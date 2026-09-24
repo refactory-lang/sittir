@@ -45,44 +45,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::extractSupertypeNames`
+### `packages/codegen/src/dsl/enrich.ts::extractGrammarSymbolNames`
 
 ```text
-/**
- * @internal — pull the declared-supertype name set out of the base
- * grammar. Handles both the `{ grammar: { supertypes: $ => [...] } }`
- * wrapped form and the bare `{ supertypes: $ => [...] }` form. Returns
- * names WITH their leading underscore so callers can test
- * `supertypeNames.has('_expression')` and still strip the prefix when
- * composing the field name.
- */
-```
-
-#### body
-
-```text
-// Callback form (raw author grammar): `$ => [$._expr, ...]`. Invoke
-// with a symbol-shaped proxy and harvest the names.
-```
-
-#### body
-
-```text
-// Proxy that returns a SYMBOL-shaped object for any property access —
-// matches tree-sitter's grammar-authoring protocol where `$.foo`
-// produces a SYMBOL reference named 'foo'. Enough to let the
-// callback return its array; any `.field()` / `.optional()` calls
-// inside would miss but no grammars we've seen do that in
-// supertypes:.
-```
-
-#### body
-
-```text
-// Pre-evaluated form: tree-sitter's native grammar() and sittir's
-// evaluate() both convert the supertypes callback to an array before
-// returning. Tree-sitter native emits `[{type:'SYMBOL', name:'_expr'}, …]`;
-// sittir evaluate() emits `['_expr', …]`. Accept both forms.
+The names a grammar lists under `supertypes`, `externals` or `inline`, whether the field is an array or a
+`$ => [...]` function. A function is called with a symbol-shaped proxy so each entry yields its name.
 ```
 
 ### `packages/codegen/src/dsl/enrich.ts::extractWordName`
@@ -93,7 +60,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * runtimes. Under sittir's grammarFn it is already a string; in the emitted
  * `.sittir/grammar.js` (which runs enrich BEFORE tree-sitter's native
  * `grammar()`) it is still the raw `$ => $.identifier` callback — invoke it
- * with the same symbol-shaped proxy `extractSupertypeNames` uses and take
+ * with the same symbol-shaped proxy `extractGrammarSymbolNames` uses and take
  * the returned symbol's name. Returns null when absent/unresolvable (the
  * word matcher then falls back via matchesWordShape).
  */
@@ -832,302 +799,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Descend into field content (a field-wrapped optional(seq) is also a target).
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::clusterSignatures`
-
-```text
-/**
- * Assign a stable cluster-id string to each value in `values`, where two
- * values get the SAME id iff `rulesEqual` (dsl/list-patterns.ts) says they're
- * structurally equal. Used as `diagnoseParseKindCollisions`'s
- * `structuralSignature` input — that function only needs values sharing a
- * signature to be groupable via `distinct()`, not a globally-canonical hash,
- * so an arbitrary-but-consistent per-call cluster index is sufficient and
- * avoids hand-rolling a serializer (DRY: reuses the existing, already
- * separator-shape-aware `rulesEqual` instead).
- *
- * @internal — exported for testing only.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Base-grammar un-aliasing (parsekind-noninjective auto-fix)
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/dsl/enrich.ts::getEnrichUnaliasDiagnostics`
-
-```text
-/**
- * Extract the un-aliasing diagnostics `enrich()` attached to an enriched
- * grammar result (or a grammar object that inherited them, e.g. via
- * `grammarFn`). Returns an empty array when none were attached.
- */
-```
-
-### `packages/codegen/src/dsl/enrich.ts::collectUnaliasCandidates`
-
-```text
-/**
- * @internal — walk `node` collecting every ALIAS site and bare SYMBOL leaf,
- * resolving each to its referenced rule body via `rulesBag` for structural
- * comparison. Descent runs through `RuleWalker.childEdgesOf` — the ONE
- * canonical child-edge relation (`dsl/rule-walker.ts`) — so every edge the
- * project's walker knows about is covered automatically: SEQ/CHOICE members,
- * FIELD/OPTIONAL/REPEAT/REPEAT1/PREC/TOKEN content, AND a repeat's
- * `separator.value`. (The former hand-rolled descent here silently omitted
- * the separator and token-wrapper edges, so an alias in one of those
- * positions was invisible — a coverage gap and a second, incomplete rule-tree
- * edge relation alongside the canonical one.)
- *
- * Two node kinds get special handling BEFORE the generic descent:
- *   - ALIAS: recorded as a candidate; NOT descended into (its resolved body
- *     is looked up directly via `rulesBag` instead) — mirrors
- *     `applyClauseHoist`'s treatment of its own synthesized wrappers as
- *     opaque once classified.
- *   - SYMBOL: recorded as a candidate leaf (its own storage kind IS its parse
- *     kind); leaves have no edges so descent is a no-op regardless.
- *
- * FIELD additionally rebinds `slotKey` to the field's name for its subtree, so
- * a field-wrapped alias buckets under its enclosing field rather than merging
- * with a same-target alias in a sibling field.
- *
- * The bare `OPTIONAL` edge (absent from `applyClauseHoist`'s
- * `optional(seq(...))`-specific descent) is covered too: sittir's own evaluate
- * runtime produces bare `OPTIONAL` nodes (not always the tree-sitter-CLI-lowered
- * `CHOICE[x,BLANK]` form) before tree-sitter's `grammar()` runs, so a
- * base-grammar alias can sit directly under `optional(...)` at this phase —
- * and `childEdgesOf` descends its `content` edge.
- */
-```
-
-#### body
-
-```text
-// `path` addresses a real, editable location in the TOP-LEVEL rule passed
-// to `applyUnaliasDistinct` only while every ancestor call stayed within
-// that rule's own tree. Once a bare-symbol expansion (below) descends into
-// a REFERENCED rule's body instead, `path` keeps accumulating segments
-// relative to that OTHER rule's structure — segments `rewriteUnaliasAt`
-// cannot follow, since the top-level rule's tree has only a bare SYMBOL at
-// that point, not the referenced rule's expanded shape. `rewritable`
-// tracks whether we're still inside the original rule's own tree; once
-// false (set the moment expansion crosses into a referenced rule), it
-// stays false for every deeper call, and any ALIAS found from then on is
-// witness-only (contributes to collision detection / signature voting)
-// and must never be handed to `rewriteUnaliasAt`.
-```
-
-```text
-// do not descend into the alias's own content
-```
-
-#### body
-
-```text
-// A bare reference to a rule whose OWN body is a pure CHOICE gets
-// its own display identity UNLESS the rule is hidden (leading `_`)
-// or a declared supertype — those are the only two mechanisms
-// that make tree-sitter collapse straight through to whichever
-// arm matched (the same fact this compiler's supertype
-// classification already relies on elsewhere); a plain visible,
-// non-supertype CHOICE-shaped rule still emits its OWN wrapper
-// node, so expanding into it here would be checking the wrong
-// question. When the erasure condition holds, expand into the
-// rule instead of registering ONE leaf candidate named after the
-// union itself, so a sibling alias whose target is only reachable
-// through one of THIS union's arms — not the union's own name —
-// is still caught as a genuine parsekind-noninjective collision
-// (confirmed case: python's argument_list, whose bare `expression`
-// arm — a declared supertype — reaches `parenthesized_expression`
-// several levels down, colliding with a sibling
-// `alias($.parenthesized_list_splat, $.parenthesized_expression)`
-// arm). `visited` guards against infinite recursion through
-// self/mutually-recursive union grammars (e.g. `expression`
-// referencing itself).
-```
-
-### `packages/codegen/src/dsl/enrich.ts::rewriteUnaliasAt`
-
-```text
-/**
- * @internal — replace the node at `path` (as recorded by
- * `collectUnaliasCandidates`, mirroring `RuleWalker.childEdgesOf`'s segments)
- * with `replacement`. Segments are `'members', <index>` (SEQ/CHOICE),
- * `'content'` (FIELD/OPTIONAL/REPEAT/REPEAT1/PREC/TOKEN), or
- * `'separator', 'value'` (a repeat's separator inner rule). The generic
- * single-property branch handles `content`/`separator`/`value` uniformly (an
- * object spread of the separator wrapper preserves its `trailing`/`leading`).
- */
-```
-
-### `packages/codegen/src/dsl/enrich.ts::applyUnaliasDistinct`
-
-```text
-/**
- * @internal — resolve `alias($.X, $.Y)` sites where `X`'s rule body is
- * structurally distinct from the other value(s) sharing parse kind `Y`
- * (a `parsekind-noninjective` collision), so each storage kind surfaces under
- * its own name at read time instead of being coerced onto a shared kind.
- *
- * Reuses `diagnoseParseKindCollisions` (the same decision function the
- * later, assemble-time check calls) fed by locally-computed storage/parse
- * kind facts — its comparison logic is phase-agnostic, so it is not
- * reimplemented here. Structurally-identical collisions (the common,
- * intentional case, e.g. multiple hidden rules aliased to one shared display
- * name) merge with no diagnostic, unchanged from `diagnoseParseKindCollisions`'s
- * existing behavior. Only genuinely-distinct collisions trigger a rewrite.
- * This is usually safe (a distinct-storage-kind collision makes read-time
- * dispatch non-injective regardless of author intent), but "distinct" here
- * is judged by `rulesEqual` over RAW, pre-simplify rule shapes — a shallower
- * notion than the assemble-time check's post-simplify/catalog-resolved
- * `structuralSignatureOfValue`/`canonicalRuleSignature` comparison, and the
- * two CAN disagree in principle. No rule name is special-cased here anymore
- * (the former `GRANULARITY_MISMATCH_EXCLUSIONS` python `_suite` carve-out was
- * removed in `cb44e218b` — both `_simple_statements`/`_newline` retargeted
- * cleanly with no live issue remaining, and python's baseline actually
- * improved 107→108).
- * The diagnostic is downgraded to non-blocking severity and kept only as an
- * audit trail of the auto-fix, not a build-blocking error.
- *
- * Per firing candidate, the fix branches on whether `X`'s OWN top-level rule
- * (`rulesBag[X]`) is hidden (leading `_`, tree-sitter/sittir convention) or
- * visible:
- *   - visible → DROP the alias at this site (`alias($.X, $.Y)` → bare `$.X`),
- *     unchanged from this pass's original behavior — `X` already produces an
- *     independent named CST node once un-aliased.
- *   - hidden → RETARGET the alias at this site, from `alias($.X, $.Y)` to
- *     `alias($.X, $.<X-without-leading-underscore>)`. A hidden rule produces
- *     no CST node of its own if merely un-aliased (tree-sitter inlines its
- *     raw content wherever referenced) — aliasing IS the standard mechanism
- *     for giving a hidden rule independent visibility, so retargeting to a
- *     non-colliding name keeps it visible instead of dropping visibility
- *     altogether. Guarded: if the stripped name already exists as a rule
- *     (`rulesBag`/`kwRules`/`clauseGroupRules`), do NOT retarget — leave this
- *     specific candidate's alias untouched and do not downgrade its
- *     diagnostic (stays at original `error` severity, still-blocking, same as
- *     if this pass declined to act).
- *
- * Strictly single-site: only the rule passed in is inspected/rewritten — no
- * cross-rule sweep. Other occurrences of the same `alias($.X, $.Y)` pair in
- * sibling top-level rules are untouched by this call (each such rule gets its
- * own independent call from `applyEnrichPasses`, and is fixed only if ITS OWN
- * local bucket independently diagnoses a collision).
- */
-```
-
-#### body
-
-```text
-// Bucket by `(slotKey ?? targetName, targetName)` — NOT `targetName` alone.
-// Two aliases sharing a target name but living in different fields are
-// genuinely distinguishable (the field name disambiguates the read-time
-// slot), so they must not be merged into one collision bucket. `slotName`
-// is the effective slot key carried onto the diagnostic (the enclosing
-// field name when field-wrapped, else the target name — matching the
-// assemble-time caller's use of the resolved slot name).
-```
-
-#### body
-
-```text
-// Per-candidate resolution: 'drop' (visible storage kind — bare content
-// replaces the alias site) or a retarget name (hidden storage kind — a
-// faithful new ALIAS node with the same content/named, stripped value).
-```
-
-#### body
-
-```text
-// Retarget names already claimed EARLIER in THIS call (across all buckets).
-// Two distinct hidden storage kinds that strip to the same name (e.g.
-// `_foo` and `__foo` → `foo`) would otherwise both be scheduled to retarget
-// to `foo`, recreating the exact non-injective collision this pass exists to
-// eliminate — under the new name. First-claimer wins; later collisions
-// decline (their diagnostic stays at original severity, same as the
-// pre-existing name-collision guard against `rulesBag`/etc.).
-```
-
-#### body
-
-```text
-// A collision needs at least one ALIAS site (only aliasing can make a
-// storage kind's parse kind differ from its own name) plus 2+ entries
-// overall sharing the target name.
-```
-
-#### body
-
-```text
-// Representative ("this parse kind's canonical shape") signature. A
-// candidate whose OWN signature matches it is NOT genuinely distinct and
-// is skipped, even though the bucket as a whole fired the diagnostic
-// because of some OTHER candidate.
-//
-// Prefer the signature of the candidate whose `storageKind === targetName`
-// — the bare, self-referencing value that IS the native identity for this
-// parse kind. Only when the bucket has no such native value do we fall
-// back to majority-by-frequency. Frequency alone is wrong: for
-// `choice(alias(a1, y), alias(a2, y), y)` where a1/a2 share one shape and
-// the bare `y` differs, majority-vote (2 vs 1) would pick a1/a2's shape as
-// representative and skip BOTH aliases, leaving the real a1/a2-vs-y
-// collision unresolved. Anchoring on the native `y` fixes that.
-```
-
-#### body
-
-```text
-// diagnoseParseKindCollisions reasons in aggregate over the bucket and
-// doesn't identify which specific site(s) collided — since the
-// diagnostic only fires on genuine structural distinctness, acting on
-// every GENUINELY DISTINCT alias site in the bucket is correct (never
-// safe to keep one aliased and not another once distinctness is
-// proven) — but a candidate matching the bucket's majority signature
-// (see `representativeSignature` above) is NOT genuinely distinct and
-// is skipped. Each remaining site independently branches drop vs.
-// retarget vs. decline-with-original-severity below.
-```
-
-#### body
-
-```text
-// Empty stripped name (a storage kind that is all underscores, e.g.
-// `_`): there's no valid name to retarget to — decline.
-```
-
-#### body
-
-```text
-// Already claimed by an EARLIER retarget in this same call (see
-// `claimedRetargetNames`) — declining here avoids re-introducing a
-// non-injective collision under the stripped name.
-```
-
-#### body
-
-```text
-// Name-collision guard: leave this candidate's alias untouched;
-// its diagnostic keeps original (error) severity below — do not
-// downgrade or suppress it.
-```
-
-#### body
-
-```text
-// Only downgrade/record the diagnostic when at least one candidate in
-// this bucket was actually acted on (dropped or retargeted); a bucket
-// where every candidate was declined via the name-collision guard must
-// keep firing at its original error severity, unchanged. Rewrite the
-// wording too, not just the severity — `diagnoseParseKindCollisions`
-// phrases every diagnostic as a live, actionable problem ("collapses
-// onto parse kind X", "give each colliding arm a distinct alias"),
-// but this one describes the BASE grammar's alias shape and has
-// already been fixed by the rewrite below — left as the original
-// wording, it reads as an open issue in the compiled/enriched
-// grammar when it is neither: it's a resolved fact about the
-// upstream construct, kept only for audit visibility.
-```
-
 ### `packages/codegen/src/dsl/enrich.ts::clauseHoistSynthName`
 
 ```text
@@ -1427,8 +1098,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // through (not by carrying the body here). `metadata` is inert to
 // tree-sitter's parse tables. (Debt PR-0c: the compiler side no longer
 // reads this tag — `compiler/link.ts`'s `mintContentAliasKinds` and
-// `resolveRule`'s ALIAS case, and `compiler/evaluate.ts`'s
-// `rewriteInlineAliases`, now identify this population structurally via
+// `resolveRule`'s ALIAS case, now identify this population structurally via
 // `isClauseHoistVisibleGroupAlias`. The write here stays load-bearing for
 // transform-path only.)
 // Route through the runtime-injected symbol constructor (`symbol` under
@@ -2552,29 +2222,6 @@ rebuild goes through here.
 /** Rebuild the original seq-member rule around a freshly-built FIELD node. */
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::UnaliasDiagnosticSink`
-
-```text
-/** A per-`enrich()`-call sink for un-aliasing diagnostics — array + dedupe-by-key
- *  Set, mirroring the assemble-time check's shape but WITHOUT the module-global
- *  lifetime. Created fresh per invocation and attached to that call's result. */
-```
-
-### `packages/codegen/src/dsl/enrich.ts::UnaliasCandidate`
-
-```text
-/**
- * @internal — a single value contributing to a target-name bucket: either an
- * ALIAS site (`aliasSite` set, eligible to be dropped) or a bare SYMBOL
- * reference sharing the same target name (its own storage kind IS its parse
- * kind — never dropped, but must be counted so `diagnoseParseKindCollisions`
- * sees the full set of colliding storage kinds, matching the real base-grammar
- * shape `choice($.generic_type, alias($.generic_type_with_turbofish,
- * $.generic_type))` where the bare `$.generic_type` branch is what makes the
- * collision detectable at all).
- */
-```
-
 ### `packages/codegen/src/dsl/enrich.ts::slotKey`
 
 ```text
@@ -2775,26 +2422,6 @@ rebuild goes through here.
  * Well-known non-enumerable key attached by `enrich()`: the hidden SOURCE
  * rule names behind every visible-group mint (`alias($._src, $.visible)`) —
  * both the promote-existing-hidden-rule and synthesize-new-body categories.
- */
-```
-
-### `packages/codegen/src/dsl/enrich.ts::ENRICH_UNALIAS_DIAGNOSTICS_KEY`
-
-```text
-/**
- * Well-known non-enumerable key under which `enrich()` attaches the
- * (downgraded, non-blocking) `parsekind-noninjective` diagnostics its
- * un-aliasing pass produced for a given grammar evaluation. Read via
- * `getEnrichUnaliasDiagnostics`.
- *
- * Attached to the SAME evaluation's own return object rather than a
- * module-level accumulator (the former design): a module-global array only
- * populated on the FIRST import of a grammar's entry path — Node caches the
- * module, so a second `evaluate()` of the same grammar in one process would
- * observe an empty drain even though the diagnostics conceptually still apply;
- * concurrent evaluations of different grammars would also interleave into one
- * shared array. Travelling with the result object avoids both: the diagnostics
- * stay on the (cached) grammar object, correct on every read, per-grammar.
  */
 ```
 
@@ -3871,6 +3498,49 @@ unwraps `prec` and a stamp on the wrapper is lost.
  */
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::ParserSymbolClass`
+
+```text
+How tree-sitter's extract_tokens step files a rule: `terminal` (a token, id below TOKEN_COUNT), `nonterminal`, or
+`inlined` (no symbol at all).
+```
+
+### `packages/codegen/src/dsl/rule-patterns.ts::ParserSymbolCtx`
+
+```text
+The grammar facts `parserSymbolClassOf` needs: rule bodies, the `externals` and `inline` names, and how many times each
+extracted token occurs across all rules (`tokenUseCounts`).
+```
+
+### `packages/codegen/src/dsl/rule-patterns.ts::parserSymbolClassOf`
+
+```text
+Predicts the parser class tree-sitter's extract_tokens gives a rule name, without generating a parser:
+- an external is a terminal;
+- a rule in `inline` has no symbol;
+- a body that is a single token — after merging nested token / immediate-token / precedence wrappers — used exactly
+  once in the grammar becomes that token, so the rule is terminal; except a plain string under a hidden name, which
+  is an anonymous token, leaving the rule a nonterminal with a unit production;
+- everything else (sequences, choices, repeated tokens) is a nonterminal.
+A unit test compares the prediction against every alias-site storage in the generated parser.c of each grammar.
+```
+
+### `packages/codegen/src/dsl/rule-patterns.ts::tokenUseCounts`
+
+```text
+How many times each extracted token (keyed by its content and merged wrapper parameters) occurs across all rules.
+tree-sitter only turns a single-token rule into a terminal when that token is used once; a shared token stays
+anonymous and the rule stays a nonterminal.
+```
+
+### `packages/codegen/src/dsl/rule-patterns.ts::extractedToken`
+
+```text
+The token a rule body reduces to, if any: token / immediate-token / precedence wrappers merged into one key, over a
+STRING or PATTERN. `anonymous` when the inner content is a plain string. Undefined for a precedence-only chain or any
+non-token body.
+```
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::classifyByType`
 
 ```text
@@ -3960,6 +3630,10 @@ The SEQ join inserts a space only where the lexer needs one: when the last chara
 that derives a literal for a grammar (flatten's terminality stamp, simplify's
 SEQ collapse, the assembled leaf's `fixedLiteralText`) supplies it, and only
 the unit tests over synthetic rules take the `\w` fallback.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::composeTokenText`
+
+The whole-text regex source of a token, composed from its interior rule: a string is escaped (regex syntax characters, and control characters as the letter escape where one exists (`\n \r \t \v \f`, and `\0` unless a digit follows) or `\xHH` otherwise), a pattern is kept verbatim, a sequence concatenates, a choice alternates (a blank arm makes the group optional), `optional`, `repeat` and `repeat1` become `?`, `*` and `+` groups, and `token`, `field` and `alias` are transparent. A symbol is followed through `lookup` (an alias of another lexical kind) with a cycle guard. Anything else, or a pattern that is empty (a token an external scanner produces), makes the whole composition `undefined`: no regex is derived rather than a partial one. The composer is the one rule for a token's interior; the emitter consumes its result through `AssembledPattern.textPattern` and never re-derives it.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::FixedLiteralCtx`
 
@@ -4134,9 +3808,9 @@ the unit tests over synthetic rules take the `\w` fallback.
 /**
  * Tree-sitter's prec.left self-referential-choice flattening: a CHOICE
  * rule whose arms are all 3-member SEQs
- * `[field(base), STRING(separator), field(extension)]` with the SAME
- * (base, extension) field-name pair and separator literal across every
- * arm, where at least one arm's base field is a bare (non-alias-wrapped)
+ * `[base, STRING(separator), extension]` with the SAME separator literal
+ * and the same fielding at each position across every arm (both operands
+ * fielded under one name pair, or unfielded), where at least one arm's base field is a bare (non-alias-wrapped)
  * SYMBOL reference to THIS rule's own name whose name is
  * `isParserHiddenName` — the PARSER's own hiddenness rule (leading `_`),
  * not `RuleBase.hidden` (sittir's published-visibility fact, which link's
@@ -4159,6 +3833,12 @@ the unit tests over synthetic rules take the `\w` fallback.
  * Only meaningful at the TOP of a named rule's own body: the self-reference
  * check requires the SYMBOL's name to equal the rule being processed, so a
  * nested CHOICE inside some OTHER rule's body can never coincidentally match.
+ *
+ * Field-agnostic because enrich asks before `patches:` fields exist: `wire()`
+ * applies patches to the already-enriched rules, and enrich must not lift a
+ * fold's arms into rules of their own — a fold is one flat node, not a
+ * choice of forms — so the same predicate serves enrich (unfielded) and
+ * flatten (fielded).
  */
 ```
 
@@ -4647,7 +4327,7 @@ the unit tests over synthetic rules take the `\w` fallback.
 // null); but the emitted `.sittir/grammar.js` runs enrich() BEFORE
 // tree-sitter's native `grammar()`, so there `word` is still the raw `$
 // => $.identifier` callback. Resolve the callback form with the same
-// symbol-shaped-proxy trick `extractSupertypeNames` uses, so both paths
+// symbol-shaped-proxy trick `extractGrammarSymbolNames` uses, so both paths
 // compile the SAME word regex (PR #111 review finding — previously the
 // CLI path silently fell back to /^\w+$/, letting keyword promotion
 // diverge between parser and IR). ruleToRegexSource in util/word-matcher
@@ -4727,13 +4407,6 @@ the unit tests over synthetic rules take the `\w` fallback.
 #### body
 
 ```text
-// Per-call un-aliasing diagnostic sink (see ENRICH_UNALIAS_DIAGNOSTICS_KEY):
-// local to THIS enrich() invocation, attached to its result below.
-```
-
-#### body
-
-```text
 // Loop 1: field-wrap every rule to its fixed point BEFORE any hoisting, so
 // the hoist stage below sees the whole grammar's enriched fields (the
 // separated-list naming needs grammar-global field-name knowledge).
@@ -4768,20 +4441,6 @@ the unit tests over synthetic rules take the `\w` fallback.
 // same order loop 1 ran. The separated-list name counts computed from the
 // fully field-wrapped grammar are what let a mint claim a bare element
 // name only with global uniqueness.
-```
-
-#### body
-
-```text
-// Base-grammar un-aliasing also needs to reach clause-hoist-minted group
-// rules, not just the original rulesBag entries above. `applyEnrichPasses`
-// only calls `applyUnaliasDistinct` on EACH RULE'S OWN body — but the
-// widened clause-hoist mint gate can hoist a `choice(…, alias($._reserved_identifier,
-// $.identifier), …)`-shaped position OUT of a rule that pass would otherwise
-// have un-aliased, into a brand-new `clauseGroupRules` entry the per-name
-// loop above never independently visits (it iterates `rulesBag`, not
-// `clauseGroupRules`). Run the same pass over every minted group once the
-// main loop has fully settled, so it sees every mint from every rule.
 ```
 
 #### body
@@ -4868,14 +4527,6 @@ the unit tests over synthetic rules take the `\w` fallback.
 #### body
 
 ```text
-// Attach this call's un-aliasing diagnostics to its own result (non-enumerable,
-// like the clause-groups key) so they travel with the grammar object instead
-// of a module-global accumulator — see ENRICH_UNALIAS_DIAGNOSTICS_KEY.
-```
-
-#### body
-
-```text
 // Attach the hidden SOURCE names behind every visible-group mint (both the
 // promote-existing and synthesize-new categories). Wire reads this to
 // FILTER these names out of the grammar's final `inline:` list: a mint
@@ -4936,37 +4587,6 @@ a stamp made there would be lost. The stamp is the declaration link collects
 // adds `_kw_<name>` hidden rules that shift tree-sitter's parser-
 // generator tables, breaking unrelated rules' reparse (rust corpus
 // regresses by ~47/136 with this pass on).
-```
-
-### `packages/codegen/src/dsl/enrich.ts::applyHoistAndUnalias`
-
-```text
-// Clause-hoist runs AFTER the field-wrapping loop has converged — it must
-// see the enrich-inferred (`source:'enriched'`) FIELDs, because its trigger
-// is `optional(seq(…))` with `some(isString) && some(isField)`. Running it
-// first (the original placement) missed every clause whose field is added
-// by applySymbolToField (e.g. rust `abstract_type`'s
-// `for <type_parameters>`), leaving those for detectClause. One pass: once a
-// seq is hoisted its replacement is `optional(SYMBOL)`, which won't re-trigger.
-// It is a separate per-rule stage (not the tail of `applyFieldWrapPasses`)
-// so enrich() can field-wrap EVERY rule before hoisting ANY of them — the
-// separated-list naming below needs grammar-global field-name uniqueness,
-// which only exists once all rules carry their enriched fields.
-```
-
-#### body
-
-```text
-// Per-parent counter is local; dedupeMap + clauseGroupRules are shared across rules.
-```
-
-#### body
-
-```text
-// Base-grammar un-aliasing: drop (visible X) or retarget (hidden X)
-// alias($.X, $.Y) sites where X's storage kind is structurally distinct
-// from the other value(s) sharing parse kind Y (parsekind-noninjective).
-// Runs after clause-hoist has settled so it sees the final member shape.
 ```
 
 ### `packages/codegen/src/dsl/enrich.ts::isAnonymousLiteralShapedRule`
@@ -6245,4 +5865,114 @@ themselves.
 
 ```text
 /** Whether a patch value is a preference placeholder. */
+```
+
+### `packages/codegen/src/dsl/enrich.ts::hoistTokenForms`
+
+The unconditional token-form hoist, one pass over every rule before clause hoisting: the body is distributed over its outermost form alternation (`distributeTokenForms`); each arm is minted as a visible group of the `arm` flavor through `visibleGroupSynthName` and referenced by a group-lift symbol, so the arms are reachable by path patches through the lift and a `variant()` on the parent's top-level arms renames them (`renameEnrichLift`), exactly as for any other enrich-minted arm. The rule becomes a choice of the minted symbols and is reported to `addSupertypes`. Minted arms get a visible-group source entry and the parent as owner, like every other enrich mint, so `collapseSingletonMintOrdinals` drops the ordinal from a lone unnamed arm. The grammar's `word` rule is left alone too: keyword extraction needs it to stay one token. A rule the grammar declares in `externals` is left alone: the scanner produces that token, and tree-sitter rejects a name that is both an external token and a non-terminal.
+
+### `packages/codegen/src/dsl/enrich.ts::annotateTokenFormArms`
+
+Stamps the polymorph annotations on a hoisted parent's arms once every mint is final: each arm gets `variant` (its name without the parent prefix), `variantOf` (the parent) and `default` on the one arm `defaultTokenFormArm` picks. A `variant()` patch later renames the arm through the lift and keeps these annotations; an authored default replaces the inferred one.
+
+### `packages/codegen/src/dsl/enrich.ts::defaultTokenFormArm`
+
+The arm a token-form parent's own factory builds from a bare value. Among the arms whose body holds at least one pattern, the one with the fewest enum choices (a choice of literals is a slot the caller must fill), then the fewest leaves; ties go to the first arm, and a parent with no pattern arm defaults to its first. It is a heuristic and the author overrides it with `variant(name, { default: true })`.
+
+### `packages/codegen/src/dsl/enrich.ts::addSupertypes`
+
+Appends rule names to the grammar's `supertypes`, whether it is an array of names or a `$ => [...]` function, skipping names already listed. The token-form parents go through here so tree-sitter treats each as the supertype of its minted arms.
+
+### `packages/codegen/src/dsl/wire/symbol-renames.ts::renameRule`
+
+Applies a rename map to every `SYMBOL` in a value, however deep, following chains (`a` renamed to `b` renamed to `c` resolves to `c`). `wire()` runs it, at the end of its own assembly, over `reserved`; the list-shaped callbacks (`extras`, `externals`, `precedences`) go through `renameNameList`, since sittir's evaluate hands them base entries as bare names, reading the live rename map when the callback runs so it sees every rename registered while the rules evaluated. A rename registered by a `variant()` on an enrich-minted arm therefore reaches every reference, not only the rule bodies.
+
+### `packages/codegen/src/dsl/wire/symbol-renames.ts::renameNameList`
+
+The same rename for the lists tree-sitter holds as names (`conflicts`, `inline`, `supertypes`): bare strings and symbol entries both. Callbacks are wrapped only for keys the config defines or the base grammar declares (`baseDeclares`), since tree-sitter rejects a callback for a property that must be an object (`reserved`) or that the grammar lacks; a wrapper for a key the config leaves out returns the base's value renamed.
+
+### `packages/codegen/src/dsl/enrich.ts::replaceExtras`
+
+A token-form parent that the grammar lists in `extras` is replaced there by its minted arms (`tokenFormArms`, read from the parent's final members after ordinals collapse), for an array of rules, an array of bare names (what sittir's evaluate holds) or a `$ => [...]` function alike. The arms are then renamed with everything else when `variant()` names them, so a grammar no longer restates its extras to swap a parent for its arms.
+
+### `packages/codegen/src/dsl/rule-transforms.ts::DistributeAliasCtx`
+
+```text
+The one fact distribution needs from the grammar: the body of an inlined rule (`inlineBodyOf`, undefined for
+anything not in `inline`).
+```
+
+### `packages/codegen/src/dsl/rule-transforms.ts::distributeInlineAliasChoices`
+
+```text
+Applies tree-sitter's alias semantics to an alias over a choice: `alias(choice(a, b), $.t)` becomes
+`choice(alias(a, $.t), alias(b, $.t))`, recursively through nested choices, whether or not `t` is a rule of its own.
+Each arm keeps its own storage with `t` as display — a keyword aliased to `identifier` is stored as the keyword's
+own symbol, which is what a read of that node reports. An inlined rule has no symbol of its own (tree-sitter
+substitutes its body), so an alias over an inlined choice rule, or an inlined choice rule among the arms,
+contributes that rule's arms: rust and typescript `alias($._reserved_identifier, $.identifier)` becomes one
+`alias('<keyword>', $.identifier)` per keyword, the shape python writes directly. Any other symbol arm is aliased
+as it stands.
+
+A distributed alias that is itself a member of a choice splices its arms into that choice: a nested choice there
+would be lifted into an arm rule of its own, a visible kind the parser would then build. Runs in enrich, so
+tree-sitter's grammar and sittir's evaluate see the same arms. It is the only place distribution happens:
+distributing earlier on one side only would hand the two enrich runs different shapes.
+```
+
+### `packages/codegen/src/dsl/rule-transforms.ts::mintInlineLiteralAliasStorage`
+
+```text
+An inline named alias over a choice of literals whose display is not a rule
+(rust `alias(choice('u8', ...), $.primitive_type)`) has no storage symbol, so
+tree-sitter reports every literal under one shared id the catalog cannot
+name. Mint the storage: one hidden rule `_<display>` holding the literal
+choice, shared by every site of that display, and each site becomes
+`alias($._<display>, $.<display>)`. A display whose sites disagree on the
+literal set is left to distribution rather than guessed. Runs in enrich
+before distribution, so both executions mint the same rule; a precedence
+the new reduction point needs is authored as an override on the minted
+rule, which the grammar sees as `original`.
+```
+
+### `packages/codegen/src/dsl/rule-transforms.ts::liftAliasedHiddenRuleBodies`
+
+```text
+A hidden rule whose whole body is a named alias over non-symbol content (rust `_reserved_identifier:
+alias(choice('default', 'union', 'gen'), $.identifier)`) becomes that content, and every reference to it becomes the
+alias over the reference — the shape typescript writes upstream. A reference that is already the direct content of
+an outer alias keeps only the outer one, which is the name tree-sitter reports. Runs before
+`distributeInlineAliasChoices`, so a lifted inline rule is then read through like any other alias over an inline
+symbol.
+```
+
+### `packages/codegen/src/dsl/rule-transforms.ts::OverloadedDisplayCtx`
+
+```text
+The parser-symbol facts `unaliasOverloadedDisplays` classifies storages with (see `ParserSymbolCtx`).
+```
+
+### `packages/codegen/src/dsl/rule-transforms.ts::unaliasOverloadedDisplays`
+
+```text
+Gives every display name one parser identity. A display is overloaded when named alias sites put storages of
+different parser classes under it. Each storage is keyed by its symbol, or by its content when inline, and marked
+terminal when tree-sitter would give it a token (`parserSymbolClassOf`; an inlined symbol is judged by its body).
+
+- Display that is a rule of its own: sites over the rule itself stay. When the display rule is terminal, terminal
+  storages stay too — tree-sitter reuses the display's symbol for them (a keyword aliased to `identifier` is
+  `sym_identifier`). Every other storage is split off.
+- Display with no rule: two or more nonterminal storages are all split; a single nonterminal among terminals is
+  split unless its stripped name is the display, in which case the terminals' aliases are dropped instead.
+
+Splitting drops the alias over a visible symbol or an inline literal, renames the alias over a hidden symbol to the
+symbol's name without underscores (or `<display>_<name>` when that is taken; a free name is required, else it
+throws), and throws for an inline nonterminal, which needs a rule of its own. Runs in enrich, so the parser and the
+model see the same kinds.
+```
+
+### `packages/codegen/src/dsl/rule-transforms.ts::innermostNamedAliasContent`
+
+```text
+The content under a chain of named aliases.
 ```

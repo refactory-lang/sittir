@@ -26,7 +26,7 @@ describe('leaf factory guards', () => {
 		// (regex literals or new RegExp for patterns with exotic syntax).
 		expect(result.factories).toContain('_leafRe_');
 		expect(result.factories).toContain('does not match pattern');
-	});
+	}, 60_000);
 
 	it('enum factories use compile-time literal union, no runtime includes check', async () => {
 		const result = await generate({

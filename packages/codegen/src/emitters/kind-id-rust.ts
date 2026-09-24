@@ -1,9 +1,9 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { findEntryForLiteralText, type GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { AbstractAssembledCompound, hasOptionalElements, isMultiple, type AssembledNode } from '../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledAlias, hasOptionalElements, isMultiple, type AssembledNode } from '../compiler/model/node-map.ts';
 import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../types/rule.ts';
-import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
+import { findOwnKindEntry, collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
 import { slotSeparatorTexts } from './shared.ts';
 
 export interface EmitKindIdRustConfig {
@@ -67,8 +67,12 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 		...new Set(
 			entries
 				.filter((entry) => {
-					const modelType = nodeMap.nodes.get(entry.kind)?.modelType;
-					return modelType === 'pattern' || modelType === 'enum';
+					const node = nodeMap.nodes.get(entry.kind);
+					return (
+						node?.modelType === 'pattern' ||
+						node?.modelType === 'enum' ||
+						(node instanceof AbstractAssembledCompound && node.lexedInterior)
+					);
 				})
 				.map((entry) => entry.id)
 		)
@@ -81,9 +85,24 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push(`    matches!(kind.0, ${textKindIds.length > 0 ? textKindIds.join(' | ') : 'u16::MAX if false'})`);
 	lines.push('}');
 
+	const aliasEnvelopeIds = [
+		...new Set(
+			[...nodeMap.nodes.values()]
+				.map((node) => (node instanceof AssembledAlias ? node.aliasTypeId : undefined))
+				.filter((id): id is number => id !== undefined)
+		)
+	].sort((a, b) => a - b);
+	lines.push('');
+	lines.push('/// Whether this parse kind id is an alias envelope: the reader stamps the');
+	lines.push('/// grammar symbol beside it when the node is the storage node shown under');
+	lines.push("/// the alias, so the wrap layer can seat it as the envelope's content.");
+	lines.push('pub fn is_alias_envelope(kind: KindId) -> bool {');
+	lines.push(`    matches!(kind.0, ${aliasEnvelopeIds.length > 0 ? aliasEnvelopeIds.join(' | ') : 'u16::MAX if false'})`);
+	lines.push('}');
+
 	const separatorRows: string[] = [];
 	for (const [, node] of nodeMap.nodes) {
-		const parentId = entries.find((entry) => entry.kind === node.kind)?.id;
+		const parentId = findOwnKindEntry(entries, node.kind)?.id;
 		if (parentId === undefined) continue;
 		const taggedLiterals = fieldTaggedLiteralTexts(node);
 		for (const slot of node.slots) {

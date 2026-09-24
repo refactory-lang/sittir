@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { DEDENT_TEXT, INDENT_TEXT } from '../../../dsl/primitives/spacing.ts';
 import type { NodeMap } from '../../types.ts';
 import type { RenderRule } from '../../../types/rule.ts';
-import { flanksOf, isSeamChoice, resolveRenderRules, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
-import { AssembledBranch, AssembledSupertype } from '../node-map.ts';
+import { flanksOf, isSeamChoice, resolveRenderRules, seamChoiceDefault, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
+import { AssembledBranch, AssembledKeyword, AssembledSupertype, AssembledPunctuation } from '../node-map.ts';
 import { preference } from '../../../dsl/primitives/preference.ts';
 import { formatPreferencePath } from '../../../dsl/primitives/preference-path.ts';
 
@@ -247,13 +247,63 @@ describe('seamRenderRules', () => {
 		const call = seq(str('fn'), sym('name'), str('('), sym('params'), str(')'));
 		const { out, config } = seamed({ call });
 		expect(memberNames(out.rules.call!)).toEqual(['fn', 'S(fn_after)', 'name', 'S(lparen_before)', '(', 'S(lparen_after)', 'params', 'S(rparen_before)', ')']);
-		expect(seamPartOf(membersOf(out.rules.call!)[3]!)).toEqual({ fieldName: 'lparen_before', label: 'lparen_before', side: 'seam', defaultArm: 'tight', arms: ['tight', 'space', 'newline', 'blankline'] });
+		expect(seamPartOf(membersOf(out.rules.call!)[3]!)).toEqual({ fieldName: 'lparen_before', label: 'lparen_before', side: 'seam', defaultArm: 'space', arms: ['tight', 'space', 'newline', 'blankline'] });
 		expect(spacingSitesOf(out, config.nodeMap).map((s) => `${s.kind}.${s.slot} ${s.label}=${s.defaultArm} @${s.address} ${s.side}`)).toEqual([
-			'call.fn fn_after=tight @fn_after seam',
-			'call.lparen lparen_before=tight @lparen_before seam',
-			'call.lparen lparen_after=tight @lparen_after seam',
-			'call.rparen rparen_before=tight @rparen_before seam'
+			'call.fn fn_after=space @fn_after seam',
+			'call.lparen lparen_before=space @lparen_before seam',
+			'call.lparen lparen_after=space @lparen_after seam',
+			'call.rparen rparen_before=space @rparen_before seam'
 		]);
+	});
+
+	it('resolves a keyword seam no row reaches to space with the word-default origin, and a punctuation seam to the fallback', () => {
+		const rules = { call: seq(str('fn'), sym('name'), str('('), sym('params')) };
+		const originsWith = (word: boolean) => {
+			const config = { nodeMap: nodeMapOf(rules, {}), kindEntries };
+			config.nodeMap.nodes.set('fn', (word ? new AssembledKeyword('fn', str('fn') as never) : new AssembledPunctuation('fn', str('fn') as never, { hidden: false })) as never);
+			const members = membersOf(seamRenderRules(spaceRenderRules(config), config).rules.call!);
+			return { names: memberNames({ members } as never), fn: seamChoiceDefault(members[1]!), lparen: seamChoiceDefault(members[3]!) };
+		};
+		const word = originsWith(true);
+		expect(word.names).toEqual(['fn', 'S(fn_after)', 'name', 'S(lparen_before)', '(', 'S(lparen_after)', 'params']);
+		expect(word.fn).toMatchObject({ arm: 'space', origin: 'word-default' });
+		expect(word.lparen).toMatchObject({ arm: 'space', origin: 'fallback' });
+		expect(originsWith(false).fn).toMatchObject({ arm: 'space', origin: 'fallback' });
+	});
+
+	it('seats a token seam inside a choice arm that references a visible punctuation kind, by the literal text, and leaves a keyword or hidden arm alone', () => {
+		const entries = [
+			...(kindEntries as never as object[]),
+			{ kind: 'dot', anon: true, symbolName: '.', literalText: '.', member: 'Dot', id: 20 },
+			{ kind: 'qmark_dot', anon: true, symbolName: '?.', literalText: '?.', member: 'QmarkDot', id: 21 }
+		] as never;
+		const armsOf = (arm: RenderRule, node: object) => {
+			const member = seq(sym('object'), choice(str('.'), arm), sym('property'));
+			const config = { nodeMap: nodeMapOf({ member }, {}), kindEntries: entries };
+			config.nodeMap.nodes.set('arm_kind', node as never);
+			const out = seamRenderRules(spaceRenderRules(config), config);
+			const group = membersOf(out.rules.member!).find((m) => (m as { type: string }).type === 'CHOICE' && !isSeamChoice(m))!;
+			return membersOf(group).map((m) => ((m as { members?: unknown }).members === undefined ? [(m as { name?: string }).name ?? (m as { value?: string }).value!] : memberNames(m)));
+		};
+		const arm = sym('arm_kind', { fieldName: 'dot' });
+		const chain = new AssembledPunctuation('arm_kind', str('?.') as never, { hidden: false });
+		expect(armsOf(arm, chain)[1]).toEqual(['S(qmark_dot_before)', 'arm_kind', 'S(qmark_dot_after)']);
+		expect(armsOf(arm, new AssembledPunctuation('arm_kind', str('?.') as never))[1]).toEqual(['arm_kind']);
+		expect(armsOf(arm, new AssembledKeyword('arm_kind', str('?.') as never))[1]).toEqual(['arm_kind']);
+	});
+
+	it('seats token seams around a reference to a visible punctuation kind that sits in a seq, optional or not', () => {
+		const entries = [...(kindEntries as never as object[]), { kind: 'qmark_dot', anon: true, symbolName: '?.', literalText: '?.', member: 'QmarkDot', id: 21 }] as never;
+		const namesWith = (node: object, multiplicity?: string) => {
+			const member = seq(sym('object'), sym('arm_kind', { fieldName: 'chain', ...(multiplicity === undefined ? {} : { multiplicity }) }), sym('index'));
+			const config = { nodeMap: nodeMapOf({ member }, {}), kindEntries: entries };
+			config.nodeMap.nodes.set('arm_kind', node as never);
+			return memberNames(seamRenderRules(spaceRenderRules(config), config).rules.member!);
+		};
+		const chain = new AssembledPunctuation('arm_kind', str('?.') as never, { hidden: false });
+		expect(namesWith(chain, 'optional')).toEqual(['object', 'S(qmark_dot_before)', 'arm_kind', 'S(qmark_dot_after)', 'index']);
+		expect(namesWith(chain)).toEqual(['object', 'S(qmark_dot_before)', 'arm_kind', 'S(qmark_dot_after)', 'index']);
+		expect(namesWith(new AssembledKeyword('arm_kind', str('?.') as never))).toEqual(['object', 'S(chain_before)', 'arm_kind', 'S(chain_after)', 'index']);
 	});
 
 	it('defaults to space where the seam-stamping dry run baked a space', () => {
@@ -319,14 +369,17 @@ describe('seamRenderRules', () => {
 		expect(memberNames(out.rules.unary!).filter((m) => m.startsWith('S('))).toEqual(['S(sign_after)']);
 		expect(memberNames(out.rules.linked!).filter((m) => m.startsWith('S('))).toEqual(['S(operator_before)', 'S(operator_after)']);
 		expect(out.rules.mixed).toBe(rules.mixed);
-		expect(out.rules.words).toBe(rules.words);
-		expect(out.rules.marker).toBe(rules.marker);
+		expect(memberNames(out.rules.words!).filter((m) => m.startsWith('S('))).toEqual(['S(operator_before)', 'S(operator_after)']);
+		expect(memberNames(out.rules.marker!).filter((m) => m.startsWith('S('))).toEqual(['S(readonly_marker_after)']);
 		expect(spacingSitesOf(out, config.nodeMap).map((s) => `${s.kind}.${s.slot} @${s.address}`)).toEqual([
 			'binary.operator @operator_before',
 			'binary.operator @operator_after',
 			'unary.sign @sign_after',
 			'linked.operator @operator_before',
-			'linked.operator @operator_after'
+			'linked.operator @operator_after',
+			'words.operator @operator_before',
+			'words.operator @operator_after',
+			'marker.readonly_marker @readonly_marker_after'
 		]);
 	});
 
@@ -355,7 +408,7 @@ describe('seamRenderRules', () => {
 		expect([pattern, body].map((m) => (m as { name: string }).name)).toEqual(['pattern', 'body']);
 		expect(memberNames(clauseOut!)).toEqual(['S(eq_before)', '=', 'S(eq_after)', 'value']);
 		expect((clauseOut as { multiplicity?: string }).multiplicity).toBe('optional');
-		expect(seamPartOf(membersOf(clauseOut!)[0]!).defaultArm).toBe('tight');
+		expect(seamPartOf(membersOf(clauseOut!)[0]!).defaultArm).toBe('space');
 		expect(memberNames(retOut!)).toEqual(['S(dash_gt_before)', '->', 'S(dash_gt_after)', 'type']);
 		expect(seamPartOf(membersOf(retOut!)[0]!).defaultArm).toBe('space');
 		expect(spacingSitesOf(out, config.nodeMap).map((s) => s.address)).toEqual(['eq_before', 'eq_after', 'dash_gt_before', 'dash_gt_after']);
@@ -378,22 +431,68 @@ describe('seamRenderRules', () => {
 			'x',
 			'S(lparen_before)',
 			'(',
-			'S(lparen_after)',
 			'S(call_after)'
 		]);
 		const members = membersOf(out.rules.call!);
-		expect(seamPartOf(members[0]!)).toEqual({ fieldName: 'call_before', label: 'call_before', side: 'seam', defaultArm: 'tight', arms: ['tight', 'space', 'newline', 'blankline'] });
-		expect(seamPartOf(members[4]!)).toEqual({ fieldName: 'lparen_after', label: 'lparen_after', side: 'seam', defaultArm: 'tight', arms: ['tight', 'space', 'newline', 'blankline'] });
-		expect(seamPartOf(members[5]!)).toEqual({ fieldName: 'call_after', label: 'call_after', side: 'seam', defaultArm: 'newline', arms: ['tight', 'space', 'newline', 'blankline'] });
+		expect(seamPartOf(members[0]!)).toEqual({ fieldName: 'call_before', label: 'call_before', side: 'seam', defaultArm: 'space', arms: ['tight', 'space', 'newline', 'blankline'] });
+		expect(seamPartOf(members[4]!)).toEqual({ fieldName: 'call_after', label: 'call_after', side: 'seam', defaultArm: 'newline', edgeLiterals: ['lparen'], arms: ['tight', 'space', 'newline', 'blankline'] });
 		expect(out.rules._helper).toBe(rules._helper);
 		expect(out.rules._call).toBe(rules._call);
 		expect(out.rules.pick).toBe(rules.pick);
 		expect(spacingSitesOf(out, nodeMap).map((s) => s.address)).toEqual([
 			'call_before',
 			'lparen_before',
-			'lparen_after',
 			'call_after'
 		]);
+	});
+
+	it('cascades a token face declared grammar-wide onto the edge of every kind that opens or closes with that token', () => {
+		// `arguments` opens with `(`: with no row of its own, its before-edge takes
+		// the `_`-scope `"("/before` face as a cascaded default; a kind row still
+		// overrides it, and a kind whose edge is a slot cascades nothing.
+		const rules = {
+			args: seq(str('('), sym('x'), str(')')),
+			paren: seq(str('('), sym('y'), str(')')),
+			call: seq(sym('f'), sym('args'))
+		};
+		const nodeMap = nodeMapOf(rules, {});
+		for (const kind of ['args', 'paren', 'call'] as const) nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind]));
+		const config = {
+			nodeMap,
+			kindEntries,
+			options: { _: { '"("/before': preference('tight'), '")"/after': preference('newline') }, paren: { before: preference('space') } }
+		} as never;
+		const out = resolveRenderRules(config, () => {}).seamed;
+		const edge = (kind: string, index: number) => {
+			const choice = membersOf(out.rules[kind]!)[index]!;
+			const part = seamPartOf(choice);
+			return { fieldName: part.fieldName, defaultArm: part.defaultArm, edgeLiterals: part.edgeLiterals, origin: seamChoiceDefault(choice)?.origin };
+		};
+		expect(edge('args', 0)).toEqual({ fieldName: 'args_before', defaultArm: 'tight', origin: 'cascade', edgeLiterals: ['lparen'] });
+		expect(edge('args', 6)).toEqual({ fieldName: 'args_after', defaultArm: 'newline', origin: 'cascade', edgeLiterals: ['rparen'] });
+		expect(edge('paren', 0)).toEqual({ fieldName: 'paren_before', defaultArm: 'space', origin: 'preference', edgeLiterals: ['lparen'] });
+		expect(edge('call', 0)).toEqual({ fieldName: 'call_before', defaultArm: 'space', origin: 'fallback', edgeLiterals: undefined });
+		expect(seamPartOf(membersOf(out.rules.call!)[0]!).edgeLiterals).toBeUndefined();
+		expect(spacingSitesOf(out, nodeMap).find((s) => s.address === 'args_before')?.edgeLiterals).toEqual(['lparen']);
+	});
+
+	it('cascades a token-set edge only when every token of its choice resolves to one declared face', () => {
+		const entries = [
+			...(kindEntries as never as object[]),
+			{ kind: 'dot_dot', anon: true, symbolName: '..', literalText: '..', member: 'DotDot', id: 30 },
+			{ kind: 'dot_dot_eq', anon: true, symbolName: '..=', literalText: '..=', member: 'DotDotEq', id: 31 }
+		] as never;
+		const rules = { range: seq(choice(str('..'), str('..=')), sym('right')) };
+		const build = (options: object) => {
+			const nodeMap = nodeMapOf(rules, {});
+			nodeMap.nodes.set('range', new AssembledBranch('range', rules.range as never, rules.range));
+			const out = resolveRenderRules({ nodeMap, kindEntries: entries, options } as never, () => {}).seamed;
+			const choice = membersOf(out.rules.range!)[0]!;
+			return { edgeLiterals: seamPartOf(choice).edgeLiterals, arm: seamChoiceDefault(choice)?.arm, origin: seamChoiceDefault(choice)?.origin };
+		};
+		expect(build({ _: { '".."/before': preference('tight'), '"..="/before': preference('tight') } })).toEqual({ edgeLiterals: ['dot_dot', 'dot_dot_eq'], arm: 'tight', origin: 'cascade' });
+		expect(build({ _: { '".."/before': preference('tight'), '"..="/before': preference('space') } }).origin).toBe('fallback');
+		expect(build({ _: { '".."/before': preference('tight') } }).origin).toBe('fallback');
 	});
 
 	it('puts a list kind\'s edge seams around its flank wrapper, which stays a three-member seq', () => {
@@ -427,7 +526,7 @@ describe('seamRenderRules', () => {
 		const braces = (options: object) => ({ nodeMap: nodeMapOf({ call }, {}), kindEntries, whitespaceText, options });
 		const tokens = braces({ call: { '"("/after': preference('indent'), '")"/before': preference('dedent') } });
 		const sites = spacingSitesOf(run(tokens), tokens.nodeMap);
-		expect(sites.map((s) => `${s.address}:${s.label}=${s.defaultArm}`)).toEqual(['lparen_before:lparen_before=tight', 'lparen_after:lparen_after=indent', 'rparen_before:rparen_before=dedent']);
+		expect(sites.map((s) => `${s.address}:${s.label}=${s.defaultArm}`)).toEqual(['lparen_before:lparen_before=space', 'lparen_after:lparen_after=indent', 'rparen_before:rparen_before=dedent']);
 		expect(sites.every((s) => s.arms.length === arms.length)).toBe(true);
 		const closesFirst = braces({ call: { '"("/before': preference('dedent'), '")"/before': preference('indent') } });
 		expect(() => run(closesFirst)).toThrow(/call\.lparen_before dedents an indent it never opened/);
@@ -493,7 +592,7 @@ describe('the options block reaches a site', () => {
 
 	it('leaves a site on its fallback when nothing declares it', () => {
 		const out = resolved();
-		expect(armOf(out, 'lbrace_after')).toBe('tight');
+		expect(armOf(out, 'lbrace_after')).toBe('space');
 	});
 
 	it('a declaration under a kind sets that site', () => {

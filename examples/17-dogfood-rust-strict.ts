@@ -3,7 +3,7 @@ import { Delimiter, ir, TSKindId } from '@sittir/rust';
 // Rebuilds rust/crates/sittir-core/src/splice.rs through the FACTORY surface
 // alone — every node is spelled with `.strict` or a namespaced form, never a
 // loose config — so a coercion failure is never mistaken for a factory one.
-// `17-dogfood-rust.ts` rebuilds the same items through the coercion surface.
+// `17-dogfood-rust-loose.generated.ts` is the same target through the loose surface.
 //
 // Every gap marker names the layer that fails:
 //   (exposure) the factory builds the shape correctly, but no public
@@ -121,7 +121,7 @@ function writeCall(format: string) {
 
 export function displayImplStrict() {
 	return ir.statement.impl.body.positiveClause.strict({
-		traitClause: [scopedTy(ns('std', 'fmt'), 'Display')],
+		traitClause: scopedTy(ns('std', 'fmt'), 'Display'),
 		type: id('SpliceError'),
 		declarationList: ir.declarationList.strict(
 				ir.statement.function.strict({
@@ -171,7 +171,7 @@ export function displayImplStrict() {
 /** `impl std::error::Error for SpliceError {}` */
 export function errorImplStrict() {
 	return ir.statement.impl.body.positiveClause.strict({
-		traitClause: [scopedTy(ns('std', 'error'), 'Error')],
+		traitClause: scopedTy(ns('std', 'error'), 'Error'),
 		type: id('SpliceError'),
 		declarationList: ir.declarationList.strict(),
 	});

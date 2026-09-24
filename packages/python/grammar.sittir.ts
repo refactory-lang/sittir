@@ -24,10 +24,6 @@ export default grammar(
 				return [...(prev ?? []), $._tight, $._space, $._blankline, $._double_newline];
 			},
 			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
-			expectTestFailures: {
-				'parenthesized_list_splat.parenthesizedListSplat':
-					'dummy stub — the aliased inner parenthesized_list_splat is stubbed with an identifier content the transport rejects'
-			},
 			conflicts: ($, previous) => [
 				...(previous ?? []),
 				[$.expression_statement, $.expression_statement_tuple],
@@ -76,6 +72,9 @@ export default grammar(
 			},
 			options: {
 				gap: { separator: preference('tight') },
+				integer_hex: { 'prefix:': preference('0x') },
+				integer_octal: { 'prefix:': preference('0o') },
+				integer_binary: { 'prefix:': preference('0b') },
 				module: {
 					'statements:/separator': preference('tight'),
 					'statements:/(function_definition)/after': preference('double_newline'),
@@ -84,10 +83,22 @@ export default grammar(
 				},
 
 				_: {
+					'"("/before': preference('tight'),
+					'"("/after': preference('tight'),
+					'")"/before': preference('tight'),
+					'"["/before': preference('tight'),
+					'"["/after': preference('tight'),
+					'"]"/before': preference('tight'),
+					'"{"/after': preference('tight'),
+					'"}"/before': preference('tight'),
+					'"."/before': preference('tight'),
+					'"."/after': preference('tight'),
+					'","/before': preference('tight'),
 					'_/separator/","/before': preference('tight'),
 					'_/separator/";"/before': preference('tight'),
 					'_/separator/"."/before': preference('tight'),
 					'_/separator/"."/after': preference('tight'),
+					'":"/before': preference('tight'),
 					'":"/after': preference('space'),
 					'"->"/before': preference('space'),
 					'"->"/after': preference('space'),
@@ -97,7 +108,6 @@ export default grammar(
 					'":="/after': preference('space'),
 					'operator:/before': preference('space'),
 					'operator:/after': preference('space'),
-					'operators:/before': preference('space'),
 					'operators:/after': preference('space')
 				},
 				keyword_argument: { '"="/before': preference('tight'), '"="/after': preference('tight') },
@@ -105,11 +115,12 @@ export default grammar(
 				slice: { '":"/before': preference('tight'), '":"/after': preference('tight') },
 				splat_pattern: { 'operator:/after': preference('tight') },
 				splat_type: { 'operator:/after': preference('tight') },
+				interpolation: { before: preference('tight'), after: preference('tight') },
+				comprehension_clauses: { 'content:/separator': preference('space') },
 
 				_bindings: {
 					'block/statements:/separator': 'gap/separator',
 					'comparison_operator/comparators:/separator': 'gap/separator',
-					'comprehension_clauses/content:/separator': 'gap/separator',
 					'concatenated_string/string:/separator': 'gap/separator',
 					'decorated_definition/decorator:/separator': 'gap/separator',
 					'if_statement/alternative:/separator': 'gap/separator',
@@ -119,10 +130,46 @@ export default grammar(
 			},
 
 			patches: {
-				// See docs/python-grammar-sittir-glossary.md::parameters
-				parameters: {
-					'1/0': alias('parameters_elements')
+				integer: {
+					0: variant('hex'),
+					1: variant('octal'),
+					2: variant('binary'),
+					3: variant('decimal', { default: true })
 				},
+				float: {
+					'0/0/0/0': field('integer'),
+					'0/0/0/2': field('fraction'),
+					'0/0/0/3/0/0': field('marker'),
+					'0/0/0/3/0/1': field('exponent'),
+					'0/0/1': field('imaginary'),
+					'1/0/0/0': field('integer'),
+					'1/0/0/2': field('fraction'),
+					'1/0/0/3/0/0': field('marker'),
+					'1/0/0/3/0/1': field('exponent'),
+					'1/0/1': field('imaginary'),
+					'2/0/0/0': field('integer'),
+					'2/0/0/1/0': field('marker'),
+					'2/0/0/1/1': field('exponent'),
+					'2/0/1': field('imaginary'),
+					0: variant('point', { default: true }),
+					1: variant('leading_point'),
+					2: variant('scientific')
+				},
+				escape_sequence: {
+					0: variant('unicode_fixed'),
+					1: variant('unicode_wide'),
+					2: variant('hex'),
+					3: variant('octal'),
+					4: variant('line_break'),
+					5: variant('simple', { default: true }),
+					6: variant('named')
+				},
+				line_continuation: {
+					0: variant('newline', { default: true }),
+					1: variant('nul')
+				},
+				// See docs/python-grammar-sittir-glossary.md::parameters
+				parameters: [{ '1/0': alias('parameters_elements') }, { '1/0': field('elements') }],
 				lambda_parameters: {
 					'.': alias('parameters_elements')
 				},

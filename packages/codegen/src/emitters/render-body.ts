@@ -102,6 +102,46 @@ export function branches(arms: readonly IfArm[], fallback: Body | undefined): Bo
 	return [{ kind: 'if', arms, fallback }];
 }
 
+function isBareSlotGate(node: BodyNode): node is IfNode & { readonly arms: readonly [IfArm] } {
+	if (node.kind !== 'if' || node.fallback !== undefined || node.arms.length !== 1) return false;
+	const arm = node.arms[0]!;
+	const only = arm.body.length === 1 ? arm.body[0]! : undefined;
+	return arm.kinds === undefined && only?.kind === 'slot' && only.name === arm.test;
+}
+
+export function gateOptionalSlotSeams(body: Body, seamNamesOf: (slot: string) => readonly string[]): Body {
+	const out: BodyNode[] = [];
+	for (let i = 0; i < body.length; i++) {
+		const node = body[i]!;
+		if (node.kind === 'if') {
+			const arms = node.arms.map((arm) => ({ ...arm, body: gateOptionalSlotSeams(arm.body, seamNamesOf) }));
+			const fallback = node.fallback === undefined ? undefined : gateOptionalSlotSeams(node.fallback, seamNamesOf);
+			const folded: IfNode = { ...node, arms, fallback };
+			if (isBareSlotGate(folded)) {
+				const test = folded.arms[0].test;
+				const prev = out[out.length - 1];
+				const next = body[i + 1];
+				const names = seamNamesOf(test);
+				const before = prev?.kind === 'seam' && names.some((name) => prev.field === `${name}_before`) ? prev : undefined;
+				const after = next?.kind === 'seam' && names.some((name) => next.field === `${name}_after`) ? next : undefined;
+				if (before !== undefined || after !== undefined) {
+					if (before !== undefined) out.pop();
+					if (after !== undefined) i++;
+					out.push({
+						...folded,
+						arms: [{ ...folded.arms[0], body: [...(before === undefined ? [] : [before]), ...folded.arms[0].body, ...(after === undefined ? [] : [after])] }]
+					});
+					continue;
+				}
+			}
+			out.push(folded);
+			continue;
+		}
+		out.push(node);
+	}
+	return out;
+}
+
 export function concat(...bodies: readonly Body[]): Body {
 	const out: BodyNode[] = [];
 	for (const body of bodies) {
@@ -129,11 +169,31 @@ export function opensAsTag(node: BodyNode): boolean {
 	return opensAsExpression(node) || node.kind === 'if';
 }
 
+export function adjacentInto(body: Body): Body {
+	return body.flatMap((node): Body =>
+		node.kind === 'if'
+			? [
+					{
+						...node,
+						arms: node.arms.map((arm) => ({ ...arm, body: adjacentInto(arm.body) })),
+						fallback: node.fallback === undefined ? undefined : adjacentInto(node.fallback)
+					}
+				]
+			: node.kind === 'slot' || node.kind === 'seam' || node.kind === 'tokenSeam'
+				? [{ kind: 'adjacent' }, node]
+				: [node]
+	);
+}
+
 export function isExpression(body: Body): boolean {
 	return body.length > 0 && opensAsExpression(body[0]!) && opensAsExpression(body[body.length - 1]!);
 }
 
 const ADJACENT_EDGE = '\u{FFFE}';
+
+export const DYNAMIC_EDGE = '\u{FFFD}';
+
+export const MARKER_EDGE = '\u{FFFC}';
 
 export function edgeChar(body: Body, side: 'starts' | 'ends'): string {
 	const node = side === 'starts' ? body[0] : body[body.length - 1];
@@ -142,12 +202,13 @@ export function edgeChar(body: Body, side: 'starts' | 'ends'): string {
 		case 'text':
 			return side === 'starts' ? node.text[0]! : node.text[node.text.length - 1]!;
 		case 'slot':
-		case 'seam':
 		case 'if':
+			return DYNAMIC_EDGE;
+		case 'seam':
 		case 'indent':
 		case 'dedent':
 		case 'tokenSeam':
-			return side === 'starts' ? '{' : '}';
+			return MARKER_EDGE;
 		case 'space':
 			return ' ';
 		case 'adjacent':
@@ -426,6 +487,10 @@ export function liftGates(body: Body, viewOf: (name: string) => ViewKind): Lifte
 
 export interface RustBodyPrinter {
 	readonly field: (name: string) => string;
+	/** The kind id and side of a seam that is the kind's own edge, written from the transport's base edges. */
+	readonly edge?: (name: string) => { readonly kindId: number; readonly side: 'before' | 'after' } | undefined;
+	/** The `options::SITE_*` constant of the seam site a body names. */
+	readonly site: (name: string) => string;
 	/** The Rust slice literal naming these kinds' ids, for a kind-gated arm. */
 	readonly kinds: (names: readonly string[]) => string;
 }
@@ -490,10 +555,17 @@ function printStatements(body: Body, printer: RustBodyPrinter, depth: number): s
 				flush();
 				lines.push(`${pad}${printer.field(node.name)}.render(w)?;`);
 				break;
-			case 'seam':
+			case 'seam': {
 				flush();
-				lines.push(`${pad}w.site(node.${printer.field(node.field)}.unwrap_or(0));`);
+				const edge = printer.edge?.(node.field);
+				if (edge !== undefined) {
+					const side = edge.side === 'before' ? 'Before' : 'After';
+					lines.push(`${pad}w.edge(::sittir_core::types::KindId(${edge.kindId}), ::sittir_core::options::Side::${side}, node.edges.and_then(|e| e.${edge.side}));`);
+				} else {
+					lines.push(`${pad}w.site_at(${printer.site(node.field)});`);
+				}
 				break;
+			}
 			case 'indent':
 				flush();
 				lines.push(`${pad}w.indent();`);

@@ -117,6 +117,50 @@ type IsKindEnum<T> = T extends { readonly __kindEnum__?: unknown } ? true : fals
 type KindEnumText<T> = T extends { readonly __kindEnum__?: infer V } ? V : never;
 
 /**
+ * HiddenLeaf<T> — brands a hidden text leaf (a pattern kind with no `ir`
+ * entry of its own) so a strict factory input admits its text: the parent's
+ * factory builds the leaf, the way the loose surface does for any leaf.
+ */
+export type HiddenLeaf<T> = T & { readonly __hiddenLeaf__?: true };
+
+/** @internal — true when T carries the HiddenLeaf brand key. */
+type IsHiddenLeaf<T> = '__hiddenLeaf__' extends keyof T ? true : false;
+
+/**
+ * AliasOf<T, C> — brands an alias node (a display the parser issues over a
+ * storage kind) with its content type C, so a strict factory input admits the
+ * content: the parent's factory builds the alias around it.
+ */
+export type AliasOf<T, C> = T & { readonly __aliasContent__?: C };
+
+/** @internal — the content an alias element stands in for, or never. */
+type AliasContent<T> = '__aliasContent__' extends keyof T
+	? T extends { readonly __aliasContent__?: infer C }
+		? Exclude<C, undefined>
+		: never
+	: never;
+
+/** @internal — an element also admits what builds it: a hidden leaf its
+ *  text, an alias its content. */
+type AdmitElementInput<E> = E extends unknown
+	? IsHiddenLeaf<E> extends true
+		? E | string
+		: [AliasContent<E>] extends [never]
+			? E
+			: E | AliasContent<E>
+	: never;
+
+/** @internal — true when an element admits more than itself. */
+type AdmitsMore<E> = E extends unknown ? (IsHiddenLeaf<E> extends true ? true : [AliasContent<E>] extends [never] ? false : true) : never;
+
+/** @internal — {@link AdmitElementInput} through a slot's array wrapper. */
+type AdmitSlotInput<S> = S extends readonly unknown[]
+	? true extends AdmitsMore<S[number]>
+		? readonly AdmitElementInput<S[number]>[]
+		: S
+	: AdmitElementInput<S>;
+
+/**
  * Terminal node shape — shared by every leaf, keyword, and enum.
  * `ID` pins the `$type` discriminant — numeric TSKindId for parser.c-
  * derived kinds, string literal for evaluate-synthesized enum kinds
@@ -127,6 +171,77 @@ export interface Terminal<ID extends number | string = number, V extends string 
 	readonly $type: ID;
 	readonly $text: V;
 }
+
+/**
+ * ArgsOf<F> — the loose argument TUPLE a generated factory or sub-factory
+ * accepts, derived from F's own call signature(s) rather than re-declared.
+ * Always array-shaped, deliberately: `(...args: ArgsOf<CF>)` and
+ * `ArgsOf<CF>[0]` are both load-bearing call shapes across the generated
+ * sub-factory overlay, the former spreading a whole argument list into the
+ * child, the latter reading its first (and possibly only) positional
+ * argument out. A 4-way overload intersection (the codegen sub-factory
+ * ceiling) unions every declared overload's argument tuple; a plain
+ * rest-parameter function yields the element type as an array.
+ */
+export type ArgsOf<F> = F extends {
+	(...a: infer A): unknown;
+	(...b: infer B): unknown;
+	(...c: infer C): unknown;
+	(...d: infer D): unknown;
+}
+	? A | B | C | D
+	: F extends (...args: readonly (infer E)[]) => unknown
+		? E[]
+		: never;
+
+/**
+ * OptionsArg<F> — F's own trailing options parameter, read off {@link ArgsOf}
+ * rather than a fixed tuple index: `ArgsOf<F>[1]` is a compile error for any
+ * F with only one declared parameter (TS statically rejects an out-of-range
+ * tuple index), which every value-arm and config-arm composer over a
+ * registered-slot-free factory is. The optional-element pattern match below
+ * is arity-safe in both directions — it resolves to `undefined` when F has
+ * no second parameter and to that parameter's own type (options or
+ * options-and-beyond) when F does.
+ */
+export type OptionsArg<F> = ArgsOf<F> extends readonly [unknown, (infer Opt)?, ...unknown[]] ? Opt : undefined;
+
+/**
+ * ElementsOf<F> — the union of every positional argument type a factory
+ * accepts, read from its own rest parameter. Unlike {@link ArgsOf} it keeps a
+ * rest parameter that is a union of tuples (a non-empty list that also takes
+ * an options object first).
+ */
+export type ElementsOf<F> = F extends (...args: infer A extends readonly unknown[]) => unknown
+	? A[number]
+	: F extends (...args: readonly (infer E)[]) => unknown
+		? E
+		: never;
+
+export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
+/** Pairs a kind's strict builder with its loose coercer under one bundle entry. */
+export interface FlavorPair<S, C> {
+	readonly strict: S;
+	readonly coerce: C;
+}
+
+/** @internal — any factory or coercer function, for Hoisted's own bounds. */
+type AnyFlavorFn = (...args: never[]) => unknown;
+
+/**
+ * Hoisted<B> — the type of `hoistRoutes(b)`: a `FlavorPair` (or a tree of
+ * them, nested under sub-factory keys) collapses into one callable per pair,
+ * the coerce flavor preferred over strict when both are present, with every
+ * sibling key still reachable on it.
+ */
+export type Hoisted<B> = B extends { coerce: infer C }
+	? (C extends AnyFlavorFn ? C : () => never) & { [K in keyof B]: Hoisted<B[K]> }
+	: B extends { strict: infer S }
+		? (S extends AnyFlavorFn ? S : () => never) & { [K in keyof B]: Hoisted<B[K]> }
+		: B extends Record<string, unknown>
+			? { [K in keyof B]: Hoisted<B[K]> }
+			: B;
 
 // ---------------------------------------------------------------------------
 // Grammar primitives
@@ -620,7 +735,7 @@ type WidenLooseFieldValue<
  * consumer code writes `config.children`, not `config.$other`. The
  * `$`-prefixed metadata shape is internal NodeData.
  */
-type ChildSlotsOf<T> = T extends { readonly $other?: infer C } ? { readonly children: C } : {};
+type ChildSlotsOf<T> = T extends { readonly $other?: infer C } ? { readonly children: AdmitSlotInput<C> } : {};
 
 /**
  * RuntimeChildSlots<T> — runtime (factory output) child-slot shape.
@@ -703,15 +818,15 @@ export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = WidenChildSl
 export type ConfigOf<T> = T extends unknown
 	? Simplify<
 			{
-				[K in keyof FieldsOf<T> as EscapeReservedAccessor<
-					CamelCase<K & string>
-				>]: IsBooleanKeywordSlot<FieldInputType<T, K>> extends true
+				[K in keyof FieldsOf<T> as EscapeReservedAccessor<CamelCase<K & string>>]: IsBooleanKeywordSlot<
+					FieldInputType<T, K>
+				> extends true
 					? boolean | BooleanKeywordSlotText<FieldInputType<T, K>> | undefined
 					: IsBitflagSlot<FieldInputType<T, K>> extends true
 						? BitflagSlotEnum<FieldInputType<T, K>> | undefined
 						: IsKindEnumSlot<FieldInputType<T, K>> extends true
 							? KindEnumSlotInput<FieldInputType<T, K>> | undefined
-							: FieldInputType<T, K>;
+							: AdmitSlotInput<FieldInputType<T, K>>;
 			} &
 				// Child surface: polymorph variants with a single-child slot hoist
 				// the inner child's Config up when the inner has meaningful Config
@@ -844,6 +959,9 @@ type OptionalKeys<T> = {
  *   1 of spec 009 — cached indexed access instead of fresh `LooseConfigOf`
  *   instantiation). When `{}` (default), falls back to recursive projection.
  */
+/** A config type whose numeric text slots (`K`) also accept a JavaScript number, converted to the slot's text by the base builder. */
+export type WidenNumeric<C, K extends PropertyKey> = { [P in keyof C]: P extends K ? C[P] | number : C[P] };
+
 /**
  * @param Visited - Set of `$type` discriminants already seen on the
  *   current expansion path. Combined with `Depth`, gives belt-and-
@@ -1044,6 +1162,7 @@ type WidenValue<
 			| WidenArrayMembers<Extract<T, readonly unknown[]>, Scalars, Strings, Depth, NsMap, Visited>
 			| WidenLeafMembers<T, Scalars, Strings>
 			| WidenKindId<BareKindId<T>, NsMap>
+			| WidenScalarKindId<BareKindId<T>, Scalars>
 			| WidenBranches<BranchMembers<T>, Scalars, Strings, Depth, NsMap, Visited>
 			| OtherMembers<T>;
 
@@ -1147,6 +1266,12 @@ type BareKindId<T> = T extends number
 
 /** @internal — a bare kind id widens to its namespace entry's `Loose`. */
 type WidenKindId<I, NsMap> = I extends keyof NsMap ? (NsMap[I] extends { readonly Loose: infer L } ? L : I) : I;
+
+/** @internal — a bare kind id the grammar's scalar map names (the true and
+ *  false keyword kinds) also admits that scalar, the way a text leaf admits
+ *  its scalar through `WidenLeafMembers`; the coercer resolves the scalar to
+ *  the kind id the slot stores. */
+type WidenScalarKindId<I, Scalars> = I extends keyof Scalars ? Scalars[I] : never;
 
 /** Widen a child slot type for the loose-config surface (applies WidenValue to arrays and single values). */
 type WidenChildSlot<
@@ -1370,7 +1495,7 @@ export interface KeywordNs<Id extends number, Text extends string, Tree = never,
  */
 export interface LeafNs<
 	Node extends { readonly $type: string | number; readonly $text: string },
-	Text extends string,
+	Text extends string | number,
 	Built = Node,
 	Tree = never,
 	Kind extends string = string
@@ -1385,3 +1510,5 @@ export interface LeafNs<
 	readonly Tree: Tree;
 	readonly Kind: Kind;
 }
+
+export type { DerivedOptions, OptionsHintOf } from './options.ts';

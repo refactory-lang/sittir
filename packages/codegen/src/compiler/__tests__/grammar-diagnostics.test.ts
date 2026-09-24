@@ -302,21 +302,12 @@ describe('grammar diagnostics preflight', () => {
 				known: { type: 'PATTERN', value: 'x' }
 			}),
 			desugarDivergences: [
-				{ site: 'inline-alias-source', name: '_orphan_alias_target' },
 				{ site: 'body-pattern-group', name: '_orphan_group' }
 			]
 		};
 		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar });
 		expect(result.diagnostics).toEqual(
 			expect.arrayContaining([
-				expect.objectContaining({
-					scope: 'grammar',
-					code: 'desugar-divergence-inline-alias-source',
-					grammar: 'synth',
-					ownerKind: '_orphan_alias_target',
-					severity: 'warning',
-					canProceed: true
-				}),
 				expect.objectContaining({
 					scope: 'grammar',
 					code: 'desugar-divergence-body-pattern-group',

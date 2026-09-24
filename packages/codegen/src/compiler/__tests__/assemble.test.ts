@@ -13,19 +13,21 @@ import {
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
 import { assemble, AssembleCtx, classifyNode, simplifyRule, nameNode } from '../assemble.ts';
-import { computeSimplifiedRules, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
-import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { flattenRules, flatten } from '../flatten.ts';
 import type { Rule, SymbolRule } from '../../types/rule.ts';
-import type { SimplifiedGrammar } from '../types.ts';
 import {
 	deriveSlots,
 	isRequired,
 	isMultiple,
 	AssembledList,
 	AssembledSupertype,
-	AssembledKeyword
+	AssembledKeyword,
+	AssembledPunctuation,
+	isVisibleTextLeaf,
+	isHiddenPunctuationLeaf,
+	isWordOrVisibleTextLeaf
 } from '../model/node-map.ts';
+import { makeNormalized } from './make-normalized.ts';
 import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.ts';
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
@@ -36,51 +38,6 @@ import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.
 // applies flattenRules before assembling.
 function deriveFields(rule: Rule<'link'>) {
 	return deriveSlots(flatten(rule)).filter((s) => !s.isUnnamed);
-}
-
-function makeNormalized(
-	rules: Record<string, Rule<'link'>>,
-	overrides?: Partial<SimplifiedGrammar>
-): SimplifiedGrammar {
-	const stamped = Object.fromEntries(
-		Object.entries(rules).map(([name, rule]) => [
-			name,
-			rule.hidden === undefined ? { ...rule, hidden: name.startsWith('_') } : rule
-		])
-	);
-	const normalizedRules = flattenRules(stamped);
-	const simplifiedRules = computeSimplifiedRules(
-		new SimplifyCtx({
-			grammar: makeNormalizedGrammar(normalizedRules),
-			diagnostics: new DiagnosticSink()
-		})
-	);
-	// If topLevelAliasBodies are provided, thread them through the same pipeline
-	// so their canonical snapshots are available under the alias kind name.
-	if (overrides?.topLevelAliasBodies) {
-		const aliasBodiesRaw: Record<string, Rule<'link'>> = Object.fromEntries(overrides.topLevelAliasBodies);
-		const aliasBodiesRender = flattenRules(aliasBodiesRaw);
-		const aliasBodiesSimplified = computeSimplifiedRules(
-			new SimplifyCtx({ grammar: makeNormalizedGrammar(aliasBodiesRender), diagnostics: new DiagnosticSink() })
-		);
-		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
-			const own = normalizedRules[kind];
-			normalizedRules[kind] = own === undefined ? rule : { ...rule, hidden: own.hidden, inlinedFrom: own.inlinedFrom };
-		}
-		for (const [kind, rule] of Object.entries(aliasBodiesSimplified)) {
-			simplifiedRules[kind] = rule;
-		}
-	}
-	return {
-		name: 'test',
-		normalizedRules,
-		rules: simplifiedRules,
-		supertypes: new Set(),
-		factoryInline: new Set(),
-		word: null,
-		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
-		...overrides
-	};
 }
 
 describe('Assemble — simplifyRule', () => {
@@ -219,19 +176,32 @@ describe('Assemble — classifyNode', () => {
 	});
 
 	it('classifies visible single alphanumeric string as keyword', () => {
-		// classifyNode itself only reports the shared 'token' modelType; the
-		// keyword/token split is decided downstream in assemble() by
-		// wordMatcher, and surfaces as the constructed node's own class.
 		const normalized = makeNormalized({ true: { type: STRING, value: 'true' } });
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('true');
-		expect(node?.modelType).toBe('token');
+		expect(node?.modelType).toBe('keyword');
 		expect(node).toBeInstanceOf(AssembledKeyword);
-		expect((node as AssembledKeyword).word).toBe(true);
 	});
 
-	it('classifies visible non-alphanumeric string as token (T027b)', () => {
+	it('keeps a visible non-word literal a visible token and a hidden one a hidden token, never a keyword', () => {
+		const normalized = makeNormalized({
+			optional_chain: { type: STRING, value: '?.' },
+			_arrow: { type: STRING, value: '->' },
+			true: { type: STRING, value: 'true' }
+		});
+		const nodes = assemble(AssembleCtx.from(normalized)).nodes;
+		const visible = nodes.get('optional_chain')!;
+		const hidden = nodes.get('_arrow')!;
+		const word = nodes.get('true')!;
+		expect(visible).toBeInstanceOf(AssembledPunctuation);
+		expect(hidden).toBeInstanceOf(AssembledPunctuation);
+		expect([visible, hidden, word].map(isVisibleTextLeaf)).toEqual([true, false, true]);
+		expect([visible, hidden, word].map(isHiddenPunctuationLeaf)).toEqual([false, true, false]);
+		expect([visible, hidden, word].map(isWordOrVisibleTextLeaf)).toEqual([true, false, true]);
+	});
+
+	it('classifies visible non-alphanumeric string as punctuation', () => {
 		const rule: Rule<'link'> = { type: STRING, value: '->' };
-		expect(classifyNode('arrow', flatten(rule))).toBe('token');
+		expect(classifyNode('arrow', flatten(rule))).toBe('punctuation');
 	});
 
 	it('classifies enum as enum', () => {
@@ -351,7 +321,7 @@ describe('Assemble — classifyNode', () => {
 		expect(classifyNode('_enum_body_elements', flatten(rule), { hoisted: true })).toBe('list');
 	});
 
-	it('assembles hidden alias sources from their captured leaf body', () => {
+	it('does not assemble a hidden rule whose whole body is an alias over a leaf — the parser issues only its display', () => {
 		const normalized = makeNormalized(
 			{
 				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
@@ -365,11 +335,10 @@ describe('Assemble — classifyNode', () => {
 				topLevelAliasBodies: new Map([['_type_identifier', { type: PATTERN, value: '[A-Za-z_]\\w*' } satisfies Rule]])
 			}
 		);
-		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_type_identifier');
-		expect(node?.modelType).toBe('pattern');
+		expect(assemble(AssembleCtx.from(normalized)).nodes.has('_type_identifier')).toBe(false);
 	});
 
-	it('assembles hidden alias sources from their captured structural body', () => {
+	it('does not assemble a hidden rule whose whole body is an alias over a structure — the parser issues only its display', () => {
 		const normalized = makeNormalized(
 			{
 				expr: { type: PATTERN, value: '[A-Za-z_]\\w*' },
@@ -403,9 +372,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_pair_alias');
-		expect(node?.modelType).toBe('branch');
-		expect(node!.slots.map((slot) => slot.name)).toEqual(['left', 'right']);
+		expect(assemble(AssembleCtx.from(normalized)).nodes.has('_pair_alias')).toBe(false);
 	});
 
 	it('includes alias-member hidden kinds in supertype subtype expansion', () => {
@@ -1073,7 +1040,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 		// The named 'comma' PATTERN rule keeps its own classification -- the
 		// anonymous ',' literal resolving to the same catalog kind name must
-		// not overwrite it with an AssembledToken/Keyword.
+		// not overwrite it with an AssembledPunctuation/Keyword.
 		expect(nodeMap.nodes.get('comma')?.modelType).toBe('pattern');
 	});
 

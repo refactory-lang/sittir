@@ -111,6 +111,7 @@ export const stringContent = bundle(F.buildStringContent, C.coerceToStringConten
 export const interpolation = bundle(F.buildInterpolation, C.coerceToInterpolation);
 export const formatSpecifier = bundle(F.buildFormatSpecifier, C.coerceToFormatSpecifier);
 export const await_ = bundle(F.buildAwait, C.coerceToAwait);
+export const comment = bundle(F.buildComment, C.coerceToComment);
 export const simpleStatementsElements = bundle(F.buildSimpleStatementsElements, C.coerceToSimpleStatementsElements);
 export const subjects = bundle(F.buildSubjects, C.coerceToSubjects);
 export const casePatterns = bundle(F.buildCasePatterns, C.coerceToCasePatterns);

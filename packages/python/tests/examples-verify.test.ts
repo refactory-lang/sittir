@@ -3,41 +3,19 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine, ir } from '@sittir/python';
 import { dogfoodContract } from '../../../examples/helpers.ts';
-import { rebuildProbeSweep, callStatement } from '../../../examples/19-dogfood-python.ts';
 import { rebuildProbeSweepStrict, callStatementStrict } from '../../../examples/19-dogfood-python-strict.ts';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 // The generated rebuild is loaded by a computed path so tsc does not follow
 // it: its type errors are counted under examples/generated-typecheck-ceiling.json,
 // and vitest runs it regardless.
-const rebuildPython4spaceGenerated = async (): Promise<{ $render(): string }> => {
-	const absolute = fileURLToPath(new URL('../../../examples/19-dogfood-python.generated.ts', import.meta.url));
+const generatedRebuild = (file: string, exportName: string) => async (): Promise<{ $render(): string }> => {
+	const absolute = fileURLToPath(new URL(`../../../examples/${file}`, import.meta.url));
 	const mod = (await import(pathToFileURL(absolute).href)) as Record<string, () => { $render(): string }>;
-	return mod.rebuildPython4spaceGenerated!();
+	return mod[exportName]!();
 };
-
-// GAP inventory (examples/19): D=2 (every suite-carrying slot rejects a block,
-// at BOTH layers; the strict statement list rejects what the coercer accepts)
-// A=1 (import statements route through a hidden list with no public
-// constructor). No function definition can be built by any path.
-describe('examples/19 dogfood python (probe-sweep.py) — coercion surface', () => {
-	const target = new URL('../../tools/scripts/probe-sweep.py', import.meta.url).pathname;
-	it('builds and renders the fragments that cross the boundary', () => {
-		const rendered = rebuildProbeSweep().$render();
-		expect(rendered.startsWith('#!/usr/bin/env python3\n')).toBe(true);
-		expect(rendered).toContain('# import argparse\n');
-		expect(rendered.endsWith('\nmain()\n')).toBe(true);
-	});
-	it('composes a call statement, which the module then holds as a simple-statements line', () => {
-		expect(callStatement().$render()).toBe('main()');
-	});
-	it.fails('re-parses to the same tree as the real file', async () => {
-		expect(dogfoodContract(createEngine(), rebuildProbeSweep(), target).reparsesEqual).toBe(true);
-	});
-	it.fails('is identical to the real file modulo whitespace', () => {
-		expect(dogfoodContract(createEngine(), rebuildProbeSweep(), target).sameModuloWhitespace).toBe(true);
-	});
-});
+const rebuildPython4spaceGenerated = generatedRebuild('19-dogfood-python.generated.ts', 'rebuildPython4spaceGenerated');
+const rebuildPython4spaceLoose = generatedRebuild('19-dogfood-python-loose.generated.ts', 'rebuildPython4spaceLoose');
 
 describe('examples/19 dogfood python — strict factory surface', () => {
 	it('composes a call statement with strict inner nodes', () => {
@@ -69,5 +47,17 @@ describe('examples/19 generated rebuild (python-4space.py)', () => {
 	});
 	it('re-parses to the same tree as the real file', async () => {
 		expect(dogfoodContract(createEngine(), await rebuildPython4spaceGenerated(), target).reparsesEqual).toBe(true);
+	});
+});
+
+// The loose rebuild: the same file through the bundle calls, with every
+// coercion the loose contract admits spelled bare.
+describe('examples/19 loose rebuild (python-4space.py)', () => {
+	const target = new URL('../../../tests/format-roundtrip/fixtures/python-4space.py', import.meta.url).pathname;
+	it('renders', async () => {
+		expect((await rebuildPython4spaceLoose()).$render()).toContain('def ');
+	});
+	it('re-parses to the same tree as the real file', async () => {
+		expect(dogfoodContract(createEngine(), await rebuildPython4spaceLoose(), target).reparsesEqual).toBe(true);
 	});
 });

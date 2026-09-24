@@ -19,6 +19,8 @@ import type {
 
 export { variant } from './primitives/variant.ts';
 export { group } from './primitives/group.ts';
+export { splice } from './primitives/splice.ts';
+export { regex } from './primitives/regex.ts';
 export { arm } from './primitives/arm.ts';
 export { preference } from './primitives/preference.ts';
 export { enrich } from './enrich.ts';

@@ -1,18 +1,19 @@
+import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
-import { writeSync } from 'node:fs';
+import { isFixedTextLeaf } from '../compiler/model/node-map.ts';
+import { isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { tokenNameOfText } from '../compiler/model/render-rules.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
-	AssembledBranch,
 	AbstractAssembledCompound,
-	AssembledEnvelope,
 	AssembledPolymorph,
 	AssembledEnum,
 	AssembledKeyword,
 	AssembledPattern,
 	AssembledSupertype,
-	AssembledToken,
+	AssembledPunctuation,
 	AssembledLeaf,
 	AssembledList,
 	deriveUnnamedChildrenCardinality,
@@ -56,7 +57,8 @@ import {
 	wordCharAsciiTable,
 	literalMergePairs,
 	fieldTypeComponents,
-	slotSeparatorTexts
+	slotSeparatorTexts,
+	compareOrdinal
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -69,7 +71,19 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
-import { planRenderOptions, renderOptionsRs, type RenderOptionsPlan, type SpacingSite, type DelimiterSite } from './render-options-rs.ts';
+import {
+	carriesPerNodeValue,
+	edgeKindId,
+	seatTableName,
+	seatedTableNames,
+	edgeSitesOf,
+	isKindEdge,
+	planRenderOptions,
+	renderOptionsRs,
+	type RenderOptionsPlan,
+	type SpacingSite,
+	type DelimiterSite
+} from './render-options-rs.ts';
 import {
 	collectSitePreferences,
 	publicKindName,
@@ -166,9 +180,9 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 		};
 	}
 
-	emitLeaf(_node: AssembledPattern | AssembledKeyword | AssembledEnum): void {}
+	emitLeaf(_node: AssembledPattern | AssembledKeyword | AssembledPunctuation | AssembledEnum): void {}
 
-	emitBranch(_node: AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList): void {}
+	emitBranch(_node: SlotBearingCompound): void {}
 
 
 	finalize(templates: EmittedTemplates): RenderModuleBundle {
@@ -307,7 +321,7 @@ function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNont
 }
 
 function renderSlotAuditVariantsOf(
-	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList
+	node: SlotBearingCompound
 ): readonly (readonly AssembledNonterminal[])[] {
 	return [node.slots];
 }
@@ -392,7 +406,7 @@ function emitStruct(
 		isUnnamed: unnamedNames.has(slot.name),
 		separator: separatorByName.get(slot.name)
 	}));
-	fields.sort((a, b) => a.name.localeCompare(b.name));
+	fields.sort((a, b) => compareOrdinal(a.name, b.name));
 	if (nodeMap !== undefined) {
 		for (const f of fields) {
 			if (f.hasTransportField || f.required || f.multiple) continue;
@@ -566,7 +580,7 @@ function renderTypedDispatch(
 	const lines: string[] = [];
 
 	for (const node of nodes) {
-		lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind, plan));
+		lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind, plan, kindEntries));
 	}
 
 	for (const [, node] of nodeMap.nodes) {
@@ -603,7 +617,7 @@ function renderTypedDispatch(
 	);
 	lines.push(`    let mut s = String::new();`);
 	lines.push(
-		`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources);`
+		`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);`
 	);
 	lines.push(`    transport.render(&mut w)?;`);
 	lines.push(`    w.finish()?;`);
@@ -651,7 +665,8 @@ function renderTypedKindFn(
 	meta: MetaData,
 	nodeMap: NodeMap,
 	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
-	plan: RenderPlan = EMPTY_PLAN
+	plan: RenderPlan = EMPTY_PLAN,
+	kindEntries: readonly KindEntryLike[] | undefined = undefined
 ): string[] {
 	switch (node.modelType) {
 		case 'branch':
@@ -661,18 +676,20 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node, nodeMap);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, kindEntries);
 		}
-		case 'polymorph': {
+		case 'polymorph':
+		case 'alias': {
 			if (node instanceof AssembledSupertype) return [];
 			const struct = structsByKind.get(node.kind);
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node, nodeMap);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, kindEntries);
 		}
 		case 'pattern':
-		case 'token':
+		case 'keyword':
+		case 'punctuation':
 		case 'enum':
 			return renderTypedLeafFn(node);
 		default:
@@ -734,11 +751,20 @@ function leafTextWrite(node: AssembledNode, on: string): string {
 	return literalWrite(`&${on}.text`, fixedTextOfKind(node));
 }
 
+function isImmediateLeaf(node: AssembledNode): boolean {
+	return node instanceof AssembledLeaf && node.immediate;
+}
+
+function leafRenderExpr(node: AssembledNode, on: string): string {
+	const write = leafTextWrite(node, on);
+	return isImmediateLeaf(node) ? `{ w.adjacent(); ${write} }` : write;
+}
+
 function renderTypedLeafFn(node: AssembledNode): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const typeName = rustTransportStructName(node);
 	const body = node instanceof AssembledEnum ? `t.render(w)` : leafTextWrite(node, 't');
-	const adjacent = node instanceof AssembledLeaf && node.immediate ? [`    w.adjacent();`] : [];
+	const adjacent = isImmediateLeaf(node) ? [`    w.adjacent();`] : [];
 	return [
 		`fn ${fnName}(t: &${typeName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
 		...adjacent,
@@ -754,11 +780,12 @@ function renderTypedBranchFn(
 	meta: MetaData,
 	nodeMap: NodeMap,
 	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
-	plan: RenderPlan = EMPTY_PLAN
+	plan: RenderPlan = EMPTY_PLAN,
+	kindEntries: readonly KindEntryLike[] | undefined = undefined
 ): string[] {
 	return [
 		`fn ${rustTypedRenderFnName(node.typeName)}(node: &${rustTransportStructName(node)}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
-		...buildTypedTemplateBody(struct, meta.separators.get(node.kind) ?? '', nodeMap, renderSlotModelOf(node), node, kindIdByKind, plan),
+		...buildTypedTemplateBody(struct, meta.separators.get(node.kind) ?? '', nodeMap, renderSlotModelOf(node), node, kindIdByKind, plan, kindEntries),
 		`}`,
 		''
 	];
@@ -792,7 +819,8 @@ function buildTypedTemplateBody(
 	slotModel: RenderSlotModel | undefined = undefined,
 	node: AssembledNode | undefined = undefined,
 	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
-	plan: RenderPlan = EMPTY_PLAN
+	plan: RenderPlan = EMPTY_PLAN,
+	kindEntries: readonly KindEntryLike[] | undefined = undefined
 ): string[] {
 	const lines: string[] = [];
 	const sepLiteral = JSON.stringify(separator);
@@ -865,8 +893,8 @@ function buildTypedTemplateBody(
 			lines.push(`        after: ${spaced(spacing.after)},`);
 			lines.push(`        leading: ${leadingExpr},`);
 			lines.push(`        trailing: ${trailingExpr},`);
-			lines.push(`        head: ${spaced(spacing.head)},`);
-			lines.push(`        tail: ${spaced(spacing.tail)},`);
+			lines.push(`        head: ${spacing.head ?? 'None'},`);
+			lines.push(`        tail: ${spacing.tail ?? 'None'},`);
 			lines.push(`    };`);
 			continue;
 		}
@@ -908,6 +936,8 @@ function buildTypedTemplateBody(
 	lines.push(
 		...printRustBody(struct.body, {
 			field: rustFieldIdent,
+			edge: kindEdgeWriterOf(plan, node, kindEntries),
+			site: (name) => `options::SITE_${toScreamingSnakeCase(publicKindName(struct.kind), publicKindName(struct.kind))}_${toScreamingSnakeCase(name, name)}`,
 			kinds: (names) => rustKindIdSlice(names, nodeMap, kindIdByKind, struct.kind)
 		})
 	);
@@ -1007,7 +1037,7 @@ export function emitRenderModule(
 ): RustRenderModuleEmit {
 	const { plan, addresses, kindEntries: optionsKindEntries } = planRenderOptionsFor(nodeMap, generatedIdTables, inputs);
 	const structs: EmittedStruct[] = [];
-	for (const kind of [...templates.bodies.keys()].sort((a, b) => a.localeCompare(b))) {
+	for (const kind of [...templates.bodies.keys()].sort((a, b) => compareOrdinal(a, b))) {
 		structs.push(emitStruct(kind, nodeMap.nodes.get(kind), templates.bodies.get(kind)!, nodeMap));
 	}
 	const meta = collectMetaData(nodeMap);
@@ -1019,9 +1049,9 @@ export function emitRenderModule(
 			'',
 			commonRustUseImports(hasNumericDispatch),
 			'use ::sittir_core::render_with_trivia;',
+			'use ::sittir_core::options::Edged as _;',
 			'use super::options;',
 			'',
-			armSeamSupport(),
 			renderTransportSupport(nodeMap, structs, meta, generatedIdTables, plan)
 		].join('\n') + '\n';
 	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries);
@@ -1101,8 +1131,9 @@ function renderTransportSupport(
 		)
 	);
 	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) =>
-		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey, kindEntries)
+		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey, kindEntries, plan)
 	);
+	const seatTargetLines = renderSeatTargets(nodes, nodeMap, plan, kindEntries, usedSupertypeNames, perSlotEnums);
 
 	return pruneUnreferencedBridges(
 		[
@@ -1115,6 +1146,7 @@ function renderTransportSupport(
 			...(supertypeEnumLines.length > 0 ? [...supertypeEnumLines, ''] : []),
 			...(perSlotEnumLines.length > 0 ? [...perSlotEnumLines, ''] : []),
 			...nodes.flatMap((node) => renderTransportStruct(node, nodeMap, generatedIdTables !== undefined, kindEntries, plan)),
+			...seatTargetLines,
 			'',
 			'',
 			...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames, kidByKind, plan, kindEntries),
@@ -1187,63 +1219,6 @@ function pruneUnreferencedBridges(rendered: string): string {
 	return out.join('\n');
 }
 
-function armSeamSupport(): string {
-	return [
-		'pub trait ArmSeams {',
-		'    fn arm_seam_sites(&self) -> Option<(usize, usize)>;',
-		'}',
-		'',
-		'#[derive(Debug, Clone)]',
-		'pub struct Seamed<T> {',
-		'    pub value: T,',
-		'    pub seam_before: Option<u16>,',
-		'    pub seam_after: Option<u16>,',
-		'}',
-		'',
-		'impl<T> Seamed<T> {',
-		'    pub fn new(value: T) -> Self {',
-		'        Self { value, seam_before: None, seam_after: None }',
-		'    }',
-		'}',
-		'',
-		'impl<T: ::sittir_core::view::KindOf> ::sittir_core::view::KindOf for Seamed<T> {',
-		'    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {',
-		'        self.value.kind_in(kinds)',
-		'    }',
-		'}',
-		'',
-		`impl<T: ArmSeams> ${PREPARE_MOD}::Prepare for Seamed<T> {`,
-		`    ${PREPARE_SIG}`,
-		'        if let Some((before, after)) = self.value.arm_seam_sites() {',
-		'            self.seam_before.get_or_insert(ctx.options.spacing[before]);',
-		'            self.seam_after.get_or_insert(ctx.options.spacing[after]);',
-		'        }',
-		'        Ok(())',
-		'    }',
-		'}',
-		'',
-		'impl<T: ::sittir_core::render::Render> ::sittir_core::render::Render for Seamed<T> {',
-		'    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {',
-		'        w.site(self.seam_before.unwrap_or(0));',
-		'        self.value.render(w)?;',
-		'        w.site(self.seam_after.unwrap_or(0));',
-		'        Ok(())',
-		'    }',
-		'}',
-		'',
-		'#[cfg(feature = "napi-bindings")]',
-		'impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue for Seamed<T> {',
-		'    unsafe fn from_napi_value(',
-		'        env: ::napi::sys::napi_env,',
-		'        napi_val: ::napi::sys::napi_value,',
-		'    ) -> ::napi::Result<Self> {',
-		'        Ok(Self::new(unsafe { T::from_napi_value(env, napi_val)? }))',
-		'    }',
-		'}',
-		''
-	].join('\n');
-}
-
 function commonRustUseImports(hasNumericDispatch: boolean): string {
 	const lines: string[] = [];
 	lines.push(
@@ -1301,11 +1276,10 @@ function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: Nod
 
 function buildKindIdByKind(kindEntries: readonly KindEnumEntry[]): ReadonlyMap<string, number> {
 	const map = new Map<string, number>();
-	for (const e of kindEntries) {
-		map.set(e.kind, e.id);
-		if (e.symbolName !== undefined && !map.has(e.symbolName)) {
-			map.set(e.symbolName, e.id);
-		}
+	const names = new Set(kindEntries.flatMap((e) => (e.symbolName !== undefined ? [e.kind, e.symbolName] : [e.kind])));
+	for (const name of names) {
+		const id = findKindEntry(kindEntries, name)?.id;
+		if (id !== undefined) map.set(name, id);
 	}
 	return map;
 }
@@ -1351,14 +1325,14 @@ function anyTransportPrepareArms(
 }
 
 function nodeTransportHasRequiredField(node: AssembledNode): boolean {
-	if (node.modelType === 'pattern' || node.modelType === 'token' || node.modelType === 'enum') {
+	if (node.modelType === 'pattern' || isFixedTextLeaf(node) || node.modelType === 'enum') {
 		return true;
 	}
 	return node.slots.some((slot) => isRequired(slot));
 }
 
 function isLeafLikeNode(n: AssembledNode): boolean {
-	return n.modelType === 'pattern' || n.modelType === 'token' || n.modelType === 'enum';
+	return n.modelType === 'pattern' || isFixedTextLeaf(n) || n.modelType === 'enum';
 }
 
 function boxedInEnum(
@@ -1450,8 +1424,8 @@ function emitAliasUnwrapRecurseArm(
 
 function aliasLeafTrialOrder(node: AssembledNode): number {
 	if (node instanceof AssembledEnum) return 0;
-	if (node instanceof AssembledKeyword) return 1;
-	if (node instanceof AssembledToken) return 2;
+	if (isVisibleTextLeaf(node)) return 1;
+	if (isHiddenPunctuationLeaf(node)) return 2;
 	if (node instanceof AssembledPattern) return 3;
 	return -1;
 }
@@ -1568,17 +1542,11 @@ function emitSupertypeTransportEnum(
 				emittedIds.add(aliasId);
 				arms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'self-alias', selfAliasLeafTrials));
 			}
-			for (const { subKind, subNode } of kindIdStoredFirst(validSubtypes, (s) => s.subNode)) {
+			const members = kindIdStoredFirst(validSubtypes, (s) => s.subNode).map(({ subKind, subNode }) => {
 				const variant = rustTypeIdent(subNode.typeName);
-				const typeName = rustTransportStructName(subNode);
-				const acceptedIds = resolveAcceptedTransportIds({
-					kind: subKind,
-					node: subNode,
-					nodeMap,
-					kindIdByKind,
-					kindEntries,
-					parseName: parseNames.get(subKind)
-				});
+				const idsOf = (parseName: string | undefined): number[] =>
+					resolveAcceptedTransportIds({ kind: subKind, node: subNode, nodeMap, kindIdByKind, kindEntries, parseName });
+				const acceptedIds = idsOf(parseNames.get(subKind));
 				assertRoutableTransportIds(
 					acceptedIds,
 					subKind,
@@ -1587,21 +1555,25 @@ function emitSupertypeTransportEnum(
 					`under supertype '${ownerKind}'`,
 					kindEntries
 				);
-				const boxed = isBoxed(subKind, subNode);
-				for (const id of acceptedIds) {
+				return { variant, typeName: rustTransportStructName(subNode), boxed: isBoxed(subKind, subNode), ownIds: idsOf(undefined), acceptedIds };
+			});
+			const claim = (member: (typeof members)[number], ids: readonly number[]): void => {
+				for (const id of ids) {
 					if (emittedIds.has(id)) continue;
 					emittedIds.add(id);
-					if (boxed) {
-						arms.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
-						arms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
+					if (member.boxed) {
+						arms.push(`                ${id} => Ok(Self::${member.variant}(Box::new(`);
+						arms.push(`                    ${member.typeName}::from_napi_value(env, napi_val)?`);
 						arms.push(`                ))),`);
 					} else {
-						arms.push(`                ${id} => Ok(Self::${variant}(`);
-						arms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
+						arms.push(`                ${id} => Ok(Self::${member.variant}(`);
+						arms.push(`                    ${member.typeName}::from_napi_value(env, napi_val)?`);
 						arms.push(`                )),`);
 					}
 				}
-			}
+			};
+			for (const member of members) claim(member, member.ownIds);
+			for (const member of members) claim(member, member.acceptedIds);
 			arms.push(`                other => Err(::napi::Error::from_reason(format!(`);
 			arms.push(`                    "unknown kind id {other} in ${enumName}",`);
 			arms.push(`                ))),`);
@@ -1754,33 +1726,12 @@ interface AcceptedTransportIdsInput {
 	parseName?: string;
 }
 
-const DBG_KINDID_FASTPATH = process.env.DBG_KINDID_FASTPATH === '1';
-let literalKindIdFastPathHits = 0;
-let literalKindIdFallbackHits = 0;
-let transportIdsFastPathHits = 0;
-let transportIdsFallbackHits = 0;
-let kindidFastPathDumpRegistered = false;
-function registerKindIdFastPathDump(): void {
-	if (kindidFastPathDumpRegistered) return;
-	kindidFastPathDumpRegistered = true;
-	process.once('exit', () => {
-		writeSync(
-			2,
-			`[DBG_KINDID_FASTPATH] resolveLiteralKindId: stamp=${literalKindIdFastPathHits} fallback=${literalKindIdFallbackHits}; ` +
-				`resolveAcceptedTransportIds: stamp=${transportIdsFastPathHits} fallback=${transportIdsFallbackHits}\n`
-		);
-	});
-}
-
 function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[] {
 	const { kind, node, nodeMap, kindIdByKind, kindEntries, stampedIds, parseAliases, parseName } = input;
-	if (DBG_KINDID_FASTPATH) registerKindIdFastPathDump();
 	let acceptedIds: number[];
 	if (stampedIds !== undefined) {
-		if (DBG_KINDID_FASTPATH) transportIdsFastPathHits++;
 		acceptedIds = [...stampedIds];
 	} else {
-		if (DBG_KINDID_FASTPATH) transportIdsFallbackHits++;
 		const nameKeyedIds = [
 			...new Set<string>([
 				...concreteKindsOf(kind, nodeMap),
@@ -2039,12 +1990,9 @@ function resolveLiteralKindId(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	kindIdByKind?: ReadonlyMap<string, number>
 ): number | undefined {
-	if (DBG_KINDID_FASTPATH) registerKindIdFastPathDump();
 	if (literal.resolvedKindId !== undefined) {
-		if (DBG_KINDID_FASTPATH) literalKindIdFastPathHits++;
 		return literal.resolvedKindId;
 	}
-	if (DBG_KINDID_FASTPATH) literalKindIdFallbackHits++;
 	if (kindEntries === undefined) return kindIdByKind?.get(literal.kind);
 	const byText = (): number | undefined => findKindEntryForLiteral(kindEntries, literal.text)?.id;
 	const byKind = (): number | undefined => findKindEntry(kindEntries, literal.kind)?.id;
@@ -2060,16 +2008,60 @@ function resolveLiteralKindId(
 	return id;
 }
 
+interface LiteralArmSeams {
+	readonly before?: string;
+	readonly after?: string;
+}
+
+function literalArmSeamSites(
+	entry: PerSlotChildEnum,
+	literalVariantByKey: ReadonlyMap<string, string>,
+	plan: RenderPlan,
+	kindEntries: readonly KindEnumEntry[]
+): ReadonlyMap<string, LiteralArmSeams> {
+	const owner = publicKindName(entry.ownerKind);
+	const out = new Map<string, LiteralArmSeams>();
+	for (const literal of entry.literals) {
+		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
+		if (variant === undefined) continue;
+		const sites: { before?: string; after?: string } = {};
+		const token = tokenNameOfText(literal.text, kindEntries);
+		for (const site of plan.spacingSites) {
+			if (site.kind !== owner || site.side !== 'seam' || site.seat !== undefined) continue;
+			const seam = parseSeamLabel(site.address);
+			if (token !== undefined && seam?.token === token) sites[seam.side] = site.constName;
+		}
+		if (sites.before !== undefined || sites.after !== undefined) out.set(variant, sites);
+	}
+	return out;
+}
+
+function literalSeamedArm(enumName: string, variant: string, write: string, seams: LiteralArmSeams): string[] {
+	const site = (side: 'before' | 'after'): string[] =>
+		seams[side] === undefined ? [] : [`                w.site_at(options::${seams[side]});`];
+	return [
+		`            ${enumName}::${variant} => {`,
+		...site('before'),
+		`                let written = ${write};`,
+		'                written?;',
+		...site('after'),
+		'                Ok(())',
+		'            }'
+	];
+}
+
 function emitPerSlotChildEnum(
 	entry: PerSlotChildEnum,
 	kindIdByKind: ReadonlyMap<string, number> | undefined,
 	nodeMap: NodeMap,
 	literalVariantByKey: ReadonlyMap<string, string>,
-	kindEntries?: readonly KindEnumEntry[]
+	kindEntries?: readonly KindEnumEntry[],
+	plan: RenderPlan = EMPTY_PLAN
 ): string[] {
 	const enumName = perSlotEnumName(entry.typeName, entry.fieldName);
 	const lines: string[] = [];
 	const ownerKind = entry.ownerKind;
+	const literalSeams = literalArmSeamSites(entry, literalVariantByKey, plan, kindEntries ?? []);
 
 	const validKinds = expandConcreteTransportKinds(entry.kinds, nodeMap);
 	const admitsVerbatim = validKinds.some(({ node }) => node.modelType === 'pattern');
@@ -2272,7 +2264,9 @@ function emitPerSlotChildEnum(
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
 			const immediate = literal.immediate === true || isImmediateLeafKind(literal.kind, nodeMap);
-			lines.push(`            ${enumName}::${variant} => ${literalWriteArm(literal.text, immediate)},`);
+			const seams = literalSeams.get(variant);
+			if (seams === undefined) lines.push(`            ${enumName}::${variant} => ${literalWriteArm(literal.text, immediate)},`);
+			else lines.push(...literalSeamedArm(enumName, variant, literalWriteArm(literal.text, immediate), seams));
 		}
 	}
 	if (admitsVerbatim) lines.push(`            ${verbatimRenderArm(enumName, entry.verbatimImmediate)}`);
@@ -2427,12 +2421,16 @@ function emitTriviaKindIdArm(id: number, variant: string, structName: string): s
 }
 
 function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
-	const extrasKindNames = nodeMap.extras ?? new Set<string>();
 	const extrasNodes: AssembledNode[] = [];
-	for (const kindName of extrasKindNames) {
+	const seenExtras = new Set<string>();
+	const addExtra = (kindName: string): void => {
+		if (seenExtras.has(kindName)) return;
+		seenExtras.add(kindName);
 		const node = nodeMap.nodes.get(kindName);
-		if (node !== undefined) extrasNodes.push(node);
-	}
+		if (node instanceof AssembledSupertype) node.subtypeNames.forEach(addExtra);
+		else if (node !== undefined) extrasNodes.push(node);
+	};
+	(nodeMap.extras ?? new Set<string>()).forEach(addExtra);
 
 	const lines: string[] = [];
 	lines.push('#[derive(Debug, Clone)]');
@@ -2545,7 +2543,7 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 }
 
 function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): string | undefined {
-	if (node.modelType !== 'token') return undefined;
+	if (!isFixedTextLeaf(node)) return undefined;
 	const literal = node.text;
 	if (!literal) return undefined;
 	for (const [, owner] of nodeMap.nodes) {
@@ -2597,14 +2595,46 @@ function synthesizedSpacingSites(plan: RenderPlan, node: AssembledNode): readonl
 	return plan.spacingSites.filter((site) => site.kind === kind && site.side !== undefined && site.seat === undefined);
 }
 
-function seatedSitesOf(plan: RenderPlan, parentKind: string, slot: string): ReadonlyMap<string, SpacingSite> {
-	const kind = publicKindName(parentKind);
-	const out = new Map<string, SpacingSite>();
-	for (const site of plan.spacingSites) {
-		if (site.seat === undefined || site.kind !== kind || site.slot !== slot) continue;
-		out.set(site.seat.kind, site);
+function kindEdgeSidesOf(plan: RenderPlan, node: AssembledNode): ReadonlyMap<string, 'before' | 'after'> {
+	const out = new Map<string, 'before' | 'after'>();
+	for (const site of synthesizedSpacingSites(plan, node)) {
+		if (site.side !== 'seam' || !isKindEdge(site)) continue;
+		out.set(rustFieldIdent(site.fieldIdent), parseSeamLabel(site.address)!.side);
 	}
 	return out;
+}
+
+function kindEdgeWriterOf(
+	plan: RenderPlan,
+	node: AssembledNode | undefined,
+	kindEntries: readonly KindEntryLike[] | undefined
+): (name: string) => { readonly kindId: number; readonly side: 'before' | 'after' } | undefined {
+	const sides = node === undefined ? new Map<string, 'before' | 'after'>() : kindEdgeSidesOf(plan, node);
+	if (node === undefined || sides.size === 0) return () => undefined;
+	const kindId = edgeIdOf(plan, node, kindEntries);
+	return (name) => {
+		const side = sides.get(rustFieldIdent(name));
+		return side === undefined ? undefined : { kindId, side };
+	};
+}
+
+const edgeRowKindsCache = new WeakMap<RenderPlan, ReadonlySet<number>>();
+
+function edgeRowKindsOf(plan: RenderPlan, kindEntries: readonly KindEntryLike[]): ReadonlySet<number> {
+	const cached = edgeRowKindsCache.get(plan);
+	if (cached !== undefined) return cached;
+	const kinds = new Set(edgeSitesOf(plan, kindEntries).map((row) => row.kind));
+	edgeRowKindsCache.set(plan, kinds);
+	return kinds;
+}
+
+function edgeIdOf(plan: RenderPlan, node: AssembledNode, kindEntries: readonly KindEntryLike[] | undefined): number {
+	const kind = publicKindName(node.kind);
+	if (kindEntries !== undefined) {
+		const id = edgeKindId(kindEntries, kind);
+		if (id !== undefined && edgeRowKindsOf(plan, kindEntries).has(id)) return id;
+	}
+	throw new Error(`kind '${kind}' has kind-edge sites but no edge row to prepare and write them from`);
 }
 
 function delimiterSiteOf(plan: RenderPlan, node: AssembledNode): DelimiterSite | undefined {
@@ -2679,116 +2709,167 @@ function spacingFieldExprs(
 	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName && site.side !== 'seam');
 	const expr = (site: SpacingSite | undefined): string | undefined =>
 		site === undefined ? undefined : `node.${rustFieldIdent(site.fieldIdent)}`;
+	const flank = (site: SpacingSite | undefined): string | undefined =>
+		site === undefined ? undefined : `Some(options::${site.constName})`;
 	return {
 		before: expr(sites.find((site) => site.side === 'before')),
 		after: expr(sites.find((site) => site.side === 'after' || site.side === 'gap')),
-		head: expr(sites.find((site) => site.side === 'start')),
-		tail: expr(sites.find((site) => site.side === 'end'))
+		head: flank(sites.find((site) => site.side === 'start')),
+		tail: flank(sites.find((site) => site.side === 'end'))
 	};
 }
 
-function seatVariantArms(
-	field: AssembledNonterminal,
-	seats: ReadonlyMap<string, SpacingSite>,
+type SeatReach = (kind: string) => boolean;
+
+const seatReachCache = new WeakMap<RenderPlan, SeatReach>();
+
+function wrapperSlotOf(node: AssembledNode): AssembledNonterminal | undefined {
+	if (!(node instanceof AssembledPolymorph) || node instanceof AssembledSupertype) return undefined;
+	const model = renderSlotModelOf(node);
+	const slot = model.named[0] ?? model.unnamed[0];
+	return slot?.name === undefined ? undefined : slot;
+}
+
+function slotElementsReach(slot: AssembledNonterminal, nodeMap: NodeMap, reaches: SeatReach): boolean {
+	const kinds = kindsOf(slot);
+	const cls = classifySlotForEmit(kinds, nodeMap);
+	if (cls.tag === 'concrete') return reaches(cls.kind);
+	if (cls.tag === 'supertype') {
+		const kind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
+		return kind !== undefined && reaches(kind);
+	}
+	return expandConcreteTransportKinds(kinds, nodeMap).some(({ kind }) => reaches(kind));
+}
+
+function seatedKindsOf(plan: RenderPlan): ReadonlySet<string> {
+	return new Set(plan.spacingSites.flatMap((site) => (site.seat === undefined ? [] : [site.seat.kind])));
+}
+
+function seatReachOf(plan: RenderPlan, nodeMap: NodeMap): SeatReach {
+	const cached = seatReachCache.get(plan);
+	if (cached !== undefined) return cached;
+	const seated = seatedKindsOf(plan);
+	const reach = new Set<string>();
+	const has: SeatReach = (kind) => reach.has(kind);
+	let changed = true;
+	while (changed) {
+		changed = false;
+		for (const [kind, node] of nodeMap.nodes) {
+			if (reach.has(kind)) continue;
+			const wrapper = wrapperSlotOf(node);
+			const reaches =
+				seated.has(publicKindName(kind)) ||
+				(node instanceof AssembledSupertype &&
+					collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes.some(({ subKind }) => reach.has(subKind))) ||
+				(wrapper !== undefined && slotElementsReach(wrapper, nodeMap, has));
+			if (reaches) {
+				reach.add(kind);
+				changed = true;
+			}
+		}
+	}
+	seatReachCache.set(plan, has);
+	return has;
+}
+
+const SEAT_TARGET_SIG =
+	'    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {';
+
+function seatTargetMatchImpl(typeName: string, variants: readonly string[], exhaustive: boolean): string[] {
+	if (variants.length === 0) return [];
+	return [
+		`impl ::sittir_core::prepare::SeatTarget for ${typeName} {`,
+		SEAT_TARGET_SIG,
+		'        match self {',
+		...variants.map((variant) => `            Self::${variant}(t) => t.seat_target(table),`),
+		...(exhaustive ? [] : ['            #[allow(unreachable_patterns)]', '            _ => None,']),
+		'        }',
+		'    }',
+		'}',
+		''
+	];
+}
+
+function seatTargetStructImpl(
+	node: AssembledNode,
 	nodeMap: NodeMap,
-	ownerTypeName: string
-): readonly string[] {
-	type Arm = { readonly pattern: string; readonly body: readonly string[] };
-	const indent = (lines: readonly string[]): string[] => lines.map((line) => `    ${line}`);
-	const matchOver = (arms: readonly Arm[]): string[] =>
-		arms.length === 0
-			? []
-			: [
-					`match t {`,
-					...arms.flatMap((arm) => [`    ${arm.pattern} => {`, ...indent(indent(arm.body)), `    }`]),
-					`    #[allow(unreachable_patterns)]`,
-					`    _ => {}`,
-					`}`
-				];
-	const bodyFor = (kind: string, node: AssembledNode, seen: Set<string>): string[] => {
-		const seat = seats.get(publicKindName(kind));
-		if (seat !== undefined) return [`t.${rustFieldIdent(seat.seat!.field)}.get_or_insert(ctx.options.spacing[options::${seat.constName}]);`];
-		if (seen.has(kind)) return [];
-		seen.add(kind);
-		if (node instanceof AssembledSupertype) return matchOver(supertypeArms(node, seen));
-		if (!(node instanceof AssembledPolymorph)) return [];
-		const model = renderSlotModelOf(node);
-		const slot = model.named[0] ?? model.unnamed[0];
-		if (slot?.name === undefined) return [];
-		const inner = slotBody(slot, node.typeName, seen);
-		if (inner.length === 0) return [];
-		const held = isRequired(slot) ? '::sittir_core::SlotValue::Transport(seated)' : 'Some(::sittir_core::SlotValue::Transport(seated))';
-		return [`if let ${held} = &mut t.${rustFieldIdent(slot.name)} {`, ...indent(inner), `}`];
-	};
-	const variantArms = (
-		enumName: string,
-		members: readonly { readonly kind: string; readonly node: AssembledNode }[],
-		seen: Set<string>
-	): Arm[] =>
-		members.flatMap(({ kind, node }) => {
-			const body = bodyFor(kind, node, seen);
-			return body.length === 0 ? [] : [{ pattern: `${enumName}::${rustTypeIdent(node.typeName)}(t)`, body }];
-		});
-	const supertypeArms = (node: AssembledSupertype, seen: Set<string>): Arm[] =>
-		variantArms(
-			`${rustTypeIdent(node.typeName)}Transport`,
-			collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes.map(({ subKind, subNode }) => ({ kind: subKind, node: subNode })),
-			seen
+	plan: RenderPlan,
+	kindEntries: readonly KindEntryLike[] | undefined
+): string[] {
+	const reaches = seatReachOf(plan, nodeMap);
+	if (!reaches(node.kind)) return [];
+	const body: string[] = [];
+	const kind = publicKindName(node.kind);
+	if (seatedKindsOf(plan).has(kind)) {
+		const id = kindEntries === undefined ? undefined : edgeKindId(kindEntries, kind);
+		if (id === undefined) throw new Error(`kind '${kind}' is seated in a list but has no kind id to find its seat by`);
+		body.push(
+			`        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(${id})) {`,
+			'            return Some((self.edges.get_or_insert_with(Default::default), site));',
+			'        }'
 		);
-	const slotBody = (slot: AssembledNonterminal, slotOwnerTypeName: string, seen: Set<string>): string[] => {
-		const kinds = kindsOf(slot);
-		const cls = classifySlotForEmit(kinds, nodeMap);
-		const borrowed = (typeName: string, lines: readonly string[]): string[] =>
-			lines.length === 0 ? [] : [`let t: &mut ${typeName} = ::std::borrow::BorrowMut::borrow_mut(seated);`, ...lines];
-		if (cls.tag === 'concrete') {
-			const node = nodeMap.nodes.get(cls.kind);
-			const typeName = concreteTransportTypeName(cls.kind, nodeMap);
-			return node === undefined || typeName === null ? [] : borrowed(typeName, bodyFor(cls.kind, node, seen));
-		}
-		if (cls.tag === 'supertype') {
-			const kind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
-			const node = kind === undefined ? undefined : nodeMap.nodes.get(kind);
-			if (!(node instanceof AssembledSupertype)) return [];
-			return borrowed(`${rustTypeIdent(cls.supertypeName)}Transport`, matchOver(supertypeArms(node, seen)));
-		}
-		const enumName = hasAnyConcreteChildKind(kinds, nodeMap) ? perSlotEnumName(slotOwnerTypeName, slot.name!) : 'AnyTransport';
-		return borrowed(enumName, matchOver(variantArms(enumName, expandConcreteTransportKinds(kinds, nodeMap), seen)));
-	};
-	return slotBody(field, ownerTypeName, new Set());
+	}
+	const wrapper = wrapperSlotOf(node);
+	if (wrapper !== undefined && slotElementsReach(wrapper, nodeMap, reaches)) {
+		const held = isRequired(wrapper) ? '::sittir_core::SlotValue::Transport(inner)' : 'Some(::sittir_core::SlotValue::Transport(inner))';
+		body.push(`        if let ${held} = &mut self.${rustFieldIdent(wrapper.name!)} {`, '            return inner.seat_target(table);', '        }');
+	}
+	return [`impl ::sittir_core::prepare::SeatTarget for ${rustTransportStructName(node)} {`, SEAT_TARGET_SIG, ...body, '        None', '    }', '}', ''];
+}
+
+function renderSeatTargets(
+	nodes: readonly AssembledNode[],
+	nodeMap: NodeMap,
+	plan: RenderPlan,
+	kindEntries: readonly KindEntryLike[] | undefined,
+	usedSupertypeNames: ReadonlySet<string>,
+	perSlotEnums: readonly PerSlotChildEnum[]
+): string[] {
+	const reaches = seatReachOf(plan, nodeMap);
+	const lines: string[] = [];
+	for (const node of nodes) {
+		if (node instanceof AssembledEnum || node instanceof AssembledSupertype) continue;
+		lines.push(...seatTargetStructImpl(node, nodeMap, plan, kindEntries));
+	}
+	for (const [, node] of nodeMap.nodes) {
+		if (!(node instanceof AssembledSupertype) || !usedSupertypeNames.has(node.typeName)) continue;
+		const enumName = `${rustTypeIdent(node.typeName)}Transport`;
+		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
+		const subtypes = collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes;
+		const reaching = subtypes.filter(({ subKind }) => reaches(subKind)).map(({ subNode }) => rustTypeIdent(subNode.typeName));
+		lines.push(...seatTargetMatchImpl(enumName, reaching, false));
+	}
+	for (const entry of perSlotEnums) {
+		const reaching = expandConcreteTransportKinds(entry.kinds, nodeMap)
+			.filter(({ kind }) => reaches(kind))
+			.map(({ node }) => rustTypeIdent(node.typeName));
+		lines.push(...seatTargetMatchImpl(perSlotEnumName(entry.typeName, entry.fieldName), reaching, false));
+	}
+	const anyReaching = nodes.filter((node) => reaches(node.kind)).map((node) => rustTransportVariantName(node));
+	lines.push(...seatTargetMatchImpl('AnyTransport', anyReaching, false));
+	return lines;
 }
 
 function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): string[] {
 	const lines: string[] = [];
+	const reaches = seatReachOf(plan, nodeMap);
 	const slotModel = renderSlotModelOf(node);
+	const seated = seatedTableNames(plan);
 	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 		if (field.name === undefined || !isMultiple(field)) continue;
-		const seats = seatedSitesOf(plan, node.kind, field.name);
-		if (seats.size === 0) continue;
-		const seated = seatVariantArms(field, seats, nodeMap, node.typeName);
-		if (seated.length === 0) continue;
+		if (!seated.has(seatTableName(publicKindName(node.kind), field.name))) continue;
+		if (!slotElementsReach(field, nodeMap, reaches)) continue;
 		const ident = rustFieldIdent(field.name);
-		const open = isRequired(field)
-			? [`        {`, `            let seated_items = &mut self.${ident};`]
-			: [`        if let Some(seated_items) = self.${ident}.as_mut() {`];
-		const element = hasOptionalElements(field)
-			? [`                let Some(item) = item.as_mut() else { continue };`]
-			: [];
+		const table = `options::${seatTableName(publicKindName(node.kind), field.name)}`;
+		const items = hasOptionalElements(field) ? 'iter_mut().map(Option::as_mut)' : 'iter_mut().map(Some)';
 		lines.push(
-			...open,
-			`            let seated_last = seated_items.len().saturating_sub(1);`,
-			`            for (seated_at, item) in seated_items.iter_mut().enumerate() {`,
-			`                if seated_at == seated_last { continue; }`,
-			...element,
-			`                if let ::sittir_core::SlotValue::Transport(seated) = item {`,
-			...seated.map((line) => `                    ${line}`),
-			`                }`,
-			`            }`,
-			`        }`
+			isRequired(field)
+				? `        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ctx);`
+				: `        if let Some(seated_items) = self.${ident}.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.${items}, ${table}, ctx); }`
 		);
 	}
 	return lines;
 }
-
 function prepareStructImpl(
 	structName: string,
 	node: AssembledNode,
@@ -2799,9 +2880,11 @@ function prepareStructImpl(
 ): string[] {
 	const body: string[] = [];
 	if (isCompound) {
+		if (kindEdgeSidesOf(plan, node).size > 0) body.push('        ::sittir_core::prepare::prepare_edges(self, ctx);');
 		body.push(...listGapClassification(plan, node));
 		for (const site of synthesizedSpacingSites(plan, node)) {
-			body.push(`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.spacing[options::${site.constName}]);`);
+			if (!carriesPerNodeValue(site)) continue;
+			body.push(`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.spacing[options::${site.constName}].arm);`);
 		}
 		body.push(...seatLoops(plan, node, nodeMap));
 		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
@@ -2809,7 +2892,7 @@ function prepareStructImpl(
 			body.push(`        self.delimiter.get_or_insert(ctx.options.delimiter[options::${delim.constName}]);`);
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
-		if (sep !== undefined) body.push(`        self.separator_kind.get_or_insert(ctx.options.spacing[options::${sep.constName}]);`);
+		if (sep !== undefined) body.push(`        self.separator_kind.get_or_insert(ctx.options.spacing[options::${sep.constName}].arm);`);
 		for (const f of fillFields) body.push(`        self.${f}.prepare(ctx)?;`);
 	}
 	return [
@@ -2818,6 +2901,17 @@ function prepareStructImpl(
 		...body,
 		`        Ok(())`,
 		`    }`,
+		`}`,
+		''
+	];
+}
+
+function edgedImplLines(typeName: string, kindId: number): string[] {
+	return [
+		`impl ::sittir_core::options::Edged for ${typeName} {`,
+		`    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(${kindId}) }`,
+		`    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }`,
+		`    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }`,
 		`}`,
 		''
 	];
@@ -2880,7 +2974,7 @@ function renderTransportDataStruct(
 	plan: RenderPlan = EMPTY_PLAN,
 	kindEntries?: readonly KindEnumEntry[]
 ): string[] {
-	const isLeafNode = node.modelType === 'pattern' || node.modelType === 'token';
+	const isLeafNode = node.modelType === 'pattern' || isFixedTextLeaf(node);
 	const lines: string[] = [];
 	const fillFields: string[] = [];
 	if (!isLeafNode) {
@@ -2892,6 +2986,7 @@ function renderTransportDataStruct(
 		node.modelType === 'branch' ||
 		node.modelType === 'envelope' ||
 		node.modelType === 'list' ||
+		node.modelType === 'alias' ||
 		(node.modelType === 'polymorph' && !(node instanceof AssembledSupertype));
 	if (isCompoundNode) {
 		lines.push(...renderTransportMetadataFields());
@@ -2937,25 +3032,28 @@ function renderTransportDataStruct(
 				}
 			}
 			for (const site of synthesizedSpacingSites(plan, node)) {
+				if (!carriesPerNodeValue(site)) continue;
 				lines.push(
 					`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(site.wireKey)}))]`,
 					`    pub ${rustFieldIdent(site.fieldIdent)}: Option<u16>,`
 				);
 			}
 		}
-	} else if (node.modelType === 'pattern' || node.modelType === 'token' || node.modelType === 'enum') {
+	} else if (node.modelType === 'pattern' || isFixedTextLeaf(node) || node.modelType === 'enum') {
 		lines.push(...renderLeafTransportPlainFields());
 	}
 	lines.push('}');
 	lines.push('');
 	const ownId = kindEntries === undefined ? undefined : findKindEntry(kindEntries, node.kind)?.id;
 	lines.push(...kindOfImplLines(structName, [], undefined, ownId === undefined ? [] : [ownId]));
+	const edgedId = kindEntries === undefined ? undefined : edgeKindId(kindEntries, publicKindName(node.kind));
+	if (edgedId !== undefined) lines.push(...edgedImplLines(structName, edgedId));
 	lines.push(`impl ::sittir_core::render::Render for ${structName} {`);
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
 	);
 	if (isLeafNode) {
-		lines.push(`        render_with_trivia!(self, w, ${leafTextWrite(node, 'self')})`);
+		lines.push(`        render_with_trivia!(self, w, ${leafRenderExpr(node, 'self')})`);
 	} else {
 		const renderFn = rustTypedRenderFnName(node.typeName);
 		lines.push(`        render_with_trivia!(self, w, ${renderFn}(self, w))`);
@@ -2989,7 +3087,7 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 	lines.push(`            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,`);
 	if (defaultTextLiteral !== undefined) {
 		lines.push(`            // Raw kind_id: value-less leaf sent as its numeric kind tag.`);
-		lines.push(`            ::napi::ValueType::Number => ${JSON.stringify(defaultTextLiteral)}.to_string(),`);
+		lines.push(`            ::napi::ValueType::Number => ${rustStringLiteral(defaultTextLiteral)}.to_string(),`);
 	}
 	if (booleanLiteral !== undefined) {
 		lines.push(`            ::napi::ValueType::Boolean => {`);
@@ -3000,7 +3098,7 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 			)}));`
 		);
 		lines.push(`                }`);
-		lines.push(`                ${JSON.stringify(booleanLiteral)}.to_string()`);
+		lines.push(`                ${rustStringLiteral(booleanLiteral)}.to_string()`);
 		lines.push(`            }`);
 	}
 	lines.push(`            _ => {`);
@@ -3008,13 +3106,15 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 	lines.push(`                __trivia = obj.get("$_trivia")?;`);
 	lines.push(
 		defaultTextLiteral !== undefined
-			? `                obj.get("$text")?.unwrap_or_else(|| ${JSON.stringify(defaultTextLiteral)}.to_string())`
+			? `                obj.get("$text")?.unwrap_or_else(|| ${rustStringLiteral(defaultTextLiteral)}.to_string())`
 			: `                obj.get("$text")?.unwrap_or_default()`
 	);
 	lines.push(`            }`);
 	lines.push(`        };`);
 	lines.push(`        Ok(Self {`);
-	lines.push(`            transport_trivia_data: __trivia,`);
+	for (const f of TRANSPORT_METADATA_FIELDS) {
+		lines.push(`            ${f.rustName}: ${f.rustName === 'transport_trivia_data' ? '__trivia' : 'None'},`);
+	}
 	lines.push(`            text,`);
 	lines.push(`        })`);
 	lines.push(`    }`);
@@ -3046,7 +3146,7 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 		lines.push(`                }`);
 		lines.push(`                return Ok(Self {`);
 		for (const f of TRANSPORT_METADATA_FIELDS) lines.push(`                    ${f.rustName}: None,`);
-		lines.push(`                    text: ${JSON.stringify(booleanLiteral)}.to_string(),`);
+		lines.push(`                    text: ${rustStringLiteral(booleanLiteral)}.to_string(),`);
 		lines.push(`                });`);
 		lines.push(`            }`);
 		lines.push(`            _ => {}`);
@@ -3055,7 +3155,7 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 	lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
 	lines.push(
 		defaultTextLiteral !== undefined
-			? `        let text: String = obj.get("$text")?.unwrap_or_else(|| ${JSON.stringify(defaultTextLiteral)}.to_string());`
+			? `        let text: String = obj.get("$text")?.unwrap_or_else(|| ${rustStringLiteral(defaultTextLiteral)}.to_string());`
 			: '        let text: String = obj.get("$text")?.unwrap_or_default();'
 	);
 	for (const f of TRANSPORT_METADATA_FIELDS) lines.push(`        let ${f.rustName} = obj.get(${JSON.stringify(f.jsName)})?;`);
@@ -3084,7 +3184,7 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 }
 
 function leafDefaultTextLiteral(node: AssembledNode): string | undefined {
-	if (node.modelType === 'token') {
+	if (isFixedTextLeaf(node)) {
 		const text = node.text || undefined;
 		return text !== undefined && isDepthText(text) ? undefined : text;
 	}
@@ -3099,7 +3199,8 @@ interface TransportMetadataField {
 }
 
 const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
-	{ jsName: '$_trivia', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' }
+	{ jsName: '$_trivia', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' },
+	{ jsName: '$_edges', rustName: 'edges', rustType: 'Option<::sittir_core::options::Edges>' }
 ];
 
 function renderTransportMetadataFields(): string[] {
@@ -3520,22 +3621,6 @@ function armSeamPairsOf(plan: RenderPlan, node: AssembledEnum): Map<string, { be
 	return out;
 }
 
-function armSeamsImpl(valueName: string, values: readonly string[], pairs: ReadonlyMap<string, { before: string; after: string }>): string[] {
-	const lines = [
-		`impl ArmSeams for ${valueName} {`,
-		`    fn arm_seam_sites(&self) -> Option<(usize, usize)> {`,
-		`        match self {`
-	];
-	for (const v of values) {
-		const pair = pairs.get(v);
-		if (pair === undefined) continue;
-		lines.push(`            Self::${literalToVariantName(v)} => Some((options::${pair.before}, options::${pair.after})),`);
-	}
-	if (pairs.size < values.length) lines.push(`            _ => None,`);
-	lines.push(`        }`, `    }`, `}`, '');
-	return lines;
-}
-
 function renderEnumType(
 	node: AssembledEnum,
 	hasNapi: boolean,
@@ -3544,7 +3629,7 @@ function renderEnumType(
 ): string[] {
 	const publicName = enumTypeName(node);
 	const seamPairs = armSeamPairsOf(plan, node);
-	const enumName = seamPairs.size === 0 ? publicName : `${publicName.replace(/Enum$/, '')}Arm`;
+	const enumName = publicName;
 	const values = node.values;
 	const lines: string[] = [];
 
@@ -3667,21 +3752,26 @@ function renderEnumType(
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
 	);
-	lines.push(`        w.text(match self {`);
-	for (const v of values) {
-		const variant = literalToVariantName(v);
-		lines.push(`            Self::${variant} => ${JSON.stringify(v)},`);
+	if (seamPairs.size === 0) {
+		lines.push(`        w.text(match self {`);
+		for (const v of values) lines.push(`            Self::${literalToVariantName(v)} => ${JSON.stringify(v)},`);
+		lines.push(`        })`);
+	} else {
+		lines.push(`        match self {`);
+		for (const v of values) {
+			const pair = seamPairs.get(v);
+			const text = `w.text(${JSON.stringify(v)})`;
+			lines.push(
+				pair === undefined
+					? `            Self::${literalToVariantName(v)} => ${text},`
+					: `            Self::${literalToVariantName(v)} => { w.site_at(options::${pair.before}); ${text}?; w.site_at(options::${pair.after}); Ok(()) }`
+			);
+		}
+		lines.push(`        }`);
 	}
-	lines.push(`        })`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-
-	if (seamPairs.size > 0) {
-		lines.push(...armSeamsImpl(enumName, values, seamPairs));
-		lines.push(`pub type ${publicName} = Seamed<${enumName}>;`);
-		lines.push('');
-	}
 
 	return lines;
 }

@@ -3,48 +3,25 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine, ir } from '@sittir/typescript';
 import { dogfoodContract } from '../../../examples/helpers.ts';
-import { rebuildFormat, formatBoundary, returnResult } from '../../../examples/18-dogfood-typescript.ts';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 // The generated rebuild is loaded by a computed path so tsc does not follow
 // it: its type errors are counted under examples/generated-typecheck-ceiling.json,
 // and vitest runs it regardless.
-const rebuildFormatGenerated = async (): Promise<{ $render(): string }> => {
-	const absolute = fileURLToPath(new URL('../../../examples/18-dogfood-typescript.generated.ts', import.meta.url));
+const generatedRebuild = (file: string, exportName: string) => async (): Promise<{ $render(): string }> => {
+	const absolute = fileURLToPath(new URL(`../../../examples/${file}`, import.meta.url));
 	const mod = (await import(pathToFileURL(absolute).href)) as Record<string, () => { $render(): string }>;
-	return mod.rebuildFormatGenerated!();
+	return mod[exportName]!();
 };
+const rebuildFormatGenerated = generatedRebuild('18-dogfood-typescript.generated.ts', 'rebuildFormatGenerated');
+const rebuildFormatLoose = generatedRebuild('18-dogfood-typescript-loose.generated.ts', 'rebuildFormatLoose');
 import {
 	rebuildFormatStrict,
 	formatBoundaryStrict,
 	returnResultStrict
 } from '../../../examples/18-dogfood-typescript-strict.ts';
 
-// GAP inventory (examples/18): A=2 cross-cutting (statement arms, import
-// clauses) B=1 (type-annotation wrapper) C=1 cross-cutting (required
-// punctuation slots). The surface cannot compose a real TypeScript file yet, so both
-// contract assertions are pinned.
-describe('examples/18 dogfood typescript (format.ts)', () => {
-	const target = new URL('../../common/src/format.ts', import.meta.url).pathname;
-	it('builds and renders the fragments that cross the boundary', () => {
-		expect(rebuildFormat().$render()).toContain('function applyFormat');
-	});
-	it('composes a member expression once its separator is supplied', () => {
-		expect(formatBoundary().$render()).toBe('format.boundary');
-	});
-	it('renders a return statement with its expression', () => {
-		expect(returnResult().$render()).toBe('return result;');
-	});
-	it.fails('re-parses to the same tree as the real file', async () => {
-		expect(dogfoodContract(createEngine(), rebuildFormat(), target).reparsesEqual).toBe(true);
-	});
-	it.fails('is identical to the real file modulo whitespace', () => {
-		expect(dogfoodContract(createEngine(), rebuildFormat(), target).sameModuloWhitespace).toBe(true);
-	});
-});
-
-// The strict half: same items through `.strict` alone, so each gap lands on the
-// layer that owns it.
+// The strict surface alone, so each gap lands on the layer that owns it.
 describe('examples/18 dogfood typescript — strict factory surface', () => {
 	it('builds a function declaration and a program', () => {
 		expect(rebuildFormatStrict().$render()).toContain('function applyFormat');
@@ -76,5 +53,17 @@ describe('examples/18 generated rebuild (format.ts)', () => {
 	});
 	it('re-parses to the same tree as the real file', async () => {
 		expect(dogfoodContract(createEngine(), await rebuildFormatGenerated(), target).reparsesEqual).toBe(true);
+	});
+});
+
+// The loose rebuild: the same file through the bundle calls, with every
+// coercion the loose contract admits spelled bare.
+describe('examples/18 loose rebuild (format.ts)', () => {
+	const target = new URL('../../common/src/format.ts', import.meta.url).pathname;
+	it('renders', async () => {
+		expect((await rebuildFormatLoose()).$render()).toContain('function applyFormat');
+	});
+	it('re-parses to the same tree as the real file', async () => {
+		expect(dogfoodContract(createEngine(), await rebuildFormatLoose(), target).reparsesEqual).toBe(true);
 	});
 });

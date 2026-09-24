@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { REPO_ROOT, generatedRootsFor, type Grammar } from './generated-manifest.ts';
+import { compareOrdinal } from '../emitters/shared.ts';
 
 const EMITTER_ORDER = [
 	'factory',
@@ -166,7 +167,7 @@ export function formatEmitDiff(grammar: Grammar): string | null {
 	const fmtCounts = (c: FileChange): string => (c.binary ? 'binary' : `+${c.added} -${c.removed}`);
 
 	for (const emitter of EMITTER_ORDER) {
-		const group = changes.filter((c) => c.emitter === emitter).sort((a, b) => a.path.localeCompare(b.path));
+		const group = changes.filter((c) => c.emitter === emitter).sort((a, b) => compareOrdinal(a.path, b.path));
 		if (group.length === 0) continue;
 		for (const c of group) {
 			const counts = fmtCounts(c).padStart(9);

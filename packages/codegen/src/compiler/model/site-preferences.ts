@@ -1,14 +1,17 @@
 import type { NodeMap } from '../types.ts';
 import { findEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
 import { CHOICE, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
-import type { RenderRule } from '../../types/rule.ts';
-import { DELIMITER_LABEL, SEPARATOR_LABEL } from '../../dsl/primitives/spacing.ts';
+import type { RenderRule, SeamOrigin } from '../../types/rule.ts';
+import { DELIMITER_LABEL, SEPARATOR_LABEL, VARIANT_LABEL } from '../../dsl/primitives/spacing.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
+	AssembledSupertype,
 	AssembledNonterminal,
 	delimiterMembersFor,
+	isNodeRef,
 	isTerminalValue,
+	storageKindOfRef,
 	type NodeOrTerminal
 } from './node-map.ts';
 import { publicKindName, spacingSitesOf, type RenderRules, type SeatedChild, type SpacingSide } from './render-rules.ts';
@@ -36,9 +39,11 @@ export interface SitePreference {
 	readonly arms: readonly PreferenceArm[];
 	readonly defaultArm: string;
 	readonly source: PreferenceSource;
+	readonly origin?: SeamOrigin;
 	readonly side?: SpacingSide;
 	readonly seat?: SeatedChild;
 	readonly path?: readonly PreferenceSegment[];
+	readonly edgeLiterals?: readonly string[];
 }
 
 export interface SiteCandidate {
@@ -69,6 +74,11 @@ export function collectSitePreferences(config: SitePreferencesConfig): SitePrefe
 			if (candidate) candidates.push(candidate);
 		}
 	}
+	for (const [kind, node] of config.nodeMap.nodes) {
+		if (!(node instanceof AssembledSupertype)) continue;
+		const candidate = variantChoiceCandidate(kind, node, config.kindEntries);
+		if (candidate) candidates.push(candidate);
+	}
 	if (config.renderRules !== undefined) {
 		for (const site of spacingSitesOf(config.renderRules, config.nodeMap)) {
 			const arms = site.arms;
@@ -81,8 +91,10 @@ export function collectSitePreferences(config: SitePreferencesConfig): SitePrefe
 				defaultArm: site.defaultArm,
 				source: 'spacing',
 				side: site.side,
+				...(site.origin === undefined ? {} : { origin: site.origin }),
 				...(site.seat === undefined ? {} : { seat: site.seat }),
-				...(site.path === undefined ? {} : { path: site.path })
+				...(site.path === undefined ? {} : { path: site.path }),
+				...(site.edgeLiterals === undefined ? {} : { edgeLiterals: site.edgeLiterals })
 			});
 		}
 	}
@@ -166,17 +178,32 @@ function withDeclaredArms(
 	}
 
 	const out = [...sites];
-	for (const [index, arm] of resolveBindings(declarations, bindings, addressed, membersOf)) {
+	for (const [index, { arm, origin }] of resolveBindings(declarations, bindings, addressed, membersOf)) {
 		const site = addressed[index]!;
 		if (!admits(site, arm)) continue;
 		if (site.siteIndex === undefined) {
+			const isSpelling = site.arms.every((candidate) => candidate.kind === undefined);
+			registerSlot(config.nodeMap, site, arm, isSpelling ? 'spelling' : 'choice');
+			if (isSpelling) continue;
 			const { kind, slot, address, label, arms, path } = site;
-			out.push({ kind, slot, address, label, arms, path, defaultArm: arm, source: 'choice' });
+			out.push({ kind, slot, address, label, arms, path, defaultArm: arm, source: 'choice', origin });
 			continue;
 		}
-		out[site.siteIndex] = { ...sites[site.siteIndex]!, defaultArm: arm };
+		out[site.siteIndex] = { ...sites[site.siteIndex]!, defaultArm: arm, origin };
 	}
 	return out;
+}
+
+function registerSlot(nodeMap: NodeMap, site: SiteCandidate, arm: string, mode: 'spelling' | 'choice'): void {
+	const node = nodeMap.nodes.get(site.kind);
+	if (node instanceof AssembledSupertype) {
+		node.optionDefaultArm = arm;
+		return;
+	}
+	const slot = node instanceof AbstractAssembledCompound ? node.slots.find((candidate) => candidate.name === site.slot) : undefined;
+	if (slot === undefined) return;
+	slot.optionDefaultArm = arm;
+	slot.registeredOption = mode;
 }
 
 function separatorArmKinds(kind: string, rule: RenderRule, kindEntries: readonly KindEntryLike[]): string[] {
@@ -196,8 +223,7 @@ function tokenKind(text: string, kindEntries: readonly KindEntryLike[]): string 
 }
 
 function armKind(v: NodeOrTerminal, kindEntries: readonly KindEntryLike[]): string | undefined {
-	const node = v.node as { kind?: string; name?: string } | undefined;
-	const raw = v.parseKind?.name ?? v.resolvedKind ?? node?.kind ?? node?.name;
+	const raw = v.parseKind?.name ?? v.resolvedKind ?? (isNodeRef(v) ? storageKindOfRef(v.node) : undefined);
 	if (raw !== undefined) return publicKindName(raw);
 	return isTerminalValue(v) ? tokenKind(v.value, kindEntries) : undefined;
 }
@@ -206,19 +232,47 @@ function armValue(v: NodeOrTerminal, kind: string | undefined): string | undefin
 	return v.variant ?? (isTerminalValue(v) ? v.value : undefined) ?? kind;
 }
 
+function armsOf(values: readonly NodeOrTerminal[], kindEntries: readonly KindEntryLike[]): PreferenceArm[] | undefined {
+	const arms: PreferenceArm[] = [];
+	for (const v of values) {
+		const armK = armKind(v, kindEntries);
+		const value = armValue(v, armK);
+		if (value === undefined) return undefined;
+		arms.push({ value, ...(armK === undefined ? {} : { kind: armK }) });
+	}
+	return arms;
+}
+
+function variantChoiceCandidate(
+	kind: string,
+	node: AssembledSupertype,
+	kindEntries: readonly KindEntryLike[]
+): SiteCandidate | undefined {
+	const variants = node.variantSubtypes;
+	const arms = variants === undefined ? undefined : armsOf(variants, kindEntries);
+	if (arms === undefined) return undefined;
+	const name = publicKindName(kind);
+	return {
+		kind,
+		slot: '',
+		address: VARIANT_LABEL,
+		label: VARIANT_LABEL,
+		arms,
+		path: [
+			{ kind: 'kind-match', name },
+			{ kind: 'name', name: VARIANT_LABEL }
+		]
+	};
+}
+
 function choiceCandidate(
 	kind: string,
 	slot: AssembledNonterminal,
 	kindEntries: readonly KindEntryLike[]
 ): SiteCandidate | undefined {
 	if (slot.values.length < 2) return undefined;
-	const arms: PreferenceArm[] = [];
-	for (const v of slot.values) {
-		const armK = armKind(v, kindEntries);
-		const value = armValue(v, armK);
-		if (value === undefined) return undefined;
-		arms.push({ value, ...(armK === undefined ? {} : { kind: armK }) });
-	}
+	const arms = armsOf(slot.values, kindEntries);
+	if (arms === undefined) return undefined;
 	const name = slot.name!;
 	return {
 		kind,

@@ -6,6 +6,7 @@ export * from './raw.js';
 export * from './coerce.js';
 
 export const program = bundle(F.buildProgram, C.coerceToProgram);
+export const hashBangLine = bundle(F.buildHashBangLine, C.coerceToHashBangLine);
 export const namespaceExport = bundle(F.buildNamespaceExport, C.coerceToNamespaceExport);
 export const exportClause = bundle(F.buildExportClause, C.coerceToExportClause);
 export const exportSpecifier = bundle(F.buildExportSpecifier, C.coerceToExportSpecifier);
@@ -38,7 +39,6 @@ export const switchCase = bundle(F.buildSwitchCase, C.coerceToSwitchCase);
 export const switchDefault = bundle(F.buildSwitchDefault, C.coerceToSwitchDefault);
 export const catchClause = bundle(F.buildCatchClause, C.coerceToCatchClause);
 export const finallyClause = bundle(F.buildFinallyClause, C.coerceToFinallyClause);
-export const parenthesizedExpression = bundle(F.buildParenthesizedExpression, C.coerceToParenthesizedExpression);
 export const yieldExpression = bundle(F.buildYieldExpression, C.coerceToYieldExpression);
 export const object = bundle(F.buildObject, C.coerceToObject);
 export const objectPattern = bundle(F.buildObjectPattern, C.coerceToObjectPattern);
@@ -58,7 +58,6 @@ export const generatorFunctionDeclaration = bundle(
 	C.coerceToGeneratorFunctionDeclaration
 );
 export const arrowFunction = bundle(F.buildArrowFunction, C.coerceToArrowFunction);
-export const callExpression = bundle(F.buildCallExpression, C.coerceToCallExpression);
 export const newExpression = bundle(F.buildNewExpression, C.coerceToNewExpression);
 export const awaitExpression = bundle(F.buildAwaitExpression, C.coerceToAwaitExpression);
 export const memberExpression = bundle(F.buildMemberExpression, C.coerceToMemberExpression);
@@ -73,10 +72,11 @@ export const ternaryExpression = bundle(F.buildTernaryExpression, C.coerceToTern
 export const binaryExpression = bundle(F.buildBinaryExpression, C.coerceToBinaryExpression);
 export const unaryExpression = bundle(F.buildUnaryExpression, C.coerceToUnaryExpression);
 export const sequenceExpression = bundle(F.buildSequenceExpression, C.coerceToSequenceExpression);
-export const string = bundle(F.buildString, C.coerceToString);
+export const escapeSequence = bundle(F.buildEscapeSequence, C.coerceToEscapeSequence);
 export const templateString = bundle(F.buildTemplateString, C.coerceToTemplateString);
 export const templateSubstitution = bundle(F.buildTemplateSubstitution, C.coerceToTemplateSubstitution);
 export const regex = bundle(F.buildRegex, C.coerceToRegex);
+export const privatePropertyIdentifier = bundle(F.buildPrivatePropertyIdentifier, C.coerceToPrivatePropertyIdentifier);
 export const arguments_ = bundle(F.buildArguments, C.coerceToArguments);
 export const decorator = bundle(F.buildDecorator, C.coerceToDecorator);
 export const decoratorMemberExpression = bundle(F.buildDecoratorMemberExpression, C.coerceToDecoratorMemberExpression);

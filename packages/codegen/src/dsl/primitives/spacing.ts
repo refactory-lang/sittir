@@ -12,7 +12,7 @@ export function depthBreakOf(text: string): string {
 export type SpacingArm = string;
 export type WhitespaceArm = string;
 export const SPACING_DEFAULT: SpacingArm = 'space';
-export const FLANK_DEFAULT: WhitespaceArm = 'tight';
+export const FLANK_DEFAULT: WhitespaceArm = 'space';
 export const EMPTY_SEPARATOR_TOKEN = 'empty';
 export const DELIMITER_LABEL = 'delimiter';
 export const DELIMITER_ARMS = ['Delimiter.None', 'Delimiter.Leading', 'Delimiter.Trailing', 'Delimiter.Both'] as const;
@@ -26,6 +26,7 @@ export function isDelimiterAddress(address: string): boolean {
 }
 
 export const SEPARATOR_LABEL = 'separator';
+export const VARIANT_LABEL = 'variant';
 
 export function isSeparatorAddress(address: string): boolean {
 	return address.endsWith(`_${SEPARATOR_LABEL}`);

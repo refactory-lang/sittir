@@ -1,21 +1,23 @@
+import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
+import { AssembledAlias, isVisibleTextLeaf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
-import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
 import {
 	AssembledSupertype,
 	AssembledList,
 	AssembledKeyword,
 	AssembledNonterminal,
-	AssembledToken,
+	AssembledPunctuation,
 	isNodeRef,
 	valueParseKindsOf
 } from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
 
-type BranchLikeForWrap = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
+type BranchLikeForWrap = AuthoredCompound;
 import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
 import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
+import { interiorOf } from './interior.ts';
 
 import {
 	collectAliasTargetToSourceMap,
@@ -31,6 +33,7 @@ import {
 	canonicalSeparatedListField,
 	kindEnumTextIdPairs,
 	kindEnumAltIdPairs,
+	kindEnumOwnSymbolIds,
 	fieldTypeComponents,
 	collectConcreteStorageKeys,
 	expandToConcreteParseKinds,
@@ -137,6 +140,7 @@ interface ResolveSlotDrillConfig {
 	readonly reclaimKindIdsExpr?: string;
 	readonly kindEnumTextIdPairs?: readonly (readonly [string, number])[];
 	readonly kindEnumAltIdPairs?: readonly (readonly [number, number])[];
+	readonly kindEnumOwnSymbolIds?: readonly number[];
 	readonly forceUnknownElement?: boolean;
 	readonly separatorIdsExpr?: string;
 	readonly elided?: boolean;
@@ -214,10 +218,15 @@ function resolveSlotDrillExprs(
 		};
 	}
 	if (storageInfo?.kind === 'mixedEnum') {
+		const ownSymbolsExpr =
+			config.kindEnumOwnSymbolIds && config.kindEnumOwnSymbolIds.length > 0
+				? `[${config.kindEnumOwnSymbolIds.join(', ')}]`
+				: undefined;
+		const mixedArgs = ownSymbolsExpr
+			? `, ${textIdMapExpr ?? 'undefined'}, ${altIdMapExpr ?? 'undefined'}, ${ownSymbolsExpr}`
+			: projectionArgs;
 		return {
-			storeExpr: projectionArgs
-				? `projectMixedEnumStorage(${normalizedStoreExpr}${projectionArgs})`
-				: normalizedStoreExpr,
+			storeExpr: mixedArgs ? `projectMixedEnumStorage(${normalizedStoreExpr}${mixedArgs})` : normalizedStoreExpr,
 			accessorBody: resolveSlotAccessorBody(
 				slot,
 				slot.arity === 'many' ? config.elemType : config.required ? config.elemType : `${config.elemType} | undefined`
@@ -359,12 +368,14 @@ function resolveSlotAccessorBody(slot: SlotModel, valueType: string): string {
 
 function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	const fn = `wrap${node.typeName}`;
-	const allowedKinds = [
-		...new Set(node.subtypeNames.flatMap((kind) => (kind.startsWith('_') ? [kind, kind.slice(1)] : [kind])))
+	const reachable = [
+		...node.subtypeNames,
+		...(node.transitiveParseKinds ?? []).filter(isNodeRef).map((ref) => storageKindOfRef(ref.node))
 	];
+	const allowedKinds = [...new Set(reachable.flatMap((kind) => (kind.startsWith('_') ? [kind, kind.slice(1)] : [kind])))];
 	const paramType = buildWrapParamType(node.typeName, new Map(), `T.${node.typeName} | readonly T.${node.typeName}[]`);
 	const subtypeRefs = node.subtypes.filter(isNodeRef);
-	if (subtypeRefs.length > 0 && subtypeRefs.every((ref) => ref.node instanceof AssembledToken || ref.node instanceof AssembledKeyword)) {
+	if (subtypeRefs.length > 0 && subtypeRefs.every((ref) => ref.node instanceof AssembledPunctuation || ref.node instanceof AssembledKeyword)) {
 		return [`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`, '  return data;', '}'].join('\n');
 	}
 	return [
@@ -635,6 +646,7 @@ function emitFieldStorageLines(
 				storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum'
 					? kindEnumAltIdPairs(f, nodeMap)
 					: undefined,
+			kindEnumOwnSymbolIds: storageInfo.kind === 'mixedEnum' ? kindEnumOwnSymbolIds(f, nodeMap) : undefined,
 			separatorIdsExpr: separatorIdsExprOf(f, kindEntries, elided),
 			elided
 		});
@@ -701,10 +713,14 @@ function emitFieldCarryingWrap(
 	const wireKeyTypes = collectWrapWireKeyTypes(slots, nodeMap, kindEntries);
 	const needsOther = children.length > 0;
 	const paramType = buildWrapParamType(node.typeName, wireKeyTypes, needsOther ? "_NodeData['$other']" : undefined);
+	const interior = interiorOf(nodeMap.nodes.get(node.kind)!);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 	lines.push(
 		`  data = _keepModelledSlots(data, ${JSON.stringify([...new Set([...slots.map((f) => f.storageKey), ...wireKeyTypes.keys()])])});`
 	);
+	if (interior !== undefined) {
+		lines.push(`  data = _projectLexed(data, TOKEN_INTERIORS[${JSON.stringify(node.kind)}], ${JSON.stringify(node.kind)});`);
+	}
 	if (wrapsAnonLiteralContent(slots, nodeMap)) {
 		lines.push(
 			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} }, _treeEngine(tree));`
@@ -913,6 +929,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				this.emitBranch(node);
 				break;
 			case 'polymorph':
+			case 'alias':
 				this.emitBranch(node);
 				break;
 			case 'supertype':
@@ -953,7 +970,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesToArr = /\b_toArr\b/.test(bodySource) || usesConcatInSourceOrder;
 		const usesOmitWrapKeys = /\b_omitWrapKeys\b/.test(bodySource);
 		const usesKeepModelledSlots = /\b_keepModelledSlots\b/.test(bodySource);
-		const usesIsReadTextLeaf = /\b_isReadTextLeaf\b/.test(bodySource);
+		const usesIsReadTextLeaf = /\b_isReadTextLeaf\b/.test(bodySource) || /\b_projectLexed\b/.test(bodySource);
+		const usesProjectLexed = /\b_projectLexed\b/.test(bodySource);
 		const usesFieldResolvers = /\bFR\./.test(bodySource);
 		const supertypeMembers = buildSupertypeMembersMap(this.#nodeMap);
 		const utilsImports = [
@@ -967,8 +985,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'// Auto-generated by @sittir/codegen — do not edit',
 			'// Lazy view layer over readNode output — shape A surface.',
 			'',
-			"import { readNode as readNodeJs, toTransportData, toEditAt, markEdited as $edited } from '@sittir/common';",
-			"import type { TreeHandle } from '@sittir/common';",
+			`import { readNode as readNodeJs, toTransportData, toEditAt, markEdited as $edited${usesProjectLexed ? ', projectInterior' : ''} } from '@sittir/common';`,
+			`import type { TreeHandle${usesProjectLexed ? ', TokenInterior' : ''} } from '@sittir/common';`,
+			...(usesProjectLexed ? ["import { TOKEN_INTERIORS } from './consts.js';"] : []),
 			"import type { ParsedRoot } from '@sittir/common/engine';",
 			'// Import _NodeData (== AnyNodeData) from @sittir/types',
 			'// instead of re-declaring locally. Single source of truth.',
@@ -999,6 +1018,20 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						"    if (key.startsWith('_')) return false;",
 						'  }',
 						'  return true;',
+						'}',
+						''
+					]
+				: []),
+			...(usesProjectLexed
+				? [
+						'function _projectLexed<D extends object>(data: D, interior: TokenInterior, kind: string): D {',
+						'  if (!_isReadTextLeaf(data)) return data;',
+						'  const projected = projectInterior((data as { $text: string }).$text, interior, kind);',
+						'  const out: Record<string, unknown> = { ...(data as Record<string, unknown>) };',
+						'  for (const [name, value] of Object.entries(projected)) {',
+						'    if (value !== undefined && value !== false) out[`_${name}`] = value;',
+						'  }',
+						'  return out as D;',
 						'}',
 						''
 					]
@@ -1297,9 +1330,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				: []),
 			...(usesProjectMixedEnum
 				? [
-						'function projectMixedEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>, altIds?: Readonly<Record<number, number>>): T {',
+						'function projectMixedEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>, altIds?: Readonly<Record<number, number>>, ownSymbols?: readonly number[]): T {',
 						'  if (!value) return value;',
-						'  if (Array.isArray(value)) return value.map(entry => projectMixedEnumStorage(entry, textIds, altIds)) as unknown as T;',
+						'  if (Array.isArray(value)) return value.map(entry => projectMixedEnumStorage(entry, textIds, altIds, ownSymbols)) as unknown as T;',
 						'  const entry = value as unknown as _NodeData;',
 						'  if (typeof value === "string") {',
 						'    const mappedId = textIds?.[value];',
@@ -1310,6 +1343,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    const folded = altIds?.[entry.$type];',
 						'    if (folded !== undefined) return folded as unknown as T;',
 						'    if (textIds && Object.values(textIds).includes(entry.$type)) return entry.$type as unknown as T;',
+						'    if (ownSymbols?.includes(entry.$type) && typeof entry.$text === "string") {',
+						'      const memberId = textIds?.[entry.$text];',
+						'      if (typeof memberId === "number") return memberId as unknown as T;',
+						'    }',
 						'  }',
 						'  return value;',
 						'}'
@@ -1605,13 +1642,26 @@ export class WrapEmitter implements CodegenEmitter<string> {
 					continue;
 				}
 				const memberName = entry?.member ?? node.typeName;
+				if (node instanceof AssembledAlias) {
+					if (entry === undefined || (entry.parseId ?? entry.id) !== node.aliasTypeId) {
+						throw new Error(
+							`emitWrap: alias envelope '${kind}' has no catalog entry for its type id ${node.aliasTypeId} — the reader stamps that id and nothing could dispatch it`
+						);
+					}
+					rows.set(memberName, {
+						row: `  ${wrapTableKey(kind, memberName)}: (d, t) => wrap${node.typeName}(_aliasEnvelope(d, t) as unknown as T.${node.typeName}, t),`,
+						exact: true,
+						typeExpr: `ReturnType<typeof wrap${node.typeName}>`
+					});
+					continue;
+				}
 				claimRow(
 					this.#kindEntries ? memberName : kind,
 					`  ${wrapTableKey(kind, memberName)}: (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`,
 					entry !== undefined && entry.kind === kind,
 					`ReturnType<typeof wrap${node.typeName}>`
 				);
-			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || node instanceof AssembledKeyword) {
+			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || isVisibleTextLeaf(node)) {
 				if (!node.factoryName) continue;
 				if (this.#kindEntries) {
 					const entry = findKindEntry(this.#kindEntries, kind);
@@ -1630,6 +1680,41 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		for (const { row } of rows.values()) lines.push(row);
 		lines.push('};');
 		lines.push('');
+		if ([...this.#nodeMap.nodes.values()].some((node) => node instanceof AssembledAlias)) {
+			lines.push(
+				'function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {',
+				'  type Wire = _NodeData & {',
+				'    readonly $storageType?: number;',
+				'    readonly $_trivia?: unknown;',
+				'    readonly $nodeHandle?: number;',
+				'    readonly $childIndex?: number;',
+				'    readonly $span?: unknown;',
+				'  };',
+				'  const shown = data as Wire;',
+				'  if (shown.$storageType === undefined) {',
+				"    const slots = Object.keys(shown).filter((key) => key.charCodeAt(0) === 95);",
+				"    if (slots.length !== 1 || slots[0] === '_content') return data;",
+				'    const { [slots[0]!]: child, ...container } = shown as unknown as Record<string, unknown>;',
+				'    return { ...container, _content: child } as unknown as _NodeData;',
+				'  }',
+				'  const full = (',
+				'    shown.$nodeHandle != null && shown.$childIndex != null ? readNode(tree, shown.$nodeHandle, shown.$childIndex) : shown',
+				'  ) as Wire;',
+				'  const { $storageType, $_trivia, $childIndex: _childIndex, ...storage } = full;',
+				'  return {',
+				'    $type: shown.$type,',
+				'    $source: shown.$source,',
+				'    $named: shown.$named,',
+				'    $span: shown.$span,',
+				'    $nodeHandle: shown.$nodeHandle,',
+				'    $childIndex: shown.$childIndex,',
+				'    $_trivia,',
+				'    _content: { ...storage, $type: $storageType }',
+				'  } as unknown as _NodeData;',
+				'}',
+				''
+			);
+		}
 		if (this.#kindEntries) {
 			lines.push('interface _WrapReturnByKindId {');
 			for (const [tableKey, { typeExpr }] of rows) {

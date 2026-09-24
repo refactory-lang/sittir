@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { addressSites, matchAddress, resolveBindings } from '../site-addresses.ts';
+import { addressSites, matchAddress, matchAddressWith, resolveBindings } from '../site-addresses.ts';
+import { CHOICE, PATTERN, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
+import { assemble, AssembleCtx } from '../../assemble.ts';
+import { makeNormalized } from '../../__tests__/make-normalized.ts';
+import { supertypeMembersByPublicName } from '../supertype-members.ts';
 import { parsePreferencePath } from '../../../dsl/primitives/preference-path.ts';
 import type { KindEntryLike } from '../../generated-metadata.ts';
 import type { RuleSpacingSite } from '../render-rules.ts';
@@ -21,6 +25,35 @@ describe('a supertype segment matches the sites of its members', () => {
 	});
 	it('reaches nothing without the membership', () => {
 		expect(matchAddress(parsePreferencePath('(statement)/after'), sites, NO_SUPERTYPES)).toEqual([]);
+	});
+});
+
+describe('a kind-scoped declaration on a polymorph reaches only its own edge, never a nested polymorph’s own members', () => {
+	const sym = (name: string) => ({ type: SYMBOL, name }) as const;
+	const nodeMap = assemble(
+		AssembleCtx.from(
+			makeNormalized({
+				visibility_modifier_group: { type: CHOICE, members: [sym('visibility_modifier_pub_in_path'), sym('crate')] },
+				visibility_modifier_pub_in_path: { type: CHOICE, members: [sym('scoped_identifier'), sym('identifier')] },
+				crate: { type: STRING, value: 'crate' },
+				scoped_identifier: { type: PATTERN, value: '[a-z]+::[a-z]+' },
+				identifier: { type: PATTERN, value: '[a-z]+' }
+			})
+		)
+	);
+	const members = supertypeMembersByPublicName(nodeMap);
+	const site = (kind: string) => ({ kind, slot: 'x', address: 'x', label: 'x', path: parsePreferencePath(`(${kind})/before`) });
+	const sites = addressSites([site('visibility_modifier_group'), site('scoped_identifier')], []);
+
+	it('takes each polymorph’s direct arms as its membership', () => {
+		expect(members.get('visibility_modifier_group')).toEqual(['visibility_modifier_pub_in_path', 'crate']);
+		expect(members.get('visibility_modifier_pub_in_path')).toEqual(['scoped_identifier', 'identifier']);
+	});
+
+	it('hits only its own edge', () => {
+		expect(matchAddress(parsePreferencePath('(visibility_modifier_group)/before'), sites, members).map((s) => s.kind)).toEqual([
+			'visibility_modifier_group'
+		]);
 	});
 });
 
@@ -130,8 +163,8 @@ describe('resolveBindings', () => {
 			[site('token_tree_punctuation', 'comma_after'), site('token_tree_punctuation', 'colon_after')],
 			ENTRIES
 		);
-	const armsOf = (out: Map<number, string>, sites: ReturnType<typeof addressSites>): Map<string, string> =>
-		new Map([...out].map(([i, arm]) => [sites[i]!.address, arm]));
+	const armsOf = (out: ReturnType<typeof resolveBindings>, sites: ReturnType<typeof addressSites>): Map<string, string> =>
+		new Map([...out].map(([i, { arm }]) => [sites[i]!.address, arm]));
 
 	it('applies a broad binding to every site it matches', () => {
 		const sites = punctuation();
@@ -140,7 +173,7 @@ describe('resolveBindings', () => {
 			[{ address: 'token_tree_punctuation', label: 'punctuation/after' }],
 			sites, NO_SUPERTYPES
 		);
-		expect([...out.values()]).toEqual(['space', 'space']);
+		expect([...out.values()].map((v) => v.arm)).toEqual(['space', 'space']);
 	});
 
 	it('lets a narrower declaration win over a broader binding', () => {
@@ -168,7 +201,7 @@ describe('resolveBindings', () => {
 			[{ address: 'keyword_argument/"="/before', label: 'assignment/before' }],
 			sites, NO_SUPERTYPES
 		);
-		expect([...out.values()]).toEqual(['tight']);
+		expect([...out.values()].map((v) => v.arm)).toEqual(['tight']);
 	});
 
 	it('rejects two addresses whose site sets overlap without nesting', () => {
@@ -255,8 +288,72 @@ describe('a separator gap names its token', () => {
 			[{ address: '_/_/separator/","/before', label: 'comma/before' }],
 			sites, NO_SUPERTYPES
 		);
-		const bySite = new Map([...arms].map(([i, arm]) => [sites[i]!.kind, arm]));
+		const bySite = new Map([...arms].map(([i, { arm }]) => [sites[i]!.kind, arm]));
 		expect(bySite.get('arguments')).toBe('tight');
 		expect(bySite.get('tuple_type')).toBe('space');
+	});
+});
+
+describe('a kind edge answers to its edge token’s face as a cascaded address', () => {
+	const kindEntries = [{ kind: 'lparen', anon: true, symbolName: '(', literalText: '(', member: 'Lparen', id: 7 }] as unknown as KindEntryLike[];
+	const sites = addressSites(
+		[
+			{ kind: 'args', slot: 'args', address: 'args_before', label: 'args_before', edgeLiterals: ['lparen'] },
+			{ kind: 'args', slot: 'args', address: 'args_after', label: 'args_after' },
+			{ kind: 'call', slot: 'lparen', address: 'lparen_before', label: 'lparen_before' }
+		],
+		kindEntries
+	);
+	it('matches the grammar-wide token face through the cascade path and marks the hit as cascaded', () => {
+		const hits = matchAddressWith(parsePreferencePath('_/"("/before'), sites, NO_SUPERTYPES);
+		expect(hits.map((h) => `${h.site.address}${h.cascade ? '~' : ''}`)).toEqual(['args_before~', 'lparen_before']);
+		expect(matchAddress(parsePreferencePath('_/"("/after'), sites, NO_SUPERTYPES)).toEqual([]);
+	});
+	it('never cascades a kind-scoped literal row onto that kind’s own edge', () => {
+		const hits = matchAddressWith(parsePreferencePath('args/"("/before'), sites, NO_SUPERTYPES);
+		expect(hits).toEqual([]);
+	});
+	it('resolves a cascaded hit with origin cascade and lets the kind’s own row win over it', () => {
+		const resolved = resolveBindings(
+			[
+				{ path: '_/"("/before', arm: 'tight' },
+				{ path: 'args/before', arm: 'space' }
+			],
+			[],
+			sites,
+			NO_SUPERTYPES,
+			false
+		);
+		const byAddress = new Map([...resolved].map(([i, v]) => [sites[i]!.address, v]));
+		expect(byAddress.get('args_before')).toEqual({ arm: 'space', origin: 'preference' });
+		expect(byAddress.get('lparen_before')).toEqual({ arm: 'tight', origin: 'literal-default' });
+		const cascadedOnly = resolveBindings([{ path: '_/"("/before', arm: 'tight' }], [], sites, NO_SUPERTYPES, false);
+		expect(new Map([...cascadedOnly].map(([i, v]) => [sites[i]!.address, v])).get('args_before')).toEqual({ arm: 'tight', origin: 'cascade' });
+	});
+});
+
+describe('a kind edge over a choice of tokens cascades only a unanimous face', () => {
+	const kindEntries = [
+		{ kind: 'dot_dot', anon: true, symbolName: '..', literalText: '..', member: 'DotDot', id: 3 },
+		{ kind: 'dot_dot_eq', anon: true, symbolName: '..=', literalText: '..=', member: 'DotDotEq', id: 4 }
+	] as unknown as KindEntryLike[];
+	const sites = addressSites([{ kind: 'range', slot: 'range', address: 'range_before', label: 'range_before', edgeLiterals: ['dot_dot', 'dot_dot_eq'] }], kindEntries);
+	const resolve = (rows: { path: string; arm: string }[]) =>
+		[...resolveBindings(rows, [], sites, NO_SUPERTYPES, false)].map(([i, v]) => `${sites[i]!.address}=${v.arm}/${v.origin}`);
+
+	it('gives the edge one cascade path per token', () => {
+		expect(sites[0]!.cascadePaths).toHaveLength(2);
+	});
+	it('cascades when every token resolves to the same declared face, without the rows overlapping', () => {
+		expect(resolve([{ path: '_/".."/before', arm: 'tight' }, { path: '_/"..="/before', arm: 'tight' }])).toEqual(['range_before=tight/cascade']);
+	});
+	it('cascades nothing when the tokens disagree or one token is undeclared', () => {
+		expect(resolve([{ path: '_/".."/before', arm: 'tight' }, { path: '_/"..="/before', arm: 'space' }])).toEqual([]);
+		expect(resolve([{ path: '_/".."/before', arm: 'tight' }])).toEqual([]);
+	});
+	it('lets the kind’s own row win over a unanimous cascade', () => {
+		expect(
+			resolve([{ path: '_/".."/before', arm: 'tight' }, { path: '_/"..="/before', arm: 'tight' }, { path: 'range/before', arm: 'space' }])
+		).toEqual(['range_before=space/preference']);
 	});
 });

@@ -43,7 +43,13 @@ pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages
 ```bash
 pnpm run validate:native      # regen all grammars + native validator counts
 pnpm run validate:history     # compare recorded validation runs (objective before/after)
+cargo test --workspace --no-default-features   # every crate's tests, grammar crates included
 ```
+
+`cargo test -p sittir-core` alone misses the grammar crates' own tests
+(`rust/crates/sittir-<lang>/tests/`), which build against the generated
+transports; `--no-default-features` is what lets their test binaries link
+without a Node runtime.
 
 `validate:native` is the primary gate for codegen-affecting work. For
 corpus-affecting changes report raw per-grammar counts (fromPass/fromTotal,
@@ -78,6 +84,13 @@ pnpm run build:debug          # debug binding (dev only)
 
 Prefer release builds when running the validators; the validation load is
 sized for the optimized binding.
+
+Rebuild natives through `pnpm exec tsx packages/cli/src/cli.ts gen --grammar
+<lang> --all --output packages/<lang>/src` (or `pnpm run validate:native`), not
+by running cargo and copying the dylib: only the `napi build` step regenerates
+`rust/crates/sittir-<lang>/index.d.ts`, so a hand-copied binary leaves it stale.
+The workspace `[profile.release] strip = "none"` keeps the binding loadable on
+macOS (see the comment in `Cargo.toml`).
 
 ## Diagnostic tooling
 

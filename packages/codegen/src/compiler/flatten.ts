@@ -18,6 +18,8 @@ import {
 import type { RenderRule, Rule, RuleSeparator, SeqRule } from '../types/rule.ts';
 import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { selfReferentialFoldOf, collectFixedLiteral } from '../dsl/rule-patterns.ts';
+import { DiagnosticSink } from '../types/diagnostics.ts';
+import { runToFixpoint } from './fixpoint.ts';
 import { attributeBuilder, buildOptional, overlaySeq } from '../dsl/builders.ts';
 import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
@@ -66,13 +68,13 @@ function construct(node: Input): Output {
 		case REPEAT1:
 			return b.repeat1(withSeparator(rebuild(node.content), node.separator));
 		case FIELD:
-			return b.field(node.name, rebuild(node.content));
+			return withKindFacts(b.field(node.name, rebuild(node.content)), node);
 		case ALIAS:
 			return b.alias(rebuild(node.content), node.named ? { ...b.symbol(node.value), kindId: node.kindId } : node.value);
 		case TOKEN:
 			return node.immediate ? b.token.immediate(rebuild(node.content)) : b.token(rebuild(node.content));
 		case STRING:
-			return { ...node, ...b.string(node.value) };
+			return { ...node, ...b.string(node.value), ...(node.nonterminal === true ? { nonterminal: true } : {}) };
 		case INDENT:
 			return { ...node, ...b.indent() };
 		case DEDENT:
@@ -99,13 +101,17 @@ export function flatten(rule: Input): Output {
 	return rebuild(rule);
 }
 
-export function flattenRules(rules: Record<string, Rule<'link'>>, wordMatcher?: RegExp): Record<string, RenderRule> {
+export function flattenRules(
+	rules: Record<string, Rule<'link'>>,
+	wordMatcher?: RegExp,
+	diagnostics?: DiagnosticSink
+): Record<string, RenderRule> {
 	const result: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
 		const flat = fuseHeadRepeatLists(flatten(applySelfReferentialFold(name, rule)));
 		result[name] = withKindFacts(flat, rule);
 	}
-	return stampTerminality(factorChoiceArmsToFixpoint(result), wordMatcher);
+	return stampTerminality(factorChoiceArmsToFixpoint(result, diagnostics ?? new DiagnosticSink()), wordMatcher);
 }
 
 function stampTerminality(rules: Record<string, RenderRule>, wordMatcher: RegExp | undefined): Record<string, RenderRule> {
@@ -221,16 +227,25 @@ function foldPermutationArms(rule: RenderRule): RenderRule {
 	return folded;
 }
 
-function factorChoiceArmsToFixpoint(rules: Record<string, RenderRule>): Record<string, RenderRule> {
+function factorChoiceArmsToFixpoint(
+	rules: Record<string, RenderRule>,
+	diagnostics: DiagnosticSink
+): Record<string, RenderRule> {
 	const out: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
 		let current = rule;
-		for (let i = 0; i < 16; i++) {
-			const step = (r: RenderRule): RenderRule => foldPermutationArms(factorChoiceArms(r));
-			const next = step(ruleWalker.map(current, step));
-			if (next === current || structuralKey(next) === structuralKey(current)) break;
-			current = next;
-		}
+		runToFixpoint({
+			name: 'flatten.factorChoiceArmsToFixpoint',
+			cap: 16,
+			diagnostics,
+			step: () => {
+				const step = (r: RenderRule): RenderRule => foldPermutationArms(factorChoiceArms(r));
+				const next = step(ruleWalker.map(current, step));
+				const changed = !(next === current || structuralKey(next) === structuralKey(current));
+				current = next;
+				return changed;
+			}
+		});
 		out[name] = current;
 	}
 	return out;

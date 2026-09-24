@@ -1,18 +1,15 @@
 {
   "_parameters": 1,
   "argument_list": 2,
-  "as_pattern": 6,
-  "assignment_eq": 3,
+  "assignment_eq": 1,
   "call": 2,
   "conditional_expression": 1,
-  "expression_statement": 8,
+  "expression_statement": 4,
   "function_definition": 3,
   "list": 3,
   "list_comprehension": 1,
-  "module": 10,
+  "module": 5,
   "parameters": 1,
-  "string": 3,
-  "subscript": 1,
   "tuple": 2,
   "tuple_pattern": 1
 }

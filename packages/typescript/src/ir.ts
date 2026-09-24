@@ -20,14 +20,24 @@ export const synonym = {
 	boolean(value: boolean): ReturnType<typeof F.buildTrue> | ReturnType<typeof F.buildFalse> {
 		return value ? F.buildTrue() : F.buildFalse();
 	},
-	number(value: number): ReturnType<typeof F.buildNumber> {
-		return F.buildNumber(String(value));
+	number(value: number): ReturnType<typeof F.number> {
+		return F.number(String(value));
 	},
-	comment(text: string): ReturnType<typeof F.buildComment> {
-		return F.buildComment(text);
-	},
+	comment: Object.assign(
+		function comment(content: string): ReturnType<typeof F.comment.line> {
+			return F.comment.line(content);
+		},
+		{
+			line(text: string): ReturnType<typeof F.comment.line> {
+				return F.comment.line(text);
+			},
+			block(text: string): ReturnType<typeof F.comment.block> {
+				return F.comment.block(text);
+			}
+		}
+	),
 	type(name: string): ReturnType<typeof F.buildTypeIdentifier> {
-		return F.buildTypeIdentifier(name);
+		return F.buildTypeIdentifier(F.buildIdentifier(name));
 	},
 	identifier(name: string): ReturnType<typeof F.buildIdentifier> {
 		return F.buildIdentifier(name);
@@ -184,7 +194,7 @@ export const primaryExpression: {
 	readonly identifier: typeof F.buildIdentifier;
 	readonly this: typeof F.buildThis;
 	readonly super: typeof F.buildSuper;
-	readonly number: typeof F.buildNumber;
+	readonly number: typeof F.number;
 	readonly string: typeof F.string;
 	readonly templateString: typeof F.templateString;
 	readonly regex: typeof F.regex;
@@ -208,7 +218,7 @@ export const primaryExpression: {
 	identifier: F.buildIdentifier,
 	this: F.buildThis,
 	super: F.buildSuper,
-	number: F.buildNumber,
+	number: F.number,
 	string: F.string,
 	templateString: F.templateString,
 	regex: F.regex,
@@ -283,45 +293,35 @@ export const identifier: typeof F.buildIdentifier & {
 });
 
 export const pattern: {
+	readonly member: typeof F.memberExpression;
+	readonly subscript: typeof F.subscriptExpression;
+	readonly undefined: typeof F.buildUndefined;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly object: typeof F.objectPattern;
+	readonly array: typeof F.arrayPattern;
+	readonly nonNull: typeof F.nonNullExpression;
 	readonly rest: typeof F.restPattern;
 } = {
+	member: F.memberExpression,
+	subscript: F.subscriptExpression,
+	undefined: F.buildUndefined,
+	identifier: F.buildIdentifier,
+	object: F.objectPattern,
+	array: F.arrayPattern,
+	nonNull: F.nonNullExpression,
 	rest: F.restPattern
 };
 
 export const propertyName: {
-	readonly privateIdentifier: typeof F.buildPrivatePropertyIdentifier;
+	readonly privateIdentifier: typeof F.privatePropertyIdentifier;
 	readonly string: typeof F.string;
-	readonly number: typeof F.buildNumber;
+	readonly number: typeof F.number;
 	readonly computed: typeof F.computedPropertyName;
 } = {
-	privateIdentifier: F.buildPrivatePropertyIdentifier,
+	privateIdentifier: F.privatePropertyIdentifier,
 	string: F.string,
-	number: F.buildNumber,
+	number: F.number,
 	computed: F.computedPropertyName
-};
-
-export const statementIdentifier: {
-	readonly identifier: typeof F.buildIdentifier;
-} = {
-	identifier: F.buildIdentifier
-};
-
-export const shorthandPropertyIdentifier: {
-	readonly identifier: typeof F.buildIdentifier;
-} = {
-	identifier: F.buildIdentifier
-};
-
-export const shorthandPropertyIdentifierPattern: {
-	readonly identifier: typeof F.buildIdentifier;
-} = {
-	identifier: F.buildIdentifier
-};
-
-export const propertyIdentifier: {
-	readonly identifier: typeof F.buildIdentifier;
-} = {
-	identifier: F.buildIdentifier
 };
 
 export const importIdentifier: {
@@ -356,7 +356,6 @@ export const tupleTypeMember: {
 
 export const primaryType: {
 	readonly parenthesized: typeof F.parenthesizedType;
-	readonly identifier: typeof F.buildIdentifier;
 	readonly nestedIdentifier: typeof F.nestedTypeIdentifier;
 	readonly generic: typeof F.genericType;
 	readonly object: typeof F.objectType;
@@ -375,7 +374,6 @@ export const primaryType: {
 	readonly union: typeof F.unionType;
 } = {
 	parenthesized: F.parenthesizedType,
-	identifier: F.buildIdentifier,
 	nestedIdentifier: F.nestedTypeIdentifier,
 	generic: F.genericType,
 	object: F.objectType,
@@ -396,6 +394,7 @@ export const primaryType: {
 
 export const ir: {
 	readonly program: typeof F.program;
+	readonly hashBangLine: typeof F.hashBangLine;
 	readonly namespaceExport: typeof F.namespaceExport;
 	readonly exportClause: typeof F.exportClause;
 	readonly exportSpecifier: typeof F.exportSpecifier;
@@ -428,7 +427,6 @@ export const ir: {
 	readonly switchDefault: typeof F.switchDefault;
 	readonly catchClause: typeof F.catchClause;
 	readonly finallyClause: typeof F.finallyClause;
-	readonly parenthesizedExpression: typeof F.parenthesizedExpression;
 	readonly yieldExpression: typeof F.yieldExpression;
 	readonly object: typeof F.object;
 	readonly objectPattern: typeof F.objectPattern;
@@ -445,7 +443,6 @@ export const ir: {
 	readonly generatorFunction: typeof F.generatorFunction;
 	readonly generatorFunctionDeclaration: typeof F.generatorFunctionDeclaration;
 	readonly arrowFunction: typeof F.arrowFunction;
-	readonly callExpression: typeof F.callExpression;
 	readonly newExpression: typeof F.newExpression;
 	readonly awaitExpression: typeof F.awaitExpression;
 	readonly memberExpression: typeof F.memberExpression;
@@ -457,10 +454,11 @@ export const ir: {
 	readonly binaryExpression: typeof F.binaryExpression;
 	readonly unaryExpression: typeof F.unaryExpression;
 	readonly sequenceExpression: typeof F.sequenceExpression;
-	readonly string: typeof F.string;
+	readonly escapeSequence: typeof F.escapeSequence;
 	readonly templateString: typeof F.templateString;
 	readonly templateSubstitution: typeof F.templateSubstitution;
 	readonly regex: typeof F.regex;
+	readonly privatePropertyIdentifier: typeof F.privatePropertyIdentifier;
 	readonly arguments: typeof F.arguments_;
 	readonly decorator: typeof F.decorator;
 	readonly decoratorMemberExpression: typeof F.decoratorMemberExpression;
@@ -564,7 +562,12 @@ export const ir: {
 	readonly importSpecifier: typeof F.importSpecifier;
 	readonly variableDeclarator: typeof F.variableDeclarator;
 	readonly forHeader: typeof F.forHeader;
+	readonly parenthesizedExpression: typeof F.parenthesizedExpression;
+	readonly callExpression: typeof F.callExpression;
 	readonly updateExpression: typeof F.updateExpression;
+	readonly string: typeof F.string;
+	readonly comment: typeof F.comment;
+	readonly number: typeof F.number;
 	readonly metaProperty: typeof F.metaProperty;
 	readonly indexSignature: typeof F.indexSignature;
 	readonly exportStatementDefault: typeof F.exportStatementDefault;
@@ -582,18 +585,13 @@ export const ir: {
 	readonly existentialType: typeof F.buildExistentialType;
 	readonly metaPropertyNewTarget: typeof F.buildMetaPropertyNewTarget;
 	readonly metaPropertyImportMeta: typeof F.buildMetaPropertyImportMeta;
-	readonly hashBangLine: typeof F.buildHashBangLine;
 	readonly unescapedDoubleStringFragment: typeof F.buildUnescapedDoubleStringFragment;
 	readonly unescapedSingleStringFragment: typeof F.buildUnescapedSingleStringFragment;
-	readonly escapeSequence: typeof F.buildEscapeSequence;
-	readonly comment: typeof F.buildComment;
 	readonly regexPattern: typeof F.buildRegexPattern;
 	readonly regexFlags: typeof F.buildRegexFlags;
-	readonly number: typeof F.buildNumber;
-	readonly privatePropertyIdentifier: typeof F.buildPrivatePropertyIdentifier;
-	readonly templateChars: typeof F.buildTemplateChars;
 	readonly htmlComment: typeof F.buildHtmlComment;
 	readonly jsxText: typeof F.buildJsxText;
+	readonly templateChars: typeof F.buildTemplateChars;
 	readonly abstractClass: typeof F.abstractClassDeclaration;
 	readonly ambient: typeof F.ambientDeclaration;
 	readonly as: typeof F.asExpression;
@@ -603,7 +601,6 @@ export const ir: {
 	readonly binary: typeof F.binaryExpression;
 	readonly block: typeof F.statementBlock;
 	readonly break: typeof F.breakStatement;
-	readonly call: typeof F.callExpression;
 	readonly computed: typeof F.computedPropertyName;
 	readonly conditional: typeof F.conditionalType;
 	readonly constructor: typeof F.constructorType;
@@ -636,8 +633,8 @@ export const ir: {
 	readonly nonNull: typeof F.nonNullExpression;
 	readonly optional: typeof F.optionalParameter;
 	readonly parameter: typeof F.tupleParameter;
-	readonly parenthesized: typeof F.parenthesizedExpression;
-	readonly privateIdentifier: typeof F.buildPrivatePropertyIdentifier;
+	readonly parenthesized: typeof F.parenthesizedType;
+	readonly privateIdentifier: typeof F.privatePropertyIdentifier;
 	readonly query: typeof F.typeQuery;
 	readonly readonly: typeof F.readonlyType;
 	readonly required: typeof F.requiredParameter;
@@ -672,10 +669,6 @@ export const ir: {
 	readonly identifier: typeof identifier;
 	readonly pattern: typeof pattern;
 	readonly propertyName: typeof propertyName;
-	readonly statementIdentifier: typeof statementIdentifier;
-	readonly shorthandPropertyIdentifier: typeof shorthandPropertyIdentifier;
-	readonly shorthandPropertyIdentifierPattern: typeof shorthandPropertyIdentifierPattern;
-	readonly propertyIdentifier: typeof propertyIdentifier;
 	readonly importIdentifier: typeof importIdentifier;
 	readonly type: typeof type;
 	readonly tupleTypeMember: typeof tupleTypeMember;
@@ -684,6 +677,7 @@ export const ir: {
 } = {
 	// Node factories
 	program: F.program,
+	hashBangLine: F.hashBangLine,
 	namespaceExport: F.namespaceExport,
 	exportClause: F.exportClause,
 	exportSpecifier: F.exportSpecifier,
@@ -716,7 +710,6 @@ export const ir: {
 	switchDefault: F.switchDefault,
 	catchClause: F.catchClause,
 	finallyClause: F.finallyClause,
-	parenthesizedExpression: F.parenthesizedExpression,
 	yieldExpression: F.yieldExpression,
 	object: F.object,
 	objectPattern: F.objectPattern,
@@ -733,7 +726,6 @@ export const ir: {
 	generatorFunction: F.generatorFunction,
 	generatorFunctionDeclaration: F.generatorFunctionDeclaration,
 	arrowFunction: F.arrowFunction,
-	callExpression: F.callExpression,
 	newExpression: F.newExpression,
 	awaitExpression: F.awaitExpression,
 	memberExpression: F.memberExpression,
@@ -745,10 +737,11 @@ export const ir: {
 	binaryExpression: F.binaryExpression,
 	unaryExpression: F.unaryExpression,
 	sequenceExpression: F.sequenceExpression,
-	string: F.string,
+	escapeSequence: F.escapeSequence,
 	templateString: F.templateString,
 	templateSubstitution: F.templateSubstitution,
 	regex: F.regex,
+	privatePropertyIdentifier: F.privatePropertyIdentifier,
 	arguments: F.arguments_,
 	decorator: F.decorator,
 	decoratorMemberExpression: F.decoratorMemberExpression,
@@ -852,7 +845,12 @@ export const ir: {
 	importSpecifier: F.importSpecifier,
 	variableDeclarator: F.variableDeclarator,
 	forHeader: F.forHeader,
+	parenthesizedExpression: F.parenthesizedExpression,
+	callExpression: F.callExpression,
 	updateExpression: F.updateExpression,
+	string: F.string,
+	comment: F.comment,
+	number: F.number,
 	metaProperty: F.metaProperty,
 	indexSignature: F.indexSignature,
 	exportStatementDefault: F.exportStatementDefault,
@@ -874,18 +872,13 @@ export const ir: {
 	metaPropertyImportMeta: F.buildMetaPropertyImportMeta,
 
 	// Leaf node factories
-	hashBangLine: F.buildHashBangLine,
 	unescapedDoubleStringFragment: F.buildUnescapedDoubleStringFragment,
 	unescapedSingleStringFragment: F.buildUnescapedSingleStringFragment,
-	escapeSequence: F.buildEscapeSequence,
-	comment: F.buildComment,
 	regexPattern: F.buildRegexPattern,
 	regexFlags: F.buildRegexFlags,
-	number: F.buildNumber,
-	privatePropertyIdentifier: F.buildPrivatePropertyIdentifier,
-	templateChars: F.buildTemplateChars,
 	htmlComment: F.buildHtmlComment,
 	jsxText: F.buildJsxText,
+	templateChars: F.buildTemplateChars,
 
 	// Supertype-stripped short aliases
 	abstractClass: F.abstractClassDeclaration,
@@ -897,7 +890,6 @@ export const ir: {
 	binary: F.binaryExpression,
 	block: F.statementBlock,
 	break: F.breakStatement,
-	call: F.callExpression,
 	computed: F.computedPropertyName,
 	conditional: F.conditionalType,
 	constructor: F.constructorType,
@@ -930,8 +922,8 @@ export const ir: {
 	nonNull: F.nonNullExpression,
 	optional: F.optionalParameter,
 	parameter: F.tupleParameter,
-	parenthesized: F.parenthesizedExpression,
-	privateIdentifier: F.buildPrivatePropertyIdentifier,
+	parenthesized: F.parenthesizedType,
+	privateIdentifier: F.privatePropertyIdentifier,
 	query: F.typeQuery,
 	readonly: F.readonlyType,
 	required: F.requiredParameter,
@@ -968,10 +960,6 @@ export const ir: {
 	identifier,
 	pattern,
 	propertyName,
-	statementIdentifier,
-	shorthandPropertyIdentifier,
-	shorthandPropertyIdentifierPattern,
-	propertyIdentifier,
 	importIdentifier,
 	type,
 	tupleTypeMember,

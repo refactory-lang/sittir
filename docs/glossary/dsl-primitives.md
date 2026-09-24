@@ -432,7 +432,7 @@ the grammar does not name it.
 
 ### `packages/codegen/src/dsl/primitives/variant.ts::variant`
 
-Builds the placeholder; `options.absent` is carried only when set.
+Builds the placeholder; `options.absent` and `options.default` are carried only when set. `default: true` names the arm the parent's own factory builds when given a bare value; it replaces any default the arms already carry (see `clearSiblingDefaults`).
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_SUPERTYPE`
 
@@ -556,6 +556,12 @@ address is `<slot>_separator` and its arm is a token kind name, checked
 against the list's literal separator kinds where separator sites are
 collected, not by the wire.
 
+### `packages/codegen/src/dsl/primitives/spacing.ts::VARIANT_LABEL`
+
+```text
+The address segment and label of a supertype's variant-choice options site.
+```
+
 ### `packages/codegen/src/dsl/primitives/spacing.ts::isSeparatorAddress`
 
 Whether a site address is a list's separator default (`<slot>_separator`).
@@ -593,3 +599,12 @@ keys, the render-rules seam detection, and the site collection.
  *  spelled that way. */
 ```
 
+### `packages/codegen/src/dsl/primitives/splice.ts::splice`
+
+Marks a position in a rule's patches as a visible wrapper spliced onto its parent: the wrapper stays a node of its own kind in the tree and on the surface, and the parent's config takes the wrapper's keys in its place. `splice()` is the only way a reference to a visible kind becomes a splice seat.
+
+### `packages/codegen/src/dsl/primitives/regex.ts::regex`
+
+```text
+A patch placeholder carrying a replacement regex source for the pattern at the patched path.
+```

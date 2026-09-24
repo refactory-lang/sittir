@@ -1481,6 +1481,16 @@ as one arm fact, not two derivations of the same declaration.
 A `group()` placeholder lowers to `annotations.hoisted` on the addressed
 rule (`withAnnotations`), the declaration link collects `hoistedKinds` from.
 
+#### splice
+
+A `splice()` patch stamps `annotations.spliced` on the member at its path, the way `group()` stamps `annotations.hoisted`. The two differ in what they seat: `hoisted` makes a sittir-minted hidden group spliceable wherever it is referenced, `spliced` makes one visible reference spliceable without hiding its kind.
+
+#### token interior
+
+```text
+`regex(/.../)` replaces the regex of the pattern at the patched path, so a bare pattern can draw named groups
+that name its slots. The path of a rule that is itself a pattern is `.`.
+```
 
 ### `packages/codegen/src/dsl/transform/transform.ts::relabelUniformFieldSet`
 
@@ -1769,3 +1779,19 @@ Only a HIDDEN group lift (`isHiddenKind`) is looked through. A visible lift is a
  * the leading underscore), a symbol's name, looking through prec wrappers.
  */
 ```
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::classifyTokenChoice`
+
+What a choice under a token is, by its arms: `presence` when an arm is blank, `spelling` when every arm is a string literal, `forms` otherwise. Only `forms` hoists; the other two are what the token-interior pass seats as a flag or an enum slot.
+
+### `packages/codegen/src/dsl/transform/transform.ts::clearSiblingDefaults`
+
+After a patch stamps `default` on one arm of a choice (`arm.default()` or `variant(name, { default: true })`), drops the `default` annotation from the other arms of that same choice, so an authored default always wins over one an earlier phase inferred (enrich picks a default arm for every token-form parent). Reaches the parent choice through the patch path minus its last segment and does nothing unless that segment is an index.
+
+### `packages/codegen/src/dsl/transform/transform.ts::dropDefault`
+
+Removes `annotations.default` from a member, looking through an `ALIAS` to the annotated content the way `isDefaultArm` reads it.
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::distributeTokenForms`
+
+The rule algebra behind the token-form hoist. For a rule whose prec-peeled core is a `TOKEN` or `IMMEDIATE_TOKEN`, finds the outermost form alternation on any path from the token root (descending through seqs and through a presence choice whose live arm is a form alternation, in which case the blank is one more arm) and distributes the whole token body over the arms: each arm becomes its own token of the same wrapper kind with the surrounding structure kept, and the result is a `CHOICE` of those tokens under the original prec stack. An arm that is itself an alternation is not descended into; it stays one lexeme. Two hazards are diagnostics: an arm that matches the empty string (a pattern is tested as an anchored regex against the empty string), and two arms with identical bodies. A presence choice is recognised in both spellings the two pipelines produce: a `CHOICE` with a blank arm (tree-sitter's) and an `OPTIONAL` node (sittir's evaluate), so both mint the same arms. Any other rule shape is returned as is.

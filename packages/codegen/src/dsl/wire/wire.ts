@@ -22,6 +22,7 @@ import {
 	type VariantPlaceholder
 } from '../primitives/variant.ts';
 import { parsePath } from '../transform/transform-path.ts';
+import { renameNameList, renameRule } from './symbol-renames.ts';
 import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
@@ -368,12 +369,20 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 	const inline = wrapInlineCallback(cfg.inline as DollarFn<unknown[]> | undefined, context);
 	const supertypes = wrapSupertypesCallback(cfg.supertypes as DollarFn<unknown[]> | undefined, context);
 
+	const renamedCallbacks = Object.fromEntries(
+		(['extras', 'externals', 'precedences'] as const)
+			.filter((key) => key in cfg || baseDeclares(baseArg, key))
+			.map((key) => [key, renamingCallback(cfg[key as keyof typeof cfg] as (() => unknown) | undefined, renameNameList, context)])
+	);
+
 	const wired = {
 		...cfg,
 		rules: outRules,
-		...(conflicts === undefined ? {} : { conflicts }),
-		...(inline === undefined ? {} : { inline }),
-		supertypes
+		...renamedCallbacks,
+		...(cfg.reserved === undefined ? {} : { reserved: renamingReserved(cfg.reserved, context) }),
+		conflicts: renamingCallback(conflicts, renameNameList, context),
+		inline: renamingCallback(inline, renameNameList, context),
+		supertypes: renamingCallback(supertypes, renameNameList, context)
 	} as unknown as WiredOpts;
 	Object.defineProperty(wired, '__wireContext__', {
 		value: context,
@@ -381,6 +390,34 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		configurable: true
 	});
 	return wired;
+}
+
+function renamingReserved(reserved: unknown, context: WireContext): unknown {
+	if (reserved === null || typeof reserved !== 'object' || Array.isArray(reserved)) return reserved;
+	return Object.fromEntries(
+		Object.entries(reserved as Record<string, unknown>).map(([contextName, list]) => [
+			contextName,
+			typeof list === 'function'
+				? renamingCallback(list as () => unknown, renameRule, context)
+				: renameRule(list, context.symbolRenames)
+		])
+	);
+}
+
+function baseDeclares(base: BaseArg | undefined, key: string): boolean {
+	const grammar = (base?.grammar ?? base) as Record<string, unknown> | undefined;
+	return grammar?.[key] !== undefined;
+}
+
+function renamingCallback<F extends (...args: never[]) => unknown>(
+	user: F | undefined,
+	rename: (value: unknown, renames: ReadonlyMap<string, string>) => unknown,
+	context: WireContext
+): DollarFn<unknown> {
+	return function renamed(this: unknown, $: unknown, previous?: unknown) {
+		const value = user === undefined ? previous : (user as unknown as (d: unknown, p?: unknown) => unknown).call(this, $, previous);
+		return rename(value, context.symbolRenames);
+	} as unknown as DollarFn<unknown>;
 }
 
 export function polymorphVisibleName(parentKind: string, suffix: string): string {

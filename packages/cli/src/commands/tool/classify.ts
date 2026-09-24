@@ -1,6 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
-import { classify as runClassify } from '@sittir/tools';
 
 export const classify: CommandModule = {
 	name: 'classify',
@@ -16,6 +15,7 @@ export const classify: CommandModule = {
 			.option('--modeltype <type>', 'Filter output to this modelType')
 			.option('--all', 'Show all assembled kinds')
 			.action(async (opts: { grammar?: string; kind?: string[]; modeltype?: string; all?: boolean }) => {
+				const { classify: runClassify } = await import('@sittir/tools');
 				const kinds = (opts.kind ?? []).length > 0 ? (opts.kind as string[]) : null;
 				const code = await runClassify({
 					grammar: opts.grammar ?? 'rust',

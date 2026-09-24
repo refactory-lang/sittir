@@ -381,12 +381,11 @@ would silently swallow the flip.
 Three severity overrides are applied at collection time, all for the same
 reason: the producer can't see the grammar-level expectation lists.
 
-An assemble-time `parsekind-noninjective` means enrich did NOT resolve the
-collision — an enrich-resolved one would already be gone from the grammar by
-assemble time — so it is always genuinely blocking. Enrich's own info-severity
-audit-trail diagnostics never reach this path; they merge in separately via
-`run-codegen.ts`'s `getEnrichUnaliasDiagnostics`, so the override cannot
-affect them.
+`diagnoseParseKindCollisions` has exactly one caller — the assemble-time
+resolution in `node-map.ts` — so every `parsekind-noninjective` diagnostic
+reaching this collector is an assemble-time collision, always genuinely
+blocking. The override forces `canProceed: false` on every instance
+unconditionally.
 
 `isBlockingAssembleWarningCode` names the only two assemble-warning codes that
 block: `storagename-collision`, and `nonterminal-separator-unstamped` — a

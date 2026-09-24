@@ -20,20 +20,20 @@ export const synonym = {
 		return value ? F.buildTrue() : F.buildFalse();
 	},
 	number: Object.assign(
-		function number(value: number): ReturnType<typeof F.buildInteger> | ReturnType<typeof F.buildFloat> {
-			return Number.isInteger(value) ? F.buildInteger(String(value)) : F.buildFloat(String(value));
+		function number(value: number): ReturnType<typeof F.integer> | ReturnType<typeof F.float> {
+			return Number.isInteger(value) ? F.integer(String(value)) : F.float(String(value));
 		},
 		{
-			integer(value: number): ReturnType<typeof F.buildInteger> {
-				return F.buildInteger(String(value));
+			integer(value: number): ReturnType<typeof F.integer> {
+				return F.integer(String(value));
 			},
-			float(value: number): ReturnType<typeof F.buildFloat> {
-				return F.buildFloat(String(value));
+			float(value: number): ReturnType<typeof F.float> {
+				return F.float(String(value));
 			}
 		}
 	),
-	comment(text: string): ReturnType<typeof F.buildComment> {
-		return F.buildComment(text);
+	comment(text: string): ReturnType<typeof F.comment> {
+		return F.comment(text);
 	},
 	type(name: string): ReturnType<typeof F.buildIdentifier> {
 		return F.buildIdentifier(name);
@@ -243,8 +243,8 @@ export const primaryExpression: {
 	readonly identifier: typeof F.buildIdentifier;
 	readonly string: typeof F.string;
 	readonly concatenatedString: typeof F.concatenatedString;
-	readonly integer: typeof F.buildInteger;
-	readonly float: typeof F.buildFloat;
+	readonly integer: typeof F.integer;
+	readonly float: typeof F.float;
 	readonly true: typeof F.buildTrue;
 	readonly false: typeof F.buildFalse;
 	readonly none: typeof F.buildNone;
@@ -269,8 +269,8 @@ export const primaryExpression: {
 	identifier: F.buildIdentifier,
 	string: F.string,
 	concatenatedString: F.concatenatedString,
-	integer: F.buildInteger,
-	float: F.buildFloat,
+	integer: F.integer,
+	float: F.float,
 	true: F.buildTrue,
 	false: F.buildFalse,
 	none: F.buildNone,
@@ -319,12 +319,6 @@ export const fExpression: {
 	list: F.expressionList,
 	patternList: F.patternList,
 	yield: F.yield_
-};
-
-export const keywordIdentifier: {
-	readonly identifier: typeof F.buildIdentifier;
-} = {
-	identifier: F.buildIdentifier
 };
 
 export const ir: {
@@ -434,6 +428,7 @@ export const ir: {
 	readonly interpolation: typeof F.interpolation;
 	readonly formatSpecifier: typeof F.formatSpecifier;
 	readonly await: typeof F.await_;
+	readonly comment: typeof F.comment;
 	readonly simpleStatementsElements: typeof F.simpleStatementsElements;
 	readonly subjects: typeof F.subjects;
 	readonly casePatterns: typeof F.casePatterns;
@@ -461,6 +456,10 @@ export const ir: {
 	readonly withClause: typeof F.withClause;
 	readonly suite: typeof F.suite;
 	readonly assignment: typeof F.assignment;
+	readonly escapeSequence: typeof F.escapeSequence;
+	readonly integer: typeof F.integer;
+	readonly float: typeof F.float;
+	readonly lineContinuation: typeof F.lineContinuation;
 	readonly wildcardImport: typeof F.buildWildcardImport;
 	readonly passStatement: typeof F.buildPassStatement;
 	readonly breakStatement: typeof F.buildBreakStatement;
@@ -472,13 +471,8 @@ export const ir: {
 	readonly positionalSeparator: typeof F.buildPositionalSeparator;
 	readonly keywordSeparator: typeof F.buildKeywordSeparator;
 	readonly importPrefix: typeof F.buildImportPrefix;
-	readonly escapeSequence: typeof F.buildEscapeSequence;
 	readonly typeConversion: typeof F.buildTypeConversion;
-	readonly integer: typeof F.buildInteger;
-	readonly float: typeof F.buildFloat;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly comment: typeof F.buildComment;
-	readonly lineContinuation: typeof F.buildLineContinuation;
 	readonly stringStart: typeof F.buildStringStart;
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
 	readonly stringEnd: typeof F.buildStringEnd;
@@ -540,7 +534,6 @@ export const ir: {
 	readonly leftHandSide: typeof leftHandSide;
 	readonly rightHandSide: typeof rightHandSide;
 	readonly fExpression: typeof fExpression;
-	readonly keywordIdentifier: typeof keywordIdentifier;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
@@ -650,6 +643,7 @@ export const ir: {
 	interpolation: F.interpolation,
 	formatSpecifier: F.formatSpecifier,
 	await: F.await_,
+	comment: F.comment,
 	simpleStatementsElements: F.simpleStatementsElements,
 	subjects: F.subjects,
 	casePatterns: F.casePatterns,
@@ -677,6 +671,10 @@ export const ir: {
 	withClause: F.withClause,
 	suite: F.suite,
 	assignment: F.assignment,
+	escapeSequence: F.escapeSequence,
+	integer: F.integer,
+	float: F.float,
+	lineContinuation: F.lineContinuation,
 
 	// Keyword factories
 	wildcardImport: F.buildWildcardImport,
@@ -692,13 +690,8 @@ export const ir: {
 
 	// Leaf node factories
 	importPrefix: F.buildImportPrefix,
-	escapeSequence: F.buildEscapeSequence,
 	typeConversion: F.buildTypeConversion,
-	integer: F.buildInteger,
-	float: F.buildFloat,
 	identifier: F.buildIdentifier,
-	comment: F.buildComment,
-	lineContinuation: F.buildLineContinuation,
 	stringStart: F.buildStringStart,
 	escapeInterpolation: F.buildEscapeInterpolation,
 	stringEnd: F.buildStringEnd,
@@ -764,6 +757,5 @@ export const ir: {
 	leftHandSide,
 	rightHandSide,
 	fExpression,
-	keywordIdentifier,
 	synonym
 };

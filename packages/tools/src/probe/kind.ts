@@ -100,7 +100,6 @@ import {
 	firstParseDefect,
 	astStructuralDiff,
 	findReparsedNodeAtOffset,
-	NAMED_EXTRAS_BY_GRAMMAR,
 	LEAF_ALIAS_TOLERANCE_BY_GRAMMAR
 } from '../validate/read-render-parse.ts';
 import { load } from '../codegen-surface.ts';
@@ -400,14 +399,12 @@ async function computeValidatorWrapDiag(
 		};
 	}
 
-	const namedExtras = NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set<string>();
 	const rootAliasPair: readonly [string, string] | undefined =
 		renderedKind !== targetKind ? [renderedKind, targetKind] : undefined;
 	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);
 	const astDiff = astStructuralDiff(
 		targetNode,
 		node2,
-		namedExtras,
 		'',
 		rootAliasPair,
 		variantChildKinds,

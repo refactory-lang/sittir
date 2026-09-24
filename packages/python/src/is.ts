@@ -8,12 +8,15 @@ import type {
 	NamespaceMap,
 	Assignment,
 	CompoundStatement,
+	EscapeSequence,
 	Expression,
 	ExpressionWithinForInClause,
 	Expressions,
 	FExpression,
-	KeywordIdentifier,
+	Float,
+	Integer,
 	LeftHandSide,
+	LineContinuation,
 	NamedExpressionLhs,
 	Parameter,
 	Pattern,
@@ -347,6 +350,9 @@ export interface IsGuards {
 	await<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Await };
+	comment<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Comment };
 	simpleStatementsElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SimpleStatementsElements };
@@ -437,7 +443,10 @@ export interface IsGuards {
 	leftHandSide(v: { readonly $type: string | number } | number): v is LeftHandSide;
 	rightHandSide(v: { readonly $type: string | number } | number): v is RightHandSide;
 	fExpression(v: { readonly $type: string | number } | number): v is FExpression;
-	keywordIdentifier(v: { readonly $type: string | number } | number): v is KeywordIdentifier;
+	escapeSequence(v: { readonly $type: string | number } | number): v is EscapeSequence;
+	integer(v: { readonly $type: string | number } | number): v is Integer;
+	float(v: { readonly $type: string | number } | number): v is Float;
+	lineContinuation(v: { readonly $type: string | number } | number): v is LineContinuation;
 	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
 }
 
@@ -589,6 +598,7 @@ export interface AssertGuards {
 	interpolation(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Interpolation };
 	formatSpecifier(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.FormatSpecifier };
 	await(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Await };
+	comment(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Comment };
 	simpleStatementsElements(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.SimpleStatementsElements };
@@ -663,7 +673,10 @@ export interface AssertGuards {
 	leftHandSide(v: { readonly $type: string | number } | number): asserts v is LeftHandSide;
 	rightHandSide(v: { readonly $type: string | number } | number): asserts v is RightHandSide;
 	fExpression(v: { readonly $type: string | number } | number): asserts v is FExpression;
-	keywordIdentifier(v: { readonly $type: string | number } | number): asserts v is KeywordIdentifier;
+	escapeSequence(v: { readonly $type: string | number } | number): asserts v is EscapeSequence;
+	integer(v: { readonly $type: string | number } | number): asserts v is Integer;
+	float(v: { readonly $type: string | number } | number): asserts v is Float;
+	lineContinuation(v: { readonly $type: string | number } | number): asserts v is LineContinuation;
 	whitespace(v: { readonly $type: string | number } | number): asserts v is Whitespace;
 }
 
@@ -675,30 +688,34 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_statement_ids = new Set<number>([114, 135, 141, 142, 143, 146, 149, 158, 162, 138]);
+const _supertype_statement_ids = new Set<number>([126, 147, 153, 154, 155, 158, 161, 170, 174, 150]);
 const _supertype_simpleStatement_ids = new Set<number>([
-	118, 115, 119, 123, 125, 126, 129, 130, 131, 132, 133, 134, 154, 155, 156, 157
+	130, 127, 131, 135, 137, 138, 141, 142, 143, 144, 145, 146, 166, 167, 168, 169
 ]);
-const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
-const _supertype_expressions_ids = new Set<number>([165]);
-const _supertype_compoundStatement_ids = new Set<number>([135, 141, 142, 143, 146, 149, 158, 162, 138]);
-const _supertype_withClause_ids = new Set<number>([273, 274]);
-const _supertype_suite_ids = new Set<number>([276, 277, 278]);
+const _supertype_namedExpressionLhs_ids = new Set<number>([1, 68, 38, 69, 70, 39, 22]);
+const _supertype_expressions_ids = new Set<number>([177]);
+const _supertype_compoundStatement_ids = new Set<number>([147, 153, 154, 155, 158, 161, 170, 174, 150]);
+const _supertype_withClause_ids = new Set<number>([288, 289]);
+const _supertype_suite_ids = new Set<number>([291, 292, 293]);
 const _supertype_simplePattern_ids = new Set<number>([
-	174, 173, 169, 257, 256, 170, 231, 230, 74, 75, 76, 266, 175, 166, 264
+	186, 185, 181, 272, 271, 182, 243, 242, 71, 72, 73, 281, 187, 178, 279
 ]);
-const _supertype_parameter_ids = new Set<number>([1, 208, 182, 183, 184, 180, 239, 238, 185]);
-const _supertype_pattern_ids = new Set<number>([1, 205, 204, 184, 180, 181]);
-const _supertype_expressionWithinForInClause_ids = new Set<number>([198]);
-const _supertype_expression_ids = new Set<number>([196, 190, 191, 197, 229, 127, 186]);
+const _supertype_parameter_ids = new Set<number>([1, 220, 194, 195, 196, 192, 254, 253, 197]);
+const _supertype_pattern_ids = new Set<number>([1, 68, 38, 69, 70, 39, 22, 217, 216, 196, 192, 193]);
+const _supertype_expressionWithinForInClause_ids = new Set<number>([210]);
+const _supertype_expression_ids = new Set<number>([208, 202, 203, 209, 241, 139, 198]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	237, 192, 1, 231, 230, 69, 70, 74, 75, 76, 193, 204, 205, 207, 216, 221, 219, 222, 217, 223, 218, 225, 224, 64, 184
+	252, 204, 1, 68, 38, 69, 70, 39, 22, 243, 242, 71, 72, 73, 205, 216, 217, 219, 228, 233, 231, 234, 229, 235, 230, 237,
+	236, 64, 196
 ]);
-const _supertype_assignment_ids = new Set<number>([269, 270, 271]);
-const _supertype_leftHandSide_ids = new Set<number>([201]);
-const _supertype_rightHandSide_ids = new Set<number>([165, 200, 201, 203]);
-const _supertype_fExpression_ids = new Set<number>([165, 201, 203]);
-const _supertype_keywordIdentifier_ids = new Set<number>([1]);
+const _supertype_assignment_ids = new Set<number>([284, 285, 286]);
+const _supertype_leftHandSide_ids = new Set<number>([213]);
+const _supertype_rightHandSide_ids = new Set<number>([177, 212, 213, 215]);
+const _supertype_fExpression_ids = new Set<number>([177, 213, 215]);
+const _supertype_escapeSequence_ids = new Set<number>([97, 98, 99, 100, 101, 102, 103]);
+const _supertype_integer_ids = new Set<number>([90, 91, 92, 93]);
+const _supertype_float_ids = new Set<number>([94, 95, 96]);
+const _supertype_lineContinuation_ids = new Set<number>([104, 105]);
 
 export const is = {
 	module: _g(TSKindId.Module),
@@ -807,6 +824,7 @@ export const is = {
 	interpolation: _g(TSKindId.Interpolation),
 	formatSpecifier: _g(TSKindId.FormatSpecifier),
 	await: _g(TSKindId.Await),
+	comment: _g(TSKindId.Comment),
 	simpleStatementsElements: _g(TSKindId.SimpleStatementsElements),
 	subjects: _g(TSKindId.Subjects),
 	casePatterns: _g(TSKindId.CasePatterns),
@@ -849,7 +867,10 @@ export const is = {
 	leftHandSide: _sg(_supertype_leftHandSide_ids),
 	rightHandSide: _sg(_supertype_rightHandSide_ids),
 	fExpression: _sg(_supertype_fExpression_ids),
-	keywordIdentifier: _sg(_supertype_keywordIdentifier_ids),
+	escapeSequence: _sg(_supertype_escapeSequence_ids),
+	integer: _sg(_supertype_integer_ids),
+	float: _sg(_supertype_float_ids),
+	lineContinuation: _sg(_supertype_lineContinuation_ids),
 	whitespace: _sg(new Set<number>())
 } as unknown as IsGuards;
 
@@ -982,6 +1003,7 @@ export const assert = {
 	interpolation: _makeAssert('interpolation', is.interpolation as _AnyGuard),
 	formatSpecifier: _makeAssert('formatSpecifier', is.formatSpecifier as _AnyGuard),
 	await: _makeAssert('await', is.await as _AnyGuard),
+	comment: _makeAssert('comment', is.comment as _AnyGuard),
 	simpleStatementsElements: _makeAssert('simpleStatementsElements', is.simpleStatementsElements as _AnyGuard),
 	subjects: _makeAssert('subjects', is.subjects as _AnyGuard),
 	casePatterns: _makeAssert('casePatterns', is.casePatterns as _AnyGuard),
@@ -1024,7 +1046,10 @@ export const assert = {
 	leftHandSide: _makeAssert('leftHandSide', is.leftHandSide as _AnyGuard),
 	rightHandSide: _makeAssert('rightHandSide', is.rightHandSide as _AnyGuard),
 	fExpression: _makeAssert('fExpression', is.fExpression as _AnyGuard),
-	keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard),
+	escapeSequence: _makeAssert('escapeSequence', is.escapeSequence as _AnyGuard),
+	integer: _makeAssert('integer', is.integer as _AnyGuard),
+	float: _makeAssert('float', is.float as _AnyGuard),
+	lineContinuation: _makeAssert('lineContinuation', is.lineContinuation as _AnyGuard),
 	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard)
 } as unknown as AssertGuards;
 

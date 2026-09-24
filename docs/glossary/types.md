@@ -435,6 +435,22 @@ Whether a rule matches nothing, in either runtime's spelling: tree-sitter's
 admit the same input; it is stamped by `arm.default` and read once, by the from
 emitter.
 
+`origin` names where a seam choice's resolved default arm came from, stamped by
+`render-rules.ts::whitespaceChoice` alongside `default: true`. It never selects
+an arm or changes a rendered value: it is read back by the template emitter's
+seam census (`render-rules.ts::originOfSeamChoice`) and by
+`render-options-rs.ts::seamStrength`, which turns it into the site's strength,
+how firmly the default holds against the mark meeting it at the same gap.
+It rides in `RuleAnnotations` because that is the existing channel a
+`whitespaceChoice` member already carries per-arm facts on, not because it is
+meant to influence rendering. Its type, `SeamOrigin` (`'preference'` |
+`'literal-default'` | `'word-default'` | `'cascade'` | `'fallback'`), is defined right above `RuleAnnotations` in
+this file — the lower layer, so `compiler/model/site-addresses.ts` and
+`compiler/model/render-rules.ts` both import it rather than each declaring
+their own copy (`site-addresses.ts`'s `PreferenceOrigin` is
+`Exclude<SeamOrigin, 'fallback' | 'word-default'>`, the subset `resolveBindings`
+itself ever produces).
+
 ```text
 /**
  * Declarative facts an author attached to a rule, carried through the phases
@@ -449,6 +465,11 @@ emitter.
  * was not declared for it.
  */
 ```
+
+`origin` admits `'cascade'` beside the declared origins and the fallback.
+`edgeLiterals` is set on a kind edge's whitespace choice only, naming the
+literal tokens the kind opens or closes with (a single token or every arm of
+a choice of tokens), so the edge can answer to their grammar-wide face.
 
 ### `packages/codegen/src/types/rule.ts::RuleBase`
 
@@ -475,6 +496,13 @@ emitter.
  * orphan trailing/leading-without-a-separator state is structurally
  * impossible.
  */
+```
+
+#### token interior
+
+```text
+`nonterminal` (a slot-promoted literal survives flatten) and `lexed` (a structured bare pattern) are carried at
+every phase from link on; both are set by the token-interior pass, not by the DSL.
 ```
 
 ### `packages/codegen/src/types/rule.ts::inline`
@@ -1114,11 +1142,11 @@ emitter produces it today; the `'error'` / `'warning'` vocabulary plus the
 
 ### `packages/codegen/src/types/parsekind-collisions.ts::ParseKindCollisionDiagnostic.severity`
 
-`diagnoseParseKindCollisions` always produces `'error'`, but the field is
-widened to the full `Severity` so a caller — `applyUnaliasDistinct` in
-`dsl/enrich.ts` — can DOWNGRADE the diagnostic when it auto-fixes the collision
-instead of merely reporting it. The shape is otherwise identical, so this stays
-one type rather than a second near-duplicate interface.
+`diagnoseParseKindCollisions` always produces `'error'`. The field is typed as the full `Severity` because it
+extends the base `Diagnostic` interface, not because any caller downgrades it — `diagnoseParseKindCollisions` has
+exactly one caller, the assemble-time resolution in `node-map.ts`, and its output reaches `GrammarDiagnostic` with
+`severity` forwarded verbatim. The shape is otherwise identical, so this stays one type rather than a second
+near-duplicate interface.
 
 ### Per-type discriminators (`packages/codegen/src/types/runtime-shapes.ts`)
 
@@ -1609,3 +1637,19 @@ narrowing guard.
 ```
 
 Any consumer downstream of the template emitter (e.g. the render-module emitter's writer-choice decision) can read this stamp as already-final without re-running `stampStaticSpacing` itself. That guarantee comes from `emit.ts`'s `emitAll`: every emitter's per-node dispatch (`dispatchNodeMapByTaxonomy`) completes, then `jinjaTemplates = templateEmitter.finalize()` is computed and passed as an explicit argument into `renderModuleEmitterInst.finalize(jinjaTemplates)` — plain sequential code order guarantees the template emitter's full lifecycle (including every `staticSeamBefore` write, whether from the dedicated `stampStaticSpacing` pass or a template walk's own in-pass stamping) is complete before render-module's `finalize` runs. The ordering is not a property of stamp-write timing alone; it depends on `emitAll` continuing to compute `jinjaTemplates` before calling `renderModuleEmitterInst.finalize`, so a reorder of those two calls would need to re-establish it.
+
+### `packages/codegen/src/types/runtime-shapes.ts::compileAnchoredPattern`
+
+The one place a grammar pattern becomes a JavaScript regex: anchored, tried with the `u` flag and then without, returning the regex or the compile error for the caller to report. The leaf guards (`anchoredLeafRegex`) and the emptiness check share it.
+
+### `packages/codegen/src/types/runtime-shapes.ts::patternAcceptsEmpty`
+
+Whether a pattern's anchored regex matches the empty string; a pattern that does not compile does not. `matchesEmpty` asks it for `PATTERN` rules, so every emptiness question about a rule (arm scaffolding, token forms) sees `[a-z]*` as empty.
+
+### `packages/codegen/src/types/rule.ts::aliasTargetOf`
+
+The display name a ref carries (`aliasedTo`), or `undefined` when it has none.
+
+### `packages/codegen/src/types/rule.ts::storageNameOf`
+
+The ref's own storage identity: the rule, or literal symbol, that parsed it.

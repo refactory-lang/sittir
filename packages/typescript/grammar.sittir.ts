@@ -9,7 +9,13 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
-import { enrich, field, alias, wire, refine, variant, preference } from '../codegen/src/dsl/index.ts';
+import { enrich, field, alias, wire, refine, variant, preference, regex } from '../codegen/src/dsl/index.ts';
+
+function immediateClosingDelimiter(original: unknown) {
+	const seqMembers = (original as { members: unknown[] }).members;
+	const last = seqMembers[seqMembers.length - 1] as { type?: string; value?: string };
+	return { ...(original as object), members: [...seqMembers.slice(0, -1), token.immediate(last.value!)] };
+}
 
 const enrichedBase = enrich(base);
 export default grammar(
@@ -179,6 +185,12 @@ export default grammar(
 				body: { before: preference('indent'), after: preference('dedent') },
 				case_body: { start: preference('indent'), end: preference('dedent') },
 				gap: { separator: preference('newline') },
+				number_hex: { 'prefix:': preference('0x') },
+				number_octal: { 'prefix:': preference('0o') },
+				number_binary: { 'prefix:': preference('0b') },
+				number_float_point: { 'marker:': preference('e') },
+				number_float_leading_point: { 'marker:': preference('e') },
+				number_float_scientific: { 'marker:': preference('e') },
 				statements: { terminator: preference(';') },
 				quotes: { style: preference('double') },
 				enum_body_elements: { 'content:/separator/","/after': preference('newline'), 'content:/delimiter': preference('Delimiter.Trailing') },
@@ -188,7 +200,30 @@ export default grammar(
 					'decorator:/separator': preference('tight'),
 					'decorator:/(_)/after': preference('newline'),
 					'decorator:/end': preference('newline'),
-					'_/separator/","/before': preference('tight'),
+					'"("/before': preference('tight'),
+					'"("/after': preference('tight'),
+					'")"/before': preference('tight'),
+					'"["/before': preference('tight'),
+					'"["/after': preference('tight'),
+					'"]"/before': preference('tight'),
+					'"{"/after': preference('tight'),
+					'"}"/before': preference('tight'),
+					'"${"/after': preference('tight'),
+					'"<"/before': preference('tight'),
+					'"<"/after': preference('tight'),
+					'">"/before': preference('tight'),
+					'"."/before': preference('tight'),
+					'"."/after': preference('tight'),
+					'","/before': preference('tight'),
+					'";"/before': preference('tight'),
+					'"++"/before': preference('tight'),
+					'"++"/after': preference('tight'),
+					'"--"/before': preference('tight'),
+					'"--"/after': preference('tight'),
+					'"?."/before': preference('tight'),
+					'"?."/after': preference('tight'),
+					'"..."/after': preference('tight'),
+					'":"/before': preference('tight'),
 					'":"/after': preference('space'),
 					'"="/before': preference('space'),
 					'"="/after': preference('space'),
@@ -200,17 +235,22 @@ export default grammar(
 					'"&"/after': preference('space'),
 					'operator:/before': preference('space'),
 					'operator:/after': preference('space'),
-					'"from"/after': preference('space'),
-					'"if"/after': preference('space'),
-					'"while"/after': preference('space'),
-					'"for"/after': preference('space'),
-					'"return"/before': preference('space'),
-					'"return"/after': preference('space'),
-					'"switch"/after': preference('space'),
-					'"catch"/after': preference('space'),
-					'"var"/after': preference('space'),
-					'kind:/after': preference('space')
+					'_/separator/","/before': preference('tight')
 				},
+
+				// A space after the substitution's `}` changes the template text. The edge
+				// sits in every string-interior context, so no neighbour immediacy reaches it.
+				template_substitution: { after: preference('tight') },
+				template_type: { after: preference('tight') },
+
+				// Unary `!` is a normal token seam (`! x` compiles fine), and
+				// the undeclared default is space — confirmed via a factory
+				// construction probe (`ir.unaryExpression({operator:'!',...})`
+				// renders "! y", not "!y"; read-render of parsed `!y` masks
+				// this because unedited content slices verbatim source bytes
+				// rather than consulting this site at all).
+				unary_expression_operator: { '"!"/after': preference('tight') },
+				number_operator: { '"-"/after': preference('tight'), '"+"/after': preference('tight') },
 
 				object_type_content: {
 					'content:/separator/before': preference('tight'),
@@ -246,7 +286,7 @@ export default grammar(
 				_bindings: {
 					'_/terminator:': 'statements/terminator',
 					'_/automatic_semicolon:': 'statements/terminator',
-					'string/content:': 'quotes/style',
+					'string/variant': 'quotes/style',
 					'class_body/"{"/after': 'body/before',
 					'class_body/"}"/before': 'body/after',
 					'statement_block/"{"/after': 'body/before',
@@ -270,11 +310,41 @@ export default grammar(
 			},
 
 			patches: {
+				comment: {
+					'1/0/1': regex(/([^*]|\*+[^*\/])*\**/),
+					'1/0/2': { type: 'STRING', value: '*/' } as never,
+					0: variant('line'),
+					1: variant('block')
+				},
+				number: {
+					'1/0/0': field('integer'),
+					'1/0/2': field('fraction'),
+					'1/0/3/0/0': field('marker'),
+					'1/0/3/0/1/0': field('sign'),
+					'1/0/3/0/1/1': field('exponent'),
+					'2/0/1': field('fraction'),
+					'2/0/2/0/0': field('marker'),
+					'2/0/2/0/1/0': field('sign'),
+					'2/0/2/0/1/1': field('exponent'),
+					'3/0/0': field('integer'),
+					'3/0/1/0': field('marker'),
+					'3/0/1/1/0': field('sign'),
+					'3/0/1/1/1': field('exponent'),
+					0: variant('hex'),
+					1: variant('float_point'),
+					2: variant('float_leading_point'),
+					3: variant('float_scientific'),
+					4: variant('decimal', { default: true }),
+					5: variant('binary'),
+					6: variant('octal'),
+					7: variant('bigint')
+				},
+				hash_bang_line: { '.': regex(/#!(?<content>.*)/) },
 				binary_expression: {
 					24: variant('in')
 				},
 				arguments: {
-					1: field('arguments')
+					1: field('elements')
 				},
 				array: {
 					1: field('elements')
@@ -630,6 +700,7 @@ export default grammar(
 			},
 			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
 			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
+			extras: ($, previous) => [...(previous ?? [])],
 			visibleExternals: (_$) => ({
 				_automatic_semicolon: string('\n'),
 				_function_signature_automatic_semicolon: string('\n'),
@@ -645,10 +716,29 @@ export default grammar(
 				debugger_statement: '#170 — _resolveOneLeaf cannot resolve the _semicolon stub',
 				import_require_clause: '#170 — Missing field _content on ImportRequireClauseTransport._source',
 				object_type_content: '#170 (#172-adjacent) — Missing field _content through export-arm transport',
-				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)'
+				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)',
+				'export_statement_default_declaration.defaultKwValue':
+					'a required registered slot on an intermediate child (defaultKw) reached through a nested (multi-level) sub-factory chain has no home in the generated test: .$with only reaches the outer node\'s own slots, and the recursive subFactoryCallArgs builder produces a nested config expression, not a statement a .$with chain could attach to'
 			},
 			rules: {
 				_whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),
+
+				string: ($, original) => ({
+					...original,
+					members: original.members.map((arm) => {
+						const seqMembers = (arm as { members: unknown[] }).members;
+						const last = seqMembers[seqMembers.length - 1] as { type?: string; value?: string };
+						if (last.type !== 'STRING') return arm;
+						return {
+							...(arm as object),
+							members: [...seqMembers.slice(0, -1), token.immediate(last.value!)]
+						};
+					})
+				}),
+
+				template_string: ($, original) => immediateClosingDelimiter(original),
+				template_literal_type: ($, original) => immediateClosingDelimiter(original),
+				template_type: ($) => seq(token.immediate('${'), choice($.primary_type, $.infer_type), '}'),
 				// `template_substitution` sits only in string-interior contexts
 				// (template_string / template_literal_type elements), where any
 				// preceding characters are absorbed into a fragment token — no
@@ -780,7 +870,12 @@ export default grammar(
 					);
 					return seq(optional(SEP()), seq(member, repeat(seq(SEP(), member))), optional(SEP()));
 				}
-			}
+			},
+			renderAs: (_$) => ({
+				html_comment: /<!--[\s\S]*?-->/,
+				jsx_text: /[^{}<>]+/,
+				_template_chars: token.immediate(/[^`\\$]+/)
+			})
 		},
 		enrichedBase
 	)

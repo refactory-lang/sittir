@@ -1,6 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { findEntryForKindName, findEntryForLiteralText, symbolNameIsNotable } from '../compiler/generated-metadata.ts';
+import { findEntryForKindName, findEntryForLiteralText, symbolNameIsNotable, type KindEntryLike } from '../compiler/generated-metadata.ts';
+import { compareOrdinal } from './shared.ts';
 
 export function toPascal(kind: string): string {
 	return kind
@@ -19,6 +20,7 @@ export interface KindEnumEntry {
 	readonly literalText?: string;
 	readonly anon?: boolean;
 	readonly literalRule?: boolean;
+	readonly alias?: boolean;
 }
 
 export function kindIdMemberName(nodeMap: NodeMap, kind: string): string {
@@ -53,10 +55,20 @@ export function collectKindEntries(
 		const symbolName = symbolNameIsNotable(row.parser?.symbolName, kind, literalRule) ? row.parser?.symbolName : undefined;
 		const literalText = row.parser?.literalText;
 		const anon = row.parser?.anon ?? false;
-		entries.push({ kind, member, id: row.id, parseId: row.parseId, symbolName, literalText, anon: anon || undefined, literalRule });
+		const alias = row.parser?.alias || undefined;
+		entries.push({ kind, member, id: row.id, parseId: row.parseId, symbolName, literalText, anon: anon || undefined, literalRule, alias });
 	}
-	entries.sort((a, b) => a.id - b.id || a.kind.localeCompare(b.kind));
+	entries.sort((a, b) => a.id - b.id || compareOrdinal(a.kind, b.kind));
 	return entries;
+}
+
+export function modelKindOfEntry(entry: { readonly kind: string; readonly symbolName?: string; readonly alias?: boolean }): string {
+	return entry.alias === true && entry.symbolName !== undefined ? entry.symbolName : entry.kind;
+}
+
+export function findOwnKindEntry<T extends KindEntryLike>(entries: readonly T[], kind: string): T | undefined {
+	const entry = findEntryForKindName(entries, kind);
+	return entry !== undefined && modelKindOfEntry(entry) === kind ? entry : undefined;
 }
 
 export function findKindEntry(kindEntries: readonly KindEnumEntry[], kind: string): KindEnumEntry | undefined {

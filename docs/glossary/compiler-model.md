@@ -335,6 +335,10 @@ pair and `default`. One derivation spread into all four SYMBOL branches of
 `deriveValuesForRule` and into supertype subtype refs, so an arm fact added to
 the model reaches every value shape and every subtype without further edits.
 
+#### spliced
+
+`annotations.spliced` on a reference becomes a `spliced` fact on the value, next to `variant` and `default`. It says the reference is a visible wrapper the grammar declares as spliced onto its parent's slot.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::deriveValuesForRule`
 
 ```text
@@ -373,6 +377,14 @@ the model reaches every value shape and every subtype without further edits.
 // `resolvedKind` is the alias-target kindId read-time matching keys on
 // (`lt`). `literal` is set only by `canonicalizeRuleLiterals`, so
 // `literal !== undefined` is the exact discriminator.
+```
+
+#### token interior
+
+```text
+A field-named PATTERN yields a value with `pattern` and no `value`: it is free text constrained by that pattern,
+not a literal. Everything downstream that reads `value` as a literal (literal types, keyword presence, enum arms)
+sees no literal there; the slot types as `string` and its guard is the pattern.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::dedupeValues`
@@ -460,7 +472,7 @@ the model reaches every value shape and every subtype without further edits.
 	 * Structural getter — replaces the former `markParameterlessKinds`
 	 * fixpoint pass. Two classes of parameterless kinds:
 	 *
-	 * - **Single-literal terminals** (`AssembledKeyword`, `AssembledToken`):
+	 * - **Single-literal terminals** (`AssembledKeyword`, `AssembledPunctuation`):
 	 *   overridden to return `true` unconditionally (or conditionally for
 	 *   tokens — only `string`-rule tokens are parameterless).
 	 * - **Parameterless compounds** (any `AbstractAssembledCompound` subclass —
@@ -540,7 +552,7 @@ the model reaches every value shape and every subtype without further edits.
 	 * - **Parameterless compound**: factory-call string
 	 *   (e.g. `"breakExpression()"`). Returns the full NodeData.
 	 *
-	 * Overridden by `AssembledKeyword`, `AssembledToken` (constructors set
+	 * Overridden by `AssembledKeyword`, `AssembledPunctuation` (constructors set
 	 * a backing field); compounds derive from `rawFactoryName`.
 	 */
 ```
@@ -1206,8 +1218,8 @@ flatten and simplify joins use.
 	 * the literal adjacent to the preceding token. Plain string-rule
 	 * tokens and non-immediate `token(...)` wrappers return false.
 	 *
-	 * NOTE: distinct from the `modelType === 'token'` classification —
-	 * an `AssembledToken` exists for every classified token kind whether
+	 * NOTE: distinct from the `keyword` / `punctuation` classification —
+	 * an `AssembledKeyword` or `AssembledPunctuation` exists for every classified literal kind whether
 	 * or not its rule was wrapped in a `TokenRule`. This getter reports
 	 * the wrapper status, not the model classification.
 	 */
@@ -1548,6 +1560,10 @@ flatten and simplify joins use.
  */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern.textPattern`
+
+The regex source the kind's whole text must match: the pattern composed from the linked token, with its affixes, when one exists, otherwise the bare pattern of a pattern-only rule, otherwise `undefined`. `pattern` is the unwrapped pattern value; consumers that validate or match a leaf's text use `textPattern`.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::text`
 
 ```text
@@ -1659,8 +1675,9 @@ flatten and simplify joins use.
  * Split from the Rule<'link'> IR file (now `types/rule.ts`). The classes here
  * represent what an assembled grammar node looks like after the full pipeline has
  * classified and enriched the Rule<'link'> — each subclass corresponds to one
- * ModelType (`branch`, `polymorph`, `leaf`, `keyword`, `token`, `enum`,
- * `supertype`, `group`, `multi`). `container` was merged into `branch`
+ * ModelType (`envelope`, `branch`, `polymorph`, `supertype`, `enum`, `keyword`,
+ * `punctuation`, `pattern`, `list`), and each value spells its class.
+ * `container` was merged into `branch`
  * (slot-surface distinctions derived from `slotClass`).
  *
  * Organized in place (follow-up — reorg decision 1: a large module is
@@ -1706,20 +1723,44 @@ flatten and simplify joins use.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::_parseKindCollisionDiagnostics`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembleDiagnosticsCollector`
 
 ```text
-// ============================================================================
-// 1. Diagnostics & module state
-// ============================================================================
-```
+The assemble phase's three diagnostic streams (parse-kind collisions,
+derive-shape diagnostics, assemble warnings) live on one collector per
+`assemble()` call, never at module scope, so two grammars compiling in one
+process cannot see each other's. One `AssembleDiagnosticsCollector`
+instance is born with each `AssembleCtx` (`ctx.assembleDiagnostics`) and
+threaded down through `CompoundOpts.assembleDiagnostics` →
+`DeriveCtx.diagnostics` — the same `ctx: KindedDeriveCtx` object
+`AbstractAssembledCompound`'s constructor already builds for `deriveSlots`/
+`resolveParseKindCollisions` — reaching collect-slots.ts's `resolveMember`/
+`buildSlot`/`recordUnclassifiableShape` and node-map.ts's own
+`auditDerivationShape`/`resolveParseKindCollisionsInSlot` call sites.
 
-### `packages/codegen/src/compiler/model/node-map.ts::_deriveShapeDiagnostics`
+`AssembledList` is the one class that does NOT forward this transparently:
+its constructor builds its OWN opts object for the `super()` call into
+`AbstractAssembledCompound` rather than passing its incoming `opts` through
+verbatim, so `assembleDiagnostics` must be re-added there explicitly
+(`assembleDiagnostics: ctx?.diagnostics`) — omitting it silently drops every
+assemble-time diagnostic for list-classified kinds (list elements are
+choice-shaped as often as branch/envelope kinds are, so this is not a
+theoretical case; a real grammar's `enum_body_elements` list caught it).
 
-```text
-// ---------------------------------------------------------------------------
-// Derive-shape diagnostic accumulator (mirrors parseKindCollisions pattern)
-// ---------------------------------------------------------------------------
+`DedupedCollector<T>` is the shared generic underneath: a keyed
+record-once-then-push, replacing the three near-identical
+key/seen-Set/push trios. `record()` returns whether the item was newly
+added (not already deduped), which the slot-grouping caller
+(`simplify.ts`'s `computeSimplifiedRules`) uses to gate a one-time
+`ctx.diagnostics.info()` emission per distinct diagnostic.
+
+The slot-grouping accumulator (`simplify.ts`, a different phase/file)
+follows the same shape but is NOT part of `AssembleDiagnosticsCollector` —
+it must survive across two separate top-level calls in one compile
+(`normalizeGrammar` populates it, `collectGrammarDiagnosticsForGrammar`
+reads it back out after `assemble()` runs), so its owner is
+`collectGrammarDiagnosticsForGrammar` itself, threaded down through
+`NormalizeCtx.slotGroupingCollector` → `SimplifyCtx.slotGroupingCollector`.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembleWarning`
@@ -2103,26 +2144,6 @@ from the model instead of recovering them from the subtype's name.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::DBG_KINDID_FALLBACK`
-
-```text
-// ---------------------------------------------------------------------------
-// `deriveValuesForRule`'s SYMBOL/SUPERTYPE/STRING/PATTERN cases read the ids
-// `canonicalizeRuleLiterals` (link.ts) already stamped onto the leaf instead
-// of re-deriving them from `ctx.kindEntries`. The catalog lookup survives
-// ONLY as a fallback for a rule that never passed through that stamping pass
-// — legitimately, that includes every hand-built `Rule` fixture this same
-// function is unit-tested against (see `derive-values-kindid-stamps.test.ts`,
-// which deliberately constructs UNSTAMPED rules to exercise this exact path),
-// so this function has no way to tell "expected test fixture" from "a real
-// post-link rule link.ts failed to stamp" — it cannot assert here without
-// breaking the former. `noteKindIdFallbackHit` stays a log, opt-in via
-// DBG_KINDID_FALLBACK; link.ts's `reportKindIdStampMisses` diagnostic is the
-// actual hard gate for a genuinely missing stamp, checked where the context
-// (a real generation run vs. a fixture) is actually known.
-// ---------------------------------------------------------------------------
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::FACTORY_NAME_RESERVED`
 
 ```text
@@ -2148,7 +2169,7 @@ from the model instead of recovering them from the subtype's name.
  *  (a choice of leaf-shaped members — a node holding one union slot),
  *  `'supertype'` (`AssembledSupertype`: a collection of subtypes with no
  *  slot; never a polymorph), `'enum'` (closed set of literals),
- *  `'token'` (a single fixed literal — `AssembledKeyword`/`AssembledToken`
+ *  `'token'` (a single fixed literal — `AssembledKeyword`/`AssembledPunctuation`
  *  share this discriminant, distinguished by their `word` getter), `'pattern'`
  *  (open regex/text-shaped leaf), `'list'` (a repeated element with genuine
  *  per-instance separator variability). A closed
@@ -2230,7 +2251,7 @@ a pass rebuilds.
 	 *
 	 * Rules:
 	 * - Visible kinds (not `_`-prefixed) — always user-facing UNLESS the
-	 *   node is an `AssembledToken` (anonymous single-literal delimiter
+	 *   node is an `AssembledPunctuation` (anonymous single-literal delimiter
 	 *   with no API surface), and even then only when it is a
 	 *   variant-child kind. A hidden tree-sitter-inlined repeat helper is,
 	 *   by construction, `_`-prefixed — it falls out through the
@@ -2431,6 +2452,38 @@ a pass rebuilds.
  *  built node. A consumer that needs one fixed text narrows further with
  *  `isFixedTextLeaf`. */
 ```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isVisibleTextLeaf`
+
+A fixed-text leaf that is not hidden: a visible kind that owns a factory and
+a type. Visibility is the leaf's `hidden` attribute, never its class; the
+class answers only whether the text is word-shaped.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isVisiblePunctuationLeaf`
+
+A non-word fixed-text leaf that is not hidden: a named parser kind whose
+whole body is punctuation, such as typescript `optional_chain` (`?.`) or
+rust `unit_expression`. A grammar-wide `_` literal row addresses punctuation
+faces, and a keyword resolves its face through the word default instead, so
+the rule that seats a token seam for a node arm of a choice asks this class
+and not `isVisibleTextLeaf`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isHiddenPunctuationLeaf`
+
+A hidden non-word fixed-text leaf: an anonymous or `_`-prefixed delimiter.
+Emitters that skip factories and types for delimiters ask this, so a visible
+non-word literal is not skipped with them.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isWordOrVisibleTextLeaf`
+
+A fixed-text leaf an emitter treats as a keyword-like kind: a word-shaped
+keyword of either visibility, or a visible non-word token. It is the
+complement of `isHiddenPunctuationLeaf` within the fixed-text leaves.
+
+Only the sites that must see hidden keywords use it: the kind-id and type
+tables (`consts`, `types`), `classifyFactoryShape`, and the edge classes and
+edge char sets of a kind. Every other emitter site asks `isVisibleTextLeaf`;
+tightening any of the four regenerates all three grammars differently.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isFixedTextLeaf`
 
@@ -2672,11 +2725,20 @@ a pass rebuilds.
  */
 ```
 
+#### body
+
+```text
+A SYMBOL body is 'alias' when the kind is an alias display
+(isAliasEnvelopeKind, which is why the kind is a parameter); otherwise
+'envelope'. Classification is structural — never keyed on which phase minted
+the rule.
+```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::branchClassFor`
 
 ```text
 /** The constructing class (`AssembledBranch`/`AssembledEnvelope`/
- *  `AssembledPolymorph`) for a compositional rule's `compoundModelTypeFor`
+ *  `AssembledPolymorph`/`AssembledAlias`) for a compositional rule's `compoundModelTypeFor`
  *  classification — `assemble.ts` calls this once it has already ruled
  *  out the SUPERTYPE-body and list-shaped cases, which construct
  *  `AssembledSupertype`/`AssembledList` directly instead. */
@@ -2724,13 +2786,13 @@ the rule shape.
  *   - `AssembledPattern` — open text, optionally regex-validated
  *     (e.g. `identifier`, `integer_literal`)
  *   - `AssembledKeyword` — single fixed named string (e.g. `"fn"`)
- *   - `AssembledToken` — single fixed anonymous delimiter (e.g. `"{"`)
+ *   - `AssembledPunctuation` — single fixed anonymous delimiter (e.g. `"{"`)
  *   - `AssembledEnum` — closed set of literals (e.g. `"u8" | "u16"`)
  *
  * The base intentionally has no `modelType` of its own — each concrete
  * subclass declares its own discriminant string: `'pattern'` for
  * `AssembledPattern`, `'enum'` for `AssembledEnum`, and `'token'` for
- * BOTH `AssembledKeyword` and `AssembledToken` — a named single literal
+ * BOTH `AssembledKeyword` and `AssembledPunctuation` — a named single literal
  * and an anonymous single literal are not distinguished by modelType,
  * only by the `word` getter (`true` on Keyword, `false` on Token, both
  * overriding the base's `false` default).
@@ -2757,20 +2819,6 @@ the rule shape.
 ```text
 /** This kind's rule lexes as one token (a consumed `token(...)`
 	 * wrapper's stamp, or an external scanner symbol). */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledLeaf.word`
-
-```text
-/**
-	 * Base default: `false`. The sole discriminant between the two
-	 * `modelType: 'token'` leaves — `AssembledKeyword` overrides this to
-	 * `true` (a named single literal matching the grammar's word shape,
-	 * e.g. `"fn"`), `AssembledToken` leaves it `false` (an anonymous
-	 * single-literal delimiter, e.g. `"{"`). `assemble.ts`'s `classifyNode`
-	 * for a `'token'`-shaped rule picks which class to construct via
-	 * `matchesWordShape`, before either instance exists to ask.
-	 */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern.fixedLiteralText`
@@ -2811,13 +2859,17 @@ the rule shape.
 // stamping) — the literal-text lookup genuinely still fires here.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledToken.resolvedKindId`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation.resolvedKindId`
 
 ```text
 /** Catalog id of `resolvedKind` — stamped at construction; see AssembledKeyword. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledToken.constructor`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation.constructor`
+
+A fixed-text leaf whose text is not word-shaped. `hidden` defaults to true
+(an anonymous or `_`-prefixed delimiter); `assemble` passes `hidden: false`
+for a named non-word literal kind so it keeps its factory and type.
 
 #### body
 
@@ -2825,16 +2877,20 @@ the rule shape.
 // SYNTHESIZED StringRule (never link-stamped) — literal-text lookup.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledToken.parameterless`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation.parameterless`
 
 ```text
 // No emitFactory — tokens are always hidden, no factoryName.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledToken.storage`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation.storage`
 
 ```text
-/** A token is always hidden and always fixed text: identity is the value. */
+/** A token is always fixed text: identity is the value. Whether it is a
+ *  visible kind (a named non-word literal such as rust `unit_expression`
+ *  `()` or typescript `optional_chain` `?.`) or a hidden one (an anonymous
+ *  or `_`-prefixed delimiter) is its `hidden` attribute, set at
+ *  construction. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword.storage`
@@ -2903,6 +2959,13 @@ the rule shape.
 ```text
 /** The member set as storage rows (`EnumMemberStorage`), in
  *  `resolvedByText` order — what a reference to this enum stamps. */
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.literalMembers`
+
+```text
+The enum's literal arms with nested choices flattened, the list its `values` read. An inline alias of a keyword
+choice onto a display arrives as a choice inside a choice.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.constructor`
@@ -2978,6 +3041,13 @@ emission).
 // second reference vocabulary for the same kind of fact. No stamped ids
 // (`storageKindId`/`parseKindId` absent) — this closure only needs to
 // answer "is this parse kind reachable here", by name.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.optionDefaultArm`
+
+```text
+The arm an `options:` choice at the supertype's variant site names as default. A slot holding the supertype falls
+back to it when the slot has no default of its own.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.constructor`
@@ -3279,15 +3349,6 @@ emission).
  *  this — the class is the surface. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword.word`
-
-```text
-/** Whether the keyword's text is word-shaped (`wordMatcher`) — the spacing
- *  fact, independent of the kind's surface. A named literal kind that is
- *  not a word (rust `unit_expression` `()`, python `ellipsis` `...`) is a
- *  keyword-class leaf with `word: false`. */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::atomEndingAt`
 
 ```text
@@ -3419,6 +3480,11 @@ refused — the arm is wrong, not merely inapplicable.
  */
 ```
 
+`origin` is the `SeamOrigin` `withDeclaredArms` recorded when a declaration
+reached the site; an undeclared site has none and plans as the fallback.
+`edgeLiterals` rides through from the `RuleSpacingSite` so the cascade paths can
+be built here as well as in `render-rules.ts`.
+
 ### `packages/codegen/src/compiler/model/site-preferences.ts::collectSitePreferences`
 
 ```text
@@ -3532,6 +3598,14 @@ that owns its edges (`ownsKindEdges`) gets its kind edge seams
 (`withKindEdges`). A grammar with no whitespace kinds gets the spaced rules
 back untouched.
 
+#### token interior
+
+```text
+A lexed kind is skipped by the interior seam pass: template text inside a token is written by the kind's own
+render function, so no address inside it can carry a preference. The kind still sits among its neighbours; that
+spacing comes from the parent's seams.
+```
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::withKindEdges`
 
 A kind's edge seams: when the kind's rule is a seq, a whitespace choice
@@ -3547,11 +3621,28 @@ choices are where it lives, and naming them by the kind reaches keyword
 edges (`else_clause_before`) as well. A rule that is not a seq holds no
 literal of its own and is returned unchanged.
 
+The kind's edge terminal cascades onto the edge: when the seq opens (or
+closes) with a literal token, or with a choice whose every arm is a token,
+`edgeLiteralsOf` names them as a set and the edge's `SpacingPart` carries it as
+`edgeLiterals`, so the site answers to those tokens'
+grammar-wide face as well as to `<kind>_before`/`_after` (see
+`site-addresses.ts::addressSites`). `arguments` opening with `(` takes the
+`_`-scope `"("/before` arm as its before-edge default without a row of its
+own; a kind row still overrides it, and a kind whose edge is a slot cascades
+nothing.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::ownsKindEdges`
 
 Whether a kind gets edge seams: it is a compound node, and it is either
 visible or a hidden kind with no visible twin of the same public name,
 since the two would claim the same `<kind>_before` key.
+
+#### token interior
+
+```text
+A lexed kind owns no edges: a token that reads as one text spaces against its neighbours through the parent's
+seams, exactly as a text leaf does.
+```
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::withArmEdgeSeams`
 
@@ -3561,6 +3652,8 @@ its arm renders: `for (init; cond; inc)` seats `semi/after` in the
 initializer's expression arm and nowhere else, so `for (let i = 0; i < 3; …)`
 spaces after its `;` while `for (;;)` stays tight. A bare token arm is
 wrapped in a sequence to hold the seam; a sequence arm takes it at its edge.
+An arm's token is its literal (`literalTokenOf`) or, for a reference to a
+visible punctuation kind, that kind's text (`punctuationReferenceTokenOf`).
 A choice that is itself one seam site (a token set or an enum slot, which
 `seamNameOf` names as a whole) is left to the boundary's own token seams.
 Runs from `withTokenSeams` on both neighbours of every boundary, before
@@ -3585,6 +3678,36 @@ member a parent boundary reads the group's edge token from.
 
 A nested seq with a seam choice prepended or appended.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::tokenNameOfText`
+
+The token name a literal's text answers to: the public catalog kind name of
+the entry that literal text resolves to, or nothing for whitespace-only text
+or a text with no catalog entry. It is the one derivation of "literal text
+to seam token", called by the seam pass when it mints a site and by the
+per-slot enum emitter when it pairs a site to a literal arm, so the two
+never disagree on a name.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::punctuationTokenOfNode`
+
+The token name a model node answers to when it is a visible punctuation leaf
+(`isVisiblePunctuationLeaf`): the name of its text through `tokenNameOfText`.
+Nothing for any other node, so a keyword, a hidden delimiter and a compound
+name no token. The one place that turns a punctuation kind into a token
+identity, read by the rule-side reader below and by the template emitter's
+slot lookup.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::punctuationReferenceTokenOf`
+
+The token name of a rule that is a reference to a visible punctuation kind,
+wherever it sits: a choice arm, or a member of a seq, optional or not. A
+member `choice('.', field(optional_chain))` has a string arm and a symbol
+arm, and `seq(object, optional(field(optional_chain)), '[', …)` holds the
+reference in the seq itself; neither is a literal to `literalTokenOf`, and
+this gives the reference the same token identity as a bare `?.` written
+elsewhere, so a `_` row for `?.` reaches all of them. A reference is a
+token however it is fielded; a keyword reference is not one, because a
+keyword face resolves through the word default.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::literalTokenOf`
 
 The catalog kind name of a member that renders as a fixed literal, keyword
@@ -3593,6 +3716,13 @@ SYMBOL carrying a `literal` and no field. Whitespace-only text is not a
 token, and a literal with no catalog kind gets no site. A keyword seam is
 what reaches `from 'x'`, which the lexical rule leaves tight.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::isDisplayedLiteral`
+
+A literal member shown under another kind's name: a string, or a symbol carrying `literal`, with an `aliasedTo`
+display (a contextual keyword distributed as `alias('default', $.identifier)`). It renders as that display, so it
+names no seam of its own: `literalTokenOf`, `punctuationReferenceTokenOf` and `armSeamName` pass over it, and its
+spacing is addressed through the display like any other member of that kind.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::literalSlotOf`
 
 The slot name of a member that renders a literal chosen per node: a
@@ -3600,9 +3730,10 @@ fielded literal that is a slot (a `nonterminal` string, or a linked symbol
 carrying `literal`), or a choice whose leaves are all literals under one
 field name, the field read from the leaf or inherited from the nearest
 enclosing choice (an operator choice nests one choice per precedence
-group). At least one leaf must be punctuation under the grammar's word
-matcher: a slot of keywords only (`let` / `const`, a `readonly` marker)
-stays lexical, and a seam beside such a marker would also break the
+group). A slot of keywords only (`and` / `or`, an `in` operator) is a slot
+too, so the keyword's word-default face exists beside a cascaded opener;
+the exception is an all-keyword slot that is optional (`isOptionalRule`),
+which stays unseamed because a seam beside such a marker would break the
 emitter's collapse of modifier-ordering arms into one gate per marker.
 Such a member joins a seam like a punctuation literal, named by the slot
 instead of the token. A fielded string that renders as plain text is a
@@ -3616,10 +3747,12 @@ or a symbol carrying `literal`.
 ### `packages/codegen/src/compiler/model/render-rules.ts::armSeamName`
 
 The seam name a single literal arm of an enum contributes: its own anonymous
-token's catalog kind. Word-shaped arms name nothing — two words cannot abut,
-so the lexical rule already separates them and a site there would never be
-declared. The resolver is the anon-only one, because this asks which token
-identity a text already has, not which rule answers to that name.
+token's catalog kind. Word-shaped arms name nothing unless `includeWords`
+asks for them: `withArmSeams` asks only for a choice that also has a
+punctuation arm, so `typeof` and `void` beside `!` get their own seams
+while an all-keyword choice keeps its slot seam. The resolver is the
+anon-only one, because this asks which token identity a text already has,
+not which rule answers to that name.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::withArmSeams`
 
@@ -3631,8 +3764,47 @@ no arm names anything is returned as is.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamNameOf`
 
-The name a member contributes to a seam beside it: its punctuation token's
-catalog kind, else its literal slot, else nothing.
+The name a member contributes to a seam beside it: its literal token's
+catalog kind, else the token of a reference to a visible punctuation kind
+(`punctuationReferenceTokenOf`), else its literal slot, else its enum slot, else its keyword
+slot, else nothing.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::keywordSlotOf`
+
+The slot name of a member that is a field referencing a keyword node
+(`AssembledKeyword` with the `word` flag), such as an arrow function's
+`async_marker`. It names a seam like an enum slot does, so a cascaded
+opener after the marker meets the keyword's face instead of nothing. A
+member inside a choice arm (`RenderRulesConfig.choiceArmNodes`) is left
+alone: the modifier-ordering arms of `public_field_definition` repeat the
+same marker per arm, and a seam beside each breaks the emitter's fold of
+those arms into one gate per marker.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::choiceArmNodesOf`
+
+Every node under any arm of any choice in a kind's rule, by identity. The
+seam pass computes it once per kind and hands it down as
+`RenderRulesConfig.choiceArmNodes`; leaves keep their identity through the
+rebuild, so `keywordSlotOf` can ask whether a member sat in an arm.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isOptionalRule`
+
+Whether a member, or any arm of a choice member, is optional.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isKeywordText`
+
+Whether a literal's kind is a keyword the grammar's `word` rule claims: the
+catalog entry's node is an `AssembledKeyword`. A keyword is a word-shaped
+literal by construction (`assemble` builds one only when the text matches the
+grammar's word matcher), so the class test is the whole answer; no text is
+matched against a pattern here.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isKeywordSeam`
+
+Whether the members a seam names are all keywords: a literal token, a
+literal slot or choice whose leaves are all keywords, an enum whose values
+all are, or a keyword-typed field. It feeds the `wordShaped` flag of
+`seamChoice`.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::literalTextOf`
 
@@ -3649,7 +3821,10 @@ print inside the referencing kind, so they own no seam sites.
 The whitespace choice of one seam, token or kind edge: field name the
 address `<token>_<side>`, label the one the grammar declared for that
 address on the kind or the address itself, side `seam`, the resolved
-default arm, and the grammar's seam arms (`SeamArms`).
+default arm, and the grammar's seam arms (`SeamArms`). `resolveSeam`'s
+`origin` rides along on the `SpacingPart` into `whitespaceChoice`, which
+stamps it beside `default: true` on the resolved arm's member — the one
+place this fact is decided; nothing downstream re-derives it.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::SeamArms`
 
@@ -3669,6 +3844,20 @@ separator's.
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamPartOf`
 
 The `SpacingPart` of a seam choice, side `seam`.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seamChoiceDefault`
+
+Reads back everything a seam choice's resolved default arm was stamped
+with, in one scan of its members — the label (the same address
+`isSeamChoice` parses off member 0), the `origin` (`undefined` for a
+separator gap's whitespace choice, which `resolver.resolveSeparator`
+builds without one), and the arm itself, recovered from the default
+member's symbol name via `publicKindName` (the inverse of
+`whitespaceSymbols`' `arm -> symbols[arm]` mapping, so no second table is
+needed to go back). The template emitter's `seamChoiceBetween` is the one
+caller — it reads both facts off a single found node rather than scanning
+twice, and never inspects an `annotations.preference` address itself to
+guess either one.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isAnyWhitespaceChoice`
 
@@ -3732,6 +3921,37 @@ the fallback — `space` for a separator gap, `tight` for a flank, and for a
 token seam the arm the seam-stamping dry run baked (`space` where the body
 had a static space, `tight` otherwise). A site's label is its address; a
 seam's resolved arm must be one its site admits.
+
+`declaredOptionArms`'s map values are `DeclaredArm` (`{ arm, origin }`),
+`origin` being `PreferenceOrigin` (`site-addresses.ts`, `Exclude<SeamOrigin,
+'fallback'>`) — `'preference'` for a kind- or supertype-scoped declaration,
+`'literal-default'` for a wildcard (`_`-scope) one, decided once in
+`resolveBindings` from the winning entry's address (a leading `_` segment
+vs. a named one) and never re-derived downstream. `#resolve` adds the
+third state, `'fallback'`, when no declaration reaches the site at all —
+the full three-value type, `SeamOrigin`, is defined once at the types
+layer (`types/rule.ts`, alongside `RuleAnnotations.origin`) since it needs
+to be nameable there without importing back up from this module.
+`resolveSeam` is the only caller that surfaces the fallback state;
+`resolveSeparator`/`resolveFlank` only need the arm and discard origin —
+separator gaps and flanks are outside the seam census's origin tracking.
+
+A `'word-default'` origin marks a seam on a keyword that no row reaches:
+`resolveSeam` gives it the fallback arm (`space`) but at the declared
+strength, so a keyword never loses its space to a cascaded tight — `return
+(x)`, `typeof (x)`, `case (1)` — while a declared tight (`return;`,
+`pub(crate)`) still wins by rank. It applies to token seams, literal and
+keyword slots, enum slots, and the keyword arms of a mixed operator choice;
+kind edges never carry it, because a kind edge whose first token is a
+keyword takes its space from the fallback. `spacingSitesOf` and `partOf`
+carry the origin for this state only, since it is a fact of the rule and
+not of any declaration.
+
+A fourth origin, `'cascade'`, marks a site whose arm came from its edge
+token's `_`-scope face through the cascade path rather than from a row
+naming the site; `resolveBindings` decides it, and `render-options-rs.ts::seamStrength`
+turns it into the middle strength tier the writer honours.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::publicKindName`
 
 ```text
@@ -3754,6 +3974,12 @@ seam's resolved arm must be one its site admits.
 One whitespace choice of a spaced separator, flank or seam: the transport
 field it becomes (the site key), its label, its side, its default arm and
 the arms it admits, read from the choice's own members.
+
+`edgeLiterals` is set only on a kind edge whose seq opens or closes with a
+literal token or a choice of tokens: the public names of those tokens (one
+element in the single-token case), stamped on the whitespace
+choice's own annotations by `whitespaceChoice` and read back by `partOf`, so
+`spacingSitesOf` can carry it onto the `RuleSpacingSite`.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::flanksOf`
 
@@ -3796,6 +4022,12 @@ skipped. Flanks are injected only when both indentation kinds are declared.
 Every site with its canonical path, sorted. A site's index in the result is its
 site number, which is what makes a prefix-scoped declaration a contiguous range
 rather than a scan.
+
+A site that names `edgeLiterals` (a kind edge whose kind opens or closes
+with those literals) also gets one `cascadePaths` entry per token:
+`[kind, literal, side]`, the path that token's own seam would have inside that
+kind. `cascadePathsOf` builds them; the primary `path` stays `[kind, side]`, so `options.ts` keys and
+kind rows are unchanged.
 
 ### `packages/codegen/src/compiler/model/site-addresses.ts::pathOf`
 
@@ -3849,6 +4081,30 @@ supertype matches every site whose segment names one of its members, through
 the members' sites the way the flat `Members` fan-out did; a site path itself
 always names the concrete kind.
 
+`matchAddressWith` is the form that says how each hit was reached: through
+the site's own path, or through one of its `cascadePaths` (the hit then names
+the token index). Only an address whose
+head is the wildcard (`_`-scope) may cascade: a kind-scoped literal row names
+the token's interior seam in that kind and must never reach the exterior
+edge of a kind that closes with the literal it opened with (closure pipes,
+quotes, backticks). `matchAddress` is the same match with the flag dropped.
+
+An edge over a set of tokens takes a cascaded face only when every token has
+one and they are the same arm: `resolveBindings` records, per cascaded site,
+the arm each token's most specific cascading row gave it, and applies the
+face only if all tokens are covered and agree. A disagreeing or partly
+undeclared set takes no cascade and stays at its fallback. The rows of one
+set overlap on the site by construction, so the nesting check ignores
+cascade hits on a token-set site; the one-token edge is the one-element case
+of the same path.
+
+### `packages/codegen/src/compiler/model/site-addresses.ts::isWildcardHead`
+
+Only a grammar-wide (`_`-scope) token face cascades onto a kind edge: a
+kind-scoped literal row names the token's interior seam in that kind, and
+must not reach the exterior edge of a kind that closes with the same
+literal it opened with.
+
 ### `packages/codegen/src/compiler/model/supertype-members.ts::unionMemberNames`
 
 The direct member names of a union node, or `null` for a node that is not one: a supertype's subtype names, a polymorph parent's symbol arms. The membership predicate `supertypeMembersByPublicName` hands to `buildMembersMap`.
@@ -3856,6 +4112,14 @@ The direct member names of a union node, or `null` for a node that is not one: a
 ### `packages/codegen/src/compiler/model/supertype-members.ts::buildMembersMap`
 
 The one expansion behind both maps: keys are the nodes `directMembers` recognises, values their transitive members in hidden and visible spellings, enums expanded to their resolved kinds. The two public maps differ only in the predicate they pass.
+
+A polymorph's arms are its own membership, full stop: an "is a"
+relationship. Chasing each arm's own union too would fold a sibling
+grouping's members into this one's ("contains", never "is a"): a polymorph
+grouping is-a its path-carrying arm, but that arm's own union (its `path`
+field's admitted kinds, including `scoped_identifier`) is not also the
+grouping's membership. Only a true supertype's subtype chain expands
+transitively: that is the parser's own "is a" hierarchy.
 
 ### `packages/codegen/src/compiler/model/supertype-members.ts::supertypeMembersByPublicName`
 
@@ -3910,6 +4174,11 @@ naming a delimiter or a separator token is passed over rather than refused;
 the pass that sees every site is the one that refuses an address naming
 nothing.
 
+A site an entry reached only through its cascade path resolves with origin
+`'cascade'` rather than the entry's own origin: the arm is the token's
+grammar-wide face inherited by the kind edge, which the writer ranks below a
+declared arm and above the fallback.
+
 ### `packages/codegen/src/compiler/model/site-addresses.ts::addressSegments`
 
 A written path read as an address. The first segment is the kind, so a bare
@@ -3918,10 +4187,25 @@ kind in the `options:` block and an address written `(kind)/…` reach the same
 site. Parsing stays literal, because a label's head is virtual and must not be
 resolved against the grammar.
 
+### `packages/codegen/src/compiler/model/site-addresses.ts::resolveBindings`
+
+Each site's arm, with the narrowest binding that reaches it winning (see
+`addressSegments` above for the head-segment normalization specificity
+sorts on). The map's value also carries `origin: PreferenceOrigin` —
+`'literal-default'` when the winning entry's address has a wildcard head
+(a bare `_`), `'preference'` otherwise — decided once here, from the
+address text, at the one place a site's winning declaration is chosen.
+Every other reader of a resolved arm (`declaredOptionArms`,
+`DefaultResolver`, the seam census) consumes this stamp; none re-parses
+an address to guess it. `withDeclaredArms` (`site-preferences.ts`), the
+other caller, only needs the arm and drops `origin`.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::declaredOptionArms`
 
 Each site's arm as the `options:` block declares it, keyed by kind and address —
-the form the default resolver already looks sites up by.
+the form the default resolver already looks sites up by. The map's value is
+`DeclaredArm` (`{ arm, origin }`), `origin` carried through unchanged from
+`resolveBindings`.
 
 It runs between the two render-rule passes, because that is the first point
 where the sites an address names exist: they are read off the built rules, not
@@ -3974,6 +4258,20 @@ The candidate a slot offers when it holds more than one value and every value
 names an arm. Arms come from the slot's own members, the way a separated
 list's arms come from its separator rule.
 
+### `packages/codegen/src/compiler/model/site-preferences.ts::variantChoiceCandidate`
+
+```text
+The options site of a supertype's choice between its variants, addressed `<kind>/variant` and labelled
+`VARIANT_LABEL`. It lets a binding pick a default variant at the kind itself (typescript `string/variant` →
+quote style) rather than at each slot that holds it.
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::armsOf`
+
+```text
+The arms of a choice site with the kind each resolves to, shared by slot choices and supertype variant choices.
+```
+
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::stampResolvedDefaults`
 
@@ -3984,6 +4282,18 @@ The factory reads the stamp rather than the options block, so the arm it
 bakes in and the arm the renderer resolves have one source. Resolution runs
 before the emitters walk the model, and a slot with no stamp is one no option
 addressed.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.registeredOption`
+
+Whether an `options:` declaration registered this slot as a spelling site: a slot whose values are literal text with no kind ids, such as `0x` and `0X`. A registered slot is no longer part of the configuration a caller supplies; its value is an option that defaults to `optionDefaultArm`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.configSlots`
+
+The slots a caller supplies, which is every slot except the ones registered as an option. The sole-slot classification reads this list, so a node with one real slot and one registered spelling takes that value directly.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::registerSpellingSite`
+
+Stamps the slot a declared spelling site names with its default arm and marks it registered. A spelling site has no kind ids, so it never joins the native option table.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.optionDefaultArm`
 
@@ -4006,3 +4316,81 @@ The separator token an option declared for this list, stamped once resolution
 has run. A list that chooses its separator per instance and has no stamp is a
 build error naming the arms it admits.
 
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.lexedInterior`
+
+```text
+True when the kind is read as one text and rendered from slots around literal runs: the top rule is a structured
+`token(...)` (`tokenized`) or a structured bare pattern (`lexed`). The reader keeps `$text` for such a kind, the
+render template glues its members with adjacency marks, no seam is minted inside it and it owns no kind-edge
+seams; its slot structure is the single derivation `interiorOf` serializes.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isPatternValue`
+
+```text
+True for a slot value that is free text constrained by a pattern rather than a literal.
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isLexedKind`
+
+```text
+True for a kind whose slot structure is a token interior; such a kind is skipped by the interior seam pass and owns no edges.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledAlias.aliasTypeId`
+
+```text
+Required: the parser's
+alias type id, which is the node's identity (`$type`) in place of its
+content's grammar id. The reader stamps this id on the node, wrap dispatches
+it to the envelope, and kind-id-rust emits the set as `is_alias_envelope`.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::CompoundOpts.aliasTypeId`
+
+```text
+The alias type id, set by assemble for a kind classified 'alias'. The
+AssembledAlias constructor throws without it, since a display with no alias
+row could never be dispatched from a read.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledAlias`
+
+```text
+The single-slot envelope for a display kind the parser issues only under an
+alias symbol (isAliasEnvelopeKind): its identity is the alias type id, its
+one slot the storage it displays. The content alone distinguishes the cases —
+a single storage node (`type_identifier` over `identifier`), or an enum of
+storage kinds with no parser symbol of their own (`reserved_identifier` over
+keyword terminals), where the parser issues each member's terminal under the
+alias id. Reading, wrap dispatch and the factory shape (`direct`) are the
+same for every content. When the displayed rule has its own symbol (a renamed
+hidden rule such as rust `_primitive_type`), that symbol is the container and
+the kind is a plain AssembledEnvelope.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isAliasEnvelopeKind`
+
+```text
+A display kind the parser only ever issues under an alias symbol, whose node
+is either the storage node itself or a container of it: its simplified body
+is a single SYMBOL, its catalog row is an `alias_sym`, and its storage is not
+hidden (or is itself only an alias row). The per-node choice between storage
+and container is made by the reader from the node's grammar symbol.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::aliasEnvelopeOf`
+
+```text
+The alias envelope an alias-site ref displays as, if any. Slot values and
+supertype members at such a site resolve to the envelope, not the storage
+kind, so types, transports and factories agree with what the read delivers.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::resolveSlotAliasPairs`
+
+The name-keyed display → storage redirects a slot needs when a node arrives under its display name: from the slot's
+aliased values whose parse id differs from their storage id, and from the restamp pairs of any supertype the slot
+holds. A redirect is kept only when it is unambiguous — the display has exactly one storage in the slot and is not
+itself a storage there. `identifier` over a dozen keyword storages beside `identifier` itself redirects nowhere; the
+read's own storage id decides.

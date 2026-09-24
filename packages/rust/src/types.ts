@@ -7,6 +7,7 @@ import type {
 	TreeNode as BaseTreeNode,
 	ConfigOf,
 	LooseConfigOf,
+	WidenNumeric,
 	LooseValue,
 	NodeKind,
 	NodeNs,
@@ -15,8 +16,9 @@ import type {
 	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
-	BooleanKeyword,
-	KindEnum
+	BooleanKeyword as BaseBooleanKeyword,
+	KindEnum,
+	HiddenLeaf
 } from '@sittir/types';
 import type * as T from './types.js';
 import type { NodeMethodsOf } from './utils.js';
@@ -28,8 +30,9 @@ export type NodeConfig<K extends NodeKind<RustGrammar>> = BaseNodeConfig<RustGra
 export type TreeNode<K extends NodeKind<RustGrammar>> = BaseTreeNode<RustGrammar, K>;
 
 export type LeafScalarMap = {
-	[TSKindId.BooleanLiteral]: boolean;
-	[TSKindId.IntegerLiteral]: number;
+	[TSKindId.TrueKeyword]: boolean;
+	[TSKindId.FalseKeyword]: boolean;
+	[TSKindId.IntegerLiteralDecimal]: number;
 	[TSKindId.FloatLiteral]: number;
 };
 
@@ -57,11 +60,10 @@ export type LeafStringMap = {
 	[TSKindId.UnitExpression]: '()';
 	[TSKindId.RemainingFieldPattern]: '..';
 	[TSKindId.BooleanLiteral]: 'true' | 'false';
-	['_reserved_identifier']: 'default' | 'union' | 'gen';
 	[TSKindId.Self]: 'self';
 	[TSKindId.Super]: 'super';
 	[TSKindId.Crate]: 'crate';
-	['_primitive_type']:
+	[TSKindId.PrimitiveType]:
 		| 'u8'
 		| 'i8'
 		| 'u16'
@@ -133,8 +135,7 @@ export type LeafStringMap = {
 		| '->'
 		| '=>'
 		| '#'
-		| '?'
-		| '$';
+		| '?';
 	[TSKindId.TokenKeywords]:
 		| "'"
 		| 'as'
@@ -183,7 +184,26 @@ export type LeafStringMap = {
 	[TSKindId.TtKeyword]: 'tt';
 	[TSKindId.TyKeyword]: 'ty';
 	[TSKindId.VisKeyword]: 'vis';
+	[TSKindId.U8Keyword]: 'u8';
+	[TSKindId.I8Keyword]: 'i8';
+	[TSKindId.U16Keyword]: 'u16';
+	[TSKindId.I16Keyword]: 'i16';
+	[TSKindId.U32Keyword]: 'u32';
+	[TSKindId.I32Keyword]: 'i32';
+	[TSKindId.U64Keyword]: 'u64';
+	[TSKindId.I64Keyword]: 'i64';
+	[TSKindId.U128Keyword]: 'u128';
+	[TSKindId.I128Keyword]: 'i128';
+	[TSKindId.IsizeKeyword]: 'isize';
+	[TSKindId.UsizeKeyword]: 'usize';
+	[TSKindId.F32Keyword]: 'f32';
+	[TSKindId.F64Keyword]: 'f64';
+	[TSKindId.BoolKeyword]: 'bool';
+	[TSKindId.StrKeyword]: 'str';
+	[TSKindId.CharKeyword]: 'char';
+	[TSKindId.DefaultKeyword]: 'default';
 	[TSKindId.UnionKeyword]: 'union';
+	[TSKindId.GenKeyword]: 'gen';
 	[TSKindId.EnumKeyword]: 'enum';
 	[TSKindId.ExternKeyword]: 'extern';
 	[TSKindId.AsKeyword]: 'as';
@@ -211,29 +231,10 @@ export type LeafStringMap = {
 	[TSKindId.AwaitKeyword]: 'await';
 	[TSKindId.UnsafeKeyword]: 'unsafe';
 	[TSKindId.AsyncKeyword]: 'async';
-	[TSKindId.GenKeyword]: 'gen';
 	[TSKindId.TryKeyword]: 'try';
 	[TSKindId.RefKeyword]: 'ref';
 	[TSKindId.TrueKeyword]: 'true';
 	[TSKindId.FalseKeyword]: 'false';
-	[TSKindId.DefaultKeyword]: 'default';
-	[TSKindId.U8Keyword]: 'u8';
-	[TSKindId.I8Keyword]: 'i8';
-	[TSKindId.U16Keyword]: 'u16';
-	[TSKindId.I16Keyword]: 'i16';
-	[TSKindId.U32Keyword]: 'u32';
-	[TSKindId.I32Keyword]: 'i32';
-	[TSKindId.U64Keyword]: 'u64';
-	[TSKindId.I64Keyword]: 'i64';
-	[TSKindId.U128Keyword]: 'u128';
-	[TSKindId.I128Keyword]: 'i128';
-	[TSKindId.IsizeKeyword]: 'isize';
-	[TSKindId.UsizeKeyword]: 'usize';
-	[TSKindId.F32Keyword]: 'f32';
-	[TSKindId.F64Keyword]: 'f64';
-	[TSKindId.BoolKeyword]: 'bool';
-	[TSKindId.StrKeyword]: 'str';
-	[TSKindId.CharKeyword]: 'char';
 	[TSKindId.MoveKeyword]: 'move';
 	[TSKindId.Underscore]: '_';
 	[TSKindId.ModKeyword]: 'mod';
@@ -242,7 +243,7 @@ export type LeafStringMap = {
 	[TSKindId.RawKeyword]: 'raw';
 };
 
-export const enum TSKindId {
+export enum TSKindId {
 	Identifier = 1,
 	Semi = 2,
 	EqGt = 3,
@@ -269,436 +270,448 @@ export const enum TSKindId {
 	TtKeyword = 24,
 	TyKeyword = 25,
 	VisKeyword = 26,
-	U8Keyword = 27,
-	I8Keyword = 28,
-	U16Keyword = 29,
-	I16Keyword = 30,
-	U32Keyword = 31,
-	I32Keyword = 32,
-	U64Keyword = 33,
-	I64Keyword = 34,
-	U128Keyword = 35,
-	I128Keyword = 36,
-	IsizeKeyword = 37,
-	UsizeKeyword = 38,
-	F32Keyword = 39,
-	F64Keyword = 40,
-	BoolKeyword = 41,
-	StrKeyword = 42,
-	CharKeyword = 43,
-	Pound = 44,
-	Lbrack = 45,
-	Rbrack = 46,
-	Bang = 47,
-	Lbrace = 48,
-	Rbrace = 49,
-	UnionKeyword = 50,
-	EnumKeyword = 51,
-	ExternKeyword = 52,
-	ConstKeyword = 53,
-	StaticKeyword = 54,
-	TypeKeyword = 55,
-	Eq = 56,
-	FnKeyword = 57,
-	WhereKeyword = 58,
-	TraitKeyword = 59,
-	ForKeyword = 60,
-	Lt = 61,
-	Gt = 62,
-	LetKeyword = 63,
-	UseKeyword = 64,
-	ColonColon = 65,
-	AsKeyword = 66,
-	DotDotDot = 67,
-	Squote = 68,
-	Lt2 = 69,
-	Amp = 70,
-	ImplKeyword = 71,
-	DynKeyword = 72,
-	MutableSpecifier = 73,
-	Dash = 74,
-	AmpAmp = 75,
-	PipePipe = 76,
-	Pipe = 77,
-	Caret = 78,
-	EqEq = 79,
-	BangEq = 80,
-	LtEq = 81,
-	GtEq = 82,
-	LtLt = 83,
-	GtGt = 84,
-	Slash = 85,
-	Percent = 86,
-	PlusEq = 87,
-	DashEq = 88,
-	StarEq = 89,
-	SlashEq = 90,
-	PercentEq = 91,
-	AmpEq = 92,
-	PipeEq = 93,
-	CaretEq = 94,
-	LtLtEq = 95,
-	GtGtEq = 96,
-	ReturnKeyword = 97,
-	YieldKeyword = 98,
-	DotDot = 99,
-	IfKeyword = 100,
-	ElseKeyword = 101,
-	MatchKeyword = 102,
-	WhileKeyword = 103,
-	LoopKeyword = 104,
-	InKeyword = 105,
-	BreakKeyword = 106,
-	ContinueKeyword = 107,
-	Dot = 108,
-	AwaitKeyword = 109,
-	UnsafeKeyword = 110,
-	AsyncKeyword = 111,
-	GenKeyword = 112,
-	TryKeyword = 113,
-	RefKeyword = 114,
-	At = 115,
-	IntegerLiteral = 116,
+	Pound = 27,
+	Lbrack = 28,
+	Rbrack = 29,
+	Bang = 30,
+	Lbrace = 31,
+	Rbrace = 32,
+	UnionKeyword = 33,
+	EnumKeyword = 34,
+	ExternKeyword = 35,
+	ConstKeyword = 36,
+	StaticKeyword = 37,
+	TypeKeyword = 38,
+	Eq = 39,
+	FnKeyword = 40,
+	WhereKeyword = 41,
+	TraitKeyword = 42,
+	ForKeyword = 43,
+	Lt = 44,
+	Gt = 45,
+	LetKeyword = 46,
+	UseKeyword = 47,
+	ColonColon = 48,
+	AsKeyword = 49,
+	DotDotDot = 50,
+	Squote = 51,
+	DefaultKeyword = 52,
+	GenKeyword = 53,
+	Lt2 = 54,
+	Amp = 55,
+	ImplKeyword = 56,
+	DynKeyword = 57,
+	MutableSpecifier = 58,
+	U8Keyword = 59,
+	I8Keyword = 60,
+	U16Keyword = 61,
+	I16Keyword = 62,
+	U32Keyword = 63,
+	I32Keyword = 64,
+	U64Keyword = 65,
+	I64Keyword = 66,
+	U128Keyword = 67,
+	I128Keyword = 68,
+	IsizeKeyword = 69,
+	UsizeKeyword = 70,
+	F32Keyword = 71,
+	F64Keyword = 72,
+	BoolKeyword = 73,
+	StrKeyword = 74,
+	CharKeyword = 75,
+	Dash = 76,
+	AmpAmp = 77,
+	PipePipe = 78,
+	Pipe = 79,
+	Caret = 80,
+	EqEq = 81,
+	BangEq = 82,
+	LtEq = 83,
+	GtEq = 84,
+	LtLt = 85,
+	GtGt = 86,
+	Slash = 87,
+	Percent = 88,
+	PlusEq = 89,
+	DashEq = 90,
+	StarEq = 91,
+	SlashEq = 92,
+	PercentEq = 93,
+	AmpEq = 94,
+	PipeEq = 95,
+	CaretEq = 96,
+	LtLtEq = 97,
+	GtGtEq = 98,
+	ReturnKeyword = 99,
+	YieldKeyword = 100,
+	DotDot = 101,
+	IfKeyword = 102,
+	ElseKeyword = 103,
+	MatchKeyword = 104,
+	WhileKeyword = 105,
+	LoopKeyword = 106,
+	InKeyword = 107,
+	BreakKeyword = 108,
+	ContinueKeyword = 109,
+	Dot = 110,
+	AwaitKeyword = 111,
+	UnsafeKeyword = 112,
+	AsyncKeyword = 113,
+	TryKeyword = 114,
+	RefKeyword = 115,
+	At = 116,
 	Dquote = 117,
-	CharLiteral = 118,
-	EscapeSequence = 119,
-	TrueKeyword = 120,
-	FalseKeyword = 121,
-	SlashSlash = 122,
-	Bang2 = 123,
-	Slash2 = 124,
-	SlashStar = 125,
-	StarSlash = 126,
-	Shebang = 127,
-	DefaultKeyword = 128,
-	Self = 129,
-	Super = 130,
-	Crate = 131,
-	Metavariable = 132,
-	MoveKeyword = 133,
-	Comma = 134,
-	DashGt = 135,
-	Underscore = 136,
-	DotDotEq = 137,
-	ModKeyword = 138,
-	PubKeyword = 139,
-	StructKeyword = 140,
-	StringLiteralOpen = 141,
-	RawKeyword = 142,
-	LineCommentRegularDslashToken1 = 143,
-	LineCommentRegularDslashToken2 = 144,
-	LineCommentContent = 145,
-	MacroRulesBang = 146,
-	StringContent = 147,
-	RawStringLiteralStart = 148,
-	RawStringLiteralContent = 149,
-	RawStringLiteralEnd = 150,
-	FloatLiteral = 151,
-	OuterBlockDocCommentMarker = 152,
-	InnerBlockDocCommentMarker = 153,
-	BlockCommentContent = 154,
-	LineDocContent = 155,
-	ErrorSentinel = 156,
-	Tight = 157,
-	Space = 158,
-	Newline = 159,
-	Blankline = 160,
-	Indent = 161,
-	Dedent = 162,
-	SourceFile = 163,
-	Statement = 164,
-	EmptyStatement = 165,
-	ExpressionStatement = 166,
-	MacroDefinition = 167,
-	MacroRule = 168,
-	TokenPattern = 169,
-	TokenTreePattern = 170,
-	TokenBindingPattern = 171,
-	TokenRepetitionPattern = 172,
-	FragmentSpecifier = 173,
-	TokenTree = 174,
-	TokenRepetition = 175,
-	_NonSpecialToken = 176,
-	AttributeItem = 177,
-	InnerAttributeItem = 178,
-	Attribute = 179,
-	ModItem = 180,
-	ForeignModItem = 181,
-	DeclarationList = 182,
-	StructItem = 183,
-	UnionItem = 184,
-	EnumItem = 185,
-	EnumVariantList = 186,
-	EnumVariant = 187,
-	FieldDeclarationList = 188,
-	FieldDeclaration = 189,
-	OrderedFieldDeclarationList = 190,
-	ExternCrateDeclaration = 191,
-	ConstItem = 192,
-	StaticItem = 193,
-	TypeItem = 194,
-	FunctionItem = 195,
-	FunctionSignatureItem = 196,
-	FunctionModifiers = 197,
-	WhereClause = 198,
-	WherePredicate = 199,
-	ImplItem = 200,
-	TraitItem = 201,
-	AssociatedType = 202,
-	TraitBounds = 203,
-	HigherRankedTraitBound = 204,
-	RemovedTraitBound = 205,
-	TypeParameters = 206,
-	ConstParameter = 207,
-	TypeParameter = 208,
-	LifetimeParameter = 209,
-	LetDeclaration = 210,
-	UseDeclaration = 211,
-	UseClause = 212,
-	ScopedUseList = 213,
-	UseList = 214,
-	UseAsClause = 215,
-	UseWildcard = 216,
-	Parameters = 217,
-	SelfParameter = 218,
-	VariadicParameter = 219,
-	Parameter = 220,
-	ExternModifier = 221,
-	VisibilityModifier = 222,
-	Type = 223,
-	BracketedType = 224,
-	QualifiedType = 225,
-	Lifetime = 226,
-	ArrayType = 227,
-	ForLifetimes = 228,
-	FunctionType = 229,
-	TupleType = 230,
-	UnitType = 231,
-	GenericFunction = 232,
-	GenericType = 233,
-	GenericTypeWithTurbofish = 234,
-	BoundedType = 235,
-	UseBounds = 236,
-	TypeArguments = 237,
-	TypeBinding = 238,
-	ReferenceType = 239,
-	PointerType = 240,
-	NeverType = 241,
-	AbstractType = 242,
-	DynamicType = 243,
-	ExpressionExceptRange = 244,
-	Expression = 245,
-	MacroInvocation = 246,
-	DelimTokenTree = 247,
-	DelimTokens = 248,
-	NonDelimToken = 249,
-	ScopedIdentifier = 250,
-	ScopedTypeIdentifierInExpressionPosition = 251,
-	ScopedTypeIdentifier = 252,
-	RangeExpression = 253,
-	UnaryExpression = 254,
-	TryExpression = 255,
-	ReferenceExpression = 256,
-	BinaryExpression = 257,
-	AssignmentExpression = 258,
-	CompoundAssignmentExpr = 259,
-	TypeCastExpression = 260,
-	ReturnExpression = 261,
-	YieldExpression = 262,
-	CallExpression = 263,
-	Arguments = 264,
-	ArrayExpression = 265,
-	ParenthesizedExpression = 266,
-	TupleExpression = 267,
-	UnitExpression = 268,
-	StructExpression = 269,
-	FieldInitializerList = 270,
-	ShorthandFieldInitializer = 271,
-	FieldInitializer = 272,
-	BaseFieldInitializer = 273,
-	IfExpression = 274,
-	LetCondition = 275,
-	LetChain = 276,
-	Condition = 277,
-	ElseClause = 278,
-	MatchExpression = 279,
-	MatchBlock = 280,
-	MatchArm = 281,
-	LastMatchArm = 282,
-	MatchPattern = 283,
-	WhileExpression = 284,
-	LoopExpression = 285,
-	ForExpression = 286,
-	ConstBlock = 287,
-	ClosureExpression = 288,
-	ClosureParameters = 289,
-	Label = 290,
-	BreakExpression = 291,
-	ContinueExpression = 292,
-	IndexExpression = 293,
-	AwaitExpression = 294,
-	FieldExpression = 295,
-	UnsafeBlock = 296,
-	AsyncBlock = 297,
-	GenBlock = 298,
-	TryBlock = 299,
-	Block = 300,
-	Pattern = 301,
-	GenericPattern = 302,
-	TuplePattern = 303,
-	SlicePattern = 304,
-	TupleStructPattern = 305,
-	StructPattern = 306,
-	FieldPattern = 307,
-	RemainingFieldPattern = 308,
-	MutPattern = 309,
-	RangePattern = 310,
-	RefPattern = 311,
-	CapturedPattern = 312,
-	ReferencePattern = 313,
-	OrPattern = 314,
-	Literal = 315,
-	LiteralPattern = 316,
-	NegativeLiteral = 317,
-	StringLiteral = 318,
-	RawStringLiteral = 319,
-	BooleanLiteral = 320,
-	LineComment = 321,
-	InnerLineDocCommentMarker = 322,
-	OuterLineDocCommentMarker = 323,
-	BlockComment = 324,
-	KwRefMarker = 325,
-	KwUnsafeMarker = 326,
-	KwStaticMarker = 327,
-	KwAsyncMarker = 328,
-	KwMoveMarker = 329,
-	MacroRules = 330,
-	EnumVariantListElements = 331,
-	FieldDeclarationListElements = 332,
-	OrderedFieldDeclarationListElements = 333,
-	WherePredicates = 334,
-	TypeParametersElements = 335,
-	UseClauses = 336,
-	ParametersElements = 337,
-	Lifetimes = 338,
-	UseBoundsElements = 339,
-	TypeArgumentsElements = 340,
-	ArgumentsElements = 341,
-	FieldInitializerListElements = 342,
-	TuplePatternElements = 343,
-	Patterns = 344,
-	StructPatternElements = 345,
-	UseWildcardGroup = 346,
-	VisibilityModifierGroup = 347,
-	KwAsync = 348,
-	KwDefault = 349,
-	KwConst = 350,
-	KwUnsafe = 351,
-	TupleTypeElements = 352,
-	TupleExpressionElements = 353,
-	TokenTreePunctuation = 354,
-	TokenKeywords = 355,
-	WildcardPattern = 356,
-	RangeExpressionBare = 357,
-	ImplItemUnsafeMarker = 358,
-	ArrayExpressionSemi = 359,
-	ArrayExpressionList = 360,
-	AttributeInput = 361,
-	ClosureExpressionBlock = 362,
-	ClosureExpressionExpr = 363,
-	ReferenceExpressionRawConst = 364,
-	ReferenceExpressionRawMut = 365,
-	ReferenceExpressionMut = 366,
-	ReferenceExpressionBare = 367,
-	ImplItemPositiveClause = 368,
-	ImplItemNegativeClause = 369,
-	ImplItemBody = 370,
-	ImplItemSemi = 371,
-	VisibilityModifierPub = 372,
-	VisibilityModifierPubInPath = 373,
-	FunctionTypeTraitForm = 374,
-	FunctionTypeFnForm = 375,
-	ModItemExternal = 376,
-	ModItemInline = 377,
-	OrPatternBinary = 378,
-	OrPatternPrefix = 379,
-	PointerTypeConst = 380,
-	PointerTypeMut = 381,
-	RangeExpressionBinary = 382,
-	RangeExpressionPostfix = 383,
-	RangeExpressionPrefix = 384,
-	ExpressionStatementWithSemi = 385,
-	ForeignModItemSemi = 386,
-	ForeignModItemBody = 387,
-	MatchArmWithComma = 388,
-	MatchArmBlockEnding = 389,
-	LineCommentRegularDslash = 390,
-	LineCommentDocOuter = 391,
-	LineCommentDocInner = 392,
-	BlockCommentDocOuter = 393,
-	BlockCommentDocInner = 394,
-	TokenTreePatternParen = 395,
-	TokenTreePatternBracket = 396,
-	TokenTreePatternBrace = 397,
-	TokenTreeParen = 398,
-	TokenTreeBracket = 399,
-	TokenTreeBrace = 400,
-	DelimTokenTreeParen = 401,
-	DelimTokenTreeBracket = 402,
-	DelimTokenTreeBrace = 403,
-	FieldPatternShorthand = 404,
-	FieldPatternNamed = 405,
-	MacroDefinitionParen = 406,
-	MacroDefinitionBracket = 407,
-	MacroDefinitionBrace = 408,
-	RangePatternPrefix = 409,
-	RangePatternWithLeftWithRight = 410,
-	RangePatternWithLeftBare = 411,
-	RangePatternWithLeft = 412,
-	StructItemBrace = 413,
-	StructItemTuple = 414,
-	StructItemUnit = 415,
-	AttributedFieldDeclaration = 416,
-	AttributedEnumVariant = 417,
-	AttributedParameter = 418,
-	AttributedTypeParameter = 419,
-	AttributedArgument = 420,
-	AttributedOrderedField = 421,
-	TypeArgument = 422,
-	MatchBlockArms = 423,
-	SourceFileRepeat1 = 424,
-	TokenRepetitionPatternRepeat1 = 425,
-	TokenRepetitionRepeat1 = 426,
-	DeclarationListRepeat1 = 427,
-	FunctionModifiersRepeat1 = 428,
-	TraitBoundsRepeat1 = 429,
-	TupleExpressionRepeat1 = 430,
-	LastMatchArmRepeat1 = 431,
-	StringLiteralRepeat1 = 432,
-	MacroRulesRepeat1 = 433,
-	EnumVariantListElementsRepeat1 = 434,
-	FieldDeclarationListElementsRepeat1 = 435,
-	OrderedFieldDeclarationListElementsRepeat1 = 436,
-	WherePredicatesRepeat1 = 437,
-	TypeParametersElementsRepeat1 = 438,
-	UseClausesRepeat1 = 439,
-	ParametersElementsRepeat1 = 440,
-	LifetimesRepeat1 = 441,
-	UseBoundsElementsRepeat1 = 442,
-	TypeArgumentsElementsRepeat1 = 443,
-	ArgumentsElementsRepeat1 = 444,
-	FieldInitializerListElementsRepeat1 = 445,
-	_ClosureParametersOptional1Repeat1 = 446,
-	TuplePatternElementsRepeat1 = 447,
-	PatternsRepeat1 = 448,
-	StructPatternElementsRepeat1 = 449,
-	_TupleTypeElementsRepeat1 = 450,
-	_TupleExpressionElementsRepeat1 = 451,
-	DelimTokenTreeParenRepeat1 = 452,
-	_MatchBlockArmsRepeat1 = 453,
-	FieldIdentifier = 454,
-	_ShorthandFieldIdentifier = 456,
-	TypeIdentifier = 457
+	TrueKeyword = 118,
+	FalseKeyword = 119,
+	SlashSlash = 120,
+	Bang2 = 121,
+	Slash2 = 122,
+	SlashStar = 123,
+	StarSlash = 124,
+	Shebang = 125,
+	Self = 126,
+	Super = 127,
+	Crate = 128,
+	Metavariable = 129,
+	MoveKeyword = 130,
+	Comma = 131,
+	DashGt = 132,
+	Underscore = 133,
+	DotDotEq = 134,
+	ModKeyword = 135,
+	PubKeyword = 136,
+	StructKeyword = 137,
+	StringLiteralOpen = 138,
+	IntegerLiteralDecimal = 139,
+	IntegerLiteralHex = 140,
+	IntegerLiteralBinary = 141,
+	IntegerLiteralOctal = 142,
+	CharLiteralEscaped = 143,
+	CharLiteralPlain = 144,
+	CharLiteralEmpty = 145,
+	EscapeSequenceSimple = 146,
+	EscapeSequenceUnicodeFixed = 147,
+	EscapeSequenceUnicodeBraced = 148,
+	EscapeSequenceHex = 149,
+	RawKeyword = 150,
+	LineCommentRegularDslashToken1 = 151,
+	LineCommentRegularDslashToken2 = 152,
+	LineCommentContent = 153,
+	MacroRulesBang = 154,
+	StringContent = 155,
+	RawStringLiteralStart = 156,
+	RawStringLiteralContent = 157,
+	RawStringLiteralEnd = 158,
+	FloatLiteral = 159,
+	OuterBlockDocCommentMarker = 160,
+	InnerBlockDocCommentMarker = 161,
+	BlockCommentContent = 162,
+	LineDocContent = 163,
+	ErrorSentinel = 164,
+	Tight = 165,
+	Space = 166,
+	Newline = 167,
+	Blankline = 168,
+	Indent = 169,
+	Dedent = 170,
+	SourceFile = 171,
+	Statement = 172,
+	EmptyStatement = 173,
+	ExpressionStatement = 174,
+	MacroDefinition = 175,
+	MacroRule = 176,
+	TokenPattern = 177,
+	TokenTreePattern = 178,
+	TokenBindingPattern = 179,
+	TokenRepetitionPattern = 180,
+	FragmentSpecifier = 181,
+	TokenTree = 182,
+	TokenRepetition = 183,
+	_NonSpecialToken = 184,
+	AttributeItem = 185,
+	InnerAttributeItem = 186,
+	Attribute = 187,
+	ModItem = 188,
+	ForeignModItem = 189,
+	DeclarationList = 190,
+	StructItem = 191,
+	UnionItem = 192,
+	EnumItem = 193,
+	EnumVariantList = 194,
+	EnumVariant = 195,
+	FieldDeclarationList = 196,
+	FieldDeclaration = 197,
+	OrderedFieldDeclarationList = 198,
+	ExternCrateDeclaration = 199,
+	ConstItem = 200,
+	StaticItem = 201,
+	TypeItem = 202,
+	FunctionItem = 203,
+	FunctionSignatureItem = 204,
+	FunctionModifiers = 205,
+	WhereClause = 206,
+	WherePredicate = 207,
+	ImplItem = 208,
+	TraitItem = 209,
+	AssociatedType = 210,
+	TraitBounds = 211,
+	HigherRankedTraitBound = 212,
+	RemovedTraitBound = 213,
+	TypeParameters = 214,
+	ConstParameter = 215,
+	TypeParameter = 216,
+	LifetimeParameter = 217,
+	LetDeclaration = 218,
+	UseDeclaration = 219,
+	UseClause = 220,
+	ScopedUseList = 221,
+	UseList = 222,
+	UseAsClause = 223,
+	UseWildcard = 224,
+	Parameters = 225,
+	SelfParameter = 226,
+	VariadicParameter = 227,
+	Parameter = 228,
+	ExternModifier = 229,
+	VisibilityModifier = 230,
+	Type = 231,
+	BracketedType = 232,
+	QualifiedType = 233,
+	Lifetime = 234,
+	ArrayType = 235,
+	ForLifetimes = 236,
+	FunctionType = 237,
+	TupleType = 238,
+	UnitType = 239,
+	GenericFunction = 240,
+	GenericType = 241,
+	GenericTypeWithTurbofish = 242,
+	BoundedType = 243,
+	UseBounds = 244,
+	TypeArguments = 245,
+	TypeBinding = 246,
+	ReferenceType = 247,
+	PointerType = 248,
+	NeverType = 249,
+	AbstractType = 250,
+	DynamicType = 251,
+	ExpressionExceptRange = 252,
+	Expression = 253,
+	MacroInvocation = 254,
+	DelimTokenTree = 255,
+	DelimTokens = 256,
+	NonDelimToken = 257,
+	ScopedIdentifier = 258,
+	ScopedTypeIdentifierInExpressionPosition = 259,
+	ScopedTypeIdentifier = 260,
+	RangeExpression = 261,
+	UnaryExpression = 262,
+	TryExpression = 263,
+	ReferenceExpression = 264,
+	BinaryExpression = 265,
+	AssignmentExpression = 266,
+	CompoundAssignmentExpr = 267,
+	TypeCastExpression = 268,
+	ReturnExpression = 269,
+	YieldExpression = 270,
+	CallExpression = 271,
+	Arguments = 272,
+	ArrayExpression = 273,
+	ParenthesizedExpression = 274,
+	TupleExpression = 275,
+	UnitExpression = 276,
+	StructExpression = 277,
+	FieldInitializerList = 278,
+	ShorthandFieldInitializer = 279,
+	FieldInitializer = 280,
+	BaseFieldInitializer = 281,
+	IfExpression = 282,
+	LetCondition = 283,
+	LetChain = 284,
+	Condition = 285,
+	ElseClause = 286,
+	MatchExpression = 287,
+	MatchBlock = 288,
+	MatchArm = 289,
+	LastMatchArm = 290,
+	MatchPattern = 291,
+	WhileExpression = 292,
+	LoopExpression = 293,
+	ForExpression = 294,
+	ConstBlock = 295,
+	ClosureExpression = 296,
+	ClosureParameters = 297,
+	Label = 298,
+	BreakExpression = 299,
+	ContinueExpression = 300,
+	IndexExpression = 301,
+	AwaitExpression = 302,
+	FieldExpression = 303,
+	UnsafeBlock = 304,
+	AsyncBlock = 305,
+	GenBlock = 306,
+	TryBlock = 307,
+	Block = 308,
+	Pattern = 309,
+	GenericPattern = 310,
+	TuplePattern = 311,
+	SlicePattern = 312,
+	TupleStructPattern = 313,
+	StructPattern = 314,
+	FieldPattern = 315,
+	RemainingFieldPattern = 316,
+	MutPattern = 317,
+	RangePattern = 318,
+	RefPattern = 319,
+	CapturedPattern = 320,
+	ReferencePattern = 321,
+	OrPattern = 322,
+	Literal = 323,
+	LiteralPattern = 324,
+	NegativeLiteral = 325,
+	IntegerLiteral = 326,
+	StringLiteral = 327,
+	RawStringLiteral = 328,
+	CharLiteral = 329,
+	EscapeSequence = 330,
+	BooleanLiteral = 331,
+	LineComment = 332,
+	InnerLineDocCommentMarker = 333,
+	OuterLineDocCommentMarker = 334,
+	BlockComment = 335,
+	PrimitiveType = 336,
+	KwRefMarker = 337,
+	KwUnsafeMarker = 338,
+	KwStaticMarker = 339,
+	KwAsyncMarker = 340,
+	KwMoveMarker = 341,
+	MacroRules = 342,
+	EnumVariantListElements = 343,
+	FieldDeclarationListElements = 344,
+	OrderedFieldDeclarationListElements = 345,
+	WherePredicates = 346,
+	TypeParametersElements = 347,
+	UseClauses = 348,
+	ParametersElements = 349,
+	Lifetimes = 350,
+	UseBoundsElements = 351,
+	TypeArgumentsElements = 352,
+	ArgumentsElements = 353,
+	FieldInitializerListElements = 354,
+	TuplePatternElements = 355,
+	Patterns = 356,
+	StructPatternElements = 357,
+	UseWildcardGroup = 358,
+	VisibilityModifierGroup = 359,
+	KwAsync = 360,
+	KwDefault = 361,
+	KwConst = 362,
+	KwUnsafe = 363,
+	TupleTypeElements = 364,
+	TupleExpressionElements = 365,
+	TokenTreePunctuation = 366,
+	TokenKeywords = 367,
+	WildcardPattern = 368,
+	RangeExpressionBare = 369,
+	ImplItemUnsafeMarker = 370,
+	ArrayExpressionSemi = 371,
+	ArrayExpressionList = 372,
+	AttributeInput = 373,
+	ClosureExpressionBlock = 374,
+	ClosureExpressionExpr = 375,
+	ReferenceExpressionRawConst = 376,
+	ReferenceExpressionRawMut = 377,
+	ReferenceExpressionMut = 378,
+	ReferenceExpressionBare = 379,
+	ImplItemPositiveClause = 380,
+	ImplItemNegativeClause = 381,
+	ImplItemBody = 382,
+	ImplItemSemi = 383,
+	VisibilityModifierPub = 384,
+	VisibilityModifierPubInPath = 385,
+	FunctionTypeTraitForm = 386,
+	FunctionTypeFnForm = 387,
+	ModItemExternal = 388,
+	ModItemInline = 389,
+	OrPatternBinary = 390,
+	OrPatternPrefix = 391,
+	PointerTypeConst = 392,
+	PointerTypeMut = 393,
+	RangeExpressionBinary = 394,
+	RangeExpressionPostfix = 395,
+	RangeExpressionPrefix = 396,
+	ExpressionStatementWithSemi = 397,
+	ForeignModItemSemi = 398,
+	ForeignModItemBody = 399,
+	MatchArmWithComma = 400,
+	MatchArmBlockEnding = 401,
+	LineCommentRegularDslash = 402,
+	LineCommentDocOuter = 403,
+	LineCommentDocInner = 404,
+	BlockCommentDocOuter = 405,
+	BlockCommentDocInner = 406,
+	TokenTreePatternParen = 407,
+	TokenTreePatternBracket = 408,
+	TokenTreePatternBrace = 409,
+	TokenTreeParen = 410,
+	TokenTreeBracket = 411,
+	TokenTreeBrace = 412,
+	DelimTokenTreeParen = 413,
+	DelimTokenTreeBracket = 414,
+	DelimTokenTreeBrace = 415,
+	FieldPatternShorthand = 416,
+	FieldPatternNamed = 417,
+	MacroDefinitionParen = 418,
+	MacroDefinitionBracket = 419,
+	MacroDefinitionBrace = 420,
+	RangePatternPrefix = 421,
+	RangePatternWithLeftWithRight = 422,
+	RangePatternWithLeftBare = 423,
+	RangePatternWithLeft = 424,
+	StructItemBrace = 425,
+	StructItemTuple = 426,
+	StructItemUnit = 427,
+	AttributedFieldDeclaration = 428,
+	AttributedEnumVariant = 429,
+	AttributedParameter = 430,
+	AttributedTypeParameter = 431,
+	AttributedArgument = 432,
+	AttributedOrderedField = 433,
+	TypeArgument = 434,
+	MatchBlockArms = 435,
+	SourceFileRepeat1 = 436,
+	TokenRepetitionPatternRepeat1 = 437,
+	TokenRepetitionRepeat1 = 438,
+	DeclarationListRepeat1 = 439,
+	FunctionModifiersRepeat1 = 440,
+	TraitBoundsRepeat1 = 441,
+	TupleExpressionRepeat1 = 442,
+	LastMatchArmRepeat1 = 443,
+	StringLiteralRepeat1 = 444,
+	MacroRulesRepeat1 = 445,
+	EnumVariantListElementsRepeat1 = 446,
+	FieldDeclarationListElementsRepeat1 = 447,
+	OrderedFieldDeclarationListElementsRepeat1 = 448,
+	WherePredicatesRepeat1 = 449,
+	TypeParametersElementsRepeat1 = 450,
+	UseClausesRepeat1 = 451,
+	ParametersElementsRepeat1 = 452,
+	LifetimesRepeat1 = 453,
+	UseBoundsElementsRepeat1 = 454,
+	TypeArgumentsElementsRepeat1 = 455,
+	ArgumentsElementsRepeat1 = 456,
+	FieldInitializerListElementsRepeat1 = 457,
+	_ClosureParametersOptional1Repeat1 = 458,
+	TuplePatternElementsRepeat1 = 459,
+	PatternsRepeat1 = 460,
+	StructPatternElementsRepeat1 = 461,
+	_TupleTypeElementsRepeat1 = 462,
+	_TupleExpressionElementsRepeat1 = 463,
+	DelimTokenTreeParenRepeat1 = 464,
+	_MatchBlockArmsRepeat1 = 465,
+	_FieldIdentifier = 466,
+	_ShorthandFieldIdentifier = 468,
+	_TypeIdentifier = 469
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -728,437 +741,449 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[24, 'tt_keyword'],
 	[25, 'ty_keyword'],
 	[26, 'vis_keyword'],
-	[27, 'u8_keyword'],
-	[28, 'i8_keyword'],
-	[29, 'u16_keyword'],
-	[30, 'i16_keyword'],
-	[31, 'u32_keyword'],
-	[32, 'i32_keyword'],
-	[33, 'u64_keyword'],
-	[34, 'i64_keyword'],
-	[35, 'u128_keyword'],
-	[36, 'i128_keyword'],
-	[37, 'isize_keyword'],
-	[38, 'usize_keyword'],
-	[39, 'f32_keyword'],
-	[40, 'f64_keyword'],
-	[41, 'bool_keyword'],
-	[42, 'str_keyword'],
-	[43, 'char_keyword'],
-	[44, 'pound'],
-	[45, 'lbrack'],
-	[46, 'rbrack'],
-	[47, 'bang'],
-	[48, 'lbrace'],
-	[49, 'rbrace'],
-	[50, 'union_keyword'],
-	[51, 'enum_keyword'],
-	[52, 'extern_keyword'],
-	[53, 'const_keyword'],
-	[54, 'static_keyword'],
-	[55, 'type_keyword'],
-	[56, 'eq'],
-	[57, 'fn_keyword'],
-	[58, 'where_keyword'],
-	[59, 'trait_keyword'],
-	[60, 'for_keyword'],
-	[61, 'lt'],
-	[62, 'gt'],
-	[63, 'let_keyword'],
-	[64, 'use_keyword'],
-	[65, 'colon_colon'],
-	[66, 'as_keyword'],
-	[67, 'dot_dot_dot'],
-	[68, 'squote'],
-	[69, 'lt2'],
-	[70, 'amp'],
-	[71, 'impl_keyword'],
-	[72, 'dyn_keyword'],
-	[73, 'mutable_specifier'],
-	[74, 'dash'],
-	[75, 'amp_amp'],
-	[76, 'pipe_pipe'],
-	[77, 'pipe'],
-	[78, 'caret'],
-	[79, 'eq_eq'],
-	[80, 'bang_eq'],
-	[81, 'lt_eq'],
-	[82, 'gt_eq'],
-	[83, 'lt_lt'],
-	[84, 'gt_gt'],
-	[85, 'slash'],
-	[86, 'percent'],
-	[87, 'plus_eq'],
-	[88, 'dash_eq'],
-	[89, 'star_eq'],
-	[90, 'slash_eq'],
-	[91, 'percent_eq'],
-	[92, 'amp_eq'],
-	[93, 'pipe_eq'],
-	[94, 'caret_eq'],
-	[95, 'lt_lt_eq'],
-	[96, 'gt_gt_eq'],
-	[97, 'return_keyword'],
-	[98, 'yield_keyword'],
-	[99, 'dot_dot'],
-	[100, 'if_keyword'],
-	[101, 'else_keyword'],
-	[102, 'match_keyword'],
-	[103, 'while_keyword'],
-	[104, 'loop_keyword'],
-	[105, 'in_keyword'],
-	[106, 'break_keyword'],
-	[107, 'continue_keyword'],
-	[108, 'dot'],
-	[109, 'await_keyword'],
-	[110, 'unsafe_keyword'],
-	[111, 'async_keyword'],
-	[112, 'gen_keyword'],
-	[113, 'try_keyword'],
-	[114, 'ref_keyword'],
-	[115, 'at'],
-	[116, 'integer_literal'],
+	[27, 'pound'],
+	[28, 'lbrack'],
+	[29, 'rbrack'],
+	[30, 'bang'],
+	[31, 'lbrace'],
+	[32, 'rbrace'],
+	[33, 'union_keyword'],
+	[34, 'enum_keyword'],
+	[35, 'extern_keyword'],
+	[36, 'const_keyword'],
+	[37, 'static_keyword'],
+	[38, 'type_keyword'],
+	[39, 'eq'],
+	[40, 'fn_keyword'],
+	[41, 'where_keyword'],
+	[42, 'trait_keyword'],
+	[43, 'for_keyword'],
+	[44, 'lt'],
+	[45, 'gt'],
+	[46, 'let_keyword'],
+	[47, 'use_keyword'],
+	[48, 'colon_colon'],
+	[49, 'as_keyword'],
+	[50, 'dot_dot_dot'],
+	[51, 'squote'],
+	[52, 'default_keyword'],
+	[53, 'gen_keyword'],
+	[54, 'lt2'],
+	[55, 'amp'],
+	[56, 'impl_keyword'],
+	[57, 'dyn_keyword'],
+	[58, 'mutable_specifier'],
+	[59, 'u8_keyword'],
+	[60, 'i8_keyword'],
+	[61, 'u16_keyword'],
+	[62, 'i16_keyword'],
+	[63, 'u32_keyword'],
+	[64, 'i32_keyword'],
+	[65, 'u64_keyword'],
+	[66, 'i64_keyword'],
+	[67, 'u128_keyword'],
+	[68, 'i128_keyword'],
+	[69, 'isize_keyword'],
+	[70, 'usize_keyword'],
+	[71, 'f32_keyword'],
+	[72, 'f64_keyword'],
+	[73, 'bool_keyword'],
+	[74, 'str_keyword'],
+	[75, 'char_keyword'],
+	[76, 'dash'],
+	[77, 'amp_amp'],
+	[78, 'pipe_pipe'],
+	[79, 'pipe'],
+	[80, 'caret'],
+	[81, 'eq_eq'],
+	[82, 'bang_eq'],
+	[83, 'lt_eq'],
+	[84, 'gt_eq'],
+	[85, 'lt_lt'],
+	[86, 'gt_gt'],
+	[87, 'slash'],
+	[88, 'percent'],
+	[89, 'plus_eq'],
+	[90, 'dash_eq'],
+	[91, 'star_eq'],
+	[92, 'slash_eq'],
+	[93, 'percent_eq'],
+	[94, 'amp_eq'],
+	[95, 'pipe_eq'],
+	[96, 'caret_eq'],
+	[97, 'lt_lt_eq'],
+	[98, 'gt_gt_eq'],
+	[99, 'return_keyword'],
+	[100, 'yield_keyword'],
+	[101, 'dot_dot'],
+	[102, 'if_keyword'],
+	[103, 'else_keyword'],
+	[104, 'match_keyword'],
+	[105, 'while_keyword'],
+	[106, 'loop_keyword'],
+	[107, 'in_keyword'],
+	[108, 'break_keyword'],
+	[109, 'continue_keyword'],
+	[110, 'dot'],
+	[111, 'await_keyword'],
+	[112, 'unsafe_keyword'],
+	[113, 'async_keyword'],
+	[114, 'try_keyword'],
+	[115, 'ref_keyword'],
+	[116, 'at'],
 	[117, 'dquote'],
-	[118, 'char_literal'],
-	[119, 'escape_sequence'],
-	[120, 'true_keyword'],
-	[121, 'false_keyword'],
-	[122, 'slash_slash'],
-	[123, 'bang2'],
-	[124, 'slash2'],
-	[125, 'slash_star'],
-	[126, 'star_slash'],
-	[127, 'shebang'],
-	[128, 'default_keyword'],
-	[129, 'self'],
-	[130, 'super'],
-	[131, 'crate'],
-	[132, 'metavariable'],
-	[133, 'move_keyword'],
-	[134, 'comma'],
-	[135, 'dash_gt'],
-	[136, 'underscore'],
-	[137, 'dot_dot_eq'],
-	[138, 'mod_keyword'],
-	[139, 'pub_keyword'],
-	[140, 'struct_keyword'],
-	[141, '_string_literal_open'],
-	[142, 'raw_keyword'],
-	[143, 'line_comment_regular_dslash_token1'],
-	[144, 'line_comment_regular_dslash_token2'],
-	[145, 'line_comment_content'],
-	[146, 'macro_rules_bang'],
-	[147, 'string_content'],
-	[148, '_raw_string_literal_start'],
-	[149, 'raw_string_literal_content'],
-	[150, '_raw_string_literal_end'],
-	[151, 'float_literal'],
-	[152, '_outer_block_doc_comment_marker'],
-	[153, '_inner_block_doc_comment_marker'],
-	[154, '_block_comment_content'],
-	[155, '_line_doc_content'],
-	[156, '_error_sentinel'],
-	[157, '_tight'],
-	[158, '_space'],
-	[159, '_newline'],
-	[160, '_blankline'],
-	[161, '_indent'],
-	[162, '_dedent'],
-	[163, 'source_file'],
-	[164, '_statement'],
-	[165, 'empty_statement'],
-	[166, 'expression_statement'],
-	[167, 'macro_definition'],
-	[168, 'macro_rule'],
-	[169, '_token_pattern'],
-	[170, 'token_tree_pattern'],
-	[171, 'token_binding_pattern'],
-	[172, 'token_repetition_pattern'],
-	[173, 'fragment_specifier'],
-	[174, 'token_tree'],
-	[175, 'token_repetition'],
-	[176, '_non_special_token'],
-	[177, 'attribute_item'],
-	[178, 'inner_attribute_item'],
-	[179, 'attribute'],
-	[180, 'mod_item'],
-	[181, 'foreign_mod_item'],
-	[182, 'declaration_list'],
-	[183, 'struct_item'],
-	[184, 'union_item'],
-	[185, 'enum_item'],
-	[186, 'enum_variant_list'],
-	[187, 'enum_variant'],
-	[188, 'field_declaration_list'],
-	[189, 'field_declaration'],
-	[190, 'ordered_field_declaration_list'],
-	[191, 'extern_crate_declaration'],
-	[192, 'const_item'],
-	[193, 'static_item'],
-	[194, 'type_item'],
-	[195, 'function_item'],
-	[196, 'function_signature_item'],
-	[197, 'function_modifiers'],
-	[198, 'where_clause'],
-	[199, 'where_predicate'],
-	[200, 'impl_item'],
-	[201, 'trait_item'],
-	[202, 'associated_type'],
-	[203, 'trait_bounds'],
-	[204, 'higher_ranked_trait_bound'],
-	[205, 'removed_trait_bound'],
-	[206, 'type_parameters'],
-	[207, 'const_parameter'],
-	[208, 'type_parameter'],
-	[209, 'lifetime_parameter'],
-	[210, 'let_declaration'],
-	[211, 'use_declaration'],
-	[212, '_use_clause'],
-	[213, 'scoped_use_list'],
-	[214, 'use_list'],
-	[215, 'use_as_clause'],
-	[216, 'use_wildcard'],
-	[217, 'parameters'],
-	[218, 'self_parameter'],
-	[219, 'variadic_parameter'],
-	[220, 'parameter'],
-	[221, 'extern_modifier'],
-	[222, 'visibility_modifier'],
-	[223, '_type'],
-	[224, 'bracketed_type'],
-	[225, 'qualified_type'],
-	[226, 'lifetime'],
-	[227, 'array_type'],
-	[228, 'for_lifetimes'],
-	[229, 'function_type'],
-	[230, 'tuple_type'],
-	[231, 'unit_type'],
-	[232, 'generic_function'],
-	[233, 'generic_type'],
-	[234, 'generic_type_with_turbofish'],
-	[235, 'bounded_type'],
-	[236, 'use_bounds'],
-	[237, 'type_arguments'],
-	[238, 'type_binding'],
-	[239, 'reference_type'],
-	[240, 'pointer_type'],
-	[241, 'never_type'],
-	[242, 'abstract_type'],
-	[243, 'dynamic_type'],
-	[244, '_expression_except_range'],
-	[245, '_expression'],
-	[246, 'macro_invocation'],
-	[247, 'delim_token_tree'],
-	[248, '_delim_tokens'],
-	[249, '_non_delim_token'],
-	[250, 'scoped_identifier'],
-	[251, 'scoped_type_identifier_in_expression_position'],
-	[252, 'scoped_type_identifier'],
-	[253, 'range_expression'],
-	[254, 'unary_expression'],
-	[255, 'try_expression'],
-	[256, 'reference_expression'],
-	[257, 'binary_expression'],
-	[258, 'assignment_expression'],
-	[259, 'compound_assignment_expr'],
-	[260, 'type_cast_expression'],
-	[261, 'return_expression'],
-	[262, 'yield_expression'],
-	[263, 'call_expression'],
-	[264, 'arguments'],
-	[265, 'array_expression'],
-	[266, 'parenthesized_expression'],
-	[267, 'tuple_expression'],
-	[268, 'unit_expression'],
-	[269, 'struct_expression'],
-	[270, 'field_initializer_list'],
-	[271, 'shorthand_field_initializer'],
-	[272, 'field_initializer'],
-	[273, 'base_field_initializer'],
-	[274, 'if_expression'],
-	[275, 'let_condition'],
-	[276, '_let_chain'],
-	[455, '_let_chain'],
-	[277, '_condition'],
-	[278, 'else_clause'],
-	[279, 'match_expression'],
-	[280, 'match_block'],
-	[281, 'match_arm'],
-	[282, 'last_match_arm'],
-	[283, 'match_pattern'],
-	[284, 'while_expression'],
-	[285, 'loop_expression'],
-	[286, 'for_expression'],
-	[287, 'const_block'],
-	[288, 'closure_expression'],
-	[289, 'closure_parameters'],
-	[290, 'label'],
-	[291, 'break_expression'],
-	[292, 'continue_expression'],
-	[293, 'index_expression'],
-	[294, 'await_expression'],
-	[295, 'field_expression'],
-	[296, 'unsafe_block'],
-	[297, 'async_block'],
-	[298, 'gen_block'],
-	[299, 'try_block'],
-	[300, 'block'],
-	[301, '_pattern'],
-	[302, 'generic_pattern'],
-	[303, 'tuple_pattern'],
-	[304, 'slice_pattern'],
-	[305, 'tuple_struct_pattern'],
-	[306, 'struct_pattern'],
-	[307, 'field_pattern'],
-	[308, 'remaining_field_pattern'],
-	[309, 'mut_pattern'],
-	[310, 'range_pattern'],
-	[311, 'ref_pattern'],
-	[312, 'captured_pattern'],
-	[313, 'reference_pattern'],
-	[314, 'or_pattern'],
-	[315, '_literal'],
-	[316, '_literal_pattern'],
-	[317, 'negative_literal'],
-	[318, 'string_literal'],
-	[319, 'raw_string_literal'],
-	[320, 'boolean_literal'],
-	[321, 'line_comment'],
-	[322, '_inner_line_doc_comment_marker'],
-	[323, '_outer_line_doc_comment_marker'],
-	[324, 'block_comment'],
-	[325, '_kw_ref_marker'],
-	[326, '_kw_unsafe_marker'],
-	[327, '_kw_static_marker'],
-	[328, '_kw_async_marker'],
-	[329, '_kw_move_marker'],
-	[330, 'macro_rules'],
-	[331, 'enum_variant_list_elements'],
-	[332, 'field_declaration_list_elements'],
-	[333, 'ordered_field_declaration_list_elements'],
-	[334, 'where_predicates'],
-	[335, 'type_parameters_elements'],
-	[336, 'use_clauses'],
-	[337, 'parameters_elements'],
-	[338, 'lifetimes'],
-	[339, 'use_bounds_elements'],
-	[340, 'type_arguments_elements'],
-	[341, 'arguments_elements'],
-	[342, 'field_initializer_list_elements'],
-	[343, 'tuple_pattern_elements'],
-	[344, 'patterns'],
-	[345, 'struct_pattern_elements'],
-	[346, 'use_wildcard_group'],
-	[347, 'visibility_modifier_group'],
-	[348, '_kw_async'],
-	[349, '_kw_default'],
-	[350, '_kw_const'],
-	[351, '_kw_unsafe'],
-	[352, '_tuple_type_elements'],
-	[353, '_tuple_expression_elements'],
-	[354, '_token_tree_punctuation'],
-	[355, '_token_keywords'],
-	[356, '_wildcard_pattern'],
-	[357, '_range_expression_bare'],
-	[358, '_impl_item_unsafe_marker'],
-	[359, 'array_expression_semi'],
-	[360, 'array_expression_list'],
-	[361, 'attribute_input'],
-	[362, 'closure_expression_block'],
-	[363, 'closure_expression_expr'],
-	[364, 'reference_expression_raw_const'],
-	[365, 'reference_expression_raw_mut'],
-	[366, 'reference_expression_mut'],
-	[367, 'reference_expression_bare'],
-	[368, 'impl_item_positive_clause'],
-	[369, 'impl_item_negative_clause'],
-	[370, 'impl_item_body'],
-	[371, 'impl_item_semi'],
-	[372, 'visibility_modifier_pub'],
-	[373, 'visibility_modifier_pub_in_path'],
-	[374, 'function_type_trait_form'],
-	[375, 'function_type_fn_form'],
-	[376, 'mod_item_external'],
-	[377, 'mod_item_inline'],
-	[378, 'or_pattern_binary'],
-	[379, 'or_pattern_prefix'],
-	[380, 'pointer_type_const'],
-	[381, 'pointer_type_mut'],
-	[382, 'range_expression_binary'],
-	[383, 'range_expression_postfix'],
-	[384, 'range_expression_prefix'],
-	[385, 'expression_statement_with_semi'],
-	[386, 'foreign_mod_item_semi'],
-	[387, 'foreign_mod_item_body'],
-	[388, 'match_arm_with_comma'],
-	[389, 'match_arm_block_ending'],
-	[390, 'line_comment_regular_dslash'],
-	[391, 'line_comment_doc_outer'],
-	[392, 'line_comment_doc_inner'],
-	[393, 'block_comment_doc_outer'],
-	[394, 'block_comment_doc_inner'],
-	[395, 'token_tree_pattern_paren'],
-	[396, 'token_tree_pattern_bracket'],
-	[397, 'token_tree_pattern_brace'],
-	[398, 'token_tree_paren'],
-	[399, 'token_tree_bracket'],
-	[400, 'token_tree_brace'],
-	[401, 'delim_token_tree_paren'],
-	[402, 'delim_token_tree_bracket'],
-	[403, 'delim_token_tree_brace'],
-	[404, 'field_pattern_shorthand'],
-	[405, 'field_pattern_named'],
-	[406, 'macro_definition_paren'],
-	[407, 'macro_definition_bracket'],
-	[408, 'macro_definition_brace'],
-	[409, 'range_pattern_prefix'],
-	[410, 'range_pattern_with_left_with_right'],
-	[411, 'range_pattern_with_left_bare'],
-	[412, 'range_pattern_with_left'],
-	[413, 'struct_item_brace'],
-	[414, 'struct_item_tuple'],
-	[415, 'struct_item_unit'],
-	[416, '_attributed_field_declaration'],
-	[417, '_attributed_enum_variant'],
-	[418, '_attributed_parameter'],
-	[419, '_attributed_type_parameter'],
-	[420, '_attributed_argument'],
-	[421, '_attributed_ordered_field'],
-	[422, '_type_argument'],
-	[423, '_match_block_arms'],
-	[424, 'source_file_repeat1'],
-	[425, 'token_repetition_pattern_repeat1'],
-	[426, 'token_repetition_repeat1'],
-	[427, 'declaration_list_repeat1'],
-	[428, 'function_modifiers_repeat1'],
-	[429, 'trait_bounds_repeat1'],
-	[430, 'tuple_expression_repeat1'],
-	[431, 'last_match_arm_repeat1'],
-	[432, 'string_literal_repeat1'],
-	[433, 'macro_rules_repeat1'],
-	[434, 'enum_variant_list_elements_repeat1'],
-	[435, 'field_declaration_list_elements_repeat1'],
-	[436, 'ordered_field_declaration_list_elements_repeat1'],
-	[437, 'where_predicates_repeat1'],
-	[438, 'type_parameters_elements_repeat1'],
-	[439, 'use_clauses_repeat1'],
-	[440, 'parameters_elements_repeat1'],
-	[441, 'lifetimes_repeat1'],
-	[442, 'use_bounds_elements_repeat1'],
-	[443, 'type_arguments_elements_repeat1'],
-	[444, 'arguments_elements_repeat1'],
-	[445, 'field_initializer_list_elements_repeat1'],
-	[446, '_closure_parameters_optional1_repeat1'],
-	[447, 'tuple_pattern_elements_repeat1'],
-	[448, 'patterns_repeat1'],
-	[449, 'struct_pattern_elements_repeat1'],
-	[450, '_tuple_type_elements_repeat1'],
-	[451, '_tuple_expression_elements_repeat1'],
-	[452, 'delim_token_tree_paren_repeat1'],
-	[453, '_match_block_arms_repeat1'],
-	[454, '_field_identifier'],
-	[456, '_shorthand_field_identifier'],
-	[457, '_type_identifier']
+	[118, 'true_keyword'],
+	[119, 'false_keyword'],
+	[120, 'slash_slash'],
+	[121, 'bang2'],
+	[122, 'slash2'],
+	[123, 'slash_star'],
+	[124, 'star_slash'],
+	[125, 'shebang'],
+	[126, 'self'],
+	[127, 'super'],
+	[128, 'crate'],
+	[129, 'metavariable'],
+	[130, 'move_keyword'],
+	[131, 'comma'],
+	[132, 'dash_gt'],
+	[133, 'underscore'],
+	[134, 'dot_dot_eq'],
+	[135, 'mod_keyword'],
+	[136, 'pub_keyword'],
+	[137, 'struct_keyword'],
+	[138, '_string_literal_open'],
+	[139, 'integer_literal_decimal'],
+	[140, 'integer_literal_hex'],
+	[141, 'integer_literal_binary'],
+	[142, 'integer_literal_octal'],
+	[143, 'char_literal_escaped'],
+	[144, 'char_literal_plain'],
+	[145, 'char_literal_empty'],
+	[146, 'escape_sequence_simple'],
+	[147, 'escape_sequence_unicode_fixed'],
+	[148, 'escape_sequence_unicode_braced'],
+	[149, 'escape_sequence_hex'],
+	[150, 'raw_keyword'],
+	[151, 'line_comment_regular_dslash_token1'],
+	[152, 'line_comment_regular_dslash_token2'],
+	[153, 'line_comment_content'],
+	[154, 'macro_rules_bang'],
+	[155, 'string_content'],
+	[156, '_raw_string_literal_start'],
+	[157, 'raw_string_literal_content'],
+	[158, '_raw_string_literal_end'],
+	[159, 'float_literal'],
+	[160, '_outer_block_doc_comment_marker'],
+	[161, '_inner_block_doc_comment_marker'],
+	[162, '_block_comment_content'],
+	[163, '_line_doc_content'],
+	[164, '_error_sentinel'],
+	[165, '_tight'],
+	[166, '_space'],
+	[167, '_newline'],
+	[168, '_blankline'],
+	[169, '_indent'],
+	[170, '_dedent'],
+	[171, 'source_file'],
+	[172, '_statement'],
+	[173, 'empty_statement'],
+	[174, 'expression_statement'],
+	[175, 'macro_definition'],
+	[176, 'macro_rule'],
+	[177, '_token_pattern'],
+	[178, 'token_tree_pattern'],
+	[179, 'token_binding_pattern'],
+	[180, 'token_repetition_pattern'],
+	[181, 'fragment_specifier'],
+	[182, 'token_tree'],
+	[183, 'token_repetition'],
+	[184, '_non_special_token'],
+	[185, 'attribute_item'],
+	[186, 'inner_attribute_item'],
+	[187, 'attribute'],
+	[188, 'mod_item'],
+	[189, 'foreign_mod_item'],
+	[190, 'declaration_list'],
+	[191, 'struct_item'],
+	[192, 'union_item'],
+	[193, 'enum_item'],
+	[194, 'enum_variant_list'],
+	[195, 'enum_variant'],
+	[196, 'field_declaration_list'],
+	[197, 'field_declaration'],
+	[198, 'ordered_field_declaration_list'],
+	[199, 'extern_crate_declaration'],
+	[200, 'const_item'],
+	[201, 'static_item'],
+	[202, 'type_item'],
+	[203, 'function_item'],
+	[204, 'function_signature_item'],
+	[205, 'function_modifiers'],
+	[206, 'where_clause'],
+	[207, 'where_predicate'],
+	[208, 'impl_item'],
+	[209, 'trait_item'],
+	[210, 'associated_type'],
+	[211, 'trait_bounds'],
+	[212, 'higher_ranked_trait_bound'],
+	[213, 'removed_trait_bound'],
+	[214, 'type_parameters'],
+	[215, 'const_parameter'],
+	[216, 'type_parameter'],
+	[217, 'lifetime_parameter'],
+	[218, 'let_declaration'],
+	[219, 'use_declaration'],
+	[220, '_use_clause'],
+	[221, 'scoped_use_list'],
+	[222, 'use_list'],
+	[223, 'use_as_clause'],
+	[224, 'use_wildcard'],
+	[225, 'parameters'],
+	[226, 'self_parameter'],
+	[227, 'variadic_parameter'],
+	[228, 'parameter'],
+	[229, 'extern_modifier'],
+	[230, 'visibility_modifier'],
+	[231, '_type'],
+	[232, 'bracketed_type'],
+	[233, 'qualified_type'],
+	[234, 'lifetime'],
+	[235, 'array_type'],
+	[236, 'for_lifetimes'],
+	[237, 'function_type'],
+	[238, 'tuple_type'],
+	[239, 'unit_type'],
+	[240, 'generic_function'],
+	[241, 'generic_type'],
+	[242, 'generic_type_with_turbofish'],
+	[243, 'bounded_type'],
+	[244, 'use_bounds'],
+	[245, 'type_arguments'],
+	[246, 'type_binding'],
+	[247, 'reference_type'],
+	[248, 'pointer_type'],
+	[249, 'never_type'],
+	[250, 'abstract_type'],
+	[251, 'dynamic_type'],
+	[252, '_expression_except_range'],
+	[253, '_expression'],
+	[254, 'macro_invocation'],
+	[255, 'delim_token_tree'],
+	[256, '_delim_tokens'],
+	[257, '_non_delim_token'],
+	[258, 'scoped_identifier'],
+	[259, 'scoped_type_identifier_in_expression_position'],
+	[260, 'scoped_type_identifier'],
+	[261, 'range_expression'],
+	[262, 'unary_expression'],
+	[263, 'try_expression'],
+	[264, 'reference_expression'],
+	[265, 'binary_expression'],
+	[266, 'assignment_expression'],
+	[267, 'compound_assignment_expr'],
+	[268, 'type_cast_expression'],
+	[269, 'return_expression'],
+	[270, 'yield_expression'],
+	[271, 'call_expression'],
+	[272, 'arguments'],
+	[273, 'array_expression'],
+	[274, 'parenthesized_expression'],
+	[275, 'tuple_expression'],
+	[276, 'unit_expression'],
+	[277, 'struct_expression'],
+	[278, 'field_initializer_list'],
+	[279, 'shorthand_field_initializer'],
+	[280, 'field_initializer'],
+	[281, 'base_field_initializer'],
+	[282, 'if_expression'],
+	[283, 'let_condition'],
+	[284, '_let_chain'],
+	[467, '_let_chain'],
+	[285, '_condition'],
+	[286, 'else_clause'],
+	[287, 'match_expression'],
+	[288, 'match_block'],
+	[289, 'match_arm'],
+	[290, 'last_match_arm'],
+	[291, 'match_pattern'],
+	[292, 'while_expression'],
+	[293, 'loop_expression'],
+	[294, 'for_expression'],
+	[295, 'const_block'],
+	[296, 'closure_expression'],
+	[297, 'closure_parameters'],
+	[298, 'label'],
+	[299, 'break_expression'],
+	[300, 'continue_expression'],
+	[301, 'index_expression'],
+	[302, 'await_expression'],
+	[303, 'field_expression'],
+	[304, 'unsafe_block'],
+	[305, 'async_block'],
+	[306, 'gen_block'],
+	[307, 'try_block'],
+	[308, 'block'],
+	[309, '_pattern'],
+	[310, 'generic_pattern'],
+	[311, 'tuple_pattern'],
+	[312, 'slice_pattern'],
+	[313, 'tuple_struct_pattern'],
+	[314, 'struct_pattern'],
+	[315, 'field_pattern'],
+	[316, 'remaining_field_pattern'],
+	[317, 'mut_pattern'],
+	[318, 'range_pattern'],
+	[319, 'ref_pattern'],
+	[320, 'captured_pattern'],
+	[321, 'reference_pattern'],
+	[322, 'or_pattern'],
+	[323, '_literal'],
+	[324, '_literal_pattern'],
+	[325, 'negative_literal'],
+	[326, 'integer_literal'],
+	[327, 'string_literal'],
+	[328, 'raw_string_literal'],
+	[329, 'char_literal'],
+	[330, 'escape_sequence'],
+	[331, 'boolean_literal'],
+	[332, 'line_comment'],
+	[333, '_inner_line_doc_comment_marker'],
+	[334, '_outer_line_doc_comment_marker'],
+	[335, 'block_comment'],
+	[336, '_primitive_type'],
+	[337, '_kw_ref_marker'],
+	[338, '_kw_unsafe_marker'],
+	[339, '_kw_static_marker'],
+	[340, '_kw_async_marker'],
+	[341, '_kw_move_marker'],
+	[342, 'macro_rules'],
+	[343, 'enum_variant_list_elements'],
+	[344, 'field_declaration_list_elements'],
+	[345, 'ordered_field_declaration_list_elements'],
+	[346, 'where_predicates'],
+	[347, 'type_parameters_elements'],
+	[348, 'use_clauses'],
+	[349, 'parameters_elements'],
+	[350, 'lifetimes'],
+	[351, 'use_bounds_elements'],
+	[352, 'type_arguments_elements'],
+	[353, 'arguments_elements'],
+	[354, 'field_initializer_list_elements'],
+	[355, 'tuple_pattern_elements'],
+	[356, 'patterns'],
+	[357, 'struct_pattern_elements'],
+	[358, 'use_wildcard_group'],
+	[359, 'visibility_modifier_group'],
+	[360, '_kw_async'],
+	[361, '_kw_default'],
+	[362, '_kw_const'],
+	[363, '_kw_unsafe'],
+	[364, '_tuple_type_elements'],
+	[365, '_tuple_expression_elements'],
+	[366, '_token_tree_punctuation'],
+	[367, '_token_keywords'],
+	[368, '_wildcard_pattern'],
+	[369, '_range_expression_bare'],
+	[370, '_impl_item_unsafe_marker'],
+	[371, 'array_expression_semi'],
+	[372, 'array_expression_list'],
+	[373, 'attribute_input'],
+	[374, 'closure_expression_block'],
+	[375, 'closure_expression_expr'],
+	[376, 'reference_expression_raw_const'],
+	[377, 'reference_expression_raw_mut'],
+	[378, 'reference_expression_mut'],
+	[379, 'reference_expression_bare'],
+	[380, 'impl_item_positive_clause'],
+	[381, 'impl_item_negative_clause'],
+	[382, 'impl_item_body'],
+	[383, 'impl_item_semi'],
+	[384, 'visibility_modifier_pub'],
+	[385, 'visibility_modifier_pub_in_path'],
+	[386, 'function_type_trait_form'],
+	[387, 'function_type_fn_form'],
+	[388, 'mod_item_external'],
+	[389, 'mod_item_inline'],
+	[390, 'or_pattern_binary'],
+	[391, 'or_pattern_prefix'],
+	[392, 'pointer_type_const'],
+	[393, 'pointer_type_mut'],
+	[394, 'range_expression_binary'],
+	[395, 'range_expression_postfix'],
+	[396, 'range_expression_prefix'],
+	[397, 'expression_statement_with_semi'],
+	[398, 'foreign_mod_item_semi'],
+	[399, 'foreign_mod_item_body'],
+	[400, 'match_arm_with_comma'],
+	[401, 'match_arm_block_ending'],
+	[402, 'line_comment_regular_dslash'],
+	[403, 'line_comment_doc_outer'],
+	[404, 'line_comment_doc_inner'],
+	[405, 'block_comment_doc_outer'],
+	[406, 'block_comment_doc_inner'],
+	[407, 'token_tree_pattern_paren'],
+	[408, 'token_tree_pattern_bracket'],
+	[409, 'token_tree_pattern_brace'],
+	[410, 'token_tree_paren'],
+	[411, 'token_tree_bracket'],
+	[412, 'token_tree_brace'],
+	[413, 'delim_token_tree_paren'],
+	[414, 'delim_token_tree_bracket'],
+	[415, 'delim_token_tree_brace'],
+	[416, 'field_pattern_shorthand'],
+	[417, 'field_pattern_named'],
+	[418, 'macro_definition_paren'],
+	[419, 'macro_definition_bracket'],
+	[420, 'macro_definition_brace'],
+	[421, 'range_pattern_prefix'],
+	[422, 'range_pattern_with_left_with_right'],
+	[423, 'range_pattern_with_left_bare'],
+	[424, 'range_pattern_with_left'],
+	[425, 'struct_item_brace'],
+	[426, 'struct_item_tuple'],
+	[427, 'struct_item_unit'],
+	[428, '_attributed_field_declaration'],
+	[429, '_attributed_enum_variant'],
+	[430, '_attributed_parameter'],
+	[431, '_attributed_type_parameter'],
+	[432, '_attributed_argument'],
+	[433, '_attributed_ordered_field'],
+	[434, '_type_argument'],
+	[435, '_match_block_arms'],
+	[436, 'source_file_repeat1'],
+	[437, 'token_repetition_pattern_repeat1'],
+	[438, 'token_repetition_repeat1'],
+	[439, 'declaration_list_repeat1'],
+	[440, 'function_modifiers_repeat1'],
+	[441, 'trait_bounds_repeat1'],
+	[442, 'tuple_expression_repeat1'],
+	[443, 'last_match_arm_repeat1'],
+	[444, 'string_literal_repeat1'],
+	[445, 'macro_rules_repeat1'],
+	[446, 'enum_variant_list_elements_repeat1'],
+	[447, 'field_declaration_list_elements_repeat1'],
+	[448, 'ordered_field_declaration_list_elements_repeat1'],
+	[449, 'where_predicates_repeat1'],
+	[450, 'type_parameters_elements_repeat1'],
+	[451, 'use_clauses_repeat1'],
+	[452, 'parameters_elements_repeat1'],
+	[453, 'lifetimes_repeat1'],
+	[454, 'use_bounds_elements_repeat1'],
+	[455, 'type_arguments_elements_repeat1'],
+	[456, 'arguments_elements_repeat1'],
+	[457, 'field_initializer_list_elements_repeat1'],
+	[458, '_closure_parameters_optional1_repeat1'],
+	[459, 'tuple_pattern_elements_repeat1'],
+	[460, 'patterns_repeat1'],
+	[461, 'struct_pattern_elements_repeat1'],
+	[462, '_tuple_type_elements_repeat1'],
+	[463, '_tuple_expression_elements_repeat1'],
+	[464, 'delim_token_tree_paren_repeat1'],
+	[465, '_match_block_arms_repeat1'],
+	[466, 'field_identifier'],
+	[468, 'shorthand_field_identifier'],
+	[469, 'type_identifier']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1189,437 +1214,449 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[24, 'tt'],
 	[25, 'ty'],
 	[26, 'vis'],
-	[27, 'primitive_type'],
-	[28, 'primitive_type'],
-	[29, 'primitive_type'],
-	[30, 'primitive_type'],
-	[31, 'primitive_type'],
-	[32, 'primitive_type'],
-	[33, 'primitive_type'],
-	[34, 'primitive_type'],
-	[35, 'primitive_type'],
-	[36, 'primitive_type'],
-	[37, 'primitive_type'],
-	[38, 'primitive_type'],
-	[39, 'primitive_type'],
-	[40, 'primitive_type'],
-	[41, 'primitive_type'],
-	[42, 'primitive_type'],
-	[43, 'primitive_type'],
-	[44, '#'],
-	[45, '['],
-	[46, ']'],
-	[47, '!'],
-	[48, '{'],
-	[49, '}'],
-	[50, 'union'],
-	[51, 'enum'],
-	[52, 'extern'],
-	[53, 'const'],
-	[54, 'static'],
-	[55, 'type'],
-	[56, '='],
-	[57, 'fn'],
-	[58, 'where'],
-	[59, 'trait'],
-	[60, 'for'],
-	[61, '<'],
-	[62, '>'],
-	[63, 'let'],
-	[64, 'use'],
-	[65, '::'],
-	[66, 'as'],
-	[67, '...'],
-	[68, "'"],
-	[69, '<'],
-	[70, '&'],
-	[71, 'impl'],
-	[72, 'dyn'],
-	[73, 'mutable_specifier'],
-	[74, '-'],
-	[75, '&&'],
-	[76, '||'],
-	[77, '|'],
-	[78, '^'],
-	[79, '=='],
-	[80, '!='],
-	[81, '<='],
-	[82, '>='],
-	[83, '<<'],
-	[84, '>>'],
-	[85, '/'],
-	[86, '%'],
-	[87, '+='],
-	[88, '-='],
-	[89, '*='],
-	[90, '/='],
-	[91, '%='],
-	[92, '&='],
-	[93, '|='],
-	[94, '^='],
-	[95, '<<='],
-	[96, '>>='],
-	[97, 'return'],
-	[98, 'yield'],
-	[99, '..'],
-	[100, 'if'],
-	[101, 'else'],
-	[102, 'match'],
-	[103, 'while'],
-	[104, 'loop'],
-	[105, 'in'],
-	[106, 'break'],
-	[107, 'continue'],
-	[108, '.'],
-	[109, 'await'],
-	[110, 'unsafe'],
-	[111, 'async'],
-	[112, 'gen'],
-	[113, 'try'],
-	[114, 'ref'],
-	[115, '@'],
-	[116, 'integer_literal'],
+	[27, '#'],
+	[28, '['],
+	[29, ']'],
+	[30, '!'],
+	[31, '{'],
+	[32, '}'],
+	[33, 'union'],
+	[34, 'enum'],
+	[35, 'extern'],
+	[36, 'const'],
+	[37, 'static'],
+	[38, 'type'],
+	[39, '='],
+	[40, 'fn'],
+	[41, 'where'],
+	[42, 'trait'],
+	[43, 'for'],
+	[44, '<'],
+	[45, '>'],
+	[46, 'let'],
+	[47, 'use'],
+	[48, '::'],
+	[49, 'as'],
+	[50, '...'],
+	[51, "'"],
+	[52, 'default'],
+	[53, 'gen'],
+	[54, '<'],
+	[55, '&'],
+	[56, 'impl'],
+	[57, 'dyn'],
+	[58, 'mutable_specifier'],
+	[59, 'u8'],
+	[60, 'i8'],
+	[61, 'u16'],
+	[62, 'i16'],
+	[63, 'u32'],
+	[64, 'i32'],
+	[65, 'u64'],
+	[66, 'i64'],
+	[67, 'u128'],
+	[68, 'i128'],
+	[69, 'isize'],
+	[70, 'usize'],
+	[71, 'f32'],
+	[72, 'f64'],
+	[73, 'bool'],
+	[74, 'str'],
+	[75, 'char'],
+	[76, '-'],
+	[77, '&&'],
+	[78, '||'],
+	[79, '|'],
+	[80, '^'],
+	[81, '=='],
+	[82, '!='],
+	[83, '<='],
+	[84, '>='],
+	[85, '<<'],
+	[86, '>>'],
+	[87, '/'],
+	[88, '%'],
+	[89, '+='],
+	[90, '-='],
+	[91, '*='],
+	[92, '/='],
+	[93, '%='],
+	[94, '&='],
+	[95, '|='],
+	[96, '^='],
+	[97, '<<='],
+	[98, '>>='],
+	[99, 'return'],
+	[100, 'yield'],
+	[101, '..'],
+	[102, 'if'],
+	[103, 'else'],
+	[104, 'match'],
+	[105, 'while'],
+	[106, 'loop'],
+	[107, 'in'],
+	[108, 'break'],
+	[109, 'continue'],
+	[110, '.'],
+	[111, 'await'],
+	[112, 'unsafe'],
+	[113, 'async'],
+	[114, 'try'],
+	[115, 'ref'],
+	[116, '@'],
 	[117, '"'],
-	[118, 'char_literal'],
-	[119, 'escape_sequence'],
-	[120, 'true'],
-	[121, 'false'],
-	[122, '//'],
-	[123, '!'],
-	[124, '/'],
-	[125, '/*'],
-	[126, '*/'],
-	[127, 'shebang'],
-	[128, 'default'],
-	[129, 'self'],
-	[130, 'super'],
-	[131, 'crate'],
-	[132, 'metavariable'],
-	[133, 'move'],
-	[134, ','],
-	[135, '->'],
-	[136, '_'],
-	[137, '..='],
-	[138, 'mod'],
-	[139, 'pub'],
-	[140, 'struct'],
-	[141, 'string_open'],
-	[142, 'raw'],
-	[143, 'line_comment_regular_dslash_token1'],
-	[144, 'line_comment_regular_dslash_token2'],
-	[145, 'line_comment_content'],
-	[146, 'macro_rules!'],
-	[147, 'string_content'],
-	[148, 'raw_string_literal_start'],
-	[149, 'string_content'],
-	[150, 'raw_string_literal_end'],
-	[151, 'float_literal'],
-	[152, 'outer_doc_comment_marker'],
-	[153, 'inner_doc_comment_marker'],
-	[154, '_block_comment_content'],
-	[155, 'doc_comment'],
-	[156, '_error_sentinel'],
-	[157, '_tight'],
-	[158, '_space'],
-	[159, '_newline'],
-	[160, '_blankline'],
-	[161, '_indent'],
-	[162, '_dedent'],
-	[163, 'source_file'],
-	[164, '_statement'],
-	[165, 'empty_statement'],
-	[166, 'expression_statement'],
-	[167, 'macro_definition'],
-	[168, 'macro_rule'],
-	[169, '_token_pattern'],
-	[170, 'token_tree_pattern'],
-	[171, 'token_binding_pattern'],
-	[172, 'token_repetition_pattern'],
-	[173, 'fragment_specifier'],
-	[174, 'token_tree'],
-	[175, 'token_repetition'],
-	[176, 'non_special_token'],
-	[177, 'attribute_item'],
-	[178, 'inner_attribute_item'],
-	[179, 'attribute'],
-	[180, 'mod_item'],
-	[181, 'foreign_mod_item'],
-	[182, 'declaration_list'],
-	[183, 'struct_item'],
-	[184, 'union_item'],
-	[185, 'enum_item'],
-	[186, 'enum_variant_list'],
-	[187, 'enum_variant'],
-	[188, 'field_declaration_list'],
-	[189, 'field_declaration'],
-	[190, 'ordered_field_declaration_list'],
-	[191, 'extern_crate_declaration'],
-	[192, 'const_item'],
-	[193, 'static_item'],
-	[194, 'type_item'],
-	[195, 'function_item'],
-	[196, 'function_signature_item'],
-	[197, 'function_modifiers'],
-	[198, 'where_clause'],
-	[199, 'where_predicate'],
-	[200, 'impl_item'],
-	[201, 'trait_item'],
-	[202, 'associated_type'],
-	[203, 'trait_bounds'],
-	[204, 'higher_ranked_trait_bound'],
-	[205, 'removed_trait_bound'],
-	[206, 'type_parameters'],
-	[207, 'const_parameter'],
-	[208, 'type_parameter'],
-	[209, 'lifetime_parameter'],
-	[210, 'let_declaration'],
-	[211, 'use_declaration'],
-	[212, '_use_clause'],
-	[213, 'scoped_use_list'],
-	[214, 'use_list'],
-	[215, 'use_as_clause'],
-	[216, 'use_wildcard'],
-	[217, 'parameters'],
-	[218, 'self_parameter'],
-	[219, 'variadic_parameter'],
-	[220, 'parameter'],
-	[221, 'extern_modifier'],
-	[222, 'visibility_modifier'],
-	[223, '_type'],
-	[224, 'bracketed_type'],
-	[225, 'qualified_type'],
-	[226, 'lifetime'],
-	[227, 'array_type'],
-	[228, 'for_lifetimes'],
-	[229, 'function_type'],
-	[230, 'tuple_type'],
-	[231, 'unit_type'],
-	[232, 'generic_function'],
-	[233, 'generic_type'],
-	[234, 'generic_type_with_turbofish'],
-	[235, 'bounded_type'],
-	[236, 'use_bounds'],
-	[237, 'type_arguments'],
-	[238, 'type_binding'],
-	[239, 'reference_type'],
-	[240, 'pointer_type'],
-	[241, 'never_type'],
-	[242, 'abstract_type'],
-	[243, 'dynamic_type'],
-	[244, '_expression_except_range'],
-	[245, '_expression'],
-	[246, 'macro_invocation'],
-	[247, 'token_tree'],
-	[248, '_delim_tokens'],
-	[249, '_non_delim_token'],
-	[250, 'scoped_identifier'],
-	[251, 'scoped_type_identifier'],
-	[252, 'scoped_type_identifier'],
-	[253, 'range_expression'],
-	[254, 'unary_expression'],
-	[255, 'try_expression'],
-	[256, 'reference_expression'],
-	[257, 'binary_expression'],
-	[258, 'assignment_expression'],
-	[259, 'compound_assignment_expr'],
-	[260, 'type_cast_expression'],
-	[261, 'return_expression'],
-	[262, 'yield_expression'],
-	[263, 'call_expression'],
-	[264, 'arguments'],
-	[265, 'array_expression'],
-	[266, 'parenthesized_expression'],
-	[267, 'tuple_expression'],
-	[268, 'unit_expression'],
-	[269, 'struct_expression'],
-	[270, 'field_initializer_list'],
-	[271, 'shorthand_field_initializer'],
-	[272, 'field_initializer'],
-	[273, 'base_field_initializer'],
-	[274, 'if_expression'],
-	[275, 'let_condition'],
-	[276, 'let_chain'],
-	[455, 'let_chain'],
-	[277, '_condition'],
-	[278, 'else_clause'],
-	[279, 'match_expression'],
-	[280, 'match_block'],
-	[281, 'match_arm'],
-	[282, 'last_match_arm'],
-	[283, 'match_pattern'],
-	[284, 'while_expression'],
-	[285, 'loop_expression'],
-	[286, 'for_expression'],
-	[287, 'const_block'],
-	[288, 'closure_expression'],
-	[289, 'closure_parameters'],
-	[290, 'label'],
-	[291, 'break_expression'],
-	[292, 'continue_expression'],
-	[293, 'index_expression'],
-	[294, 'await_expression'],
-	[295, 'field_expression'],
-	[296, 'unsafe_block'],
-	[297, 'async_block'],
-	[298, 'gen_block'],
-	[299, 'try_block'],
-	[300, 'block'],
-	[301, '_pattern'],
-	[302, 'generic_pattern'],
-	[303, 'tuple_pattern'],
-	[304, 'slice_pattern'],
-	[305, 'tuple_struct_pattern'],
-	[306, 'struct_pattern'],
-	[307, 'field_pattern'],
-	[308, 'remaining_field_pattern'],
-	[309, 'mut_pattern'],
-	[310, 'range_pattern'],
-	[311, 'ref_pattern'],
-	[312, 'captured_pattern'],
-	[313, 'reference_pattern'],
-	[314, 'or_pattern'],
-	[315, '_literal'],
-	[316, '_literal_pattern'],
-	[317, 'negative_literal'],
-	[318, 'string_literal'],
-	[319, 'raw_string_literal'],
-	[320, 'boolean_literal'],
-	[321, 'line_comment'],
-	[322, 'inner_doc_comment_marker'],
-	[323, 'outer_doc_comment_marker'],
-	[324, 'block_comment'],
-	[325, '_kw_ref_marker'],
-	[326, '_kw_unsafe_marker'],
-	[327, '_kw_static_marker'],
-	[328, '_kw_async_marker'],
-	[329, '_kw_move_marker'],
-	[330, 'macro_rules'],
-	[331, 'enum_variant_list_elements'],
-	[332, 'field_declaration_list_elements'],
-	[333, 'ordered_field_declaration_list_elements'],
-	[334, 'where_predicates'],
-	[335, 'type_parameters_elements'],
-	[336, 'use_clauses'],
-	[337, 'parameters_elements'],
-	[338, 'lifetimes'],
-	[339, 'use_bounds_elements'],
-	[340, 'type_arguments_elements'],
-	[341, 'arguments_elements'],
-	[342, 'field_initializer_list_elements'],
-	[343, 'tuple_pattern_elements'],
-	[344, 'patterns'],
-	[345, 'struct_pattern_elements'],
-	[346, 'use_wildcard_group'],
-	[347, 'visibility_modifier_group'],
-	[348, '_kw_async'],
-	[349, '_kw_default'],
-	[350, '_kw_const'],
-	[351, '_kw_unsafe'],
-	[352, 'tuple_type_elements'],
-	[353, 'tuple_expression_elements'],
-	[354, 'token_tree_punctuation'],
-	[355, '_token_keywords'],
-	[356, 'wildcard_pattern'],
-	[357, 'range_expression_bare'],
-	[358, '_impl_item_unsafe_marker'],
-	[359, 'array_expression_semi'],
-	[360, 'array_expression_list'],
-	[361, 'attribute_input'],
-	[362, 'closure_expression_block'],
-	[363, 'closure_expression_expr'],
-	[364, 'reference_expression_raw_const'],
-	[365, 'reference_expression_raw_mut'],
-	[366, 'reference_expression_mut'],
-	[367, 'reference_expression_bare'],
-	[368, 'impl_item_positive_clause'],
-	[369, 'impl_item_negative_clause'],
-	[370, 'impl_item_body'],
-	[371, 'impl_item_semi'],
-	[372, 'visibility_modifier_pub'],
-	[373, 'visibility_modifier_pub_in_path'],
-	[374, 'function_type_trait_form'],
-	[375, 'function_type_fn_form'],
-	[376, 'mod_item_external'],
-	[377, 'mod_item_inline'],
-	[378, 'or_pattern_binary'],
-	[379, 'or_pattern_prefix'],
-	[380, 'pointer_type_const'],
-	[381, 'pointer_type_mut'],
-	[382, 'range_expression_binary'],
-	[383, 'range_expression_postfix'],
-	[384, 'range_expression_prefix'],
-	[385, 'expression_statement_with_semi'],
-	[386, 'foreign_mod_item_semi'],
-	[387, 'foreign_mod_item_body'],
-	[388, 'match_arm_with_comma'],
-	[389, 'match_arm_block_ending'],
-	[390, 'line_comment_regular_dslash'],
-	[391, 'line_comment_doc_outer'],
-	[392, 'line_comment_doc_inner'],
-	[393, 'block_comment_doc_outer'],
-	[394, 'block_comment_doc_inner'],
-	[395, 'token_tree_pattern_paren'],
-	[396, 'token_tree_pattern_bracket'],
-	[397, 'token_tree_pattern_brace'],
-	[398, 'token_tree_paren'],
-	[399, 'token_tree_bracket'],
-	[400, 'token_tree_brace'],
-	[401, 'delim_token_tree_paren'],
-	[402, 'delim_token_tree_bracket'],
-	[403, 'delim_token_tree_brace'],
-	[404, 'field_pattern_shorthand'],
-	[405, 'field_pattern_named'],
-	[406, 'macro_definition_paren'],
-	[407, 'macro_definition_bracket'],
-	[408, 'macro_definition_brace'],
-	[409, 'range_pattern_prefix'],
-	[410, 'range_pattern_with_left_with_right'],
-	[411, 'range_pattern_with_left_bare'],
-	[412, 'range_pattern_with_left'],
-	[413, 'struct_item_brace'],
-	[414, 'struct_item_tuple'],
-	[415, 'struct_item_unit'],
-	[416, 'attributed_field_declaration'],
-	[417, 'attributed_enum_variant'],
-	[418, 'attributed_parameter'],
-	[419, 'attributed_type_parameter'],
-	[420, 'attributed_argument'],
-	[421, 'attributed_ordered_field'],
-	[422, 'type_argument'],
-	[423, 'match_block_arms'],
-	[424, 'source_file_repeat1'],
-	[425, 'token_repetition_pattern_repeat1'],
-	[426, 'token_repetition_repeat1'],
-	[427, 'declaration_list_repeat1'],
-	[428, 'function_modifiers_repeat1'],
-	[429, 'trait_bounds_repeat1'],
-	[430, 'tuple_expression_repeat1'],
-	[431, 'last_match_arm_repeat1'],
-	[432, 'string_literal_repeat1'],
-	[433, 'macro_rules_repeat1'],
-	[434, 'enum_variant_list_elements_repeat1'],
-	[435, 'field_declaration_list_elements_repeat1'],
-	[436, 'ordered_field_declaration_list_elements_repeat1'],
-	[437, 'where_predicates_repeat1'],
-	[438, 'type_parameters_elements_repeat1'],
-	[439, 'use_clauses_repeat1'],
-	[440, 'parameters_elements_repeat1'],
-	[441, 'lifetimes_repeat1'],
-	[442, 'use_bounds_elements_repeat1'],
-	[443, 'type_arguments_elements_repeat1'],
-	[444, 'arguments_elements_repeat1'],
-	[445, 'field_initializer_list_elements_repeat1'],
-	[446, '_closure_parameters_optional1_repeat1'],
-	[447, 'tuple_pattern_elements_repeat1'],
-	[448, 'patterns_repeat1'],
-	[449, 'struct_pattern_elements_repeat1'],
-	[450, '_tuple_type_elements_repeat1'],
-	[451, '_tuple_expression_elements_repeat1'],
-	[452, 'delim_token_tree_paren_repeat1'],
-	[453, '_match_block_arms_repeat1'],
-	[454, 'field_identifier'],
-	[456, 'shorthand_field_identifier'],
-	[457, 'type_identifier']
+	[118, 'true'],
+	[119, 'false'],
+	[120, '//'],
+	[121, '!'],
+	[122, '/'],
+	[123, '/*'],
+	[124, '*/'],
+	[125, 'shebang'],
+	[126, 'self'],
+	[127, 'super'],
+	[128, 'crate'],
+	[129, 'metavariable'],
+	[130, 'move'],
+	[131, ','],
+	[132, '->'],
+	[133, '_'],
+	[134, '..='],
+	[135, 'mod'],
+	[136, 'pub'],
+	[137, 'struct'],
+	[138, 'string_open'],
+	[139, 'integer_literal_decimal'],
+	[140, 'integer_literal_hex'],
+	[141, 'integer_literal_binary'],
+	[142, 'integer_literal_octal'],
+	[143, 'char_literal_escaped'],
+	[144, 'char_literal_plain'],
+	[145, 'char_literal_empty'],
+	[146, 'escape_sequence_simple'],
+	[147, 'escape_sequence_unicode_fixed'],
+	[148, 'escape_sequence_unicode_braced'],
+	[149, 'escape_sequence_hex'],
+	[150, 'raw'],
+	[151, 'line_comment_regular_dslash_token1'],
+	[152, 'line_comment_regular_dslash_token2'],
+	[153, 'line_comment_content'],
+	[154, 'macro_rules!'],
+	[155, 'string_content'],
+	[156, 'raw_string_literal_start'],
+	[157, 'string_content'],
+	[158, 'raw_string_literal_end'],
+	[159, 'float_literal'],
+	[160, 'outer_doc_comment_marker'],
+	[161, 'inner_doc_comment_marker'],
+	[162, '_block_comment_content'],
+	[163, 'doc_comment'],
+	[164, '_error_sentinel'],
+	[165, '_tight'],
+	[166, '_space'],
+	[167, '_newline'],
+	[168, '_blankline'],
+	[169, '_indent'],
+	[170, '_dedent'],
+	[171, 'source_file'],
+	[172, '_statement'],
+	[173, 'empty_statement'],
+	[174, 'expression_statement'],
+	[175, 'macro_definition'],
+	[176, 'macro_rule'],
+	[177, '_token_pattern'],
+	[178, 'token_tree_pattern'],
+	[179, 'token_binding_pattern'],
+	[180, 'token_repetition_pattern'],
+	[181, 'fragment_specifier'],
+	[182, 'token_tree'],
+	[183, 'token_repetition'],
+	[184, 'non_special_token'],
+	[185, 'attribute_item'],
+	[186, 'inner_attribute_item'],
+	[187, 'attribute'],
+	[188, 'mod_item'],
+	[189, 'foreign_mod_item'],
+	[190, 'declaration_list'],
+	[191, 'struct_item'],
+	[192, 'union_item'],
+	[193, 'enum_item'],
+	[194, 'enum_variant_list'],
+	[195, 'enum_variant'],
+	[196, 'field_declaration_list'],
+	[197, 'field_declaration'],
+	[198, 'ordered_field_declaration_list'],
+	[199, 'extern_crate_declaration'],
+	[200, 'const_item'],
+	[201, 'static_item'],
+	[202, 'type_item'],
+	[203, 'function_item'],
+	[204, 'function_signature_item'],
+	[205, 'function_modifiers'],
+	[206, 'where_clause'],
+	[207, 'where_predicate'],
+	[208, 'impl_item'],
+	[209, 'trait_item'],
+	[210, 'associated_type'],
+	[211, 'trait_bounds'],
+	[212, 'higher_ranked_trait_bound'],
+	[213, 'removed_trait_bound'],
+	[214, 'type_parameters'],
+	[215, 'const_parameter'],
+	[216, 'type_parameter'],
+	[217, 'lifetime_parameter'],
+	[218, 'let_declaration'],
+	[219, 'use_declaration'],
+	[220, '_use_clause'],
+	[221, 'scoped_use_list'],
+	[222, 'use_list'],
+	[223, 'use_as_clause'],
+	[224, 'use_wildcard'],
+	[225, 'parameters'],
+	[226, 'self_parameter'],
+	[227, 'variadic_parameter'],
+	[228, 'parameter'],
+	[229, 'extern_modifier'],
+	[230, 'visibility_modifier'],
+	[231, '_type'],
+	[232, 'bracketed_type'],
+	[233, 'qualified_type'],
+	[234, 'lifetime'],
+	[235, 'array_type'],
+	[236, 'for_lifetimes'],
+	[237, 'function_type'],
+	[238, 'tuple_type'],
+	[239, 'unit_type'],
+	[240, 'generic_function'],
+	[241, 'generic_type'],
+	[242, 'generic_type_with_turbofish'],
+	[243, 'bounded_type'],
+	[244, 'use_bounds'],
+	[245, 'type_arguments'],
+	[246, 'type_binding'],
+	[247, 'reference_type'],
+	[248, 'pointer_type'],
+	[249, 'never_type'],
+	[250, 'abstract_type'],
+	[251, 'dynamic_type'],
+	[252, '_expression_except_range'],
+	[253, '_expression'],
+	[254, 'macro_invocation'],
+	[255, 'delim_token_tree'],
+	[256, '_delim_tokens'],
+	[257, '_non_delim_token'],
+	[258, 'scoped_identifier'],
+	[259, 'scoped_type_identifier_in_expression_position'],
+	[260, 'scoped_type_identifier'],
+	[261, 'range_expression'],
+	[262, 'unary_expression'],
+	[263, 'try_expression'],
+	[264, 'reference_expression'],
+	[265, 'binary_expression'],
+	[266, 'assignment_expression'],
+	[267, 'compound_assignment_expr'],
+	[268, 'type_cast_expression'],
+	[269, 'return_expression'],
+	[270, 'yield_expression'],
+	[271, 'call_expression'],
+	[272, 'arguments'],
+	[273, 'array_expression'],
+	[274, 'parenthesized_expression'],
+	[275, 'tuple_expression'],
+	[276, 'unit_expression'],
+	[277, 'struct_expression'],
+	[278, 'field_initializer_list'],
+	[279, 'shorthand_field_initializer'],
+	[280, 'field_initializer'],
+	[281, 'base_field_initializer'],
+	[282, 'if_expression'],
+	[283, 'let_condition'],
+	[284, 'let_chain'],
+	[467, 'let_chain'],
+	[285, '_condition'],
+	[286, 'else_clause'],
+	[287, 'match_expression'],
+	[288, 'match_block'],
+	[289, 'match_arm'],
+	[290, 'last_match_arm'],
+	[291, 'match_pattern'],
+	[292, 'while_expression'],
+	[293, 'loop_expression'],
+	[294, 'for_expression'],
+	[295, 'const_block'],
+	[296, 'closure_expression'],
+	[297, 'closure_parameters'],
+	[298, 'label'],
+	[299, 'break_expression'],
+	[300, 'continue_expression'],
+	[301, 'index_expression'],
+	[302, 'await_expression'],
+	[303, 'field_expression'],
+	[304, 'unsafe_block'],
+	[305, 'async_block'],
+	[306, 'gen_block'],
+	[307, 'try_block'],
+	[308, 'block'],
+	[309, '_pattern'],
+	[310, 'generic_pattern'],
+	[311, 'tuple_pattern'],
+	[312, 'slice_pattern'],
+	[313, 'tuple_struct_pattern'],
+	[314, 'struct_pattern'],
+	[315, 'field_pattern'],
+	[316, 'remaining_field_pattern'],
+	[317, 'mut_pattern'],
+	[318, 'range_pattern'],
+	[319, 'ref_pattern'],
+	[320, 'captured_pattern'],
+	[321, 'reference_pattern'],
+	[322, 'or_pattern'],
+	[323, '_literal'],
+	[324, '_literal_pattern'],
+	[325, 'negative_literal'],
+	[326, 'integer_literal'],
+	[327, 'string_literal'],
+	[328, 'raw_string_literal'],
+	[329, 'char_literal'],
+	[330, 'escape_sequence'],
+	[331, 'boolean_literal'],
+	[332, 'line_comment'],
+	[333, 'inner_line_doc_comment_marker'],
+	[334, 'outer_line_doc_comment_marker'],
+	[335, 'block_comment'],
+	[336, 'primitive_type'],
+	[337, '_kw_ref_marker'],
+	[338, '_kw_unsafe_marker'],
+	[339, '_kw_static_marker'],
+	[340, '_kw_async_marker'],
+	[341, '_kw_move_marker'],
+	[342, 'macro_rules'],
+	[343, 'enum_variant_list_elements'],
+	[344, 'field_declaration_list_elements'],
+	[345, 'ordered_field_declaration_list_elements'],
+	[346, 'where_predicates'],
+	[347, 'type_parameters_elements'],
+	[348, 'use_clauses'],
+	[349, 'parameters_elements'],
+	[350, 'lifetimes'],
+	[351, 'use_bounds_elements'],
+	[352, 'type_arguments_elements'],
+	[353, 'arguments_elements'],
+	[354, 'field_initializer_list_elements'],
+	[355, 'tuple_pattern_elements'],
+	[356, 'patterns'],
+	[357, 'struct_pattern_elements'],
+	[358, 'use_wildcard_group'],
+	[359, 'visibility_modifier_group'],
+	[360, '_kw_async'],
+	[361, '_kw_default'],
+	[362, '_kw_const'],
+	[363, '_kw_unsafe'],
+	[364, 'tuple_type_elements'],
+	[365, 'tuple_expression_elements'],
+	[366, 'token_tree_punctuation'],
+	[367, '_token_keywords'],
+	[368, 'wildcard_pattern'],
+	[369, 'range_expression_bare'],
+	[370, '_impl_item_unsafe_marker'],
+	[371, 'array_expression_semi'],
+	[372, 'array_expression_list'],
+	[373, 'attribute_input'],
+	[374, 'closure_expression_block'],
+	[375, 'closure_expression_expr'],
+	[376, 'reference_expression_raw_const'],
+	[377, 'reference_expression_raw_mut'],
+	[378, 'reference_expression_mut'],
+	[379, 'reference_expression_bare'],
+	[380, 'impl_item_positive_clause'],
+	[381, 'impl_item_negative_clause'],
+	[382, 'impl_item_body'],
+	[383, 'impl_item_semi'],
+	[384, 'visibility_modifier_pub'],
+	[385, 'visibility_modifier_pub_in_path'],
+	[386, 'function_type_trait_form'],
+	[387, 'function_type_fn_form'],
+	[388, 'mod_item_external'],
+	[389, 'mod_item_inline'],
+	[390, 'or_pattern_binary'],
+	[391, 'or_pattern_prefix'],
+	[392, 'pointer_type_const'],
+	[393, 'pointer_type_mut'],
+	[394, 'range_expression_binary'],
+	[395, 'range_expression_postfix'],
+	[396, 'range_expression_prefix'],
+	[397, 'expression_statement_with_semi'],
+	[398, 'foreign_mod_item_semi'],
+	[399, 'foreign_mod_item_body'],
+	[400, 'match_arm_with_comma'],
+	[401, 'match_arm_block_ending'],
+	[402, 'line_comment_regular_dslash'],
+	[403, 'line_comment_doc_outer'],
+	[404, 'line_comment_doc_inner'],
+	[405, 'block_comment_doc_outer'],
+	[406, 'block_comment_doc_inner'],
+	[407, 'token_tree_pattern_paren'],
+	[408, 'token_tree_pattern_bracket'],
+	[409, 'token_tree_pattern_brace'],
+	[410, 'token_tree_paren'],
+	[411, 'token_tree_bracket'],
+	[412, 'token_tree_brace'],
+	[413, 'delim_token_tree_paren'],
+	[414, 'delim_token_tree_bracket'],
+	[415, 'delim_token_tree_brace'],
+	[416, 'field_pattern_shorthand'],
+	[417, 'field_pattern_named'],
+	[418, 'macro_definition_paren'],
+	[419, 'macro_definition_bracket'],
+	[420, 'macro_definition_brace'],
+	[421, 'range_pattern_prefix'],
+	[422, 'range_pattern_with_left_with_right'],
+	[423, 'range_pattern_with_left_bare'],
+	[424, 'range_pattern_with_left'],
+	[425, 'struct_item_brace'],
+	[426, 'struct_item_tuple'],
+	[427, 'struct_item_unit'],
+	[428, 'attributed_field_declaration'],
+	[429, 'attributed_enum_variant'],
+	[430, 'attributed_parameter'],
+	[431, 'attributed_type_parameter'],
+	[432, 'attributed_argument'],
+	[433, 'attributed_ordered_field'],
+	[434, 'type_argument'],
+	[435, 'match_block_arms'],
+	[436, 'source_file_repeat1'],
+	[437, 'token_repetition_pattern_repeat1'],
+	[438, 'token_repetition_repeat1'],
+	[439, 'declaration_list_repeat1'],
+	[440, 'function_modifiers_repeat1'],
+	[441, 'trait_bounds_repeat1'],
+	[442, 'tuple_expression_repeat1'],
+	[443, 'last_match_arm_repeat1'],
+	[444, 'string_literal_repeat1'],
+	[445, 'macro_rules_repeat1'],
+	[446, 'enum_variant_list_elements_repeat1'],
+	[447, 'field_declaration_list_elements_repeat1'],
+	[448, 'ordered_field_declaration_list_elements_repeat1'],
+	[449, 'where_predicates_repeat1'],
+	[450, 'type_parameters_elements_repeat1'],
+	[451, 'use_clauses_repeat1'],
+	[452, 'parameters_elements_repeat1'],
+	[453, 'lifetimes_repeat1'],
+	[454, 'use_bounds_elements_repeat1'],
+	[455, 'type_arguments_elements_repeat1'],
+	[456, 'arguments_elements_repeat1'],
+	[457, 'field_initializer_list_elements_repeat1'],
+	[458, '_closure_parameters_optional1_repeat1'],
+	[459, 'tuple_pattern_elements_repeat1'],
+	[460, 'patterns_repeat1'],
+	[461, 'struct_pattern_elements_repeat1'],
+	[462, '_tuple_type_elements_repeat1'],
+	[463, '_tuple_expression_elements_repeat1'],
+	[464, 'delim_token_tree_paren_repeat1'],
+	[465, '_match_block_arms_repeat1'],
+	[466, 'field_identifier'],
+	[468, 'shorthand_field_identifier'],
+	[469, 'type_identifier']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -1679,40 +1716,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TyKeyword;
 		case 'vis_keyword':
 			return TSKindId.VisKeyword;
-		case 'u8_keyword':
-			return TSKindId.U8Keyword;
-		case 'i8_keyword':
-			return TSKindId.I8Keyword;
-		case 'u16_keyword':
-			return TSKindId.U16Keyword;
-		case 'i16_keyword':
-			return TSKindId.I16Keyword;
-		case 'u32_keyword':
-			return TSKindId.U32Keyword;
-		case 'i32_keyword':
-			return TSKindId.I32Keyword;
-		case 'u64_keyword':
-			return TSKindId.U64Keyword;
-		case 'i64_keyword':
-			return TSKindId.I64Keyword;
-		case 'u128_keyword':
-			return TSKindId.U128Keyword;
-		case 'i128_keyword':
-			return TSKindId.I128Keyword;
-		case 'isize_keyword':
-			return TSKindId.IsizeKeyword;
-		case 'usize_keyword':
-			return TSKindId.UsizeKeyword;
-		case 'f32_keyword':
-			return TSKindId.F32Keyword;
-		case 'f64_keyword':
-			return TSKindId.F64Keyword;
-		case 'bool_keyword':
-			return TSKindId.BoolKeyword;
-		case 'str_keyword':
-			return TSKindId.StrKeyword;
-		case 'char_keyword':
-			return TSKindId.CharKeyword;
 		case 'pound':
 			return TSKindId.Pound;
 		case 'lbrack':
@@ -1763,6 +1766,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DotDotDot;
 		case 'squote':
 			return TSKindId.Squote;
+		case 'default_keyword':
+			return TSKindId.DefaultKeyword;
+		case 'gen_keyword':
+			return TSKindId.GenKeyword;
 		case 'lt2':
 			return TSKindId.Lt2;
 		case 'amp':
@@ -1773,6 +1780,40 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DynKeyword;
 		case 'mutable_specifier':
 			return TSKindId.MutableSpecifier;
+		case 'u8_keyword':
+			return TSKindId.U8Keyword;
+		case 'i8_keyword':
+			return TSKindId.I8Keyword;
+		case 'u16_keyword':
+			return TSKindId.U16Keyword;
+		case 'i16_keyword':
+			return TSKindId.I16Keyword;
+		case 'u32_keyword':
+			return TSKindId.U32Keyword;
+		case 'i32_keyword':
+			return TSKindId.I32Keyword;
+		case 'u64_keyword':
+			return TSKindId.U64Keyword;
+		case 'i64_keyword':
+			return TSKindId.I64Keyword;
+		case 'u128_keyword':
+			return TSKindId.U128Keyword;
+		case 'i128_keyword':
+			return TSKindId.I128Keyword;
+		case 'isize_keyword':
+			return TSKindId.IsizeKeyword;
+		case 'usize_keyword':
+			return TSKindId.UsizeKeyword;
+		case 'f32_keyword':
+			return TSKindId.F32Keyword;
+		case 'f64_keyword':
+			return TSKindId.F64Keyword;
+		case 'bool_keyword':
+			return TSKindId.BoolKeyword;
+		case 'str_keyword':
+			return TSKindId.StrKeyword;
+		case 'char_keyword':
+			return TSKindId.CharKeyword;
 		case 'dash':
 			return TSKindId.Dash;
 		case 'amp_amp':
@@ -1849,22 +1890,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.UnsafeKeyword;
 		case 'async_keyword':
 			return TSKindId.AsyncKeyword;
-		case 'gen_keyword':
-			return TSKindId.GenKeyword;
 		case 'try_keyword':
 			return TSKindId.TryKeyword;
 		case 'ref_keyword':
 			return TSKindId.RefKeyword;
 		case 'at':
 			return TSKindId.At;
-		case 'integer_literal':
-			return TSKindId.IntegerLiteral;
 		case 'dquote':
 			return TSKindId.Dquote;
-		case 'char_literal':
-			return TSKindId.CharLiteral;
-		case 'escape_sequence':
-			return TSKindId.EscapeSequence;
 		case 'true_keyword':
 			return TSKindId.TrueKeyword;
 		case 'false_keyword':
@@ -1881,8 +1914,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StarSlash;
 		case 'shebang':
 			return TSKindId.Shebang;
-		case 'default_keyword':
-			return TSKindId.DefaultKeyword;
 		case 'self':
 			return TSKindId.Self;
 		case 'super':
@@ -1909,6 +1940,28 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StructKeyword;
 		case '_string_literal_open':
 			return TSKindId.StringLiteralOpen;
+		case 'integer_literal_decimal':
+			return TSKindId.IntegerLiteralDecimal;
+		case 'integer_literal_hex':
+			return TSKindId.IntegerLiteralHex;
+		case 'integer_literal_binary':
+			return TSKindId.IntegerLiteralBinary;
+		case 'integer_literal_octal':
+			return TSKindId.IntegerLiteralOctal;
+		case 'char_literal_escaped':
+			return TSKindId.CharLiteralEscaped;
+		case 'char_literal_plain':
+			return TSKindId.CharLiteralPlain;
+		case 'char_literal_empty':
+			return TSKindId.CharLiteralEmpty;
+		case 'escape_sequence_simple':
+			return TSKindId.EscapeSequenceSimple;
+		case 'escape_sequence_unicode_fixed':
+			return TSKindId.EscapeSequenceUnicodeFixed;
+		case 'escape_sequence_unicode_braced':
+			return TSKindId.EscapeSequenceUnicodeBraced;
+		case 'escape_sequence_hex':
+			return TSKindId.EscapeSequenceHex;
 		case 'raw_keyword':
 			return TSKindId.RawKeyword;
 		case 'line_comment_regular_dslash_token1':
@@ -2261,10 +2314,16 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LiteralPattern;
 		case 'negative_literal':
 			return TSKindId.NegativeLiteral;
+		case 'integer_literal':
+			return TSKindId.IntegerLiteral;
 		case 'string_literal':
 			return TSKindId.StringLiteral;
 		case 'raw_string_literal':
 			return TSKindId.RawStringLiteral;
+		case 'char_literal':
+			return TSKindId.CharLiteral;
+		case 'escape_sequence':
+			return TSKindId.EscapeSequence;
 		case 'boolean_literal':
 			return TSKindId.BooleanLiteral;
 		case 'line_comment':
@@ -2275,6 +2334,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.OuterLineDocCommentMarker;
 		case 'block_comment':
 			return TSKindId.BlockComment;
+		case '_primitive_type':
+			return TSKindId.PrimitiveType;
 		case '_kw_ref_marker':
 			return TSKindId.KwRefMarker;
 		case '_kw_unsafe_marker':
@@ -2533,12 +2594,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DelimTokenTreeParenRepeat1;
 		case '_match_block_arms_repeat1':
 			return TSKindId._MatchBlockArmsRepeat1;
-		case '_field_identifier':
-			return TSKindId.FieldIdentifier;
-		case '_shorthand_field_identifier':
+		case 'field_identifier':
+			return TSKindId._FieldIdentifier;
+		case 'shorthand_field_identifier':
 			return TSKindId._ShorthandFieldIdentifier;
-		case '_type_identifier':
-			return TSKindId.TypeIdentifier;
+		case 'type_identifier':
+			return TSKindId._TypeIdentifier;
 		case ';':
 			return TSKindId.Semi;
 		case '=>':
@@ -2583,8 +2644,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TyKeyword;
 		case 'vis':
 			return TSKindId.VisKeyword;
-		case 'primitive_type':
-			return TSKindId.U8Keyword;
 		case '#':
 			return TSKindId.Pound;
 		case '[':
@@ -2635,12 +2694,50 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DotDotDot;
 		case "'":
 			return TSKindId.Squote;
+		case 'default':
+			return TSKindId.DefaultKeyword;
+		case 'gen':
+			return TSKindId.GenKeyword;
 		case '&':
 			return TSKindId.Amp;
 		case 'impl':
 			return TSKindId.ImplKeyword;
 		case 'dyn':
 			return TSKindId.DynKeyword;
+		case 'u8':
+			return TSKindId.U8Keyword;
+		case 'i8':
+			return TSKindId.I8Keyword;
+		case 'u16':
+			return TSKindId.U16Keyword;
+		case 'i16':
+			return TSKindId.I16Keyword;
+		case 'u32':
+			return TSKindId.U32Keyword;
+		case 'i32':
+			return TSKindId.I32Keyword;
+		case 'u64':
+			return TSKindId.U64Keyword;
+		case 'i64':
+			return TSKindId.I64Keyword;
+		case 'u128':
+			return TSKindId.U128Keyword;
+		case 'i128':
+			return TSKindId.I128Keyword;
+		case 'isize':
+			return TSKindId.IsizeKeyword;
+		case 'usize':
+			return TSKindId.UsizeKeyword;
+		case 'f32':
+			return TSKindId.F32Keyword;
+		case 'f64':
+			return TSKindId.F64Keyword;
+		case 'bool':
+			return TSKindId.BoolKeyword;
+		case 'str':
+			return TSKindId.StrKeyword;
+		case 'char':
+			return TSKindId.CharKeyword;
 		case '-':
 			return TSKindId.Dash;
 		case '&&':
@@ -2717,8 +2814,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.UnsafeKeyword;
 		case 'async':
 			return TSKindId.AsyncKeyword;
-		case 'gen':
-			return TSKindId.GenKeyword;
 		case 'try':
 			return TSKindId.TryKeyword;
 		case 'ref':
@@ -2737,8 +2832,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.SlashStar;
 		case '*/':
 			return TSKindId.StarSlash;
-		case 'default':
-			return TSKindId.DefaultKeyword;
 		case 'move':
 			return TSKindId.MoveKeyword;
 		case ',':
@@ -2775,6 +2868,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._NonSpecialToken;
 		case 'let_chain':
 			return TSKindId.LetChain;
+		case 'inner_line_doc_comment_marker':
+			return TSKindId.InnerLineDocCommentMarker;
+		case 'outer_line_doc_comment_marker':
+			return TSKindId.OuterLineDocCommentMarker;
+		case 'primitive_type':
+			return TSKindId.PrimitiveType;
 		case 'tuple_type_elements':
 			return TSKindId.TupleTypeElements;
 		case 'tuple_expression_elements':
@@ -2801,20 +2900,23 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TypeArgument;
 		case 'match_block_arms':
 			return TSKindId.MatchBlockArms;
-		case 'field_identifier':
-			return TSKindId.FieldIdentifier;
-		case 'shorthand_field_identifier':
-			return TSKindId._ShorthandFieldIdentifier;
-		case 'type_identifier':
-			return TSKindId.TypeIdentifier;
 		default:
 			throw new TypeError(`unknown kind name ${kindName}`);
 	}
 }
 
+export type SpacingArm = TSKindId.Tight | TSKindId.Space | TSKindId.Newline | TSKindId.Blankline;
+export type WhitespaceArm =
+	| TSKindId.Tight
+	| TSKindId.Space
+	| TSKindId.Newline
+	| TSKindId.Blankline
+	| TSKindId.Indent
+	| TSKindId.Dedent;
+
 /** Separated-list optional-flank bitflag — the wire's `_delimiter` key
  *  and the list factories' `delimiter` option. */
-export const enum Delimiter {
+export enum Delimiter {
 	None = 0,
 	Leading = 1,
 	Trailing = 2,
@@ -2822,7 +2924,7 @@ export const enum Delimiter {
 }
 
 // Scoped enums per supertype
-export const enum StatementKind {
+export enum StatementKind {
 	ExpressionStatement = 'expression_statement',
 	DeclarationStatement = '_declaration_statement',
 	ConstItem = 'const_item',
@@ -2848,7 +2950,7 @@ export const enum StatementKind {
 	StaticItem = 'static_item'
 }
 
-export const enum DeclarationStatementKind {
+export enum DeclarationStatementKind {
 	ConstItem = 'const_item',
 	MacroInvocation = 'macro_invocation',
 	MacroDefinition = 'macro_definition',
@@ -2872,34 +2974,18 @@ export const enum DeclarationStatementKind {
 	StaticItem = 'static_item'
 }
 
-export const enum MacroDefinitionKind {
+export enum MacroDefinitionKind {
 	MacroDefinitionParen = 'macro_definition_paren',
 	MacroDefinitionBracket = 'macro_definition_bracket',
 	MacroDefinitionBrace = 'macro_definition_brace'
 }
 
-export const enum TokenPatternKind {
+export enum TokenPatternKind {
 	TokenTreePattern = 'token_tree_pattern',
 	TokenRepetitionPattern = 'token_repetition_pattern',
 	TokenBindingPattern = 'token_binding_pattern',
 	Metavariable = 'metavariable',
-	_NonSpecialToken = '_non_special_token'
-}
-
-export const enum TokenTreePatternKind {
-	TokenTreePatternParen = 'token_tree_pattern_paren',
-	TokenTreePatternBracket = 'token_tree_pattern_bracket',
-	TokenTreePatternBrace = 'token_tree_pattern_brace'
-}
-
-export const enum TokensKind {
-	TokenTree = 'token_tree',
-	TokenRepetition = 'token_repetition',
-	Metavariable = 'metavariable',
-	_NonSpecialToken = '_non_special_token'
-}
-
-export const enum _NonSpecialTokenKind {
+	_NonSpecialToken = '_non_special_token',
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -2917,41 +3003,113 @@ export const enum _NonSpecialTokenKind {
 	TokenKeywords = '_token_keywords'
 }
 
-export const enum ModItemKind {
+export enum TokenTreePatternKind {
+	TokenTreePatternParen = 'token_tree_pattern_paren',
+	TokenTreePatternBracket = 'token_tree_pattern_bracket',
+	TokenTreePatternBrace = 'token_tree_pattern_brace'
+}
+
+export enum TokensKind {
+	TokenTree = 'token_tree',
+	TokenRepetition = 'token_repetition',
+	Metavariable = 'metavariable',
+	_NonSpecialToken = '_non_special_token',
+	Literal = '_literal',
+	StringLiteral = 'string_literal',
+	RawStringLiteral = 'raw_string_literal',
+	CharLiteral = 'char_literal',
+	BooleanLiteral = 'boolean_literal',
+	IntegerLiteral = 'integer_literal',
+	FloatLiteral = 'float_literal',
+	Identifier = 'identifier',
+	MutableSpecifier = 'mutable_specifier',
+	Self = 'self',
+	Super = 'super',
+	Crate = 'crate',
+	PrimitiveType = '_primitive_type',
+	TokenTreePunctuation = '_token_tree_punctuation',
+	TokenKeywords = '_token_keywords'
+}
+
+export enum TokenTreeKind {
+	TokenTreeParen = 'token_tree_paren',
+	TokenTreeBracket = 'token_tree_bracket',
+	TokenTreeBrace = 'token_tree_brace'
+}
+
+export enum _NonSpecialTokenKind {
+	Literal = '_literal',
+	StringLiteral = 'string_literal',
+	RawStringLiteral = 'raw_string_literal',
+	CharLiteral = 'char_literal',
+	BooleanLiteral = 'boolean_literal',
+	IntegerLiteral = 'integer_literal',
+	FloatLiteral = 'float_literal',
+	Identifier = 'identifier',
+	MutableSpecifier = 'mutable_specifier',
+	Self = 'self',
+	Super = 'super',
+	Crate = 'crate',
+	PrimitiveType = '_primitive_type',
+	TokenTreePunctuation = '_token_tree_punctuation',
+	TokenKeywords = '_token_keywords'
+}
+
+export enum ModItemKind {
 	ModItemExternal = 'mod_item_external',
 	ModItemInline = 'mod_item_inline'
 }
 
-export const enum ForeignModItemKind {
+export enum ForeignModItemKind {
 	ForeignModItemSemi = 'foreign_mod_item_semi',
 	ForeignModItemBody = 'foreign_mod_item_body'
 }
 
-export const enum StructItemKind {
+export enum StructItemKind {
 	StructItemBrace = 'struct_item_brace',
 	StructItemTuple = 'struct_item_tuple',
 	StructItemUnit = 'struct_item_unit'
 }
 
-export const enum ImplItemKind {
+export enum ImplItemKind {
 	ImplItemBody = 'impl_item_body',
 	ImplItemSemi = 'impl_item_semi'
 }
 
-export const enum UseClauseKind {
+export enum UseClauseKind {
 	Self = 'self',
-	Identifier = 'identifier',
+	U8Keyword = 'u8_keyword',
+	I8Keyword = 'i8_keyword',
+	U16Keyword = 'u16_keyword',
+	I16Keyword = 'i16_keyword',
+	U32Keyword = 'u32_keyword',
+	I32Keyword = 'i32_keyword',
+	U64Keyword = 'u64_keyword',
+	I64Keyword = 'i64_keyword',
+	U128Keyword = 'u128_keyword',
+	I128Keyword = 'i128_keyword',
+	IsizeKeyword = 'isize_keyword',
+	UsizeKeyword = 'usize_keyword',
+	F32Keyword = 'f32_keyword',
+	F64Keyword = 'f64_keyword',
+	BoolKeyword = 'bool_keyword',
+	StrKeyword = 'str_keyword',
+	CharKeyword = 'char_keyword',
 	Metavariable = 'metavariable',
 	Super = 'super',
 	Crate = 'crate',
+	Identifier = 'identifier',
 	ScopedIdentifier = 'scoped_identifier',
+	DefaultKeyword = 'default_keyword',
+	UnionKeyword = 'union_keyword',
+	GenKeyword = 'gen_keyword',
 	UseAsClause = 'use_as_clause',
 	UseList = 'use_list',
 	ScopedUseList = 'scoped_use_list',
 	UseWildcard = 'use_wildcard'
 }
 
-export const enum TypeKind {
+export enum TypeKind {
 	AbstractType = 'abstract_type',
 	ReferenceType = 'reference_type',
 	Metavariable = 'metavariable',
@@ -2962,7 +3120,7 @@ export const enum TypeKind {
 	UnitType = 'unit_type',
 	ArrayType = 'array_type',
 	FunctionType = 'function_type',
-	Identifier = 'identifier',
+	TypeIdentifier = 'type_identifier',
 	MacroInvocation = 'macro_invocation',
 	NeverType = 'never_type',
 	DynamicType = 'dynamic_type',
@@ -2971,12 +3129,12 @@ export const enum TypeKind {
 	PrimitiveType = '_primitive_type'
 }
 
-export const enum PointerTypeKind {
+export enum PointerTypeKind {
 	PointerTypeConst = 'pointer_type_const',
 	PointerTypeMut = 'pointer_type_mut'
 }
 
-export const enum ExpressionExceptRangeKind {
+export enum ExpressionExceptRangeKind {
 	UnaryExpression = 'unary_expression',
 	ReferenceExpression = 'reference_expression',
 	TryExpression = 'try_expression',
@@ -2995,6 +3153,26 @@ export const enum ExpressionExceptRangeKind {
 	IntegerLiteral = 'integer_literal',
 	FloatLiteral = 'float_literal',
 	Identifier = 'identifier',
+	U8Keyword = 'u8_keyword',
+	I8Keyword = 'i8_keyword',
+	U16Keyword = 'u16_keyword',
+	I16Keyword = 'i16_keyword',
+	U32Keyword = 'u32_keyword',
+	I32Keyword = 'i32_keyword',
+	U64Keyword = 'u64_keyword',
+	I64Keyword = 'i64_keyword',
+	U128Keyword = 'u128_keyword',
+	I128Keyword = 'i128_keyword',
+	IsizeKeyword = 'isize_keyword',
+	UsizeKeyword = 'usize_keyword',
+	F32Keyword = 'f32_keyword',
+	F64Keyword = 'f64_keyword',
+	BoolKeyword = 'bool_keyword',
+	StrKeyword = 'str_keyword',
+	CharKeyword = 'char_keyword',
+	DefaultKeyword = 'default_keyword',
+	UnionKeyword = 'union_keyword',
+	GenKeyword = 'gen_keyword',
 	Self = 'self',
 	ScopedIdentifier = 'scoped_identifier',
 	GenericFunction = 'generic_function',
@@ -3024,7 +3202,7 @@ export const enum ExpressionExceptRangeKind {
 	ConstBlock = 'const_block'
 }
 
-export const enum ExpressionKind {
+export enum ExpressionKind {
 	UnaryExpression = 'unary_expression',
 	ReferenceExpression = 'reference_expression',
 	TryExpression = 'try_expression',
@@ -3043,6 +3221,26 @@ export const enum ExpressionKind {
 	IntegerLiteral = 'integer_literal',
 	FloatLiteral = 'float_literal',
 	Identifier = 'identifier',
+	U8Keyword = 'u8_keyword',
+	I8Keyword = 'i8_keyword',
+	U16Keyword = 'u16_keyword',
+	I16Keyword = 'i16_keyword',
+	U32Keyword = 'u32_keyword',
+	I32Keyword = 'i32_keyword',
+	U64Keyword = 'u64_keyword',
+	I64Keyword = 'i64_keyword',
+	U128Keyword = 'u128_keyword',
+	I128Keyword = 'i128_keyword',
+	IsizeKeyword = 'isize_keyword',
+	UsizeKeyword = 'usize_keyword',
+	F32Keyword = 'f32_keyword',
+	F64Keyword = 'f64_keyword',
+	BoolKeyword = 'bool_keyword',
+	StrKeyword = 'str_keyword',
+	CharKeyword = 'char_keyword',
+	DefaultKeyword = 'default_keyword',
+	UnionKeyword = 'union_keyword',
+	GenKeyword = 'gen_keyword',
 	Self = 'self',
 	ScopedIdentifier = 'scoped_identifier',
 	GenericFunction = 'generic_function',
@@ -3073,7 +3271,7 @@ export const enum ExpressionKind {
 	RangeExpression = 'range_expression'
 }
 
-export const enum ExpressionEndingWithBlockKind {
+export enum ExpressionEndingWithBlockKind {
 	UnsafeBlock = 'unsafe_block',
 	AsyncBlock = 'async_block',
 	GenBlock = 'gen_block',
@@ -3087,36 +3285,66 @@ export const enum ExpressionEndingWithBlockKind {
 	ConstBlock = 'const_block'
 }
 
-export const enum DelimTokenTreeKind {
+export enum DelimTokenTreeKind {
 	DelimTokenTreeParen = 'delim_token_tree_paren',
 	DelimTokenTreeBracket = 'delim_token_tree_bracket',
 	DelimTokenTreeBrace = 'delim_token_tree_brace'
 }
 
-export const enum DelimTokensKind {
+export enum DelimTokensKind {
 	_NonSpecialToken = '_non_special_token',
+	Literal = '_literal',
+	StringLiteral = 'string_literal',
+	RawStringLiteral = 'raw_string_literal',
+	CharLiteral = 'char_literal',
+	BooleanLiteral = 'boolean_literal',
+	IntegerLiteral = 'integer_literal',
+	FloatLiteral = 'float_literal',
+	Identifier = 'identifier',
+	MutableSpecifier = 'mutable_specifier',
+	Self = 'self',
+	Super = 'super',
+	Crate = 'crate',
+	PrimitiveType = '_primitive_type',
+	TokenTreePunctuation = '_token_tree_punctuation',
+	TokenKeywords = '_token_keywords',
 	Dollar = 'dollar',
 	DelimTokenTree = 'delim_token_tree'
 }
 
-export const enum NonDelimTokenKind {
+export enum NonDelimTokenKind {
 	_NonSpecialToken = '_non_special_token',
+	Literal = '_literal',
+	StringLiteral = 'string_literal',
+	RawStringLiteral = 'raw_string_literal',
+	CharLiteral = 'char_literal',
+	BooleanLiteral = 'boolean_literal',
+	IntegerLiteral = 'integer_literal',
+	FloatLiteral = 'float_literal',
+	Identifier = 'identifier',
+	MutableSpecifier = 'mutable_specifier',
+	Self = 'self',
+	Super = 'super',
+	Crate = 'crate',
+	PrimitiveType = '_primitive_type',
+	TokenTreePunctuation = '_token_tree_punctuation',
+	TokenKeywords = '_token_keywords',
 	Dollar = 'dollar'
 }
 
-export const enum ReferenceExpressionKind {
+export enum ReferenceExpressionKind {
 	ReferenceExpressionRawConst = 'reference_expression_raw_const',
 	ReferenceExpressionRawMut = 'reference_expression_raw_mut',
 	ReferenceExpressionMut = 'reference_expression_mut',
 	ReferenceExpressionBare = 'reference_expression_bare'
 }
 
-export const enum ArrayExpressionKind {
+export enum ArrayExpressionKind {
 	ArrayExpressionSemi = 'array_expression_semi',
 	ArrayExpressionList = 'array_expression_list'
 }
 
-export const enum ConditionKind {
+export enum ConditionKind {
 	Expression = '_expression',
 	UnaryExpression = 'unary_expression',
 	ReferenceExpression = 'reference_expression',
@@ -3136,6 +3364,26 @@ export const enum ConditionKind {
 	IntegerLiteral = 'integer_literal',
 	FloatLiteral = 'float_literal',
 	Identifier = 'identifier',
+	U8Keyword = 'u8_keyword',
+	I8Keyword = 'i8_keyword',
+	U16Keyword = 'u16_keyword',
+	I16Keyword = 'i16_keyword',
+	U32Keyword = 'u32_keyword',
+	I32Keyword = 'i32_keyword',
+	U64Keyword = 'u64_keyword',
+	I64Keyword = 'i64_keyword',
+	U128Keyword = 'u128_keyword',
+	I128Keyword = 'i128_keyword',
+	IsizeKeyword = 'isize_keyword',
+	UsizeKeyword = 'usize_keyword',
+	F32Keyword = 'f32_keyword',
+	F64Keyword = 'f64_keyword',
+	BoolKeyword = 'bool_keyword',
+	StrKeyword = 'str_keyword',
+	CharKeyword = 'char_keyword',
+	DefaultKeyword = 'default_keyword',
+	UnionKeyword = 'union_keyword',
+	GenKeyword = 'gen_keyword',
 	Self = 'self',
 	ScopedIdentifier = 'scoped_identifier',
 	GenericFunction = 'generic_function',
@@ -3168,17 +3416,17 @@ export const enum ConditionKind {
 	LetChain = '_let_chain'
 }
 
-export const enum MatchArmKind {
+export enum MatchArmKind {
 	MatchArmWithComma = 'match_arm_with_comma',
 	MatchArmBlockEnding = 'match_arm_block_ending'
 }
 
-export const enum ClosureExpressionKind {
+export enum ClosureExpressionKind {
 	ClosureExpressionBlock = 'closure_expression_block',
 	ClosureExpressionExpr = 'closure_expression_expr'
 }
 
-export const enum PatternKind {
+export enum PatternKind {
 	LiteralPattern = '_literal_pattern',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -3187,12 +3435,32 @@ export const enum PatternKind {
 	IntegerLiteral = 'integer_literal',
 	FloatLiteral = 'float_literal',
 	NegativeLiteral = 'negative_literal',
+	U8Keyword = 'u8_keyword',
+	I8Keyword = 'i8_keyword',
+	U16Keyword = 'u16_keyword',
+	I16Keyword = 'i16_keyword',
+	U32Keyword = 'u32_keyword',
+	I32Keyword = 'i32_keyword',
+	U64Keyword = 'u64_keyword',
+	I64Keyword = 'i64_keyword',
+	U128Keyword = 'u128_keyword',
+	I128Keyword = 'i128_keyword',
+	IsizeKeyword = 'isize_keyword',
+	UsizeKeyword = 'usize_keyword',
+	F32Keyword = 'f32_keyword',
+	F64Keyword = 'f64_keyword',
+	BoolKeyword = 'bool_keyword',
+	StrKeyword = 'str_keyword',
+	CharKeyword = 'char_keyword',
 	Identifier = 'identifier',
 	ScopedIdentifier = 'scoped_identifier',
 	GenericPattern = 'generic_pattern',
 	TuplePattern = 'tuple_pattern',
 	TupleStructPattern = 'tuple_struct_pattern',
 	StructPattern = 'struct_pattern',
+	DefaultKeyword = 'default_keyword',
+	UnionKeyword = 'union_keyword',
+	GenKeyword = 'gen_keyword',
 	RefPattern = 'ref_pattern',
 	SlicePattern = 'slice_pattern',
 	CapturedPattern = 'captured_pattern',
@@ -3206,22 +3474,22 @@ export const enum PatternKind {
 	WildcardPattern = '_wildcard_pattern'
 }
 
-export const enum FieldPatternKind {
+export enum FieldPatternKind {
 	FieldPatternShorthand = 'field_pattern_shorthand',
 	FieldPatternNamed = 'field_pattern_named'
 }
 
-export const enum RangePatternKind {
+export enum RangePatternKind {
 	RangePatternWithLeft = 'range_pattern_with_left',
 	RangePatternPrefix = 'range_pattern_prefix'
 }
 
-export const enum OrPatternKind {
+export enum OrPatternKind {
 	OrPatternBinary = 'or_pattern_binary',
 	OrPatternPrefix = 'or_pattern_prefix'
 }
 
-export const enum LiteralKind {
+export enum LiteralKind {
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -3230,7 +3498,7 @@ export const enum LiteralKind {
 	FloatLiteral = 'float_literal'
 }
 
-export const enum LiteralPatternKind {
+export enum LiteralPatternKind {
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -3240,16 +3508,56 @@ export const enum LiteralPatternKind {
 	NegativeLiteral = 'negative_literal'
 }
 
-export const enum PathKind {
+export enum IntegerLiteralKind {
+	IntegerLiteralDecimal = 'integer_literal_decimal',
+	IntegerLiteralHex = 'integer_literal_hex',
+	IntegerLiteralBinary = 'integer_literal_binary',
+	IntegerLiteralOctal = 'integer_literal_octal'
+}
+
+export enum CharLiteralKind {
+	CharLiteralEscaped = 'char_literal_escaped',
+	CharLiteralPlain = 'char_literal_plain',
+	CharLiteralEmpty = 'char_literal_empty'
+}
+
+export enum EscapeSequenceKind {
+	EscapeSequenceSimple = 'escape_sequence_simple',
+	EscapeSequenceUnicodeFixed = 'escape_sequence_unicode_fixed',
+	EscapeSequenceUnicodeBraced = 'escape_sequence_unicode_braced',
+	EscapeSequenceHex = 'escape_sequence_hex'
+}
+
+export enum PathKind {
 	Self = 'self',
-	Identifier = 'identifier',
+	U8Keyword = 'u8_keyword',
+	I8Keyword = 'i8_keyword',
+	U16Keyword = 'u16_keyword',
+	I16Keyword = 'i16_keyword',
+	U32Keyword = 'u32_keyword',
+	I32Keyword = 'i32_keyword',
+	U64Keyword = 'u64_keyword',
+	I64Keyword = 'i64_keyword',
+	U128Keyword = 'u128_keyword',
+	I128Keyword = 'i128_keyword',
+	IsizeKeyword = 'isize_keyword',
+	UsizeKeyword = 'usize_keyword',
+	F32Keyword = 'f32_keyword',
+	F64Keyword = 'f64_keyword',
+	BoolKeyword = 'bool_keyword',
+	StrKeyword = 'str_keyword',
+	CharKeyword = 'char_keyword',
 	Metavariable = 'metavariable',
 	Super = 'super',
 	Crate = 'crate',
-	ScopedIdentifier = 'scoped_identifier'
+	Identifier = 'identifier',
+	ScopedIdentifier = 'scoped_identifier',
+	DefaultKeyword = 'default_keyword',
+	UnionKeyword = 'union_keyword',
+	GenKeyword = 'gen_keyword'
 }
 
-export const enum WhitespaceKind {
+export enum WhitespaceKind {
 	Tight = '_tight',
 	Space = '_space',
 	Newline = '_newline',
@@ -3258,7 +3566,7 @@ export const enum WhitespaceKind {
 	Dedent = '_dedent'
 }
 
-export const enum NonSpecialTokenKind {
+export enum NonSpecialTokenKind {
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -3322,9 +3630,6 @@ export interface MacroRule {
 	readonly $type: TSKindId.MacroRule;
 	readonly _left: TokenTreePattern;
 	readonly _right: TokenTree;
-	readonly __looseHints__?: {
-		readonly right: readonly (TokenTreeParen | TokenTreeBracket | TokenTreeBrace)[];
-	};
 	left(): TokenTreePattern;
 	right(): TokenTree;
 }
@@ -3380,7 +3685,7 @@ export interface TokenRepetitionPattern {
 		| Metavariable
 		| _NonSpecialToken
 	)[];
-	readonly _separator?: boolean;
+	readonly _separator?: string;
 	readonly _operator: number;
 	readonly __inputHints__?: {
 		readonly token_patterns?: readonly (
@@ -3452,7 +3757,6 @@ export interface TokenRepetitionPattern {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -3549,7 +3853,6 @@ export interface TokenRepetitionPattern {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -3586,7 +3889,6 @@ export interface TokenRepetitionPattern {
 			| Metavariable
 			| _NonSpecialToken
 		)[];
-		readonly separator?: BooleanKeyword<'[^+*?]+'>;
 		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
 	};
 	tokenPatterns(): readonly (
@@ -3596,20 +3898,14 @@ export interface TokenRepetitionPattern {
 		| Metavariable
 		| _NonSpecialToken
 	)[];
-	separator(): boolean | undefined;
+	separator(): string | undefined;
 	operator(): number;
-}
-
-export interface TokenTree {
-	readonly $type: TSKindId.TokenTree;
-	readonly _content: TokenTreeParen | TokenTreeBracket | TokenTreeBrace;
-	content(): TokenTreeParen | TokenTreeBracket | TokenTreeBrace;
 }
 
 export interface TokenRepetition {
 	readonly $type: TSKindId.TokenRepetition;
 	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
-	readonly _separator?: boolean;
+	readonly _separator?: string;
 	readonly _operator: number;
 	readonly __inputHints__?: {
 		readonly tokens?: readonly (
@@ -3681,7 +3977,6 @@ export interface TokenRepetition {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -3778,7 +4073,6 @@ export interface TokenRepetition {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -3814,11 +4108,10 @@ export interface TokenRepetition {
 			| Metavariable
 			| _NonSpecialToken
 		)[];
-		readonly separator?: BooleanKeyword<'[^+*?]+'>;
 		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
 	};
 	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
-	separator(): boolean | undefined;
+	separator(): string | undefined;
 	operator(): number;
 }
 
@@ -3836,16 +4129,115 @@ export interface InnerAttributeItem {
 
 export interface Attribute {
 	readonly $type: TSKindId.Attribute;
-	readonly _path: TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier;
+	readonly _path:
+		| TSKindId.Self
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly _input?: AttributeInput;
 	readonly __inputHints__?: {
 		readonly path:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier;
 	};
-	path(): TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier;
+	path():
+		| TSKindId.Self
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	input(): AttributeInput | undefined;
 }
 
@@ -3861,18 +4253,19 @@ export interface DeclarationList {
 export interface UnionItem {
 	readonly $type: TSKindId.UnionItem;
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
+	readonly _name: TypeIdentifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _where_clause?: WhereClause;
 	readonly _body: FieldDeclarationList;
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 		readonly body: readonly AttributedFieldDeclaration[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
+	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
 	whereClause(): WhereClause | undefined;
 	body(): FieldDeclarationList;
@@ -3881,18 +4274,19 @@ export interface UnionItem {
 export interface EnumItem {
 	readonly $type: TSKindId.EnumItem;
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
+	readonly _name: TypeIdentifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _where_clause?: WhereClause;
 	readonly _body: EnumVariantList;
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 		readonly body: readonly AttributedEnumVariant[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
+	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
 	whereClause(): WhereClause | undefined;
 	body(): EnumVariantList;
@@ -3939,7 +4333,7 @@ export interface FieldDeclarationList {
 export interface FieldDeclaration {
 	readonly $type: TSKindId.FieldDeclaration;
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
+	readonly _name: FieldIdentifier;
 	readonly _type: Type;
 	readonly __inputHints__?: {
 		readonly type:
@@ -3985,9 +4379,10 @@ export interface FieldDeclaration {
 	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly name: readonly Identifier[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
+	name(): FieldIdentifier;
 	type(): Type;
 }
 
@@ -4082,8 +4477,8 @@ export interface StaticItem {
 	readonly _type: Type;
 	readonly _value?: Expression;
 	readonly __inputHints__?: {
-		readonly ref_marker?: BooleanKeyword<'ref'>;
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly ref_marker?: BaseBooleanKeyword<'ref'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 		readonly type:
 			| KindEnum<
 					| '!'
@@ -4144,7 +4539,7 @@ export interface StaticItem {
 export interface TypeItem {
 	readonly $type: TSKindId.TypeItem;
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
+	readonly _name: TypeIdentifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _where_clause?: WhereClause;
 	readonly _type: Type;
@@ -4193,12 +4588,13 @@ export interface TypeItem {
 	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 		readonly trailing_where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
+	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
 	whereClause(): WhereClause | undefined;
 	type(): Type;
@@ -4373,7 +4769,7 @@ export interface WherePredicate {
 	readonly $type: TSKindId.WherePredicate;
 	readonly _left:
 		| Lifetime
-		| Identifier
+		| TypeIdentifier
 		| ScopedTypeIdentifier
 		| GenericType
 		| ReferenceType
@@ -4438,7 +4834,7 @@ export interface WherePredicate {
 					| TSKindId.CharKeyword
 			  >
 			| Lifetime
-			| Identifier
+			| TypeIdentifier
 			| ScopedTypeIdentifier
 			| GenericType
 			| ReferenceType
@@ -4452,7 +4848,7 @@ export interface WherePredicate {
 	};
 	left():
 		| Lifetime
-		| Identifier
+		| TypeIdentifier
 		| ScopedTypeIdentifier
 		| GenericType
 		| ReferenceType
@@ -4484,17 +4880,18 @@ export interface TraitItem {
 	readonly $type: TSKindId.TraitItem;
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _unsafe_marker?: boolean;
-	readonly _name: Identifier;
+	readonly _name: TypeIdentifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _bounds?: TraitBounds;
 	readonly _where_clause?: WhereClause;
 	readonly _body: DeclarationList;
 	readonly __inputHints__?: {
-		readonly unsafe_marker?: BooleanKeyword<'unsafe'>;
+		readonly unsafe_marker?: BaseBooleanKeyword<'unsafe'>;
 	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly unsafe_marker?: 'unsafe' | 'unsafe';
+		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly bounds?: readonly (Type | Lifetime | HigherRankedTraitBound)[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
@@ -4502,7 +4899,7 @@ export interface TraitItem {
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	unsafeMarker(): boolean | undefined;
-	name(): Identifier;
+	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
 	bounds(): TraitBounds | undefined;
 	whereClause(): WhereClause | undefined;
@@ -4511,16 +4908,17 @@ export interface TraitItem {
 
 export interface AssociatedType {
 	readonly $type: TSKindId.AssociatedType;
-	readonly _name: Identifier;
+	readonly _name: TypeIdentifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _bounds?: TraitBounds;
 	readonly _where_clause?: WhereClause;
 	readonly __looseHints__?: {
+		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly bounds?: readonly (Type | Lifetime | HigherRankedTraitBound)[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
-	name(): Identifier;
+	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
 	bounds(): TraitBounds | undefined;
 	whereClause(): WhereClause | undefined;
@@ -4747,7 +5145,7 @@ export interface ConstParameter {
 
 export interface TypeParameter {
 	readonly $type: TSKindId.TypeParameter;
-	readonly _name: Identifier;
+	readonly _name: TypeIdentifier;
 	readonly _bounds?: TraitBounds;
 	readonly _default_type?: Type;
 	readonly __inputHints__?: {
@@ -4793,9 +5191,10 @@ export interface TypeParameter {
 			| Type;
 	};
 	readonly __looseHints__?: {
+		readonly name: readonly Identifier[];
 		readonly bounds?: readonly (Type | Lifetime | HigherRankedTraitBound)[];
 	};
-	name(): Identifier;
+	name(): TypeIdentifier;
 	bounds(): TraitBounds | undefined;
 	defaultType(): Type | undefined;
 }
@@ -4819,7 +5218,7 @@ export interface LetDeclaration {
 	readonly _value?: Expression;
 	readonly _alternative?: Block;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
@@ -4885,20 +5284,87 @@ export interface UseDeclaration {
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _argument:
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| UseAsClause
 		| UseList
 		| ScopedUseList
 		| UseWildcard;
 	readonly __inputHints__?: {
 		readonly argument:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier
 			| UseAsClause
 			| UseList
@@ -4911,11 +5377,31 @@ export interface UseDeclaration {
 	visibilityModifier(): VisibilityModifier | undefined;
 	argument():
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| UseAsClause
 		| UseList
 		| ScopedUseList
@@ -4924,30 +5410,150 @@ export interface UseDeclaration {
 
 export interface ScopedUseList {
 	readonly $type: TSKindId.ScopedUseList;
-	readonly _path?: TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier;
+	readonly _path?:
+		| TSKindId.Self
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly _list: UseList;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier;
 	};
 	readonly __looseHints__?: {
 		readonly list: readonly (
 			| 'self'
-			| Identifier
+			| 'u8'
+			| 'i8'
+			| 'u16'
+			| 'i16'
+			| 'u32'
+			| 'i32'
+			| 'u64'
+			| 'i64'
+			| 'u128'
+			| 'i128'
+			| 'isize'
+			| 'usize'
+			| 'f32'
+			| 'f64'
+			| 'bool'
+			| 'str'
+			| 'char'
 			| Metavariable
 			| 'super'
 			| 'crate'
+			| Identifier
 			| ScopedIdentifier
+			| 'default'
+			| 'union'
+			| 'gen'
 			| UseAsClause
 			| UseList
 			| ScopedUseList
 			| UseWildcard
 		)[];
 	};
-	path(): TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier | undefined;
+	path():
+		| TSKindId.Self
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
+		| undefined;
 	list(): UseList;
 }
 
@@ -4957,11 +5563,31 @@ export interface UseList {
 	readonly __looseHints__?: {
 		readonly use_clauses?: readonly (
 			| 'self'
-			| Identifier
+			| 'u8'
+			| 'i8'
+			| 'u16'
+			| 'i16'
+			| 'u32'
+			| 'i32'
+			| 'u64'
+			| 'i64'
+			| 'u128'
+			| 'i128'
+			| 'isize'
+			| 'usize'
+			| 'f32'
+			| 'f64'
+			| 'bool'
+			| 'str'
+			| 'char'
 			| Metavariable
 			| 'super'
 			| 'crate'
+			| Identifier
 			| ScopedIdentifier
+			| 'default'
+			| 'union'
+			| 'gen'
 			| UseAsClause
 			| UseList
 			| ScopedUseList
@@ -4973,16 +5599,115 @@ export interface UseList {
 
 export interface UseAsClause {
 	readonly $type: TSKindId.UseAsClause;
-	readonly _path: TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier;
+	readonly _path:
+		| TSKindId.Self
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly _alias: Identifier;
 	readonly __inputHints__?: {
 		readonly path:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier;
 	};
-	path(): TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier;
+	path():
+		| TSKindId.Self
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	alias(): Identifier;
 }
 
@@ -4995,7 +5720,34 @@ export interface UseWildcard {
 			| 'self'
 			| 'super'
 			| 'crate'
-			| readonly ('self' | Identifier | Metavariable | 'super' | 'crate' | ScopedIdentifier)[];
+			| readonly (
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| Metavariable
+					| 'super'
+					| 'crate'
+					| Identifier
+					| ScopedIdentifier
+					| 'default'
+					| 'union'
+					| 'gen'
+			  )[];
 	};
 	useWildcardGroup(): UseWildcardGroup | undefined;
 }
@@ -5015,8 +5767,8 @@ export interface SelfParameter {
 	readonly _lifetime?: Lifetime;
 	readonly _mutable_specifier?: boolean;
 	readonly __inputHints__?: {
-		readonly reference?: BooleanKeyword<'&'>;
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly reference?: BaseBooleanKeyword<'&'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 	};
 	readonly __looseHints__?: {
 		readonly mutable_specifier?: 'mut' | 'mut';
@@ -5031,7 +5783,7 @@ export interface VariadicParameter {
 	readonly _mutable_specifier?: boolean;
 	readonly _pattern?: Pattern;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 		readonly pattern?:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
@@ -5052,7 +5804,7 @@ export interface Parameter {
 	readonly _name: Pattern | TSKindId.Self;
 	readonly _type: Type;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 		readonly name:
 			| KindEnum<
 					'true' | 'false' | '..' | '_' | 'self',
@@ -5410,23 +6162,34 @@ export interface GenericFunction {
 
 export interface GenericType {
 	readonly $type: TSKindId.GenericType;
-	readonly _type: Identifier | ScopedTypeIdentifier;
+	readonly _type:
+		| TypeIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
+		| ScopedTypeIdentifier;
 	readonly _type_arguments: TypeArguments;
+	readonly __inputHints__?: {
+		readonly type:
+			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
+			| TypeIdentifier
+			| ScopedTypeIdentifier;
+	};
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly TypeArgument[];
 	};
-	type(): Identifier | ScopedTypeIdentifier;
+	type(): TypeIdentifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword | ScopedTypeIdentifier;
 	typeArguments(): TypeArguments;
 }
 
 export interface GenericTypeWithTurbofish {
 	readonly $type: TSKindId.GenericTypeWithTurbofish;
-	readonly _type: Identifier | ScopedIdentifier;
+	readonly _type: TypeIdentifier | ScopedIdentifier;
 	readonly _type_arguments: TypeArguments;
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly TypeArgument[];
 	};
-	type(): Identifier | ScopedIdentifier;
+	type(): TypeIdentifier | ScopedIdentifier;
 	typeArguments(): TypeArguments;
 }
 
@@ -5528,7 +6291,7 @@ export interface UseBounds {
 	readonly $type: TSKindId.UseBounds;
 	readonly _bounds?: UseBoundsElements;
 	readonly __looseHints__?: {
-		readonly bounds?: readonly (Lifetime | Identifier)[];
+		readonly bounds?: readonly (Lifetime | TypeIdentifier)[];
 	};
 	bounds(): UseBoundsElements | undefined;
 }
@@ -5544,7 +6307,7 @@ export interface TypeArguments {
 
 export interface TypeBinding {
 	readonly $type: TSKindId.TypeBinding;
-	readonly _name: Identifier;
+	readonly _name: TypeIdentifier;
 	readonly _type_arguments?: TypeArguments;
 	readonly _type: Type;
 	readonly __inputHints__?: {
@@ -5590,9 +6353,10 @@ export interface TypeBinding {
 			| Type;
 	};
 	readonly __looseHints__?: {
+		readonly name: readonly Identifier[];
 		readonly type_arguments?: readonly TypeArgument[];
 	};
-	name(): Identifier;
+	name(): TypeIdentifier;
 	typeArguments(): TypeArguments | undefined;
 	type(): Type;
 }
@@ -5603,7 +6367,7 @@ export interface ReferenceType {
 	readonly _mutable_specifier?: boolean;
 	readonly _type: Type;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 		readonly type:
 			| KindEnum<
 					| '!'
@@ -5657,7 +6421,7 @@ export interface AbstractType {
 	readonly $type: TSKindId.AbstractType;
 	readonly _type_parameters?: TypeParameters;
 	readonly _trait:
-		| Identifier
+		| TypeIdentifier
 		| ScopedTypeIdentifier
 		| RemovedTraitBound
 		| GenericType
@@ -5668,20 +6432,44 @@ export interface AbstractType {
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 	};
 	typeParameters(): TypeParameters | undefined;
-	trait(): Identifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
+	trait():
+		| TypeIdentifier
+		| ScopedTypeIdentifier
+		| RemovedTraitBound
+		| GenericType
+		| FunctionType
+		| TupleType
+		| BoundedType;
 }
 
 export interface DynamicType {
 	readonly $type: TSKindId.DynamicType;
-	readonly _trait: HigherRankedTraitBound | Identifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
-	trait(): HigherRankedTraitBound | Identifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
+	readonly _trait:
+		| HigherRankedTraitBound
+		| TypeIdentifier
+		| ScopedTypeIdentifier
+		| GenericType
+		| FunctionType
+		| TupleType;
+	trait(): HigherRankedTraitBound | TypeIdentifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
 }
 
 export interface MacroInvocation {
 	readonly $type: TSKindId.MacroInvocation;
-	readonly _macro: ScopedIdentifier | Identifier;
+	readonly _macro:
+		| ScopedIdentifier
+		| Identifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly _arguments: DelimTokenTree;
-	macro(): ScopedIdentifier | Identifier;
+	readonly __inputHints__?: {
+		readonly macro:
+			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
+			| ScopedIdentifier
+			| Identifier;
+	};
+	macro(): ScopedIdentifier | Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
 	arguments(): DelimTokenTree;
 }
 
@@ -5689,19 +6477,86 @@ export interface ScopedIdentifier {
 	readonly $type: TSKindId.ScopedIdentifier;
 	readonly _path?:
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| BracketedType
 		| GenericTypeWithTurbofish;
 	readonly _name: Identifier | TSKindId.Super;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier
 			| BracketedType
 			| GenericTypeWithTurbofish;
@@ -5709,11 +6564,31 @@ export interface ScopedIdentifier {
 	};
 	path():
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| BracketedType
 		| GenericTypeWithTurbofish
 		| undefined;
@@ -5724,68 +6599,248 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 	readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
 	readonly _path?:
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| GenericTypeWithTurbofish;
-	readonly _name: Identifier;
+	readonly _name: TypeIdentifier;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier
 			| GenericTypeWithTurbofish;
 	};
+	readonly __looseHints__?: {
+		readonly name: readonly Identifier[];
+	};
 	path():
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| GenericTypeWithTurbofish
 		| undefined;
-	name(): Identifier;
+	name(): TypeIdentifier;
 }
 
 export interface ScopedTypeIdentifier {
 	readonly $type: TSKindId.ScopedTypeIdentifier;
 	readonly _path?:
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| GenericTypeWithTurbofish
 		| BracketedType
 		| GenericType;
-	readonly _name: Identifier;
+	readonly _name: TypeIdentifier;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier
 			| GenericTypeWithTurbofish
 			| BracketedType
 			| GenericType;
 	};
+	readonly __looseHints__?: {
+		readonly name: readonly Identifier[];
+	};
 	path():
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| GenericTypeWithTurbofish
 		| BracketedType
 		| GenericType
 		| undefined;
-	name(): Identifier;
+	name(): TypeIdentifier;
 }
 
 export interface RangeExpression {
@@ -6006,6 +7061,26 @@ export interface CallExpression {
 		| YieldExpression
 		| Literal
 		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| TSKindId.Self
 		| ScopedIdentifier
 		| GenericFunction
@@ -6037,8 +7112,54 @@ export interface CallExpression {
 	readonly __inputHints__?: {
 		readonly function:
 			| KindEnum<
-					'true' | 'false' | 'self' | '()',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.UnitExpression
+					| 'true'
+					| 'false'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'default'
+					| 'union'
+					| 'gen'
+					| 'self'
+					| '()',
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.Self
+					| TSKindId.UnitExpression
 			  >
 			| UnaryExpression
 			| ReferenceExpression
@@ -6094,6 +7215,26 @@ export interface CallExpression {
 		| YieldExpression
 		| Literal
 		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| TSKindId.Self
 		| ScopedIdentifier
 		| GenericFunction
@@ -6157,12 +7298,12 @@ export interface TupleExpression {
 
 export interface StructExpression {
 	readonly $type: TSKindId.StructExpression;
-	readonly _name: Identifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
+	readonly _name: TypeIdentifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
 	readonly _body: FieldInitializerList;
 	readonly __looseHints__?: {
 		readonly body: readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
 	};
-	name(): Identifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
+	name(): TypeIdentifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
 	body(): FieldInitializerList;
 }
 
@@ -6186,7 +7327,7 @@ export interface ShorthandFieldInitializer {
 export interface FieldInitializer {
 	readonly $type: TSKindId.FieldInitializer;
 	readonly _attribute_item?: readonly AttributeItem[];
-	readonly _field: Identifier | IntegerLiteral;
+	readonly _field: FieldIdentifier | IntegerLiteral;
 	readonly _value: Expression;
 	readonly __inputHints__?: {
 		readonly value:
@@ -6194,7 +7335,7 @@ export interface FieldInitializer {
 			| Expression;
 	};
 	attributeItems(): readonly AttributeItem[];
-	field(): Identifier | IntegerLiteral;
+	field(): FieldIdentifier | IntegerLiteral;
 	value(): Expression;
 }
 
@@ -6306,7 +7447,7 @@ export interface LastMatchArm {
 		readonly value:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
-		readonly comma?: BooleanKeyword<','>;
+		readonly comma?: BaseBooleanKeyword<','>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
 	pattern(): MatchPattern;
@@ -6460,14 +7601,14 @@ export interface AwaitExpression {
 export interface FieldExpression {
 	readonly $type: TSKindId.FieldExpression;
 	readonly _value: Expression;
-	readonly _field: Identifier | IntegerLiteral;
+	readonly _field: FieldIdentifier | IntegerLiteral;
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	value(): Expression;
-	field(): Identifier | IntegerLiteral;
+	field(): FieldIdentifier | IntegerLiteral;
 }
 
 export interface UnsafeBlock {
@@ -6481,7 +7622,7 @@ export interface AsyncBlock {
 	readonly _move_marker?: boolean;
 	readonly _body: Block;
 	readonly __inputHints__?: {
-		readonly move_marker?: BooleanKeyword<'move'>;
+		readonly move_marker?: BaseBooleanKeyword<'move'>;
 	};
 	readonly __looseHints__?: {
 		readonly move_marker?: 'move' | 'move';
@@ -6495,7 +7636,7 @@ export interface GenBlock {
 	readonly _move_marker?: boolean;
 	readonly _body: Block;
 	readonly __inputHints__?: {
-		readonly move_marker?: BooleanKeyword<'move'>;
+		readonly move_marker?: BaseBooleanKeyword<'move'>;
 	};
 	readonly __looseHints__?: {
 		readonly move_marker?: 'move' | 'move';
@@ -6568,12 +7709,12 @@ export interface TupleStructPattern {
 
 export interface StructPattern {
 	readonly $type: TSKindId.StructPattern;
-	readonly _type: Identifier | ScopedTypeIdentifier;
+	readonly _type: TypeIdentifier | ScopedTypeIdentifier;
 	readonly _fields?: StructPatternElements;
 	readonly __looseHints__?: {
 		readonly fields?: readonly (FieldPattern | '..')[];
 	};
-	type(): Identifier | ScopedTypeIdentifier;
+	type(): TypeIdentifier | ScopedTypeIdentifier;
 	fields(): StructPatternElements | undefined;
 }
 
@@ -6626,7 +7767,7 @@ export interface ReferencePattern {
 	readonly _mutable_specifier?: boolean;
 	readonly _pattern: Pattern;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
@@ -6677,6 +7818,18 @@ export interface BlockComment {
 	content(): BlockCommentDocOuter | BlockCommentDocInner | BlockCommentContent | undefined;
 }
 
+export interface Shebang {
+	readonly $type: TSKindId.Shebang;
+	readonly _content: string;
+	content(): string;
+}
+
+export interface Metavariable {
+	readonly $type: TSKindId.Metavariable;
+	readonly _name: string;
+	name(): string;
+}
+
 export interface MacroRules {
 	readonly $type: TSKindId.MacroRules;
 	readonly _macro_rule: NonEmptyArray<MacroRule>;
@@ -6705,7 +7858,7 @@ export interface OrderedFieldDeclarationListElements {
 	readonly $type: TSKindId.OrderedFieldDeclarationListElements;
 	readonly _element: NonEmptyArray<AttributedOrderedField>;
 	readonly __inputHints__?: {
-		readonly element: NonEmptyArray<T.AttributedOrderedField | T.Type>;
+		readonly element: NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>;
 	};
 	elements(): NonEmptyArray<AttributedOrderedField>;
 }
@@ -6731,11 +7884,31 @@ export interface UseClauses {
 	readonly $type: TSKindId.UseClauses;
 	readonly _use_clause: NonEmptyArray<
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| UseAsClause
 		| UseList
 		| ScopedUseList
@@ -6743,11 +7916,31 @@ export interface UseClauses {
 	>;
 	useClauses(): NonEmptyArray<
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| UseAsClause
 		| UseList
 		| ScopedUseList
@@ -6760,7 +7953,13 @@ export interface ParametersElements {
 	readonly _element: NonEmptyArray<AttributedParameter>;
 	readonly __inputHints__?: {
 		readonly element: NonEmptyArray<
-			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type
+			| T.AttributedParameter
+			| T.Parameter
+			| T.SelfParameter
+			| T.VariadicParameter
+			| TSKindId.Underscore
+			| T.Type
+			| T.TypeIdentifier.Types
 		>;
 	};
 	elements(): NonEmptyArray<AttributedParameter>;
@@ -6774,15 +7973,17 @@ export interface Lifetimes {
 
 export interface UseBoundsElements {
 	readonly $type: TSKindId.UseBoundsElements;
-	readonly _element: NonEmptyArray<Lifetime | Identifier>;
-	elements(): NonEmptyArray<Lifetime | Identifier>;
+	readonly _element: NonEmptyArray<Lifetime | TypeIdentifier>;
+	elements(): NonEmptyArray<Lifetime | TypeIdentifier>;
 }
 
 export interface TypeArgumentsElements {
 	readonly $type: TSKindId.TypeArgumentsElements;
 	readonly _element: NonEmptyArray<TypeArgument>;
 	readonly __inputHints__?: {
-		readonly element: NonEmptyArray<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>;
+		readonly element: NonEmptyArray<
+			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
+		>;
 	};
 	elements(): NonEmptyArray<TypeArgument>;
 }
@@ -6822,15 +8023,115 @@ export interface StructPatternElements {
 
 export interface UseWildcardGroup {
 	readonly $type: TSKindId.UseWildcardGroup;
-	readonly _path?: TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier;
+	readonly _path?:
+		| TSKindId.Self
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier;
 	};
-	path(): TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier | undefined;
+	path():
+		| TSKindId.Self
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
+		| undefined;
 }
 
 export interface VisibilityModifierGroup {
@@ -6854,6 +8155,200 @@ export interface TupleExpressionElements {
 	readonly $type: TSKindId.TupleExpressionElements;
 	readonly _element: NonEmptyArray<Expression>;
 	elements(): NonEmptyArray<Expression>;
+}
+
+export interface IntegerLiteralDecimal {
+	readonly $type: TSKindId.IntegerLiteralDecimal;
+	readonly _content: string;
+	readonly _suffix?:
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64';
+	content(): string;
+	suffix():
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64'
+		| undefined;
+}
+
+export interface IntegerLiteralHex {
+	readonly $type: TSKindId.IntegerLiteralHex;
+	readonly _content: string;
+	readonly _suffix?:
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64';
+	content(): string;
+	suffix():
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64'
+		| undefined;
+}
+
+export interface IntegerLiteralBinary {
+	readonly $type: TSKindId.IntegerLiteralBinary;
+	readonly _content: string;
+	readonly _suffix?:
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64';
+	content(): string;
+	suffix():
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64'
+		| undefined;
+}
+
+export interface IntegerLiteralOctal {
+	readonly $type: TSKindId.IntegerLiteralOctal;
+	readonly _content: string;
+	readonly _suffix?:
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64';
+	content(): string;
+	suffix():
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64'
+		| undefined;
+}
+
+export interface CharLiteralEscaped {
+	readonly $type: TSKindId.CharLiteralEscaped;
+	readonly _b?: boolean;
+	readonly _content: string;
+	readonly __inputHints__?: {
+		readonly b?: BaseBooleanKeyword<'b'>;
+	};
+	b(): boolean | undefined;
+	content(): string;
+}
+
+export interface CharLiteralPlain {
+	readonly $type: TSKindId.CharLiteralPlain;
+	readonly _b?: boolean;
+	readonly _content: string;
+	readonly __inputHints__?: {
+		readonly b?: BaseBooleanKeyword<'b'>;
+	};
+	b(): boolean | undefined;
+	content(): string;
+}
+
+export interface EscapeSequenceSimple {
+	readonly $type: TSKindId.EscapeSequenceSimple;
+	readonly _content: string;
+	content(): string;
+}
+
+export interface EscapeSequenceUnicodeFixed {
+	readonly $type: TSKindId.EscapeSequenceUnicodeFixed;
+	readonly _content: string;
+	content(): string;
+}
+
+export interface EscapeSequenceUnicodeBraced {
+	readonly $type: TSKindId.EscapeSequenceUnicodeBraced;
+	readonly _content: string;
+	content(): string;
+}
+
+export interface EscapeSequenceHex {
+	readonly $type: TSKindId.EscapeSequenceHex;
+	readonly _content: string;
+	content(): string;
 }
 
 export interface ArrayExpressionSemi {
@@ -6907,9 +8402,9 @@ export interface ClosureExpressionBlock {
 	readonly _return_type?: Type;
 	readonly _body: Block;
 	readonly __inputHints__?: {
-		readonly static_marker?: BooleanKeyword<'static'>;
-		readonly async_marker?: BooleanKeyword<'async'>;
-		readonly move_marker?: BooleanKeyword<'move'>;
+		readonly static_marker?: BaseBooleanKeyword<'static'>;
+		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly move_marker?: BaseBooleanKeyword<'move'>;
 		readonly return_type?:
 			| KindEnum<
 					| '!'
@@ -6973,9 +8468,9 @@ export interface ClosureExpressionExpr {
 	readonly _parameters: ClosureParameters;
 	readonly _body: Expression | TSKindId.Underscore;
 	readonly __inputHints__?: {
-		readonly static_marker?: BooleanKeyword<'static'>;
-		readonly async_marker?: BooleanKeyword<'async'>;
-		readonly move_marker?: BooleanKeyword<'move'>;
+		readonly static_marker?: BaseBooleanKeyword<'static'>;
+		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly move_marker?: BaseBooleanKeyword<'move'>;
 		readonly body:
 			| KindEnum<
 					'true' | 'false' | 'self' | '_',
@@ -7042,14 +8537,14 @@ export interface ReferenceExpressionBare {
 
 export interface ImplItemPositiveClause {
 	readonly $type: TSKindId.ImplItemPositiveClause;
-	readonly _trait: Identifier | ScopedTypeIdentifier | GenericType;
-	trait(): Identifier | ScopedTypeIdentifier | GenericType;
+	readonly _trait: TypeIdentifier | ScopedTypeIdentifier | GenericType;
+	trait(): TypeIdentifier | ScopedTypeIdentifier | GenericType;
 }
 
 export interface ImplItemNegativeClause {
 	readonly $type: TSKindId.ImplItemNegativeClause;
-	readonly _trait: Identifier | ScopedTypeIdentifier | GenericType;
-	trait(): Identifier | ScopedTypeIdentifier | GenericType;
+	readonly _trait: TypeIdentifier | ScopedTypeIdentifier | GenericType;
+	trait(): TypeIdentifier | ScopedTypeIdentifier | GenericType;
 }
 
 export interface ImplItemBody {
@@ -7061,7 +8556,7 @@ export interface ImplItemBody {
 	readonly _where_clause?: WhereClause;
 	readonly _declaration_list: DeclarationList;
 	readonly __inputHints__?: {
-		readonly unsafe_marker?: BooleanKeyword<'unsafe'>;
+		readonly unsafe_marker?: BaseBooleanKeyword<'unsafe'>;
 		readonly type:
 			| KindEnum<
 					| '!'
@@ -7125,7 +8620,7 @@ export interface ImplItemSemi {
 	readonly _type: Type;
 	readonly _where_clause?: WhereClause;
 	readonly __inputHints__?: {
-		readonly unsafe_marker?: BooleanKeyword<'unsafe'>;
+		readonly unsafe_marker?: BaseBooleanKeyword<'unsafe'>;
 		readonly type:
 			| KindEnum<
 					| '!'
@@ -7195,21 +8690,120 @@ export interface VisibilityModifierPub {
 
 export interface VisibilityModifierPubInPath {
 	readonly $type: TSKindId.VisibilityModifierPubInPath;
-	readonly _path: TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier;
+	readonly _path:
+		| TSKindId.Self
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly __inputHints__?: {
 		readonly path:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier;
 	};
-	path(): TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier;
+	path():
+		| TSKindId.Self
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 }
 
 export interface FunctionTypeTraitForm {
 	readonly $type: TSKindId.FunctionTypeTraitForm;
-	readonly _trait: Identifier | ScopedTypeIdentifier;
-	trait(): Identifier | ScopedTypeIdentifier;
+	readonly _trait: TypeIdentifier | ScopedTypeIdentifier;
+	trait(): TypeIdentifier | ScopedTypeIdentifier;
 }
 
 export interface FunctionTypeFnForm {
@@ -7607,7 +9201,6 @@ export interface TokenTreePatternParen {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -7704,7 +9297,6 @@ export interface TokenTreePatternParen {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -7830,7 +9422,6 @@ export interface TokenTreePatternBracket {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -7927,7 +9518,6 @@ export interface TokenTreePatternBracket {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -8053,7 +9643,6 @@ export interface TokenTreePatternBrace {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -8150,7 +9739,6 @@ export interface TokenTreePatternBrace {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -8270,7 +9858,6 @@ export interface TokenTreeParen {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -8367,7 +9954,6 @@ export interface TokenTreeParen {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -8480,7 +10066,6 @@ export interface TokenTreeBracket {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -8577,7 +10162,6 @@ export interface TokenTreeBracket {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -8690,7 +10274,6 @@ export interface TokenTreeBrace {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -8787,7 +10370,6 @@ export interface TokenTreeBrace {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -8900,7 +10482,6 @@ export interface DelimTokenTreeParen {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -8929,7 +10510,8 @@ export interface DelimTokenTreeParen {
 					| 'unsafe'
 					| 'use'
 					| 'where'
-					| 'while',
+					| 'while'
+					| '$',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
 					| TSKindId.MutableSpecifier
@@ -8997,7 +10579,6 @@ export interface DelimTokenTreeParen {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -9027,6 +10608,7 @@ export interface DelimTokenTreeParen {
 					| TSKindId.UseKeyword
 					| TSKindId.WhereKeyword
 					| TSKindId.WhileKeyword
+					| TSKindId.Dollar
 			  >
 			| _NonSpecialToken
 			| DelimTokenTree
@@ -9108,7 +10690,6 @@ export interface DelimTokenTreeBracket {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -9137,7 +10718,8 @@ export interface DelimTokenTreeBracket {
 					| 'unsafe'
 					| 'use'
 					| 'where'
-					| 'while',
+					| 'while'
+					| '$',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
 					| TSKindId.MutableSpecifier
@@ -9205,7 +10787,6 @@ export interface DelimTokenTreeBracket {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -9235,6 +10816,7 @@ export interface DelimTokenTreeBracket {
 					| TSKindId.UseKeyword
 					| TSKindId.WhereKeyword
 					| TSKindId.WhileKeyword
+					| TSKindId.Dollar
 			  >
 			| _NonSpecialToken
 			| DelimTokenTree
@@ -9316,7 +10898,6 @@ export interface DelimTokenTreeBrace {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -9345,7 +10926,8 @@ export interface DelimTokenTreeBrace {
 					| 'unsafe'
 					| 'use'
 					| 'where'
-					| 'while',
+					| 'while'
+					| '$',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
 					| TSKindId.MutableSpecifier
@@ -9413,7 +10995,6 @@ export interface DelimTokenTreeBrace {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -9443,6 +11024,7 @@ export interface DelimTokenTreeBrace {
 					| TSKindId.UseKeyword
 					| TSKindId.WhereKeyword
 					| TSKindId.WhileKeyword
+					| TSKindId.Dollar
 			  >
 			| _NonSpecialToken
 			| DelimTokenTree
@@ -9455,29 +11037,30 @@ export interface FieldPatternShorthand {
 	readonly $type: TSKindId.FieldPatternShorthand;
 	readonly _ref_marker?: boolean;
 	readonly _mutable_specifier?: boolean;
-	readonly _name: Identifier;
+	readonly _name: ShorthandFieldIdentifier;
 	readonly __inputHints__?: {
-		readonly ref_marker?: BooleanKeyword<'ref'>;
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly ref_marker?: BaseBooleanKeyword<'ref'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 	};
 	readonly __looseHints__?: {
 		readonly ref_marker?: 'ref' | 'ref';
 		readonly mutable_specifier?: 'mut' | 'mut';
+		readonly name: readonly Identifier[];
 	};
 	refMarker(): boolean | undefined;
 	mutableSpecifier(): boolean | undefined;
-	name(): Identifier;
+	name(): ShorthandFieldIdentifier;
 }
 
 export interface FieldPatternNamed {
 	readonly $type: TSKindId.FieldPatternNamed;
 	readonly _ref_marker?: boolean;
 	readonly _mutable_specifier?: boolean;
-	readonly _name: Identifier;
+	readonly _name: FieldIdentifier;
 	readonly _pattern: Pattern;
 	readonly __inputHints__?: {
-		readonly ref_marker?: BooleanKeyword<'ref'>;
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly ref_marker?: BaseBooleanKeyword<'ref'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
@@ -9488,43 +11071,59 @@ export interface FieldPatternNamed {
 	readonly __looseHints__?: {
 		readonly ref_marker?: 'ref' | 'ref';
 		readonly mutable_specifier?: 'mut' | 'mut';
+		readonly name: readonly Identifier[];
 	};
 	refMarker(): boolean | undefined;
 	mutableSpecifier(): boolean | undefined;
-	name(): Identifier;
+	name(): FieldIdentifier;
 	pattern(): Pattern;
 }
 
 export interface MacroDefinitionParen {
 	readonly $type: TSKindId.MacroDefinitionParen;
-	readonly _name: Identifier;
+	readonly _name: Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
 	readonly _macro_rules?: MacroRules;
+	readonly __inputHints__?: {
+		readonly name:
+			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
+			| Identifier;
+	};
 	readonly __looseHints__?: {
 		readonly macro_rules?: readonly MacroRule[];
 	};
-	name(): Identifier;
+	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
 	macroRules(): MacroRules | undefined;
 }
 
 export interface MacroDefinitionBracket {
 	readonly $type: TSKindId.MacroDefinitionBracket;
-	readonly _name: Identifier;
+	readonly _name: Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
 	readonly _macro_rules?: MacroRules;
+	readonly __inputHints__?: {
+		readonly name:
+			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
+			| Identifier;
+	};
 	readonly __looseHints__?: {
 		readonly macro_rules?: readonly MacroRule[];
 	};
-	name(): Identifier;
+	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
 	macroRules(): MacroRules | undefined;
 }
 
 export interface MacroDefinitionBrace {
 	readonly $type: TSKindId.MacroDefinitionBrace;
-	readonly _name: Identifier;
+	readonly _name: Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
 	readonly _macro_rules?: MacroRules;
+	readonly __inputHints__?: {
+		readonly name:
+			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
+			| Identifier;
+	};
 	readonly __looseHints__?: {
 		readonly macro_rules?: readonly MacroRule[];
 	};
-	name(): Identifier;
+	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
 	macroRules(): MacroRules | undefined;
 }
 
@@ -9534,32 +11133,120 @@ export interface RangePatternPrefix {
 	readonly _right:
 		| LiteralPattern
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
-		| ScopedIdentifier;
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly __inputHints__?: {
 		readonly content: KindEnum<'..=' | '..', TSKindId.DotDotEq | TSKindId.DotDot>;
 		readonly right:
 			| KindEnum<
-					'true' | 'false' | 'self' | 'super' | 'crate',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
+					| 'true'
+					| 'false'
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
 			  >
 			| LiteralPattern
-			| Identifier
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier;
 	};
 	content(): number;
 	right():
 		| LiteralPattern
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
-		| ScopedIdentifier;
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 }
 
 export interface RangePatternWithLeftWithRight {
@@ -9568,32 +11255,120 @@ export interface RangePatternWithLeftWithRight {
 	readonly _right:
 		| LiteralPattern
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
-		| ScopedIdentifier;
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly __inputHints__?: {
 		readonly content: KindEnum<'...' | '..=' | '..', TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot>;
 		readonly right:
 			| KindEnum<
-					'true' | 'false' | 'self' | 'super' | 'crate',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
+					| 'true'
+					| 'false'
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
 			  >
 			| LiteralPattern
-			| Identifier
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier;
 	};
 	content(): number;
 	right():
 		| LiteralPattern
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
-		| ScopedIdentifier;
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 }
 
 export interface RangePatternWithLeft {
@@ -9601,21 +11376,89 @@ export interface RangePatternWithLeft {
 	readonly _left:
 		| LiteralPattern
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
-		| ScopedIdentifier;
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly _content: RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare;
 	readonly __inputHints__?: {
 		readonly left:
 			| KindEnum<
-					'true' | 'false' | 'self' | 'super' | 'crate',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
+					| 'true'
+					| 'false'
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
 			  >
 			| LiteralPattern
-			| Identifier
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier;
 		readonly content:
 			| KindEnum<'..', TSKindId.RangePatternWithLeftBare | TSKindId.DotDot>
@@ -9624,29 +11467,50 @@ export interface RangePatternWithLeft {
 	left():
 		| LiteralPattern
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
-		| ScopedIdentifier;
+		| Identifier
+		| ScopedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	content(): RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare;
 }
 
 export interface StructItemBrace {
 	readonly $type: TSKindId.StructItemBrace;
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
+	readonly _name: TypeIdentifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _where_clause?: WhereClause;
 	readonly _body: FieldDeclarationList;
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 		readonly body: readonly AttributedFieldDeclaration[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
+	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
 	whereClause(): WhereClause | undefined;
 	body(): FieldDeclarationList;
@@ -9655,18 +11519,19 @@ export interface StructItemBrace {
 export interface StructItemTuple {
 	readonly $type: TSKindId.StructItemTuple;
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
+	readonly _name: TypeIdentifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _body: OrderedFieldDeclarationList;
 	readonly _where_clause?: WhereClause;
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly body: readonly AttributedOrderedField[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
+	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
 	body(): OrderedFieldDeclarationList;
 	whereClause(): WhereClause | undefined;
@@ -9675,14 +11540,15 @@ export interface StructItemTuple {
 export interface StructItemUnit {
 	readonly $type: TSKindId.StructItemUnit;
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
+	readonly _name: TypeIdentifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
+	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
 }
 
@@ -9754,7 +11620,34 @@ export interface AttributedParameter {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly attribute_item?: readonly ('self' | Identifier | Metavariable | 'super' | 'crate' | ScopedIdentifier)[];
+		readonly attribute_item?: readonly (
+			| 'self'
+			| 'u8'
+			| 'i8'
+			| 'u16'
+			| 'i16'
+			| 'u32'
+			| 'i32'
+			| 'u64'
+			| 'i64'
+			| 'u128'
+			| 'i128'
+			| 'isize'
+			| 'usize'
+			| 'f32'
+			| 'f64'
+			| 'bool'
+			| 'str'
+			| 'char'
+			| Metavariable
+			| 'super'
+			| 'crate'
+			| Identifier
+			| ScopedIdentifier
+			| 'default'
+			| 'union'
+			| 'gen'
+		)[];
 	};
 	attributeItem(): AttributeItem | undefined;
 	content(): Parameter | SelfParameter | VariadicParameter | TSKindId.Underscore | Type;
@@ -9905,6 +11798,27 @@ export interface MatchBlockArms {
 	lastArm(): LastMatchArm;
 }
 
+export interface TypeIdentifier {
+	readonly $type: TSKindId._TypeIdentifier;
+	readonly _content: Identifier;
+	readonly __aliasContent__?: TypeIdentifier.Types;
+	content(): Identifier;
+}
+
+export interface FieldIdentifier {
+	readonly $type: TSKindId._FieldIdentifier;
+	readonly _content: Identifier;
+	readonly __aliasContent__?: FieldIdentifier.Types;
+	content(): Identifier;
+}
+
+export interface ShorthandFieldIdentifier {
+	readonly $type: TSKindId._ShorthandFieldIdentifier;
+	readonly _content: Identifier;
+	readonly __aliasContent__?: ShorthandFieldIdentifier.Types;
+	content(): Identifier;
+}
+
 // Leaf node types
 export type EmptyStatement = TSKindId.EmptyStatement;
 export type FragmentSpecifier =
@@ -9928,18 +11842,11 @@ export type NeverType = TSKindId.NeverType;
 export type MutableSpecifier = TSKindId.MutableSpecifier;
 export type UnitExpression = TSKindId.UnitExpression;
 export type RemainingFieldPattern = TSKindId.RemainingFieldPattern;
-export type IntegerLiteral = Terminal<TSKindId.IntegerLiteral, string>;
-export type CharLiteral = Terminal<TSKindId.CharLiteral, string>;
-export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
 export type BooleanLiteral = TSKindId.TrueKeyword | TSKindId.FalseKeyword;
 export type Identifier = Terminal<TSKindId.Identifier, string>;
-export type Shebang = Terminal<TSKindId.Shebang, string>;
-export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
-export type FieldIdentifier = Terminal<TSKindId.FieldIdentifier, string>;
 export type Self = TSKindId.Self;
 export type Super = TSKindId.Super;
 export type Crate = TSKindId.Crate;
-export type Metavariable = Terminal<TSKindId.Metavariable, string>;
 export type PrimitiveType =
 	| TSKindId.U8Keyword
 	| TSKindId.I8Keyword
@@ -10022,8 +11929,7 @@ export type TokenTreePunctuation =
 	| TSKindId.DashGt
 	| TSKindId.EqGt
 	| TSKindId.Pound
-	| TSKindId.Qmark
-	| TSKindId.Dollar;
+	| TSKindId.Qmark;
 export type TokenKeywords =
 	| TSKindId.Squote
 	| TSKindId.AsKeyword
@@ -10055,19 +11961,40 @@ export type TokenKeywords =
 	| TSKindId.WhereKeyword
 	| TSKindId.WhileKeyword;
 export type WildcardPattern = TSKindId.WildcardPattern;
-export type StringLiteralOpen = Terminal<TSKindId.StringLiteralOpen, string>;
+export type StringLiteralOpen = HiddenLeaf<Terminal<TSKindId.StringLiteralOpen, string>>;
 export type ImplItemUnsafeMarker = TSKindId.ImplItemUnsafeMarker;
+export type CharLiteralEmpty = Terminal<TSKindId.CharLiteralEmpty, string>;
 export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
 export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
 export type RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
-export type StringContent = Terminal<TSKindId.StringContent, string>;
-export type RawStringLiteralStart = Terminal<TSKindId.RawStringLiteralStart, string>;
-export type RawStringLiteralContent = Terminal<TSKindId.RawStringLiteralContent, string>;
-export type RawStringLiteralEnd = Terminal<TSKindId.RawStringLiteralEnd, string>;
 export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
-export type BlockCommentContent = Terminal<TSKindId.BlockCommentContent, string>;
-export type LineDocContent = Terminal<TSKindId.LineDocContent, string>;
+export type StringContent = Terminal<TSKindId.StringContent, string>;
+export type RawStringLiteralContent = Terminal<TSKindId.RawStringLiteralContent, string>;
+export type LineDocContent = HiddenLeaf<Terminal<TSKindId.LineDocContent, string>>;
+export type BlockCommentContent = HiddenLeaf<Terminal<TSKindId.BlockCommentContent, string>>;
+export type RawStringLiteralStart = HiddenLeaf<Terminal<TSKindId.RawStringLiteralStart, string>>;
+export type RawStringLiteralEnd = HiddenLeaf<Terminal<TSKindId.RawStringLiteralEnd, string>>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
+export type U8Keyword = TSKindId.U8Keyword;
+export type I8Keyword = TSKindId.I8Keyword;
+export type U16Keyword = TSKindId.U16Keyword;
+export type I16Keyword = TSKindId.I16Keyword;
+export type U32Keyword = TSKindId.U32Keyword;
+export type I32Keyword = TSKindId.I32Keyword;
+export type U64Keyword = TSKindId.U64Keyword;
+export type I64Keyword = TSKindId.I64Keyword;
+export type U128Keyword = TSKindId.U128Keyword;
+export type I128Keyword = TSKindId.I128Keyword;
+export type IsizeKeyword = TSKindId.IsizeKeyword;
+export type UsizeKeyword = TSKindId.UsizeKeyword;
+export type F32Keyword = TSKindId.F32Keyword;
+export type F64Keyword = TSKindId.F64Keyword;
+export type BoolKeyword = TSKindId.BoolKeyword;
+export type StrKeyword = TSKindId.StrKeyword;
+export type CharKeyword = TSKindId.CharKeyword;
+export type DefaultKeyword = TSKindId.DefaultKeyword;
+export type UnionKeyword = TSKindId.UnionKeyword;
+export type GenKeyword = TSKindId.GenKeyword;
 
 // Tree types
 export interface SourceFileTree extends TreeNode<'source_file'> {}
@@ -10075,7 +12002,6 @@ export interface ExpressionStatementTree extends TreeNode<'expression_statement'
 export interface MacroRuleTree extends TreeNode<'macro_rule'> {}
 export interface TokenBindingPatternTree extends TreeNode<'token_binding_pattern'> {}
 export interface TokenRepetitionPatternTree extends TreeNode<'token_repetition_pattern'> {}
-export interface TokenTreeTree extends TreeNode<'token_tree'> {}
 export interface TokenRepetitionTree extends TreeNode<'token_repetition'> {}
 export interface AttributeItemTree extends TreeNode<'attribute_item'> {}
 export interface InnerAttributeItemTree extends TreeNode<'inner_attribute_item'> {}
@@ -10137,9 +12063,7 @@ export interface AbstractTypeTree extends TreeNode<'abstract_type'> {}
 export interface DynamicTypeTree extends TreeNode<'dynamic_type'> {}
 export interface MacroInvocationTree extends TreeNode<'macro_invocation'> {}
 export interface ScopedIdentifierTree extends TreeNode<'scoped_identifier'> {}
-export interface ScopedTypeIdentifierInExpressionPositionTree extends AnyTreeNode {
-	readonly type: 'scoped_type_identifier_in_expression_position';
-}
+export interface ScopedTypeIdentifierInExpressionPositionTree extends TreeNode<'scoped_type_identifier_in_expression_position'> {}
 export interface ScopedTypeIdentifierTree extends TreeNode<'scoped_type_identifier'> {}
 export interface RangeExpressionTree extends TreeNode<'range_expression'> {}
 export interface UnaryExpressionTree extends TreeNode<'unary_expression'> {}
@@ -10199,6 +12123,8 @@ export interface StringLiteralTree extends TreeNode<'string_literal'> {}
 export interface RawStringLiteralTree extends TreeNode<'raw_string_literal'> {}
 export interface LineCommentTree extends TreeNode<'line_comment'> {}
 export interface BlockCommentTree extends TreeNode<'block_comment'> {}
+export interface ShebangTree extends TreeNode<'shebang'> {}
+export interface MetavariableTree extends TreeNode<'metavariable'> {}
 export interface MacroRulesTree extends TreeNode<'macro_rules'> {}
 export interface EnumVariantListElementsTree extends TreeNode<'enum_variant_list_elements'> {}
 export interface FieldDeclarationListElementsTree extends TreeNode<'field_declaration_list_elements'> {}
@@ -10223,6 +12149,16 @@ export interface TupleTypeElementsTree extends AnyTreeNode {
 export interface TupleExpressionElementsTree extends AnyTreeNode {
 	readonly type: '_tuple_expression_elements';
 }
+export interface IntegerLiteralDecimalTree extends TreeNode<'integer_literal_decimal'> {}
+export interface IntegerLiteralHexTree extends TreeNode<'integer_literal_hex'> {}
+export interface IntegerLiteralBinaryTree extends TreeNode<'integer_literal_binary'> {}
+export interface IntegerLiteralOctalTree extends TreeNode<'integer_literal_octal'> {}
+export interface CharLiteralEscapedTree extends TreeNode<'char_literal_escaped'> {}
+export interface CharLiteralPlainTree extends TreeNode<'char_literal_plain'> {}
+export interface EscapeSequenceSimpleTree extends TreeNode<'escape_sequence_simple'> {}
+export interface EscapeSequenceUnicodeFixedTree extends TreeNode<'escape_sequence_unicode_fixed'> {}
+export interface EscapeSequenceUnicodeBracedTree extends TreeNode<'escape_sequence_unicode_braced'> {}
+export interface EscapeSequenceHexTree extends TreeNode<'escape_sequence_hex'> {}
 export interface ArrayExpressionSemiTree extends TreeNode<'array_expression_semi'> {}
 export interface ArrayExpressionListTree extends TreeNode<'array_expression_list'> {}
 export interface AttributeInputTree extends TreeNode<'attribute_input'> {}
@@ -10302,6 +12238,9 @@ export interface TypeArgumentTree extends AnyTreeNode {
 export interface MatchBlockArmsTree extends AnyTreeNode {
 	readonly type: '_match_block_arms';
 }
+export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
+export interface FieldIdentifierTree extends TreeNode<'field_identifier'> {}
+export interface ShorthandFieldIdentifierTree extends TreeNode<'shorthand_field_identifier'> {}
 export interface EmptyStatementTree extends AnyTreeNode {
 	readonly type: 'empty_statement';
 }
@@ -10321,21 +12260,8 @@ export interface UnitExpressionTree extends AnyTreeNode {
 export interface RemainingFieldPatternTree extends AnyTreeNode {
 	readonly type: 'remaining_field_pattern';
 }
-export interface IntegerLiteralTree extends TreeNode<'integer_literal'> {}
-export interface CharLiteralTree extends TreeNode<'char_literal'> {}
-export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface BooleanLiteralTree extends TreeNode<'boolean_literal'> {}
 export interface IdentifierTree extends TreeNode<'identifier'> {}
-export interface ShebangTree extends TreeNode<'shebang'> {}
-export interface ReservedIdentifierTree extends AnyTreeNode {
-	readonly type: '_reserved_identifier';
-}
-export interface TypeIdentifierTree extends AnyTreeNode {
-	readonly type: '_type_identifier';
-}
-export interface FieldIdentifierTree extends AnyTreeNode {
-	readonly type: '_field_identifier';
-}
 export interface SelfTree extends AnyTreeNode {
 	readonly type: 'self';
 }
@@ -10345,7 +12271,6 @@ export interface SuperTree extends AnyTreeNode {
 export interface CrateTree extends AnyTreeNode {
 	readonly type: 'crate';
 }
-export interface MetavariableTree extends TreeNode<'metavariable'> {}
 export interface PrimitiveTypeTree extends AnyTreeNode {
 	readonly type: '_primitive_type';
 }
@@ -10394,27 +12319,28 @@ export interface StringLiteralOpenTree extends AnyTreeNode {
 export interface ImplItemUnsafeMarkerTree extends AnyTreeNode {
 	readonly type: '_impl_item_unsafe_marker';
 }
+export interface CharLiteralEmptyTree extends TreeNode<'char_literal_empty'> {}
 export interface LineCommentRegularDslashTree extends TreeNode<'line_comment_regular_dslash'> {}
 export interface LineCommentContentTree extends TreeNode<'line_comment_content'> {}
 export interface RangePatternWithLeftBareTree extends AnyTreeNode {
 	readonly type: 'range_pattern_with_left_bare';
 }
+export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
 export interface StringContentTree extends TreeNode<'string_content'> {}
-export interface RawStringLiteralStartTree extends AnyTreeNode {
-	readonly type: '_raw_string_literal_start';
-}
 export interface RawStringLiteralContentTree extends AnyTreeNode {
 	readonly type: 'raw_string_literal_content';
 }
-export interface RawStringLiteralEndTree extends AnyTreeNode {
-	readonly type: '_raw_string_literal_end';
+export interface LineDocContentTree extends AnyTreeNode {
+	readonly type: '_line_doc_content';
 }
-export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
 export interface BlockCommentContentTree extends AnyTreeNode {
 	readonly type: '_block_comment_content';
 }
-export interface LineDocContentTree extends AnyTreeNode {
-	readonly type: '_line_doc_content';
+export interface RawStringLiteralStartTree extends AnyTreeNode {
+	readonly type: '_raw_string_literal_start';
+}
+export interface RawStringLiteralEndTree extends AnyTreeNode {
+	readonly type: '_raw_string_literal_end';
 }
 export interface ErrorSentinelTree extends AnyTreeNode {
 	readonly type: '_error_sentinel';
@@ -10464,8 +12390,65 @@ export interface TyKeywordTree extends AnyTreeNode {
 export interface VisKeywordTree extends AnyTreeNode {
 	readonly type: 'vis_keyword';
 }
+export interface U8KeywordTree extends AnyTreeNode {
+	readonly type: 'u8_keyword';
+}
+export interface I8KeywordTree extends AnyTreeNode {
+	readonly type: 'i8_keyword';
+}
+export interface U16KeywordTree extends AnyTreeNode {
+	readonly type: 'u16_keyword';
+}
+export interface I16KeywordTree extends AnyTreeNode {
+	readonly type: 'i16_keyword';
+}
+export interface U32KeywordTree extends AnyTreeNode {
+	readonly type: 'u32_keyword';
+}
+export interface I32KeywordTree extends AnyTreeNode {
+	readonly type: 'i32_keyword';
+}
+export interface U64KeywordTree extends AnyTreeNode {
+	readonly type: 'u64_keyword';
+}
+export interface I64KeywordTree extends AnyTreeNode {
+	readonly type: 'i64_keyword';
+}
+export interface U128KeywordTree extends AnyTreeNode {
+	readonly type: 'u128_keyword';
+}
+export interface I128KeywordTree extends AnyTreeNode {
+	readonly type: 'i128_keyword';
+}
+export interface IsizeKeywordTree extends AnyTreeNode {
+	readonly type: 'isize_keyword';
+}
+export interface UsizeKeywordTree extends AnyTreeNode {
+	readonly type: 'usize_keyword';
+}
+export interface F32KeywordTree extends AnyTreeNode {
+	readonly type: 'f32_keyword';
+}
+export interface F64KeywordTree extends AnyTreeNode {
+	readonly type: 'f64_keyword';
+}
+export interface BoolKeywordTree extends AnyTreeNode {
+	readonly type: 'bool_keyword';
+}
+export interface StrKeywordTree extends AnyTreeNode {
+	readonly type: 'str_keyword';
+}
+export interface CharKeywordTree extends AnyTreeNode {
+	readonly type: 'char_keyword';
+}
+export interface DefaultKeywordTree extends AnyTreeNode {
+	readonly type: 'default_keyword';
+}
 export interface UnionKeywordTree extends AnyTreeNode {
 	readonly type: 'union_keyword';
+}
+export interface GenKeywordTree extends AnyTreeNode {
+	readonly type: 'gen_keyword';
 }
 export interface EnumKeywordTree extends AnyTreeNode {
 	readonly type: 'enum_keyword';
@@ -10548,9 +12531,6 @@ export interface UnsafeKeywordTree extends AnyTreeNode {
 export interface AsyncKeywordTree extends AnyTreeNode {
 	readonly type: 'async_keyword';
 }
-export interface GenKeywordTree extends AnyTreeNode {
-	readonly type: 'gen_keyword';
-}
 export interface TryKeywordTree extends AnyTreeNode {
 	readonly type: 'try_keyword';
 }
@@ -10562,60 +12542,6 @@ export interface TrueKeywordTree extends AnyTreeNode {
 }
 export interface FalseKeywordTree extends AnyTreeNode {
 	readonly type: 'false_keyword';
-}
-export interface DefaultKeywordTree extends AnyTreeNode {
-	readonly type: 'default_keyword';
-}
-export interface U8KeywordTree extends AnyTreeNode {
-	readonly type: 'u8_keyword';
-}
-export interface I8KeywordTree extends AnyTreeNode {
-	readonly type: 'i8_keyword';
-}
-export interface U16KeywordTree extends AnyTreeNode {
-	readonly type: 'u16_keyword';
-}
-export interface I16KeywordTree extends AnyTreeNode {
-	readonly type: 'i16_keyword';
-}
-export interface U32KeywordTree extends AnyTreeNode {
-	readonly type: 'u32_keyword';
-}
-export interface I32KeywordTree extends AnyTreeNode {
-	readonly type: 'i32_keyword';
-}
-export interface U64KeywordTree extends AnyTreeNode {
-	readonly type: 'u64_keyword';
-}
-export interface I64KeywordTree extends AnyTreeNode {
-	readonly type: 'i64_keyword';
-}
-export interface U128KeywordTree extends AnyTreeNode {
-	readonly type: 'u128_keyword';
-}
-export interface I128KeywordTree extends AnyTreeNode {
-	readonly type: 'i128_keyword';
-}
-export interface IsizeKeywordTree extends AnyTreeNode {
-	readonly type: 'isize_keyword';
-}
-export interface UsizeKeywordTree extends AnyTreeNode {
-	readonly type: 'usize_keyword';
-}
-export interface F32KeywordTree extends AnyTreeNode {
-	readonly type: 'f32_keyword';
-}
-export interface F64KeywordTree extends AnyTreeNode {
-	readonly type: 'f64_keyword';
-}
-export interface BoolKeywordTree extends AnyTreeNode {
-	readonly type: 'bool_keyword';
-}
-export interface StrKeywordTree extends AnyTreeNode {
-	readonly type: 'str_keyword';
-}
-export interface CharKeywordTree extends AnyTreeNode {
-	readonly type: 'char_keyword';
 }
 export interface MoveKeywordTree extends AnyTreeNode {
 	readonly type: 'move_keyword';
@@ -10731,17 +12657,84 @@ export type TokenPattern =
 	| TokenRepetitionPattern
 	| TokenBindingPattern
 	| Metavariable
-	| _NonSpecialToken;
+	| _NonSpecialToken
+	| Literal
+	| StringLiteral
+	| RawStringLiteral
+	| CharLiteral
+	| BooleanLiteral
+	| IntegerLiteral
+	| FloatLiteral
+	| Identifier
+	| MutableSpecifier
+	| Self
+	| Super
+	| Crate
+	| PrimitiveType
+	| TokenTreePunctuation
+	| TokenKeywords;
 
-export type TokenPatternTree = TokenRepetitionPatternTree | TokenBindingPatternTree | MetavariableTree;
+export type TokenPatternTree =
+	| TokenRepetitionPatternTree
+	| TokenBindingPatternTree
+	| MetavariableTree
+	| StringLiteralTree
+	| RawStringLiteralTree
+	| BooleanLiteralTree
+	| FloatLiteralTree
+	| IdentifierTree
+	| MutableSpecifierTree
+	| SelfTree
+	| SuperTree
+	| CrateTree
+	| PrimitiveTypeTree
+	| TokenTreePunctuationTree
+	| TokenKeywordsTree;
 
 export type TokenTreePattern = TokenTreePatternParen | TokenTreePatternBracket | TokenTreePatternBrace;
 
 export type TokenTreePatternTree = TokenTreePatternParenTree | TokenTreePatternBracketTree | TokenTreePatternBraceTree;
 
-export type Tokens = TokenTree | TokenRepetition | Metavariable | _NonSpecialToken;
+export type Tokens =
+	| TokenTree
+	| TokenRepetition
+	| Metavariable
+	| _NonSpecialToken
+	| Literal
+	| StringLiteral
+	| RawStringLiteral
+	| CharLiteral
+	| BooleanLiteral
+	| IntegerLiteral
+	| FloatLiteral
+	| Identifier
+	| MutableSpecifier
+	| Self
+	| Super
+	| Crate
+	| PrimitiveType
+	| TokenTreePunctuation
+	| TokenKeywords;
 
-export type TokensTree = TokenTreeTree | TokenRepetitionTree | MetavariableTree;
+export type TokensTree =
+	| TokenRepetitionTree
+	| MetavariableTree
+	| StringLiteralTree
+	| RawStringLiteralTree
+	| BooleanLiteralTree
+	| FloatLiteralTree
+	| IdentifierTree
+	| MutableSpecifierTree
+	| SelfTree
+	| SuperTree
+	| CrateTree
+	| PrimitiveTypeTree
+	| TokenTreePunctuationTree
+	| TokenKeywordsTree;
+
+export type TokenTree = TokenTreeParen | TokenTreeBracket | TokenTreeBrace;
+
+export type TokenTreeTree = TokenTreeParenTree | TokenTreeBracketTree | TokenTreeBraceTree;
 
 export type _NonSpecialToken =
 	| Literal
@@ -10763,9 +12756,7 @@ export type _NonSpecialToken =
 export type _NonSpecialTokenTree =
 	| StringLiteralTree
 	| RawStringLiteralTree
-	| CharLiteralTree
 	| BooleanLiteralTree
-	| IntegerLiteralTree
 	| FloatLiteralTree
 	| IdentifierTree
 	| MutableSpecifierTree
@@ -10794,11 +12785,31 @@ export type ImplItemTree = ImplItemBodyTree | ImplItemSemiTree;
 
 export type UseClause =
 	| Self
-	| Identifier
+	| U8Keyword
+	| I8Keyword
+	| U16Keyword
+	| I16Keyword
+	| U32Keyword
+	| I32Keyword
+	| U64Keyword
+	| I64Keyword
+	| U128Keyword
+	| I128Keyword
+	| IsizeKeyword
+	| UsizeKeyword
+	| F32Keyword
+	| F64Keyword
+	| BoolKeyword
+	| StrKeyword
+	| CharKeyword
 	| Metavariable
 	| Super
 	| Crate
+	| Identifier
 	| ScopedIdentifier
+	| DefaultKeyword
+	| UnionKeyword
+	| GenKeyword
 	| UseAsClause
 	| UseList
 	| ScopedUseList
@@ -10806,11 +12817,31 @@ export type UseClause =
 
 export type UseClauseTree =
 	| SelfTree
-	| IdentifierTree
+	| U8KeywordTree
+	| I8KeywordTree
+	| U16KeywordTree
+	| I16KeywordTree
+	| U32KeywordTree
+	| I32KeywordTree
+	| U64KeywordTree
+	| I64KeywordTree
+	| U128KeywordTree
+	| I128KeywordTree
+	| IsizeKeywordTree
+	| UsizeKeywordTree
+	| F32KeywordTree
+	| F64KeywordTree
+	| BoolKeywordTree
+	| StrKeywordTree
+	| CharKeywordTree
 	| MetavariableTree
 	| SuperTree
 	| CrateTree
+	| IdentifierTree
 	| ScopedIdentifierTree
+	| DefaultKeywordTree
+	| UnionKeywordTree
+	| GenKeywordTree
 	| UseAsClauseTree
 	| UseListTree
 	| ScopedUseListTree
@@ -10827,7 +12858,7 @@ export type Type =
 	| UnitType
 	| ArrayType
 	| FunctionType
-	| Identifier
+	| TypeIdentifier
 	| MacroInvocation
 	| NeverType
 	| DynamicType
@@ -10845,7 +12876,7 @@ export type TypeTree =
 	| UnitTypeTree
 	| ArrayTypeTree
 	| FunctionTypeTree
-	| IdentifierTree
+	| TypeIdentifierTree
 	| MacroInvocationTree
 	| NeverTypeTree
 	| DynamicTypeTree
@@ -10876,6 +12907,26 @@ export type ExpressionExceptRange =
 	| IntegerLiteral
 	| FloatLiteral
 	| Identifier
+	| U8Keyword
+	| I8Keyword
+	| U16Keyword
+	| I16Keyword
+	| U32Keyword
+	| I32Keyword
+	| U64Keyword
+	| I64Keyword
+	| U128Keyword
+	| I128Keyword
+	| IsizeKeyword
+	| UsizeKeyword
+	| F32Keyword
+	| F64Keyword
+	| BoolKeyword
+	| StrKeyword
+	| CharKeyword
+	| DefaultKeyword
+	| UnionKeyword
+	| GenKeyword
 	| Self
 	| ScopedIdentifier
 	| GenericFunction
@@ -10916,11 +12967,29 @@ export type ExpressionExceptRangeTree =
 	| YieldExpressionTree
 	| StringLiteralTree
 	| RawStringLiteralTree
-	| CharLiteralTree
 	| BooleanLiteralTree
-	| IntegerLiteralTree
 	| FloatLiteralTree
 	| IdentifierTree
+	| U8KeywordTree
+	| I8KeywordTree
+	| U16KeywordTree
+	| I16KeywordTree
+	| U32KeywordTree
+	| I32KeywordTree
+	| U64KeywordTree
+	| I64KeywordTree
+	| U128KeywordTree
+	| I128KeywordTree
+	| IsizeKeywordTree
+	| UsizeKeywordTree
+	| F32KeywordTree
+	| F64KeywordTree
+	| BoolKeywordTree
+	| StrKeywordTree
+	| CharKeywordTree
+	| DefaultKeywordTree
+	| UnionKeywordTree
+	| GenKeywordTree
 	| SelfTree
 	| ScopedIdentifierTree
 	| GenericFunctionTree
@@ -10966,6 +13035,26 @@ export type Expression =
 	| IntegerLiteral
 	| FloatLiteral
 	| Identifier
+	| U8Keyword
+	| I8Keyword
+	| U16Keyword
+	| I16Keyword
+	| U32Keyword
+	| I32Keyword
+	| U64Keyword
+	| I64Keyword
+	| U128Keyword
+	| I128Keyword
+	| IsizeKeyword
+	| UsizeKeyword
+	| F32Keyword
+	| F64Keyword
+	| BoolKeyword
+	| StrKeyword
+	| CharKeyword
+	| DefaultKeyword
+	| UnionKeyword
+	| GenKeyword
 	| Self
 	| ScopedIdentifier
 	| GenericFunction
@@ -11007,11 +13096,29 @@ export type ExpressionTree =
 	| YieldExpressionTree
 	| StringLiteralTree
 	| RawStringLiteralTree
-	| CharLiteralTree
 	| BooleanLiteralTree
-	| IntegerLiteralTree
 	| FloatLiteralTree
 	| IdentifierTree
+	| U8KeywordTree
+	| I8KeywordTree
+	| U16KeywordTree
+	| I16KeywordTree
+	| U32KeywordTree
+	| I32KeywordTree
+	| U64KeywordTree
+	| I64KeywordTree
+	| U128KeywordTree
+	| I128KeywordTree
+	| IsizeKeywordTree
+	| UsizeKeywordTree
+	| F32KeywordTree
+	| F64KeywordTree
+	| BoolKeywordTree
+	| StrKeywordTree
+	| CharKeywordTree
+	| DefaultKeywordTree
+	| UnionKeywordTree
+	| GenKeywordTree
 	| SelfTree
 	| ScopedIdentifierTree
 	| GenericFunctionTree
@@ -11069,9 +13176,72 @@ export type DelimTokenTree = DelimTokenTreeParen | DelimTokenTreeBracket | Delim
 
 export type DelimTokenTreeTree = DelimTokenTreeParenTree | DelimTokenTreeBracketTree | DelimTokenTreeBraceTree;
 
-export type DelimTokens = _NonSpecialToken | Dollar | DelimTokenTree;
+export type DelimTokens =
+	| _NonSpecialToken
+	| Literal
+	| StringLiteral
+	| RawStringLiteral
+	| CharLiteral
+	| BooleanLiteral
+	| IntegerLiteral
+	| FloatLiteral
+	| Identifier
+	| MutableSpecifier
+	| Self
+	| Super
+	| Crate
+	| PrimitiveType
+	| TokenTreePunctuation
+	| TokenKeywords
+	| Dollar
+	| DelimTokenTree;
 
-export type NonDelimToken = _NonSpecialToken | Dollar;
+export type DelimTokensTree =
+	| StringLiteralTree
+	| RawStringLiteralTree
+	| BooleanLiteralTree
+	| FloatLiteralTree
+	| IdentifierTree
+	| MutableSpecifierTree
+	| SelfTree
+	| SuperTree
+	| CrateTree
+	| PrimitiveTypeTree
+	| TokenTreePunctuationTree
+	| TokenKeywordsTree;
+
+export type NonDelimToken =
+	| _NonSpecialToken
+	| Literal
+	| StringLiteral
+	| RawStringLiteral
+	| CharLiteral
+	| BooleanLiteral
+	| IntegerLiteral
+	| FloatLiteral
+	| Identifier
+	| MutableSpecifier
+	| Self
+	| Super
+	| Crate
+	| PrimitiveType
+	| TokenTreePunctuation
+	| TokenKeywords
+	| Dollar;
+
+export type NonDelimTokenTree =
+	| StringLiteralTree
+	| RawStringLiteralTree
+	| BooleanLiteralTree
+	| FloatLiteralTree
+	| IdentifierTree
+	| MutableSpecifierTree
+	| SelfTree
+	| SuperTree
+	| CrateTree
+	| PrimitiveTypeTree
+	| TokenTreePunctuationTree
+	| TokenKeywordsTree;
 
 export type ReferenceExpression =
 	| ReferenceExpressionRawConst
@@ -11109,6 +13279,26 @@ export type Condition =
 	| IntegerLiteral
 	| FloatLiteral
 	| Identifier
+	| U8Keyword
+	| I8Keyword
+	| U16Keyword
+	| I16Keyword
+	| U32Keyword
+	| I32Keyword
+	| U64Keyword
+	| I64Keyword
+	| U128Keyword
+	| I128Keyword
+	| IsizeKeyword
+	| UsizeKeyword
+	| F32Keyword
+	| F64Keyword
+	| BoolKeyword
+	| StrKeyword
+	| CharKeyword
+	| DefaultKeyword
+	| UnionKeyword
+	| GenKeyword
 	| Self
 	| ScopedIdentifier
 	| GenericFunction
@@ -11152,11 +13342,29 @@ export type ConditionTree =
 	| YieldExpressionTree
 	| StringLiteralTree
 	| RawStringLiteralTree
-	| CharLiteralTree
 	| BooleanLiteralTree
-	| IntegerLiteralTree
 	| FloatLiteralTree
 	| IdentifierTree
+	| U8KeywordTree
+	| I8KeywordTree
+	| U16KeywordTree
+	| I16KeywordTree
+	| U32KeywordTree
+	| I32KeywordTree
+	| U64KeywordTree
+	| I64KeywordTree
+	| U128KeywordTree
+	| I128KeywordTree
+	| IsizeKeywordTree
+	| UsizeKeywordTree
+	| F32KeywordTree
+	| F64KeywordTree
+	| BoolKeywordTree
+	| StrKeywordTree
+	| CharKeywordTree
+	| DefaultKeywordTree
+	| UnionKeywordTree
+	| GenKeywordTree
 	| SelfTree
 	| ScopedIdentifierTree
 	| GenericFunctionTree
@@ -11203,12 +13411,32 @@ export type Pattern =
 	| IntegerLiteral
 	| FloatLiteral
 	| NegativeLiteral
+	| U8Keyword
+	| I8Keyword
+	| U16Keyword
+	| I16Keyword
+	| U32Keyword
+	| I32Keyword
+	| U64Keyword
+	| I64Keyword
+	| U128Keyword
+	| I128Keyword
+	| IsizeKeyword
+	| UsizeKeyword
+	| F32Keyword
+	| F64Keyword
+	| BoolKeyword
+	| StrKeyword
+	| CharKeyword
 	| Identifier
 	| ScopedIdentifier
 	| GenericPattern
 	| TuplePattern
 	| TupleStructPattern
 	| StructPattern
+	| DefaultKeyword
+	| UnionKeyword
+	| GenKeyword
 	| RefPattern
 	| SlicePattern
 	| CapturedPattern
@@ -11224,17 +13452,35 @@ export type Pattern =
 export type PatternTree =
 	| StringLiteralTree
 	| RawStringLiteralTree
-	| CharLiteralTree
 	| BooleanLiteralTree
-	| IntegerLiteralTree
 	| FloatLiteralTree
 	| NegativeLiteralTree
+	| U8KeywordTree
+	| I8KeywordTree
+	| U16KeywordTree
+	| I16KeywordTree
+	| U32KeywordTree
+	| I32KeywordTree
+	| U64KeywordTree
+	| I64KeywordTree
+	| U128KeywordTree
+	| I128KeywordTree
+	| IsizeKeywordTree
+	| UsizeKeywordTree
+	| F32KeywordTree
+	| F64KeywordTree
+	| BoolKeywordTree
+	| StrKeywordTree
+	| CharKeywordTree
 	| IdentifierTree
 	| ScopedIdentifierTree
 	| GenericPatternTree
 	| TuplePatternTree
 	| TupleStructPatternTree
 	| StructPatternTree
+	| DefaultKeywordTree
+	| UnionKeywordTree
+	| GenKeywordTree
 	| RefPatternTree
 	| SlicePatternTree
 	| CapturedPatternTree
@@ -11259,13 +13505,7 @@ export type OrPatternTree = OrPatternBinaryTree | OrPatternPrefixTree;
 
 export type Literal = StringLiteral | RawStringLiteral | CharLiteral | BooleanLiteral | IntegerLiteral | FloatLiteral;
 
-export type LiteralTree =
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| CharLiteralTree
-	| BooleanLiteralTree
-	| IntegerLiteralTree
-	| FloatLiteralTree;
+export type LiteralTree = StringLiteralTree | RawStringLiteralTree | BooleanLiteralTree | FloatLiteralTree;
 
 export type LiteralPattern =
 	| StringLiteral
@@ -11279,15 +13519,89 @@ export type LiteralPattern =
 export type LiteralPatternTree =
 	| StringLiteralTree
 	| RawStringLiteralTree
-	| CharLiteralTree
 	| BooleanLiteralTree
-	| IntegerLiteralTree
 	| FloatLiteralTree
 	| NegativeLiteralTree;
 
-export type Path = Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier;
+export type IntegerLiteral = IntegerLiteralDecimal | IntegerLiteralHex | IntegerLiteralBinary | IntegerLiteralOctal;
 
-export type PathTree = SelfTree | IdentifierTree | MetavariableTree | SuperTree | CrateTree | ScopedIdentifierTree;
+export type IntegerLiteralTree =
+	| IntegerLiteralDecimalTree
+	| IntegerLiteralHexTree
+	| IntegerLiteralBinaryTree
+	| IntegerLiteralOctalTree;
+
+export type CharLiteral = CharLiteralEscaped | CharLiteralPlain | CharLiteralEmpty;
+
+export type CharLiteralTree = CharLiteralEscapedTree | CharLiteralPlainTree | CharLiteralEmptyTree;
+
+export type EscapeSequence =
+	| EscapeSequenceSimple
+	| EscapeSequenceUnicodeFixed
+	| EscapeSequenceUnicodeBraced
+	| EscapeSequenceHex;
+
+export type EscapeSequenceTree =
+	| EscapeSequenceSimpleTree
+	| EscapeSequenceUnicodeFixedTree
+	| EscapeSequenceUnicodeBracedTree
+	| EscapeSequenceHexTree;
+
+export type Path =
+	| Self
+	| U8Keyword
+	| I8Keyword
+	| U16Keyword
+	| I16Keyword
+	| U32Keyword
+	| I32Keyword
+	| U64Keyword
+	| I64Keyword
+	| U128Keyword
+	| I128Keyword
+	| IsizeKeyword
+	| UsizeKeyword
+	| F32Keyword
+	| F64Keyword
+	| BoolKeyword
+	| StrKeyword
+	| CharKeyword
+	| Metavariable
+	| Super
+	| Crate
+	| Identifier
+	| ScopedIdentifier
+	| DefaultKeyword
+	| UnionKeyword
+	| GenKeyword;
+
+export type PathTree =
+	| SelfTree
+	| U8KeywordTree
+	| I8KeywordTree
+	| U16KeywordTree
+	| I16KeywordTree
+	| U32KeywordTree
+	| I32KeywordTree
+	| U64KeywordTree
+	| I64KeywordTree
+	| U128KeywordTree
+	| I128KeywordTree
+	| IsizeKeywordTree
+	| UsizeKeywordTree
+	| F32KeywordTree
+	| F64KeywordTree
+	| BoolKeywordTree
+	| StrKeywordTree
+	| CharKeywordTree
+	| MetavariableTree
+	| SuperTree
+	| CrateTree
+	| IdentifierTree
+	| ScopedIdentifierTree
+	| DefaultKeywordTree
+	| UnionKeywordTree
+	| GenKeywordTree;
 
 export type Whitespace = Tight | Space | Newline | Blankline | Indent | Dedent;
 
@@ -11311,9 +13625,7 @@ export type NonSpecialToken =
 export type NonSpecialTokenTree =
 	| StringLiteralTree
 	| RawStringLiteralTree
-	| CharLiteralTree
 	| BooleanLiteralTree
-	| IntegerLiteralTree
 	| FloatLiteralTree
 	| IdentifierTree
 	| MutableSpecifierTree
@@ -11323,6 +13635,195 @@ export type NonSpecialTokenTree =
 	| PrimitiveTypeTree
 	| TokenTreePunctuationTree
 	| TokenKeywordsTree;
+
+export namespace Statement {
+	export type Kind = '_statement';
+	export type Tree = StatementTree;
+}
+
+export namespace DeclarationStatement {
+	export type Kind = '_declaration_statement';
+	export type Tree = DeclarationStatementTree;
+}
+
+export namespace MacroDefinition {
+	export type Kind = 'macro_definition';
+	export type Tree = MacroDefinitionTree;
+}
+
+export namespace TokenPattern {
+	export type Kind = '_token_pattern';
+	export type Tree = TokenPatternTree;
+}
+
+export namespace TokenTreePattern {
+	export type Kind = 'token_tree_pattern';
+	export type Tree = TokenTreePatternTree;
+}
+
+export namespace Tokens {
+	export type Kind = '_tokens';
+	export type Tree = TokensTree;
+}
+
+export namespace TokenTree {
+	export type Kind = 'token_tree';
+	export type Tree = TokenTreeTree;
+}
+
+export namespace _NonSpecialToken {
+	export type Kind = '_non_special_token';
+	export type Tree = _NonSpecialTokenTree;
+}
+
+export namespace ModItem {
+	export type Kind = 'mod_item';
+	export type Tree = ModItemTree;
+}
+
+export namespace ForeignModItem {
+	export type Kind = 'foreign_mod_item';
+	export type Tree = ForeignModItemTree;
+}
+
+export namespace StructItem {
+	export type Kind = 'struct_item';
+	export type Tree = StructItemTree;
+}
+
+export namespace ImplItem {
+	export type Kind = 'impl_item';
+	export type Tree = ImplItemTree;
+}
+
+export namespace UseClause {
+	export type Kind = '_use_clause';
+	export type Tree = UseClauseTree;
+}
+
+export namespace Type {
+	export type Kind = '_type';
+	export type Tree = TypeTree;
+}
+
+export namespace PointerType {
+	export type Kind = 'pointer_type';
+	export type Tree = PointerTypeTree;
+}
+
+export namespace ExpressionExceptRange {
+	export type Kind = '_expression_except_range';
+	export type Tree = ExpressionExceptRangeTree;
+}
+
+export namespace Expression {
+	export type Kind = '_expression';
+	export type Tree = ExpressionTree;
+}
+
+export namespace ExpressionEndingWithBlock {
+	export type Kind = '_expression_ending_with_block';
+	export type Tree = ExpressionEndingWithBlockTree;
+}
+
+export namespace DelimTokenTree {
+	export type Kind = 'delim_token_tree';
+	export type Tree = DelimTokenTreeTree;
+}
+
+export namespace DelimTokens {
+	export type Kind = '_delim_tokens';
+	export type Tree = DelimTokensTree;
+}
+
+export namespace NonDelimToken {
+	export type Kind = '_non_delim_token';
+	export type Tree = NonDelimTokenTree;
+}
+
+export namespace ReferenceExpression {
+	export type Kind = 'reference_expression';
+	export type Tree = ReferenceExpressionTree;
+}
+
+export namespace ArrayExpression {
+	export type Kind = 'array_expression';
+	export type Tree = ArrayExpressionTree;
+}
+
+export namespace Condition {
+	export type Kind = '_condition';
+	export type Tree = ConditionTree;
+}
+
+export namespace MatchArm {
+	export type Kind = 'match_arm';
+	export type Tree = MatchArmTree;
+}
+
+export namespace ClosureExpression {
+	export type Kind = 'closure_expression';
+	export type Tree = ClosureExpressionTree;
+}
+
+export namespace Pattern {
+	export type Kind = '_pattern';
+	export type Tree = PatternTree;
+}
+
+export namespace FieldPattern {
+	export type Kind = 'field_pattern';
+	export type Tree = FieldPatternTree;
+}
+
+export namespace RangePattern {
+	export type Kind = 'range_pattern';
+	export type Tree = RangePatternTree;
+}
+
+export namespace OrPattern {
+	export type Kind = 'or_pattern';
+	export type Tree = OrPatternTree;
+}
+
+export namespace Literal {
+	export type Kind = '_literal';
+	export type Tree = LiteralTree;
+}
+
+export namespace LiteralPattern {
+	export type Kind = '_literal_pattern';
+	export type Tree = LiteralPatternTree;
+}
+
+export namespace IntegerLiteral {
+	export type Kind = 'integer_literal';
+	export type Tree = IntegerLiteralTree;
+}
+
+export namespace CharLiteral {
+	export type Kind = 'char_literal';
+	export type Tree = CharLiteralTree;
+}
+
+export namespace EscapeSequence {
+	export type Kind = 'escape_sequence';
+	export type Tree = EscapeSequenceTree;
+}
+
+export namespace Path {
+	export type Kind = '_path';
+	export type Tree = PathTree;
+}
+
+export namespace Whitespace {
+	export type Kind = '_whitespace';
+}
+
+export namespace NonSpecialToken {
+	export type Kind = 'non_special_token';
+	export type Tree = NonSpecialTokenTree;
+}
 
 // Token type aliases (only tokens referenced in field/child unions)
 export type RangeExpressionBare = TSKindId.RangeExpressionBare;
@@ -11364,7 +13865,6 @@ export type RustNode =
 	| MacroRule
 	| TokenBindingPattern
 	| TokenRepetitionPattern
-	| TokenTree
 	| TokenRepetition
 	| AttributeItem
 	| InnerAttributeItem
@@ -11484,6 +13984,8 @@ export type RustNode =
 	| RawStringLiteral
 	| LineComment
 	| BlockComment
+	| Shebang
+	| Metavariable
 	| MacroRules
 	| EnumVariantListElements
 	| FieldDeclarationListElements
@@ -11504,6 +14006,16 @@ export type RustNode =
 	| VisibilityModifierGroup
 	| TupleTypeElements
 	| TupleExpressionElements
+	| IntegerLiteralDecimal
+	| IntegerLiteralHex
+	| IntegerLiteralBinary
+	| IntegerLiteralOctal
+	| CharLiteralEscaped
+	| CharLiteralPlain
+	| EscapeSequenceSimple
+	| EscapeSequenceUnicodeFixed
+	| EscapeSequenceUnicodeBraced
+	| EscapeSequenceHex
 	| ArrayExpressionSemi
 	| ArrayExpressionList
 	| AttributeInput
@@ -11566,263 +14078,3066 @@ export type RustNode =
 	| AttributedArgument
 	| AttributedOrderedField
 	| TypeArgument
-	| MatchBlockArms;
+	| MatchBlockArms
+	| TypeIdentifier
+	| FieldIdentifier
+	| ShorthandFieldIdentifier;
 
-export interface KindMap {
-	source_file: SourceFile;
-	expression_statement: ExpressionStatement;
-	macro_rule: MacroRule;
-	token_binding_pattern: TokenBindingPattern;
-	token_repetition_pattern: TokenRepetitionPattern;
-	token_tree: TokenTree;
-	token_repetition: TokenRepetition;
-	attribute_item: AttributeItem;
-	inner_attribute_item: InnerAttributeItem;
-	attribute: Attribute;
-	declaration_list: DeclarationList;
-	union_item: UnionItem;
-	enum_item: EnumItem;
-	enum_variant_list: EnumVariantList;
-	enum_variant: EnumVariant;
-	field_declaration_list: FieldDeclarationList;
-	field_declaration: FieldDeclaration;
-	ordered_field_declaration_list: OrderedFieldDeclarationList;
-	extern_crate_declaration: ExternCrateDeclaration;
-	const_item: ConstItem;
-	static_item: StaticItem;
-	type_item: TypeItem;
-	function_item: FunctionItem;
-	function_signature_item: FunctionSignatureItem;
-	function_modifiers: FunctionModifiers;
-	where_clause: WhereClause;
-	where_predicate: WherePredicate;
-	trait_item: TraitItem;
-	associated_type: AssociatedType;
-	trait_bounds: TraitBounds;
-	higher_ranked_trait_bound: HigherRankedTraitBound;
-	removed_trait_bound: RemovedTraitBound;
-	type_parameters: TypeParameters;
-	const_parameter: ConstParameter;
-	type_parameter: TypeParameter;
-	lifetime_parameter: LifetimeParameter;
-	let_declaration: LetDeclaration;
-	use_declaration: UseDeclaration;
-	scoped_use_list: ScopedUseList;
-	use_list: UseList;
-	use_as_clause: UseAsClause;
-	use_wildcard: UseWildcard;
-	parameters: Parameters;
-	self_parameter: SelfParameter;
-	variadic_parameter: VariadicParameter;
-	parameter: Parameter;
-	extern_modifier: ExternModifier;
-	visibility_modifier: VisibilityModifier;
-	bracketed_type: BracketedType;
-	qualified_type: QualifiedType;
-	lifetime: Lifetime;
-	array_type: ArrayType;
-	for_lifetimes: ForLifetimes;
-	function_type: FunctionType;
-	tuple_type: TupleType;
-	generic_function: GenericFunction;
-	generic_type: GenericType;
-	generic_type_with_turbofish: GenericTypeWithTurbofish;
-	bounded_type: BoundedType;
-	use_bounds: UseBounds;
-	type_arguments: TypeArguments;
-	type_binding: TypeBinding;
-	reference_type: ReferenceType;
-	abstract_type: AbstractType;
-	dynamic_type: DynamicType;
-	macro_invocation: MacroInvocation;
-	scoped_identifier: ScopedIdentifier;
-	scoped_type_identifier_in_expression_position: ScopedTypeIdentifierInExpressionPosition;
-	scoped_type_identifier: ScopedTypeIdentifier;
-	range_expression: RangeExpression;
-	unary_expression: UnaryExpression;
-	try_expression: TryExpression;
-	binary_expression: BinaryExpression;
-	assignment_expression: AssignmentExpression;
-	compound_assignment_expr: CompoundAssignmentExpr;
-	type_cast_expression: TypeCastExpression;
-	return_expression: ReturnExpression;
-	yield_expression: YieldExpression;
-	call_expression: CallExpression;
-	arguments: Arguments;
-	parenthesized_expression: ParenthesizedExpression;
-	tuple_expression: TupleExpression;
-	struct_expression: StructExpression;
-	field_initializer_list: FieldInitializerList;
-	shorthand_field_initializer: ShorthandFieldInitializer;
-	field_initializer: FieldInitializer;
-	base_field_initializer: BaseFieldInitializer;
-	if_expression: IfExpression;
-	let_condition: LetCondition;
-	_let_chain: LetChain;
-	else_clause: ElseClause;
-	match_expression: MatchExpression;
-	match_block: MatchBlock;
-	last_match_arm: LastMatchArm;
-	match_pattern: MatchPattern;
-	while_expression: WhileExpression;
-	loop_expression: LoopExpression;
-	for_expression: ForExpression;
-	const_block: ConstBlock;
-	closure_parameters: ClosureParameters;
-	label: Label;
-	break_expression: BreakExpression;
-	continue_expression: ContinueExpression;
-	index_expression: IndexExpression;
-	await_expression: AwaitExpression;
-	field_expression: FieldExpression;
-	unsafe_block: UnsafeBlock;
-	async_block: AsyncBlock;
-	gen_block: GenBlock;
-	try_block: TryBlock;
-	block: Block;
-	generic_pattern: GenericPattern;
-	tuple_pattern: TuplePattern;
-	slice_pattern: SlicePattern;
-	tuple_struct_pattern: TupleStructPattern;
-	struct_pattern: StructPattern;
-	mut_pattern: MutPattern;
-	ref_pattern: RefPattern;
-	captured_pattern: CapturedPattern;
-	reference_pattern: ReferencePattern;
-	negative_literal: NegativeLiteral;
-	string_literal: StringLiteral;
-	raw_string_literal: RawStringLiteral;
-	line_comment: LineComment;
-	block_comment: BlockComment;
-	macro_rules: MacroRules;
-	enum_variant_list_elements: EnumVariantListElements;
-	field_declaration_list_elements: FieldDeclarationListElements;
-	ordered_field_declaration_list_elements: OrderedFieldDeclarationListElements;
-	where_predicates: WherePredicates;
-	type_parameters_elements: TypeParametersElements;
-	use_clauses: UseClauses;
-	parameters_elements: ParametersElements;
-	lifetimes: Lifetimes;
-	use_bounds_elements: UseBoundsElements;
-	type_arguments_elements: TypeArgumentsElements;
-	arguments_elements: ArgumentsElements;
-	field_initializer_list_elements: FieldInitializerListElements;
-	tuple_pattern_elements: TuplePatternElements;
-	patterns: Patterns;
-	struct_pattern_elements: StructPatternElements;
-	use_wildcard_group: UseWildcardGroup;
-	visibility_modifier_group: VisibilityModifierGroup;
-	_tuple_type_elements: TupleTypeElements;
-	_tuple_expression_elements: TupleExpressionElements;
-	array_expression_semi: ArrayExpressionSemi;
-	array_expression_list: ArrayExpressionList;
-	attribute_input: AttributeInput;
-	closure_expression_block: ClosureExpressionBlock;
-	closure_expression_expr: ClosureExpressionExpr;
-	reference_expression_raw_const: ReferenceExpressionRawConst;
-	reference_expression_raw_mut: ReferenceExpressionRawMut;
-	reference_expression_mut: ReferenceExpressionMut;
-	reference_expression_bare: ReferenceExpressionBare;
-	impl_item_positive_clause: ImplItemPositiveClause;
-	impl_item_negative_clause: ImplItemNegativeClause;
-	impl_item_body: ImplItemBody;
-	impl_item_semi: ImplItemSemi;
-	visibility_modifier_pub: VisibilityModifierPub;
-	visibility_modifier_pub_in_path: VisibilityModifierPubInPath;
-	function_type_trait_form: FunctionTypeTraitForm;
-	function_type_fn_form: FunctionTypeFnForm;
-	mod_item_external: ModItemExternal;
-	mod_item_inline: ModItemInline;
-	or_pattern_binary: OrPatternBinary;
-	or_pattern_prefix: OrPatternPrefix;
-	pointer_type_const: PointerTypeConst;
-	pointer_type_mut: PointerTypeMut;
-	range_expression_binary: RangeExpressionBinary;
-	range_expression_postfix: RangeExpressionPostfix;
-	range_expression_prefix: RangeExpressionPrefix;
-	expression_statement_with_semi: ExpressionStatementWithSemi;
-	foreign_mod_item_semi: ForeignModItemSemi;
-	foreign_mod_item_body: ForeignModItemBody;
-	match_arm_with_comma: MatchArmWithComma;
-	match_arm_block_ending: MatchArmBlockEnding;
-	line_comment_doc_outer: LineCommentDocOuter;
-	line_comment_doc_inner: LineCommentDocInner;
-	block_comment_doc_outer: BlockCommentDocOuter;
-	block_comment_doc_inner: BlockCommentDocInner;
-	token_tree_pattern_paren: TokenTreePatternParen;
-	token_tree_pattern_bracket: TokenTreePatternBracket;
-	token_tree_pattern_brace: TokenTreePatternBrace;
-	token_tree_paren: TokenTreeParen;
-	token_tree_bracket: TokenTreeBracket;
-	token_tree_brace: TokenTreeBrace;
-	delim_token_tree_paren: DelimTokenTreeParen;
-	delim_token_tree_bracket: DelimTokenTreeBracket;
-	delim_token_tree_brace: DelimTokenTreeBrace;
-	field_pattern_shorthand: FieldPatternShorthand;
-	field_pattern_named: FieldPatternNamed;
-	macro_definition_paren: MacroDefinitionParen;
-	macro_definition_bracket: MacroDefinitionBracket;
-	macro_definition_brace: MacroDefinitionBrace;
-	range_pattern_prefix: RangePatternPrefix;
-	range_pattern_with_left_with_right: RangePatternWithLeftWithRight;
-	range_pattern_with_left: RangePatternWithLeft;
-	struct_item_brace: StructItemBrace;
-	struct_item_tuple: StructItemTuple;
-	struct_item_unit: StructItemUnit;
-	_attributed_field_declaration: AttributedFieldDeclaration;
-	_attributed_enum_variant: AttributedEnumVariant;
-	_attributed_parameter: AttributedParameter;
-	_attributed_type_parameter: AttributedTypeParameter;
-	_attributed_argument: AttributedArgument;
-	_attributed_ordered_field: AttributedOrderedField;
-	_type_argument: TypeArgument;
-	_match_block_arms: MatchBlockArms;
-	empty_statement: EmptyStatement;
-	fragment_specifier: FragmentSpecifier;
-	unit_type: UnitType;
-	never_type: NeverType;
-	mutable_specifier: MutableSpecifier;
-	unit_expression: UnitExpression;
-	remaining_field_pattern: RemainingFieldPattern;
-	integer_literal: IntegerLiteral;
-	char_literal: CharLiteral;
-	escape_sequence: EscapeSequence;
-	boolean_literal: BooleanLiteral;
-	identifier: Identifier;
-	shebang: Shebang;
-	_type_identifier: TypeIdentifier;
-	_field_identifier: FieldIdentifier;
-	self: Self;
-	super: Super;
-	crate: Crate;
-	metavariable: Metavariable;
-	_primitive_type: PrimitiveType;
-	_kw_ref_marker: KwRefMarker;
-	_kw_unsafe_marker: KwUnsafeMarker;
-	_kw_static_marker: KwStaticMarker;
-	_kw_async_marker: KwAsyncMarker;
-	_kw_move_marker: KwMoveMarker;
-	_kw_async: KwAsync;
-	_kw_default: KwDefault;
-	_kw_const: KwConst;
-	_kw_unsafe: KwUnsafe;
-	_compound_assignment_expr_operator: CompoundAssignmentExprOperator;
-	_token_tree_punctuation: TokenTreePunctuation;
-	_token_keywords: TokenKeywords;
-	_wildcard_pattern: WildcardPattern;
-	_string_literal_open: StringLiteralOpen;
-	_impl_item_unsafe_marker: ImplItemUnsafeMarker;
-	line_comment_regular_dslash: LineCommentRegularDslash;
-	line_comment_content: LineCommentContent;
-	range_pattern_with_left_bare: RangePatternWithLeftBare;
-	string_content: StringContent;
-	_raw_string_literal_start: RawStringLiteralStart;
-	raw_string_literal_content: RawStringLiteralContent;
-	_raw_string_literal_end: RawStringLiteralEnd;
-	float_literal: FloatLiteral;
-	_block_comment_content: BlockCommentContent;
-	_line_doc_content: LineDocContent;
-	_error_sentinel: ErrorSentinel;
+export interface OptionsHintMap {
+	sourceFile: SourceFile.Hints;
+	macroRule: MacroRule.Hints;
+	tokenBindingPattern: TokenBindingPattern.Hints;
+	tokenRepetitionPattern: TokenRepetitionPattern.Hints;
+	tokenRepetition: TokenRepetition.Hints;
+	attributeItem: AttributeItem.Hints;
+	innerAttributeItem: InnerAttributeItem.Hints;
+	attribute: Attribute.Hints;
+	declarationList: DeclarationList.Hints;
+	unionItem: UnionItem.Hints;
+	enumItem: EnumItem.Hints;
+	enumVariantList: EnumVariantList.Hints;
+	enumVariant: EnumVariant.Hints;
+	fieldDeclarationList: FieldDeclarationList.Hints;
+	fieldDeclaration: FieldDeclaration.Hints;
+	orderedFieldDeclarationList: OrderedFieldDeclarationList.Hints;
+	externCrateDeclaration: ExternCrateDeclaration.Hints;
+	constItem: ConstItem.Hints;
+	staticItem: StaticItem.Hints;
+	typeItem: TypeItem.Hints;
+	functionItem: FunctionItem.Hints;
+	functionSignatureItem: FunctionSignatureItem.Hints;
+	functionModifiers: FunctionModifiers.Hints;
+	whereClause: WhereClause.Hints;
+	wherePredicate: WherePredicate.Hints;
+	traitItem: TraitItem.Hints;
+	associatedType: AssociatedType.Hints;
+	traitBounds: TraitBounds.Hints;
+	higherRankedTraitBound: HigherRankedTraitBound.Hints;
+	removedTraitBound: RemovedTraitBound.Hints;
+	typeParameters: TypeParameters.Hints;
+	constParameter: ConstParameter.Hints;
+	typeParameter: TypeParameter.Hints;
+	lifetimeParameter: LifetimeParameter.Hints;
+	letDeclaration: LetDeclaration.Hints;
+	useDeclaration: UseDeclaration.Hints;
+	scopedUseList: ScopedUseList.Hints;
+	useList: UseList.Hints;
+	useAsClause: UseAsClause.Hints;
+	useWildcard: UseWildcard.Hints;
+	parameters: Parameters.Hints;
+	selfParameter: SelfParameter.Hints;
+	variadicParameter: VariadicParameter.Hints;
+	parameter: Parameter.Hints;
+	externModifier: ExternModifier.Hints;
+	bracketedType: BracketedType.Hints;
+	qualifiedType: QualifiedType.Hints;
+	lifetime: Lifetime.Hints;
+	arrayType: ArrayType.Hints;
+	forLifetimes: ForLifetimes.Hints;
+	functionType: FunctionType.Hints;
+	tupleType: TupleType.Hints;
+	genericFunction: GenericFunction.Hints;
+	genericType: GenericType.Hints;
+	genericTypeWithTurbofish: GenericTypeWithTurbofish.Hints;
+	boundedType: BoundedType.Hints;
+	useBounds: UseBounds.Hints;
+	typeArguments: TypeArguments.Hints;
+	typeBinding: TypeBinding.Hints;
+	referenceType: ReferenceType.Hints;
+	abstractType: AbstractType.Hints;
+	dynamicType: DynamicType.Hints;
+	macroInvocation: MacroInvocation.Hints;
+	scopedIdentifier: ScopedIdentifier.Hints;
+	scopedTypeIdentifierInExpressionPosition: ScopedTypeIdentifierInExpressionPosition.Hints;
+	scopedTypeIdentifier: ScopedTypeIdentifier.Hints;
+	unaryExpression: UnaryExpression.Hints;
+	tryExpression: TryExpression.Hints;
+	binaryExpression: BinaryExpression.Hints;
+	assignmentExpression: AssignmentExpression.Hints;
+	compoundAssignmentExpr: CompoundAssignmentExpr.Hints;
+	typeCastExpression: TypeCastExpression.Hints;
+	returnExpression: ReturnExpression.Hints;
+	yieldExpression: YieldExpression.Hints;
+	callExpression: CallExpression.Hints;
+	arguments: Arguments.Hints;
+	parenthesizedExpression: ParenthesizedExpression.Hints;
+	tupleExpression: TupleExpression.Hints;
+	structExpression: StructExpression.Hints;
+	fieldInitializerList: FieldInitializerList.Hints;
+	shorthandFieldInitializer: ShorthandFieldInitializer.Hints;
+	fieldInitializer: FieldInitializer.Hints;
+	baseFieldInitializer: BaseFieldInitializer.Hints;
+	ifExpression: IfExpression.Hints;
+	letCondition: LetCondition.Hints;
+	letChain: LetChain.Hints;
+	elseClause: ElseClause.Hints;
+	matchExpression: MatchExpression.Hints;
+	matchBlock: MatchBlock.Hints;
+	lastMatchArm: LastMatchArm.Hints;
+	matchPattern: MatchPattern.Hints;
+	whileExpression: WhileExpression.Hints;
+	loopExpression: LoopExpression.Hints;
+	forExpression: ForExpression.Hints;
+	constBlock: ConstBlock.Hints;
+	closureParameters: ClosureParameters.Hints;
+	label: Label.Hints;
+	breakExpression: BreakExpression.Hints;
+	continueExpression: ContinueExpression.Hints;
+	indexExpression: IndexExpression.Hints;
+	awaitExpression: AwaitExpression.Hints;
+	fieldExpression: FieldExpression.Hints;
+	unsafeBlock: UnsafeBlock.Hints;
+	asyncBlock: AsyncBlock.Hints;
+	genBlock: GenBlock.Hints;
+	tryBlock: TryBlock.Hints;
+	block: Block.Hints;
+	genericPattern: GenericPattern.Hints;
+	tuplePattern: TuplePattern.Hints;
+	slicePattern: SlicePattern.Hints;
+	tupleStructPattern: TupleStructPattern.Hints;
+	structPattern: StructPattern.Hints;
+	mutPattern: MutPattern.Hints;
+	refPattern: RefPattern.Hints;
+	capturedPattern: CapturedPattern.Hints;
+	referencePattern: ReferencePattern.Hints;
+	negativeLiteral: NegativeLiteral.Hints;
+	stringLiteral: StringLiteral.Hints;
+	rawStringLiteral: RawStringLiteral.Hints;
+	lineComment: LineComment.Hints;
+	blockComment: BlockComment.Hints;
+	macroRules: MacroRules.Hints;
+	enumVariantListElements: EnumVariantListElements.Hints;
+	fieldDeclarationListElements: FieldDeclarationListElements.Hints;
+	orderedFieldDeclarationListElements: OrderedFieldDeclarationListElements.Hints;
+	wherePredicates: WherePredicates.Hints;
+	typeParametersElements: TypeParametersElements.Hints;
+	useClauses: UseClauses.Hints;
+	parametersElements: ParametersElements.Hints;
+	lifetimes: Lifetimes.Hints;
+	useBoundsElements: UseBoundsElements.Hints;
+	typeArgumentsElements: TypeArgumentsElements.Hints;
+	argumentsElements: ArgumentsElements.Hints;
+	fieldInitializerListElements: FieldInitializerListElements.Hints;
+	tuplePatternElements: TuplePatternElements.Hints;
+	patterns: Patterns.Hints;
+	structPatternElements: StructPatternElements.Hints;
+	useWildcardGroup: UseWildcardGroup.Hints;
+	visibilityModifierGroup: VisibilityModifierGroup.Hints;
+	tupleTypeElements: TupleTypeElements.Hints;
+	tupleExpressionElements: TupleExpressionElements.Hints;
+	arrayExpressionSemi: ArrayExpressionSemi.Hints;
+	arrayExpressionList: ArrayExpressionList.Hints;
+	attributeInput: AttributeInput.Hints;
+	closureExpressionBlock: ClosureExpressionBlock.Hints;
+	closureExpressionExpr: ClosureExpressionExpr.Hints;
+	referenceExpressionRawConst: ReferenceExpressionRawConst.Hints;
+	referenceExpressionRawMut: ReferenceExpressionRawMut.Hints;
+	referenceExpressionMut: ReferenceExpressionMut.Hints;
+	referenceExpressionBare: ReferenceExpressionBare.Hints;
+	implItemPositiveClause: ImplItemPositiveClause.Hints;
+	implItemNegativeClause: ImplItemNegativeClause.Hints;
+	implItemBody: ImplItemBody.Hints;
+	implItemSemi: ImplItemSemi.Hints;
+	visibilityModifierPub: VisibilityModifierPub.Hints;
+	visibilityModifierPubInPath: VisibilityModifierPubInPath.Hints;
+	functionTypeFnForm: FunctionTypeFnForm.Hints;
+	modItemExternal: ModItemExternal.Hints;
+	modItemInline: ModItemInline.Hints;
+	orPatternBinary: OrPatternBinary.Hints;
+	orPatternPrefix: OrPatternPrefix.Hints;
+	pointerTypeConst: PointerTypeConst.Hints;
+	pointerTypeMut: PointerTypeMut.Hints;
+	rangeExpressionBinary: RangeExpressionBinary.Hints;
+	rangeExpressionPostfix: RangeExpressionPostfix.Hints;
+	rangeExpressionPrefix: RangeExpressionPrefix.Hints;
+	expressionStatementWithSemi: ExpressionStatementWithSemi.Hints;
+	foreignModItemSemi: ForeignModItemSemi.Hints;
+	foreignModItemBody: ForeignModItemBody.Hints;
+	matchArmWithComma: MatchArmWithComma.Hints;
+	matchArmBlockEnding: MatchArmBlockEnding.Hints;
+	lineCommentDocOuter: LineCommentDocOuter.Hints;
+	lineCommentDocInner: LineCommentDocInner.Hints;
+	blockCommentDocOuter: BlockCommentDocOuter.Hints;
+	blockCommentDocInner: BlockCommentDocInner.Hints;
+	tokenTreePatternParen: TokenTreePatternParen.Hints;
+	tokenTreePatternBracket: TokenTreePatternBracket.Hints;
+	tokenTreePatternBrace: TokenTreePatternBrace.Hints;
+	tokenTreeParen: TokenTreeParen.Hints;
+	tokenTreeBracket: TokenTreeBracket.Hints;
+	tokenTreeBrace: TokenTreeBrace.Hints;
+	delimTokenTreeParen: DelimTokenTreeParen.Hints;
+	delimTokenTreeBracket: DelimTokenTreeBracket.Hints;
+	delimTokenTreeBrace: DelimTokenTreeBrace.Hints;
+	fieldPatternShorthand: FieldPatternShorthand.Hints;
+	fieldPatternNamed: FieldPatternNamed.Hints;
+	macroDefinitionParen: MacroDefinitionParen.Hints;
+	macroDefinitionBracket: MacroDefinitionBracket.Hints;
+	macroDefinitionBrace: MacroDefinitionBrace.Hints;
+	rangePatternPrefix: RangePatternPrefix.Hints;
+	rangePatternWithLeftWithRight: RangePatternWithLeftWithRight.Hints;
+	rangePatternWithLeft: RangePatternWithLeft.Hints;
+	structItemBrace: StructItemBrace.Hints;
+	structItemTuple: StructItemTuple.Hints;
+	structItemUnit: StructItemUnit.Hints;
+	attributedFieldDeclaration: AttributedFieldDeclaration.Hints;
+	attributedEnumVariant: AttributedEnumVariant.Hints;
+	attributedParameter: AttributedParameter.Hints;
+	attributedTypeParameter: AttributedTypeParameter.Hints;
+	attributedArgument: AttributedArgument.Hints;
+	attributedOrderedField: AttributedOrderedField.Hints;
+	typeArgument: TypeArgument.Hints;
+	matchBlockArms: MatchBlockArms.Hints;
+	unitType: UnitType.Hints;
+	unitExpression: UnitExpression.Hints;
+	compoundAssignmentExprOperator: CompoundAssignmentExprOperator.Hints;
+	tokenTreePunctuation: TokenTreePunctuation.Hints;
+	tokenKeywords: TokenKeywords.Hints;
+	charLiteralEmpty: CharLiteralEmpty.Hints;
+}
+
+export namespace SourceFile {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly statements?: {
+				readonly associatedType?: { readonly after?: WhitespaceArm };
+				readonly asyncBlock?: { readonly after?: WhitespaceArm };
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly block?: { readonly after?: WhitespaceArm };
+				readonly constBlock?: { readonly after?: WhitespaceArm };
+				readonly constItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly enumItem?: { readonly after?: WhitespaceArm };
+				readonly expressionStatementWithSemi?: { readonly after?: WhitespaceArm };
+				readonly externCrateDeclaration?: { readonly after?: WhitespaceArm };
+				readonly forExpression?: { readonly after?: WhitespaceArm };
+				readonly foreignModItemBody?: { readonly after?: WhitespaceArm };
+				readonly foreignModItemSemi?: { readonly after?: WhitespaceArm };
+				readonly functionItem?: { readonly after?: WhitespaceArm };
+				readonly functionSignatureItem?: { readonly after?: WhitespaceArm };
+				readonly genBlock?: { readonly after?: WhitespaceArm };
+				readonly ifExpression?: { readonly after?: WhitespaceArm };
+				readonly implItemBody?: { readonly after?: WhitespaceArm };
+				readonly implItemSemi?: { readonly after?: WhitespaceArm };
+				readonly innerAttributeItem?: { readonly after?: WhitespaceArm };
+				readonly letDeclaration?: { readonly after?: WhitespaceArm };
+				readonly loopExpression?: { readonly after?: WhitespaceArm };
+				readonly macroDefinitionBrace?: { readonly after?: WhitespaceArm };
+				readonly macroDefinitionBracket?: { readonly after?: WhitespaceArm };
+				readonly macroDefinitionParen?: { readonly after?: WhitespaceArm };
+				readonly macroInvocation?: { readonly after?: WhitespaceArm };
+				readonly matchExpression?: { readonly after?: WhitespaceArm };
+				readonly modItemExternal?: { readonly after?: WhitespaceArm };
+				readonly modItemInline?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+				readonly staticItem?: { readonly after?: WhitespaceArm };
+				readonly structItemBrace?: { readonly after?: WhitespaceArm };
+				readonly structItemTuple?: { readonly after?: WhitespaceArm };
+				readonly structItemUnit?: { readonly after?: WhitespaceArm };
+				readonly traitItem?: { readonly after?: WhitespaceArm };
+				readonly tryBlock?: { readonly after?: WhitespaceArm };
+				readonly typeItem?: { readonly after?: WhitespaceArm };
+				readonly unionItem?: { readonly after?: WhitespaceArm };
+				readonly unsafeBlock?: { readonly after?: WhitespaceArm };
+				readonly useDeclaration?: { readonly after?: WhitespaceArm };
+				readonly whileExpression?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace MacroRule {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly eqGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TokenBindingPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly type?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TokenRepetitionPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dollar?: { readonly after?: WhitespaceArm };
+			readonly lparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly operator?: { readonly before?: WhitespaceArm };
+			readonly rparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly tokenPatterns?: {
+				readonly end?: WhitespaceArm;
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+				readonly tokenBindingPattern?: { readonly after?: WhitespaceArm };
+				readonly tokenRepetitionPattern?: { readonly after?: WhitespaceArm };
+				readonly tokenTreePatternBrace?: { readonly after?: WhitespaceArm };
+				readonly tokenTreePatternBracket?: { readonly after?: WhitespaceArm };
+				readonly tokenTreePatternParen?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace TokenRepetition {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dollar?: { readonly after?: WhitespaceArm };
+			readonly lparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly operator?: { readonly before?: WhitespaceArm };
+			readonly rparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly tokens?: {
+				readonly end?: WhitespaceArm;
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+				readonly tokenRepetition?: { readonly after?: WhitespaceArm };
+				readonly tokenTreeBrace?: { readonly after?: WhitespaceArm };
+				readonly tokenTreeBracket?: { readonly after?: WhitespaceArm };
+				readonly tokenTreeParen?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace AttributeItem {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrack?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly pound?: { readonly after?: WhitespaceArm };
+			readonly rbrack?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace InnerAttributeItem {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly bang?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+			readonly lbrack?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly pound?: { readonly after?: WhitespaceArm };
+			readonly rbrack?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace Attribute {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+	}
+}
+
+export namespace DeclarationList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly declarations?: {
+				readonly associatedType?: { readonly after?: WhitespaceArm };
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly constItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly enumItem?: { readonly after?: WhitespaceArm };
+				readonly externCrateDeclaration?: { readonly after?: WhitespaceArm };
+				readonly foreignModItemBody?: { readonly after?: WhitespaceArm };
+				readonly foreignModItemSemi?: { readonly after?: WhitespaceArm };
+				readonly functionItem?: { readonly after?: WhitespaceArm };
+				readonly functionSignatureItem?: { readonly after?: WhitespaceArm };
+				readonly implItemBody?: { readonly after?: WhitespaceArm };
+				readonly implItemSemi?: { readonly after?: WhitespaceArm };
+				readonly innerAttributeItem?: { readonly after?: WhitespaceArm };
+				readonly letDeclaration?: { readonly after?: WhitespaceArm };
+				readonly macroDefinitionBrace?: { readonly after?: WhitespaceArm };
+				readonly macroDefinitionBracket?: { readonly after?: WhitespaceArm };
+				readonly macroDefinitionParen?: { readonly after?: WhitespaceArm };
+				readonly macroInvocation?: { readonly after?: WhitespaceArm };
+				readonly modItemExternal?: { readonly after?: WhitespaceArm };
+				readonly modItemInline?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+				readonly staticItem?: { readonly after?: WhitespaceArm };
+				readonly structItemBrace?: { readonly after?: WhitespaceArm };
+				readonly structItemTuple?: { readonly after?: WhitespaceArm };
+				readonly structItemUnit?: { readonly after?: WhitespaceArm };
+				readonly traitItem?: { readonly after?: WhitespaceArm };
+				readonly typeItem?: { readonly after?: WhitespaceArm };
+				readonly unionItem?: { readonly after?: WhitespaceArm };
+				readonly useDeclaration?: { readonly after?: WhitespaceArm };
+			};
+			readonly lbrace?: { readonly after?: WhitespaceArm };
+			readonly rbrace?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace UnionItem {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly unionKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace EnumItem {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly enumKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace EnumVariantList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrace?: { readonly after?: WhitespaceArm };
+			readonly rbrace?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace EnumVariant {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace FieldDeclarationList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrace?: { readonly after?: WhitespaceArm };
+			readonly rbrace?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace FieldDeclaration {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace OrderedFieldDeclarationList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ExternCrateDeclaration {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly asKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+			readonly crate?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly externKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly semi?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ConstItem {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly constKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly semi?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace StaticItem {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly mutableSpecifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly refMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly semi?: { readonly before?: WhitespaceArm };
+			readonly staticKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TypeItem {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly semi?: { readonly before?: WhitespaceArm };
+			readonly typeKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace FunctionItem {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dashGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly fnKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace FunctionSignatureItem {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dashGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly fnKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly semi?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace FunctionModifiers {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly modifier?: {
+				readonly end?: WhitespaceArm;
+				readonly externModifier?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+		};
+	}
+}
+
+export namespace WhereClause {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly whereKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace WherePredicate {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+	}
+}
+
+export namespace TraitItem {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly traitKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly unsafeMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace AssociatedType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly semi?: { readonly before?: WhitespaceArm };
+			readonly typeKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TraitBounds {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly bounds?: {
+				readonly abstractType?: { readonly after?: WhitespaceArm };
+				readonly arrayType?: { readonly after?: WhitespaceArm };
+				readonly boundedType?: { readonly after?: WhitespaceArm };
+				readonly dynamicType?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly functionType?: { readonly after?: WhitespaceArm };
+				readonly genericType?: { readonly after?: WhitespaceArm };
+				readonly higherRankedTraitBound?: { readonly after?: WhitespaceArm };
+				readonly lifetime?: { readonly after?: WhitespaceArm };
+				readonly macroInvocation?: { readonly after?: WhitespaceArm };
+				readonly pointerTypeConst?: { readonly after?: WhitespaceArm };
+				readonly pointerTypeMut?: { readonly after?: WhitespaceArm };
+				readonly referenceType?: { readonly after?: WhitespaceArm };
+				readonly removedTraitBound?: { readonly after?: WhitespaceArm };
+				readonly scopedTypeIdentifier?: { readonly after?: WhitespaceArm };
+				readonly separator?: { readonly plus?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+				readonly tupleType?: { readonly after?: WhitespaceArm };
+			};
+			readonly colon?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace HigherRankedTraitBound {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly forKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace RemovedTraitBound {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly qmark?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TypeParameters {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly gt?: { readonly before?: WhitespaceArm };
+			readonly lt?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ConstParameter {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly constKeyword?: { readonly after?: WhitespaceArm };
+			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TypeParameter {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace LifetimeParameter {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+	}
+}
+
+export namespace LetDeclaration {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly elseKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly letKeyword?: { readonly after?: WhitespaceArm };
+			readonly mutableSpecifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly semi?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace UseDeclaration {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly semi?: { readonly before?: WhitespaceArm };
+			readonly useKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ScopedUseList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colonColon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace UseList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrace?: { readonly after?: WhitespaceArm };
+			readonly rbrace?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace UseAsClause {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly asKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+		};
+	}
+}
+
+export namespace UseWildcard {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly star?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace Parameters {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace SelfParameter {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly mutableSpecifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly reference?: { readonly after?: WhitespaceArm };
+			readonly self?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace VariadicParameter {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly dotDotDot?: { readonly before?: WhitespaceArm };
+			readonly mutableSpecifier?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace Parameter {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly mutableSpecifier?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ExternModifier {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly externKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace BracketedType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly gt?: { readonly before?: WhitespaceArm };
+			readonly lt?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace QualifiedType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly asKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+		};
+	}
+}
+
+export namespace Lifetime {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly squote?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ArrayType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrack?: { readonly after?: WhitespaceArm };
+			readonly rbrack?: { readonly before?: WhitespaceArm };
+			readonly semi?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ForLifetimes {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly forKeyword?: { readonly after?: WhitespaceArm };
+			readonly gt?: { readonly before?: WhitespaceArm };
+			readonly lt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace FunctionType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dashGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TupleType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace GenericFunction {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colonColon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace GenericType {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+	}
+}
+
+export namespace GenericTypeWithTurbofish {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colonColon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace BoundedType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly plus?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace UseBounds {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly gt?: { readonly before?: WhitespaceArm };
+			readonly lt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly useKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TypeArguments {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly gt?: { readonly before?: WhitespaceArm };
+			readonly lt?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TypeBinding {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ReferenceType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly amp?: { readonly after?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+			readonly mutableSpecifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace AbstractType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly forKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly implKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace DynamicType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dynKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace MacroInvocation {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly bang?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+		};
+	}
+}
+
+export namespace ScopedIdentifier {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colonColon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ScopedTypeIdentifierInExpressionPosition {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colonColon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ScopedTypeIdentifier {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colonColon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace UnaryExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly operator?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TryExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly qmark?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace BinaryExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly operator?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace AssignmentExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace CompoundAssignmentExpr {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+	}
+}
+
+export namespace TypeCastExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly asKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+		};
+	}
+}
+
+export namespace ReturnExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly returnKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace YieldExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly yieldKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace CallExpression {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+	}
+}
+
+export namespace Arguments {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ParenthesizedExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TupleExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly attributes?: {
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly before?: WhitespaceArm;
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace StructExpression {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+	}
+}
+
+export namespace FieldInitializerList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrace?: { readonly after?: WhitespaceArm };
+			readonly rbrace?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ShorthandFieldInitializer {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly attributes?: {
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly before?: WhitespaceArm;
+		};
+	}
+}
+
+export namespace FieldInitializer {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly attributeItem?: {
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace BaseFieldInitializer {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dotDot?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace IfExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly ifKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace LetCondition {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly letKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace LetChain {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly ampAmp?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly right?: {
+				readonly arrayExpressionList?: { readonly after?: WhitespaceArm };
+				readonly arrayExpressionSemi?: { readonly after?: WhitespaceArm };
+				readonly assignmentExpression?: { readonly after?: WhitespaceArm };
+				readonly asyncBlock?: { readonly after?: WhitespaceArm };
+				readonly awaitExpression?: { readonly after?: WhitespaceArm };
+				readonly binaryExpression?: { readonly after?: WhitespaceArm };
+				readonly block?: { readonly after?: WhitespaceArm };
+				readonly breakExpression?: { readonly after?: WhitespaceArm };
+				readonly callExpression?: { readonly after?: WhitespaceArm };
+				readonly closureExpressionBlock?: { readonly after?: WhitespaceArm };
+				readonly closureExpressionExpr?: { readonly after?: WhitespaceArm };
+				readonly compoundAssignmentExpr?: { readonly after?: WhitespaceArm };
+				readonly constBlock?: { readonly after?: WhitespaceArm };
+				readonly continueExpression?: { readonly after?: WhitespaceArm };
+				readonly fieldExpression?: { readonly after?: WhitespaceArm };
+				readonly forExpression?: { readonly after?: WhitespaceArm };
+				readonly genBlock?: { readonly after?: WhitespaceArm };
+				readonly genericFunction?: { readonly after?: WhitespaceArm };
+				readonly ifExpression?: { readonly after?: WhitespaceArm };
+				readonly indexExpression?: { readonly after?: WhitespaceArm };
+				readonly letCondition?: { readonly after?: WhitespaceArm };
+				readonly loopExpression?: { readonly after?: WhitespaceArm };
+				readonly macroInvocation?: { readonly after?: WhitespaceArm };
+				readonly matchExpression?: { readonly after?: WhitespaceArm };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceArm };
+				readonly rangeExpressionBinary?: { readonly after?: WhitespaceArm };
+				readonly rangeExpressionPostfix?: { readonly after?: WhitespaceArm };
+				readonly rangeExpressionPrefix?: { readonly after?: WhitespaceArm };
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly referenceExpressionBare?: { readonly after?: WhitespaceArm };
+				readonly referenceExpressionMut?: { readonly after?: WhitespaceArm };
+				readonly referenceExpressionRawConst?: { readonly after?: WhitespaceArm };
+				readonly referenceExpressionRawMut?: { readonly after?: WhitespaceArm };
+				readonly returnExpression?: { readonly after?: WhitespaceArm };
+				readonly scopedIdentifier?: { readonly after?: WhitespaceArm };
+				readonly separator?: { readonly ampAmp?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+				readonly structExpression?: { readonly after?: WhitespaceArm };
+				readonly tryBlock?: { readonly after?: WhitespaceArm };
+				readonly tryExpression?: { readonly after?: WhitespaceArm };
+				readonly tupleExpression?: { readonly after?: WhitespaceArm };
+				readonly typeCastExpression?: { readonly after?: WhitespaceArm };
+				readonly unaryExpression?: { readonly after?: WhitespaceArm };
+				readonly unsafeBlock?: { readonly after?: WhitespaceArm };
+				readonly whileExpression?: { readonly after?: WhitespaceArm };
+				readonly yieldExpression?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace ElseClause {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly elseKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace MatchExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly matchKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace MatchBlock {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrace?: { readonly after?: WhitespaceArm };
+			readonly rbrace?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace LastMatchArm {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly attributes?: {
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly innerAttributeItem?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly before?: WhitespaceArm;
+			readonly comma?: { readonly before?: WhitespaceArm };
+			readonly eqGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace MatchPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly ifKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace WhileExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly whileKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace LoopExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly loopKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ForExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly forKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly inKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ConstBlock {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly constKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ClosureParameters {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly parameters?: {
+				readonly capturedPattern?: { readonly after?: WhitespaceArm };
+				readonly constBlock?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly genericPattern?: { readonly after?: WhitespaceArm };
+				readonly macroInvocation?: { readonly after?: WhitespaceArm };
+				readonly mutPattern?: { readonly after?: WhitespaceArm };
+				readonly negativeLiteral?: { readonly after?: WhitespaceArm };
+				readonly orPatternBinary?: { readonly after?: WhitespaceArm };
+				readonly orPatternPrefix?: { readonly after?: WhitespaceArm };
+				readonly parameter?: { readonly after?: WhitespaceArm };
+				readonly rangePatternPrefix?: { readonly after?: WhitespaceArm };
+				readonly rangePatternWithLeft?: { readonly after?: WhitespaceArm };
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly refPattern?: { readonly after?: WhitespaceArm };
+				readonly referencePattern?: { readonly after?: WhitespaceArm };
+				readonly scopedIdentifier?: { readonly after?: WhitespaceArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly slicePattern?: { readonly after?: WhitespaceArm };
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+				readonly structPattern?: { readonly after?: WhitespaceArm };
+				readonly tuplePattern?: { readonly after?: WhitespaceArm };
+				readonly tupleStructPattern?: { readonly after?: WhitespaceArm };
+			};
+			readonly pipe?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace Label {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly squote?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace BreakExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly breakKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ContinueExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly continueKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace IndexExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrack?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly rbrack?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace AwaitExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly awaitKeyword?: { readonly before?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+			readonly dot?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace FieldExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dot?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace UnsafeBlock {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly unsafeKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace AsyncBlock {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly asyncKeyword?: { readonly after?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+			readonly moveMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace GenBlock {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly genKeyword?: { readonly after?: WhitespaceArm };
+			readonly moveMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TryBlock {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly tryKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace Block {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly lbrace?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly rbrace?: { readonly before?: WhitespaceArm };
+			readonly statements?: {
+				readonly associatedType?: { readonly after?: WhitespaceArm };
+				readonly asyncBlock?: { readonly after?: WhitespaceArm };
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly block?: { readonly after?: WhitespaceArm };
+				readonly constBlock?: { readonly after?: WhitespaceArm };
+				readonly constItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly enumItem?: { readonly after?: WhitespaceArm };
+				readonly expressionStatementWithSemi?: { readonly after?: WhitespaceArm };
+				readonly externCrateDeclaration?: { readonly after?: WhitespaceArm };
+				readonly forExpression?: { readonly after?: WhitespaceArm };
+				readonly foreignModItemBody?: { readonly after?: WhitespaceArm };
+				readonly foreignModItemSemi?: { readonly after?: WhitespaceArm };
+				readonly functionItem?: { readonly after?: WhitespaceArm };
+				readonly functionSignatureItem?: { readonly after?: WhitespaceArm };
+				readonly genBlock?: { readonly after?: WhitespaceArm };
+				readonly ifExpression?: { readonly after?: WhitespaceArm };
+				readonly implItemBody?: { readonly after?: WhitespaceArm };
+				readonly implItemSemi?: { readonly after?: WhitespaceArm };
+				readonly innerAttributeItem?: { readonly after?: WhitespaceArm };
+				readonly letDeclaration?: { readonly after?: WhitespaceArm };
+				readonly loopExpression?: { readonly after?: WhitespaceArm };
+				readonly macroDefinitionBrace?: { readonly after?: WhitespaceArm };
+				readonly macroDefinitionBracket?: { readonly after?: WhitespaceArm };
+				readonly macroDefinitionParen?: { readonly after?: WhitespaceArm };
+				readonly macroInvocation?: { readonly after?: WhitespaceArm };
+				readonly matchExpression?: { readonly after?: WhitespaceArm };
+				readonly modItemExternal?: { readonly after?: WhitespaceArm };
+				readonly modItemInline?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+				readonly staticItem?: { readonly after?: WhitespaceArm };
+				readonly structItemBrace?: { readonly after?: WhitespaceArm };
+				readonly structItemTuple?: { readonly after?: WhitespaceArm };
+				readonly structItemUnit?: { readonly after?: WhitespaceArm };
+				readonly traitItem?: { readonly after?: WhitespaceArm };
+				readonly tryBlock?: { readonly after?: WhitespaceArm };
+				readonly typeItem?: { readonly after?: WhitespaceArm };
+				readonly unionItem?: { readonly after?: WhitespaceArm };
+				readonly unsafeBlock?: { readonly after?: WhitespaceArm };
+				readonly useDeclaration?: { readonly after?: WhitespaceArm };
+				readonly whileExpression?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace GenericPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colonColon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TuplePattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace SlicePattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrack?: { readonly after?: WhitespaceArm };
+			readonly rbrack?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TupleStructPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace StructPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrace?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly rbrace?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace MutPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly mutableSpecifier?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace RefPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly refKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace CapturedPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly at?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+		};
+	}
+}
+
+export namespace ReferencePattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly amp?: { readonly after?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+			readonly mutableSpecifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace NegativeLiteral {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dash?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace StringLiteral {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+	}
+}
+
+export namespace RawStringLiteral {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+	}
+}
+
+export namespace LineComment {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+	}
+}
+
+export namespace BlockComment {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly slashStar?: { readonly after?: WhitespaceArm };
+			readonly starSlash?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace MacroRules {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly macroRule?: {
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly macroRule?: { readonly after?: WhitespaceArm };
+				readonly separator?: { readonly semi?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+			};
+		};
+	}
+}
+
+export namespace EnumVariantListElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly element?: {
+				readonly attributedEnumVariant?: { readonly after?: WhitespaceArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+			};
+		};
+	}
+}
+
+export namespace FieldDeclarationListElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly element?: {
+				readonly attributedFieldDeclaration?: { readonly after?: WhitespaceArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+			};
+		};
+	}
+}
+
+export namespace OrderedFieldDeclarationListElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly element?: {
+				readonly attributedOrderedField?: { readonly after?: WhitespaceArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+			};
+		};
+	}
+}
+
+export namespace WherePredicates {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly wherePredicate?: {
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+				readonly wherePredicate?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace TypeParametersElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly element?: {
+				readonly attributedTypeParameter?: { readonly after?: WhitespaceArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+			};
+		};
+	}
+}
+
+export namespace UseClauses {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly useClause?: {
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly scopedIdentifier?: { readonly after?: WhitespaceArm };
+				readonly scopedUseList?: { readonly after?: WhitespaceArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+				readonly useAsClause?: { readonly after?: WhitespaceArm };
+				readonly useList?: { readonly after?: WhitespaceArm };
+				readonly useWildcard?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace ParametersElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly element?: {
+				readonly attributedParameter?: { readonly after?: WhitespaceArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+			};
+		};
+	}
+}
+
+export namespace Lifetimes {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lifetime?: {
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly lifetime?: { readonly after?: WhitespaceArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+			};
+		};
+	}
+}
+
+export namespace UseBoundsElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly element?: {
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly lifetime?: { readonly after?: WhitespaceArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+			};
+		};
+	}
+}
+
+export namespace TypeArgumentsElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly element?: {
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+				readonly typeArgument?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace ArgumentsElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly element?: {
+				readonly attributedArgument?: { readonly after?: WhitespaceArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+			};
+		};
+	}
+}
+
+export namespace FieldInitializerListElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly element?: {
+				readonly baseFieldInitializer?: { readonly after?: WhitespaceArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly fieldInitializer?: { readonly after?: WhitespaceArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly shorthandFieldInitializer?: { readonly after?: WhitespaceArm };
+				readonly start?: WhitespaceArm;
+			};
+		};
+	}
+}
+
+export namespace TuplePatternElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly element?: {
+				readonly capturedPattern?: { readonly after?: WhitespaceArm };
+				readonly closureExpressionBlock?: { readonly after?: WhitespaceArm };
+				readonly closureExpressionExpr?: { readonly after?: WhitespaceArm };
+				readonly constBlock?: { readonly after?: WhitespaceArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly genericPattern?: { readonly after?: WhitespaceArm };
+				readonly macroInvocation?: { readonly after?: WhitespaceArm };
+				readonly mutPattern?: { readonly after?: WhitespaceArm };
+				readonly negativeLiteral?: { readonly after?: WhitespaceArm };
+				readonly orPatternBinary?: { readonly after?: WhitespaceArm };
+				readonly orPatternPrefix?: { readonly after?: WhitespaceArm };
+				readonly rangePatternPrefix?: { readonly after?: WhitespaceArm };
+				readonly rangePatternWithLeft?: { readonly after?: WhitespaceArm };
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly refPattern?: { readonly after?: WhitespaceArm };
+				readonly referencePattern?: { readonly after?: WhitespaceArm };
+				readonly scopedIdentifier?: { readonly after?: WhitespaceArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly slicePattern?: { readonly after?: WhitespaceArm };
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+				readonly structPattern?: { readonly after?: WhitespaceArm };
+				readonly tuplePattern?: { readonly after?: WhitespaceArm };
+				readonly tupleStructPattern?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace Patterns {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly pattern?: {
+				readonly capturedPattern?: { readonly after?: WhitespaceArm };
+				readonly constBlock?: { readonly after?: WhitespaceArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly genericPattern?: { readonly after?: WhitespaceArm };
+				readonly macroInvocation?: { readonly after?: WhitespaceArm };
+				readonly mutPattern?: { readonly after?: WhitespaceArm };
+				readonly negativeLiteral?: { readonly after?: WhitespaceArm };
+				readonly orPatternBinary?: { readonly after?: WhitespaceArm };
+				readonly orPatternPrefix?: { readonly after?: WhitespaceArm };
+				readonly rangePatternPrefix?: { readonly after?: WhitespaceArm };
+				readonly rangePatternWithLeft?: { readonly after?: WhitespaceArm };
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly refPattern?: { readonly after?: WhitespaceArm };
+				readonly referencePattern?: { readonly after?: WhitespaceArm };
+				readonly scopedIdentifier?: { readonly after?: WhitespaceArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly slicePattern?: { readonly after?: WhitespaceArm };
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+				readonly structPattern?: { readonly after?: WhitespaceArm };
+				readonly tuplePattern?: { readonly after?: WhitespaceArm };
+				readonly tupleStructPattern?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace StructPatternElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly element?: {
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly fieldPatternNamed?: { readonly after?: WhitespaceArm };
+				readonly fieldPatternShorthand?: { readonly after?: WhitespaceArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+			};
+		};
+	}
+}
+
+export namespace UseWildcardGroup {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colonColon?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace VisibilityModifierGroup {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TupleTypeElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly type?: {
+				readonly abstractType?: { readonly after?: WhitespaceArm };
+				readonly arrayType?: { readonly after?: WhitespaceArm };
+				readonly boundedType?: { readonly after?: WhitespaceArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dynamicType?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly functionType?: { readonly after?: WhitespaceArm };
+				readonly genericType?: { readonly after?: WhitespaceArm };
+				readonly macroInvocation?: { readonly after?: WhitespaceArm };
+				readonly pointerTypeConst?: { readonly after?: WhitespaceArm };
+				readonly pointerTypeMut?: { readonly after?: WhitespaceArm };
+				readonly referenceType?: { readonly after?: WhitespaceArm };
+				readonly removedTraitBound?: { readonly after?: WhitespaceArm };
+				readonly scopedTypeIdentifier?: { readonly after?: WhitespaceArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+				readonly tupleType?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace TupleExpressionElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly element?: {
+				readonly arrayExpressionList?: { readonly after?: WhitespaceArm };
+				readonly arrayExpressionSemi?: { readonly after?: WhitespaceArm };
+				readonly assignmentExpression?: { readonly after?: WhitespaceArm };
+				readonly asyncBlock?: { readonly after?: WhitespaceArm };
+				readonly awaitExpression?: { readonly after?: WhitespaceArm };
+				readonly binaryExpression?: { readonly after?: WhitespaceArm };
+				readonly block?: { readonly after?: WhitespaceArm };
+				readonly breakExpression?: { readonly after?: WhitespaceArm };
+				readonly callExpression?: { readonly after?: WhitespaceArm };
+				readonly closureExpressionBlock?: { readonly after?: WhitespaceArm };
+				readonly closureExpressionExpr?: { readonly after?: WhitespaceArm };
+				readonly compoundAssignmentExpr?: { readonly after?: WhitespaceArm };
+				readonly constBlock?: { readonly after?: WhitespaceArm };
+				readonly continueExpression?: { readonly after?: WhitespaceArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly end?: WhitespaceArm;
+				readonly fieldExpression?: { readonly after?: WhitespaceArm };
+				readonly forExpression?: { readonly after?: WhitespaceArm };
+				readonly genBlock?: { readonly after?: WhitespaceArm };
+				readonly genericFunction?: { readonly after?: WhitespaceArm };
+				readonly ifExpression?: { readonly after?: WhitespaceArm };
+				readonly indexExpression?: { readonly after?: WhitespaceArm };
+				readonly loopExpression?: { readonly after?: WhitespaceArm };
+				readonly macroInvocation?: { readonly after?: WhitespaceArm };
+				readonly matchExpression?: { readonly after?: WhitespaceArm };
+				readonly parenthesizedExpression?: { readonly after?: WhitespaceArm };
+				readonly rangeExpressionBinary?: { readonly after?: WhitespaceArm };
+				readonly rangeExpressionPostfix?: { readonly after?: WhitespaceArm };
+				readonly rangeExpressionPrefix?: { readonly after?: WhitespaceArm };
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly referenceExpressionBare?: { readonly after?: WhitespaceArm };
+				readonly referenceExpressionMut?: { readonly after?: WhitespaceArm };
+				readonly referenceExpressionRawConst?: { readonly after?: WhitespaceArm };
+				readonly referenceExpressionRawMut?: { readonly after?: WhitespaceArm };
+				readonly returnExpression?: { readonly after?: WhitespaceArm };
+				readonly scopedIdentifier?: { readonly after?: WhitespaceArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+				readonly structExpression?: { readonly after?: WhitespaceArm };
+				readonly tryBlock?: { readonly after?: WhitespaceArm };
+				readonly tryExpression?: { readonly after?: WhitespaceArm };
+				readonly tupleExpression?: { readonly after?: WhitespaceArm };
+				readonly typeCastExpression?: { readonly after?: WhitespaceArm };
+				readonly unaryExpression?: { readonly after?: WhitespaceArm };
+				readonly unsafeBlock?: { readonly after?: WhitespaceArm };
+				readonly whileExpression?: { readonly after?: WhitespaceArm };
+				readonly yieldExpression?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace ArrayExpressionSemi {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly attributes?: {
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly before?: WhitespaceArm;
+			readonly lbrack?: { readonly after?: WhitespaceArm };
+			readonly rbrack?: { readonly before?: WhitespaceArm };
+			readonly semi?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ArrayExpressionList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly attributes?: {
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly before?: WhitespaceArm;
+			readonly lbrack?: { readonly after?: WhitespaceArm };
+			readonly rbrack?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace AttributeInput {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly eq?: { readonly after?: WhitespaceArm } };
+	}
+}
+
+export namespace ClosureExpressionBlock {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly asyncMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+			readonly dashGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly moveMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly staticMarker?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ClosureExpressionExpr {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly asyncMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+			readonly moveMarker?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly staticMarker?: { readonly after?: WhitespaceArm };
+			readonly underscore?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ReferenceExpressionRawConst {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly amp?: { readonly after?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+			readonly constKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly rawKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ReferenceExpressionRawMut {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly amp?: { readonly after?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+			readonly rawKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ReferenceExpressionMut {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly amp?: { readonly after?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+		};
+	}
+}
+
+export namespace ReferenceExpressionBare {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly amp?: { readonly after?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+		};
+	}
+}
+
+export namespace ImplItemPositiveClause {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly forKeyword?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ImplItemNegativeClause {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly bang?: { readonly after?: WhitespaceArm };
+			readonly before?: WhitespaceArm;
+			readonly forKeyword?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ImplItemBody {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly implKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly unsafeMarker?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ImplItemSemi {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly implKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly semi?: { readonly before?: WhitespaceArm };
+			readonly unsafeMarker?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace VisibilityModifierPub {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly pubKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace VisibilityModifierPubInPath {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly inKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace FunctionTypeFnForm {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly fnKeyword?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ModItemExternal {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly modKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly semi?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ModItemInline {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly modKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace OrPatternBinary {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly pipe?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace OrPatternPrefix {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly pipe?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace PointerTypeConst {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly constKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly star?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace PointerTypeMut {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly star?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace RangeExpressionBinary {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly operator?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace RangeExpressionPostfix {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly operator?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace RangeExpressionPrefix {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly operator?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ExpressionStatementWithSemi {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly semi?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ForeignModItemSemi {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly semi?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace ForeignModItemBody {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+	}
+}
+
+export namespace MatchArmWithComma {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly attributes?: {
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly innerAttributeItem?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly before?: WhitespaceArm;
+			readonly comma?: { readonly before?: WhitespaceArm };
+			readonly eqGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace MatchArmBlockEnding {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly attributes?: {
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly innerAttributeItem?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly before?: WhitespaceArm;
+			readonly eqGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace LineCommentDocOuter {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm };
+	}
+}
+
+export namespace LineCommentDocInner {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm };
+	}
+}
+
+export namespace BlockCommentDocOuter {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm };
+	}
+}
+
+export namespace BlockCommentDocInner {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm };
+	}
+}
+
+export namespace TokenTreePatternParen {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+			readonly tokenPatterns?: {
+				readonly end?: WhitespaceArm;
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+				readonly tokenBindingPattern?: { readonly after?: WhitespaceArm };
+				readonly tokenRepetitionPattern?: { readonly after?: WhitespaceArm };
+				readonly tokenTreePatternBrace?: { readonly after?: WhitespaceArm };
+				readonly tokenTreePatternBracket?: { readonly after?: WhitespaceArm };
+				readonly tokenTreePatternParen?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace TokenTreePatternBracket {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrack?: { readonly after?: WhitespaceArm };
+			readonly rbrack?: { readonly before?: WhitespaceArm };
+			readonly tokenPatterns?: {
+				readonly end?: WhitespaceArm;
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+				readonly tokenBindingPattern?: { readonly after?: WhitespaceArm };
+				readonly tokenRepetitionPattern?: { readonly after?: WhitespaceArm };
+				readonly tokenTreePatternBrace?: { readonly after?: WhitespaceArm };
+				readonly tokenTreePatternBracket?: { readonly after?: WhitespaceArm };
+				readonly tokenTreePatternParen?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace TokenTreePatternBrace {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrace?: { readonly after?: WhitespaceArm };
+			readonly rbrace?: { readonly before?: WhitespaceArm };
+			readonly tokenPatterns?: {
+				readonly end?: WhitespaceArm;
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+				readonly tokenBindingPattern?: { readonly after?: WhitespaceArm };
+				readonly tokenRepetitionPattern?: { readonly after?: WhitespaceArm };
+				readonly tokenTreePatternBrace?: { readonly after?: WhitespaceArm };
+				readonly tokenTreePatternBracket?: { readonly after?: WhitespaceArm };
+				readonly tokenTreePatternParen?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace TokenTreeParen {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+			readonly tokens?: {
+				readonly end?: WhitespaceArm;
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+				readonly tokenRepetition?: { readonly after?: WhitespaceArm };
+				readonly tokenTreeBrace?: { readonly after?: WhitespaceArm };
+				readonly tokenTreeBracket?: { readonly after?: WhitespaceArm };
+				readonly tokenTreeParen?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace TokenTreeBracket {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrack?: { readonly after?: WhitespaceArm };
+			readonly rbrack?: { readonly before?: WhitespaceArm };
+			readonly tokens?: {
+				readonly end?: WhitespaceArm;
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+				readonly tokenRepetition?: { readonly after?: WhitespaceArm };
+				readonly tokenTreeBrace?: { readonly after?: WhitespaceArm };
+				readonly tokenTreeBracket?: { readonly after?: WhitespaceArm };
+				readonly tokenTreeParen?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace TokenTreeBrace {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrace?: { readonly after?: WhitespaceArm };
+			readonly rbrace?: { readonly before?: WhitespaceArm };
+			readonly tokens?: {
+				readonly end?: WhitespaceArm;
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+				readonly tokenRepetition?: { readonly after?: WhitespaceArm };
+				readonly tokenTreeBrace?: { readonly after?: WhitespaceArm };
+				readonly tokenTreeBracket?: { readonly after?: WhitespaceArm };
+				readonly tokenTreeParen?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+
+export namespace DelimTokenTreeParen {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly delimTokens?: {
+				readonly delimTokenTreeBrace?: { readonly after?: WhitespaceArm };
+				readonly delimTokenTreeBracket?: { readonly after?: WhitespaceArm };
+				readonly delimTokenTreeParen?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+			};
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace DelimTokenTreeBracket {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly delimTokens?: {
+				readonly delimTokenTreeBrace?: { readonly after?: WhitespaceArm };
+				readonly delimTokenTreeBracket?: { readonly after?: WhitespaceArm };
+				readonly delimTokenTreeParen?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+			};
+			readonly lbrack?: { readonly after?: WhitespaceArm };
+			readonly rbrack?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace DelimTokenTreeBrace {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly delimTokens?: {
+				readonly delimTokenTreeBrace?: { readonly after?: WhitespaceArm };
+				readonly delimTokenTreeBracket?: { readonly after?: WhitespaceArm };
+				readonly delimTokenTreeParen?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly rawStringLiteral?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+				readonly stringLiteral?: { readonly after?: WhitespaceArm };
+			};
+			readonly lbrace?: { readonly after?: WhitespaceArm };
+			readonly rbrace?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace FieldPatternShorthand {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly mutableSpecifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly refMarker?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace FieldPatternNamed {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly mutableSpecifier?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly refMarker?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace MacroDefinitionParen {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly macroRulesBang?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly semi?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace MacroDefinitionBracket {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrack?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly macroRulesBang?: { readonly after?: WhitespaceArm };
+			readonly rbrack?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly semi?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace MacroDefinitionBrace {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lbrace?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly macroRulesBang?: { readonly after?: WhitespaceArm };
+			readonly rbrace?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace RangePatternPrefix {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dotDot?: { readonly after?: WhitespaceArm };
+			readonly dotDotEq?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace RangePatternWithLeftWithRight {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dotDot?: { readonly after?: WhitespaceArm };
+			readonly dotDotDot?: { readonly after?: WhitespaceArm };
+			readonly dotDotEq?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace RangePatternWithLeft {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dotDot?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace StructItemBrace {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly structKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace StructItemTuple {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly semi?: { readonly before?: WhitespaceArm };
+			readonly structKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace StructItemUnit {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly semi?: { readonly before?: WhitespaceArm };
+			readonly structKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace AttributedFieldDeclaration {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly attributeItem?: {
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly before?: WhitespaceArm;
+		};
+	}
+}
+
+export namespace AttributedEnumVariant {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly attributeItem?: {
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly before?: WhitespaceArm;
+		};
+	}
+}
+
+export namespace AttributedParameter {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly underscore?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace AttributedTypeParameter {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly attributeItem?: {
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly before?: WhitespaceArm;
+		};
+	}
+}
+
+export namespace AttributedArgument {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly attributeItem?: {
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly before?: WhitespaceArm;
+		};
+	}
+}
+
+export namespace AttributedOrderedField {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly attributeItem?: {
+				readonly attributeItem?: { readonly after?: WhitespaceArm };
+				readonly end?: WhitespaceArm;
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+			readonly before?: WhitespaceArm;
+		};
+	}
+}
+
+export namespace TypeArgument {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+	}
+}
+
+export namespace MatchBlockArms {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly matchArm?: {
+				readonly end?: WhitespaceArm;
+				readonly matchArmBlockEnding?: { readonly after?: WhitespaceArm };
+				readonly matchArmWithComma?: { readonly after?: WhitespaceArm };
+				readonly separator?: SpacingArm;
+				readonly start?: WhitespaceArm;
+			};
+		};
+	}
+}
+
+export namespace UnitType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace UnitExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace CompoundAssignmentExprOperator {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly ampEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly caretEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly dashEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly gtGtEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly ltLtEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly percentEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly pipeEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly plusEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly slashEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly starEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TokenTreePunctuation {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly amp?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly ampAmp?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly ampEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly at?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly bang?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly bangEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly caret?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly caretEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly colon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly colonColon?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly comma?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly dash?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly dashEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly dashGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly dot?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly dotDot?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly dotDotDot?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly dotDotEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly eq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly eqEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly eqGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly gt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly gtEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly gtGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly gtGtEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly lt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly ltEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly ltLt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly ltLtEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly percent?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly percentEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly pipe?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly pipeEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly pipePipe?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly plus?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly plusEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly pound?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly qmark?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly semi?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly slash?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly slashEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly star?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly starEq?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly underscore?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace TokenKeywords {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly asKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly asyncKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly awaitKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly breakKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly constKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly continueKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly defaultKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly enumKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly fnKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly forKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly genKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly ifKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly implKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly letKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly loopKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly matchKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly modKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly pubKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly returnKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly squote?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly staticKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly structKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly traitKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly typeKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly unionKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly unsafeKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly useKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly whereKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly whileKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace CharLiteralEmpty {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly squote?: { readonly before?: WhitespaceArm } };
+	}
 }
 
 // Per-kind namespace interfaces — one computed base per kind
@@ -11880,17 +17195,6 @@ export interface TokenRepetitionPatternNs extends NodeNs<
 	TokenRepetitionPattern.LooseArgs,
 	never,
 	'token_repetition_pattern'
-> {}
-export interface TokenTreeNs extends NodeNs<
-	TokenTree,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	TokenTree.Built,
-	TokenTree.BuildArgs,
-	TokenTree.LooseArgs,
-	'content',
-	'token_tree'
 > {}
 export interface TokenRepetitionNs extends NodeNs<
 	TokenRepetition,
@@ -13201,6 +18505,28 @@ export interface BlockCommentNs extends NodeNs<
 	'content',
 	'block_comment'
 > {}
+export interface ShebangNs extends NodeNs<
+	Shebang,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	Shebang.Built,
+	Shebang.BuildArgs,
+	Shebang.LooseArgs,
+	'content',
+	'shebang'
+> {}
+export interface MetavariableNs extends NodeNs<
+	Metavariable,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	Metavariable.Built,
+	Metavariable.BuildArgs,
+	Metavariable.LooseArgs,
+	'name',
+	'metavariable'
+> {}
 export interface MacroRulesNs extends NodeNs<
 	MacroRules,
 	LeafScalarMap,
@@ -13420,6 +18746,116 @@ export interface TupleExpressionElementsNs extends NodeNs<
 	TupleExpressionElements.LooseArgs,
 	'element',
 	'_tuple_expression_elements'
+> {}
+export interface IntegerLiteralDecimalNs extends NodeNs<
+	IntegerLiteralDecimal,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerLiteralDecimal.Built,
+	IntegerLiteralDecimal.BuildArgs,
+	IntegerLiteralDecimal.LooseArgs,
+	'content',
+	'integer_literal_decimal'
+> {}
+export interface IntegerLiteralHexNs extends NodeNs<
+	IntegerLiteralHex,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerLiteralHex.Built,
+	IntegerLiteralHex.BuildArgs,
+	IntegerLiteralHex.LooseArgs,
+	'content',
+	'integer_literal_hex'
+> {}
+export interface IntegerLiteralBinaryNs extends NodeNs<
+	IntegerLiteralBinary,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerLiteralBinary.Built,
+	IntegerLiteralBinary.BuildArgs,
+	IntegerLiteralBinary.LooseArgs,
+	'content',
+	'integer_literal_binary'
+> {}
+export interface IntegerLiteralOctalNs extends NodeNs<
+	IntegerLiteralOctal,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerLiteralOctal.Built,
+	IntegerLiteralOctal.BuildArgs,
+	IntegerLiteralOctal.LooseArgs,
+	'content',
+	'integer_literal_octal'
+> {}
+export interface CharLiteralEscapedNs extends NodeNs<
+	CharLiteralEscaped,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	CharLiteralEscaped.Built,
+	CharLiteralEscaped.BuildArgs,
+	CharLiteralEscaped.LooseArgs,
+	'content',
+	'char_literal_escaped'
+> {}
+export interface CharLiteralPlainNs extends NodeNs<
+	CharLiteralPlain,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	CharLiteralPlain.Built,
+	CharLiteralPlain.BuildArgs,
+	CharLiteralPlain.LooseArgs,
+	'content',
+	'char_literal_plain'
+> {}
+export interface EscapeSequenceSimpleNs extends NodeNs<
+	EscapeSequenceSimple,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	EscapeSequenceSimple.Built,
+	EscapeSequenceSimple.BuildArgs,
+	EscapeSequenceSimple.LooseArgs,
+	'content',
+	'escape_sequence_simple'
+> {}
+export interface EscapeSequenceUnicodeFixedNs extends NodeNs<
+	EscapeSequenceUnicodeFixed,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	EscapeSequenceUnicodeFixed.Built,
+	EscapeSequenceUnicodeFixed.BuildArgs,
+	EscapeSequenceUnicodeFixed.LooseArgs,
+	'content',
+	'escape_sequence_unicode_fixed'
+> {}
+export interface EscapeSequenceUnicodeBracedNs extends NodeNs<
+	EscapeSequenceUnicodeBraced,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	EscapeSequenceUnicodeBraced.Built,
+	EscapeSequenceUnicodeBraced.BuildArgs,
+	EscapeSequenceUnicodeBraced.LooseArgs,
+	'content',
+	'escape_sequence_unicode_braced'
+> {}
+export interface EscapeSequenceHexNs extends NodeNs<
+	EscapeSequenceHex,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	EscapeSequenceHex.Built,
+	EscapeSequenceHex.BuildArgs,
+	EscapeSequenceHex.LooseArgs,
+	'content',
+	'escape_sequence_hex'
 > {}
 export interface ArrayExpressionSemiNs extends NodeNs<
 	ArrayExpressionSemi,
@@ -14114,6 +19550,39 @@ export interface MatchBlockArmsNs extends NodeNs<
 	never,
 	'_match_block_arms'
 > {}
+export interface TypeIdentifierNs extends NodeNs<
+	TypeIdentifier,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	TypeIdentifier.Built,
+	TypeIdentifier.BuildArgs,
+	TypeIdentifier.LooseArgs,
+	'content',
+	'type_identifier'
+> {}
+export interface FieldIdentifierNs extends NodeNs<
+	FieldIdentifier,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	FieldIdentifier.Built,
+	FieldIdentifier.BuildArgs,
+	FieldIdentifier.LooseArgs,
+	'content',
+	'field_identifier'
+> {}
+export interface ShorthandFieldIdentifierNs extends NodeNs<
+	ShorthandFieldIdentifier,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ShorthandFieldIdentifier.Built,
+	ShorthandFieldIdentifier.BuildArgs,
+	ShorthandFieldIdentifier.LooseArgs,
+	'content',
+	'shorthand_field_identifier'
+> {}
 export interface EmptyStatementNs extends KeywordNs<
 	TSKindId.EmptyStatement,
 	';',
@@ -14185,56 +19654,45 @@ export interface RangePatternWithLeftBareNs extends KeywordNs<
 	RangePatternWithLeftBareTree,
 	'range_pattern_with_left_bare'
 > {}
-export interface IntegerLiteralNs extends LeafNs<
-	IntegerLiteral,
-	string,
-	IntegerLiteral.Built,
-	IntegerLiteralTree,
-	'integer_literal'
+export interface U8KeywordNs extends KeywordNs<TSKindId.U8Keyword, 'u8', U8KeywordTree, 'u8_keyword'> {}
+export interface I8KeywordNs extends KeywordNs<TSKindId.I8Keyword, 'i8', I8KeywordTree, 'i8_keyword'> {}
+export interface U16KeywordNs extends KeywordNs<TSKindId.U16Keyword, 'u16', U16KeywordTree, 'u16_keyword'> {}
+export interface I16KeywordNs extends KeywordNs<TSKindId.I16Keyword, 'i16', I16KeywordTree, 'i16_keyword'> {}
+export interface U32KeywordNs extends KeywordNs<TSKindId.U32Keyword, 'u32', U32KeywordTree, 'u32_keyword'> {}
+export interface I32KeywordNs extends KeywordNs<TSKindId.I32Keyword, 'i32', I32KeywordTree, 'i32_keyword'> {}
+export interface U64KeywordNs extends KeywordNs<TSKindId.U64Keyword, 'u64', U64KeywordTree, 'u64_keyword'> {}
+export interface I64KeywordNs extends KeywordNs<TSKindId.I64Keyword, 'i64', I64KeywordTree, 'i64_keyword'> {}
+export interface U128KeywordNs extends KeywordNs<TSKindId.U128Keyword, 'u128', U128KeywordTree, 'u128_keyword'> {}
+export interface I128KeywordNs extends KeywordNs<TSKindId.I128Keyword, 'i128', I128KeywordTree, 'i128_keyword'> {}
+export interface IsizeKeywordNs extends KeywordNs<TSKindId.IsizeKeyword, 'isize', IsizeKeywordTree, 'isize_keyword'> {}
+export interface UsizeKeywordNs extends KeywordNs<TSKindId.UsizeKeyword, 'usize', UsizeKeywordTree, 'usize_keyword'> {}
+export interface F32KeywordNs extends KeywordNs<TSKindId.F32Keyword, 'f32', F32KeywordTree, 'f32_keyword'> {}
+export interface F64KeywordNs extends KeywordNs<TSKindId.F64Keyword, 'f64', F64KeywordTree, 'f64_keyword'> {}
+export interface BoolKeywordNs extends KeywordNs<TSKindId.BoolKeyword, 'bool', BoolKeywordTree, 'bool_keyword'> {}
+export interface StrKeywordNs extends KeywordNs<TSKindId.StrKeyword, 'str', StrKeywordTree, 'str_keyword'> {}
+export interface CharKeywordNs extends KeywordNs<TSKindId.CharKeyword, 'char', CharKeywordTree, 'char_keyword'> {}
+export interface DefaultKeywordNs extends KeywordNs<
+	TSKindId.DefaultKeyword,
+	'default',
+	DefaultKeywordTree,
+	'default_keyword'
 > {}
-export interface CharLiteralNs extends LeafNs<
-	CharLiteral,
-	string,
-	CharLiteral.Built,
-	CharLiteralTree,
-	'char_literal'
-> {}
-export interface EscapeSequenceNs extends LeafNs<
-	EscapeSequence,
-	string,
-	EscapeSequence.Built,
-	EscapeSequenceTree,
-	'escape_sequence'
-> {}
+export interface UnionKeywordNs extends KeywordNs<TSKindId.UnionKeyword, 'union', UnionKeywordTree, 'union_keyword'> {}
+export interface GenKeywordNs extends KeywordNs<TSKindId.GenKeyword, 'gen', GenKeywordTree, 'gen_keyword'> {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Built, IdentifierTree, 'identifier'> {}
-export interface ShebangNs extends LeafNs<Shebang, string, Shebang.Built, ShebangTree, 'shebang'> {}
-export interface TypeIdentifierNs extends LeafNs<
-	TypeIdentifier,
-	string,
-	TypeIdentifier.Built,
-	TypeIdentifierTree,
-	'_type_identifier'
-> {}
-export interface FieldIdentifierNs extends LeafNs<
-	FieldIdentifier,
-	string,
-	FieldIdentifier.Built,
-	FieldIdentifierTree,
-	'_field_identifier'
-> {}
-export interface MetavariableNs extends LeafNs<
-	Metavariable,
-	string,
-	Metavariable.Built,
-	MetavariableTree,
-	'metavariable'
-> {}
 export interface StringLiteralOpenNs extends LeafNs<
 	StringLiteralOpen,
 	string,
 	StringLiteralOpen.Built,
 	StringLiteralOpenTree,
 	'_string_literal_open'
+> {}
+export interface CharLiteralEmptyNs extends LeafNs<
+	CharLiteralEmpty,
+	string,
+	CharLiteralEmpty.Built,
+	CharLiteralEmptyTree,
+	'char_literal_empty'
 > {}
 export interface LineCommentRegularDslashNs extends LeafNs<
 	LineCommentRegularDslash,
@@ -14250,19 +19708,19 @@ export interface LineCommentContentNs extends LeafNs<
 	LineCommentContentTree,
 	'line_comment_content'
 > {}
+export interface FloatLiteralNs extends LeafNs<
+	FloatLiteral,
+	string | number,
+	FloatLiteral.Built,
+	FloatLiteralTree,
+	'float_literal'
+> {}
 export interface StringContentNs extends LeafNs<
 	StringContent,
 	string,
 	StringContent.Built,
 	StringContentTree,
 	'string_content'
-> {}
-export interface RawStringLiteralStartNs extends LeafNs<
-	RawStringLiteralStart,
-	string,
-	RawStringLiteralStart.Built,
-	RawStringLiteralStartTree,
-	'_raw_string_literal_start'
 > {}
 export interface RawStringLiteralContentNs extends LeafNs<
 	RawStringLiteralContent,
@@ -14271,19 +19729,12 @@ export interface RawStringLiteralContentNs extends LeafNs<
 	RawStringLiteralContentTree,
 	'raw_string_literal_content'
 > {}
-export interface RawStringLiteralEndNs extends LeafNs<
-	RawStringLiteralEnd,
+export interface LineDocContentNs extends LeafNs<
+	LineDocContent,
 	string,
-	RawStringLiteralEnd.Built,
-	RawStringLiteralEndTree,
-	'_raw_string_literal_end'
-> {}
-export interface FloatLiteralNs extends LeafNs<
-	FloatLiteral,
-	string,
-	FloatLiteral.Built,
-	FloatLiteralTree,
-	'float_literal'
+	LineDocContent.Built,
+	LineDocContentTree,
+	'_line_doc_content'
 > {}
 export interface BlockCommentContentNs extends LeafNs<
 	BlockCommentContent,
@@ -14292,12 +19743,19 @@ export interface BlockCommentContentNs extends LeafNs<
 	BlockCommentContentTree,
 	'_block_comment_content'
 > {}
-export interface LineDocContentNs extends LeafNs<
-	LineDocContent,
+export interface RawStringLiteralStartNs extends LeafNs<
+	RawStringLiteralStart,
 	string,
-	LineDocContent.Built,
-	LineDocContentTree,
-	'_line_doc_content'
+	RawStringLiteralStart.Built,
+	RawStringLiteralStartTree,
+	'_raw_string_literal_start'
+> {}
+export interface RawStringLiteralEndNs extends LeafNs<
+	RawStringLiteralEnd,
+	string,
+	RawStringLiteralEnd.Built,
+	RawStringLiteralEndTree,
+	'_raw_string_literal_end'
 > {}
 export interface ErrorSentinelNs extends LeafNs<
 	ErrorSentinel,
@@ -14313,7 +19771,6 @@ export interface NamespaceMap {
 	[TSKindId.MacroRule]: MacroRuleNs;
 	[TSKindId.TokenBindingPattern]: TokenBindingPatternNs;
 	[TSKindId.TokenRepetitionPattern]: TokenRepetitionPatternNs;
-	[TSKindId.TokenTree]: TokenTreeNs;
 	[TSKindId.TokenRepetition]: TokenRepetitionNs;
 	[TSKindId.AttributeItem]: AttributeItemNs;
 	[TSKindId.InnerAttributeItem]: InnerAttributeItemNs;
@@ -14433,6 +19890,8 @@ export interface NamespaceMap {
 	[TSKindId.RawStringLiteral]: RawStringLiteralNs;
 	[TSKindId.LineComment]: LineCommentNs;
 	[TSKindId.BlockComment]: BlockCommentNs;
+	[TSKindId.Shebang]: ShebangNs;
+	[TSKindId.Metavariable]: MetavariableNs;
 	[TSKindId.MacroRules]: MacroRulesNs;
 	[TSKindId.EnumVariantListElements]: EnumVariantListElementsNs;
 	[TSKindId.FieldDeclarationListElements]: FieldDeclarationListElementsNs;
@@ -14453,6 +19912,16 @@ export interface NamespaceMap {
 	[TSKindId.VisibilityModifierGroup]: VisibilityModifierGroupNs;
 	[TSKindId.TupleTypeElements]: TupleTypeElementsNs;
 	[TSKindId.TupleExpressionElements]: TupleExpressionElementsNs;
+	[TSKindId.IntegerLiteralDecimal]: IntegerLiteralDecimalNs;
+	[TSKindId.IntegerLiteralHex]: IntegerLiteralHexNs;
+	[TSKindId.IntegerLiteralBinary]: IntegerLiteralBinaryNs;
+	[TSKindId.IntegerLiteralOctal]: IntegerLiteralOctalNs;
+	[TSKindId.CharLiteralEscaped]: CharLiteralEscapedNs;
+	[TSKindId.CharLiteralPlain]: CharLiteralPlainNs;
+	[TSKindId.EscapeSequenceSimple]: EscapeSequenceSimpleNs;
+	[TSKindId.EscapeSequenceUnicodeFixed]: EscapeSequenceUnicodeFixedNs;
+	[TSKindId.EscapeSequenceUnicodeBraced]: EscapeSequenceUnicodeBracedNs;
+	[TSKindId.EscapeSequenceHex]: EscapeSequenceHexNs;
 	[TSKindId.ArrayExpressionSemi]: ArrayExpressionSemiNs;
 	[TSKindId.ArrayExpressionList]: ArrayExpressionListNs;
 	[TSKindId.AttributeInput]: AttributeInputNs;
@@ -14516,6 +19985,9 @@ export interface NamespaceMap {
 	[TSKindId.AttributedOrderedField]: AttributedOrderedFieldNs;
 	[TSKindId.TypeArgument]: TypeArgumentNs;
 	[TSKindId.MatchBlockArms]: MatchBlockArmsNs;
+	[TSKindId._TypeIdentifier]: TypeIdentifierNs;
+	[TSKindId._FieldIdentifier]: FieldIdentifierNs;
+	[TSKindId._ShorthandFieldIdentifier]: ShorthandFieldIdentifierNs;
 	[TSKindId.EmptyStatement]: EmptyStatementNs;
 	[TSKindId.UnitType]: UnitTypeNs;
 	[TSKindId.NeverType]: NeverTypeNs;
@@ -14537,24 +20009,38 @@ export interface NamespaceMap {
 	[TSKindId.WildcardPattern]: WildcardPatternNs;
 	[TSKindId.ImplItemUnsafeMarker]: ImplItemUnsafeMarkerNs;
 	[TSKindId.RangePatternWithLeftBare]: RangePatternWithLeftBareNs;
-	[TSKindId.IntegerLiteral]: IntegerLiteralNs;
-	[TSKindId.CharLiteral]: CharLiteralNs;
-	[TSKindId.EscapeSequence]: EscapeSequenceNs;
+	[TSKindId.U8Keyword]: U8KeywordNs;
+	[TSKindId.I8Keyword]: I8KeywordNs;
+	[TSKindId.U16Keyword]: U16KeywordNs;
+	[TSKindId.I16Keyword]: I16KeywordNs;
+	[TSKindId.U32Keyword]: U32KeywordNs;
+	[TSKindId.I32Keyword]: I32KeywordNs;
+	[TSKindId.U64Keyword]: U64KeywordNs;
+	[TSKindId.I64Keyword]: I64KeywordNs;
+	[TSKindId.U128Keyword]: U128KeywordNs;
+	[TSKindId.I128Keyword]: I128KeywordNs;
+	[TSKindId.IsizeKeyword]: IsizeKeywordNs;
+	[TSKindId.UsizeKeyword]: UsizeKeywordNs;
+	[TSKindId.F32Keyword]: F32KeywordNs;
+	[TSKindId.F64Keyword]: F64KeywordNs;
+	[TSKindId.BoolKeyword]: BoolKeywordNs;
+	[TSKindId.StrKeyword]: StrKeywordNs;
+	[TSKindId.CharKeyword]: CharKeywordNs;
+	[TSKindId.DefaultKeyword]: DefaultKeywordNs;
+	[TSKindId.UnionKeyword]: UnionKeywordNs;
+	[TSKindId.GenKeyword]: GenKeywordNs;
 	[TSKindId.Identifier]: IdentifierNs;
-	[TSKindId.Shebang]: ShebangNs;
-	[TSKindId.TypeIdentifier]: TypeIdentifierNs;
-	[TSKindId.FieldIdentifier]: FieldIdentifierNs;
-	[TSKindId.Metavariable]: MetavariableNs;
 	[TSKindId.StringLiteralOpen]: StringLiteralOpenNs;
+	[TSKindId.CharLiteralEmpty]: CharLiteralEmptyNs;
 	[TSKindId.LineCommentRegularDslash]: LineCommentRegularDslashNs;
 	[TSKindId.LineCommentContent]: LineCommentContentNs;
-	[TSKindId.StringContent]: StringContentNs;
-	[TSKindId.RawStringLiteralStart]: RawStringLiteralStartNs;
-	[TSKindId.RawStringLiteralContent]: RawStringLiteralContentNs;
-	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEndNs;
 	[TSKindId.FloatLiteral]: FloatLiteralNs;
-	[TSKindId.BlockCommentContent]: BlockCommentContentNs;
+	[TSKindId.StringContent]: StringContentNs;
+	[TSKindId.RawStringLiteralContent]: RawStringLiteralContentNs;
 	[TSKindId.LineDocContent]: LineDocContentNs;
+	[TSKindId.BlockCommentContent]: BlockCommentContentNs;
+	[TSKindId.RawStringLiteralStart]: RawStringLiteralStartNs;
+	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEndNs;
 	[TSKindId.ErrorSentinel]: ErrorSentinelNs;
 }
 
@@ -14698,7 +20184,7 @@ export namespace TokenRepetitionPattern {
 			tokenPatterns(
 				value?: NonNullable<T.TokenRepetitionPattern.Config>['tokenPatterns']
 			): T.TokenRepetitionPattern.Built;
-			separator(value?: NonNullable<T.TokenRepetitionPattern.Config>['separator']): T.TokenRepetitionPattern.Built;
+			separator(value?: string): T.TokenRepetitionPattern.Built;
 			operator(value: NonNullable<T.TokenRepetitionPattern.Config>['operator']): T.TokenRepetitionPattern.Built;
 		};
 	}
@@ -14713,29 +20199,6 @@ export namespace TokenRepetitionPattern {
 	export type Tree = TreeFor<TSKindId.TokenRepetitionPattern>;
 	export type Kind = 'token_repetition_pattern';
 }
-export namespace TokenTree {
-	export type Config = ConfigFor<TSKindId.TokenTree>;
-	export interface Built extends T.TokenTree, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: T.TokenTreeParen | T.TokenTreeBracket | T.TokenTreeBrace): T.TokenTree.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.TokenTree>;
-	export type LooseConfig = LooseConfigFor<TSKindId.TokenTree>;
-	export type BuildArgs = [value: T.TokenTreeParen | T.TokenTreeBracket | T.TokenTreeBrace];
-	export type LooseArgs = [
-		value: LooseValue<
-			T.TokenTreeParen | T.TokenTreeBracket | T.TokenTreeBrace,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
-	export type Tree = TreeFor<TSKindId.TokenTree>;
-	export type Kind = 'token_tree';
-}
 export namespace TokenRepetition {
 	export type Config = ConfigFor<TSKindId.TokenRepetition>;
 	export interface Built extends T.TokenRepetition, NodeMethodsOf {
@@ -14743,7 +20206,7 @@ export namespace TokenRepetition {
 		readonly $named: true;
 		readonly $with: {
 			tokens(value?: NonNullable<T.TokenRepetition.Config>['tokens']): T.TokenRepetition.Built;
-			separator(value?: NonNullable<T.TokenRepetition.Config>['separator']): T.TokenRepetition.Built;
+			separator(value?: string): T.TokenRepetition.Built;
 			operator(value: NonNullable<T.TokenRepetition.Config>['operator']): T.TokenRepetition.Built;
 		};
 	}
@@ -14832,7 +20295,7 @@ export namespace UnionItem {
 		readonly $named: true;
 		readonly $with: {
 			visibilityModifier(value?: T.VisibilityModifier): T.UnionItem.Built;
-			name(value: T.Identifier): T.UnionItem.Built;
+			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.UnionItem.Built;
 			typeParameters(value?: T.TypeParameters): T.UnionItem.Built;
 			whereClause(value?: T.WhereClause): T.UnionItem.Built;
 			body(value: T.FieldDeclarationList): T.UnionItem.Built;
@@ -14854,7 +20317,7 @@ export namespace EnumItem {
 		readonly $named: true;
 		readonly $with: {
 			visibilityModifier(value?: T.VisibilityModifier): T.EnumItem.Built;
-			name(value: T.Identifier): T.EnumItem.Built;
+			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.EnumItem.Built;
 			typeParameters(value?: T.TypeParameters): T.EnumItem.Built;
 			whereClause(value?: T.WhereClause): T.EnumItem.Built;
 			body(value: T.EnumVariantList): T.EnumItem.Built;
@@ -14933,7 +20396,7 @@ export namespace FieldDeclaration {
 		readonly $named: true;
 		readonly $with: {
 			visibilityModifier(value?: T.VisibilityModifier): T.FieldDeclaration.Built;
-			name(value: T.Identifier): T.FieldDeclaration.Built;
+			name(value: T.FieldIdentifier | T.FieldIdentifier.Types): T.FieldDeclaration.Built;
 			type(value: NonNullable<T.FieldDeclaration.Config>['type']): T.FieldDeclaration.Built;
 		};
 	}
@@ -15037,7 +20500,7 @@ export namespace TypeItem {
 		readonly $named: true;
 		readonly $with: {
 			visibilityModifier(value?: T.VisibilityModifier): T.TypeItem.Built;
-			name(value: T.Identifier): T.TypeItem.Built;
+			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.TypeItem.Built;
 			typeParameters(value?: T.TypeParameters): T.TypeItem.Built;
 			whereClause(value?: T.WhereClause): T.TypeItem.Built;
 			type(value: NonNullable<T.TypeItem.Config>['type']): T.TypeItem.Built;
@@ -15190,7 +20653,7 @@ export namespace TraitItem {
 		readonly $with: {
 			visibilityModifier(value?: T.VisibilityModifier): T.TraitItem.Built;
 			unsafeMarker(value?: NonNullable<T.TraitItem.Config>['unsafeMarker']): T.TraitItem.Built;
-			name(value: T.Identifier): T.TraitItem.Built;
+			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.TraitItem.Built;
 			typeParameters(value?: T.TypeParameters): T.TraitItem.Built;
 			bounds(value?: T.TraitBounds): T.TraitItem.Built;
 			whereClause(value?: T.WhereClause): T.TraitItem.Built;
@@ -15212,7 +20675,7 @@ export namespace AssociatedType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			name(value: T.Identifier): T.AssociatedType.Built;
+			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.AssociatedType.Built;
 			typeParameters(value?: T.TypeParameters): T.AssociatedType.Built;
 			bounds(value?: T.TraitBounds): T.AssociatedType.Built;
 			whereClause(value?: T.WhereClause): T.AssociatedType.Built;
@@ -15233,15 +20696,15 @@ export namespace TraitBounds {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			bounds(...vs: (T.Type | T.Lifetime | T.HigherRankedTraitBound)[]): T.TraitBounds.Built;
+			bounds(...vs: ((T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types)[]): T.TraitBounds.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TraitBounds>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TraitBounds>;
-	export type BuildArgs = [...children: (T.Type | T.Lifetime | T.HigherRankedTraitBound)[]];
+	export type BuildArgs = [...children: ((T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.Type | T.Lifetime | T.HigherRankedTraitBound,
+			(T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -15277,13 +20740,15 @@ export namespace RemovedTraitBound {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			type(value: NonNullable<T.Type>): T.RemovedTraitBound.Built;
+			type(value: NonNullable<T.Type | T.TypeIdentifier.Types>): T.RemovedTraitBound.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.RemovedTraitBound>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RemovedTraitBound>;
-	export type BuildArgs = [value: T.Type];
-	export type LooseArgs = [value: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value: T.Type | T.TypeIdentifier.Types];
+	export type LooseArgs = [
+		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.RemovedTraitBound>;
 	export type Kind = 'removed_trait_bound';
 }
@@ -15331,7 +20796,7 @@ export namespace TypeParameter {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			name(value: T.Identifier): T.TypeParameter.Built;
+			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.TypeParameter.Built;
 			bounds(value?: T.TraitBounds): T.TypeParameter.Built;
 			defaultType(value?: NonNullable<T.TypeParameter.Config>['defaultType']): T.TypeParameter.Built;
 		};
@@ -15419,9 +20884,9 @@ export namespace ScopedUseList {
 	}
 	export type Loose = LooseFor<TSKindId.ScopedUseList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ScopedUseList>;
-	export type BuildArgs = [config: ConfigOf<T.ScopedUseList>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.ScopedUseList>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ScopedUseList, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ScopedUseList
+		config?: LooseConfigOf<T.ScopedUseList, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ScopedUseList
 	];
 	export type Tree = TreeFor<TSKindId.ScopedUseList>;
 	export type Kind = 'scoped_use_list';
@@ -15594,14 +21059,19 @@ export namespace BracketedType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: NonNullable<T.Type | T.QualifiedType>): T.BracketedType.Built;
+			content(value: NonNullable<(T.Type | T.QualifiedType) | T.TypeIdentifier.Types>): T.BracketedType.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.BracketedType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BracketedType>;
-	export type BuildArgs = [value: T.Type | T.QualifiedType];
+	export type BuildArgs = [value: (T.Type | T.QualifiedType) | T.TypeIdentifier.Types];
 	export type LooseArgs = [
-		value: LooseValue<T.Type | T.QualifiedType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		value: LooseValue<
+			(T.Type | T.QualifiedType) | T.TypeIdentifier.Types,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
 	];
 	export type Tree = TreeFor<TSKindId.BracketedType>;
 	export type Kind = 'bracketed_type';
@@ -15738,7 +21208,7 @@ export namespace GenericType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			type(value: T.Identifier | T.ScopedTypeIdentifier): T.GenericType.Built;
+			type(value: NonNullable<T.GenericType.Config>['type']): T.GenericType.Built;
 			typeArguments(value: T.TypeArguments): T.GenericType.Built;
 		};
 	}
@@ -15757,7 +21227,7 @@ export namespace GenericTypeWithTurbofish {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			type(value: T.Identifier | T.ScopedIdentifier): T.GenericTypeWithTurbofish.Built;
+			type(value: T.TypeIdentifier | T.ScopedIdentifier | T.TypeIdentifier.Types): T.GenericTypeWithTurbofish.Built;
 			typeArguments(value: T.TypeArguments): T.GenericTypeWithTurbofish.Built;
 		};
 	}
@@ -15831,7 +21301,7 @@ export namespace TypeBinding {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			name(value: T.Identifier): T.TypeBinding.Built;
+			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.TypeBinding.Built;
 			typeArguments(value?: T.TypeArguments): T.TypeBinding.Built;
 			type(value: NonNullable<T.TypeBinding.Config>['type']): T.TypeBinding.Built;
 		};
@@ -15874,13 +21344,14 @@ export namespace AbstractType {
 			typeParameters(value?: T.TypeParameters): T.AbstractType.Built;
 			trait(
 				value:
-					| T.Identifier
+					| T.TypeIdentifier
 					| T.ScopedTypeIdentifier
 					| T.RemovedTraitBound
 					| T.GenericType
 					| T.FunctionType
 					| T.TupleType
 					| T.BoundedType
+					| T.TypeIdentifier.Types
 			): T.AbstractType.Built;
 		};
 	}
@@ -15901,12 +21372,15 @@ export namespace DynamicType {
 		readonly $with: {
 			trait(
 				value:
-					| T.HigherRankedTraitBound
-					| T.Identifier
-					| T.ScopedTypeIdentifier
-					| T.GenericType
-					| T.FunctionType
-					| T.TupleType
+					| (
+							| T.HigherRankedTraitBound
+							| T.TypeIdentifier
+							| T.ScopedTypeIdentifier
+							| T.GenericType
+							| T.FunctionType
+							| T.TupleType
+					  )
+					| T.TypeIdentifier.Types
 			): T.DynamicType.Built;
 		};
 	}
@@ -15914,16 +21388,27 @@ export namespace DynamicType {
 	export type LooseConfig = LooseConfigFor<TSKindId.DynamicType>;
 	export type BuildArgs = [
 		value:
-			| T.HigherRankedTraitBound
-			| T.Identifier
-			| T.ScopedTypeIdentifier
-			| T.GenericType
-			| T.FunctionType
-			| T.TupleType
+			| (
+					| T.HigherRankedTraitBound
+					| T.TypeIdentifier
+					| T.ScopedTypeIdentifier
+					| T.GenericType
+					| T.FunctionType
+					| T.TupleType
+			  )
+			| T.TypeIdentifier.Types
 	];
 	export type LooseArgs = [
 		value: LooseValue<
-			T.HigherRankedTraitBound | T.Identifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType,
+			| (
+					| T.HigherRankedTraitBound
+					| T.TypeIdentifier
+					| T.ScopedTypeIdentifier
+					| T.GenericType
+					| T.FunctionType
+					| T.TupleType
+			  )
+			| T.TypeIdentifier.Types,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -15938,7 +21423,7 @@ export namespace MacroInvocation {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			macro(value: T.ScopedIdentifier | T.Identifier): T.MacroInvocation.Built;
+			macro(value: NonNullable<T.MacroInvocation.Config>['macro']): T.MacroInvocation.Built;
 			arguments(value: T.DelimTokenTree): T.MacroInvocation.Built;
 		};
 	}
@@ -15979,7 +21464,7 @@ export namespace ScopedTypeIdentifierInExpressionPosition {
 			path(
 				value?: NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config>['path']
 			): T.ScopedTypeIdentifierInExpressionPosition.Built;
-			name(value: T.Identifier): T.ScopedTypeIdentifierInExpressionPosition.Built;
+			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.ScopedTypeIdentifierInExpressionPosition.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ScopedTypeIdentifierInExpressionPosition>;
@@ -16000,7 +21485,7 @@ export namespace ScopedTypeIdentifier {
 		readonly $named: true;
 		readonly $with: {
 			path(value?: NonNullable<T.ScopedTypeIdentifier.Config>['path']): T.ScopedTypeIdentifier.Built;
-			name(value: T.Identifier): T.ScopedTypeIdentifier.Built;
+			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.ScopedTypeIdentifier.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ScopedTypeIdentifier>;
@@ -16271,7 +21756,11 @@ export namespace StructExpression {
 		readonly $named: true;
 		readonly $with: {
 			name(
-				value: T.Identifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish
+				value:
+					| T.TypeIdentifier
+					| T.ScopedTypeIdentifierInExpressionPosition
+					| T.GenericTypeWithTurbofish
+					| T.TypeIdentifier.Types
 			): T.StructExpression.Built;
 			body(value: T.FieldInitializerList): T.StructExpression.Built;
 		};
@@ -16331,7 +21820,7 @@ export namespace FieldInitializer {
 		readonly $named: true;
 		readonly $with: {
 			attributeItems(...values: T.AttributeItem[]): T.FieldInitializer.Built;
-			field(value: T.Identifier | T.IntegerLiteral): T.FieldInitializer.Built;
+			field(value: T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types): T.FieldInitializer.Built;
 			value(value: NonNullable<T.FieldInitializer.Config>['value']): T.FieldInitializer.Built;
 		};
 	}
@@ -16543,9 +22032,9 @@ export namespace LoopExpression {
 	}
 	export type Loose = LooseFor<TSKindId.LoopExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LoopExpression>;
-	export type BuildArgs = [config: ConfigOf<T.LoopExpression>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.LoopExpression>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.LoopExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.LoopExpression
+		config?: LooseConfigOf<T.LoopExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.LoopExpression
 	];
 	export type Tree = TreeFor<TSKindId.LoopExpression>;
 	export type Kind = 'loop_expression';
@@ -16698,7 +22187,7 @@ export namespace FieldExpression {
 		readonly $named: true;
 		readonly $with: {
 			value(value: NonNullable<T.FieldExpression.Config>['value']): T.FieldExpression.Built;
-			field(value: T.Identifier | T.IntegerLiteral): T.FieldExpression.Built;
+			field(value: T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types): T.FieldExpression.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.FieldExpression>;
@@ -16738,9 +22227,9 @@ export namespace AsyncBlock {
 	}
 	export type Loose = LooseFor<TSKindId.AsyncBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AsyncBlock>;
-	export type BuildArgs = [config: ConfigOf<T.AsyncBlock>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.AsyncBlock>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.AsyncBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.AsyncBlock
+		config?: LooseConfigOf<T.AsyncBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.AsyncBlock
 	];
 	export type Tree = TreeFor<TSKindId.AsyncBlock>;
 	export type Kind = 'async_block';
@@ -16757,9 +22246,9 @@ export namespace GenBlock {
 	}
 	export type Loose = LooseFor<TSKindId.GenBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GenBlock>;
-	export type BuildArgs = [config: ConfigOf<T.GenBlock>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.GenBlock>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.GenBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.GenBlock
+		config?: LooseConfigOf<T.GenBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.GenBlock
 	];
 	export type Tree = TreeFor<TSKindId.GenBlock>;
 	export type Kind = 'gen_block';
@@ -16880,7 +22369,7 @@ export namespace StructPattern {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			type(value: T.Identifier | T.ScopedTypeIdentifier): T.StructPattern.Built;
+			type(value: T.TypeIdentifier | T.ScopedTypeIdentifier | T.TypeIdentifier.Types): T.StructPattern.Built;
 			fields(value?: T.StructPatternElements): T.StructPattern.Built;
 		};
 	}
@@ -16987,7 +22476,7 @@ export namespace StringLiteral {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			stringOpen(value: T.StringLiteralOpen): T.StringLiteral.Built;
+			stringOpen(value: T.StringLiteralOpen | string): T.StringLiteral.Built;
 			elements(...values: (T.EscapeSequence | T.StringContent)[]): T.StringLiteral.Built;
 		};
 	}
@@ -17006,9 +22495,9 @@ export namespace RawStringLiteral {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			rawStringLiteralStart(value: T.RawStringLiteralStart): T.RawStringLiteral.Built;
+			rawStringLiteralStart(value: T.RawStringLiteralStart | string): T.RawStringLiteral.Built;
 			stringContent(value: T.RawStringLiteralContent): T.RawStringLiteral.Built;
-			rawStringLiteralEnd(value: T.RawStringLiteralEnd): T.RawStringLiteral.Built;
+			rawStringLiteralEnd(value: T.RawStringLiteralEnd | string): T.RawStringLiteral.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.RawStringLiteral>;
@@ -17053,15 +22542,17 @@ export namespace BlockComment {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent): T.BlockComment.Built;
+			content(
+				value?: (T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) | string
+			): T.BlockComment.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.BlockComment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BlockComment>;
-	export type BuildArgs = [value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent];
+	export type BuildArgs = [value?: (T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) | string];
 	export type LooseArgs = [
 		value?: LooseValue<
-			T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent,
+			(T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) | string,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -17069,6 +22560,38 @@ export namespace BlockComment {
 	];
 	export type Tree = TreeFor<TSKindId.BlockComment>;
 	export type Kind = 'block_comment';
+}
+export namespace Shebang {
+	export type Config = ConfigFor<TSKindId.Shebang>;
+	export interface Built extends T.Shebang, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.Shebang.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.Shebang>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Shebang>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.Shebang>;
+	export type Kind = 'shebang';
+}
+export namespace Metavariable {
+	export type Config = ConfigFor<TSKindId.Metavariable>;
+	export interface Built extends T.Metavariable, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			name(value: string): T.Metavariable.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.Metavariable>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Metavariable>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.Metavariable>;
+	export type Kind = 'metavariable';
 }
 export namespace MacroRules {
 	export type Config = ConfigFor<TSKindId.MacroRules>;
@@ -17158,19 +22681,31 @@ export namespace OrderedFieldDeclarationListElements {
 		readonly $named: true;
 		readonly _delimiter: Delimiter;
 		readonly $with: {
-			elements(...vs: NonEmptyArray<T.AttributedOrderedField | T.Type>): T.OrderedFieldDeclarationListElements.Built;
+			elements(
+				...vs: NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>
+			): T.OrderedFieldDeclarationListElements.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.OrderedFieldDeclarationListElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.OrderedFieldDeclarationListElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OrderedFieldDeclarationListElements>;
 	export type BuildArgs = [
-		element: T.AttributedOrderedField | T.Type,
-		...elements: (T.AttributedOrderedField | T.Type)[]
+		element: T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
+		...elements: (T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types)[]
 	];
 	export type LooseArgs = [
-		element: LooseValue<T.AttributedOrderedField | T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.AttributedOrderedField | T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		element: LooseValue<
+			T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>,
+		...elements: LooseValue<
+			T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.OrderedFieldDeclarationListElements>;
 	export type Kind = 'ordered_field_declaration_list_elements';
@@ -17250,11 +22785,31 @@ export namespace UseClauses {
 			useClauses(
 				...vs: NonEmptyArray<
 					| TSKindId.Self
-					| T.Identifier
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 					| T.Metavariable
 					| TSKindId.Super
 					| TSKindId.Crate
+					| T.Identifier
 					| T.ScopedIdentifier
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
 					| T.UseAsClause
 					| T.UseList
 					| T.ScopedUseList
@@ -17269,22 +22824,62 @@ export namespace UseClauses {
 	export type BuildArgs = [
 		element:
 			| TSKindId.Self
-			| T.Identifier
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
+			| T.Identifier
 			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
 			| T.UseWildcard,
 		...elements: (
 			| TSKindId.Self
-			| T.Identifier
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
+			| T.Identifier
 			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
@@ -17294,11 +22889,31 @@ export namespace UseClauses {
 	export type LooseArgs = [
 		element: LooseValue<
 			| TSKindId.Self
-			| T.Identifier
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
+			| T.Identifier
 			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
@@ -17309,11 +22924,31 @@ export namespace UseClauses {
 		>,
 		...elements: LooseValue<
 			| TSKindId.Self
-			| T.Identifier
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
+			| T.Identifier
 			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
@@ -17335,7 +22970,13 @@ export namespace ParametersElements {
 		readonly $with: {
 			elements(
 				...vs: NonEmptyArray<
-					T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type
+					| T.AttributedParameter
+					| T.Parameter
+					| T.SelfParameter
+					| T.VariadicParameter
+					| TSKindId.Underscore
+					| T.Type
+					| T.TypeIdentifier.Types
 				>
 			): T.ParametersElements.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ParametersElements.Built;
@@ -17344,7 +22985,14 @@ export namespace ParametersElements {
 	export type Loose = LooseFor<TSKindId.ParametersElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParametersElements>;
 	export type BuildArgs = [
-		element: T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type,
+		element:
+			| T.AttributedParameter
+			| T.Parameter
+			| T.SelfParameter
+			| T.VariadicParameter
+			| TSKindId.Underscore
+			| T.Type
+			| T.TypeIdentifier.Types,
 		...elements: (
 			| T.AttributedParameter
 			| T.Parameter
@@ -17352,17 +23000,30 @@ export namespace ParametersElements {
 			| T.VariadicParameter
 			| TSKindId.Underscore
 			| T.Type
+			| T.TypeIdentifier.Types
 		)[]
 	];
 	export type LooseArgs = [
 		element: LooseValue<
-			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type,
+			| T.AttributedParameter
+			| T.Parameter
+			| T.SelfParameter
+			| T.VariadicParameter
+			| TSKindId.Underscore
+			| T.Type
+			| T.TypeIdentifier.Types,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
 		>,
 		...elements: LooseValue<
-			T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type,
+			| T.AttributedParameter
+			| T.Parameter
+			| T.SelfParameter
+			| T.VariadicParameter
+			| TSKindId.Underscore
+			| T.Type
+			| T.TypeIdentifier.Types,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -17399,16 +23060,29 @@ export namespace UseBoundsElements {
 		readonly $named: true;
 		readonly _delimiter: Delimiter;
 		readonly $with: {
-			elements(...vs: NonEmptyArray<T.Lifetime | T.Identifier>): T.UseBoundsElements.Built;
+			elements(...vs: NonEmptyArray<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>): T.UseBoundsElements.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.UseBoundsElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.UseBoundsElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UseBoundsElements>;
-	export type BuildArgs = [element: T.Lifetime | T.Identifier, ...elements: (T.Lifetime | T.Identifier)[]];
+	export type BuildArgs = [
+		element: T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
+		...elements: (T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types)[]
+	];
 	export type LooseArgs = [
-		element: LooseValue<T.Lifetime | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.Lifetime | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		element: LooseValue<
+			T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>,
+		...elements: LooseValue<
+			T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.UseBoundsElements>;
 	export type Kind = 'use_bounds_elements';
@@ -17421,7 +23095,9 @@ export namespace TypeArgumentsElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			elements(
-				...vs: NonEmptyArray<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>
+				...vs: NonEmptyArray<
+					T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
+				>
 			): T.TypeArgumentsElements.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TypeArgumentsElements.Built;
 		};
@@ -17429,18 +23105,18 @@ export namespace TypeArgumentsElements {
 	export type Loose = LooseFor<TSKindId.TypeArgumentsElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeArgumentsElements>;
 	export type BuildArgs = [
-		element: T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block,
-		...elements: (T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block)[]
+		element: T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+		...elements: (T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types)[]
 	];
 	export type LooseArgs = [
 		element: LooseValue<
-			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block,
+			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
 		>,
 		...elements: LooseValue<
-			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block,
+			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -17593,7 +23269,32 @@ export namespace UseWildcardGroup {
 		readonly $with: {
 			path(
 				value?: NonNullable<
-					TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| T.Metavariable
+					| TSKindId.Super
+					| TSKindId.Crate
+					| T.Identifier
+					| T.ScopedIdentifier
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
 				>
 			): T.UseWildcardGroup.Built;
 		};
@@ -17601,11 +23302,62 @@ export namespace UseWildcardGroup {
 	export type Loose = LooseFor<TSKindId.UseWildcardGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UseWildcardGroup>;
 	export type BuildArgs = [
-		value?: TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+		value?:
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
 	];
 	export type LooseArgs = [
 		value?: LooseValue<
-			TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier,
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -17646,16 +23398,16 @@ export namespace TupleTypeElements {
 		readonly $named: true;
 		readonly _delimiter: Delimiter;
 		readonly $with: {
-			types(...vs: NonEmptyArray<T.Type>): T.TupleTypeElements.Built;
+			types(...vs: NonEmptyArray<T.Type | T.TypeIdentifier.Types>): T.TupleTypeElements.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TupleTypeElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TupleTypeElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleTypeElements>;
-	export type BuildArgs = [element: T.Type, ...elements: T.Type[]];
+	export type BuildArgs = [element: T.Type | T.TypeIdentifier.Types, ...elements: (T.Type | T.TypeIdentifier.Types)[]];
 	export type LooseArgs = [
-		element: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		element: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.TupleTypeElements>;
 	export type Kind = '_tuple_type_elements';
@@ -17680,6 +23432,282 @@ export namespace TupleExpressionElements {
 	];
 	export type Tree = TreeFor<TSKindId.TupleExpressionElements>;
 	export type Kind = '_tuple_expression_elements';
+}
+export namespace IntegerLiteralDecimal {
+	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralDecimal>, 'content'>;
+	export interface Built extends T.IntegerLiteralDecimal, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string | number): T.IntegerLiteralDecimal.Built;
+			suffix(
+				value?:
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+			): T.IntegerLiteralDecimal.Built;
+		};
+	}
+	export type Loose =
+		| LooseFor<TSKindId.IntegerLiteralDecimal>
+		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralDecimal>, 'content'>
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralDecimal>, 'content'>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralDecimal>, 'content'>];
+	export type LooseArgs = [
+		config:
+			| WidenNumeric<
+					LooseConfigOf<T.IntegerLiteralDecimal, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'content'
+			  >
+			| T.IntegerLiteralDecimal
+	];
+	export type Tree = TreeFor<TSKindId.IntegerLiteralDecimal>;
+	export type Kind = 'integer_literal_decimal';
+}
+export namespace IntegerLiteralHex {
+	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralHex>, 'content'>;
+	export interface Built extends T.IntegerLiteralHex, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string | number): T.IntegerLiteralHex.Built;
+			suffix(
+				value?:
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+			): T.IntegerLiteralHex.Built;
+		};
+	}
+	export type Loose =
+		| LooseFor<TSKindId.IntegerLiteralHex>
+		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralHex>, 'content'>
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralHex>, 'content'>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralHex>, 'content'>];
+	export type LooseArgs = [
+		config:
+			| WidenNumeric<
+					LooseConfigOf<T.IntegerLiteralHex, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'content'
+			  >
+			| T.IntegerLiteralHex
+	];
+	export type Tree = TreeFor<TSKindId.IntegerLiteralHex>;
+	export type Kind = 'integer_literal_hex';
+}
+export namespace IntegerLiteralBinary {
+	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralBinary>, 'content'>;
+	export interface Built extends T.IntegerLiteralBinary, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string | number): T.IntegerLiteralBinary.Built;
+			suffix(
+				value?:
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+			): T.IntegerLiteralBinary.Built;
+		};
+	}
+	export type Loose =
+		| LooseFor<TSKindId.IntegerLiteralBinary>
+		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralBinary>, 'content'>
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralBinary>, 'content'>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralBinary>, 'content'>];
+	export type LooseArgs = [
+		config:
+			| WidenNumeric<
+					LooseConfigOf<T.IntegerLiteralBinary, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'content'
+			  >
+			| T.IntegerLiteralBinary
+	];
+	export type Tree = TreeFor<TSKindId.IntegerLiteralBinary>;
+	export type Kind = 'integer_literal_binary';
+}
+export namespace IntegerLiteralOctal {
+	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralOctal>, 'content'>;
+	export interface Built extends T.IntegerLiteralOctal, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string | number): T.IntegerLiteralOctal.Built;
+			suffix(
+				value?:
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+			): T.IntegerLiteralOctal.Built;
+		};
+	}
+	export type Loose =
+		| LooseFor<TSKindId.IntegerLiteralOctal>
+		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralOctal>, 'content'>
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralOctal>, 'content'>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralOctal>, 'content'>];
+	export type LooseArgs = [
+		config:
+			| WidenNumeric<
+					LooseConfigOf<T.IntegerLiteralOctal, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'content'
+			  >
+			| T.IntegerLiteralOctal
+	];
+	export type Tree = TreeFor<TSKindId.IntegerLiteralOctal>;
+	export type Kind = 'integer_literal_octal';
+}
+export namespace CharLiteralEscaped {
+	export type Config = ConfigFor<TSKindId.CharLiteralEscaped>;
+	export interface Built extends T.CharLiteralEscaped, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			b(value?: NonNullable<T.CharLiteralEscaped.Config>['b']): T.CharLiteralEscaped.Built;
+			content(value: string): T.CharLiteralEscaped.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.CharLiteralEscaped>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CharLiteralEscaped>;
+	export type BuildArgs = [config: ConfigOf<T.CharLiteralEscaped>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.CharLiteralEscaped, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.CharLiteralEscaped
+	];
+	export type Tree = TreeFor<TSKindId.CharLiteralEscaped>;
+	export type Kind = 'char_literal_escaped';
+}
+export namespace CharLiteralPlain {
+	export type Config = ConfigFor<TSKindId.CharLiteralPlain>;
+	export interface Built extends T.CharLiteralPlain, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			b(value?: NonNullable<T.CharLiteralPlain.Config>['b']): T.CharLiteralPlain.Built;
+			content(value: string): T.CharLiteralPlain.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.CharLiteralPlain>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CharLiteralPlain>;
+	export type BuildArgs = [config: ConfigOf<T.CharLiteralPlain>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.CharLiteralPlain, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CharLiteralPlain
+	];
+	export type Tree = TreeFor<TSKindId.CharLiteralPlain>;
+	export type Kind = 'char_literal_plain';
+}
+export namespace EscapeSequenceSimple {
+	export type Config = ConfigFor<TSKindId.EscapeSequenceSimple>;
+	export interface Built extends T.EscapeSequenceSimple, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.EscapeSequenceSimple.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.EscapeSequenceSimple>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceSimple>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.EscapeSequenceSimple>;
+	export type Kind = 'escape_sequence_simple';
+}
+export namespace EscapeSequenceUnicodeFixed {
+	export type Config = ConfigFor<TSKindId.EscapeSequenceUnicodeFixed>;
+	export interface Built extends T.EscapeSequenceUnicodeFixed, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.EscapeSequenceUnicodeFixed.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.EscapeSequenceUnicodeFixed>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceUnicodeFixed>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.EscapeSequenceUnicodeFixed>;
+	export type Kind = 'escape_sequence_unicode_fixed';
+}
+export namespace EscapeSequenceUnicodeBraced {
+	export type Config = ConfigFor<TSKindId.EscapeSequenceUnicodeBraced>;
+	export interface Built extends T.EscapeSequenceUnicodeBraced, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.EscapeSequenceUnicodeBraced.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.EscapeSequenceUnicodeBraced>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceUnicodeBraced>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.EscapeSequenceUnicodeBraced>;
+	export type Kind = 'escape_sequence_unicode_braced';
+}
+export namespace EscapeSequenceHex {
+	export type Config = ConfigFor<TSKindId.EscapeSequenceHex>;
+	export interface Built extends T.EscapeSequenceHex, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.EscapeSequenceHex.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.EscapeSequenceHex>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceHex>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.EscapeSequenceHex>;
+	export type Kind = 'escape_sequence_hex';
 }
 export namespace ArrayExpressionSemi {
 	export type Config = ConfigFor<TSKindId.ArrayExpressionSemi>;
@@ -17864,15 +23892,17 @@ export namespace ImplItemPositiveClause {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			trait(value: T.Identifier | T.ScopedTypeIdentifier | T.GenericType): T.ImplItemPositiveClause.Built;
+			trait(
+				value: (T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types
+			): T.ImplItemPositiveClause.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ImplItemPositiveClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImplItemPositiveClause>;
-	export type BuildArgs = [value: T.Identifier | T.ScopedTypeIdentifier | T.GenericType];
+	export type BuildArgs = [value: (T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types];
 	export type LooseArgs = [
 		value: LooseValue<
-			T.Identifier | T.ScopedTypeIdentifier | T.GenericType,
+			(T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -17887,15 +23917,17 @@ export namespace ImplItemNegativeClause {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			trait(value: T.Identifier | T.ScopedTypeIdentifier | T.GenericType): T.ImplItemNegativeClause.Built;
+			trait(
+				value: (T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types
+			): T.ImplItemNegativeClause.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ImplItemNegativeClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImplItemNegativeClause>;
-	export type BuildArgs = [value: T.Identifier | T.ScopedTypeIdentifier | T.GenericType];
+	export type BuildArgs = [value: (T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types];
 	export type LooseArgs = [
 		value: LooseValue<
-			T.Identifier | T.ScopedTypeIdentifier | T.GenericType,
+			(T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -17975,7 +24007,32 @@ export namespace VisibilityModifierPubInPath {
 		readonly $with: {
 			path(
 				value: NonNullable<
-					TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| T.Metavariable
+					| TSKindId.Super
+					| TSKindId.Crate
+					| T.Identifier
+					| T.ScopedIdentifier
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
 				>
 			): T.VisibilityModifierPubInPath.Built;
 		};
@@ -17983,11 +24040,62 @@ export namespace VisibilityModifierPubInPath {
 	export type Loose = LooseFor<TSKindId.VisibilityModifierPubInPath>;
 	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPubInPath>;
 	export type BuildArgs = [
-		value: TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+		value:
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
 	];
 	export type LooseArgs = [
 		value: LooseValue<
-			TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier,
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -18002,14 +24110,19 @@ export namespace FunctionTypeTraitForm {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			trait(value: T.Identifier | T.ScopedTypeIdentifier): T.FunctionTypeTraitForm.Built;
+			trait(value: (T.TypeIdentifier | T.ScopedTypeIdentifier) | T.TypeIdentifier.Types): T.FunctionTypeTraitForm.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.FunctionTypeTraitForm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionTypeTraitForm>;
-	export type BuildArgs = [value: T.Identifier | T.ScopedTypeIdentifier];
+	export type BuildArgs = [value: (T.TypeIdentifier | T.ScopedTypeIdentifier) | T.TypeIdentifier.Types];
 	export type LooseArgs = [
-		value: LooseValue<T.Identifier | T.ScopedTypeIdentifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		value: LooseValue<
+			(T.TypeIdentifier | T.ScopedTypeIdentifier) | T.TypeIdentifier.Types,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
 	];
 	export type Tree = TreeFor<TSKindId.FunctionTypeTraitForm>;
 	export type Kind = 'function_type_trait_form';
@@ -18110,13 +24223,15 @@ export namespace PointerTypeConst {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			type(value: NonNullable<T.Type>): T.PointerTypeConst.Built;
+			type(value: NonNullable<T.Type | T.TypeIdentifier.Types>): T.PointerTypeConst.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.PointerTypeConst>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PointerTypeConst>;
-	export type BuildArgs = [value: T.Type];
-	export type LooseArgs = [value: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value: T.Type | T.TypeIdentifier.Types];
+	export type LooseArgs = [
+		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.PointerTypeConst>;
 	export type Kind = 'pointer_type_const';
 }
@@ -18126,13 +24241,15 @@ export namespace PointerTypeMut {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			type(value: NonNullable<T.Type>): T.PointerTypeMut.Built;
+			type(value: NonNullable<T.Type | T.TypeIdentifier.Types>): T.PointerTypeMut.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.PointerTypeMut>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PointerTypeMut>;
-	export type BuildArgs = [value: T.Type];
-	export type LooseArgs = [value: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value: T.Type | T.TypeIdentifier.Types];
+	export type LooseArgs = [
+		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.PointerTypeMut>;
 	export type Kind = 'pointer_type_mut';
 }
@@ -18218,9 +24335,9 @@ export namespace ForeignModItemSemi {
 	}
 	export type Loose = LooseFor<TSKindId.ForeignModItemSemi>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForeignModItemSemi>;
-	export type BuildArgs = [config: ConfigOf<T.ForeignModItemSemi>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.ForeignModItemSemi>>];
 	export type LooseArgs = [
-		config:
+		config?:
 			| LooseConfigOf<T.ForeignModItemSemi, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ForeignModItemSemi
 	];
@@ -18312,13 +24429,15 @@ export namespace LineCommentDocOuter {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			doc(value: T.LineDocContent): T.LineCommentDocOuter.Built;
+			doc(value: T.LineDocContent | string): T.LineCommentDocOuter.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.LineCommentDocOuter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LineCommentDocOuter>;
-	export type BuildArgs = [value: T.LineDocContent];
-	export type LooseArgs = [value: LooseValue<T.LineDocContent, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value: T.LineDocContent | string];
+	export type LooseArgs = [
+		value: LooseValue<T.LineDocContent | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.LineCommentDocOuter>;
 	export type Kind = 'line_comment_doc_outer';
 }
@@ -18328,13 +24447,15 @@ export namespace LineCommentDocInner {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			doc(value: T.LineDocContent): T.LineCommentDocInner.Built;
+			doc(value: T.LineDocContent | string): T.LineCommentDocInner.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.LineCommentDocInner>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LineCommentDocInner>;
-	export type BuildArgs = [value: T.LineDocContent];
-	export type LooseArgs = [value: LooseValue<T.LineDocContent, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value: T.LineDocContent | string];
+	export type LooseArgs = [
+		value: LooseValue<T.LineDocContent | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.LineCommentDocInner>;
 	export type Kind = 'line_comment_doc_inner';
 }
@@ -18344,13 +24465,15 @@ export namespace BlockCommentDocOuter {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			doc(value?: T.BlockCommentContent): T.BlockCommentDocOuter.Built;
+			doc(value?: T.BlockCommentContent | string): T.BlockCommentDocOuter.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.BlockCommentDocOuter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BlockCommentDocOuter>;
-	export type BuildArgs = [value?: T.BlockCommentContent];
-	export type LooseArgs = [value?: LooseValue<T.BlockCommentContent, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value?: T.BlockCommentContent | string];
+	export type LooseArgs = [
+		value?: LooseValue<T.BlockCommentContent | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.BlockCommentDocOuter>;
 	export type Kind = 'block_comment_doc_outer';
 }
@@ -18360,13 +24483,15 @@ export namespace BlockCommentDocInner {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			doc(value?: T.BlockCommentContent): T.BlockCommentDocInner.Built;
+			doc(value?: T.BlockCommentContent | string): T.BlockCommentDocInner.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.BlockCommentDocInner>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BlockCommentDocInner>;
-	export type BuildArgs = [value?: T.BlockCommentContent];
-	export type LooseArgs = [value?: LooseValue<T.BlockCommentContent, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value?: T.BlockCommentContent | string];
+	export type LooseArgs = [
+		value?: LooseValue<T.BlockCommentContent | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Tree = TreeFor<TSKindId.BlockCommentDocInner>;
 	export type Kind = 'block_comment_doc_inner';
 }
@@ -18637,7 +24762,7 @@ export namespace FieldPatternShorthand {
 			mutableSpecifier(
 				value?: NonNullable<T.FieldPatternShorthand.Config>['mutableSpecifier']
 			): T.FieldPatternShorthand.Built;
-			name(value: T.Identifier): T.FieldPatternShorthand.Built;
+			name(value: T.ShorthandFieldIdentifier | T.ShorthandFieldIdentifier.Types): T.FieldPatternShorthand.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.FieldPatternShorthand>;
@@ -18659,7 +24784,7 @@ export namespace FieldPatternNamed {
 		readonly $with: {
 			refMarker(value?: NonNullable<T.FieldPatternNamed.Config>['refMarker']): T.FieldPatternNamed.Built;
 			mutableSpecifier(value?: NonNullable<T.FieldPatternNamed.Config>['mutableSpecifier']): T.FieldPatternNamed.Built;
-			name(value: T.Identifier): T.FieldPatternNamed.Built;
+			name(value: T.FieldIdentifier | T.FieldIdentifier.Types): T.FieldPatternNamed.Built;
 			pattern(value: NonNullable<T.FieldPatternNamed.Config>['pattern']): T.FieldPatternNamed.Built;
 		};
 	}
@@ -18680,7 +24805,7 @@ export namespace MacroDefinitionParen {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			name(value: T.Identifier): T.MacroDefinitionParen.Built;
+			name(value: NonNullable<T.MacroDefinitionParen.Config>['name']): T.MacroDefinitionParen.Built;
 			macroRules(value?: T.MacroRules): T.MacroDefinitionParen.Built;
 		};
 	}
@@ -18701,7 +24826,7 @@ export namespace MacroDefinitionBracket {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			name(value: T.Identifier): T.MacroDefinitionBracket.Built;
+			name(value: NonNullable<T.MacroDefinitionBracket.Config>['name']): T.MacroDefinitionBracket.Built;
 			macroRules(value?: T.MacroRules): T.MacroDefinitionBracket.Built;
 		};
 	}
@@ -18722,7 +24847,7 @@ export namespace MacroDefinitionBrace {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			name(value: T.Identifier): T.MacroDefinitionBrace.Built;
+			name(value: NonNullable<T.MacroDefinitionBrace.Config>['name']): T.MacroDefinitionBrace.Built;
 			macroRules(value?: T.MacroRules): T.MacroDefinitionBrace.Built;
 		};
 	}
@@ -18809,7 +24934,7 @@ export namespace StructItemBrace {
 		readonly $named: true;
 		readonly $with: {
 			visibilityModifier(value?: T.VisibilityModifier): T.StructItemBrace.Built;
-			name(value: T.Identifier): T.StructItemBrace.Built;
+			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.StructItemBrace.Built;
 			typeParameters(value?: T.TypeParameters): T.StructItemBrace.Built;
 			whereClause(value?: T.WhereClause): T.StructItemBrace.Built;
 			body(value: T.FieldDeclarationList): T.StructItemBrace.Built;
@@ -18831,7 +24956,7 @@ export namespace StructItemTuple {
 		readonly $named: true;
 		readonly $with: {
 			visibilityModifier(value?: T.VisibilityModifier): T.StructItemTuple.Built;
-			name(value: T.Identifier): T.StructItemTuple.Built;
+			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.StructItemTuple.Built;
 			typeParameters(value?: T.TypeParameters): T.StructItemTuple.Built;
 			body(value: T.OrderedFieldDeclarationList): T.StructItemTuple.Built;
 			whereClause(value?: T.WhereClause): T.StructItemTuple.Built;
@@ -18853,7 +24978,7 @@ export namespace StructItemUnit {
 		readonly $named: true;
 		readonly $with: {
 			visibilityModifier(value?: T.VisibilityModifier): T.StructItemUnit.Built;
-			name(value: T.Identifier): T.StructItemUnit.Built;
+			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.StructItemUnit.Built;
 			typeParameters(value?: T.TypeParameters): T.StructItemUnit.Built;
 		};
 	}
@@ -19032,6 +25157,57 @@ export namespace MatchBlockArms {
 	];
 	export type Tree = TreeFor<TSKindId.MatchBlockArms>;
 	export type Kind = '_match_block_arms';
+}
+export namespace TypeIdentifier {
+	export type Config = ConfigFor<TSKindId._TypeIdentifier>;
+	export type Types = Identifier;
+	export interface Built extends T.TypeIdentifier, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: T.Identifier): T.TypeIdentifier.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId._TypeIdentifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId._TypeIdentifier>;
+	export type BuildArgs = [value: T.Identifier];
+	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId._TypeIdentifier>;
+	export type Kind = 'type_identifier';
+}
+export namespace FieldIdentifier {
+	export type Config = ConfigFor<TSKindId._FieldIdentifier>;
+	export type Types = Identifier;
+	export interface Built extends T.FieldIdentifier, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: T.Identifier): T.FieldIdentifier.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId._FieldIdentifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId._FieldIdentifier>;
+	export type BuildArgs = [value: T.Identifier];
+	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId._FieldIdentifier>;
+	export type Kind = 'field_identifier';
+}
+export namespace ShorthandFieldIdentifier {
+	export type Config = ConfigFor<TSKindId._ShorthandFieldIdentifier>;
+	export type Types = Identifier;
+	export interface Built extends T.ShorthandFieldIdentifier, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: T.Identifier): T.ShorthandFieldIdentifier.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId._ShorthandFieldIdentifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId._ShorthandFieldIdentifier>;
+	export type BuildArgs = [value: T.Identifier];
+	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId._ShorthandFieldIdentifier>;
+	export type Kind = 'shorthand_field_identifier';
 }
 export namespace EmptyStatement {
 	export type Config = EmptyStatementNs['Config'];
@@ -19243,50 +25419,205 @@ export namespace RangePatternWithLeftBare {
 	export type Tree = RangePatternWithLeftBareNs['Tree'];
 	export type Kind = 'range_pattern_with_left_bare';
 }
-export namespace IntegerLiteral {
-	export type Config = IntegerLiteralNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.IntegerLiteral;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = IntegerLiteralNs['Loose'];
-	export type LooseConfig = IntegerLiteralNs['LooseConfig'];
-	export type BuildArgs = IntegerLiteralNs['BuildArgs'];
-	export type LooseArgs = IntegerLiteralNs['LooseArgs'];
-	export type Tree = IntegerLiteralNs['Tree'];
-	export type Kind = 'integer_literal';
+export namespace U8Keyword {
+	export type Config = U8KeywordNs['Config'];
+	export type Built = U8KeywordNs['Built'];
+	export type Loose = U8KeywordNs['Loose'];
+	export type LooseConfig = U8KeywordNs['LooseConfig'];
+	export type BuildArgs = U8KeywordNs['BuildArgs'];
+	export type LooseArgs = U8KeywordNs['LooseArgs'];
+	export type Tree = U8KeywordNs['Tree'];
+	export type Kind = 'u8_keyword';
 }
-export namespace CharLiteral {
-	export type Config = CharLiteralNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.CharLiteral;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = CharLiteralNs['Loose'];
-	export type LooseConfig = CharLiteralNs['LooseConfig'];
-	export type BuildArgs = CharLiteralNs['BuildArgs'];
-	export type LooseArgs = CharLiteralNs['LooseArgs'];
-	export type Tree = CharLiteralNs['Tree'];
-	export type Kind = 'char_literal';
+export namespace I8Keyword {
+	export type Config = I8KeywordNs['Config'];
+	export type Built = I8KeywordNs['Built'];
+	export type Loose = I8KeywordNs['Loose'];
+	export type LooseConfig = I8KeywordNs['LooseConfig'];
+	export type BuildArgs = I8KeywordNs['BuildArgs'];
+	export type LooseArgs = I8KeywordNs['LooseArgs'];
+	export type Tree = I8KeywordNs['Tree'];
+	export type Kind = 'i8_keyword';
 }
-export namespace EscapeSequence {
-	export type Config = EscapeSequenceNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.EscapeSequence;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = EscapeSequenceNs['Loose'];
-	export type LooseConfig = EscapeSequenceNs['LooseConfig'];
-	export type BuildArgs = EscapeSequenceNs['BuildArgs'];
-	export type LooseArgs = EscapeSequenceNs['LooseArgs'];
-	export type Tree = EscapeSequenceNs['Tree'];
-	export type Kind = 'escape_sequence';
+export namespace U16Keyword {
+	export type Config = U16KeywordNs['Config'];
+	export type Built = U16KeywordNs['Built'];
+	export type Loose = U16KeywordNs['Loose'];
+	export type LooseConfig = U16KeywordNs['LooseConfig'];
+	export type BuildArgs = U16KeywordNs['BuildArgs'];
+	export type LooseArgs = U16KeywordNs['LooseArgs'];
+	export type Tree = U16KeywordNs['Tree'];
+	export type Kind = 'u16_keyword';
+}
+export namespace I16Keyword {
+	export type Config = I16KeywordNs['Config'];
+	export type Built = I16KeywordNs['Built'];
+	export type Loose = I16KeywordNs['Loose'];
+	export type LooseConfig = I16KeywordNs['LooseConfig'];
+	export type BuildArgs = I16KeywordNs['BuildArgs'];
+	export type LooseArgs = I16KeywordNs['LooseArgs'];
+	export type Tree = I16KeywordNs['Tree'];
+	export type Kind = 'i16_keyword';
+}
+export namespace U32Keyword {
+	export type Config = U32KeywordNs['Config'];
+	export type Built = U32KeywordNs['Built'];
+	export type Loose = U32KeywordNs['Loose'];
+	export type LooseConfig = U32KeywordNs['LooseConfig'];
+	export type BuildArgs = U32KeywordNs['BuildArgs'];
+	export type LooseArgs = U32KeywordNs['LooseArgs'];
+	export type Tree = U32KeywordNs['Tree'];
+	export type Kind = 'u32_keyword';
+}
+export namespace I32Keyword {
+	export type Config = I32KeywordNs['Config'];
+	export type Built = I32KeywordNs['Built'];
+	export type Loose = I32KeywordNs['Loose'];
+	export type LooseConfig = I32KeywordNs['LooseConfig'];
+	export type BuildArgs = I32KeywordNs['BuildArgs'];
+	export type LooseArgs = I32KeywordNs['LooseArgs'];
+	export type Tree = I32KeywordNs['Tree'];
+	export type Kind = 'i32_keyword';
+}
+export namespace U64Keyword {
+	export type Config = U64KeywordNs['Config'];
+	export type Built = U64KeywordNs['Built'];
+	export type Loose = U64KeywordNs['Loose'];
+	export type LooseConfig = U64KeywordNs['LooseConfig'];
+	export type BuildArgs = U64KeywordNs['BuildArgs'];
+	export type LooseArgs = U64KeywordNs['LooseArgs'];
+	export type Tree = U64KeywordNs['Tree'];
+	export type Kind = 'u64_keyword';
+}
+export namespace I64Keyword {
+	export type Config = I64KeywordNs['Config'];
+	export type Built = I64KeywordNs['Built'];
+	export type Loose = I64KeywordNs['Loose'];
+	export type LooseConfig = I64KeywordNs['LooseConfig'];
+	export type BuildArgs = I64KeywordNs['BuildArgs'];
+	export type LooseArgs = I64KeywordNs['LooseArgs'];
+	export type Tree = I64KeywordNs['Tree'];
+	export type Kind = 'i64_keyword';
+}
+export namespace U128Keyword {
+	export type Config = U128KeywordNs['Config'];
+	export type Built = U128KeywordNs['Built'];
+	export type Loose = U128KeywordNs['Loose'];
+	export type LooseConfig = U128KeywordNs['LooseConfig'];
+	export type BuildArgs = U128KeywordNs['BuildArgs'];
+	export type LooseArgs = U128KeywordNs['LooseArgs'];
+	export type Tree = U128KeywordNs['Tree'];
+	export type Kind = 'u128_keyword';
+}
+export namespace I128Keyword {
+	export type Config = I128KeywordNs['Config'];
+	export type Built = I128KeywordNs['Built'];
+	export type Loose = I128KeywordNs['Loose'];
+	export type LooseConfig = I128KeywordNs['LooseConfig'];
+	export type BuildArgs = I128KeywordNs['BuildArgs'];
+	export type LooseArgs = I128KeywordNs['LooseArgs'];
+	export type Tree = I128KeywordNs['Tree'];
+	export type Kind = 'i128_keyword';
+}
+export namespace IsizeKeyword {
+	export type Config = IsizeKeywordNs['Config'];
+	export type Built = IsizeKeywordNs['Built'];
+	export type Loose = IsizeKeywordNs['Loose'];
+	export type LooseConfig = IsizeKeywordNs['LooseConfig'];
+	export type BuildArgs = IsizeKeywordNs['BuildArgs'];
+	export type LooseArgs = IsizeKeywordNs['LooseArgs'];
+	export type Tree = IsizeKeywordNs['Tree'];
+	export type Kind = 'isize_keyword';
+}
+export namespace UsizeKeyword {
+	export type Config = UsizeKeywordNs['Config'];
+	export type Built = UsizeKeywordNs['Built'];
+	export type Loose = UsizeKeywordNs['Loose'];
+	export type LooseConfig = UsizeKeywordNs['LooseConfig'];
+	export type BuildArgs = UsizeKeywordNs['BuildArgs'];
+	export type LooseArgs = UsizeKeywordNs['LooseArgs'];
+	export type Tree = UsizeKeywordNs['Tree'];
+	export type Kind = 'usize_keyword';
+}
+export namespace F32Keyword {
+	export type Config = F32KeywordNs['Config'];
+	export type Built = F32KeywordNs['Built'];
+	export type Loose = F32KeywordNs['Loose'];
+	export type LooseConfig = F32KeywordNs['LooseConfig'];
+	export type BuildArgs = F32KeywordNs['BuildArgs'];
+	export type LooseArgs = F32KeywordNs['LooseArgs'];
+	export type Tree = F32KeywordNs['Tree'];
+	export type Kind = 'f32_keyword';
+}
+export namespace F64Keyword {
+	export type Config = F64KeywordNs['Config'];
+	export type Built = F64KeywordNs['Built'];
+	export type Loose = F64KeywordNs['Loose'];
+	export type LooseConfig = F64KeywordNs['LooseConfig'];
+	export type BuildArgs = F64KeywordNs['BuildArgs'];
+	export type LooseArgs = F64KeywordNs['LooseArgs'];
+	export type Tree = F64KeywordNs['Tree'];
+	export type Kind = 'f64_keyword';
+}
+export namespace BoolKeyword {
+	export type Config = BoolKeywordNs['Config'];
+	export type Built = BoolKeywordNs['Built'];
+	export type Loose = BoolKeywordNs['Loose'];
+	export type LooseConfig = BoolKeywordNs['LooseConfig'];
+	export type BuildArgs = BoolKeywordNs['BuildArgs'];
+	export type LooseArgs = BoolKeywordNs['LooseArgs'];
+	export type Tree = BoolKeywordNs['Tree'];
+	export type Kind = 'bool_keyword';
+}
+export namespace StrKeyword {
+	export type Config = StrKeywordNs['Config'];
+	export type Built = StrKeywordNs['Built'];
+	export type Loose = StrKeywordNs['Loose'];
+	export type LooseConfig = StrKeywordNs['LooseConfig'];
+	export type BuildArgs = StrKeywordNs['BuildArgs'];
+	export type LooseArgs = StrKeywordNs['LooseArgs'];
+	export type Tree = StrKeywordNs['Tree'];
+	export type Kind = 'str_keyword';
+}
+export namespace CharKeyword {
+	export type Config = CharKeywordNs['Config'];
+	export type Built = CharKeywordNs['Built'];
+	export type Loose = CharKeywordNs['Loose'];
+	export type LooseConfig = CharKeywordNs['LooseConfig'];
+	export type BuildArgs = CharKeywordNs['BuildArgs'];
+	export type LooseArgs = CharKeywordNs['LooseArgs'];
+	export type Tree = CharKeywordNs['Tree'];
+	export type Kind = 'char_keyword';
+}
+export namespace DefaultKeyword {
+	export type Config = DefaultKeywordNs['Config'];
+	export type Built = DefaultKeywordNs['Built'];
+	export type Loose = DefaultKeywordNs['Loose'];
+	export type LooseConfig = DefaultKeywordNs['LooseConfig'];
+	export type BuildArgs = DefaultKeywordNs['BuildArgs'];
+	export type LooseArgs = DefaultKeywordNs['LooseArgs'];
+	export type Tree = DefaultKeywordNs['Tree'];
+	export type Kind = 'default_keyword';
+}
+export namespace UnionKeyword {
+	export type Config = UnionKeywordNs['Config'];
+	export type Built = UnionKeywordNs['Built'];
+	export type Loose = UnionKeywordNs['Loose'];
+	export type LooseConfig = UnionKeywordNs['LooseConfig'];
+	export type BuildArgs = UnionKeywordNs['BuildArgs'];
+	export type LooseArgs = UnionKeywordNs['LooseArgs'];
+	export type Tree = UnionKeywordNs['Tree'];
+	export type Kind = 'union_keyword';
+}
+export namespace GenKeyword {
+	export type Config = GenKeywordNs['Config'];
+	export type Built = GenKeywordNs['Built'];
+	export type Loose = GenKeywordNs['Loose'];
+	export type LooseConfig = GenKeywordNs['LooseConfig'];
+	export type BuildArgs = GenKeywordNs['BuildArgs'];
+	export type LooseArgs = GenKeywordNs['LooseArgs'];
+	export type Tree = GenKeywordNs['Tree'];
+	export type Kind = 'gen_keyword';
 }
 export namespace Identifier {
 	export type Config = IdentifierNs['Config'];
@@ -19303,66 +25634,6 @@ export namespace Identifier {
 	export type Tree = IdentifierNs['Tree'];
 	export type Kind = 'identifier';
 }
-export namespace Shebang {
-	export type Config = ShebangNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Shebang;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = ShebangNs['Loose'];
-	export type LooseConfig = ShebangNs['LooseConfig'];
-	export type BuildArgs = ShebangNs['BuildArgs'];
-	export type LooseArgs = ShebangNs['LooseArgs'];
-	export type Tree = ShebangNs['Tree'];
-	export type Kind = 'shebang';
-}
-export namespace TypeIdentifier {
-	export type Config = TypeIdentifierNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.TypeIdentifier;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = TypeIdentifierNs['Loose'];
-	export type LooseConfig = TypeIdentifierNs['LooseConfig'];
-	export type BuildArgs = TypeIdentifierNs['BuildArgs'];
-	export type LooseArgs = TypeIdentifierNs['LooseArgs'];
-	export type Tree = TypeIdentifierNs['Tree'];
-	export type Kind = '_type_identifier';
-}
-export namespace FieldIdentifier {
-	export type Config = FieldIdentifierNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.FieldIdentifier;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = FieldIdentifierNs['Loose'];
-	export type LooseConfig = FieldIdentifierNs['LooseConfig'];
-	export type BuildArgs = FieldIdentifierNs['BuildArgs'];
-	export type LooseArgs = FieldIdentifierNs['LooseArgs'];
-	export type Tree = FieldIdentifierNs['Tree'];
-	export type Kind = '_field_identifier';
-}
-export namespace Metavariable {
-	export type Config = MetavariableNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Metavariable;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = MetavariableNs['Loose'];
-	export type LooseConfig = MetavariableNs['LooseConfig'];
-	export type BuildArgs = MetavariableNs['BuildArgs'];
-	export type LooseArgs = MetavariableNs['LooseArgs'];
-	export type Tree = MetavariableNs['Tree'];
-	export type Kind = 'metavariable';
-}
 export namespace StringLiteralOpen {
 	export type Config = StringLiteralOpenNs['Config'];
 	export interface Built extends NodeMethodsOf {
@@ -19377,6 +25648,21 @@ export namespace StringLiteralOpen {
 	export type LooseArgs = StringLiteralOpenNs['LooseArgs'];
 	export type Tree = StringLiteralOpenNs['Tree'];
 	export type Kind = '_string_literal_open';
+}
+export namespace CharLiteralEmpty {
+	export type Config = CharLiteralEmptyNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.CharLiteralEmpty;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = CharLiteralEmptyNs['Loose'];
+	export type LooseConfig = CharLiteralEmptyNs['LooseConfig'];
+	export type BuildArgs = CharLiteralEmptyNs['BuildArgs'];
+	export type LooseArgs = CharLiteralEmptyNs['LooseArgs'];
+	export type Tree = CharLiteralEmptyNs['Tree'];
+	export type Kind = 'char_literal_empty';
 }
 export namespace LineCommentRegularDslash {
 	export type Config = LineCommentRegularDslashNs['Config'];
@@ -19408,6 +25694,21 @@ export namespace LineCommentContent {
 	export type Tree = LineCommentContentNs['Tree'];
 	export type Kind = 'line_comment_content';
 }
+export namespace FloatLiteral {
+	export type Config = FloatLiteralNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.FloatLiteral;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = FloatLiteralNs['Loose'];
+	export type LooseConfig = FloatLiteralNs['LooseConfig'];
+	export type BuildArgs = FloatLiteralNs['BuildArgs'];
+	export type LooseArgs = FloatLiteralNs['LooseArgs'];
+	export type Tree = FloatLiteralNs['Tree'];
+	export type Kind = 'float_literal';
+}
 export namespace StringContent {
 	export type Config = StringContentNs['Config'];
 	export interface Built extends NodeMethodsOf {
@@ -19422,21 +25723,6 @@ export namespace StringContent {
 	export type LooseArgs = StringContentNs['LooseArgs'];
 	export type Tree = StringContentNs['Tree'];
 	export type Kind = 'string_content';
-}
-export namespace RawStringLiteralStart {
-	export type Config = RawStringLiteralStartNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.RawStringLiteralStart;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = RawStringLiteralStartNs['Loose'];
-	export type LooseConfig = RawStringLiteralStartNs['LooseConfig'];
-	export type BuildArgs = RawStringLiteralStartNs['BuildArgs'];
-	export type LooseArgs = RawStringLiteralStartNs['LooseArgs'];
-	export type Tree = RawStringLiteralStartNs['Tree'];
-	export type Kind = '_raw_string_literal_start';
 }
 export namespace RawStringLiteralContent {
 	export type Config = RawStringLiteralContentNs['Config'];
@@ -19453,35 +25739,20 @@ export namespace RawStringLiteralContent {
 	export type Tree = RawStringLiteralContentNs['Tree'];
 	export type Kind = 'raw_string_literal_content';
 }
-export namespace RawStringLiteralEnd {
-	export type Config = RawStringLiteralEndNs['Config'];
+export namespace LineDocContent {
+	export type Config = LineDocContentNs['Config'];
 	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.RawStringLiteralEnd;
+		readonly $type: TSKindId.LineDocContent;
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export type Loose = RawStringLiteralEndNs['Loose'];
-	export type LooseConfig = RawStringLiteralEndNs['LooseConfig'];
-	export type BuildArgs = RawStringLiteralEndNs['BuildArgs'];
-	export type LooseArgs = RawStringLiteralEndNs['LooseArgs'];
-	export type Tree = RawStringLiteralEndNs['Tree'];
-	export type Kind = '_raw_string_literal_end';
-}
-export namespace FloatLiteral {
-	export type Config = FloatLiteralNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.FloatLiteral;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = FloatLiteralNs['Loose'];
-	export type LooseConfig = FloatLiteralNs['LooseConfig'];
-	export type BuildArgs = FloatLiteralNs['BuildArgs'];
-	export type LooseArgs = FloatLiteralNs['LooseArgs'];
-	export type Tree = FloatLiteralNs['Tree'];
-	export type Kind = 'float_literal';
+	export type Loose = LineDocContentNs['Loose'];
+	export type LooseConfig = LineDocContentNs['LooseConfig'];
+	export type BuildArgs = LineDocContentNs['BuildArgs'];
+	export type LooseArgs = LineDocContentNs['LooseArgs'];
+	export type Tree = LineDocContentNs['Tree'];
+	export type Kind = '_line_doc_content';
 }
 export namespace BlockCommentContent {
 	export type Config = BlockCommentContentNs['Config'];
@@ -19498,20 +25769,35 @@ export namespace BlockCommentContent {
 	export type Tree = BlockCommentContentNs['Tree'];
 	export type Kind = '_block_comment_content';
 }
-export namespace LineDocContent {
-	export type Config = LineDocContentNs['Config'];
+export namespace RawStringLiteralStart {
+	export type Config = RawStringLiteralStartNs['Config'];
 	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.LineDocContent;
+		readonly $type: TSKindId.RawStringLiteralStart;
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export type Loose = LineDocContentNs['Loose'];
-	export type LooseConfig = LineDocContentNs['LooseConfig'];
-	export type BuildArgs = LineDocContentNs['BuildArgs'];
-	export type LooseArgs = LineDocContentNs['LooseArgs'];
-	export type Tree = LineDocContentNs['Tree'];
-	export type Kind = '_line_doc_content';
+	export type Loose = RawStringLiteralStartNs['Loose'];
+	export type LooseConfig = RawStringLiteralStartNs['LooseConfig'];
+	export type BuildArgs = RawStringLiteralStartNs['BuildArgs'];
+	export type LooseArgs = RawStringLiteralStartNs['LooseArgs'];
+	export type Tree = RawStringLiteralStartNs['Tree'];
+	export type Kind = '_raw_string_literal_start';
+}
+export namespace RawStringLiteralEnd {
+	export type Config = RawStringLiteralEndNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.RawStringLiteralEnd;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = RawStringLiteralEndNs['Loose'];
+	export type LooseConfig = RawStringLiteralEndNs['LooseConfig'];
+	export type BuildArgs = RawStringLiteralEndNs['BuildArgs'];
+	export type LooseArgs = RawStringLiteralEndNs['LooseArgs'];
+	export type Tree = RawStringLiteralEndNs['Tree'];
+	export type Kind = '_raw_string_literal_end';
 }
 export namespace ErrorSentinel {
 	export type Config = ErrorSentinelNs['Config'];

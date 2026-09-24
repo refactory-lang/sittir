@@ -27,9 +27,11 @@ function buildMembersMap(nodeMap: NodeMap, directMembers: (node: unknown) => rea
 		const direct = directMembers(node);
 		if (direct === null) return [kind];
 		const members = new Set<string>();
+		const transitive = node instanceof AssembledSupertype;
 		for (const subtype of direct) {
 			members.add(subtype);
 			if (subtype.startsWith('_')) members.add(subtype.slice(1));
+			if (!transitive) continue;
 			for (const member of expandMembers(subtype, seen)) {
 				members.add(member);
 				if (member.startsWith('_')) members.add(member.slice(1));

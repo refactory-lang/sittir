@@ -4,7 +4,7 @@ import { emitFactorySourceText } from '../../src/emit/factory-source.ts';
 describe('emitFactorySourceText (real rust grammar)', () => {
 	it('prints a strict module for a one-function file', async () => {
 		const source = await emitFactorySourceText('rust', 'fn main() {}\n', 'rebuildMain');
-		expect(source).toContain("import { ir, TSKindId, Delimiter } from '@sittir/rust';");
+		expect(source).toContain("import { ir } from '@sittir/rust';");
 		expect(source).toContain('export function rebuildMain() {');
 		expect(source).toContain('ir.sourceFile.strict(');
 		expect(source).toContain('name: ir.identifier("main")');
@@ -13,9 +13,15 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 	});
 	// A comment rides the FOLLOWING node's trivia; construction carries it onto
 	// the built node, as the `$with` setters do, since trivia is not config.
+	it('imports only the names the module uses', async () => {
+		const source = await emitFactorySourceText('rust', '#[derive(Debug, Clone)]\nstruct S;\n', 'rebuildDerive');
+		expect(source).toContain("import { ir, TSKindId } from '@sittir/rust';");
+		expect(source).not.toContain('Delimiter');
+	});
+
 	it('prints a leading comment as verbatim trivia', async () => {
 		const source = await emitFactorySourceText('rust', '// hello\nfn main() {}\n', 'rebuildMain');
-		expect(source).toContain('$trivia({ leading: ["// hello"] })');
+		expect(source).toContain('$trivia.leading("// hello")');
 	});
 	it('prints a token tree through its form with kind-id punctuation', async () => {
 		const source = await emitFactorySourceText('rust', '#[derive(Debug, Clone)]\nstruct S;\n', 'rebuildDerive');

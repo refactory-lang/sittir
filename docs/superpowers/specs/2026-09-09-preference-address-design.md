@@ -1,6 +1,7 @@
 # Preferences have one address
 
-> **Status:** Design (brainstormed 2026-09-09). Supersedes the six-namespace
+> **Status:** Implemented 2026-09-24 (the amendments included); the render
+> context is the sink, which holds the resolved options. Brainstormed 2026-09-09. Supersedes the six-namespace
 > option surface described across the punctuation seam spacing and choice
 > separator spacing designs — those mechanisms survive; their spellings do
 > not. Builds on the path vocabulary already in
@@ -357,3 +358,137 @@ A `_bindings` value is a label path. Nothing else: an address with a differing
 default declares it under its kind, and an address in no group is only a
 declaration. The union of value shapes an earlier draft carried was the
 membership and the default fighting for one slot.
+
+## Amendments (2026-09-21)
+
+Reviewed against what landed. Both surfaces materialized the site set once
+per site — as generated type tables on the TypeScript side and as named
+fields on the Rust side — where this design derives it. Four corrections,
+each a conformance to a section above rather than a new mechanism.
+
+### Kind edges live in the transport base
+
+Every transport carries `before` and `after` once, in the shared base beside
+its trivia field. They are the kind's own edges (`<kind>/before`,
+`<kind>/after`), so a per-kind field named after the kind is the same fact
+spelled 400 times.
+
+### A sibling gap is the preceding element's own `after` edge
+
+"A sibling gap belongs to the child before it" is a statement about
+storage as much as addressing. With edges in every transport's base, a
+seated site (`arguments/elements/as_expression/after`) fills the element's
+own base `after`; the element carrier gains nothing. What the generated
+`prepare` does today by matching on each element's kind and descending into
+nested polymorph content becomes one loop over the elements and a generated
+per-slot table from element kind id to seated site index. The reader's
+classifier keeps stamping one majority class per list into the list
+transport's two separator fields, which stay: they are list facts, not
+token seams.
+
+### A token seam has no per-node carrier
+
+`arguments/lparen/after` is a site — the only owner of the gap between `(`
+and the first element, which is why the flanks were retired in its favour —
+but nothing writes it per node: the classifier does not, and the TypeScript
+surface never exposed the key. The field, its `prepare` fill and the
+`fill_options` walk go, as "What this retires" already said; render reads
+the resolved vector at the site, which is what it does today whenever the
+field is `None`. A token that is its kind's first or last member has no
+outward seam; that gap is the kind edge.
+
+Reading is by site index over the resolved vector, not through nested
+per-address `Option<u16>` structs. An options object is read once, through a
+static address trie each grammar emits (`ADDRESSES`), into the sites it sets;
+resolving it over a base table checks each value against the site's admitted
+arms and records the arm with the strength it writes at, so a render reads a
+site with one index (`w.site_at(SITE_X)`). A kind's edge row and a list's
+seat table are dense tables indexed by kind id, one array read each.
+
+### The TypeScript `Options` type is derived, not tabulated
+
+The generated `options.ts` was a site table (`AddressRoot`, `AddressBranch`,
+`AddressLeaf`) with a mapped tail. Under this design the table does not
+exist. The addresses a kind carries are one fact the generator already
+holds, the same site table the Rust address trie is emitted from, so the
+generator writes it once per kind as a phantom member, **`__optionsHint__`**,
+on the kind's namespace, nested the way the address trie is nested, each leaf
+typed as the arm union the site admits:
+
+```ts
+export namespace Arguments {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+			readonly elements?: {
+				readonly separator?: { readonly comma?: { readonly before?: SpacingArm; readonly after?: SpacingArm } };
+				readonly spreadElement?: { readonly after?: WhitespaceArm };
+			};
+		};
+	}
+}
+```
+
+Every level is optional, so the hint is the shape a caller writes. The rule
+is the same for every kind that has sites: a struct kind, a supertype (whose
+own sites, such as `string`'s `variant`, are its own; its members keep
+theirs) and an enum leaf whose arms carry token seams. Each namespace merges
+with the kind's interface or type alias. `types.ts` lists the kinds that
+have sites in one map, `OptionsHintMap` (camel kind key → `X.Hints`), and
+`Options` is one generic in `packages/types`:
+
+```ts
+export type DerivedOptions<HintMap> = {
+	readonly [K in keyof HintMap]?: OptionsHintOf<HintMap[K]>;
+} & { readonly indent?: string };
+```
+
+with `Options = DerivedOptions<T.OptionsHintMap> & LabelOptions`. Labels are
+not kinds and have no namespace, so their sites are the one residual table,
+`LabelOptions`, derived from the label roots of the same address tables.
+
+Every option key is camel-cased (`spreadElement`, `automaticSemicolon`), the
+casing the rest of the typed surface uses, and it is the same key on both
+sides: one helper writes the TypeScript hint keys and the keys of the Rust
+address trie, so the key a caller writes is the key the trie matches. The
+canonical addresses (the `options:` block, error messages, the paths a site
+reports) keep the grammar's snake-cased kind and slot names.
+
+The hint is the only fact emitted for the type that is not already in the
+declarations, and it is emitted from the same site table the Rust trie is
+numbered from: one source, two projections, and nothing for the type system
+to parse. A per-kind template type was considered as the source instead (the
+rule's members in order, with the sites re-derived at the type level) and
+set aside: it is a second derivation of the site table, done by the type
+checker, where the hint is the table itself. The grammar type in
+`grammar.ts` was also considered and set aside, since node-types omits
+every unfielded token and lists a separator only when the field wraps the
+repeat. A factory's preference bag (a kind's per-construction `Options`,
+keyed flat by slot) is not yet a projection of the hint: the two are
+different shapes, and making it one changes the factories' runtime surface.
+
+The hint lives on the namespace rather than on the node interface because
+the instantiation gate requires it. The gate compares the typescript
+package after the change with the same entries before it, on the same
+branch, within 0.2%: an entry that imports only `src/options.ts`, and one
+that includes all of `src` (`tsc -p` over a tsconfig extending the package's
+with `noEmit` and `files: ["src/options.ts"]` or `include: ["src"]`, with
+`--extendedDiagnostics`). Measured before: 4,126,667 and 10,608,812.
+
+| where the hint lives, how `Options` maps it | options.ts-only | src-only |
+|---|---|---|
+| node-interface member, key-filtered mapped type | 4,180,601 (+1.31%) | 10,701,084 (+0.87%) |
+| node-interface member, plain mapped type | 4,162,929 (+0.88%) | 10,675,447 (+0.63%) |
+| namespace `Hints`, key-filtered mapped type | 4,148,226 (+0.52%) | 10,631,634 (+0.22%) |
+| namespace `Hints`, plain mapped type | 4,132,302 (+0.14%) | 10,608,781 (−31) |
+
+A member on the ~200 node interfaces is re-examined by every surface derived
+from them (`Built`, `Loose`, `Tree`, the namespace map) however its type is
+spelled; on the namespace it costs nothing until `Options` is read. A
+key-filtered mapped type evaluates every key's hint up front, where the plain
+mapped type resolves each property when it is read. The usage
+`arguments: { lparen: { after }, elements: { separator: { comma: { after } }, spreadElement: { after } } }`
+(kind, slot, site, exactly as the trie does) type-checks against the derived
+type, and a missing token, a non-whitespace arm and an unknown kind are
+refused.

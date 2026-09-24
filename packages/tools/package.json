@@ -10,6 +10,12 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js",
 			"default": "./dist/index.js"
+		},
+		"./post-generate": {
+			"types": "./src/post-generate.ts",
+			"source": "./src/post-generate.ts",
+			"import": "./dist/post-generate.js",
+			"default": "./dist/post-generate.js"
 		}
 	},
 	"scripts": {
@@ -22,7 +28,8 @@
 		"@ast-grep/wasm": "^0.42.1",
 		"@sittir/codegen": "workspace:*",
 		"@sittir/common": "workspace:*",
-		"@sittir/types": "workspace:*"
+		"@sittir/types": "workspace:*",
+		"@sittir/typescript": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^25.6.0",

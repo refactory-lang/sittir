@@ -21,6 +21,8 @@ import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
 import type { PreferencePlaceholder } from '../primitives/preference.ts';
 import { isGroupPlaceholder } from '../primitives/group.ts';
+import { isSplicePlaceholder, type SplicePlaceholder } from '../primitives/splice.ts';
+import { isRegexPlaceholder, type RegexPlaceholder } from '../primitives/regex.ts';
 import type { GroupPlaceholder } from '../primitives/group.ts';
 import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
 import type { RuleAnnotations } from '../../types/rule.ts';
@@ -79,7 +81,9 @@ export type PatchValue =
 	| VariantPlaceholder
 	| ArmDefaultPlaceholder
 	| PreferencePlaceholder
-	| GroupPlaceholder;
+	| GroupPlaceholder
+	| SplicePlaceholder
+	| RegexPlaceholder;
 
 type PatchSet = Record<number | string, PatchValue>;
 
@@ -88,7 +92,7 @@ export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: 
 	for (const patches of patchSets) {
 		const hasPathKeys = requiresPathMode(patches);
 		const hasPlaceholderAlias = Object.values(patches).some(
-			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v)
+			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v) || isRegexPlaceholder(v)
 		);
 		if (hasPathKeys || hasPlaceholderAlias) {
 			rule = applyPathPatches(rule, patches);
@@ -110,11 +114,35 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 		const segments = parsePath(String(key));
 		if (isArmDefault(value)) assertChoiceArmPath(rule, String(key), segments);
 		rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
+		if (isArmDefault(value)) rule = clearSiblingDefaults(rule, segments);
 	}
-	if (variantEntries.length > 0) {
-		rule = applyVariantPatches(rule, variantEntries);
+	if (variantEntries.length > 0) rule = applyVariantPatches(rule, variantEntries);
+	for (const [key, value] of variantEntries) {
+		if (value.default === true) rule = clearSiblingDefaults(rule, parsePath(key));
 	}
 	return rule;
+}
+
+function clearSiblingDefaults(rule: RuntimeRule, segments: readonly PathSegment[]): RuntimeRule {
+	const last = segments[segments.length - 1];
+	if (last?.kind !== 'index') return rule;
+	return applyPath(rule, segments.slice(0, -1), (parent) => {
+		const members = (parent as { members?: RuntimeRule[] }).members;
+		if (members === undefined) return parent;
+		return {
+			...parent,
+			members: members.map((m, i) => (i === last.value || !isDefaultArm(m) ? m : dropDefault(m)))
+		} as RuntimeRule;
+	});
+}
+
+function dropDefault(rule: RuntimeRule): RuntimeRule {
+	const strip = (node: RuntimeRule): RuntimeRule => {
+		const { default: _drop, ...rest } = (((node as { annotations?: RuleAnnotations }).annotations) ?? {}) as RuleAnnotations & { default?: true };
+		return { ...node, annotations: rest } as RuntimeRule;
+	};
+	const node = rule as { type?: string; content?: RuntimeRule };
+	return node.type === 'ALIAS' && node.content !== undefined ? ({ ...rule, content: strip(node.content) } as RuntimeRule) : strip(rule);
 }
 
 function assertChoiceArmPath(rule: RuntimeRule, key: string, segments: readonly PathSegment[]): void {
@@ -158,7 +186,12 @@ function applyVariantPatches(
 	for (const [key, value] of ordered) {
 		if (hoisted?.consumed.has(key)) continue;
 		const segments = parsePath(key);
-		result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack));
+		try {
+			result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack));
+		} catch (error) {
+			if (error instanceof Error) error.message = `${wireGetCurrentRuleKind()} patch ${key}: ${error.message}`;
+			throw error;
+		}
 	}
 	registerIfPureVariantChoice(result);
 	return result;
@@ -571,13 +604,22 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 	if (isGroupPlaceholder(patch)) {
 		return withAnnotations(originalMember, { hoisted: true });
 	}
+	if (isSplicePlaceholder(patch)) {
+		return withAnnotations(originalMember, { spliced: true });
+	}
+	if (isRegexPlaceholder(patch)) {
+		if ((originalMember as { type?: string }).type !== 'PATTERN') {
+			throw new Error(`regex(): the patched member is a '${(originalMember as { type?: string }).type}', not a pattern`);
+		}
+		return { ...originalMember, value: patch.source } as RuntimeRule;
+	}
 	if (isVariantPlaceholder(patch)) {
 		const parentKind = wireGetCurrentRuleKind();
 		if (!parentKind) {
 			throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`);
 		}
 		const name = polymorphVisibleName(parentKind, variantMintName(patch));
-		const annotated = (rule: unknown): RuntimeRule => withVariantAnnotation(rule, patch.name, parentKind);
+		const annotated = (rule: unknown): RuntimeRule => withVariantAnnotation(rule, patch.name, parentKind, patch.default === true ? { annotations: { default: true } } : undefined);
 		const lift = enrichLiftArmOf(originalMember);
 		if (lift !== null) return annotated(renameEnrichLift(originalMember, lift, name, name));
 		if ((originalMember as { type?: string }).type === 'ALIAS') {

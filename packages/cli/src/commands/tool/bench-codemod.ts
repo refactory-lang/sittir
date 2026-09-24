@@ -1,5 +1,4 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
-import { benchCodemod as runBenchCodemod } from '@sittir/tools';
 
 export const benchCodemod: CommandModule = {
 	name: 'bench-codemod',
@@ -8,6 +7,7 @@ export const benchCodemod: CommandModule = {
 		defineCommand(program, benchCodemod)
 			.argument('<corpus-dir>', 'Corpus directory to benchmark')
 			.action(async (corpusDir: string) => {
+				const { benchCodemod: runBenchCodemod } = await import('@sittir/tools');
 				const code = await runBenchCodemod({ corpus: corpusDir });
 				if (code !== 0) process.exitCode = code;
 			});

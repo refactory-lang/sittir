@@ -28,12 +28,18 @@ export type WrapperPhase = 'evaluate' | 'link';
 
 export type AnyRule = Rule<PhaseName>;
 
+export type SeamOrigin = 'preference' | 'literal-default' | 'word-default' | 'cascade' | 'fallback';
+
 export type RuleAnnotations = {
 	readonly variant?: string;
 	readonly variantOf?: string;
 	readonly default?: true;
 	readonly preference?: string;
 	readonly hoisted?: true;
+	readonly spliced?: true;
+	readonly origin?: SeamOrigin;
+	readonly edgeLiterals?: readonly string[];
+	readonly tokenForm?: true;
 };
 
 export type RuleBase<Phase extends PhaseName = 'normalize'> = {
@@ -54,12 +60,14 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 	readonly variantArms?: readonly string[];
 
 	readonly annotations?: RuleAnnotations;
+
+	readonly nonterminal?: boolean;
+
+	readonly lexed?: boolean;
 } & (Phase extends NormalizedPhase
 	? {
 			readonly fieldName?: string;
 			readonly multiplicity?: Multiplicity;
-			readonly nonterminal?: boolean;
-
 			readonly separator?: RuleSeparator<Rule<Phase>>;
 
 			readonly optionalElement?: boolean;
@@ -276,6 +284,14 @@ export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly kindId?: number;
 	readonly aliasedToId?: number;
 };
+
+export function aliasTargetOf(ref: SymbolRule<PhaseName>): string | undefined {
+	return ref.aliasedTo;
+}
+
+export function storageNameOf(ref: SymbolRule<PhaseName>): string {
+	return ref.name;
+}
 
 export type AliasRule<Phase extends PhaseName = 'link'> = Phase extends WrapperPhase
 	? RuleBase<Phase> & {

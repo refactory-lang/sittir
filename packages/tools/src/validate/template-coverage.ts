@@ -34,6 +34,7 @@ import type { RawNodeEntry, PolymorphVariantMap } from '../codegen-surface.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
 import { bodyToLegacyRule, loadRenderBodies, renderBodiesPath } from './render-bodies.ts';
+import type { ValidatorSkip } from './common.ts';
 
 /**
  * Every emitted kind's body in the checker's placeholder shape
@@ -67,6 +68,7 @@ export interface TemplateCoverageResult {
 	/** Kinds with at least one unreferenced field. */
 	fail: number;
 	issues: CoverageIssue[];
+	excluded: ValidatorSkip[];
 }
 
 export interface CoverageIssue {
@@ -114,6 +116,7 @@ export function validateTemplateCoverage(grammar: string): TemplateCoverageResul
 	);
 
 	const issues: CoverageIssue[] = [];
+	const excluded: ValidatorSkip[] = [];
 	let total = 0;
 	let pass = 0;
 
@@ -134,7 +137,10 @@ export function validateTemplateCoverage(grammar: string): TemplateCoverageResul
 		// `render.ts` perform the same remap on the runtime side.
 		const resolvedKind = entry.type in rules ? entry.type : `_${entry.type}`;
 		const rule = rules[resolvedKind];
-		if (rule === undefined) continue; // validate-renderable catches this.
+		if (rule === undefined) {
+			excluded.push({ entry: entry.type, kind: resolvedKind, reason: 'no-rule' });
+			continue;
+		}
 		const rawTemplate = rawByKind[resolvedKind];
 		const templatePath = `${renderBodiesPath(grammar)}#${resolvedKind}`;
 
@@ -157,7 +163,7 @@ export function validateTemplateCoverage(grammar: string): TemplateCoverageResul
 		}
 	}
 
-	return { grammar, total, pass, fail: total - pass, issues };
+	return { grammar, total, pass, fail: total - pass, issues, excluded };
 }
 
 // ---------------------------------------------------------------------------

@@ -17,18 +17,19 @@ import { renderMainFunction, renderUntouched, roundTrip } from '../../../example
 import { readSource, readFirstFunction, wrappedLazyAccess } from '../../../examples/07-read-source.ts';
 import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
 import { dogfoodContract, structuralShape } from '../../../examples/helpers.ts';
-import { rebuildSplice } from '../../../examples/17-dogfood-rust.ts';
 import { rebuildSpliceStrict } from '../../../examples/17-dogfood-rust-strict.ts';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 // The generated rebuild is loaded by a computed path so tsc does not follow
 // it: its type errors are counted under examples/generated-typecheck-ceiling.json,
 // and vitest runs it regardless.
-const rebuildSpliceGenerated = async (): Promise<{ $render(): string }> => {
-	const absolute = fileURLToPath(new URL('../../../examples/17-dogfood-rust.generated.ts', import.meta.url));
+const generatedRebuild = (file: string, exportName: string) => async (): Promise<{ $render(): string }> => {
+	const absolute = fileURLToPath(new URL(`../../../examples/${file}`, import.meta.url));
 	const mod = (await import(pathToFileURL(absolute).href)) as Record<string, () => { $render(): string }>;
-	return mod.rebuildSpliceGenerated!();
+	return mod[exportName]!();
 };
+const rebuildSpliceGenerated = generatedRebuild('17-dogfood-rust.generated.ts', 'rebuildSpliceGenerated');
+const rebuildSpliceLoose = generatedRebuild('17-dogfood-rust-loose.generated.ts', 'rebuildSpliceLoose');
 import { createEngine, ir } from '@sittir/rust';
 import { writeFileSync, mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
@@ -173,23 +174,6 @@ describe('structuralShape trivia handling', () => {
 	});
 });
 
-// GAP inventory (examples/17): A=6 B=8 C=1 — each marked in the example at
-// the construct it blocks. Both assertions flip to `it` as the classes close.
-describe('examples/17 dogfood rust (splice.rs)', () => {
-	const target = new URL('../../../rust/crates/sittir-core/src/splice.rs', import.meta.url).pathname;
-	it('builds and renders the whole file through the construction surface', () => {
-		expect(rebuildSplice().$render()).toContain('pub enum SpliceError');
-	});
-	it.fails('re-parses to the same tree as the real file', async () => {
-		expect(dogfoodContract(createEngine(), rebuildSplice(), target).reparsesEqual).toBe(true);
-	});
-	it.fails('is identical to the real file modulo whitespace', () => {
-		const r = dogfoodContract(createEngine(), rebuildSplice(), target);
-		expect(r.firstDifference).toBeUndefined();
-		expect(r.sameModuloWhitespace).toBe(true);
-	});
-});
-
 // Namespaced constructors are the reachable spelling for an arm kind: the
 // parent names the form, the arm keeps no top-level builder of its own.
 describe('namespaced constructors reach the arm kinds', () => {
@@ -270,6 +254,21 @@ describe('examples/17 generated rebuild (splice.rs)', () => {
 	});
 	it('re-parses to the same tree as the real file and matches it modulo whitespace', async () => {
 		const result = dogfoodContract(createEngine(), await rebuildSpliceGenerated(), target);
+		expect(result.reparsesEqual).toBe(true);
+		expect(result.sameModuloWhitespace).toBe(true);
+	});
+});
+
+// The loose rebuild: the same file through the bundle calls, with every
+// coercion the loose contract admits spelled bare, so a coercion the runtime
+// refuses is a diff here rather than a description.
+describe('examples/17 loose rebuild (splice.rs)', () => {
+	const target = new URL('../../../rust/crates/sittir-core/src/splice.rs', import.meta.url).pathname;
+	it('renders', async () => {
+		expect((await rebuildSpliceLoose()).$render()).toContain('pub enum SpliceError');
+	});
+	it('re-parses to the same tree as the real file and matches it modulo whitespace', async () => {
+		const result = dogfoodContract(createEngine(), await rebuildSpliceLoose(), target);
 		expect(result.reparsesEqual).toBe(true);
 		expect(result.sameModuloWhitespace).toBe(true);
 	});

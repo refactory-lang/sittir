@@ -8,6 +8,7 @@ import {
 	isSeqType,
 	isStringType,
 	isSymbolType,
+	isTokenWrapperType,
 	typeEq,
 	type RuntimeRule
 } from '../types/runtime-shapes.ts';
@@ -17,6 +18,7 @@ import {
 	CHOICE,
 	DEDENT,
 	FIELD,
+	IMMEDIATE_TOKEN,
 	INDENT,
 	NEWLINE,
 	OPTIONAL,
@@ -60,7 +62,7 @@ export function classifyByType(
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
 		case 'PREC_DYNAMIC':
-		case 'IMMEDIATE_TOKEN':
+		case IMMEDIATE_TOKEN:
 			return anyChildNonterminal ? 'nonterminal' : 'terminal';
 		default:
 			return assertNever(ruleType);
@@ -83,7 +85,7 @@ function ruleChildren<Phase extends PhaseName>(rule: Rule<Phase>): readonly Rule
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
 		case 'PREC_DYNAMIC':
-		case 'IMMEDIATE_TOKEN':
+		case IMMEDIATE_TOKEN:
 			return [anyRule.content as Rule<Phase>];
 		case SEQ:
 			return anyRule.members as Rule<Phase>[];
@@ -528,40 +530,107 @@ export function isParserHiddenName(name: string): boolean {
 	return name.startsWith('_');
 }
 
-export function selfReferentialFoldOf(
-	name: string,
-	rule: Rule<'link'>
-): { extensionFieldName: string; separator: Rule<'link'> } | undefined {
+export type ParserSymbolClass = 'terminal' | 'nonterminal' | 'inlined';
+
+export interface ParserSymbolCtx {
+	readonly rules: Readonly<Record<string, AnyRule>>;
+	readonly externals: ReadonlySet<string>;
+	readonly inline: ReadonlySet<string>;
+	readonly tokenUses: ReadonlyMap<string, number>;
+}
+
+type TokenShape = { readonly type: string; readonly value?: unknown; readonly content?: TokenShape };
+
+interface ExtractedToken {
+	readonly key: string;
+	readonly anonymous: boolean;
+}
+
+function extractedToken(rule: TokenShape): ExtractedToken | undefined {
+	const params: string[] = [];
+	let tokenized = false;
+	let current = rule;
+	for (;;) {
+		if (isTokenWrapperType(current.type)) {
+			tokenized = true;
+			if (current.type === IMMEDIATE_TOKEN) params.push('immediate');
+		} else if (isPrecWrapper(current)) {
+			params.push(`${current.type}:${String(current.value)}`);
+		} else break;
+		current = current.content!;
+	}
+	if (!tokenized && params.length > 0) return undefined;
+	if (!tokenized && current.type !== STRING && current.type !== PATTERN) return undefined;
+	const inner = current.type === STRING || current.type === PATTERN ? `${current.type}:${String(current.value)}` : JSON.stringify(stripRuleAnnotations(current));
+	return { key: [...params.sort(), inner].join('|'), anonymous: current.type === STRING };
+}
+
+function stripRuleAnnotations(rule: unknown): unknown {
+	if (Array.isArray(rule)) return rule.map(stripRuleAnnotations);
+	if (rule === null || typeof rule !== 'object') return rule;
+	const out: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(rule)) {
+		if (key === 'annotations' || key === 'metadata' || key === 'id') continue;
+		out[key] = stripRuleAnnotations(value);
+	}
+	return out;
+}
+
+export function tokenUseCounts(rules: Readonly<Record<string, AnyRule>>): Map<string, number> {
+	const counts = new Map<string, number>();
+	const visit = (rule: TokenShape | undefined): void => {
+		if (rule === undefined || rule === null || typeof rule !== 'object') return;
+		if (isTokenWrapperType(rule.type) || rule.type === STRING || rule.type === PATTERN) {
+			const token = extractedToken(rule);
+			if (token !== undefined) counts.set(token.key, (counts.get(token.key) ?? 0) + 1);
+			return;
+		}
+		if (rule.content !== undefined) visit(rule.content);
+		for (const member of (rule as { members?: readonly TokenShape[] }).members ?? []) visit(member);
+	};
+	for (const rule of Object.values(rules)) visit(rule as unknown as TokenShape);
+	return counts;
+}
+
+export function parserSymbolClassOf(name: string, ctx: ParserSymbolCtx): ParserSymbolClass {
+	if (ctx.externals.has(name)) return 'terminal';
+	if (ctx.inline.has(name)) return 'inlined';
+	const rule = ctx.rules[name] as unknown as TokenShape | undefined;
+	if (rule === undefined) return 'nonterminal';
+	const token = extractedToken(rule);
+	if (token === undefined || ctx.tokenUses.get(token.key) !== 1) return 'nonterminal';
+	return token.anonymous && isParserHiddenName(name) ? 'nonterminal' : 'terminal';
+}
+
+export function selfReferentialFoldOf(name: string, rule: Rule<'link'>): { separator: Rule<'link'> } | undefined {
 	if (rule.type !== CHOICE) return undefined;
-	let baseFieldName: string | undefined;
-	let extensionFieldName: string | undefined;
+	const fieldOf = (member: Rule<'link'>): string | undefined => (member.type === FIELD ? member.name : undefined);
+	const operandOf = (member: Rule<'link'>): Rule<'link'> => (member.type === FIELD ? member.content : member);
+	const isSelfRef = (member: Rule<'link'>): boolean => {
+		const content = operandOf(member);
+		return (
+			content.type === SYMBOL &&
+			content.name === name &&
+			isParserHiddenName(content.name) &&
+			(content as { aliasedTo?: string }).aliasedTo === undefined
+		);
+	};
+	let fields: readonly [string | undefined, string | undefined] | undefined;
 	let separator: Rule<'link'> | undefined;
 	let sawSelfRef = false;
-	const isSelfRef = (content: Rule<'link'>): boolean =>
-		content.type === SYMBOL &&
-		content.name === name &&
-		isParserHiddenName(content.name) &&
-		(content as { aliasedTo?: string }).aliasedTo === undefined;
 	for (const arm of rule.members) {
 		if (arm.type !== SEQ || arm.members.length !== 3) return undefined;
-		const m0 = arm.members[0];
-		const sep = arm.members[1];
-		const m2 = arm.members[2];
-		if (m0 === undefined || sep === undefined || m2 === undefined) return undefined;
-		if (m0.type !== FIELD || m2.type !== FIELD || sep.type !== STRING) return undefined;
-		if (baseFieldName === undefined) {
-			baseFieldName = m0.name;
-			extensionFieldName = m2.name;
-		} else if (m0.name !== baseFieldName || m2.name !== extensionFieldName) {
-			return undefined;
-		}
+		const [m0, sep, m2] = arm.members;
+		if (m0 === undefined || sep === undefined || m2 === undefined || sep.type !== STRING) return undefined;
+		if (fields === undefined) fields = [fieldOf(m0), fieldOf(m2)];
+		else if (fieldOf(m0) !== fields[0] || fieldOf(m2) !== fields[1]) return undefined;
 		if (separator === undefined) separator = sep;
 		else if (separator.type !== STRING || separator.value !== sep.value) return undefined;
-		if (isSelfRef(m0.content)) sawSelfRef = true;
-		else if (isSelfRef(m2.content)) return undefined;
+		if (isSelfRef(m0)) sawSelfRef = true;
+		else if (isSelfRef(m2)) return undefined;
 	}
-	if (!sawSelfRef || extensionFieldName === undefined || separator === undefined) return undefined;
-	return { extensionFieldName, separator };
+	if (!sawSelfRef || separator === undefined) return undefined;
+	return { separator };
 }
 
 export function exclusiveFieldChoiceBranches<P extends PhaseName>(
@@ -1011,6 +1080,101 @@ export function collectFixedLiteral(
 				out += part;
 			}
 			return out || undefined;
+		}
+		default:
+			return undefined;
+	}
+}
+
+const DELETE_CODE = 0x7f;
+const SPACE_CODE = 0x20;
+
+function escapeControlChars(text: string): string {
+	let out = '';
+	for (let i = 0; i < text.length; i += 1) {
+		const char = text[i]!;
+		const code = char.charCodeAt(0);
+		out += code < SPACE_CODE || code === DELETE_CODE ? escapeControlChar(char, text[i + 1]) : char;
+	}
+	return out;
+}
+
+const LETTER_ESCAPES: Readonly<Record<string, string>> = {
+	'\n': '\\n',
+	'\r': '\\r',
+	'\t': '\\t',
+	'\v': '\\v',
+	'\f': '\\f'
+};
+
+function escapeControlChar(char: string, next: string | undefined): string {
+	const letter = LETTER_ESCAPES[char];
+	if (letter !== undefined) return letter;
+	if (char === '\0' && (next === undefined || !/[0-9]/.test(next))) return '\\0';
+	return `\\x${char.charCodeAt(0).toString(16).padStart(2, '0')}`;
+}
+
+const REGEX_SYNTAX_CHARS = /[.*+?^${}()|[\]\\]/g;
+
+function isBlankLinkRule(rule: Rule<'link'>): boolean {
+	return (rule.type === CHOICE || rule.type === SEQ) && rule.members.length === 0;
+}
+
+export function composeTokenText(
+	rule: Rule<'link'>,
+	lookup?: (name: string) => Rule<'link'> | undefined,
+	seen: ReadonlySet<string> = new Set()
+): string | undefined {
+	const compose = (inner: Rule<'link'>): string | undefined => composeTokenText(inner, lookup, seen);
+	switch (rule.type) {
+		case STRING:
+			return escapeControlChars(rule.value.replace(REGEX_SYNTAX_CHARS, '\\$&'));
+		case PATTERN:
+			return rule.value === '' ? undefined : `(?:${rule.value})`;
+		case SEQ: {
+			const parts: string[] = [];
+			for (const member of rule.members) {
+				const part = compose(member);
+				if (part === undefined) return undefined;
+				parts.push(part);
+			}
+			return parts.join('');
+		}
+		case CHOICE: {
+			const arms: string[] = [];
+			let blank = false;
+			for (const member of rule.members) {
+				if (isBlankLinkRule(member)) {
+					blank = true;
+					continue;
+				}
+				const arm = compose(member);
+				if (arm === undefined) return undefined;
+				arms.push(arm);
+			}
+			if (arms.length === 0) return undefined;
+			return `(?:${arms.join('|')})${blank ? '?' : ''}`;
+		}
+		case OPTIONAL: {
+			const inner = compose(rule.content);
+			return inner === undefined ? undefined : `(?:${inner})?`;
+		}
+		case REPEAT: {
+			const inner = compose(rule.content);
+			return inner === undefined ? undefined : `(?:${inner})*`;
+		}
+		case REPEAT1: {
+			const inner = compose(rule.content);
+			return inner === undefined ? undefined : `(?:${inner})+`;
+		}
+		case TOKEN:
+		case FIELD:
+		case ALIAS:
+			return compose(rule.content);
+		case SYMBOL: {
+			const target = lookup?.(rule.name);
+			if (target === undefined || seen.has(rule.name)) return undefined;
+			return composeTokenText(target, lookup, new Set([...seen, rule.name]));
 		}
 		default:
 			return undefined;

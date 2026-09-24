@@ -11,18 +11,18 @@ import {
 	TOKEN,
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, ChoiceRule, RuleBase, Multiplicity, SimplifiedRule } from '../types/rule.ts';
-import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import { sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import {
 	AssembledNonterminal,
+	type AssembleDiagnosticsCollector,
+	type DeriveCtx,
 	type NodeOrTerminal,
 	deriveValuesForRule,
 	dedupeValues,
 	extractSeparatorString,
 	mergeDelimiterMode,
 	mergeSourceRuleIds,
-	recordAssembleWarning,
 	stampListFactsOnValues
 } from './model/node-map.ts';
 import { findRepeatFlag } from '../dsl/rule-transforms.ts';
@@ -286,6 +286,8 @@ function isSlotNode(rule: SimplifiedRule): boolean {
 	return isNonterminalRuleType(rule);
 }
 
+export type SlotDeriveCtx = Pick<DeriveCtx, 'kindEntries' | 'simplifiedRules'>;
+
 function slotMultiplicity(rule: AnyRule, inherited: Multiplicity): Multiplicity {
 	const own = (rule as { multiplicity?: Multiplicity }).multiplicity;
 	if (own !== undefined) return own;
@@ -296,10 +298,11 @@ function slotMultiplicity(rule: AnyRule, inherited: Multiplicity): Multiplicity 
 function buildSlot(
 	rule: SimplifiedRule,
 	kindForName: string | undefined,
-	kindEntries: readonly GeneratedKindEntry[] | undefined,
+	deriveCtx: SlotDeriveCtx | undefined,
 	inherited: Multiplicity,
 	inheritedSeparator: RuleBase<'normalize'>['separator'],
-	sanctionedUnion = false
+	sanctionedUnion = false,
+	diagnostics?: AssembleDiagnosticsCollector
 ): AssembledNonterminal | null {
 	const armLifted =
 		rule.type === CHOICE && (rule as { multiplicity?: Multiplicity }).multiplicity === undefined
@@ -337,7 +340,7 @@ function buildSlot(
 		}
 	}
 
-	const rawValues = deriveValuesForRule(rule, { kindEntries, stampArmFieldNamesAsParseName: sanctionedUnion }, mult);
+	const rawValues = deriveValuesForRule(rule, { ...deriveCtx, stampArmFieldNamesAsParseName: sanctionedUnion }, mult);
 	let dedupedValues = dedupeValues(rawValues);
 	if (dedupedValues.length === 0) return null;
 
@@ -364,7 +367,7 @@ function buildSlot(
 
 	const separatorStr = isMultiSlot ? extractSeparatorString(sep) : undefined;
 	if (isMultiSlot && nestedScanSep !== undefined && separatorStr === undefined) {
-		recordAssembleWarning({
+		diagnostics?.assembleWarnings.record({
 			code: 'nonterminal-separator-unstamped',
 			ownerKind: kindForName,
 			message:
@@ -399,20 +402,26 @@ function buildSlot(
 export function collectSlots(
 	rule: SimplifiedRule,
 	kindForName?: string,
-	kindEntries?: readonly GeneratedKindEntry[],
+	deriveCtx?: SlotDeriveCtx,
 	inherited: Multiplicity = 'single',
-	inheritedSeparator: RuleBase<'normalize'>['separator'] = undefined
+	inheritedSeparator: RuleBase<'normalize'>['separator'] = undefined,
+	diagnostics?: AssembleDiagnosticsCollector
 ): AssembledNonterminal[] {
 	if (rule.type === SEQ) {
 		const seqMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
 		const seqSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
-		return rule.members.flatMap((m) => resolveMember(m, kindForName, kindEntries, seqMult, seqSep));
+		return rule.members.flatMap((m) => resolveMember(m, kindForName, deriveCtx, seqMult, seqSep, diagnostics));
 	}
-	return resolveMember(rule, kindForName, kindEntries, inherited, inheritedSeparator);
+	return resolveMember(rule, kindForName, deriveCtx, inherited, inheritedSeparator, diagnostics);
 }
 
-function recordUnclassifiableShape(kindForName: string | undefined, member: SimplifiedRule, bucket: string): void {
-	recordAssembleWarning({
+function recordUnclassifiableShape(
+	kindForName: string | undefined,
+	member: SimplifiedRule,
+	bucket: string,
+	diagnostics?: AssembleDiagnosticsCollector
+): void {
+	diagnostics?.assembleWarnings.record({
 		code: 'unclassifiable-shape',
 		ownerKind: kindForName,
 		message:
@@ -425,17 +434,18 @@ function recordUnclassifiableShape(kindForName: string | undefined, member: Simp
 function resolveMember(
 	rule: SimplifiedRule,
 	kindForName: string | undefined,
-	kindEntries: readonly GeneratedKindEntry[] | undefined,
+	deriveCtx: SlotDeriveCtx | undefined,
 	inherited: Multiplicity,
-	inheritedSeparator: RuleBase<'normalize'>['separator']
+	inheritedSeparator: RuleBase<'normalize'>['separator'],
+	diagnostics?: AssembleDiagnosticsCollector
 ): AssembledNonterminal[] {
 	switch (rule.type) {
 		case SEQ: {
 			const isList =
 				(rule as { multiplicity?: Multiplicity }).multiplicity !== undefined ||
 				(rule as { separator?: RuleBase<'normalize'>['separator'] }).separator !== undefined;
-			if (!isList) recordUnclassifiableShape(kindForName, rule, 'nested-seq');
-			return collectSlots(rule, kindForName, kindEntries, inherited, inheritedSeparator);
+			if (!isList) recordUnclassifiableShape(kindForName, rule, 'nested-seq', diagnostics);
+			return collectSlots(rule, kindForName, deriveCtx, inherited, inheritedSeparator, diagnostics);
 		}
 
 		case CHOICE: {
@@ -444,7 +454,7 @@ function resolveMember(
 				const choiceSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
 				const partition = partitionChoiceArms(rule);
 				if (partition.structuredArms.length > 0 || partition.structuredNamedArms.length > 0) {
-					recordUnclassifiableShape(kindForName, rule, 'choice-with-structured-arms');
+					recordUnclassifiableShape(kindForName, rule, 'choice-with-structured-arms', diagnostics);
 				}
 				if (partition.unionArms.length > 0) {
 					const ruleId = (rule as { id?: string }).id;
@@ -455,7 +465,7 @@ function resolveMember(
 							: undefined) ?? armMult;
 					const repeated = effectiveMult === 'array' || effectiveMult === 'nonEmptyArray';
 					if (unionRoutingGateB(partition) && partition.structuredNamedArms.length > 0) {
-						recordAssembleWarning({
+						diagnostics?.assembleWarnings.record({
 							code: 'union-slot-mixed-row',
 							ownerKind: kindForName,
 							message:
@@ -470,7 +480,7 @@ function resolveMember(
 								`(PR 3 mint) and join one kind-dispatched union slot.`
 						});
 					} else if (unionRoutingGateB(partition) && ruleId === undefined) {
-						recordAssembleWarning({
+						diagnostics?.assembleWarnings.record({
 							code: 'union-slot-unaddressable',
 							ownerKind: kindForName,
 							message:
@@ -480,7 +490,7 @@ function resolveMember(
 								`to preserve ids.`
 						});
 					} else if (unionRoutingGateB(partition)) {
-						recordAssembleWarning({
+						diagnostics?.assembleWarnings.record({
 							code: 'union-slot-routed',
 							ownerKind: kindForName,
 							message:
@@ -500,19 +510,27 @@ function resolveMember(
 						});
 						if (unionSlotRouting) {
 							const namedArmSlots = partition.structuredNamedArms.map((m) =>
-								mergeByName(collectSlots(m, kindForName, kindEntries, armMult, choiceSep))
+								mergeByName(collectSlots(m, kindForName, deriveCtx, armMult, choiceSep, diagnostics))
 							);
 							const restricted = {
 								...rule,
 								members: [...partition.unionArms, ...partition.degenerateNamedArms]
 							};
-							const unionSlot = buildSlot(restricted, kindForName, kindEntries, inherited, inheritedSeparator, true);
+							const unionSlot = buildSlot(
+								restricted,
+								kindForName,
+								deriveCtx,
+								inherited,
+								inheritedSeparator,
+								true,
+								diagnostics
+							);
 							if (unionSlot === null) return mergeChoiceArms(namedArmSlots);
 							if (ruleId !== undefined) _synthesizedUnionChoiceIds.add(ruleId);
 							return mergeChoiceArms([...namedArmSlots, [unionSlot]]);
 						}
 					} else {
-						recordAssembleWarning({
+						diagnostics?.assembleWarnings.record({
 							code: 'union-slot-nondegenerate-arm',
 							ownerKind: kindForName,
 							message:
@@ -529,18 +547,18 @@ function resolveMember(
 					}
 				}
 				const armSlots = rule.members.map((m) =>
-					mergeByName(collectSlots(m, kindForName, kindEntries, armMult, choiceSep))
+					mergeByName(collectSlots(m, kindForName, deriveCtx, armMult, choiceSep, diagnostics))
 				);
 				return mergeChoiceArms(armSlots);
 			}
 			if (!isSlotNode(rule)) return [];
-			const slot = buildSlot(rule, kindForName, kindEntries, inherited, inheritedSeparator);
+			const slot = buildSlot(rule, kindForName, deriveCtx, inherited, inheritedSeparator, undefined, diagnostics);
 			return slot ? [slot] : [];
 		}
 
 		default: {
 			if (!isSlotNode(rule)) return [];
-			const slot = buildSlot(rule, kindForName, kindEntries, inherited, inheritedSeparator);
+			const slot = buildSlot(rule, kindForName, deriveCtx, inherited, inheritedSeparator, undefined, diagnostics);
 			return slot ? [slot] : [];
 		}
 	}

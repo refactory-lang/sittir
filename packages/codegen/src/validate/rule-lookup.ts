@@ -1,6 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
-import { AssembledKeyword, isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
+import { isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
 
 export type RenderKindPath = 'template' | 'text' | 'dispatch' | 'none';
 
@@ -59,14 +60,16 @@ function classify(node: AssembledNode): RenderKindPath {
 		case 'list':
 			return 'template';
 		case 'polymorph':
+		case 'alias':
 			return 'template';
 		case 'supertype':
 			return 'dispatch';
 		case 'pattern':
 		case 'enum':
 			return 'text';
-		case 'token':
-			return node instanceof AssembledKeyword ? 'text' : 'none';
+		case 'keyword':
+		case 'punctuation':
+			return isVisibleTextLeaf(node) ? 'text' : 'none';
 		default:
 			return 'none';
 	}

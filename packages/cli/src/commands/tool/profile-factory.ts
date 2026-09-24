@@ -1,6 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
-import { profileFactory as runProfileFactory } from '@sittir/tools';
 
 export const profileFactory: CommandModule = {
 	name: 'profile-factory',
@@ -9,6 +8,7 @@ export const profileFactory: CommandModule = {
 		withGrammar(defineCommand(program, profileFactory))
 			.option('--ast', 'Include AST mismatch breakdown')
 			.action(async (opts: { grammar?: string; ast?: boolean }) => {
+				const { profileFactory: runProfileFactory } = await import('@sittir/tools');
 				const code = await runProfileFactory({
 					grammar: opts.grammar,
 					showAst: opts.ast ?? false

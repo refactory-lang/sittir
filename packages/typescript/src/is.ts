@@ -7,6 +7,8 @@ import { TSKindId } from './types.js';
 import type {
 	NamespaceMap,
 	AugmentedAssignmentLhs,
+	CallExpression,
+	Comment,
 	Declaration,
 	DestructuringPattern,
 	ExportStatement,
@@ -20,22 +22,21 @@ import type {
 	IndexSignature,
 	MetaProperty,
 	ModuleExportName,
+	Number,
+	ParenthesizedExpression,
 	Pattern,
 	PrimaryExpression,
 	PrimaryType,
 	PropertyName,
-	ShorthandPropertyIdentifier,
-	ShorthandPropertyIdentifierPattern,
 	Statement,
-	StatementIdentifier,
+	String,
 	TupleTypeMember,
 	Type,
 	UpdateExpression,
 	VariableDeclarator,
 	Whitespace,
 	_Identifier,
-	_LhsExpression,
-	_PropertyIdentifier
+	_LhsExpression
 } from './types.js';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
@@ -43,6 +44,9 @@ export interface IsGuards {
 	program<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Program };
+	hashBangLine<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.HashBangLine };
 	namespaceExport<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamespaceExport };
@@ -139,9 +143,6 @@ export interface IsGuards {
 	finallyClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FinallyClause };
-	parenthesizedExpression<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParenthesizedExpression };
 	yieldExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.YieldExpression };
@@ -190,9 +191,6 @@ export interface IsGuards {
 	arrowFunction<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrowFunction };
-	callExpression<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CallExpression };
 	newExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NewExpression };
@@ -226,9 +224,9 @@ export interface IsGuards {
 	sequenceExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SequenceExpression };
-	string<T extends { readonly $type: number } | number>(
+	escapeSequence<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.String };
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequence };
 	templateString<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TemplateString };
@@ -238,6 +236,9 @@ export interface IsGuards {
 	regex<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Regex };
+	privatePropertyIdentifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrivatePropertyIdentifier };
 	arguments<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Arguments };
@@ -548,24 +549,23 @@ export interface IsGuards {
 	statement(v: { readonly $type: string | number } | number): v is Statement;
 	variableDeclarator(v: { readonly $type: string | number } | number): v is VariableDeclarator;
 	forHeader(v: { readonly $type: string | number } | number): v is ForHeader;
+	parenthesizedExpression(v: { readonly $type: string | number } | number): v is ParenthesizedExpression;
 	expressions(v: { readonly $type: string | number } | number): v is Expressions;
 	expression(v: { readonly $type: string | number } | number): v is Expression;
 	primaryExpression(v: { readonly $type: string | number } | number): v is PrimaryExpression;
 	formalParameter(v: { readonly $type: string | number } | number): v is FormalParameter;
+	callExpression(v: { readonly $type: string | number } | number): v is CallExpression;
 	lhsExpression(v: { readonly $type: string | number } | number): v is _LhsExpression;
 	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number } | number): v is DestructuringPattern;
 	updateExpression(v: { readonly $type: string | number } | number): v is UpdateExpression;
+	string(v: { readonly $type: string | number } | number): v is String;
+	comment(v: { readonly $type: string | number } | number): v is Comment;
+	number(v: { readonly $type: string | number } | number): v is Number;
 	identifier(v: { readonly $type: string | number } | number): v is _Identifier;
 	metaProperty(v: { readonly $type: string | number } | number): v is MetaProperty;
 	pattern(v: { readonly $type: string | number } | number): v is Pattern;
 	propertyName(v: { readonly $type: string | number } | number): v is PropertyName;
-	statementIdentifier(v: { readonly $type: string | number } | number): v is StatementIdentifier;
-	shorthandPropertyIdentifier(v: { readonly $type: string | number } | number): v is ShorthandPropertyIdentifier;
-	shorthandPropertyIdentifierPattern(
-		v: { readonly $type: string | number } | number
-	): v is ShorthandPropertyIdentifierPattern;
-	propertyIdentifier(v: { readonly $type: string | number } | number): v is _PropertyIdentifier;
 	importIdentifier(v: { readonly $type: string | number } | number): v is ImportIdentifier;
 	type(v: { readonly $type: string | number } | number): v is Type;
 	tupleTypeMember(v: { readonly $type: string | number } | number): v is TupleTypeMember;
@@ -578,6 +578,7 @@ export interface IsGuards {
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
 	program(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Program };
+	hashBangLine(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.HashBangLine };
 	namespaceExport(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.NamespaceExport };
 	exportClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExportClause };
 	exportSpecifier(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExportSpecifier };
@@ -620,9 +621,6 @@ export interface AssertGuards {
 	switchDefault(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.SwitchDefault };
 	catchClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CatchClause };
 	finallyClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.FinallyClause };
-	parenthesizedExpression(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.ParenthesizedExpression };
 	yieldExpression(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.YieldExpression };
 	object(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Object };
 	objectPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ObjectPattern };
@@ -651,7 +649,6 @@ export interface AssertGuards {
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.GeneratorFunctionDeclaration };
 	arrowFunction(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ArrowFunction };
-	callExpression(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CallExpression };
 	newExpression(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.NewExpression };
 	awaitExpression(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.AwaitExpression };
 	memberExpression(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.MemberExpression };
@@ -673,12 +670,15 @@ export interface AssertGuards {
 	sequenceExpression(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.SequenceExpression };
-	string(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.String };
+	escapeSequence(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.EscapeSequence };
 	templateString(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TemplateString };
 	templateSubstitution(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.TemplateSubstitution };
 	regex(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Regex };
+	privatePropertyIdentifier(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.PrivatePropertyIdentifier };
 	arguments(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Arguments };
 	decorator(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Decorator };
 	decoratorMemberExpression(
@@ -875,26 +875,23 @@ export interface AssertGuards {
 	statement(v: { readonly $type: string | number } | number): asserts v is Statement;
 	variableDeclarator(v: { readonly $type: string | number } | number): asserts v is VariableDeclarator;
 	forHeader(v: { readonly $type: string | number } | number): asserts v is ForHeader;
+	parenthesizedExpression(v: { readonly $type: string | number } | number): asserts v is ParenthesizedExpression;
 	expressions(v: { readonly $type: string | number } | number): asserts v is Expressions;
 	expression(v: { readonly $type: string | number } | number): asserts v is Expression;
 	primaryExpression(v: { readonly $type: string | number } | number): asserts v is PrimaryExpression;
 	formalParameter(v: { readonly $type: string | number } | number): asserts v is FormalParameter;
+	callExpression(v: { readonly $type: string | number } | number): asserts v is CallExpression;
 	lhsExpression(v: { readonly $type: string | number } | number): asserts v is _LhsExpression;
 	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): asserts v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number } | number): asserts v is DestructuringPattern;
 	updateExpression(v: { readonly $type: string | number } | number): asserts v is UpdateExpression;
+	string(v: { readonly $type: string | number } | number): asserts v is String;
+	comment(v: { readonly $type: string | number } | number): asserts v is Comment;
+	number(v: { readonly $type: string | number } | number): asserts v is Number;
 	identifier(v: { readonly $type: string | number } | number): asserts v is _Identifier;
 	metaProperty(v: { readonly $type: string | number } | number): asserts v is MetaProperty;
 	pattern(v: { readonly $type: string | number } | number): asserts v is Pattern;
 	propertyName(v: { readonly $type: string | number } | number): asserts v is PropertyName;
-	statementIdentifier(v: { readonly $type: string | number } | number): asserts v is StatementIdentifier;
-	shorthandPropertyIdentifier(
-		v: { readonly $type: string | number } | number
-	): asserts v is ShorthandPropertyIdentifier;
-	shorthandPropertyIdentifierPattern(
-		v: { readonly $type: string | number } | number
-	): asserts v is ShorthandPropertyIdentifierPattern;
-	propertyIdentifier(v: { readonly $type: string | number } | number): asserts v is _PropertyIdentifier;
 	importIdentifier(v: { readonly $type: string | number } | number): asserts v is ImportIdentifier;
 	type(v: { readonly $type: string | number } | number): asserts v is Type;
 	tupleTypeMember(v: { readonly $type: string | number } | number): asserts v is TupleTypeMember;
@@ -912,46 +909,56 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_exportStatement_ids = new Set<number>([384, 385, 383]);
-const _supertype_moduleExportName_ids = new Set<number>([1, 255]);
+const _supertype_exportStatement_ids = new Set<number>([395, 396, 394]);
+const _supertype_moduleExportName_ids = new Set<number>([1]);
 const _supertype_declaration_ids = new Set<number>([
-	231, 233, 228, 191, 190, 279, 290, 291, 292, 301, 298, 296, 294, 289
+	241, 243, 238, 201, 200, 290, 301, 302, 303, 312, 309, 307, 305, 300
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([393, 394]);
+const _supertype_importSpecifier_ids = new Set<number>([404, 405]);
 const _supertype_statement_ids = new Set<number>([
-	181, 206, 189, 193, 195, 196, 197, 198, 200, 201, 202, 203, 204, 205, 207, 208, 209, 210
+	191, 216, 199, 203, 205, 206, 207, 208, 210, 211, 212, 213, 214, 215, 217, 218, 219, 220
 ]);
-const _supertype_variableDeclarator_ids = new Set<number>([414, 415]);
-const _supertype_forHeader_ids = new Set<number>([418, 419, 420]);
-const _supertype_expressions_ids = new Set<number>([254]);
-const _supertype_expression_ids = new Set<number>([282, 283, 284, 292, 281, 244, 246, 240, 252, 251, 250, 239, 219]);
+const _supertype_variableDeclarator_ids = new Set<number>([425, 426]);
+const _supertype_forHeader_ids = new Set<number>([429, 430, 431]);
+const _supertype_parenthesizedExpression_ids = new Set<number>([406, 407]);
+const _supertype_expressions_ids = new Set<number>([264]);
+const _supertype_expression_ids = new Set<number>([293, 294, 295, 303, 292, 254, 256, 250, 262, 261, 260, 249, 229]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	242, 241, 216, 105, 1, 448, 100, 101, 98, 255, 256, 258, 102, 103, 104, 220, 224, 230, 234, 232, 227, 238, 276
+	252, 251, 124, 1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120,
+	266, 268, 121, 122, 123, 230, 234, 240, 244, 242, 237, 287
 ]);
-const _supertype_formalParameter_ids = new Set<number>([304, 305]);
-const _supertype_lhsExpression_ids = new Set<number>([241, 242, 105, 1, 448, 221, 225, 276]);
-const _supertype_augmentedAssignmentLhs_ids = new Set<number>([241, 242, 448, 1, 216, 276]);
-const _supertype_destructuringPattern_ids = new Set<number>([221, 225]);
-const _supertype_updateExpression_ids = new Set<number>([402, 403]);
-const _supertype_identifier_ids = new Set<number>([105, 1]);
-const _supertype_metaProperty_ids = new Set<number>([416, 417]);
-const _supertype_pattern_ids = new Set<number>([268]);
-const _supertype_propertyName_ids = new Set<number>([99, 255, 98, 273]);
-const _supertype_statementIdentifier_ids = new Set<number>([1, 448]);
-const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 448]);
-const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 448]);
-const _supertype_propertyIdentifier_ids = new Set<number>([1, 448]);
+const _supertype_formalParameter_ids = new Set<number>([315, 316]);
+const _supertype_callExpression_ids = new Set<number>([408, 409, 410]);
+const _supertype_lhsExpression_ids = new Set<number>([
+	251, 252, 124, 1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 231, 235, 287
+]);
+const _supertype_augmentedAssignmentLhs_ids = new Set<number>([
+	251, 252, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 287
+]);
+const _supertype_destructuringPattern_ids = new Set<number>([231, 235]);
+const _supertype_updateExpression_ids = new Set<number>([413, 414]);
+const _supertype_string_ids = new Set<number>([411, 412]);
+const _supertype_comment_ids = new Set<number>([152, 153]);
+const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160, 161]);
+const _supertype_identifier_ids = new Set<number>([124, 1]);
+const _supertype_metaProperty_ids = new Set<number>([427, 428]);
+const _supertype_pattern_ids = new Set<number>([
+	251, 252, 124, 1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 231, 235,
+	287, 279
+]);
+const _supertype_propertyName_ids = new Set<number>([118, 284]);
 const _supertype_importIdentifier_ids = new Set<number>([1, 7]);
-const _supertype_type_ids = new Set<number>([359, 356, 321, 325, 311, 312]);
-const _supertype_tupleTypeMember_ids = new Set<number>([316, 317, 318, 319]);
+const _supertype_type_ids = new Set<number>([370, 367, 332, 336, 322, 323]);
+const _supertype_tupleTypeMember_ids = new Set<number>([327, 328, 329, 330]);
 const _supertype_primaryType_ids = new Set<number>([
-	342, 343, 1, 295, 327, 345, 354, 355, 341, 334, 335, 100, 340, 338, 336, 326, 324, 358, 357
+	353, 354, 306, 338, 356, 365, 366, 352, 345, 346, 119, 351, 349, 347, 337, 335, 369, 368
 ]);
-const _supertype_indexSignature_ids = new Set<number>([390, 391]);
-const _supertype_exportStatementDefault_ids = new Set<number>([407, 408]);
+const _supertype_indexSignature_ids = new Set<number>([401, 402]);
+const _supertype_exportStatementDefault_ids = new Set<number>([418, 419]);
 
 export const is = {
 	program: _g(TSKindId.Program),
+	hashBangLine: _g(TSKindId.HashBangLine),
 	namespaceExport: _g(TSKindId.NamespaceExport),
 	exportClause: _g(TSKindId.ExportClause),
 	exportSpecifier: _g(TSKindId.ExportSpecifier),
@@ -984,7 +991,6 @@ export const is = {
 	switchDefault: _g(TSKindId.SwitchDefault),
 	catchClause: _g(TSKindId.CatchClause),
 	finallyClause: _g(TSKindId.FinallyClause),
-	parenthesizedExpression: _g(TSKindId.ParenthesizedExpression),
 	yieldExpression: _g(TSKindId.YieldExpression),
 	object: _g(TSKindId.Object),
 	objectPattern: _g(TSKindId.ObjectPattern),
@@ -1001,7 +1007,6 @@ export const is = {
 	generatorFunction: _g(TSKindId.GeneratorFunction),
 	generatorFunctionDeclaration: _g(TSKindId.GeneratorFunctionDeclaration),
 	arrowFunction: _g(TSKindId.ArrowFunction),
-	callExpression: _g(TSKindId.CallExpression),
 	newExpression: _g(TSKindId.NewExpression),
 	awaitExpression: _g(TSKindId.AwaitExpression),
 	memberExpression: _g(TSKindId.MemberExpression),
@@ -1013,10 +1018,11 @@ export const is = {
 	binaryExpression: _g(TSKindId.BinaryExpression),
 	unaryExpression: _g(TSKindId.UnaryExpression),
 	sequenceExpression: _g(TSKindId.SequenceExpression),
-	string: _g(TSKindId.String),
+	escapeSequence: _g(TSKindId.EscapeSequence),
 	templateString: _g(TSKindId.TemplateString),
 	templateSubstitution: _g(TSKindId.TemplateSubstitution),
 	regex: _g(TSKindId.Regex),
+	privatePropertyIdentifier: _g(TSKindId.PrivatePropertyIdentifier),
 	arguments: _g(TSKindId.Arguments),
 	decorator: _g(TSKindId.Decorator),
 	decoratorMemberExpression: _g(TSKindId.DecoratorMemberExpression),
@@ -1125,22 +1131,23 @@ export const is = {
 	statement: _sg(_supertype_statement_ids),
 	variableDeclarator: _sg(_supertype_variableDeclarator_ids),
 	forHeader: _sg(_supertype_forHeader_ids),
+	parenthesizedExpression: _sg(_supertype_parenthesizedExpression_ids),
 	expressions: _sg(_supertype_expressions_ids),
 	expression: _sg(_supertype_expression_ids),
 	primaryExpression: _sg(_supertype_primaryExpression_ids),
 	formalParameter: _sg(_supertype_formalParameter_ids),
+	callExpression: _sg(_supertype_callExpression_ids),
 	lhsExpression: _sg(_supertype_lhsExpression_ids),
 	augmentedAssignmentLhs: _sg(_supertype_augmentedAssignmentLhs_ids),
 	destructuringPattern: _sg(_supertype_destructuringPattern_ids),
 	updateExpression: _sg(_supertype_updateExpression_ids),
+	string: _sg(_supertype_string_ids),
+	comment: _sg(_supertype_comment_ids),
+	number: _sg(_supertype_number_ids),
 	identifier: _sg(_supertype_identifier_ids),
 	metaProperty: _sg(_supertype_metaProperty_ids),
 	pattern: _sg(_supertype_pattern_ids),
 	propertyName: _sg(_supertype_propertyName_ids),
-	statementIdentifier: _sg(_supertype_statementIdentifier_ids),
-	shorthandPropertyIdentifier: _sg(_supertype_shorthandPropertyIdentifier_ids),
-	shorthandPropertyIdentifierPattern: _sg(_supertype_shorthandPropertyIdentifierPattern_ids),
-	propertyIdentifier: _sg(_supertype_propertyIdentifier_ids),
 	importIdentifier: _sg(_supertype_importIdentifier_ids),
 	type: _sg(_supertype_type_ids),
 	tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
@@ -1174,6 +1181,7 @@ function _makeAssertKind(guard: _AnyGuard) {
 
 export const assert = {
 	program: _makeAssert('program', is.program as _AnyGuard),
+	hashBangLine: _makeAssert('hashBangLine', is.hashBangLine as _AnyGuard),
 	namespaceExport: _makeAssert('namespaceExport', is.namespaceExport as _AnyGuard),
 	exportClause: _makeAssert('exportClause', is.exportClause as _AnyGuard),
 	exportSpecifier: _makeAssert('exportSpecifier', is.exportSpecifier as _AnyGuard),
@@ -1206,7 +1214,6 @@ export const assert = {
 	switchDefault: _makeAssert('switchDefault', is.switchDefault as _AnyGuard),
 	catchClause: _makeAssert('catchClause', is.catchClause as _AnyGuard),
 	finallyClause: _makeAssert('finallyClause', is.finallyClause as _AnyGuard),
-	parenthesizedExpression: _makeAssert('parenthesizedExpression', is.parenthesizedExpression as _AnyGuard),
 	yieldExpression: _makeAssert('yieldExpression', is.yieldExpression as _AnyGuard),
 	object: _makeAssert('object', is.object as _AnyGuard),
 	objectPattern: _makeAssert('objectPattern', is.objectPattern as _AnyGuard),
@@ -1226,7 +1233,6 @@ export const assert = {
 		is.generatorFunctionDeclaration as _AnyGuard
 	),
 	arrowFunction: _makeAssert('arrowFunction', is.arrowFunction as _AnyGuard),
-	callExpression: _makeAssert('callExpression', is.callExpression as _AnyGuard),
 	newExpression: _makeAssert('newExpression', is.newExpression as _AnyGuard),
 	awaitExpression: _makeAssert('awaitExpression', is.awaitExpression as _AnyGuard),
 	memberExpression: _makeAssert('memberExpression', is.memberExpression as _AnyGuard),
@@ -1241,10 +1247,11 @@ export const assert = {
 	binaryExpression: _makeAssert('binaryExpression', is.binaryExpression as _AnyGuard),
 	unaryExpression: _makeAssert('unaryExpression', is.unaryExpression as _AnyGuard),
 	sequenceExpression: _makeAssert('sequenceExpression', is.sequenceExpression as _AnyGuard),
-	string: _makeAssert('string', is.string as _AnyGuard),
+	escapeSequence: _makeAssert('escapeSequence', is.escapeSequence as _AnyGuard),
 	templateString: _makeAssert('templateString', is.templateString as _AnyGuard),
 	templateSubstitution: _makeAssert('templateSubstitution', is.templateSubstitution as _AnyGuard),
 	regex: _makeAssert('regex', is.regex as _AnyGuard),
+	privatePropertyIdentifier: _makeAssert('privatePropertyIdentifier', is.privatePropertyIdentifier as _AnyGuard),
 	arguments: _makeAssert('arguments', is.arguments as _AnyGuard),
 	decorator: _makeAssert('decorator', is.decorator as _AnyGuard),
 	decoratorMemberExpression: _makeAssert('decoratorMemberExpression', is.decoratorMemberExpression as _AnyGuard),
@@ -1371,25 +1378,23 @@ export const assert = {
 	statement: _makeAssert('statement', is.statement as _AnyGuard),
 	variableDeclarator: _makeAssert('variableDeclarator', is.variableDeclarator as _AnyGuard),
 	forHeader: _makeAssert('forHeader', is.forHeader as _AnyGuard),
+	parenthesizedExpression: _makeAssert('parenthesizedExpression', is.parenthesizedExpression as _AnyGuard),
 	expressions: _makeAssert('expressions', is.expressions as _AnyGuard),
 	expression: _makeAssert('expression', is.expression as _AnyGuard),
 	primaryExpression: _makeAssert('primaryExpression', is.primaryExpression as _AnyGuard),
 	formalParameter: _makeAssert('formalParameter', is.formalParameter as _AnyGuard),
+	callExpression: _makeAssert('callExpression', is.callExpression as _AnyGuard),
 	lhsExpression: _makeAssert('lhsExpression', is.lhsExpression as _AnyGuard),
 	augmentedAssignmentLhs: _makeAssert('augmentedAssignmentLhs', is.augmentedAssignmentLhs as _AnyGuard),
 	destructuringPattern: _makeAssert('destructuringPattern', is.destructuringPattern as _AnyGuard),
 	updateExpression: _makeAssert('updateExpression', is.updateExpression as _AnyGuard),
+	string: _makeAssert('string', is.string as _AnyGuard),
+	comment: _makeAssert('comment', is.comment as _AnyGuard),
+	number: _makeAssert('number', is.number as _AnyGuard),
 	identifier: _makeAssert('identifier', is.identifier as _AnyGuard),
 	metaProperty: _makeAssert('metaProperty', is.metaProperty as _AnyGuard),
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
 	propertyName: _makeAssert('propertyName', is.propertyName as _AnyGuard),
-	statementIdentifier: _makeAssert('statementIdentifier', is.statementIdentifier as _AnyGuard),
-	shorthandPropertyIdentifier: _makeAssert('shorthandPropertyIdentifier', is.shorthandPropertyIdentifier as _AnyGuard),
-	shorthandPropertyIdentifierPattern: _makeAssert(
-		'shorthandPropertyIdentifierPattern',
-		is.shorthandPropertyIdentifierPattern as _AnyGuard
-	),
-	propertyIdentifier: _makeAssert('propertyIdentifier', is.propertyIdentifier as _AnyGuard),
 	importIdentifier: _makeAssert('importIdentifier', is.importIdentifier as _AnyGuard),
 	type: _makeAssert('type', is.type as _AnyGuard),
 	tupleTypeMember: _makeAssert('tupleTypeMember', is.tupleTypeMember as _AnyGuard),

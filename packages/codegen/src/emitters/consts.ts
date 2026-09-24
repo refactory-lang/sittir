@@ -1,16 +1,22 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
 	AssembledPattern,
-	AssembledEnum,
-	AssembledKeyword,
-	AssembledToken
+	AssembledEnum
 } from '../compiler/model/node-map.ts';
 import type { GeneratedIdEntry, GeneratedIdTable, GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { keywordPresenceKind, keywordPresenceValues, keywordPresenceIsNonEmptyRepeat, escForSource } from './shared.ts';
+import {
+	keywordPresenceKind,
+	keywordPresenceValues,
+	keywordPresenceIsNonEmptyRepeat,
+	escForSource,
+	compareOrdinal
+} from './shared.ts';
 import { collectCatalogKinds } from './kind-discriminant.ts';
+import { collectInteriors } from './interior.ts';
 
 export interface EmitConstsConfig {
 	grammar: string;
@@ -35,10 +41,10 @@ export function emitConsts(config: EmitConstsConfig): string {
 		} else if (node instanceof AssembledEnum) {
 			leafKinds.push(kind);
 			enumEntries.push({ kind, values: node.values });
-		} else if (node instanceof AssembledKeyword) {
+		} else if (isWordOrVisibleTextLeaf(node)) {
 			leafKinds.push(kind);
 			keywords.push(kind);
-		} else if (node instanceof AssembledToken) {
+		} else if (isHiddenPunctuationLeaf(node)) {
 			operators.push(kind);
 		}
 	}
@@ -98,10 +104,12 @@ export function emitConsts(config: EmitConstsConfig): string {
 		sourceArtifact: generatedIdTables?.sourceArtifact
 	});
 
+	emitTokenInteriors(lines, nodeMap);
+
 	emitBitflagConstEnums(lines, nodeMap);
 
 	const emittedValueTypes = new Set<string>();
-	for (const ek of enumEntries.sort((a, b) => a.kind.localeCompare(b.kind))) {
+	for (const ek of enumEntries.sort((a, b) => compareOrdinal(a.kind, b.kind))) {
 		const constName = ek.kind.toUpperCase() + 'S';
 		const typeName =
 			ek.kind
@@ -124,6 +132,20 @@ export function emitConsts(config: EmitConstsConfig): string {
 	}
 
 	return lines.join('\n');
+}
+
+function emitTokenInteriors(lines: string[], nodeMap: NodeMap): void {
+	const interiors = collectInteriors(nodeMap);
+	if (interiors.size === 0) return;
+	lines.push("import type { TokenInterior } from '@sittir/common';");
+	lines.push('');
+	lines.push('/** Slot structure of every token whose lexed text carries literal affixes, flags or enums around its content. */');
+	lines.push('export const TOKEN_INTERIORS = {');
+	for (const [kind, interior] of [...interiors].sort(([a], [b]) => compareOrdinal(a, b))) {
+		lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify({ regex: interior.regex, slots: interior.slots })},`);
+	}
+	lines.push("} as const satisfies { readonly [kind: string]: TokenInterior };");
+	lines.push('');
 }
 
 interface TreeSitterIdConstConfig {
@@ -183,7 +205,7 @@ function emitIdEnumBlock(
 ): void {
 	if (config.entries.length === 0) return;
 
-	lines.push(`export const enum ${config.enumName} {`);
+	lines.push(`export enum ${config.enumName} {`);
 	for (const entry of config.entries) {
 		lines.push(`  ${entry.memberName} = ${entry.id},`);
 	}
@@ -259,8 +281,8 @@ function collectIdEntries(keys: readonly string[], ids: GeneratedIdTable | undef
 		.sort(
 			(a, b) =>
 				(a.entry.id ?? -1) - (b.entry.id ?? -1) ||
-				a.key.localeCompare(b.key) ||
-				(a.entry.parser?.cSymbol ?? '').localeCompare(b.entry.parser?.cSymbol ?? '')
+				compareOrdinal(a.key, b.key) ||
+				compareOrdinal(a.entry.parser?.cSymbol ?? '', b.entry.parser?.cSymbol ?? '')
 		);
 
 	for (const { key, entry } of keyedEntries) {
@@ -324,15 +346,15 @@ interface BitflagBinding {
 function emitBitflagConstEnums(lines: string[], nodeMap: NodeMap): void {
 	const bindings = collectBitflagBindings(nodeMap);
 	if (bindings.length === 0) return;
-	bindings.sort((a, b) => a.constName.localeCompare(b.constName));
+	bindings.sort((a, b) => compareOrdinal(a.constName, b.constName));
 
-	lines.push('// Bitflag const enums — ordered-unique literal sets per bitflag field');
+	lines.push('// Bitflag enums — ordered-unique literal sets per bitflag field');
 	const seen = new Set<string>();
 	for (const b of bindings) {
 		if (seen.has(b.constName)) continue;
 		seen.add(b.constName);
 		lines.push(`/** Bitflag set for \`${b.kind}.${b.field.name}\`. */`);
-		lines.push(`export const enum ${b.constName} {`);
+		lines.push(`export enum ${b.constName} {`);
 		if (!b.nonEmptyRepeat) {
 			lines.push('  None = 0,');
 		}

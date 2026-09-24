@@ -87,3 +87,4 @@ export {
 } from './commands.ts';
 export { run as emitFactorySource, type EmitFactorySourceOptions } from './emit/factory-source.ts';
 export { run as hoistedCensus, type HoistedCensusOptions } from './census/hoisted.ts';
+export { run as bindingsInventory, type BindingsInventoryOptions } from './inventory/index.ts';

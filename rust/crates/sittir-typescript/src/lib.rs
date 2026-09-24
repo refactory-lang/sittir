@@ -60,6 +60,10 @@ impl sittir_core::read_node::ReadModel for TypeScriptGrammar {
     ) -> bool {
         render::kind_ids::is_slot_separator(parent, field, child)
     }
+
+    fn is_alias_envelope(&self, kind: sittir_core::types::KindId) -> bool {
+        render::kind_ids::is_alias_envelope(kind)
+    }
 }
 
 // The engine class itself — parse, read, render, edits, and the live-tree
@@ -71,6 +75,5 @@ sittir_core::napi_engine!(
     render::options::Options,
     render_transport_parts,
     NATIVE_RENDER_TRANSPORT_ABI,
-    render::options::defaults,
-    render::options::resolve
+    render::options::defaults
 );

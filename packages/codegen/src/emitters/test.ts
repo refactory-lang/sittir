@@ -1,9 +1,11 @@
+import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
+import { samplePattern } from '../types/runtime-shapes.ts';
+import { isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
+import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
-import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
 import {
 	AbstractAssembledCompound,
-	AssembledKeyword,
 	AssembledList,
 	AssembledSupertype,
 	isNodeRef,
@@ -28,12 +30,13 @@ import {
 	keywordPresenceKind,
 	kindEnumTextIdPairs,
 	resolveFieldStorageInfo,
+	isTextEnum,
 	soleSlotFacts,
 	type SoleSlotFacts,
 	escForSource
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
-import { valueStorageExpr, kindEnumTextExpr } from './factories.ts';
+import { valueStorageExpr, kindEnumTextExpr, registeredSlots } from './factories.ts';
 import { seatsConfigChild, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
 import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
@@ -107,16 +110,18 @@ export function emitTests(config: EmitTestsConfig): string {
 				emitBranchTest(target, node, kind, key, nodeMap, kindEntries);
 				emitSubFactoryTests(target, node, kind, subFactoryBase(kind, key, polymorphWires, routePaths), nodeMap, kindEntries, polymorphWires, config.expectTestFailures);
 				break;
+			case 'alias':
 			case 'supertype':
 				break;
 			case 'list':
 				emitSeparatedListTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'pattern':
-				emitLeafTest(target, node, kind, key, kindEntries, nodeMap);
+				if (node.annotations?.tokenForm !== true) emitLeafTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
-			case 'token':
-				if (node instanceof AssembledKeyword) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
+			case 'keyword':
+			case 'punctuation':
+				if (isVisibleTextLeaf(node) && node.annotations?.tokenForm !== true) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'enum':
 				break;
@@ -147,39 +152,61 @@ function emitBranchTest(
 		return;
 	}
 
-	const { typeConfigArg, renderConfigArg } = factoryCallArgs(node, nodeMap, kindEntries);
+	const { typeConfigArg, renderConfigArg, registeredOptionsArg } = factoryCallArgs(node, nodeMap, kindEntries);
+	const typeCallArgs =
+		registeredOptionsArg === undefined
+			? typeConfigArg
+			: `${typeConfigArg === '' ? 'undefined' : typeConfigArg}, ${registeredOptionsArg}`;
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
-	lines.push(`    const node = ir.${key}(${typeConfigArg});`);
+	lines.push(`    const node = ir.${key}(${typeCallArgs});`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
 
-	const hasRenderContent = renderConfigArg !== '{}';
-	if (hasRenderContent) {
-		lines.push(`  it('render produces non-empty string', () => {`);
-		lines.push(`    const node = ir.${key}(${renderConfigArg});`);
-		lines.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
-		lines.push('  });');
-	} else {
-		lines.push(`  it('render does not throw on minimal config', () => {`);
-		lines.push(`    const node = ir.${key}(${renderConfigArg});`);
-		lines.push(`    expect(() => node.$render!()).not.toThrow();`);
-		lines.push('  });');
-	}
+	pushRenderTest(lines, key, renderConfigArg, registeredOptionsArg);
 
 	lines.push('});');
 	lines.push('');
 }
 
+function pushRenderTest(
+	lines: string[],
+	key: string,
+	renderArg: string,
+	registeredOptionsArg?: string,
+	texts: readonly string[] = []
+): void {
+	const callArgs =
+		registeredOptionsArg === undefined
+			? renderArg
+			: `${renderArg === '' ? 'undefined' : renderArg}, ${registeredOptionsArg}`;
+	const hasRenderContent = registeredOptionsArg !== undefined || (renderArg !== '{}' && renderArg !== '');
+	if (hasRenderContent) {
+		lines.push(`  it('render produces non-empty string', () => {`);
+		lines.push(`    const node = ir.${key}(${callArgs});`);
+		lines.push(`    const rendered = node.$render!();`);
+		lines.push(`    expect(rendered.length).toBeGreaterThan(0);`);
+		for (const text of new Set(texts)) lines.push(`    expect(rendered).toContain(${JSON.stringify(text)});`);
+		lines.push('  });');
+	} else {
+		lines.push(`  it('render does not throw on minimal config', () => {`);
+		lines.push(`    const node = ir.${key}(${callArgs});`);
+		lines.push(`    expect(() => node.$render!()).not.toThrow();`);
+		lines.push('  });');
+	}
+}
+
 function factoryCallArgs(
-	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
+	node: AuthoredCompound,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	strict = false
-): { typeConfigArg: string; renderConfigArg: string } {
+): { typeConfigArg: string; renderConfigArg: string; registeredOptionsArg: string | undefined } {
+	const registeredSet = new Set(registeredSlots(node));
 	const typeConfigParts: string[] = [];
 	for (const f of node.slots) {
+		if (registeredSet.has(f)) continue;
 		if (isRequired(f)) {
 			typeConfigParts.push(`${f.configKey}: ${dummyValue(f, nodeMap, kindEntries, strict)}`);
 		}
@@ -201,11 +228,16 @@ function factoryCallArgs(
 		typeConfigArg = typeConfigParts.length > 0 ? `{ ${typeConfigParts.join(', ')} }` : '{}';
 		renderConfigArg = renderConfigParts.length > 0 ? `{ ${renderConfigParts.join(', ')} }` : '{}';
 	}
-	return { typeConfigArg, renderConfigArg };
+	const registeredRequired = [...registeredSet].filter(isRequired);
+	const registeredOptionsArg =
+		registeredRequired.length === 0
+			? undefined
+			: `{ ${registeredRequired.map((f) => `${f.configKey}: ${strictOptionDummy(f, nodeMap, kindEntries)}`).join(', ')} }`;
+	return { typeConfigArg, renderConfigArg, registeredOptionsArg };
 }
 
 function soleSlotDummyKind(
-	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
+	node: AuthoredCompound,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): { facts: SoleSlotFacts; firstKindName: string | undefined } | null {
@@ -215,27 +247,56 @@ function soleSlotDummyKind(
 		.map((v) => (isNodeRef(v) ? storageKindOfRef(v.node) : undefined) ?? v.parseKind?.name)
 		.filter((n) => n !== undefined);
 	const firstKindName =
-		candidateKindNames.length > 0 ? resolveConcreteKind(candidateKindNames, nodeMap, kindEntries) : undefined;
+		candidateKindNames.length > 0
+			? resolveConcreteKind(candidateKindNames, nodeMap, kindEntries, new Set([node.kind]))
+			: undefined;
 	return { facts, firstKindName };
 }
 
+function patternSlotDummy(slot: AssembledNonterminal): string | undefined {
+	const patternValue = slot.values.find(isPatternValue);
+	if (patternValue === undefined) return undefined;
+	const sample = pickSampleForPattern(patternValue.pattern);
+	return sample === null ? "'test' as any" : JSON.stringify(sample);
+}
+
 function childrenCallArgs(
-	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
+	node: AuthoredCompound,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	texts: string[]
 ): string {
+	const value = childrenCallValueArg(node, nodeMap, kindEntries, texts);
+	const registeredRequired = registeredSlots(node).filter(isRequired);
+	if (registeredRequired.length === 0) return value;
+	const optionsParts = registeredRequired.map((f) => `${f.configKey}: ${strictOptionDummy(f, nodeMap, kindEntries)}`);
+	return `${value === '' ? 'undefined' : value}, { ${optionsParts.join(', ')} }`;
+}
+
+function childrenCallValueArg(
+	node: AuthoredCompound,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	texts: string[]
+): string {
+	const patternDummy = node.soleSlot === undefined ? undefined : patternSlotDummy(node.soleSlot);
+	if (patternDummy !== undefined) return patternDummy;
 	const resolved = soleSlotDummyKind(node, nodeMap, kindEntries);
 	if (resolved === null || resolved.firstKindName === undefined) return '';
 	const { facts, firstKindName } = resolved;
 	const requiredSingular = !facts.multiple && facts.required;
-	return requiredSingular || facts.nonEmpty ? buildDummyStub(firstKindName, nodeMap, kindEntries, 0, new Set()) : '';
+	return requiredSingular || facts.nonEmpty
+		? buildDummyStub(firstKindName, nodeMap, kindEntries, 0, new Set(), { texts, populateOptional: true })
+		: '';
 }
 
 function subFactoryChildrenArgs(
-	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
+	node: AuthoredCompound,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
+	const patternDummy = node.soleSlot === undefined ? undefined : patternSlotDummy(node.soleSlot);
+	if (patternDummy !== undefined) return patternDummy;
 	const resolved = soleSlotDummyKind(node, nodeMap, kindEntries);
 	if (resolved === null || resolved.firstKindName === undefined) return '';
 	const { facts, firstKindName } = resolved;
@@ -251,7 +312,8 @@ function childBareCallArgs(
 	switch (child.modelType) {
 		case 'branch':
 		case 'envelope':
-		case 'polymorph': {
+		case 'polymorph':
+		case 'alias': {
 			if (!(child instanceof AbstractAssembledCompound) || child instanceof AssembledList) return undefined;
 			if (testConstructsWithChildren(child, nodeMap)) {
 				return subFactoryChildrenArgs(child, nodeMap, kindEntries);
@@ -261,11 +323,12 @@ function childBareCallArgs(
 		case 'list':
 			return dummyValueForField(buildSeparatedListContentSlot(child), nodeMap, kindEntries, 0, new Set());
 		case 'pattern': {
-			const sample = pickSampleForPattern(child.pattern);
+			const sample = pickSampleForPattern(child.textPattern);
 			return sample === null ? undefined : JSON.stringify(sample);
 		}
-		case 'token':
-			return child instanceof AssembledKeyword
+		case 'keyword':
+		case 'punctuation':
+			return isVisibleTextLeaf(child)
 				? buildDummyStub(child.kind, nodeMap, kindEntries, 0, new Set())
 				: undefined;
 		case 'enum': {
@@ -302,10 +365,15 @@ function subFactoryCallArgs(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	isEmitted: (kind: string) => boolean,
 	bundledKinds: ReadonlySet<string>,
-	visiting: ReadonlySet<string> = new Set()
+	visiting: ReadonlySet<string> = new Set(),
+	positional = false
 ): string | undefined {
 	if (sub.arm.via === 'value') {
 		if (sub.residual.length === 0) return '';
+		if (positional) {
+			const sole = sub.residual[0];
+			return sole === undefined ? '' : dummyValue(sole, nodeMap, kindEntries);
+		}
 		return objectFrom(requiredFieldParts(sub.residual, nodeMap, kindEntries));
 	}
 
@@ -334,6 +402,7 @@ function subFactoryCallArgs(
 	if (seatsConfigChild(sub, nodeMap)) {
 		return objectFrom([...residualParts, `${sub.slot.configKey}: ${childArgs === '' ? '{}' : childArgs}`]);
 	}
+	if (child.parameterless) return objectFrom(residualParts);
 	const tuple = childArgs === '' ? '[]' : `[${childArgs}]`;
 	return objectFrom([...residualParts, `${sub.slot.configKey}: ${tuple}`]);
 }
@@ -372,9 +441,10 @@ function emitSubFactoryTests(
 	const aliases = wireSet?.aliases ?? [];
 	if (entries.length === 0 && aliases.length === 0) return;
 
+	const positional = resolveDirectFactorySlot(node, nodeMap) !== undefined;
 	const cases: string[] = [];
 	for (const sub of entries) {
-		const args = subFactoryCallArgs(sub, nodeMap, kindEntries, isEmitted, bundledKinds);
+		const args = subFactoryCallArgs(sub, nodeMap, kindEntries, isEmitted, bundledKinds, new Set(), positional);
 		if (args === undefined) continue;
 		const spelling = emittedArmPath(kind, [sub.name], polymorphWires).join('.');
 		const knownFailure = expectTestFailures?.[`${kind}.${sub.name}`];
@@ -383,7 +453,12 @@ function emitSubFactoryTests(
 			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(spelling)} builds the parent', () => {`
 		);
 		const callTarget = knownFailure !== undefined ? `(ir.${base.path} as any).${spelling}${base.flavor}` : `ir.${base.path}.${spelling}${base.flavor}`;
-		cases.push(`    const node = ${callTarget}(${args});`);
+		const registeredChain = (() => {
+			if (!(node instanceof AbstractAssembledCompound)) return '';
+			const required = registeredSlots(node).filter((f) => f !== sub.slot && isRequired(f));
+			return required.map((f) => `.$with.${f.configKey}(${strictOptionDummy(f, nodeMap, kindEntries)})`).join('');
+		})();
+		cases.push(`    const node = ${callTarget}(${args})${registeredChain};`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 		const slotProp = sub.slot.propertyName;
 		const slotStorageInfo = resolveFieldStorageInfo(sub.slot, nodeMap);
@@ -405,12 +480,7 @@ function emitSubFactoryTests(
 		} else {
 			cases.push(`    expect((node as any).${slotProp}()).toBeDefined();`);
 		}
-		const hasContent = args !== '' && args !== '{}';
-		if (hasContent) {
-			cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
-		} else {
-			cases.push(`    expect(() => node.$render!()).not.toThrow();`);
-		}
+		cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
 		cases.push('  });');
 	}
 	for (const alias of aliases) {
@@ -423,13 +493,14 @@ function emitSubFactoryTests(
 			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(alias.name)} builds the ${escForSource(child.kind)} form', () => {`
 		);
 		const callTarget = knownFailure !== undefined ? `(ir.${base.path} as any).${alias.name}${base.flavor}` : `ir.${base.path}.${alias.name}${base.flavor}`;
-		cases.push(`    const node = ${callTarget}(${args});`);
+		const aliasRegisteredChain = (() => {
+			if (!(child instanceof AbstractAssembledCompound)) return '';
+			const required = registeredSlots(child).filter(isRequired);
+			return required.map((f) => `.$with.${f.configKey}(${strictOptionDummy(f, nodeMap, kindEntries)})`).join('');
+		})();
+		cases.push(`    const node = ${callTarget}(${args})${aliasRegisteredChain};`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(child.kind, kindEntries, nodeMap)});`);
-		if (args === '' || args === '{}') {
-			cases.push(`    expect(() => node.$render!()).not.toThrow();`);
-		} else {
-			cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
-		}
+		cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
 		cases.push('  });');
 	}
 	if (cases.length === 0) return;
@@ -451,13 +522,15 @@ function emitChildrenTest(
 	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList) return;
 	if (!testConstructsWithChildren(node, nodeMap)) return;
 
-	const placeholder = childrenCallArgs(node, nodeMap, kindEntries);
+	const texts: string[] = [];
+	const placeholder = childrenCallArgs(node, nodeMap, kindEntries, texts);
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
 	lines.push(`    const node = ir.${key}(${placeholder});`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
+	pushRenderTest(lines, key, placeholder, undefined, texts);
 	lines.push('});');
 	lines.push('');
 }
@@ -498,7 +571,7 @@ function emitLeafTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	const pattern = node.modelType === 'pattern' ? node.pattern : undefined;
+	const pattern = node.modelType === 'pattern' ? node.textPattern : undefined;
 	const sample = pickSampleForPattern(pattern);
 	if (sample === null) {
 		return;
@@ -532,6 +605,15 @@ function pickSampleForPattern(pattern: string | undefined): string | null {
 		'1.0',
 		'1e0',
 		'1u32',
+		'1_0',
+		'{{',
+		'.',
+		'!a',
+		'// a',
+		'# a',
+		'#x',
+		'\\n',
+		'\\\n',
 		'\n',
 		' '
 	];
@@ -548,7 +630,7 @@ function pickSampleForPattern(pattern: string | undefined): string | null {
 	for (const c of candidates) {
 		if (re.test(c)) return c;
 	}
-	return null;
+	return samplePattern(pattern);
 }
 
 function emitKeywordTest(
@@ -559,7 +641,7 @@ function emitKeywordTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	if (!(node instanceof AssembledKeyword)) return;
+	if (!isVisibleTextLeaf(node)) return;
 	lines.push(`describe(${JSON.stringify(kind)}, () => {`);
 	lines.push(`  it('factory produces the kind id', () => {`);
 	lines.push(`    expect(ir.${key}()).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
@@ -571,7 +653,8 @@ function emitKeywordTest(
 function resolveConcreteKind(
 	candidates: readonly string[],
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	onPath: ReadonlySet<string>
 ): string {
 	const seen = new Set<string>();
 	const enumCandidates: string[] = [];
@@ -589,28 +672,58 @@ function resolveConcreteKind(
 		}
 		if (kindEntries && !hasCatalogEntry(kindEntries, current)) continue;
 		if (current.startsWith('_')) continue;
-		if (node.modelType === 'pattern' || node.modelType === 'token') return current;
+		if (node.modelType === 'pattern' || isFixedTextLeaf(node)) return current;
 		if (node.modelType === 'enum') enumCandidates.push(current);
 		else nonLeafCandidates.push(current);
 	}
-	return nonLeafCandidates[0] ?? enumCandidates[0] ?? candidates[0] ?? '';
+	const offPath = nonLeafCandidates.find((k) => !onPath.has(k));
+	return offPath ?? enumCandidates[0] ?? nonLeafCandidates[0] ?? candidates[0] ?? '';
 }
 
 const MAX_DUMMY_DEPTH = 6;
+
+interface DummyOptions {
+	/** Receives the text of every leaf the stub seats, so a test can assert the render carries it. */
+	readonly texts?: string[];
+	/** Also seats the optional single-valued slots of the top-level stub. */
+	readonly populateOptional?: boolean;
+}
+
+function strictOptionDummy(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);
+	if (storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum') {
+		const enumKind = storageInfo.enumKinds[0];
+		if (enumKind !== undefined && kindEntries && hasCatalogEntry(kindEntries, enumKind)) {
+			return kindDiscriminantExpr(enumKind, nodeMap, kindEntries);
+		}
+	}
+	return dummyValue(field, nodeMap, kindEntries, true);
+}
 
 function dummyValueForField(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	depth: number,
-	visiting: ReadonlySet<string>
+	visiting: ReadonlySet<string>,
+	options?: DummyOptions
 ): string {
+	const patternDummy = patternSlotDummy(field);
+	if (patternDummy !== undefined) return patternDummy;
 	const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);
+	if (isTextEnum(storageInfo)) {
+		return JSON.stringify(storageInfo.texts[0]);
+	}
 	if (depth === 0) {
 		if (storageInfo.kind === 'boolean') return 'true';
 		if (storageInfo.kind === 'bitflag') return '0 as never';
 		if (storageInfo.kind === 'kindEnum') {
 			const text = storageInfo.texts[0];
+			if (text !== undefined) options?.texts?.push(text);
 			return text !== undefined ? JSON.stringify(text) : "'test' as any";
 		}
 	} else {
@@ -622,14 +735,15 @@ function dummyValueForField(
 				return `${kindDiscriminantExpr(enumKind, nodeMap, kindEntries)} as never`;
 			}
 			const text = storageInfo.texts[0];
+			if (text !== undefined) options?.texts?.push(text);
 			return text !== undefined ? JSON.stringify(text) : "'test' as any";
 		}
 	}
 
 	const kinds = slotKindNames(field);
 	if (kinds.length === 0) return "'test' as any";
-	const concrete = resolveConcreteKind(kinds, nodeMap, kindEntries);
-	return buildDummyStub(concrete, nodeMap, kindEntries, depth, visiting);
+	const concrete = resolveConcreteKind(kinds, nodeMap, kindEntries, visiting);
+	return buildDummyStub(concrete, nodeMap, kindEntries, depth, visiting, options);
 }
 
 function buildDummyStub(
@@ -637,22 +751,27 @@ function buildDummyStub(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	depth: number,
-	visiting: ReadonlySet<string>
+	visiting: ReadonlySet<string>,
+	options?: DummyOptions
 ): string {
 	const node = nodeMap.nodes.get(kind) ?? nodeMap.nodes.get(`_${kind}`);
 	const dummyText = node ? dummyTextForKind(kind, nodeMap) : 'test';
 	const base = dummyNodeLiteral(kind, dummyText, nodeMap, kindEntries);
-	if (!node || (!(node instanceof AbstractAssembledCompound) && !(node instanceof AssembledList))) return base;
+	if (!node || (!(node instanceof AbstractAssembledCompound) && !(node instanceof AssembledList))) {
+		if (node !== undefined && (isFixedTextLeaf(node) || node.modelType === 'enum' || node.modelType === 'pattern')) options?.texts?.push(dummyText);
+		return base;
+	}
 	if (depth >= MAX_DUMMY_DEPTH || visiting.has(kind)) return base;
 
 	const nextVisiting = new Set(visiting);
 	nextVisiting.add(kind);
 	const fieldParts: string[] = [];
+	const populateOptional = depth === 0 && options?.populateOptional === true;
 	for (const f of node.slots) {
-		if (!isRequired(f)) continue;
+		if (!isRequired(f) && !(populateOptional && !isMultiple(f))) continue;
 		const value = isMultiple(f)
-			? `[${dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting)}]`
-			: dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting);
+			? `[${dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting, options)}]`
+			: dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting, options);
 		fieldParts.push(`${f.storageKey}: ${value}`);
 	}
 	if (fieldParts.length === 0) return base;
@@ -691,7 +810,7 @@ function dummyValue(
 function dummyTextForKind(kind: string, nodeMap: NodeMap): string {
 	const node = nodeMap.nodes.get(kind);
 	if (!node) return 'test';
-	if (node.modelType === 'token') return node.text;
+	if (isFixedTextLeaf(node)) return node.text;
 	if (node.modelType === 'enum' && node.values.length > 0) return node.values[0]!;
 	return 'test';
 }

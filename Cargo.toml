@@ -23,6 +23,13 @@ rust-version = "1.88"
 license = "MIT"
 repository = "https://github.com/refactory-lang/sittir"
 
+# A cdylib built with cargo's release default `strip = "debuginfo"` and the
+# explicit `--target` that `napi build --platform` passes comes out with a
+# "mis-aligned LINKEDIT string pool" on current macOS, and dyld refuses to load
+# it. Keeping symbols costs ~4% binary size and loads everywhere.
+[profile.release]
+strip = "none"
+
 # Centralise common dependency versions so core + render + napi stay
 # aligned. Per-crate `Cargo.toml` files pull these via
 # `{ workspace = true }` or override when pinning is required.
