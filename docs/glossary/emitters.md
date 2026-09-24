@@ -258,13 +258,14 @@ no per-list match block: each element answers its own seat through
 be absent is iterated through `Option::as_mut`, a required one through
 `Some`, so one core function serves both.
 
-The core walk skips the last element. A child's edge is written at the end
-of its own body and cannot know whether a sibling follows, so seating the
-final element would leak the gap past the end of the list
-(`extern"C"fn foo` became `extern"C"\nfn foo` when it did). Skipping it
-leaves that element's edge on the kind's own arm, which makes "a sibling gap
-belongs to the child before it" literally true: element *i* is seated only
-when there is an *i+1*. The seating happens in the parent's prepare, not in
+The core walk skips the last present element. A child's edge is written at
+the end of its own body and cannot know whether a sibling follows, so
+seating the final element would leak the gap past the end of the list
+(`extern"C"fn foo` became `extern"C"\nfn foo` when it did). An absent
+element renders nothing, so it is neither seated nor the sibling that makes
+a gap. Skipping the last present one leaves its edge on the kind's own arm,
+which makes "a sibling gap belongs to the child before it" literally true:
+an element is seated only when a present element follows it. The seating happens in the parent's prepare, not in
 the element's, because only the parent knows an element's position.
 
 ### `packages/codegen/src/emitters/render-module.ts::SeatReach`

@@ -48,20 +48,20 @@ pub fn seat_site(table: &[u16], kind: KindId) -> Option<usize> {
     }
 }
 
-/// Fill the gap after every element but the last from the slot's seat table:
-/// a seated element's base `after` edge takes its site's arm unless the wire
-/// already set it. A coordinate or an absent element is skipped.
+/// Fill the gap after every present element but the last present one from
+/// the slot's seat table: a seated element's base `after` edge takes its
+/// site's arm unless the wire already set it. A coordinate is skipped; an
+/// absent element renders nothing, so it neither takes a gap nor counts as
+/// the sibling that makes the gap before it.
 pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
-    items: impl ExactSizeIterator<Item = Option<&'i mut SlotValue<T, ADJACENT>>>,
+    items: impl Iterator<Item = Option<&'i mut SlotValue<T, ADJACENT>>>,
     table: &[u16],
     ctx: &RenderContext<'_>,
 ) {
-    let last = items.len().saturating_sub(1);
-    for (at, item) in items.enumerate() {
-        if at == last {
-            break;
-        }
-        let Some(SlotValue::Transport(t)) = item else { continue };
+    let mut present: Vec<&'i mut SlotValue<T, ADJACENT>> = items.flatten().collect();
+    present.pop();
+    for item in present {
+        let SlotValue::Transport(t) = item else { continue };
         if let Some((edges, site)) = t.seat_target(table) {
             edges.after.get_or_insert(ctx.options.spacing[site].arm);
         }

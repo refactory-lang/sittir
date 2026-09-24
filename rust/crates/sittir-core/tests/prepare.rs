@@ -271,6 +271,17 @@ fn seated_gaps_fill_the_preceding_elements_after_edge_and_never_the_last() {
 }
 
 #[test]
+fn a_seated_gap_is_not_written_after_the_last_present_element() {
+    let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
+    let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
+    let sources = Sources(HashMap::new());
+    let mut items = vec![seatable(3), seatable(3), None, None];
+    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
+    assert_eq!(after_of(&items[0]), Some(70));
+    assert_eq!(after_of(&items[1]), None);
+}
+
+#[test]
 fn a_seated_gap_keeps_an_after_edge_the_element_already_carries() {
     let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
