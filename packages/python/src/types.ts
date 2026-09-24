@@ -1998,6 +1998,19 @@ export function kindIdFromName(kindName: string): TSKindId {
 	}
 }
 
+export type SpacingArm =
+	| TSKindId.Tight
+	| TSKindId.Space
+	| TSKindId.Newline
+	| TSKindId.Blankline
+	| TSKindId.DoubleNewline;
+export type WhitespaceArm =
+	| TSKindId.Tight
+	| TSKindId.Space
+	| TSKindId.Newline
+	| TSKindId.Blankline
+	| TSKindId.DoubleNewline;
+
 /** Separated-list optional-flank bitflag — the wire's `_delimiter` key
  *  and the list factories' `delimiter` option. */
 export enum Delimiter {
@@ -5173,6 +5186,115 @@ export type LineContinuationTree = LineContinuationNewlineTree | LineContinuatio
 
 export type Whitespace = Tight | Space | Newline | Blankline | DoubleNewline;
 
+export namespace Statement {
+	export type Kind = '_statement';
+	export type Tree = StatementTree;
+}
+
+export namespace SimpleStatement {
+	export type Kind = '_simple_statement';
+	export type Tree = SimpleStatementTree;
+}
+
+export namespace NamedExpressionLhs {
+	export type Kind = '_named_expression_lhs';
+	export type Tree = NamedExpressionLhsTree;
+}
+
+export namespace Expressions {
+	export type Kind = '_expressions';
+	export type Tree = ExpressionsTree;
+}
+
+export namespace CompoundStatement {
+	export type Kind = '_compound_statement';
+	export type Tree = CompoundStatementTree;
+}
+
+export namespace WithClause {
+	export type Kind = 'with_clause';
+	export type Tree = WithClauseTree;
+}
+
+export namespace Suite {
+	export type Kind = '_suite';
+	export type Tree = SuiteTree;
+}
+
+export namespace SimplePattern {
+	export type Kind = '_simple_pattern';
+	export type Tree = SimplePatternTree;
+}
+
+export namespace Parameter {
+	export type Kind = 'parameter';
+	export type Tree = ParameterTree;
+}
+
+export namespace Pattern {
+	export type Kind = 'pattern';
+	export type Tree = PatternTree;
+}
+
+export namespace ExpressionWithinForInClause {
+	export type Kind = '_expression_within_for_in_clause';
+	export type Tree = ExpressionWithinForInClauseTree;
+}
+
+export namespace Expression {
+	export type Kind = 'expression';
+	export type Tree = ExpressionTree;
+}
+
+export namespace PrimaryExpression {
+	export type Kind = 'primary_expression';
+	export type Tree = PrimaryExpressionTree;
+}
+
+export namespace Assignment {
+	export type Kind = 'assignment';
+	export type Tree = AssignmentTree;
+}
+
+export namespace LeftHandSide {
+	export type Kind = '_left_hand_side';
+	export type Tree = LeftHandSideTree;
+}
+
+export namespace RightHandSide {
+	export type Kind = '_right_hand_side';
+	export type Tree = RightHandSideTree;
+}
+
+export namespace FExpression {
+	export type Kind = '_f_expression';
+	export type Tree = FExpressionTree;
+}
+
+export namespace EscapeSequence {
+	export type Kind = 'escape_sequence';
+	export type Tree = EscapeSequenceTree;
+}
+
+export namespace Integer {
+	export type Kind = 'integer';
+	export type Tree = IntegerTree;
+}
+
+export namespace Float {
+	export type Kind = 'float';
+	export type Tree = FloatTree;
+}
+
+export namespace LineContinuation {
+	export type Kind = 'line_continuation';
+	export type Tree = LineContinuationTree;
+}
+
+export namespace Whitespace {
+	export type Kind = '_whitespace';
+}
+
 // Token type aliases (only tokens referenced in field/child unions)
 export type NotEscapeSequence = TSKindId.NotEscapeSequence;
 export interface NotEscapeSequenceTree extends AnyTreeNode {
@@ -5362,200 +5484,2049 @@ export type PythonNode =
 	| AsPatternTarget
 	| FormatExpression;
 
-export interface KindMap {
-	module: Module;
-	_simple_statements: SimpleStatements;
-	import_statement: ImportStatement;
-	relative_import: RelativeImport;
-	future_import_statement: FutureImportStatement;
-	import_from_statement: ImportFromStatement;
-	_import_list: ImportList;
-	aliased_import: AliasedImport;
-	print_statement: PrintStatement;
-	chevron: Chevron;
-	assert_statement: AssertStatement;
-	expression_statement: ExpressionStatement;
-	named_expression: NamedExpression;
-	return_statement: ReturnStatement;
-	delete_statement: DeleteStatement;
-	raise_statement: RaiseStatement;
-	if_statement: IfStatement;
-	elif_clause: ElifClause;
-	else_clause: ElseClause;
-	match_statement: MatchStatement;
-	_match_block: MatchBlock;
-	case_clause: CaseClause;
-	for_statement: ForStatement;
-	while_statement: WhileStatement;
-	try_statement: TryStatement;
-	except_clause: ExceptClause;
-	finally_clause: FinallyClause;
-	with_statement: WithStatement;
-	with_item: WithItem;
-	function_definition: FunctionDefinition;
-	parameters: Parameters;
-	lambda_parameters: LambdaParameters;
-	list_splat: ListSplat;
-	dictionary_splat: DictionarySplat;
-	global_statement: GlobalStatement;
-	nonlocal_statement: NonlocalStatement;
-	exec_statement: ExecStatement;
-	type_alias_statement: TypeAliasStatement;
-	class_definition: ClassDefinition;
-	type_parameter: TypeParameter;
-	parenthesized_list_splat: ParenthesizedListSplat;
-	argument_list: ArgumentList;
-	decorated_definition: DecoratedDefinition;
-	decorator: Decorator;
-	block: Block;
-	expression_list: ExpressionList;
-	dotted_name: DottedName;
-	case_pattern: CasePattern;
-	union_pattern: UnionPattern;
-	dict_pattern: DictPattern;
-	_key_value_pattern: KeyValuePattern;
-	keyword_pattern: KeywordPattern;
-	splat_pattern: SplatPattern;
-	class_pattern: ClassPattern;
-	complex_pattern: ComplexPattern;
-	_parameters: _Parameters;
-	_patterns: Patterns;
-	tuple_pattern: TuplePattern;
-	list_pattern: ListPattern;
-	default_parameter: DefaultParameter;
-	typed_default_parameter: TypedDefaultParameter;
-	list_splat_pattern: ListSplatPattern;
-	dictionary_splat_pattern: DictionarySplatPattern;
-	as_pattern: AsPattern;
-	not_operator: NotOperator;
-	boolean_operator: BooleanOperator;
-	binary_operator: BinaryOperator;
-	unary_operator: UnaryOperator;
-	comparison_operator: ComparisonOperator;
-	lambda: Lambda;
-	lambda_within_for_in_clause: LambdaWithinForInClause;
-	augmented_assignment: AugmentedAssignment;
-	pattern_list: PatternList;
-	yield: Yield;
-	attribute: Attribute;
-	subscript: Subscript;
-	slice: Slice;
-	call: Call;
-	typed_parameter: TypedParameter;
-	type: Type;
-	splat_type: SplatType;
-	generic_type: GenericType;
-	union_type: UnionType;
-	constrained_type: ConstrainedType;
-	member_type: MemberType;
-	keyword_argument: KeywordArgument;
-	list: List;
-	set: Set;
-	tuple: Tuple;
-	dictionary: Dictionary;
-	pair: Pair;
-	list_comprehension: ListComprehension;
-	dictionary_comprehension: DictionaryComprehension;
-	set_comprehension: SetComprehension;
-	generator_expression: GeneratorExpression;
-	parenthesized_expression: ParenthesizedExpression;
-	_collection_elements: CollectionElements;
-	for_in_clause: ForInClause;
-	if_clause: IfClause;
-	conditional_expression: ConditionalExpression;
-	concatenated_string: ConcatenatedString;
-	string: String;
-	string_content: StringContent;
-	interpolation: Interpolation;
-	format_specifier: FormatSpecifier;
-	keyword_identifier: KeywordIdentifier;
-	await: Await;
-	comment: Comment;
-	simple_statements_elements: SimpleStatementsElements;
-	subjects: Subjects;
-	case_patterns: CasePatterns;
-	with_clause_with_items: WithClauseWithItems;
-	types: Types;
-	argument_list_elements: ArgumentListElements;
-	expression_list_expressions: ExpressionListExpressions;
-	list_pattern_case_patterns: ListPatternCasePatterns;
-	dict_pattern_elements: DictPatternElements;
-	pattern_list_patterns: PatternListPatterns;
-	subscripts: Subscripts;
-	dictionary_elements: DictionaryElements;
-	slice_group: SliceGroup;
-	except_clause_exception_as: ExceptClauseExceptionAs;
-	case_tuple_pattern: CaseTuplePattern;
-	case_list_pattern: CaseListPattern;
-	case_as_pattern: CaseAsPattern;
-	comprehension_clauses: ComprehensionClauses;
-	_print_arguments: PrintArguments;
-	_print_chevron_arguments: PrintChevronArguments;
-	print_statement_chevron: PrintStatementChevron;
-	print_statement_plain: PrintStatementPlain;
-	_parenthesized_import_list: ParenthesizedImportList;
-	integer_hex: IntegerHex;
-	integer_octal: IntegerOctal;
-	integer_binary: IntegerBinary;
-	float_point: FloatPoint;
-	float_leading_point: FloatLeadingPoint;
-	float_scientific: FloatScientific;
-	escape_sequence_unicode_fixed: EscapeSequenceUnicodeFixed;
-	escape_sequence_unicode_wide: EscapeSequenceUnicodeWide;
-	escape_sequence_hex: EscapeSequenceHex;
-	escape_sequence_octal: EscapeSequenceOctal;
-	escape_sequence_line_break: EscapeSequenceLineBreak;
-	escape_sequence_simple: EscapeSequenceSimple;
-	escape_sequence_named: EscapeSequenceNamed;
-	simple_pattern_negative: SimplePatternNegative;
-	except_clause_exception_list: ExceptClauseExceptionList;
-	except_clause_exception: ExceptClauseException;
-	assignment_eq: AssignmentEq;
-	assignment_type: AssignmentType;
-	assignment_typed: AssignmentTyped;
-	expression_statement_tuple: ExpressionStatementTuple;
-	with_clause_bare: WithClauseBare;
-	with_clause_paren: WithClauseParen;
-	match_block_block: MatchBlockBlock;
-	suite_inline: SuiteInline;
-	suite_block: SuiteBlock;
-	suite_empty: SuiteEmpty;
-	_comparison_operator_comparator: ComparisonOperatorComparator;
-	_yield_from_clause: YieldFromClause;
-	as_pattern_target: AsPatternTarget;
-	format_expression: FormatExpression;
-	import_prefix: ImportPrefix;
-	wildcard_import: WildcardImport;
-	pass_statement: PassStatement;
-	break_statement: BreakStatement;
-	continue_statement: ContinueStatement;
-	ellipsis: Ellipsis;
-	type_conversion: TypeConversion;
-	identifier: Identifier;
-	true: True;
-	false: False;
-	none: None;
-	positional_separator: PositionalSeparator;
-	keyword_separator: KeywordSeparator;
-	_kw_async_marker: KwAsyncMarker;
-	_unary_operator_operator: UnaryOperatorOperator;
-	_augmented_assignment_operator: AugmentedAssignmentOperator;
-	_wildcard_pattern: WildcardPattern;
-	integer_decimal: IntegerDecimal;
-	line_continuation_newline: LineContinuationNewline;
-	line_continuation_nul: LineContinuationNul;
-	string_start: StringStart;
-	_string_content: _StringContent;
-	escape_interpolation: EscapeInterpolation;
-	string_end: StringEnd;
-	_indent: Indent;
-	_dedent: Dedent;
-	print_keyword: PrintKeyword;
-	exec_keyword: ExecKeyword;
-	async_keyword: AsyncKeyword;
-	await_keyword: AwaitKeyword;
-	type_keyword: TypeKeyword;
-	match_keyword: MatchKeyword;
+export interface OptionsHintMap {
+	module: Module.Hints;
+	simpleStatements: SimpleStatements.Hints;
+	importStatement: ImportStatement.Hints;
+	relativeImport: RelativeImport.Hints;
+	futureImportStatement: FutureImportStatement.Hints;
+	importFromStatement: ImportFromStatement.Hints;
+	importList: ImportList.Hints;
+	aliasedImport: AliasedImport.Hints;
+	chevron: Chevron.Hints;
+	assertStatement: AssertStatement.Hints;
+	namedExpression: NamedExpression.Hints;
+	returnStatement: ReturnStatement.Hints;
+	deleteStatement: DeleteStatement.Hints;
+	raiseStatement: RaiseStatement.Hints;
+	ifStatement: IfStatement.Hints;
+	elifClause: ElifClause.Hints;
+	elseClause: ElseClause.Hints;
+	matchStatement: MatchStatement.Hints;
+	caseClause: CaseClause.Hints;
+	forStatement: ForStatement.Hints;
+	whileStatement: WhileStatement.Hints;
+	tryStatement: TryStatement.Hints;
+	exceptClause: ExceptClause.Hints;
+	finallyClause: FinallyClause.Hints;
+	withStatement: WithStatement.Hints;
+	functionDefinition: FunctionDefinition.Hints;
+	parameters: Parameters.Hints;
+	listSplat: ListSplat.Hints;
+	dictionarySplat: DictionarySplat.Hints;
+	globalStatement: GlobalStatement.Hints;
+	nonlocalStatement: NonlocalStatement.Hints;
+	execStatement: ExecStatement.Hints;
+	typeAliasStatement: TypeAliasStatement.Hints;
+	classDefinition: ClassDefinition.Hints;
+	typeParameter: TypeParameter.Hints;
+	parenthesizedListSplat: ParenthesizedListSplat.Hints;
+	argumentList: ArgumentList.Hints;
+	decoratedDefinition: DecoratedDefinition.Hints;
+	decorator: Decorator.Hints;
+	block: Block.Hints;
+	expressionList: ExpressionList.Hints;
+	dottedName: DottedName.Hints;
+	unionPattern: UnionPattern.Hints;
+	dictPattern: DictPattern.Hints;
+	keyValuePattern: KeyValuePattern.Hints;
+	keywordPattern: KeywordPattern.Hints;
+	splatPattern: SplatPattern.Hints;
+	classPattern: ClassPattern.Hints;
+	complexPattern: ComplexPattern.Hints;
+	patterns: Patterns.Hints;
+	tuplePattern: TuplePattern.Hints;
+	listPattern: ListPattern.Hints;
+	defaultParameter: DefaultParameter.Hints;
+	typedDefaultParameter: TypedDefaultParameter.Hints;
+	listSplatPattern: ListSplatPattern.Hints;
+	dictionarySplatPattern: DictionarySplatPattern.Hints;
+	asPattern: AsPattern.Hints;
+	notOperator: NotOperator.Hints;
+	booleanOperator: BooleanOperator.Hints;
+	binaryOperator: BinaryOperator.Hints;
+	unaryOperator: UnaryOperator.Hints;
+	comparisonOperator: ComparisonOperator.Hints;
+	lambda: Lambda.Hints;
+	lambdaWithinForInClause: LambdaWithinForInClause.Hints;
+	augmentedAssignment: AugmentedAssignment.Hints;
+	patternList: PatternList.Hints;
+	yield: Yield.Hints;
+	attribute: Attribute.Hints;
+	subscript: Subscript.Hints;
+	slice: Slice.Hints;
+	call: Call.Hints;
+	typedParameter: TypedParameter.Hints;
+	splatType: SplatType.Hints;
+	genericType: GenericType.Hints;
+	unionType: UnionType.Hints;
+	constrainedType: ConstrainedType.Hints;
+	memberType: MemberType.Hints;
+	keywordArgument: KeywordArgument.Hints;
+	list: List.Hints;
+	set: Set.Hints;
+	tuple: Tuple.Hints;
+	dictionary: Dictionary.Hints;
+	pair: Pair.Hints;
+	listComprehension: ListComprehension.Hints;
+	dictionaryComprehension: DictionaryComprehension.Hints;
+	setComprehension: SetComprehension.Hints;
+	generatorExpression: GeneratorExpression.Hints;
+	parenthesizedExpression: ParenthesizedExpression.Hints;
+	collectionElements: CollectionElements.Hints;
+	forInClause: ForInClause.Hints;
+	ifClause: IfClause.Hints;
+	conditionalExpression: ConditionalExpression.Hints;
+	concatenatedString: ConcatenatedString.Hints;
+	string: String.Hints;
+	interpolation: Interpolation.Hints;
+	formatSpecifier: FormatSpecifier.Hints;
+	await: Await.Hints;
+	simpleStatementsElements: SimpleStatementsElements.Hints;
+	subjects: Subjects.Hints;
+	casePatterns: CasePatterns.Hints;
+	withClauseWithItems: WithClauseWithItems.Hints;
+	types: Types.Hints;
+	argumentListElements: ArgumentListElements.Hints;
+	expressionListExpressions: ExpressionListExpressions.Hints;
+	listPatternCasePatterns: ListPatternCasePatterns.Hints;
+	dictPatternElements: DictPatternElements.Hints;
+	patternListPatterns: PatternListPatterns.Hints;
+	subscripts: Subscripts.Hints;
+	dictionaryElements: DictionaryElements.Hints;
+	sliceGroup: SliceGroup.Hints;
+	exceptClauseExceptionAs: ExceptClauseExceptionAs.Hints;
+	caseTuplePattern: CaseTuplePattern.Hints;
+	caseListPattern: CaseListPattern.Hints;
+	caseAsPattern: CaseAsPattern.Hints;
+	comprehensionClauses: ComprehensionClauses.Hints;
+	printArguments: PrintArguments.Hints;
+	printChevronArguments: PrintChevronArguments.Hints;
+	printStatementChevron: PrintStatementChevron.Hints;
+	printStatementPlain: PrintStatementPlain.Hints;
+	parenthesizedImportList: ParenthesizedImportList.Hints;
+	simplePatternNegative: SimplePatternNegative.Hints;
+	exceptClauseExceptionList: ExceptClauseExceptionList.Hints;
+	assignmentEq: AssignmentEq.Hints;
+	assignmentType: AssignmentType.Hints;
+	assignmentTyped: AssignmentTyped.Hints;
+	expressionStatementTuple: ExpressionStatementTuple.Hints;
+	withClauseBare: WithClauseBare.Hints;
+	withClauseParen: WithClauseParen.Hints;
+	matchBlockBlock: MatchBlockBlock.Hints;
+	suiteInline: SuiteInline.Hints;
+	suiteBlock: SuiteBlock.Hints;
+	comparisonOperatorComparator: ComparisonOperatorComparator.Hints;
+	yieldFromClause: YieldFromClause.Hints;
+	unaryOperatorOperator: UnaryOperatorOperator.Hints;
+	augmentedAssignmentOperator: AugmentedAssignmentOperator.Hints;
+	lineContinuationNewline: LineContinuationNewline.Hints;
+	lineContinuationNul: LineContinuationNul.Hints;
+}
+
+export namespace Module {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly statements?: {
+				readonly classDefinition?: { readonly after?: SpacingArm };
+				readonly decoratedDefinition?: { readonly after?: SpacingArm };
+				readonly forStatement?: { readonly after?: SpacingArm };
+				readonly functionDefinition?: { readonly after?: SpacingArm };
+				readonly ifStatement?: { readonly after?: SpacingArm };
+				readonly matchStatement?: { readonly after?: SpacingArm };
+				readonly separator?: SpacingArm;
+				readonly simpleStatements?: { readonly after?: SpacingArm };
+				readonly tryStatement?: { readonly after?: SpacingArm };
+				readonly whileStatement?: { readonly after?: SpacingArm };
+				readonly withStatement?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace SimpleStatements {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+	}
+}
+
+export namespace ImportStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly importKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace RelativeImport {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+	}
+}
+
+export namespace FutureImportStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly fromKeyword?: { readonly after?: SpacingArm };
+			readonly future__Keyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly importKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ImportFromStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly fromKeyword?: { readonly after?: SpacingArm };
+			readonly importKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly star?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ImportList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly name?: {
+				readonly aliasedImport?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+			};
+		};
+	}
+}
+
+export namespace AliasedImport {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly asKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly before?: SpacingArm;
+		};
+	}
+}
+
+export namespace Chevron {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly gtGt?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace AssertStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly assertKeyword?: { readonly after?: SpacingArm };
+			readonly before?: SpacingArm;
+			readonly expression?: {
+				readonly asPattern?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly await?: { readonly after?: SpacingArm };
+				readonly binaryOperator?: { readonly after?: SpacingArm };
+				readonly booleanOperator?: { readonly after?: SpacingArm };
+				readonly call?: { readonly after?: SpacingArm };
+				readonly comparisonOperator?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: SpacingArm };
+				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
+				readonly generatorExpression?: { readonly after?: SpacingArm };
+				readonly lambda?: { readonly after?: SpacingArm };
+				readonly list?: { readonly after?: SpacingArm };
+				readonly listComprehension?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly namedExpression?: { readonly after?: SpacingArm };
+				readonly notOperator?: { readonly after?: SpacingArm };
+				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly set?: { readonly after?: SpacingArm };
+				readonly setComprehension?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuple?: { readonly after?: SpacingArm };
+				readonly unaryOperator?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace NamedExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colonEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ReturnStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly returnKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace DeleteStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly delKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace RaiseStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly fromKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly raiseKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace IfStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly alternative?: {
+				readonly elifClause?: { readonly after?: SpacingArm };
+				readonly elseClause?: { readonly after?: SpacingArm };
+				readonly separator?: SpacingArm;
+			};
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly ifKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace ElifClause {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly elifKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace ElseClause {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly elseKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace MatchStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly matchKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace CaseClause {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly caseKeyword?: { readonly after?: SpacingArm };
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ForStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly asyncMarker?: { readonly after?: SpacingArm };
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly forKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly inKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace WhileStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly whileKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace TryStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly exceptClauses?: {
+				readonly exceptClause?: { readonly after?: SpacingArm };
+				readonly separator?: SpacingArm;
+			};
+			readonly tryKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace ExceptClause {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly exceptKeyword?: { readonly after?: SpacingArm };
+			readonly starMarker?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace FinallyClause {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly finallyKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace WithStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly asyncMarker?: { readonly after?: SpacingArm };
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly withKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace FunctionDefinition {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly asyncMarker?: { readonly after?: SpacingArm };
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly dashGt?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly defKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace Parameters {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lparen?: { readonly after?: SpacingArm };
+			readonly parameter?: {
+				readonly defaultParameter?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictionarySplatPattern?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly tuplePattern?: { readonly after?: SpacingArm };
+				readonly typedDefaultParameter?: { readonly after?: SpacingArm };
+				readonly typedParameter?: { readonly after?: SpacingArm };
+			};
+			readonly rparen?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ListSplat {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly star?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace DictionarySplat {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly starStar?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace GlobalStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly globalKeyword?: { readonly after?: SpacingArm };
+			readonly names?: {
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+			};
+		};
+	}
+}
+
+export namespace NonlocalStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly names?: {
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+			};
+			readonly nonlocalKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace ExecStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly execKeyword?: { readonly after?: SpacingArm };
+			readonly inClause?: {
+				readonly asPattern?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly await?: { readonly after?: SpacingArm };
+				readonly binaryOperator?: { readonly after?: SpacingArm };
+				readonly booleanOperator?: { readonly after?: SpacingArm };
+				readonly call?: { readonly after?: SpacingArm };
+				readonly comparisonOperator?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: SpacingArm };
+				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
+				readonly generatorExpression?: { readonly after?: SpacingArm };
+				readonly lambda?: { readonly after?: SpacingArm };
+				readonly list?: { readonly after?: SpacingArm };
+				readonly listComprehension?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly namedExpression?: { readonly after?: SpacingArm };
+				readonly notOperator?: { readonly after?: SpacingArm };
+				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly set?: { readonly after?: SpacingArm };
+				readonly setComprehension?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuple?: { readonly after?: SpacingArm };
+				readonly unaryOperator?: { readonly after?: SpacingArm };
+			};
+			readonly inKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace TypeAliasStatement {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly typeKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace ClassDefinition {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly classKeyword?: { readonly after?: SpacingArm };
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace TypeParameter {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lbrack?: { readonly after?: SpacingArm };
+			readonly rbrack?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ParenthesizedListSplat {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lparen?: { readonly after?: SpacingArm };
+			readonly rparen?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ArgumentList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lparen?: { readonly after?: SpacingArm };
+			readonly rparen?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace DecoratedDefinition {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly decorator?: { readonly decorator?: { readonly after?: SpacingArm }; readonly separator?: SpacingArm };
+		};
+	}
+}
+
+export namespace Decorator {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly at?: { readonly after?: SpacingArm };
+			readonly before?: SpacingArm;
+		};
+	}
+}
+
+export namespace Block {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly statements?: {
+				readonly classDefinition?: { readonly after?: SpacingArm };
+				readonly decoratedDefinition?: { readonly after?: SpacingArm };
+				readonly forStatement?: { readonly after?: SpacingArm };
+				readonly functionDefinition?: { readonly after?: SpacingArm };
+				readonly ifStatement?: { readonly after?: SpacingArm };
+				readonly matchStatement?: { readonly after?: SpacingArm };
+				readonly separator?: SpacingArm;
+				readonly simpleStatements?: { readonly after?: SpacingArm };
+				readonly tryStatement?: { readonly after?: SpacingArm };
+				readonly whileStatement?: { readonly after?: SpacingArm };
+				readonly withStatement?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace ExpressionList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly comma?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace DottedName {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly names?: {
+				readonly separator?: { readonly dot?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+			};
+		};
+	}
+}
+
+export namespace UnionPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly patterns?: {
+				readonly caseListPattern?: { readonly after?: SpacingArm };
+				readonly caseTuplePattern?: { readonly after?: SpacingArm };
+				readonly classPattern?: { readonly after?: SpacingArm };
+				readonly complexPattern?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly dictPattern?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly pipe?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly simplePatternNegative?: { readonly after?: SpacingArm };
+				readonly splatPattern?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace DictPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lbrace?: { readonly after?: SpacingArm };
+			readonly rbrace?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace KeyValuePattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace KeywordPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace SplatPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly operator?: { readonly after?: SpacingArm };
+			readonly underscore?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ClassPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lparen?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly rparen?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ComplexPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly operator?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly real?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace Patterns {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly pattern?: {
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly listPattern?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuplePattern?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace TuplePattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lparen?: { readonly after?: SpacingArm };
+			readonly rparen?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ListPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lbrack?: { readonly after?: SpacingArm };
+			readonly rbrack?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace DefaultParameter {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace TypedDefaultParameter {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ListSplatPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly star?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace DictionarySplatPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly starStar?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace AsPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly asKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly before?: SpacingArm;
+		};
+	}
+}
+
+export namespace NotOperator {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly notKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace BooleanOperator {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly operator?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace BinaryOperator {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly operator?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace UnaryOperator {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+	}
+}
+
+export namespace ComparisonOperator {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly comparators?: {
+				readonly comparisonOperatorComparator?: { readonly after?: SpacingArm };
+				readonly separator?: SpacingArm;
+			};
+		};
+	}
+}
+
+export namespace Lambda {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly lambdaKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace LambdaWithinForInClause {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly lambdaKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace AugmentedAssignment {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+	}
+}
+
+export namespace PatternList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly comma?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace Yield {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly yieldKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace Attribute {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly dot?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace Subscript {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lbrack?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly rbrack?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace Slice {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace Call {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+	}
+}
+
+export namespace TypedParameter {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace SplatType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly operator?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace GenericType {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+	}
+}
+
+export namespace UnionType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly pipe?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ConstrainedType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace MemberType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly dot?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace KeywordArgument {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace List {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lbrack?: { readonly after?: SpacingArm };
+			readonly rbrack?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace Set {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lbrace?: { readonly after?: SpacingArm };
+			readonly rbrace?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace Tuple {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lparen?: { readonly after?: SpacingArm };
+			readonly rparen?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace Dictionary {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lbrace?: { readonly after?: SpacingArm };
+			readonly rbrace?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace Pair {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ListComprehension {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lbrack?: { readonly after?: SpacingArm };
+			readonly rbrack?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace DictionaryComprehension {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lbrace?: { readonly after?: SpacingArm };
+			readonly rbrace?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace SetComprehension {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lbrace?: { readonly after?: SpacingArm };
+			readonly rbrace?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace GeneratorExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lparen?: { readonly after?: SpacingArm };
+			readonly rparen?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ParenthesizedExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lparen?: { readonly after?: SpacingArm };
+			readonly rparen?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace CollectionElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly element?: {
+				readonly asPattern?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly await?: { readonly after?: SpacingArm };
+				readonly binaryOperator?: { readonly after?: SpacingArm };
+				readonly booleanOperator?: { readonly after?: SpacingArm };
+				readonly call?: { readonly after?: SpacingArm };
+				readonly comparisonOperator?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictionary?: { readonly after?: SpacingArm };
+				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
+				readonly generatorExpression?: { readonly after?: SpacingArm };
+				readonly lambda?: { readonly after?: SpacingArm };
+				readonly list?: { readonly after?: SpacingArm };
+				readonly listComprehension?: { readonly after?: SpacingArm };
+				readonly listSplat?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly namedExpression?: { readonly after?: SpacingArm };
+				readonly notOperator?: { readonly after?: SpacingArm };
+				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
+				readonly parenthesizedListSplat?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly set?: { readonly after?: SpacingArm };
+				readonly setComprehension?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuple?: { readonly after?: SpacingArm };
+				readonly unaryOperator?: { readonly after?: SpacingArm };
+				readonly yield?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace ForInClause {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly asyncMarker?: { readonly after?: SpacingArm };
+			readonly before?: SpacingArm;
+			readonly comma?: { readonly before?: SpacingArm };
+			readonly forKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly inKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly right?: {
+				readonly asPattern?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly await?: { readonly after?: SpacingArm };
+				readonly binaryOperator?: { readonly after?: SpacingArm };
+				readonly booleanOperator?: { readonly after?: SpacingArm };
+				readonly call?: { readonly after?: SpacingArm };
+				readonly comparisonOperator?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: SpacingArm };
+				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
+				readonly generatorExpression?: { readonly after?: SpacingArm };
+				readonly lambda?: { readonly after?: SpacingArm };
+				readonly lambdaWithinForInClause?: { readonly after?: SpacingArm };
+				readonly list?: { readonly after?: SpacingArm };
+				readonly listComprehension?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly namedExpression?: { readonly after?: SpacingArm };
+				readonly notOperator?: { readonly after?: SpacingArm };
+				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly set?: { readonly after?: SpacingArm };
+				readonly setComprehension?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuple?: { readonly after?: SpacingArm };
+				readonly unaryOperator?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace IfClause {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly ifKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace ConditionalExpression {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly elseKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly ifKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ConcatenatedString {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly string?: { readonly separator?: SpacingArm; readonly string?: { readonly after?: SpacingArm } };
+		};
+	}
+}
+
+export namespace String {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+	}
+}
+
+export namespace Interpolation {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly eqMarker?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly lbrace?: { readonly after?: SpacingArm };
+			readonly rbrace?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace FormatSpecifier {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace Await {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly awaitKeyword?: { readonly after?: SpacingArm };
+			readonly before?: SpacingArm;
+		};
+	}
+}
+
+export namespace SimpleStatementsElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly simpleStatement?: {
+				readonly asPattern?: { readonly after?: SpacingArm };
+				readonly assertStatement?: { readonly after?: SpacingArm };
+				readonly assignmentEq?: { readonly after?: SpacingArm };
+				readonly assignmentType?: { readonly after?: SpacingArm };
+				readonly assignmentTyped?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly augmentedAssignment?: { readonly after?: SpacingArm };
+				readonly await?: { readonly after?: SpacingArm };
+				readonly binaryOperator?: { readonly after?: SpacingArm };
+				readonly booleanOperator?: { readonly after?: SpacingArm };
+				readonly call?: { readonly after?: SpacingArm };
+				readonly comparisonOperator?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly deleteStatement?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictionary?: { readonly after?: SpacingArm };
+				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
+				readonly execStatement?: { readonly after?: SpacingArm };
+				readonly futureImportStatement?: { readonly after?: SpacingArm };
+				readonly generatorExpression?: { readonly after?: SpacingArm };
+				readonly globalStatement?: { readonly after?: SpacingArm };
+				readonly importFromStatement?: { readonly after?: SpacingArm };
+				readonly importStatement?: { readonly after?: SpacingArm };
+				readonly lambda?: { readonly after?: SpacingArm };
+				readonly list?: { readonly after?: SpacingArm };
+				readonly listComprehension?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly namedExpression?: { readonly after?: SpacingArm };
+				readonly nonlocalStatement?: { readonly after?: SpacingArm };
+				readonly notOperator?: { readonly after?: SpacingArm };
+				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
+				readonly printStatementChevron?: { readonly after?: SpacingArm };
+				readonly printStatementPlain?: { readonly after?: SpacingArm };
+				readonly raiseStatement?: { readonly after?: SpacingArm };
+				readonly returnStatement?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly semi?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly set?: { readonly after?: SpacingArm };
+				readonly setComprehension?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuple?: { readonly after?: SpacingArm };
+				readonly typeAliasStatement?: { readonly after?: SpacingArm };
+				readonly unaryOperator?: { readonly after?: SpacingArm };
+				readonly yield?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace Subjects {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly subject?: {
+				readonly asPattern?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly await?: { readonly after?: SpacingArm };
+				readonly binaryOperator?: { readonly after?: SpacingArm };
+				readonly booleanOperator?: { readonly after?: SpacingArm };
+				readonly call?: { readonly after?: SpacingArm };
+				readonly comparisonOperator?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictionary?: { readonly after?: SpacingArm };
+				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
+				readonly generatorExpression?: { readonly after?: SpacingArm };
+				readonly lambda?: { readonly after?: SpacingArm };
+				readonly list?: { readonly after?: SpacingArm };
+				readonly listComprehension?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly namedExpression?: { readonly after?: SpacingArm };
+				readonly notOperator?: { readonly after?: SpacingArm };
+				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly set?: { readonly after?: SpacingArm };
+				readonly setComprehension?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuple?: { readonly after?: SpacingArm };
+				readonly unaryOperator?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace CasePatterns {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly casePattern?: {
+				readonly caseAsPattern?: { readonly after?: SpacingArm };
+				readonly caseListPattern?: { readonly after?: SpacingArm };
+				readonly caseTuplePattern?: { readonly after?: SpacingArm };
+				readonly classPattern?: { readonly after?: SpacingArm };
+				readonly complexPattern?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictPattern?: { readonly after?: SpacingArm };
+				readonly keywordPattern?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly simplePatternNegative?: { readonly after?: SpacingArm };
+				readonly splatPattern?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace WithClauseWithItems {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly withItem?: {
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+			};
+		};
+	}
+}
+
+export namespace Types {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly type?: {
+				readonly asPattern?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly await?: { readonly after?: SpacingArm };
+				readonly binaryOperator?: { readonly after?: SpacingArm };
+				readonly booleanOperator?: { readonly after?: SpacingArm };
+				readonly call?: { readonly after?: SpacingArm };
+				readonly comparisonOperator?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly constrainedType?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictionary?: { readonly after?: SpacingArm };
+				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
+				readonly generatorExpression?: { readonly after?: SpacingArm };
+				readonly genericType?: { readonly after?: SpacingArm };
+				readonly lambda?: { readonly after?: SpacingArm };
+				readonly list?: { readonly after?: SpacingArm };
+				readonly listComprehension?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly memberType?: { readonly after?: SpacingArm };
+				readonly namedExpression?: { readonly after?: SpacingArm };
+				readonly notOperator?: { readonly after?: SpacingArm };
+				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly set?: { readonly after?: SpacingArm };
+				readonly setComprehension?: { readonly after?: SpacingArm };
+				readonly splatType?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuple?: { readonly after?: SpacingArm };
+				readonly unaryOperator?: { readonly after?: SpacingArm };
+				readonly unionType?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace ArgumentListElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly element?: {
+				readonly asPattern?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly await?: { readonly after?: SpacingArm };
+				readonly binaryOperator?: { readonly after?: SpacingArm };
+				readonly booleanOperator?: { readonly after?: SpacingArm };
+				readonly call?: { readonly after?: SpacingArm };
+				readonly comparisonOperator?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictionary?: { readonly after?: SpacingArm };
+				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
+				readonly dictionarySplat?: { readonly after?: SpacingArm };
+				readonly generatorExpression?: { readonly after?: SpacingArm };
+				readonly keywordArgument?: { readonly after?: SpacingArm };
+				readonly lambda?: { readonly after?: SpacingArm };
+				readonly list?: { readonly after?: SpacingArm };
+				readonly listComprehension?: { readonly after?: SpacingArm };
+				readonly listSplat?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly namedExpression?: { readonly after?: SpacingArm };
+				readonly notOperator?: { readonly after?: SpacingArm };
+				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
+				readonly parenthesizedListSplat?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly set?: { readonly after?: SpacingArm };
+				readonly setComprehension?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuple?: { readonly after?: SpacingArm };
+				readonly unaryOperator?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace ExpressionListExpressions {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly expression?: {
+				readonly asPattern?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly await?: { readonly after?: SpacingArm };
+				readonly binaryOperator?: { readonly after?: SpacingArm };
+				readonly booleanOperator?: { readonly after?: SpacingArm };
+				readonly call?: { readonly after?: SpacingArm };
+				readonly comparisonOperator?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictionary?: { readonly after?: SpacingArm };
+				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
+				readonly generatorExpression?: { readonly after?: SpacingArm };
+				readonly lambda?: { readonly after?: SpacingArm };
+				readonly list?: { readonly after?: SpacingArm };
+				readonly listComprehension?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly namedExpression?: { readonly after?: SpacingArm };
+				readonly notOperator?: { readonly after?: SpacingArm };
+				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly set?: { readonly after?: SpacingArm };
+				readonly setComprehension?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuple?: { readonly after?: SpacingArm };
+				readonly unaryOperator?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace ListPatternCasePatterns {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly casePattern?: {
+				readonly caseAsPattern?: { readonly after?: SpacingArm };
+				readonly caseListPattern?: { readonly after?: SpacingArm };
+				readonly caseTuplePattern?: { readonly after?: SpacingArm };
+				readonly classPattern?: { readonly after?: SpacingArm };
+				readonly complexPattern?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictPattern?: { readonly after?: SpacingArm };
+				readonly keywordPattern?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly simplePatternNegative?: { readonly after?: SpacingArm };
+				readonly splatPattern?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace DictPatternElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly element?: {
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly keyValuePattern?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly splatPattern?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace PatternListPatterns {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly pattern?: {
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly listPattern?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuplePattern?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace Subscripts {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly subscript?: {
+				readonly asPattern?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly await?: { readonly after?: SpacingArm };
+				readonly binaryOperator?: { readonly after?: SpacingArm };
+				readonly booleanOperator?: { readonly after?: SpacingArm };
+				readonly call?: { readonly after?: SpacingArm };
+				readonly comparisonOperator?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictionary?: { readonly after?: SpacingArm };
+				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
+				readonly generatorExpression?: { readonly after?: SpacingArm };
+				readonly lambda?: { readonly after?: SpacingArm };
+				readonly list?: { readonly after?: SpacingArm };
+				readonly listComprehension?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly namedExpression?: { readonly after?: SpacingArm };
+				readonly notOperator?: { readonly after?: SpacingArm };
+				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly set?: { readonly after?: SpacingArm };
+				readonly setComprehension?: { readonly after?: SpacingArm };
+				readonly slice?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuple?: { readonly after?: SpacingArm };
+				readonly unaryOperator?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace DictionaryElements {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly element?: {
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictionarySplat?: { readonly after?: SpacingArm };
+				readonly pair?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+			};
+		};
+	}
+}
+
+export namespace SliceGroup {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace ExceptClauseExceptionAs {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly asKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly before?: SpacingArm;
+		};
+	}
+}
+
+export namespace CaseTuplePattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lparen?: { readonly after?: SpacingArm };
+			readonly rparen?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace CaseListPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lbrack?: { readonly after?: SpacingArm };
+			readonly rbrack?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace CaseAsPattern {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly asKeyword?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly before?: SpacingArm;
+		};
+	}
+}
+
+export namespace ComprehensionClauses {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly content?: {
+				readonly forInClause?: { readonly after?: SpacingArm };
+				readonly ifClause?: { readonly after?: SpacingArm };
+				readonly separator?: SpacingArm;
+			};
+		};
+	}
+}
+
+export namespace PrintArguments {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly argument?: {
+				readonly asPattern?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly await?: { readonly after?: SpacingArm };
+				readonly binaryOperator?: { readonly after?: SpacingArm };
+				readonly booleanOperator?: { readonly after?: SpacingArm };
+				readonly call?: { readonly after?: SpacingArm };
+				readonly comparisonOperator?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictionary?: { readonly after?: SpacingArm };
+				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
+				readonly generatorExpression?: { readonly after?: SpacingArm };
+				readonly lambda?: { readonly after?: SpacingArm };
+				readonly list?: { readonly after?: SpacingArm };
+				readonly listComprehension?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly namedExpression?: { readonly after?: SpacingArm };
+				readonly notOperator?: { readonly after?: SpacingArm };
+				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly set?: { readonly after?: SpacingArm };
+				readonly setComprehension?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuple?: { readonly after?: SpacingArm };
+				readonly unaryOperator?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace PrintChevronArguments {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly argument?: {
+				readonly asPattern?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly await?: { readonly after?: SpacingArm };
+				readonly binaryOperator?: { readonly after?: SpacingArm };
+				readonly booleanOperator?: { readonly after?: SpacingArm };
+				readonly call?: { readonly after?: SpacingArm };
+				readonly comparisonOperator?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictionary?: { readonly after?: SpacingArm };
+				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
+				readonly generatorExpression?: { readonly after?: SpacingArm };
+				readonly lambda?: { readonly after?: SpacingArm };
+				readonly list?: { readonly after?: SpacingArm };
+				readonly listComprehension?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly namedExpression?: { readonly after?: SpacingArm };
+				readonly notOperator?: { readonly after?: SpacingArm };
+				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly set?: { readonly after?: SpacingArm };
+				readonly setComprehension?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuple?: { readonly after?: SpacingArm };
+				readonly unaryOperator?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace PrintStatementChevron {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly comma?: { readonly before?: SpacingArm };
+			readonly printKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace PrintStatementPlain {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly printKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace ParenthesizedImportList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lparen?: { readonly after?: SpacingArm };
+			readonly rparen?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace SimplePatternNegative {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly sign?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace ExceptClauseExceptionList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly value?: {
+				readonly asPattern?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly await?: { readonly after?: SpacingArm };
+				readonly binaryOperator?: { readonly after?: SpacingArm };
+				readonly booleanOperator?: { readonly after?: SpacingArm };
+				readonly call?: { readonly after?: SpacingArm };
+				readonly comparisonOperator?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly dictionary?: { readonly after?: SpacingArm };
+				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
+				readonly generatorExpression?: { readonly after?: SpacingArm };
+				readonly lambda?: { readonly after?: SpacingArm };
+				readonly list?: { readonly after?: SpacingArm };
+				readonly listComprehension?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly namedExpression?: { readonly after?: SpacingArm };
+				readonly notOperator?: { readonly after?: SpacingArm };
+				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly set?: { readonly after?: SpacingArm };
+				readonly setComprehension?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuple?: { readonly after?: SpacingArm };
+				readonly unaryOperator?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace AssignmentEq {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace AssignmentType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace AssignmentTyped {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly colon?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly eq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace ExpressionStatementTuple {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly expression?: {
+				readonly asPattern?: { readonly after?: SpacingArm };
+				readonly attribute?: { readonly after?: SpacingArm };
+				readonly await?: { readonly after?: SpacingArm };
+				readonly binaryOperator?: { readonly after?: SpacingArm };
+				readonly booleanOperator?: { readonly after?: SpacingArm };
+				readonly call?: { readonly after?: SpacingArm };
+				readonly comparisonOperator?: { readonly after?: SpacingArm };
+				readonly concatenatedString?: { readonly after?: SpacingArm };
+				readonly conditionalExpression?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictionary?: { readonly after?: SpacingArm };
+				readonly dictionaryComprehension?: { readonly after?: SpacingArm };
+				readonly generatorExpression?: { readonly after?: SpacingArm };
+				readonly lambda?: { readonly after?: SpacingArm };
+				readonly list?: { readonly after?: SpacingArm };
+				readonly listComprehension?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly namedExpression?: { readonly after?: SpacingArm };
+				readonly notOperator?: { readonly after?: SpacingArm };
+				readonly parenthesizedExpression?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly set?: { readonly after?: SpacingArm };
+				readonly setComprehension?: { readonly after?: SpacingArm };
+				readonly string?: { readonly after?: SpacingArm };
+				readonly subscript?: { readonly after?: SpacingArm };
+				readonly tuple?: { readonly after?: SpacingArm };
+				readonly unaryOperator?: { readonly after?: SpacingArm };
+			};
+		};
+	}
+}
+
+export namespace WithClauseBare {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly withItem?: {
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+			};
+		};
+	}
+}
+
+export namespace WithClauseParen {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly lparen?: { readonly after?: SpacingArm };
+			readonly rparen?: { readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace MatchBlockBlock {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly alternative?: { readonly caseClause?: { readonly after?: SpacingArm }; readonly separator?: SpacingArm };
+			readonly before?: SpacingArm;
+		};
+	}
+}
+
+export namespace SuiteInline {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+	}
+}
+
+export namespace SuiteBlock {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+	}
+}
+
+export namespace ComparisonOperatorComparator {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly operators?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace YieldFromClause {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly fromKeyword?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace UnaryOperatorOperator {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly dash?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly plus?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly tilde?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace AugmentedAssignmentOperator {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly ampEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly atEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly caretEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly dashEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly gtGtEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly ltLtEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly percentEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly pipeEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly plusEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly slashEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly slashSlashEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly starEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+			readonly starStarEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
+	}
+}
+
+export namespace LineContinuationNewline {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly bslash?: { readonly after?: SpacingArm } };
+	}
+}
+
+export namespace LineContinuationNul {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly bslash?: { readonly after?: SpacingArm } };
+	}
 }
 
 // Per-kind namespace interfaces — one computed base per kind

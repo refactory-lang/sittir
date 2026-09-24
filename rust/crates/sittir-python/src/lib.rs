@@ -75,6 +75,5 @@ sittir_core::napi_engine!(
     render::options::Options,
     render_transport_parts,
     NATIVE_RENDER_TRANSPORT_ABI,
-    render::options::defaults,
-    render::options::resolve
+    render::options::defaults
 );

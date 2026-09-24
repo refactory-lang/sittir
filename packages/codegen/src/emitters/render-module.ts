@@ -71,7 +71,19 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
-import { planRenderOptions, renderOptionsRs, type RenderOptionsPlan, type SpacingSite, type DelimiterSite } from './render-options-rs.ts';
+import {
+	carriesPerNodeValue,
+	edgeKindId,
+	seatTableName,
+	seatedTableNames,
+	edgeSitesOf,
+	isKindEdge,
+	planRenderOptions,
+	renderOptionsRs,
+	type RenderOptionsPlan,
+	type SpacingSite,
+	type DelimiterSite
+} from './render-options-rs.ts';
 import {
 	collectSitePreferences,
 	publicKindName,
@@ -568,7 +580,7 @@ function renderTypedDispatch(
 	const lines: string[] = [];
 
 	for (const node of nodes) {
-		lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind, plan));
+		lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind, plan, kindEntries));
 	}
 
 	for (const [, node] of nodeMap.nodes) {
@@ -605,7 +617,7 @@ function renderTypedDispatch(
 	);
 	lines.push(`    let mut s = String::new();`);
 	lines.push(
-		`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources);`
+		`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);`
 	);
 	lines.push(`    transport.render(&mut w)?;`);
 	lines.push(`    w.finish()?;`);
@@ -653,7 +665,8 @@ function renderTypedKindFn(
 	meta: MetaData,
 	nodeMap: NodeMap,
 	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
-	plan: RenderPlan = EMPTY_PLAN
+	plan: RenderPlan = EMPTY_PLAN,
+	kindEntries: readonly KindEntryLike[] | undefined = undefined
 ): string[] {
 	switch (node.modelType) {
 		case 'branch':
@@ -663,7 +676,7 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node, nodeMap);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, kindEntries);
 		}
 		case 'polymorph':
 		case 'alias': {
@@ -672,7 +685,7 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node, nodeMap);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, kindEntries);
 		}
 		case 'pattern':
 		case 'keyword':
@@ -767,11 +780,12 @@ function renderTypedBranchFn(
 	meta: MetaData,
 	nodeMap: NodeMap,
 	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
-	plan: RenderPlan = EMPTY_PLAN
+	plan: RenderPlan = EMPTY_PLAN,
+	kindEntries: readonly KindEntryLike[] | undefined = undefined
 ): string[] {
 	return [
 		`fn ${rustTypedRenderFnName(node.typeName)}(node: &${rustTransportStructName(node)}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
-		...buildTypedTemplateBody(struct, meta.separators.get(node.kind) ?? '', nodeMap, renderSlotModelOf(node), node, kindIdByKind, plan),
+		...buildTypedTemplateBody(struct, meta.separators.get(node.kind) ?? '', nodeMap, renderSlotModelOf(node), node, kindIdByKind, plan, kindEntries),
 		`}`,
 		''
 	];
@@ -805,7 +819,8 @@ function buildTypedTemplateBody(
 	slotModel: RenderSlotModel | undefined = undefined,
 	node: AssembledNode | undefined = undefined,
 	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
-	plan: RenderPlan = EMPTY_PLAN
+	plan: RenderPlan = EMPTY_PLAN,
+	kindEntries: readonly KindEntryLike[] | undefined = undefined
 ): string[] {
 	const lines: string[] = [];
 	const sepLiteral = JSON.stringify(separator);
@@ -878,8 +893,8 @@ function buildTypedTemplateBody(
 			lines.push(`        after: ${spaced(spacing.after)},`);
 			lines.push(`        leading: ${leadingExpr},`);
 			lines.push(`        trailing: ${trailingExpr},`);
-			lines.push(`        head: ${spaced(spacing.head)},`);
-			lines.push(`        tail: ${spaced(spacing.tail)},`);
+			lines.push(`        head: ${spacing.head ?? 'None'},`);
+			lines.push(`        tail: ${spacing.tail ?? 'None'},`);
 			lines.push(`    };`);
 			continue;
 		}
@@ -921,6 +936,7 @@ function buildTypedTemplateBody(
 	lines.push(
 		...printRustBody(struct.body, {
 			field: rustFieldIdent,
+			edge: kindEdgeWriterOf(plan, node, kindEntries),
 			site: (name) => `options::SITE_${toScreamingSnakeCase(publicKindName(struct.kind), publicKindName(struct.kind))}_${toScreamingSnakeCase(name, name)}`,
 			kinds: (names) => rustKindIdSlice(names, nodeMap, kindIdByKind, struct.kind)
 		})
@@ -1033,9 +1049,9 @@ export function emitRenderModule(
 			'',
 			commonRustUseImports(hasNumericDispatch),
 			'use ::sittir_core::render_with_trivia;',
+			'use ::sittir_core::options::Edged as _;',
 			'use super::options;',
 			'',
-			armSeamSupport(),
 			renderTransportSupport(nodeMap, structs, meta, generatedIdTables, plan)
 		].join('\n') + '\n';
 	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries);
@@ -1117,6 +1133,7 @@ function renderTransportSupport(
 	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) =>
 		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey, kindEntries, plan)
 	);
+	const seatTargetLines = renderSeatTargets(nodes, nodeMap, plan, kindEntries, usedSupertypeNames, perSlotEnums);
 
 	return pruneUnreferencedBridges(
 		[
@@ -1129,6 +1146,7 @@ function renderTransportSupport(
 			...(supertypeEnumLines.length > 0 ? [...supertypeEnumLines, ''] : []),
 			...(perSlotEnumLines.length > 0 ? [...perSlotEnumLines, ''] : []),
 			...nodes.flatMap((node) => renderTransportStruct(node, nodeMap, generatedIdTables !== undefined, kindEntries, plan)),
+			...seatTargetLines,
 			'',
 			'',
 			...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames, kidByKind, plan, kindEntries),
@@ -1199,70 +1217,6 @@ function pruneUnreferencedBridges(rendered: string): string {
 		i++;
 	}
 	return out.join('\n');
-}
-
-function armSeamSupport(): string {
-	return [
-		'#[derive(Debug, Clone, Copy, Default)]',
-		'pub struct LiteralSeams {',
-		'    pub before: Option<u16>,',
-		'    pub after: Option<u16>,',
-		'}',
-		'',
-		'pub trait ArmSeams {',
-		'    fn arm_seam_sites(&self) -> Option<(usize, usize)>;',
-		'}',
-		'',
-		'#[derive(Debug, Clone)]',
-		'pub struct Seamed<T> {',
-		'    pub value: T,',
-		'    pub seam_before: Option<u16>,',
-		'    pub seam_after: Option<u16>,',
-		'}',
-		'',
-		'impl<T> Seamed<T> {',
-		'    pub fn new(value: T) -> Self {',
-		'        Self { value, seam_before: None, seam_after: None }',
-		'    }',
-		'}',
-		'',
-		'impl<T: ::sittir_core::view::KindOf> ::sittir_core::view::KindOf for Seamed<T> {',
-		'    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {',
-		'        self.value.kind_in(kinds)',
-		'    }',
-		'}',
-		'',
-		`impl<T: ArmSeams> ${PREPARE_MOD}::Prepare for Seamed<T> {`,
-		`    ${PREPARE_SIG}`,
-		'        if let Some((before, after)) = self.value.arm_seam_sites() {',
-		'            self.seam_before.get_or_insert(ctx.options.spacing[before]);',
-		'            self.seam_after.get_or_insert(ctx.options.spacing[after]);',
-		'        }',
-		'        Ok(())',
-		'    }',
-		'}',
-		'',
-		'impl<T: ::sittir_core::render::Render + ArmSeams> ::sittir_core::render::Render for Seamed<T> {',
-		'    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {',
-		'        let (before, after) = self.value.arm_seam_sites().map_or((0u8, 0u8), |(b, a)| (options::site_strength(b, self.seam_before.unwrap_or(0)), options::site_strength(a, self.seam_after.unwrap_or(0))));',
-		'        w.site_with(self.seam_before.unwrap_or(0), before);',
-		'        self.value.render(w)?;',
-		'        w.site_with(self.seam_after.unwrap_or(0), after);',
-		'        Ok(())',
-		'    }',
-		'}',
-		'',
-		'#[cfg(feature = "napi-bindings")]',
-		'impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue for Seamed<T> {',
-		'    unsafe fn from_napi_value(',
-		'        env: ::napi::sys::napi_env,',
-		'        napi_val: ::napi::sys::napi_value,',
-		'    ) -> ::napi::Result<Self> {',
-		'        Ok(Self::new(unsafe { T::from_napi_value(env, napi_val)? }))',
-		'    }',
-		'}',
-		''
-	].join('\n');
 }
 
 function commonRustUseImports(hasNumericDispatch: boolean): string {
@@ -2082,19 +2036,11 @@ function literalArmSeamSites(
 	return out;
 }
 
-function literalSeamFill(seams: LiteralArmSeams): string[] {
-	return (['before', 'after'] as const).flatMap((side) =>
-		seams[side] === undefined ? [] : [`t.${side}.get_or_insert(ctx.options.spacing[options::${seams[side]}]);`]
-	);
-}
-
 function literalSeamedArm(enumName: string, variant: string, write: string, seams: LiteralArmSeams): string[] {
 	const site = (side: 'before' | 'after'): string[] =>
-		seams[side] === undefined
-			? []
-			: [`                w.site_with(seams.${side}.unwrap_or(0), options::site_strength(options::${seams[side]}, seams.${side}.unwrap_or(0)));`];
+		seams[side] === undefined ? [] : [`                w.site_at(options::${seams[side]});`];
 	return [
-		`            ${enumName}::${variant}(seams) => {`,
+		`            ${enumName}::${variant} => {`,
 		...site('before'),
 		`                let written = ${write};`,
 		'                written?;',
@@ -2134,7 +2080,7 @@ function emitPerSlotChildEnum(
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
-			lines.push(`    ${variant}${literalSeams.has(variant) ? '(LiteralSeams)' : ''},`);
+			lines.push(`    ${variant},`);
 			literalVariants.push(variant);
 		}
 	}
@@ -2144,11 +2090,7 @@ function emitPerSlotChildEnum(
 	lines.push(
 		...prepareEnumImpl(enumName, [
 			...validKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
-			...literalVariants.map((variant) => ({
-				variant,
-				payload: literalSeams.has(variant),
-				...(literalSeams.has(variant) ? { fill: literalSeamFill(literalSeams.get(variant)!) } : {})
-			})),
+			...literalVariants.map((variant) => ({ variant, payload: false })),
 			...(admitsVerbatim ? [{ variant: 'Verbatim', payload: true }] : [])
 		])
 	);
@@ -2161,7 +2103,7 @@ function emitPerSlotChildEnum(
 					const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 					if (variant === undefined) return [];
 					const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
-					return [{ variant, payload: literalSeams.has(variant), ids: id === undefined ? [] : [id] }];
+					return [{ variant, payload: false, ids: id === undefined ? [] : [id] }];
 				})
 			],
 			admitsVerbatim
@@ -2181,7 +2123,7 @@ function emitPerSlotChildEnum(
 			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
 			emittedIds.add(id);
-			kindIdArms.push(`                ${id} => Ok(Self::${variant}${literalSeams.has(variant) ? '(LiteralSeams::default())' : ''}),`);
+			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
 		}
 		for (const { kind, node, concreteName } of kindIdStoredFirst(validKinds, (v) => v.node)) {
 			const variant = rustTypeIdent(node.typeName);
@@ -2298,7 +2240,7 @@ function emitPerSlotChildEnum(
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
-			lines.push(`        ${enumName}::${variant}${literalSeams.has(variant) ? '(_)' : ''} => AnyTransport::${variant},`);
+			lines.push(`        ${enumName}::${variant} => AnyTransport::${variant},`);
 		}
 	}
 	if (admitsVerbatim) lines.push(`        ${enumName}::Verbatim(inner) => AnyTransport::Verbatim(inner),`);
@@ -2620,17 +2562,15 @@ const PREPARE_SIG = `fn prepare(&mut self, ctx: &${PREPARE_MOD}::RenderContext<'
 
 function prepareEnumImpl(
 	enumName: string,
-	arms: readonly { readonly variant: string; readonly payload: boolean; readonly fill?: readonly string[] }[]
+	arms: readonly { readonly variant: string; readonly payload: boolean }[]
 ): string[] {
 	const anyPayload = arms.some((a) => a.payload);
 	return [
 		`impl ${PREPARE_MOD}::Prepare for ${enumName} {`,
 		`    ${anyPayload ? PREPARE_SIG : PREPARE_SIG.replace('ctx:', '_ctx:')}`,
 		`        match self {`,
-		...arms.flatMap((a) =>
-			a.fill !== undefined
-				? [`            ${enumName}::${a.variant}(t) => {`, ...a.fill.map((line) => `                ${line}`), `                Ok(())`, `            }`]
-				: [a.payload ? `            ${enumName}::${a.variant}(t) => t.prepare(ctx),` : `            ${enumName}::${a.variant} => Ok(()),`]
+		...arms.map((a) =>
+			a.payload ? `            ${enumName}::${a.variant}(t) => t.prepare(ctx),` : `            ${enumName}::${a.variant} => Ok(()),`
 		),
 		`        }`,
 		`    }`,
@@ -2655,14 +2595,46 @@ function synthesizedSpacingSites(plan: RenderPlan, node: AssembledNode): readonl
 	return plan.spacingSites.filter((site) => site.kind === kind && site.side !== undefined && site.seat === undefined);
 }
 
-function seatedSitesOf(plan: RenderPlan, parentKind: string, slot: string): ReadonlyMap<string, SpacingSite> {
-	const kind = publicKindName(parentKind);
-	const out = new Map<string, SpacingSite>();
-	for (const site of plan.spacingSites) {
-		if (site.seat === undefined || site.kind !== kind || site.slot !== slot) continue;
-		out.set(site.seat.kind, site);
+function kindEdgeSidesOf(plan: RenderPlan, node: AssembledNode): ReadonlyMap<string, 'before' | 'after'> {
+	const out = new Map<string, 'before' | 'after'>();
+	for (const site of synthesizedSpacingSites(plan, node)) {
+		if (site.side !== 'seam' || !isKindEdge(site)) continue;
+		out.set(rustFieldIdent(site.fieldIdent), parseSeamLabel(site.address)!.side);
 	}
 	return out;
+}
+
+function kindEdgeWriterOf(
+	plan: RenderPlan,
+	node: AssembledNode | undefined,
+	kindEntries: readonly KindEntryLike[] | undefined
+): (name: string) => { readonly kindId: number; readonly side: 'before' | 'after' } | undefined {
+	const sides = node === undefined ? new Map<string, 'before' | 'after'>() : kindEdgeSidesOf(plan, node);
+	if (node === undefined || sides.size === 0) return () => undefined;
+	const kindId = edgeIdOf(plan, node, kindEntries);
+	return (name) => {
+		const side = sides.get(rustFieldIdent(name));
+		return side === undefined ? undefined : { kindId, side };
+	};
+}
+
+const edgeRowKindsCache = new WeakMap<RenderPlan, ReadonlySet<number>>();
+
+function edgeRowKindsOf(plan: RenderPlan, kindEntries: readonly KindEntryLike[]): ReadonlySet<number> {
+	const cached = edgeRowKindsCache.get(plan);
+	if (cached !== undefined) return cached;
+	const kinds = new Set(edgeSitesOf(plan, kindEntries).map((row) => row.kind));
+	edgeRowKindsCache.set(plan, kinds);
+	return kinds;
+}
+
+function edgeIdOf(plan: RenderPlan, node: AssembledNode, kindEntries: readonly KindEntryLike[] | undefined): number {
+	const kind = publicKindName(node.kind);
+	if (kindEntries !== undefined) {
+		const id = edgeKindId(kindEntries, kind);
+		if (id !== undefined && edgeRowKindsOf(plan, kindEntries).has(id)) return id;
+	}
+	throw new Error(`kind '${kind}' has kind-edge sites but no edge row to prepare and write them from`);
 }
 
 function delimiterSiteOf(plan: RenderPlan, node: AssembledNode): DelimiterSite | undefined {
@@ -2737,116 +2709,167 @@ function spacingFieldExprs(
 	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName && site.side !== 'seam');
 	const expr = (site: SpacingSite | undefined): string | undefined =>
 		site === undefined ? undefined : `node.${rustFieldIdent(site.fieldIdent)}`;
+	const flank = (site: SpacingSite | undefined): string | undefined =>
+		site === undefined ? undefined : `Some(options::${site.constName})`;
 	return {
 		before: expr(sites.find((site) => site.side === 'before')),
 		after: expr(sites.find((site) => site.side === 'after' || site.side === 'gap')),
-		head: expr(sites.find((site) => site.side === 'start')),
-		tail: expr(sites.find((site) => site.side === 'end'))
+		head: flank(sites.find((site) => site.side === 'start')),
+		tail: flank(sites.find((site) => site.side === 'end'))
 	};
 }
 
-function seatVariantArms(
-	field: AssembledNonterminal,
-	seats: ReadonlyMap<string, SpacingSite>,
+type SeatReach = (kind: string) => boolean;
+
+const seatReachCache = new WeakMap<RenderPlan, SeatReach>();
+
+function wrapperSlotOf(node: AssembledNode): AssembledNonterminal | undefined {
+	if (!(node instanceof AssembledPolymorph) || node instanceof AssembledSupertype) return undefined;
+	const model = renderSlotModelOf(node);
+	const slot = model.named[0] ?? model.unnamed[0];
+	return slot?.name === undefined ? undefined : slot;
+}
+
+function slotElementsReach(slot: AssembledNonterminal, nodeMap: NodeMap, reaches: SeatReach): boolean {
+	const kinds = kindsOf(slot);
+	const cls = classifySlotForEmit(kinds, nodeMap);
+	if (cls.tag === 'concrete') return reaches(cls.kind);
+	if (cls.tag === 'supertype') {
+		const kind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
+		return kind !== undefined && reaches(kind);
+	}
+	return expandConcreteTransportKinds(kinds, nodeMap).some(({ kind }) => reaches(kind));
+}
+
+function seatedKindsOf(plan: RenderPlan): ReadonlySet<string> {
+	return new Set(plan.spacingSites.flatMap((site) => (site.seat === undefined ? [] : [site.seat.kind])));
+}
+
+function seatReachOf(plan: RenderPlan, nodeMap: NodeMap): SeatReach {
+	const cached = seatReachCache.get(plan);
+	if (cached !== undefined) return cached;
+	const seated = seatedKindsOf(plan);
+	const reach = new Set<string>();
+	const has: SeatReach = (kind) => reach.has(kind);
+	let changed = true;
+	while (changed) {
+		changed = false;
+		for (const [kind, node] of nodeMap.nodes) {
+			if (reach.has(kind)) continue;
+			const wrapper = wrapperSlotOf(node);
+			const reaches =
+				seated.has(publicKindName(kind)) ||
+				(node instanceof AssembledSupertype &&
+					collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes.some(({ subKind }) => reach.has(subKind))) ||
+				(wrapper !== undefined && slotElementsReach(wrapper, nodeMap, has));
+			if (reaches) {
+				reach.add(kind);
+				changed = true;
+			}
+		}
+	}
+	seatReachCache.set(plan, has);
+	return has;
+}
+
+const SEAT_TARGET_SIG =
+	'    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {';
+
+function seatTargetMatchImpl(typeName: string, variants: readonly string[], exhaustive: boolean): string[] {
+	if (variants.length === 0) return [];
+	return [
+		`impl ::sittir_core::prepare::SeatTarget for ${typeName} {`,
+		SEAT_TARGET_SIG,
+		'        match self {',
+		...variants.map((variant) => `            Self::${variant}(t) => t.seat_target(table),`),
+		...(exhaustive ? [] : ['            #[allow(unreachable_patterns)]', '            _ => None,']),
+		'        }',
+		'    }',
+		'}',
+		''
+	];
+}
+
+function seatTargetStructImpl(
+	node: AssembledNode,
 	nodeMap: NodeMap,
-	ownerTypeName: string
-): readonly string[] {
-	type Arm = { readonly pattern: string; readonly body: readonly string[] };
-	const indent = (lines: readonly string[]): string[] => lines.map((line) => `    ${line}`);
-	const matchOver = (arms: readonly Arm[]): string[] =>
-		arms.length === 0
-			? []
-			: [
-					`match t {`,
-					...arms.flatMap((arm) => [`    ${arm.pattern} => {`, ...indent(indent(arm.body)), `    }`]),
-					`    #[allow(unreachable_patterns)]`,
-					`    _ => {}`,
-					`}`
-				];
-	const bodyFor = (kind: string, node: AssembledNode, seen: Set<string>): string[] => {
-		const seat = seats.get(publicKindName(kind));
-		if (seat !== undefined) return [`t.${rustFieldIdent(seat.seat!.field)}.get_or_insert(ctx.options.spacing[options::${seat.constName}]);`];
-		if (seen.has(kind)) return [];
-		seen.add(kind);
-		if (node instanceof AssembledSupertype) return matchOver(supertypeArms(node, seen));
-		if (!(node instanceof AssembledPolymorph)) return [];
-		const model = renderSlotModelOf(node);
-		const slot = model.named[0] ?? model.unnamed[0];
-		if (slot?.name === undefined) return [];
-		const inner = slotBody(slot, node.typeName, seen);
-		if (inner.length === 0) return [];
-		const held = isRequired(slot) ? '::sittir_core::SlotValue::Transport(seated)' : 'Some(::sittir_core::SlotValue::Transport(seated))';
-		return [`if let ${held} = &mut t.${rustFieldIdent(slot.name)} {`, ...indent(inner), `}`];
-	};
-	const variantArms = (
-		enumName: string,
-		members: readonly { readonly kind: string; readonly node: AssembledNode }[],
-		seen: Set<string>
-	): Arm[] =>
-		members.flatMap(({ kind, node }) => {
-			const body = bodyFor(kind, node, seen);
-			return body.length === 0 ? [] : [{ pattern: `${enumName}::${rustTypeIdent(node.typeName)}(t)`, body }];
-		});
-	const supertypeArms = (node: AssembledSupertype, seen: Set<string>): Arm[] =>
-		variantArms(
-			`${rustTypeIdent(node.typeName)}Transport`,
-			collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes.map(({ subKind, subNode }) => ({ kind: subKind, node: subNode })),
-			seen
+	plan: RenderPlan,
+	kindEntries: readonly KindEntryLike[] | undefined
+): string[] {
+	const reaches = seatReachOf(plan, nodeMap);
+	if (!reaches(node.kind)) return [];
+	const body: string[] = [];
+	const kind = publicKindName(node.kind);
+	if (seatedKindsOf(plan).has(kind)) {
+		const id = kindEntries === undefined ? undefined : edgeKindId(kindEntries, kind);
+		if (id === undefined) throw new Error(`kind '${kind}' is seated in a list but has no kind id to find its seat by`);
+		body.push(
+			`        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(${id})) {`,
+			'            return Some((self.edges.get_or_insert_with(Default::default), site));',
+			'        }'
 		);
-	const slotBody = (slot: AssembledNonterminal, slotOwnerTypeName: string, seen: Set<string>): string[] => {
-		const kinds = kindsOf(slot);
-		const cls = classifySlotForEmit(kinds, nodeMap);
-		const borrowed = (typeName: string, lines: readonly string[]): string[] =>
-			lines.length === 0 ? [] : [`let t: &mut ${typeName} = ::std::borrow::BorrowMut::borrow_mut(seated);`, ...lines];
-		if (cls.tag === 'concrete') {
-			const node = nodeMap.nodes.get(cls.kind);
-			const typeName = concreteTransportTypeName(cls.kind, nodeMap);
-			return node === undefined || typeName === null ? [] : borrowed(typeName, bodyFor(cls.kind, node, seen));
-		}
-		if (cls.tag === 'supertype') {
-			const kind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
-			const node = kind === undefined ? undefined : nodeMap.nodes.get(kind);
-			if (!(node instanceof AssembledSupertype)) return [];
-			return borrowed(`${rustTypeIdent(cls.supertypeName)}Transport`, matchOver(supertypeArms(node, seen)));
-		}
-		const enumName = hasAnyConcreteChildKind(kinds, nodeMap) ? perSlotEnumName(slotOwnerTypeName, slot.name!) : 'AnyTransport';
-		return borrowed(enumName, matchOver(variantArms(enumName, expandConcreteTransportKinds(kinds, nodeMap), seen)));
-	};
-	return slotBody(field, ownerTypeName, new Set());
+	}
+	const wrapper = wrapperSlotOf(node);
+	if (wrapper !== undefined && slotElementsReach(wrapper, nodeMap, reaches)) {
+		const held = isRequired(wrapper) ? '::sittir_core::SlotValue::Transport(inner)' : 'Some(::sittir_core::SlotValue::Transport(inner))';
+		body.push(`        if let ${held} = &mut self.${rustFieldIdent(wrapper.name!)} {`, '            return inner.seat_target(table);', '        }');
+	}
+	return [`impl ::sittir_core::prepare::SeatTarget for ${rustTransportStructName(node)} {`, SEAT_TARGET_SIG, ...body, '        None', '    }', '}', ''];
+}
+
+function renderSeatTargets(
+	nodes: readonly AssembledNode[],
+	nodeMap: NodeMap,
+	plan: RenderPlan,
+	kindEntries: readonly KindEntryLike[] | undefined,
+	usedSupertypeNames: ReadonlySet<string>,
+	perSlotEnums: readonly PerSlotChildEnum[]
+): string[] {
+	const reaches = seatReachOf(plan, nodeMap);
+	const lines: string[] = [];
+	for (const node of nodes) {
+		if (node instanceof AssembledEnum || node instanceof AssembledSupertype) continue;
+		lines.push(...seatTargetStructImpl(node, nodeMap, plan, kindEntries));
+	}
+	for (const [, node] of nodeMap.nodes) {
+		if (!(node instanceof AssembledSupertype) || !usedSupertypeNames.has(node.typeName)) continue;
+		const enumName = `${rustTypeIdent(node.typeName)}Transport`;
+		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
+		const subtypes = collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes;
+		const reaching = subtypes.filter(({ subKind }) => reaches(subKind)).map(({ subNode }) => rustTypeIdent(subNode.typeName));
+		lines.push(...seatTargetMatchImpl(enumName, reaching, false));
+	}
+	for (const entry of perSlotEnums) {
+		const reaching = expandConcreteTransportKinds(entry.kinds, nodeMap)
+			.filter(({ kind }) => reaches(kind))
+			.map(({ node }) => rustTypeIdent(node.typeName));
+		lines.push(...seatTargetMatchImpl(perSlotEnumName(entry.typeName, entry.fieldName), reaching, false));
+	}
+	const anyReaching = nodes.filter((node) => reaches(node.kind)).map((node) => rustTransportVariantName(node));
+	lines.push(...seatTargetMatchImpl('AnyTransport', anyReaching, false));
+	return lines;
 }
 
 function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): string[] {
 	const lines: string[] = [];
+	const reaches = seatReachOf(plan, nodeMap);
 	const slotModel = renderSlotModelOf(node);
+	const seated = seatedTableNames(plan);
 	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 		if (field.name === undefined || !isMultiple(field)) continue;
-		const seats = seatedSitesOf(plan, node.kind, field.name);
-		if (seats.size === 0) continue;
-		const seated = seatVariantArms(field, seats, nodeMap, node.typeName);
-		if (seated.length === 0) continue;
+		if (!seated.has(seatTableName(publicKindName(node.kind), field.name))) continue;
+		if (!slotElementsReach(field, nodeMap, reaches)) continue;
 		const ident = rustFieldIdent(field.name);
-		const open = isRequired(field)
-			? [`        {`, `            let seated_items = &mut self.${ident};`]
-			: [`        if let Some(seated_items) = self.${ident}.as_mut() {`];
-		const element = hasOptionalElements(field)
-			? [`                let Some(item) = item.as_mut() else { continue };`]
-			: [];
+		const table = `options::${seatTableName(publicKindName(node.kind), field.name)}`;
+		const items = hasOptionalElements(field) ? 'iter_mut().map(Option::as_mut)' : 'iter_mut().map(Some)';
 		lines.push(
-			...open,
-			`            let seated_last = seated_items.len().saturating_sub(1);`,
-			`            for (seated_at, item) in seated_items.iter_mut().enumerate() {`,
-			`                if seated_at == seated_last { continue; }`,
-			...element,
-			`                if let ::sittir_core::SlotValue::Transport(seated) = item {`,
-			...seated.map((line) => `                    ${line}`),
-			`                }`,
-			`            }`,
-			`        }`
+			isRequired(field)
+				? `        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ctx);`
+				: `        if let Some(seated_items) = self.${ident}.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.${items}, ${table}, ctx); }`
 		);
 	}
 	return lines;
 }
-
 function prepareStructImpl(
 	structName: string,
 	node: AssembledNode,
@@ -2857,9 +2880,11 @@ function prepareStructImpl(
 ): string[] {
 	const body: string[] = [];
 	if (isCompound) {
+		if (kindEdgeSidesOf(plan, node).size > 0) body.push('        ::sittir_core::prepare::prepare_edges(self, ctx);');
 		body.push(...listGapClassification(plan, node));
 		for (const site of synthesizedSpacingSites(plan, node)) {
-			body.push(`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.spacing[options::${site.constName}]);`);
+			if (!carriesPerNodeValue(site)) continue;
+			body.push(`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.spacing[options::${site.constName}].arm);`);
 		}
 		body.push(...seatLoops(plan, node, nodeMap));
 		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
@@ -2867,7 +2892,7 @@ function prepareStructImpl(
 			body.push(`        self.delimiter.get_or_insert(ctx.options.delimiter[options::${delim.constName}]);`);
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
-		if (sep !== undefined) body.push(`        self.separator_kind.get_or_insert(ctx.options.spacing[options::${sep.constName}]);`);
+		if (sep !== undefined) body.push(`        self.separator_kind.get_or_insert(ctx.options.spacing[options::${sep.constName}].arm);`);
 		for (const f of fillFields) body.push(`        self.${f}.prepare(ctx)?;`);
 	}
 	return [
@@ -2876,6 +2901,17 @@ function prepareStructImpl(
 		...body,
 		`        Ok(())`,
 		`    }`,
+		`}`,
+		''
+	];
+}
+
+function edgedImplLines(typeName: string, kindId: number): string[] {
+	return [
+		`impl ::sittir_core::options::Edged for ${typeName} {`,
+		`    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(${kindId}) }`,
+		`    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }`,
+		`    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }`,
 		`}`,
 		''
 	];
@@ -2996,6 +3032,7 @@ function renderTransportDataStruct(
 				}
 			}
 			for (const site of synthesizedSpacingSites(plan, node)) {
+				if (!carriesPerNodeValue(site)) continue;
 				lines.push(
 					`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(site.wireKey)}))]`,
 					`    pub ${rustFieldIdent(site.fieldIdent)}: Option<u16>,`
@@ -3009,6 +3046,8 @@ function renderTransportDataStruct(
 	lines.push('');
 	const ownId = kindEntries === undefined ? undefined : findKindEntry(kindEntries, node.kind)?.id;
 	lines.push(...kindOfImplLines(structName, [], undefined, ownId === undefined ? [] : [ownId]));
+	const edgedId = kindEntries === undefined ? undefined : edgeKindId(kindEntries, publicKindName(node.kind));
+	if (edgedId !== undefined) lines.push(...edgedImplLines(structName, edgedId));
 	lines.push(`impl ::sittir_core::render::Render for ${structName} {`);
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
@@ -3073,7 +3112,9 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 	lines.push(`            }`);
 	lines.push(`        };`);
 	lines.push(`        Ok(Self {`);
-	lines.push(`            transport_trivia_data: __trivia,`);
+	for (const f of TRANSPORT_METADATA_FIELDS) {
+		lines.push(`            ${f.rustName}: ${f.rustName === 'transport_trivia_data' ? '__trivia' : 'None'},`);
+	}
 	lines.push(`            text,`);
 	lines.push(`        })`);
 	lines.push(`    }`);
@@ -3158,7 +3199,8 @@ interface TransportMetadataField {
 }
 
 const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
-	{ jsName: '$_trivia', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' }
+	{ jsName: '$_trivia', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' },
+	{ jsName: '$_edges', rustName: 'edges', rustType: 'Option<::sittir_core::options::Edges>' }
 ];
 
 function renderTransportMetadataFields(): string[] {
@@ -3579,22 +3621,6 @@ function armSeamPairsOf(plan: RenderPlan, node: AssembledEnum): Map<string, { be
 	return out;
 }
 
-function armSeamsImpl(valueName: string, values: readonly string[], pairs: ReadonlyMap<string, { before: string; after: string }>): string[] {
-	const lines = [
-		`impl ArmSeams for ${valueName} {`,
-		`    fn arm_seam_sites(&self) -> Option<(usize, usize)> {`,
-		`        match self {`
-	];
-	for (const v of values) {
-		const pair = pairs.get(v);
-		if (pair === undefined) continue;
-		lines.push(`            Self::${literalToVariantName(v)} => Some((options::${pair.before}, options::${pair.after})),`);
-	}
-	if (pairs.size < values.length) lines.push(`            _ => None,`);
-	lines.push(`        }`, `    }`, `}`, '');
-	return lines;
-}
-
 function renderEnumType(
 	node: AssembledEnum,
 	hasNapi: boolean,
@@ -3603,7 +3629,7 @@ function renderEnumType(
 ): string[] {
 	const publicName = enumTypeName(node);
 	const seamPairs = armSeamPairsOf(plan, node);
-	const enumName = seamPairs.size === 0 ? publicName : `${publicName.replace(/Enum$/, '')}Arm`;
+	const enumName = publicName;
 	const values = node.values;
 	const lines: string[] = [];
 
@@ -3726,21 +3752,26 @@ function renderEnumType(
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
 	);
-	lines.push(`        w.text(match self {`);
-	for (const v of values) {
-		const variant = literalToVariantName(v);
-		lines.push(`            Self::${variant} => ${JSON.stringify(v)},`);
+	if (seamPairs.size === 0) {
+		lines.push(`        w.text(match self {`);
+		for (const v of values) lines.push(`            Self::${literalToVariantName(v)} => ${JSON.stringify(v)},`);
+		lines.push(`        })`);
+	} else {
+		lines.push(`        match self {`);
+		for (const v of values) {
+			const pair = seamPairs.get(v);
+			const text = `w.text(${JSON.stringify(v)})`;
+			lines.push(
+				pair === undefined
+					? `            Self::${literalToVariantName(v)} => ${text},`
+					: `            Self::${literalToVariantName(v)} => { w.site_at(options::${pair.before}); ${text}?; w.site_at(options::${pair.after}); Ok(()) }`
+			);
+		}
+		lines.push(`        }`);
 	}
-	lines.push(`        })`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-
-	if (seamPairs.size > 0) {
-		lines.push(...armSeamsImpl(enumName, values, seamPairs));
-		lines.push(`pub type ${publicName} = Seamed<${enumName}>;`);
-		lines.push('');
-	}
 
 	return lines;
 }

@@ -236,10 +236,10 @@ describe('templateOf', () => {
 });
 
 describe('seam nodes', () => {
-	it('print as a site call resolved from the field at runtime, compare by field, and are listed by references', () => {
+	it('print as a site call read from the resolved options, compare by field, and are listed by references', () => {
 		expect(printRustBody(concat(text('fn'), seam('lparen_before'), text('('), slot('x')), { field: (n) => n, site: (n) => `options::SITE_CALL_${n.toUpperCase()}`, kinds: (names) => `&[${names.join(', ')}]` })).toEqual([
 			'    w.text("fn")?;',
-			'    w.site_with(node.lparen_before.unwrap_or(0), options::site_strength(options::SITE_CALL_LPAREN_BEFORE, node.lparen_before.unwrap_or(0)));',
+			'    w.site_at(options::SITE_CALL_LPAREN_BEFORE);',
 			'    w.text("(")?;',
 			'    x.render(w)?;',
 			'    Ok(())'
@@ -273,7 +273,7 @@ describe('gateOptionalSlotSeams', () => {
 			site: (n) => `options::SITE_${n.toUpperCase()}`,
 			kinds: (names) => `&[${names.join(', ')}]`
 		});
-		const site = lines.findIndex((l) => l.includes('site_with'));
+		const site = lines.findIndex((l) => l.includes('site_at'));
 		const open = lines.findIndex((l) => l.trimStart().startsWith('if '));
 		expect(open).toBeGreaterThanOrEqual(0);
 		expect(site).toBeGreaterThan(open);

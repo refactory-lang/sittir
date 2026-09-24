@@ -154,6 +154,7 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     seam_text: String,
     seam_is_token: bool,
     sources: Option<&'a dyn crate::render::SourceTable>,
+    options: Option<&'a crate::options::ResolvedOptions>,
 }
 
 impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
@@ -173,7 +174,17 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam_text: String::new(),
             seam_is_token: false,
             sources: None,
+            options: None,
         }
+    }
+
+    /// The resolved options [`crate::render::RenderSink::site_at`] and
+    /// [`crate::render::RenderSink::edge`] read. A render that writes option
+    /// sites must attach them; a writer with none attached is a debug-mode
+    /// bug, like a missing whitespace table.
+    pub fn with_options(mut self, options: &'a crate::options::ResolvedOptions) -> Self {
+        self.options = Some(options);
+        self
     }
 
     /// The text written once per depth level after every newline.
@@ -343,6 +354,25 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     /// other kind as unknown and writes nothing.
     fn site(&mut self, kind: u16) {
         self.site_with(kind, SEAM_DECLARED);
+    }
+
+    fn site_at(&mut self, site: usize) {
+        debug_assert!(self.options.is_some(), "a render that writes option sites must attach the resolved options");
+        let Some(options) = self.options else {
+            return;
+        };
+        let crate::slot::SeamArm { arm, strength } = options.site_arm(site);
+        self.site_with(arm, strength);
+    }
+
+    fn edge(&mut self, kind: crate::types::KindId, side: crate::options::Side, stamped: Option<crate::options::EdgeArm>) {
+        debug_assert!(self.options.is_some(), "a render that writes kind edges must attach the resolved options");
+        let Some(options) = self.options else {
+            return;
+        };
+        if let Some(crate::slot::SeamArm { arm, strength }) = options.edge_arm(kind, side, stamped) {
+            self.site_with(arm, strength);
+        }
     }
 
     fn site_with(&mut self, kind: u16, strength: u8) {

@@ -1510,3 +1510,5 @@ export interface LeafNs<
 	readonly Tree: Tree;
 	readonly Kind: Kind;
 }
+
+export type { DerivedOptions, OptionsHintOf } from './options.ts';

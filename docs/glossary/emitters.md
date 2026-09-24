@@ -248,46 +248,91 @@ by kind and slot; the raw builder tests a slot value against that constant.
 // path doesn't widen.
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::seatedSitesOf`
-
-The seated child edges of one slot, keyed by the child kind each belongs to.
-
 ### `packages/codegen/src/emitters/render-module.ts::seatLoops`
 
-The seating for every repeat slot the parent holds: one walk per slot that
-writes each element's seated arm into that element's own trailing-edge field
-before the fill descends into it. Only a `Transport` element is seated; a
-`Coord` element renders its own bytes, gap included.
+One `fill_seated_gaps` call per repeat slot that has seated sites and whose
+elements can reach a seat (`slotElementsReach`), passing the slot's seat
+table (`SEATS_<KIND>_<SLOT>`). The runtime walks the elements, so there is
+no per-list match block: each element answers its own seat through
+`SeatTarget`. An optional slot is unwrapped first; a slot whose elements may
+be absent is iterated through `Option::as_mut`, a required one through
+`Some`, so one core function serves both.
 
-The walk skips the last element. A child's edge is written at the end of its
-own body and cannot know whether a sibling follows, so seating the final
-element would leak the gap past the end of the list — `extern"C"fn foo`
-became `extern"C"\nfn foo` when it did. Skipping it leaves that element's edge
-on the kind's own global arm, which is what a trailing edge should be, and
-makes "a sibling gap belongs to the child before it" literally true: element
-*i* is seated only when there is an *i+1*.
+The core walk skips the last present element. A child's edge is written at
+the end of its own body and cannot know whether a sibling follows, so
+seating the final element would leak the gap past the end of the list
+(`extern"C"fn foo` became `extern"C"\nfn foo` when it did). An absent
+element renders nothing, so it is neither seated nor the sibling that makes
+a gap. Skipping the last present one leaves its edge on the kind's own arm,
+which makes "a sibling gap belongs to the child before it" literally true:
+an element is seated only when a present element follows it. The seating happens in the parent's prepare, not in
+the element's, because only the parent knows an element's position.
 
-The seating is applied here rather than inside the element enum's own
-`prepare` because only the parent's walk knows an element's position.
+### `packages/codegen/src/emitters/render-module.ts::SeatReach`
 
-### `packages/codegen/src/emitters/render-module.ts::seatVariantArms`
+Whether a kind can reach a seated element: a predicate over kind names,
+computed once per render plan (`seatReachOf`).
 
-How one slot's elements are reached. A slot carrying a per-slot or supertype
-enum matches its variants, each named from the shape the enum was emitted
-from so a suppressed kind is never named; a slot with a single concrete
-element type has no enum and takes the assignment directly.
+### `packages/codegen/src/emitters/render-module.ts::wrapperSlotOf`
 
-A variant that is not itself seated is walked through rather than skipped:
-a nested supertype variant opens a match on its own enum, and a polymorph
-parent with no seat of its own opens its one slot, recursively, so the
-assignment lands on the transport that carries the seated `after` field. Every
-level rebinds `t` through `BorrowMut::borrow_mut`, which std implements for
-`T` and `Box<T>` alike, because a content slot may be boxed to break a
-recursive type and a pattern cannot see through a box; the annotated type on
-the rebinding picks the impl, so the emitter need not know which slots are
-boxed. Only a level that reaches a seat is emitted. The walk mirrors the
-seating in `seatedSites`, which expands the same kinds when it mints the
-sites; a seat with no arm would be a site the renderer never fills.
+The one slot a polymorph wrapper holds its content in, or `undefined` for a
+node that is not a polymorph wrapper (supertypes are excluded: they reach a
+seat through their subtypes, not a slot).
+
+### `packages/codegen/src/emitters/render-module.ts::slotElementsReach`
+
+Whether any element kind a slot admits reaches a seat, classified the way
+the transport emitter classifies the slot (`classifySlotForEmit`): a
+concrete kind is looked up directly, a supertype slot by its supertype kind,
+and a mixed slot through every concrete transport kind it expands to.
+
+### `packages/codegen/src/emitters/render-module.ts::seatedKindsOf`
+
+The public names of every kind some list seats (`site.seat.kind`): the
+kinds whose own base `after` edge a seat table fills.
+
+### `packages/codegen/src/emitters/render-module.ts::seatReachCache`
+
+`seatReachOf`'s memo, keyed weakly by the render plan so a plan's reach set
+is computed once and dropped with the plan.
+
+### `packages/codegen/src/emitters/render-module.ts::SEAT_TARGET_SIG`
+
+The emitted `seat_target` signature line, shared by the struct and enum
+impls so the two cannot drift from the core trait.
+
+### `packages/codegen/src/emitters/render-module.ts::seatReachOf`
+
+The `SeatReach` for a plan, as a fixpoint over the node map: a kind reaches
+a seat when it is seated itself, when it is a supertype one of whose subtypes
+reaches, or when it is a polymorph wrapper whose content slot's elements
+reach. Only kinds that reach get a `SeatTarget` impl, so the runtime descent
+follows data and the emitter needs no visited-set. Cached per plan, since
+every struct and enum impl asks it.
+
+### `packages/codegen/src/emitters/render-module.ts::seatTargetMatchImpl`
+
+`impl SeatTarget` for an enum (a supertype transport enum, a per-slot child
+enum, `AnyTransport`): each reaching variant delegates to its payload, and a
+non-exhaustive list falls through to `None`. An enum with no reaching
+variant gets no impl.
+
+### `packages/codegen/src/emitters/render-module.ts::seatTargetStructImpl`
+
+`impl SeatTarget` for one transport struct that reaches a seat. A seated
+kind looks itself up in the table by its kind id (`seat_site`) and answers
+its own base `edges` with the site; a polymorph wrapper that is not itself
+seated descends into its content slot. A wrapper keeps its own edges: the
+descent is a separate trait, not an `Edged` delegation, so filling a seat
+never overwrites the wrapper's own kind edges. A seated kind with no kind id
+fails at codegen.
+
+### `packages/codegen/src/emitters/render-module.ts::renderSeatTargets`
+
+Every `SeatTarget` impl for one render module, in one pass: struct impls for
+the reaching nodes, then match impls for the used supertype enums, the
+per-slot child enums and `AnyTransport`, each listing only the variants that
+reach.
 
 ### `packages/codegen/src/emitters/shared.ts::emitsPlainBuiltAlias`
 
@@ -3938,14 +3983,13 @@ named for its text rather than for its kind name.
 
 
 A literal arm whose token has seam sites under the owner kind (a
-statement's `;` terminator, `semi_before`) carries `LiteralSeams` as its
-payload: `literalArmSeamSites` finds the owner's `before` and `after` site
-constants in the render plan, `prepareEnumImpl`'s `fill` hook seats them
-from `ctx.options.spacing`, and `literalSeamedArm` writes them around the
-literal. The choice's seams sit inside the arm in the render rule, and the
-template collapses the choice to one slot, so the enum is where they are
-written; the parent never sees them. Literal arms with no such site stay
-unit variants.
+statement's `;` terminator, `semi_before`) is still a unit variant:
+`literalArmSeamSites` finds the owner's `before` and `after` site constants
+in the render plan, and `literalSeamedArm` writes `w.site_at(SITE)` around
+the literal, so the sink reads the arm from its resolved options. The
+choice's seams sit inside the arm in the render rule, and the template
+collapses the choice to one slot, so the enum is where they are written;
+the parent never sees them.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderAnyTransportWithNapiFromValue`
 
@@ -4405,30 +4449,12 @@ property names with the `$`-prefixed keys explicitly.
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::armSeamSupport`
-
-The per-grammar `Seamed<T>` carrier and the `ArmSeams` trait it prepares
-through. It is generated beside the transports rather than living in
-`sittir-core` because its `Render` impl resolves the grammar's own site ids
-through `w.site(...)`, which core's writer already does generically —
-`Seamed` just calls it before and after the value. `Seamed` holds the value
-and the two resolved whitespace kind ids, filled from `ctx.options.spacing`
-in its `Prepare` impl; every position that already accepted the enum
-accepts it unchanged, because the enum's public name becomes an alias for
-it.
-
 ### `packages/codegen/src/emitters/render-module.ts::armSeamPairsOf`
 
 The seam pair each literal arm of an enum owns, keyed by the arm's text. A
 site records the arm's token kind as its slot and `resolvedByText` records
 the same kind for the text, so the two meet without re-deriving the
 identity here. An arm missing either side is left out.
-
-### `packages/codegen/src/emitters/render-module.ts::armSeamsImpl`
-
-The `ArmSeams` impl mapping each arm to its site pair. Arms with no pair
-answer `None`, which leaves both fields unset and writes nothing, so the
-wildcard arm appears only when some arm needs it.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderEnumType`
 
@@ -4442,7 +4468,10 @@ wildcard arm appears only when some arm needs it.
  * - `impl FromNapiValue` — reads a plain `u16` KindId (no heap allocation)
  *   and dispatches to the correct variant via a match on numeric IDs.
  *   Falls back to `$text: String` matching when `kindEntries` is absent.
- * - `impl Display` — writes the static literal text per variant
+ * - `impl Render` — writes the static literal text per variant; a variant
+ *   whose arm has a seam pair (`armSeamPairsOf`) writes its before site, the
+ *   text, then its after site, each read from the resolved options with
+ *   `w.site_at`, so an enum arm needs no per-node carrier for its seams
  *
  * @param node - the AssembledEnum node
  * @param hasNapi - whether napi-bindings feature is present (from generatedIdTables)
@@ -5468,11 +5497,16 @@ its seam payload, `w.dedent()`, `w.token_seam(...)`) — see
 whitespace becomes that call's argument. A residual gate chain is an
 `if … else if … else` block over the views' `is_present`.
 
-A `seam` node prints as `w.site_with(node.<field>.unwrap_or(0),
-options::site_strength(<SITE const>, …))`: the printer's `site(name)` names
-the `options::SITE_*` constant for the field, so the writer receives the
-strength beside the arm. `render-module.ts` supplies it from the public kind
-name and the field, the same spelling `render-options-rs.ts` emits.
+A `seam` node that is the kind's own edge (the printer's `edge(name)`
+answers its kind id and side) prints as `w.edge(KindId(N), Side::…,
+node.edges.and_then(|e| e.<side>))`: the sink takes the node's stamp when it
+carries one (arm and strength, from the site that set it: the kind's own
+edge site or a list's seat), else the kind's edge row. Every
+other seam prints as `w.site_at(<SITE const>)`: the transport carries no
+field for it, and the sink reads the site's arm from its resolved options.
+The printer's `site(name)` names the `options::SITE_*` constant from the
+public kind name and the field, the same spelling `render-options-rs.ts`
+emits.
 
 ### `packages/codegen/src/emitters/render-body.ts::printStatements`
 
@@ -6906,6 +6940,37 @@ A pattern leaf that some slot admits as a hidden text leaf (`hiddenTextLeafKinds
 // consumers reach supertype Config via `T.Supertype` and map it
 // through generic helpers rather than a flat alias.
 ```
+
+### `packages/codegen/src/emitters/types.ts::EmittedSupertype`
+
+A supertype union `emitSupertypeUnionDeclarations` wrote: its kind, its type
+name, and whether a `Tree` union was written beside it.
+
+### `packages/codegen/src/emitters/types.ts::supertypeTypeName`
+
+The type name a supertype's union is declared under: the node's own
+`typeName`, else the Pascal-cased kind without its leading underscore.
+
+### `packages/codegen/src/emitters/types.ts::emitSupertypeNamespaces`
+
+`export namespace X { Kind; Tree }` for every emitted supertype, so a
+supertype has the same kind of home a struct kind has. It merges with the
+union alias of the same name.
+
+### `packages/codegen/src/emitters/types.ts::emitOptionsHints`
+
+`OptionsHintMap` and one `export namespace X { export interface Hints {
+readonly __optionsHint__?: … } }` per kind root of the trie (`HintRoot`),
+keyed by the root's own key: struct kinds, supertypes and enum leaves alike,
+each namespace merging with the kind's interface or alias. A kind root that
+finds no declared type to carry its hint fails at codegen instead of
+dropping out of `Options` while the Rust trie still accepts it. The hint lives in the namespace, not on the node
+interface, because a member on the node interfaces is re-examined by every
+derived surface (`Built`, `Loose`, `Tree`, the namespace map) and cost about
+30k instantiations on the typescript grammar however its type was spelled;
+in the namespace it costs nothing until `Options` is read. A hidden kind
+and its visible twin share a root (their public name); the visible one is
+kept, and two hidden spellings for one root fail at codegen.
 
 ### `packages/codegen/src/emitters/types.ts::leafTextType`
 
@@ -8870,7 +8935,20 @@ name on the wire, `rustName` the Rust struct field, `rustType` its type.
 ### `packages/codegen/src/emitters/render-module.ts::TRANSPORT_METADATA_FIELDS`
 
 The metadata fields every transport struct carries besides its content:
-one entry, `$_trivia` → `transport_trivia_data: Option<TransportTrivia>`.
+`$_trivia` → `transport_trivia_data: Option<TransportTrivia>`, and `$_edges`
+→ `edges: Option<Edges>`, the kind's two edges in the transport's base.
+
+`edges` is an `Option` for the wire, not for the model. Compound transports
+derive `napi(object)`, napi-derive has no way to skip a field, and napi maps
+an absent key to `None`, so a bare `Edges` would make every JS object that
+omits `$_edges` fail with "missing field" — and no JS code sends it. `None`
+means "not yet prepared": `prepare_edges` is the only code that branches on
+it, filling each unset side from the kind's edge row, and a body passes
+`node.edges.and_then(|e| e.<side>)` to `w.edge`, which falls back to the row
+itself. No render path reads `None` as "this node has no edges". Each side is
+an `EdgeArm` (arm plus an optional strength): the render side stamps both, so
+a seated gap writes at its seat's strength, and a stamp that arrives without
+a strength writes at the strength the kind's edge site gives that arm.
 Every emission helper that produces the field declarations, the `None`
 initialisers or the `obj.get(...)` reads derives from this array. A
 transport carries no coordinate fields: a coordinate is the `Coord` arm of
@@ -15570,25 +15648,22 @@ Flattened parents emit last as plain route objects (`export const <parent> = { <
 
 ### `packages/codegen/src/emitters/options.ts::renderOptionsModule`
 
-Source text for `options.ts`: the type-only import of the enums the sites
-name, `SpacingArm` (the kind ids of the grammar's `_whitespace` members a
-separator admits, `spacingArmsOf`), `WhitespaceArm` (every member, including
-`indent` and `dedent`, which a seam, edge or flank admits when the grammar
-renders indentation; `whitespaceArmsOf`) — named for the arm they type, since
-`types.ts` already exports the supertype's own `Whitespace` union and the
-package index re-exports both modules — the address tables and
-the `AddressedOptions` type mapped over them (`addressLines`), and
-`Options`, which is that mapped type plus `indent`. Every site is reached
-by its address alone, nested as the path is written; there is no flat
-key, no per-kind object and no runtime catalog — the facts that resolve
-an options object live in the render crate's path table.
+Source text for `options.ts`: a re-export of `SpacingArm` and `WhitespaceArm`
+(declared in `types.ts`, where the hints that use them live), `LabelOptions`
+from the label roots, and `Options = DerivedOptions<T.OptionsHintMap> &
+LabelOptions`. There is no address table and no mapped type over one: every
+kind's sites are on its namespace as `X.Hints` (`emitOptionsHints`),
+`OptionsHintMap` points at them by key, and `DerivedOptions` in
+`@sittir/types` is a plain mapped type over that map, so each property
+resolves lazily. `indent` comes with `DerivedOptions`. Without arm aliases (a
+grammar with no sites) the two aliases are declared `never` here instead of
+re-exported.
 
 ### `packages/codegen/src/emitters/options.ts::OptionsModuleInputs`
 
-What the module is written from: the spacing and whitespace arm lists read
-off the grammar's `_whitespace` supertype, so a leaf whose arms are exactly
-one of them is written as `SpacingArm` or `WhitespaceArm` rather than spelled
-out, and the address tables.
+What the module is written from: the arm aliases (`armAliasesOf`) and the
+hint emitter over the address tables (`hintEmitterOf`), whose label roots
+become `LabelOptions`.
 
 ### `packages/codegen/src/emitters/options.ts::addressTablesFor`
 
@@ -15597,26 +15672,99 @@ out, and the address tables.
  *  the declared `options:` block read against the grammar's public kind
  *  names, and the supertype-membership map — from a node map, kind catalog
  *  and already-collected sites. `emit.ts` calls this once per grammar and
- *  threads the resulting `AddressTables` into both `emitOptions` and
- *  `emitRenderModule`, so the TypeScript `AddressedOptions` type and the
- *  generated Rust structs are never derived from two independent builds of
- *  the same inputs. A caller with no `AddressTables` in hand yet (a test)
+ *  threads the resulting `AddressTables` into `emitTypes`, `emitOptions` and
+ *  `emitRenderModule`, so the TypeScript hints and the Rust address trie are
+ *  never derived from two independent builds of the same inputs. A caller with no `AddressTables` in hand yet (a test)
  *  may call this directly; production has exactly one call site. */
 ```
 
 ### `packages/codegen/src/emitters/options.ts::emitOptions`
 
-```text
-/**
- * `options.ts` for one grammar package, from the site preferences read off
- * the model and the spaced render rules (collectSitePreferences), the
- * supertype members map and the kind catalog. The catalog is required:
- * option values are typed by kind id and there is no fallback spelling.
- * `config.addresses`, when the caller already built one (`addressTablesFor`
- * in `emit.ts`), is used as-is; otherwise it is derived here through the
- * same helper.
- */
-```
+`options.ts` for one grammar package, from the site preferences
+(`collectSitePreferences`, unless the caller passes them), the kind catalog
+and the address tables (`config.addresses` when `emit.ts` already built them
+through `addressTablesFor`). The catalog is required: option values are typed
+by kind id and there is no fallback spelling.
+
+### `packages/codegen/src/emitters/options.ts::optionKey`
+
+The key a segment is written under on the options surface, in TypeScript
+and in the Rust trie alike: `snakeToCamel` of its `nestedKey`. It is the one
+casing of an option key. Canonical paths (the `options:` block, error
+messages, `SiteRef.path`) keep the grammar's snake spelling; only the key a
+caller writes is camel-cased. A serde or napi rename on the Rust side would
+be a second casing implementation, and the trie is a codegen table, not a
+derived struct, so the rename happens here once.
+
+### `packages/codegen/src/emitters/options.ts::DirectChild`
+
+One address one segment below some prefix: its snake `name` (the order key),
+its option `key`, and whichever of `branch`/`leaf` it is.
+
+### `packages/codegen/src/emitters/options.ts::ChildIndex`
+
+Every branch and leaf bucketed by its parent's canonical address, each bucket
+sorted by snake name, so the hint printer and the trie printer walk the same
+children in the same order with one lookup per level.
+
+### `packages/codegen/src/emitters/options.ts::childIndexOf`
+
+Builds the `ChildIndex`. Takes `kindEntries` because a literal segment's
+name is its token's kind name (`nestedKey`), the same derivation the address
+tables used for `path` and `children`.
+
+### `packages/codegen/src/emitters/options.ts::ArmAliases`
+
+The two arm unions every whitespace leaf is typed by: `spacingType` (the
+`_whitespace` members a separator admits) and `whitespaceType` (every member,
+indent and dedent included when some site admits depth, else the same as
+`spacingType`).
+
+### `packages/codegen/src/emitters/options.ts::armAliasesOf`
+
+`ArmAliases` for a grammar, from `spacingArmsOf`/`whitespaceArmsOf` and
+whether any site admits depth. `types.ts` declares the aliases from it and
+`options.ts` re-exports them, so there is one source.
+
+### `packages/codegen/src/emitters/options.ts::armAliasName`
+
+Writes a leaf type as `SpacingArm` or `WhitespaceArm` when it is exactly one
+of the two unions, and as itself otherwise.
+
+### `packages/codegen/src/emitters/options.ts::HintEmitter`
+
+What the types and options emitters read off the address tables: every root
+of the trie as a `HintRoot`, in the shared index's order.
+
+### `packages/codegen/src/emitters/options.ts::HintRoot`
+
+One root of the address trie as the hint surfaces see it: its snake `name`
+(a kind's public name or a label), its `key` (`optionKey`), its printed
+`hint`, and whether it is a `label`.
+
+### `packages/codegen/src/emitters/options.ts::hintEmitterOf`
+
+Prints each root's sites as one nested object type, from the same
+`ChildIndex` the Rust trie is printed from, so the two surfaces cannot
+disagree on which sites exist or how a key is spelled: a root's key is its
+index entry's `optionKey`, the same key the trie root carries. Every level
+is optional, so the hint is the option shape a caller writes. A root that is
+not a kind's public name (`kinds`) is a label. An address that is a site at
+the root has no hint home and fails at codegen.
+
+### `packages/codegen/src/emitters/options.ts::publicKindNames`
+
+Every kind's public name (`publicKindName`), the set `hintEmitterOf` tells
+kinds from labels by.
+
+### `render options: LabelOptions` (emitted into `options.ts`)
+
+The virtual kinds a grammar declares in its `options:` block (`body`,
+`quotes`, `statements`, …), each typed by the sites bound to it, keyed and
+nested like the kind hints. They are not kinds, so they have no namespace to
+carry a hint; this interface is their home. It is derived from the label
+roots of the same address tables, not kept by hand, and it is the only
+residual table on the TypeScript options surface.
 
 ### `packages/codegen/src/emitters/templates.ts::hasFlankSignal`
 
@@ -15682,14 +15830,77 @@ An exhaustive switch over `SeamOrigin | undefined`: `preference`,
 `fallback` or no origin is 0. A new origin fails to compile here until it is
 given a strength.
 
+### `packages/codegen/src/emitters/render-options-rs.ts::SEAM_DECLARED`
+
+The declared strength (2), named once on the TypeScript side so the plan's
+fixed-strength rows (separators, list flanks) and `seamStrength`'s declared
+origins spell the same value core's `spacing::SEAM_DECLARED` holds.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::edgeSitesOf`
 
-The per-kind edge table: for each spacing site whose address is a token face
-(`parseSeamLabel(address).token` equals the site's kind), the kind's id and,
-for its before and after edge, the site index, default arm and strength.
-Kinds whose name resolves to more than one id are dropped, and rows are
-sorted by id so the runtime finds a kind by binary search. A source
-coordinate of that kind meets these seams like a rendered node would.
+The per-kind edge rows: for each spacing site that is its kind's own edge
+(`isKindEdge`), the kind's id (`edgeKindId`) and the site index of its before
+and after edge. Kinds whose name resolves to more than one id are dropped, and
+rows come out in id order. `renderOptionsRs` writes them as `EDGE_SITES` and
+indexes them by kind id in the dense `EDGE_ROWS` table (`denseTable`), so the
+runtime reaches a kind's row by one array read. A source coordinate of that
+kind meets these seams like a rendered node would, and a transport's
+`prepare_edges` and `w.edge` read the same rows, so the render emitter checks
+a kind with edge sites against this table (`edgeIdOf`).
+
+### `packages/codegen/src/emitters/render-options-rs.ts::isKindEdge`
+
+Whether a spacing site is its kind's own edge: its address parses as a seam
+whose token is the kind itself (`<kind>_before`/`<kind>_after`). One
+predicate for the edge table, the transport emitter's edge writes and its
+field filter, so they cannot disagree on which sites live in the base.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::edgeKindId`
+
+The id a kind's edges are keyed by: the kind's catalog entry by public name.
+`EDGE_SITES` rows, a transport's `Edged::kind_id` and every `w.edge` call
+take it from here, so a kind's edges are found under the id they were
+written with.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::carriesPerNodeValue`
+
+Whether a spacing site keeps a field on its transport: only list facts do —
+the separator row and a list's gap sites (`before`, `after`, `gap`), which
+the reader's gap classifier stamps per node. A token seam and a list flank
+have no per-node value; the body reads them from the resolved options with
+`w.site_at`, and a kind edge lives in the transport's base `edges`.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::SeatTable`
+
+One slot's seat table before emission: its constant name and its rows (kind
+id, site index), sorted by kind id.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::seatTableName`
+
+`SEATS_<KIND>_<SLOT>`, the constant a slot's seat table is emitted under
+and `seatLoops` passes to `fill_seated_gaps`.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::seatEdgeSide`
+
+The side of a seated site's edge, read from the parsed label of the child's
+edge address the site carries (`seat.field`). A seat whose label is not the
+seated kind's own edge is a malformed site and fails generation.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::seatTablesOf`
+
+Groups every seated spacing site by its list (kind, slot) into a
+`SeatTable` keyed by the seated element's kind id, the id the transport
+carries for that element (for an alias element, the envelope's own id). A
+seat must fill the element's `after` edge (a sibling gap is the preceding
+element's own trailing edge); a seat on a `before` edge, a seated kind with
+no id, or one kind seated twice in the same list fails at codegen. The rows
+are written as a dense table indexed by kind id (`denseTable`).
+
+### `packages/codegen/src/emitters/render-options-rs.ts::seatedTableNames`
+
+The seat-table name of every list that seats something, from the same
+grouping key `seatTablesOf` uses, so `seatLoops` asks the tables' own
+grouping whether a slot has seats.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::DelimiterSite`
 
@@ -15735,71 +15946,52 @@ A `source: 'separator'` site becomes a spacing-table row under its kind
 default's token text is stamped on the row as `defaultText` here, where
 the kind catalog is in hand, so the render emitter never re-derives it.
 
-The emitted `site_strength(site, arm)` returns the row's strength when `arm`
-is the row's default and `SEAM_DECLARED` otherwise, so a value set on the
-node counts as declared. A value set explicitly to the default of a
-cascaded site is indistinguishable from the default and takes the cascade
-tier; the read-side inference that will set such values records
-explicitness when it lands.
+A row's strength is what the sink writes the site's default arm at:
+`SiteSpec` carries it into the resolved options, and `site_arm`/`edge_arm`
+use it when the arm is the default and `SEAM_DECLARED` otherwise, so a value
+set on the node counts as declared. A separator row and a list flank row
+(`start`/`end`) carry `SEAM_DECLARED` regardless of origin: the list view
+writes both at declared strength, so the row states the strength render
+uses. A value set explicitly to the default of a cascaded site is
+indistinguishable from the default and takes the cascade tier; the
+read-side inference that will set such values records explicitness when it
+lands.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
 
-```text
-/**
- * Source text of a render crate's `options.rs`: the site constants, the
- * tables the resolver walks, `spacing_text` mapping a whitespace kind id to
- * the text its visible external renders, `defaults()`, one generated struct
- * per address branch (root plus every `AddressBranchEntry`) with a
- * `#[cfg(feature = "napi-bindings")]` `FromNapiValue`/`ToNapiValue` pair, and
- * `resolve()`. A text whitespace kind's string is written with the core
- * writer's seam mark in front, so every option-driven whitespace (separator,
- * flank, token seam) coalesces in the writer; the indent and dedent kinds
- * keep their own mark constants. A delimiter site row carries its default
- * bitflag, from the grammar's declared default or none, and `defaults()`
- * fills the delimiter vector from it. Each struct's `FromNapiValue` calls
- * `reject_unknown_keys` with that struct's own canonical address as `at`;
- * the resolver walks every leaf's field-access chain and applies its value
- * to the site(s) its `canonical` entries name — an unknown key, an address
- * naming no site, or a value a site does not admit is an error naming the
- * address. A leaf's own field type (`Option<u16>`/`Option<u8>`) is the
- * TypeScript-checked guard on shape; a value that is not a number at all
- * surfaces as napi's own conversion error naming the property, never the
- * old `options: <address> must be a kind id` message.
- */
-```
+Source text of a render crate's `options.rs`: the site constants,
+`SPACING_SITES`/`DELIMITER_SITES`/`SITE_SPECS`, the edge rows and their
+kind-indexed `EDGE_ROWS`, one dense `SEATS_*` table per seated slot
+(`seatTablesOf`), `DEPTH_SITES`, `spacing_text`, `defaults()`, the address
+trie `ADDRESSES` (`emitAddressTrie`), a `Sites` marker implementing
+`sittir_core::options::OptionSites` over those tables, and
+`pub type Options = sittir_core::options::Options<Sites>`. No per-grammar
+struct, deserializer or resolver is emitted: reading a JS object through the
+trie and resolving it over a base table live once in core, and this file only
+supplies the tables. `defaults()` builds `spacing` through
+`ResolvedOptions::default_spacing`, so every site is already a `SeamArm` at
+its default arm and strength. A text whitespace kind's string is written with
+the core writer's seam mark in front, so every option-driven whitespace
+coalesces in the writer; the indent and dedent kinds keep their own mark
+constants.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::allowed`
 
-`allowed(site) -> &'static [u16]`: the arms a spacing site admits, read
-off the `SPACING_SITES` row the resolver already carries. The prepare
-walk's gap classification asks it which measured gap a site may take.
-
-### `packages/codegen/src/emitters/render-options-rs.ts::structNameOf`
-
-```text
-/** The generated struct name for an address's own segment list: each
- *  segment's nested key (`nestedKey`, never the field-escaped ident —
- *  Rust's field-keyword escaping is irrelevant to a type name), Pascal-cased
- *  and type-escaped (`rustTypeIdent`), concatenated and suffixed `Options`.
- *  The root's struct is named `Options` directly, bypassing this function
- *  (its segment list is empty). */
-```
+`allowed(site) -> &'static [u16]`: the arms a spacing site admits, the last
+column of its `SPACING_SITES` row. It is one of the `OptionTables` a grammar's
+`Sites` marker hands core, so `Options::resolve` refuses a value the site does
+not admit, and the prepare walk's gap classification asks it which measured
+gap a site may take.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::siteRefsOf`
 
-```text
-/** The site(s) a leaf's `canonical` entries name, looked up in a `SiteIndex`
- *  (`siteIndexOf`) built once per emit and keyed by each site's own
- *  canonical address. `formatPreferencePath` is a bijection over the
- *  `PreferenceSegment` vocabulary — every kind's syntax marker (quotes,
- *  parens, colon suffix, digits, `_`, bare identifier) is mutually
- *  exclusive — so the first hash-bucket entry at a formatted key is the
- *  site, with no separate segment-equality check; `childIndexOf` and
- *  `directChildrenOf` key on the same formatted string with the same
- *  assumption. One entry for an ordinary site, every bound site for a
- *  declaration reached through bindings. A canonical entry naming no site
- *  is a codegen-time error. */
-```
+The site each of a leaf's `canonical` entries names, looked up in the
+`SiteIndex` by its canonical address. Exactly one site must answer each
+entry: none, or more than one at the same address, fails at codegen rather
+than silently taking the first. One entry for an ordinary site, every bound
+site for a declaration reached through bindings. A leaf whose entries mix
+spacing and delimiter sites (its trie node would have to be two variants)
+also fails.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::SiteIndex`
 
@@ -15811,120 +16003,105 @@ walk's gap classification asks it which measured gap a site may take.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::siteIndexOf`
 
-```text
-/** Builds a `SiteIndex`: every `plan.sitePaths` entry keyed by
- *  `formatPreferencePath` of its own `segments` — the canonical string
- *  identity `siteRefsOf`, `childIndexOf` and `directChildrenOf` all share. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::DirectChild`
-
-```text
-/** One address one segment below some prefix: the JS property key it is
- *  reached by, and whichever of `branch`/`leaf` it actually is. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::directChildrenOf`
-
-```text
-/** Every branch/leaf whose own address is exactly one segment below
- *  `prefix`, read from a `ChildIndex` (`childIndexOf`) built once per emit
- *  and keyed by each entry's own parent address — a struct's fields resolve
- *  by one lookup instead of a scan over every branch and leaf in the
- *  grammar. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::AddressField`
-
-```text
-/** One generated struct field: its JS property key, its Rust field
- *  identifier, and its Rust type (`Option<StructName>` for a branch,
- *  `Option<u16>`/`Option<u8>` for a spacing/delimiter leaf). */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::fieldsOf`
-
-```text
-/** The fields of the struct at `prefix`, in the branch's own child order:
- *  a child that is itself a branch nests that branch's struct; a leaf
- *  child's field width is `u8` when every site its `canonical` entries name
- *  is a delimiter site, `u16` when none is. A leaf whose sites mix
- *  delimiter and spacing sites is a codegen-time error naming the address —
- *  resolving it silently as `u16` would only surface as a cargo type
- *  mismatch downstream, far from the address that caused it. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::emitOptionsStructs`
-
-```text
-/** One `#[derive(Debug, Clone, Default)]` struct, `FromNapiValue` and
- *  `ToNapiValue` impl per address branch — root plus every
- *  `AddressBranchEntry` — sharing one `ChildIndex`/`SiteIndex` pair built
- *  once for the whole emit. `FromNapiValue` refuses an unknown key via
- *  `reject_unknown_keys`; `ToNapiValue` exists only because `EngineOptions`
- *  is a `#[napi(object)]` struct, whose derive requires every field type to
- *  support both directions even though these structs are only ever an
- *  engine input. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::chainOf`
-
-```text
-/** The resolver's field-access expression for one leaf's own segment list:
- *  `options.a.as_ref().and_then(|o| o.b.as_ref())…and_then(|o| o.z)` down to
- *  the leaf's own `Copy` value. A single-segment list (a root-level leaf)
- *  is just `options.a` — there is no branch to borrow through. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::literalOf`
-
-```text
-/** An `Options` struct literal setting one leaf's own segment chain to a
- *  given value, `..Default::default()` elsewhere at every level — used only
- *  by the generated `resolve_tests`, which know both the leaf's address and
- *  the id/bits they are asserting against. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::resolverBody`
-
-```text
-/** One `if let Some(v) = <chainOf> { set_spacing/set_delimiter(…)? }` block
- *  per leaf, one `set_spacing`/`set_delimiter` call per site the leaf's
- *  `canonical` entries name — a leaf bound to several sites through a
- *  declaration fans the same value out to all of them. */
-```
+Builds a `SiteIndex`: every `plan.sitePaths` entry keyed by
+`formatPreferencePath` of its own `segments`, the canonical string identity
+`siteRefsOf`, `childIndexOf` and `emitAddressLevel` all share.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::resolveTests`
 
-```text
-/** The generated `#[cfg(test)] mod resolve_tests`: `resolve` over an empty
- *  `Options` is a no-op, and setting the first site (from `plan.sitePaths`)
- *  that admits an id/bits other than its own default resolves to a table
- *  that differs from `defaults()` at exactly that site's index and nowhere
- *  else. The site is chosen from `plan.sitePaths` and its own `segments`,
- *  never through `siteRefsOf`/a leaf: `resolverBody` also reaches its
- *  `SITE_*` constant through `siteRefsOf`, so a test built the same way
- *  would assert against whatever wrong constant a leaf→site mismatch there
- *  produced, not catch it. A grammar where every site's only admitted value
- *  is its own default emits only the first assertion. */
-```
+The generated `#[cfg(test)] mod resolve_tests`, one smoke test per error
+shape the core walk can raise, since the core trie test cannot know a
+grammar's real addresses: no options leaves `defaults()`; an unknown root key
+is refused; an unknown key beneath the first branch is refused naming the
+branch's canonical path; the first leaf with an arm every site it names admits
+and at least one does not hold by default (`admittedEverywhere`) changes
+exactly those sites' arms; the first spacing leaf refuses `65535` naming its
+path; and, where `unbalancedLeafOf` finds one, a single-site indent leaf
+refuses an indent its kind never dedents. Each test feeds a JSON object built
+by `jsonAt` through `Options::read` over a `serde_json` map, the second
+`OptionObject` impl.
 
-### `packages/codegen/src/emitters/render-options-rs.ts::differingArmOf`
+### `packages/codegen/src/emitters/render-options-rs.ts::siteConstOf`
 
-```text
-/** The first id (spacing) or bit pattern (delimiter) a site admits other
- *  than its own default, or `undefined` when the default is the site's only
- *  admitted value. */
-```
+The `SITE_*`/`DELIM_*` constant name a `SitePath` stands for, from the
+spacing or delimiter site it indexes.
 
-### `packages/codegen/src/emitters/render-options-rs.ts::RESOLVER_HELPERS`
+### `packages/codegen/src/emitters/render-options-rs.ts::emitAddressLevel`
 
-```text
-/** `spacing_id`/`set_spacing`/`set_delimiter`: the resolver's per-site
- *  admission check and table write, shared by every generated
- *  `if let Some(v) = …` block in `resolve`. Takes the already-typed
- *  `u16`/`u8` value napi produced — there is no JSON value to parse here. */
-```
+One level of `ADDRESSES`: every child beneath `prefix` from the shared
+`ChildIndex`, in its snake-name order, as an `AddressNode::Branch` carrying
+its canonical path (the `at` an unknown key beneath it is reported against)
+and its children recursively, or an `AddressNode::Spacing`/`Delimiter` leaf
+carrying every `SiteRef` (site constant plus canonical path) its `canonical`
+entries name. The key is the child's `optionKey`, the same camel spelling
+the TypeScript hint uses, so the key a caller writes is the key the trie
+matches.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::emitAddressTrie`
+
+`pub static ADDRESSES: &[AddressNode]`, the whole address trie from the
+roots down (`emitAddressLevel`), over one `ChildIndex` (`childIndexOf`)
+built for the emit, the same index the TypeScript hints are printed from.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::SmokeLeaf`
+
+A leaf as the generated smoke tests see it: its key path from the root and
+the sites it names.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::smokeLeavesOf`
+
+Every address leaf as a `SmokeLeaf`, in table order, so the smoke tests pick
+the first leaf of each shape they need.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::jsonAt`
+
+A JSON object literal nesting `value` under `keys`, the wire an options
+object arrives on, for the generated smoke tests.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::admittedEverywhere`
+
+For a spacing leaf, the first arm every site it names admits and at least
+one does not hold by default, or `undefined`: the value whose resolution the
+admitted-value smoke test can assert changed every named site and nothing
+else. A leaf naming several sites through bindings needs a value all of them
+admit.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::unbalancedLeafOf`
+
+The first single-site spacing leaf whose site admits the indent kind and
+sits in a `DEPTH_SITES` row whose other sites hold neither indent nor dedent
+by default, with that row's kind: setting it to indent must trip the
+resolver's depth balance. `undefined` when the grammar has no such leaf
+(python), and the smoke test is then not emitted.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::NO_SITE`
+
+The Rust spelling of an empty cell in a kind-indexed site table
+(`sittir_core::options::NO_SITE`); `NO_SITE_ID` is its value, the bound a
+real site index must stay below (`siteOrNone`).
+
+### `packages/codegen/src/emitters/render-options-rs.ts::NO_SITE_ID`
+
+The value `NO_SITE` spells, `0xffff`; a real site index must stay below it
+to fit a `u16` table cell.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::siteOrNone`
+
+A table cell: a site index as written, or `NO_SITE` for none. A site index
+at or above `NO_SITE_ID` fails at codegen, since it would be read back as
+empty.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::denseTable`
+
+`pub static NAME: &[u16]`, a table indexed by kind id up to the highest key
+present, `NO_SITE` in every gap, sixteen cells to a line. `EDGE_ROWS` and the
+`SEATS_*` tables are written through it so a runtime lookup by kind id is one
+array read instead of a search.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::EdgeSiteRow`
+
+One kind's edge row before emission: its id and the site index of its
+before and after edge, either absent when the kind owns no seam on that side.
 
 ### `packages/codegen/src/emitters/render-module.ts::RenderOptionsInputs`
 
@@ -16009,24 +16186,26 @@ enums, `VerbatimTransport`): `Ok(())`.
 
 ### `packages/codegen/src/emitters/render-module.ts::prepareStructImpl`
 
-A transport struct's `Prepare` impl. It first lets the source speak for its
-repeated slots (`listGapClassification`: the gaps between items that are
-still coordinates become the site value when the wire left it empty), then
-fills this kind's own facts
-— each of its spacing fields takes the table value when unset, the seating
-loops write each element's seated arm into the element's own trailing-edge
-field, and a separated list takes its `delimiter` from the delimiter table
-and its `separator_kind` from its separator site when unset — and only
-then walks the children (every slot field's `prepare(ctx)?`). The order is
-load-bearing: a seat is a `get_or_insert` on the child's field, and the
-child's own prepare fills that same field with the child's global default,
-so the parent must seat before the child sees it. A wire-carried value
-always wins; a coordinate that names no tree or a span outside its source
-is the walk's error, not the render's.
+A transport struct's `Prepare` impl. A compound kind first fills its own
+base edges from its edge row (`prepare_edges`, only for a kind that owns
+kind-edge sites), then lets the source speak for its repeated slots
+(`listGapClassification`: the gaps between items that are still coordinates
+become the site value when the wire left it empty), then fills this kind's
+own facts: each spacing field that carries a per-node value
+(`carriesPerNodeValue`) takes the resolved arm when unset; the seat calls
+(`seatLoops`) write each seated element's gap into that element's own base
+`after` edge; and a separated list takes its `delimiter` and its
+`separator_kind` from their sites when unset. Only then does it walk the
+children (every slot field's `prepare(ctx)?`). The order matters: a seat is
+a `get_or_insert` on the child's base edge, and the child's own
+`prepare_edges` fills that same edge from its kind's row, so the parent must
+seat before the child sees it. A wire-carried value always wins; a
+coordinate that names no tree or a span outside its source is the walk's
+error, not the render's.
 
-A list's delimiter is filled from the table like any spacing site, zero
-included: the table's value is the grammar's declared default or a render
-option, and the transport's own value still wins.
+A list's delimiter is filled from the table like any site, zero included:
+the table's value is the grammar's declared default or a render option, and
+the transport's own value still wins.
 
 ### `packages/codegen/src/emitters/render-module.ts::listGapSitesOf`
 
@@ -16065,6 +16244,40 @@ children, and the classifier resolves the coordinates it measures itself).
  *  spacing sites, each `Option<u16>` named by the site key. */
 ```
 
+### `packages/codegen/src/emitters/render-module.ts::kindEdgeSidesOf`
+
+A kind's own edge sites among its synthesized sites, by field name to side:
+the seams `isKindEdge` accepts, their side read from the parsed seam label.
+
+### `packages/codegen/src/emitters/render-module.ts::kindEdgeWriterOf`
+
+The body printer's `edge` lookup for one struct: a seam name answers its
+kind id and side when it is the kind's own edge, nothing otherwise. A kind
+with edge sites resolves its id once, through `edgeIdOf`.
+
+### `packages/codegen/src/emitters/render-module.ts::edgeIdOf`
+
+The edge-row id of a kind that has kind-edge sites, checked against the
+plan's edge-row kinds (`edgeRowKindsOf`). A kind whose id is missing, or that
+`edgeSitesOf` dropped as ambiguous, has no row to prepare and write its edges
+from; generation fails here rather than rendering the kind with its edges
+silently gone.
+
+### `packages/codegen/src/emitters/render-module.ts::edgeRowKindsCache`
+
+`edgeRowKindsOf`'s memo, keyed weakly by the render plan.
+
+### `packages/codegen/src/emitters/render-module.ts::edgeRowKindsOf`
+
+The kind ids that have an edge row, from `edgeSitesOf`, computed once per
+plan so `edgeIdOf` is a set lookup per node.
+
+### `packages/codegen/src/emitters/render-module.ts::edgedImplLines`
+
+A transport's `Edged` impl: its edge-row id, and access to its base `edges`,
+inserting the default on first write. `edges()` answers `Edges::NONE` for a
+transport not yet prepared.
+
 ### `packages/codegen/src/emitters/render-module.ts::delimiterSiteOf`
 
 ```text
@@ -16098,29 +16311,6 @@ looked up in. Delimiter rows keep kind-and-slot order among themselves so
 their constants are stable; a delimiter is reached by address like any other
 site, its path ending in `delimiter`.
 
-### `render options: site_range` (emitted into `options.rs`)
-
-The sites an address names — itself and everything beneath it — as a contiguous
-range, because sites are numbered in canonical path order.
-
-The scan is deliberate. That order compares parsed segments, not the bytes of
-the formatted path, so the table is not in byte order and a binary search over
-it would land in the wrong place: within a kind, `for:/before` precedes
-`before`, where bytes would put `after` first. Resolution runs once per options
-change rather than once per render, so a pass over a few hundred short strings
-costs nothing, and correctness here is not negotiable.
-
-### `render options: apply_nested` (emitted into `options.rs`)
-
-A kind-keyed nested object applied by address. The nested object and the path
-are the same address in two layouts, so each nested key is matched against every
-spelling a segment has — a bare name, a quoted literal, or a field.
-
-It is all or nothing. A key that resolves to no site is an error naming the
-full address it was written at, raised before any leaf is applied, so the
-table is untouched. Applying the half it understood would drop the rest in
-silence.
-
 ### `packages/codegen/src/emitters/options.ts::deriveAddressTables`
 
 Every site's address split into the two tables the generated surface needs: the
@@ -16139,16 +16329,6 @@ mismatch is rejected as `options: address '<path>' names two segments`.
 
 A key that is both a branch and a leaf, or an address resolving to two types, is
 rejected: an address names one site or a set of them, never both.
-
-### `render options: AddressedOptions` (emitted into `options.ts`)
-
-The nested face of the address tables, as a mapped type over `AddressRoot` that
-descends through `AddressBranch` and bottoms out in `AddressLeaf`. It is
-unrolled rather than recursive, one level per depth the grammar has, so the
-checker never has to bound a recursion it cannot see the end of.
-
-It is the whole of `Options` beside `indent`: every site has exactly one
-spelling, its address, and an excess-property check refuses any other key.
 
 ### `packages/codegen/src/emitters/options.ts::deriveAddressTables` — supertype membership
 
@@ -16197,9 +16377,9 @@ exists.
 
 ### `packages/codegen/src/emitters/options.ts::nestedKey`
 
-The one derivation of a nested option object's key, shared by the TS type
-emitter (`AddressedOptions`) and the Rust struct emitter
-(`render-options-rs.ts`): an index segment's number as a string, `_` for a
+The one derivation of a segment's snake name, the order key of the shared
+`ChildIndex` and the input to `optionKey`, which the TypeScript hints and
+the Rust trie both write keys with: an index segment's number as a string, `_` for a
 wildcard, a named segment's own name, and — for a literal segment — the
 anonymous token's own kind name (`findEntryForLiteralText`), never its raw
 text. The kind name it reads is `generated-metadata.ts::deriveSymbolRuntimeName`'s
@@ -16233,22 +16413,6 @@ segments that would spell the same nested key distinguishable.
  *  `plan.sitePaths` rather than by string; the formatted form is produced
  *  only where a message or an `at` prefix needs one. */
 ```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::ChildIndex`
-
-```text
-/** Every branch/leaf bucketed by its own parent's canonical address, built
- *  once per emit so a struct's fields resolve by one lookup instead of a
- *  scan over every branch and leaf in the grammar. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::childIndexOf`
-
-Every branch/leaf bucketed by its own parent's canonical address, so a
-struct's fields resolve by one lookup instead of a scan over every branch and
-leaf in the grammar. Takes `kindEntries` because bucketing a child under its
-parent keys it by `nestedKey(segment, kindEntries)`, the same derivation the
-address tables used to build `path` and `children` in the first place.
 
 ### `packages/codegen/src/emitters/factories.ts::hiddenTextLeaves`
 

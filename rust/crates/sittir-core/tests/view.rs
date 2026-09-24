@@ -3,7 +3,8 @@
 //! tail spacing, and the list's own template.
 
 use sittir_core::render::{render_to_string, Render, RenderResult, RenderSink, WhitespaceTable};
-use sittir_core::spacing::WordMatcher;
+use sittir_core::options::{ResolvedOptions, SiteSpec};
+use sittir_core::spacing::{SpacingWriter, WordMatcher};
 use sittir_core::view::{ListView, View, NO_ITEMS};
 use sittir_core::SlotValue;
 
@@ -31,6 +32,28 @@ const TABLE: WhitespaceTable = WhitespaceTable {
 
 fn rt(value: &dyn Render) -> String {
     render_to_string(value, WordMatcher::default_ident(), &TABLE, "    ").unwrap()
+}
+
+/// Two spacing sites, both resolved to a newline at declared strength: what
+/// a list's head and tail flanks read through the options the writer holds.
+fn rt_with_sites(value: &dyn Render) -> String {
+    static SITES: &[SiteSpec] = &[
+        SiteSpec { default_arm: NEWLINE, strength: 2 },
+        SiteSpec { default_arm: NEWLINE, strength: 2 },
+    ];
+    let options = ResolvedOptions {
+        spacing: ResolvedOptions::default_spacing(SITES),
+        sites: SITES,
+        ..ResolvedOptions::default()
+    };
+    let mut out = String::new();
+    let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident())
+        .with_table(&TABLE)
+        .with_indent("    ")
+        .with_options(&options);
+    value.render(&mut w).unwrap();
+    w.finish().unwrap();
+    out
 }
 
 struct Word(&'static str);
@@ -122,8 +145,8 @@ fn list<'a>(
         after,
         leading,
         trailing,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     }
 }
 
@@ -189,10 +212,10 @@ fn an_empty_list_writes_nothing_even_with_flanks_head_tail_and_template() {
         after: SPACE,
         leading: true,
         trailing: true,
-        head: NEWLINE,
-        tail: NEWLINE,
+        head: Some(0),
+        tail: Some(1),
     };
-    assert_eq!(rt(&view), "");
+    assert_eq!(rt_with_sites(&view), "");
     let none = ListView {
         items: NO_ITEMS,
         template: "in{}",
@@ -201,8 +224,8 @@ fn an_empty_list_writes_nothing_even_with_flanks_head_tail_and_template() {
         after: TIGHT,
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     assert_eq!(rt(&none), "");
 }
@@ -218,10 +241,10 @@ fn template_is_outside_head_and_tail() {
         after: TIGHT,
         leading: false,
         trailing: false,
-        head: NEWLINE,
-        tail: NEWLINE,
+        head: Some(0),
+        tail: Some(1),
     };
-    assert_eq!(rt(&view), "{\na,b\n}");
+    assert_eq!(rt_with_sites(&view), "{\na,b\n}");
 }
 
 #[test]
@@ -235,8 +258,8 @@ fn optional_elements_still_take_separators() {
         after: TIGHT,
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     assert_eq!(rt(&view), ",,a");
 }
