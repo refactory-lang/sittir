@@ -196,63 +196,14 @@ function collectVisibleChildren(n: TSNode): TSNode[] {
 	return out;
 }
 
-/**
- * Same-text leaf kind pairs the AST compare tolerates, per grammar — an
- * audited allowlist for positional leaf re-classification the reparse
- * wrapper genuinely cannot reproduce. A pair NOT listed here fails the
- * compare even when the bytes match — an unlisted same-text kind swap is
- * a real regression signal, not alias noise. Keys are order-insensitive
- * via {@link leafAliasKey}.
- *
- * Currently EMPTY: every known positional case is handled by a
- * context-faithful reparse wrapper instead (the decorator variant family
- * wraps in a real `@…` position — see `REPARSE_WRAPPERS.typescript`), so
- * leaf classification matches exactly. Adding an entry here requires the
- * same audit that emptied it: instrument the tolerance, run
- * validate:native across all grammars, and list only pairs whose context
- * a wrapper cannot express.
- */
-export const LEAF_ALIAS_TOLERANCE_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {};
-
-export function leafAliasKey(a: string, b: string): string {
-	return a < b ? `${a}|${b}` : `${b}|${a}`;
-}
-
 export function astStructuralDiff(
 	a: TSNode,
 	b: TSNode,
 	path: string = '',
-	rootAliasPair?: readonly [string, string],
-	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>,
-	leafAliasPairs?: ReadonlySet<string>
+	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>
 ): string | null {
-	// Root-level alias tolerance: `a`/`b` are the same underlying content —
-	// `wrapForReparse`'s synthetic wrapper context doesn't always reproduce
-	// the exact grammar position that triggered the ORIGINAL parse's named
-	// alias (see `renderedKind`/`targetKind` at this function's call site),
-	// so the reparsed root can legitimately surface under either the alias
-	// source or the alias target's display name. Scoped to path === '' —
-	// deeper mismatches are still real (`findNodeBySpanOfKind` already
-	// anchors nested lookups correctly) and must still fail.
-	const rootAliasTolerated =
-		path === '' &&
-		rootAliasPair !== undefined &&
-		((a.type === rootAliasPair[0] && b.type === rootAliasPair[1]) ||
-			(a.type === rootAliasPair[1] && b.type === rootAliasPair[0]));
-	if (a.type !== b.type && !rootAliasTolerated) {
-		// Byte-identical leaf tolerance, gated on the grammar's audited pair
-		// allowlist ({@link LEAF_ALIAS_TOLERANCE_BY_GRAMMAR}): only childless
-		// nodes with identical text AND an allowlisted kind pair pass — any
-		// structural or byte difference, or an unlisted kind pair, still fails.
-		if (
-			a.childCount === 0 &&
-			b.childCount === 0 &&
-			a.text === b.text &&
-			leafAliasPairs?.has(leafAliasKey(a.type, b.type)) === true
-		) {
-			return null;
-		}
-		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
+	if (a.grammarId !== b.grammarId) {
+		return `${path || 'root'}: grammar type ${a.grammarType} ≠ ${b.grammarType}`;
 	}
 	const aChildren = collectVisibleChildren(a);
 	let bChildren = collectVisibleChildren(b);
@@ -318,14 +269,7 @@ export function astStructuralDiff(
 			continue;
 		}
 		// Named child — recurse.
-		const sub = astStructuralDiff(
-			ac,
-			bc,
-			`${path || a.type}[${i}].${ac.type}`,
-			undefined,
-			variantChildKinds,
-			leafAliasPairs
-		);
+		const sub = astStructuralDiff(ac, bc, `${path || a.type}[${i}].${ac.type}`, variantChildKinds);
 		if (sub) return sub;
 	}
 	return null;
@@ -917,18 +861,7 @@ export async function validateReadRenderParse(
 						kindOk = true;
 						// AST comparison: only when we have a WASM source node to
 						// compare against (native path without $span skips this).
-						const rootAliasPair: readonly [string, string] | undefined =
-							renderedKind !== targetKind ? [renderedKind, targetKind] : undefined;
-						const diff = node1ForAst
-							? astStructuralDiff(
-									node1ForAst,
-									node2,
-									'',
-									rootAliasPair,
-									variantChildKinds,
-									LEAF_ALIAS_TOLERANCE_BY_GRAMMAR[grammar]
-								)
-							: null;
+						const diff = node1ForAst ? astStructuralDiff(node1ForAst, node2, '', variantChildKinds) : null;
 						if (diff) {
 							kindAstMismatches.push({
 								kind: renderedKind,

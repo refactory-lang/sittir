@@ -1,20 +1,24 @@
 import { describe, expect, it } from 'vitest';
-import { astStructuralDiff, LEAF_ALIAS_TOLERANCE_BY_GRAMMAR, leafAliasKey } from '../read-render-parse.ts';
+import { astStructuralDiff } from '../read-render-parse.ts';
 import type { TSNode } from '../common.ts';
 
-function leaf(type: string, text: string): TSNode {
-	return {
-		type,
-		text,
-		childCount: 0,
-		isNamed: true,
-		child: () => null
-	} as unknown as TSNode;
-}
+const GRAMMAR_IDS: Record<string, number> = {
+	identifier: 1,
+	super: 2,
+	type_identifier: 3,
+	call_expression: 4,
+	new_expression: 5,
+	member_expression: 6,
+	property_identifier: 7,
+	generic_type: 245,
+	generic_type_with_turbofish: 246
+};
 
-function branch(type: string, text: string, children: TSNode[]): TSNode {
+function node(type: string, text: string, children: TSNode[] = [], grammarType: string = type): TSNode {
 	return {
 		type,
+		grammarType,
+		grammarId: GRAMMAR_IDS[grammarType],
 		text,
 		childCount: children.length,
 		isNamed: true,
@@ -22,104 +26,35 @@ function branch(type: string, text: string, children: TSNode[]): TSNode {
 	} as unknown as TSNode;
 }
 
-describe('astStructuralDiff leaf-kind tolerance', () => {
-	// Synthetic allowlist exercising the mechanism — the SHIPPED table is
-	// empty (see the empty-table ratchet below); context-faithful reparse
-	// wrappers cover the known positional cases instead.
-	const tsPairs = new Set([leafAliasKey('identifier', 'super')]);
-
-	it('tolerates an allowlisted same-text leaf pair (identifier/super, both orders)', () => {
-		expect(
-			astStructuralDiff(
-				leaf('identifier', 'super'),
-				leaf('super', 'super'),
-				'',
-				undefined,
-				undefined,
-				tsPairs
-			)
-		).toBeNull();
-		expect(
-			astStructuralDiff(
-				leaf('super', 'super'),
-				leaf('identifier', 'super'),
-				'',
-				undefined,
-				undefined,
-				tsPairs
-			)
-		).toBeNull();
+describe('astStructuralDiff compares grammar types, not display names', () => {
+	it('two nodes with the same grammar type but different display names are equal', () => {
+		const a = node('generic_type', 'a::<b>', [], 'generic_type_with_turbofish');
+		const b = node('generic_type_with_turbofish', 'a::<b>', [], 'generic_type_with_turbofish');
+		expect(astStructuralDiff(a, b)).toBeNull();
 	});
 
-	it('fails an allowlisted pair when the bytes differ', () => {
-		expect(
-			astStructuralDiff(
-				leaf('identifier', 'supper'),
-				leaf('super', 'super'),
-				'',
-				undefined,
-				undefined,
-				tsPairs
-			)
-		).toMatch(/type identifier ≠ super/);
+	it('two nodes with different grammar types differ even when the display names match', () => {
+		const a = node('generic_type', 'a<b>', [], 'generic_type');
+		const b = node('generic_type', 'a<b>', [], 'generic_type_with_turbofish');
+		expect(astStructuralDiff(a, b)).toMatch(/grammar type generic_type ≠ generic_type_with_turbofish/);
 	});
 
-	it('fails a same-text leaf kind swap that is NOT allowlisted', () => {
-		// A regression that re-lexes a terminal under a different kind with
-		// identical bytes must surface, not pass as alias noise.
-		expect(
-			astStructuralDiff(
-				leaf('type_identifier', 'T'),
-				leaf('identifier', 'T'),
-				'',
-				undefined,
-				undefined,
-				tsPairs
-			)
-		).toMatch(/type type_identifier ≠ identifier/);
-	});
-
-	it('fails every same-text leaf kind swap when no allowlist is provided', () => {
-		expect(
-			astStructuralDiff(
-				leaf('identifier', 'super'),
-				leaf('super', 'super'),
-				'',
-				undefined,
-				undefined,
-				undefined
-			)
-		).toMatch(/type identifier ≠ super/);
-	});
-
-	it('never tolerates a kind mismatch on structured nodes, even with identical text', () => {
-		const a = branch('call_expression', 'f()', [leaf('identifier', 'f')]);
-		const b = branch('new_expression', 'f()', [leaf('identifier', 'f')]);
-		expect(astStructuralDiff(a, b, '', undefined, undefined, tsPairs)).toMatch(
-			/type call_expression ≠ new_expression/
+	it('fails a same-text leaf kind swap: a re-lexed terminal is a regression, not alias noise', () => {
+		expect(astStructuralDiff(node('type_identifier', 'T'), node('identifier', 'T'))).toMatch(
+			/grammar type type_identifier ≠ identifier/
 		);
+		expect(astStructuralDiff(node('identifier', 'super'), node('super', 'super'))).toMatch(/grammar type identifier ≠ super/);
 	});
 
-	it('applies the tolerance at nested depth through the recursion', () => {
-		const a = branch('member_expression', 'super.x', [leaf('identifier', 'super'), leaf('property_identifier', 'x')]);
-		const b = branch('member_expression', 'super.x', [leaf('super', 'super'), leaf('property_identifier', 'x')]);
-		expect(astStructuralDiff(a, b, '', undefined, undefined, tsPairs)).toBeNull();
+	it('fails a kind mismatch on structured nodes, even with identical text', () => {
+		const a = node('call_expression', 'f()', [node('identifier', 'f')]);
+		const b = node('new_expression', 'f()', [node('identifier', 'f')]);
+		expect(astStructuralDiff(a, b)).toMatch(/grammar type call_expression ≠ new_expression/);
 	});
-});
 
-describe('leafAliasKey', () => {
-	it('is order-insensitive', () => {
-		expect(leafAliasKey('identifier', 'super')).toBe(leafAliasKey('super', 'identifier'));
-	});
-});
-
-describe('LEAF_ALIAS_TOLERANCE_BY_GRAMMAR', () => {
-	it('ships empty — context-faithful reparse wrappers make leaf-kind tolerance unnecessary', () => {
-		// Ratchet: adding a tolerated pair requires the audit documented on
-		// the table (instrument, run validate:native on all grammars, list
-		// only pairs no wrapper can express) — and updating this test.
-		for (const [grammar, pairs] of Object.entries(LEAF_ALIAS_TOLERANCE_BY_GRAMMAR)) {
-			expect({ grammar, pairs: [...pairs] }).toEqual({ grammar, pairs: [] });
-		}
+	it('compares grammar types at nested depth through the recursion', () => {
+		const a = node('member_expression', 'super.x', [node('identifier', 'super'), node('property_identifier', 'x')]);
+		const b = node('member_expression', 'super.x', [node('super', 'super'), node('property_identifier', 'x')]);
+		expect(astStructuralDiff(a, b)).toMatch(/member_expression\[0\]\.identifier: grammar type identifier ≠ super/);
 	});
 });

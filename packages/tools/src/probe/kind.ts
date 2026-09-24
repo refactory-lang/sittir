@@ -99,8 +99,7 @@ import {
 	loadVariantChildKindsByOwner,
 	firstParseDefect,
 	astStructuralDiff,
-	findReparsedNodeAtOffset,
-	LEAF_ALIAS_TOLERANCE_BY_GRAMMAR
+	findReparsedNodeAtOffset
 } from '../validate/read-render-parse.ts';
 import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
@@ -399,17 +398,8 @@ async function computeValidatorWrapDiag(
 		};
 	}
 
-	const rootAliasPair: readonly [string, string] | undefined =
-		renderedKind !== targetKind ? [renderedKind, targetKind] : undefined;
 	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);
-	const astDiff = astStructuralDiff(
-		targetNode,
-		node2,
-		'',
-		rootAliasPair,
-		variantChildKinds,
-		LEAF_ALIAS_TOLERANCE_BY_GRAMMAR[grammar]
-	);
+	const astDiff = astStructuralDiff(targetNode, node2, '', variantChildKinds);
 
 	return {
 		renderedKind,

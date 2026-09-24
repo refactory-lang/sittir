@@ -696,7 +696,10 @@ git commit -m "feat(diagnostics): an alias over a sequence or a repeat is a bloc
 
 ---
 
-### Task 6: The validator compares grammar types; tolerances deleted
+### Task 6: The validator compares grammar types; tolerances deleted (landed)
+
+**What landed:** `astStructuralDiff(a, b, path?, variantChildKinds?)` compares `grammarId` (web-tree-sitter 0.26.9) and reports `grammar type X ≠ Y`. The root-alias pair, the leaf-alias allowlist, `LEAF_ALIAS_TOLERANCE_BY_GRAMMAR` and `leafAliasKey` are deleted. Both callers are updated: the validator, and `probe/kind.ts`, which the steps below miss. Validator rows are unchanged on all three grammars with the tolerances gone.
+
 
 **Files:**
 - Modify: `packages/tools/src/validate/read-render-parse.ts:220-330` (`astStructuralDiff`), `:913-925` (call site), the `LEAF_ALIAS_TOLERANCE_BY_GRAMMAR` declaration at `:214` (already `{}` at ad445142f: no grammar carries a tolerance any more, only the plumbing is left), its comment at `:243` and `leafAliasKey`
