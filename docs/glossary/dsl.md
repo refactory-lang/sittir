@@ -3525,6 +3525,21 @@ Predicts the parser class tree-sitter's extract_tokens gives a rule name, withou
 A unit test compares the prediction against every alias-site storage in the generated parser.c of each grammar.
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::lexesAsOneToken`
+
+Whether a rule body is one token as tree-sitter's extract_tokens sees it: a
+bare string or pattern, or anything under token / immediate-token, through
+precedence wrappers. It is the shape question alone. `parserSymbolClassOf`
+adds the grammar-wide facts (how often the token is used, externals,
+inline) to answer whether the *rule* becomes a terminal. A minted rule whose
+body lexes as one token is a subtype leaf, not a hoisted group
+(`transform.ts::hoistedUnlessToken`).
+
+### `packages/codegen/src/dsl/rule-patterns.ts::TokenShape`
+
+The structural view of a rule `extractedToken` and `lexesAsOneToken` read:
+a type, a value and a content, so runtime and phase rules both fit.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::tokenUseCounts`
 
 ```text

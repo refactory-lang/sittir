@@ -1338,6 +1338,9 @@ function tokenUseCounts(rules) {
   for (const rule of Object.values(rules)) visit(rule);
   return counts;
 }
+function lexesAsOneToken(rule) {
+  return extractedToken(rule) !== void 0;
+}
 function parserSymbolClassOf(name, ctx) {
   if (ctx.externals.has(name)) return "terminal";
   if (ctx.inline.has(name)) return "inlined";
@@ -4685,7 +4688,7 @@ function resolveAliasPlaceholder(patch, originalMember, precStack) {
   const lift = enrichLiftArmOf(originalMember);
   if (lift !== null) return renameEnrichLift(originalMember, lift, ruleName, patch.name);
   if (originalMember.type === "ALIAS") {
-    return { ...originalMember, value: patch.name };
+    return { ...originalMember, named: true, value: patch.name };
   }
   return registerAliasedVariant(ruleName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
 }
@@ -4709,7 +4712,7 @@ function registerAliasedVariant(ruleName, nodeName, originalMember, bodyWrapper)
     );
   }
   const body = factored ? factored.nonEmpty : originalMember;
-  if (!wireRegisterSyntheticRule(ruleName, bodyWrapper(withHoistedAnnotation(body)))) {
+  if (!wireRegisterSyntheticRule(ruleName, bodyWrapper(hoistedUnlessToken(body)))) {
     throw new Error(`registerSyntheticRule('${ruleName}'): no active wire() context`);
   }
   const aliasNode = ruleRef(ruleName, nodeName);
@@ -4723,6 +4726,9 @@ function registerAliasedVariant(ruleName, nodeName, originalMember, bodyWrapper)
     return optional2(aliasNode);
   }
   return aliasNode;
+}
+function hoistedUnlessToken(body) {
+  return lexesAsOneToken(body) ? body : withHoistedAnnotation(body);
 }
 function factorOutEmptiness(rule) {
   if (!matchesEmpty(rule)) return null;

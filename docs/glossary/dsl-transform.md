@@ -1042,11 +1042,20 @@ both sites (`<kind>/<key>`).
 #### body
 
 ```text
-// An arm that already carries a named alias keeps its content and takes
-// the placeholder's name as its face — an upsert, never a second alias
+// An arm that already carries an alias keeps its content and takes
+// the placeholder's name as its face, becoming named if it was not (an
+// unnamed alias such as rust's `alias(/[bc]?"/, '"')` is promoted) — an upsert, never a second alias
 // around the first and never a deposit under the target's hidden name,
 // which would redefine an existing rule as an alias of itself.
 ```
+
+### `packages/codegen/src/dsl/transform/transform.ts::hoistedUnlessToken`
+
+The annotation a minted body carries: `hoisted` (a group whose slots seat on
+the parent) unless the body lexes as one token (`lexesAsOneToken`), in which
+case the mint is a leaf subtype and carries none. It applies to `alias()` and
+`variant()` mints alike: a literal arm (rust `range_pattern_with_left_bare`)
+or a token-bodied arm (rust `line_comment_content`) has nothing to seat.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::registerAliasedVariant`
 

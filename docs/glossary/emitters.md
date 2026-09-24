@@ -15217,7 +15217,7 @@ yields one arm per value — literal arms, node arms, and the child's own
 sub-factories flattened up under leaf-relative names; a forwarding hop
 (`forwardedTargetKind`) passes the target's sub-factories through re-seated
 in the hop's slot; and a lone kind-enum slot yields literal arms. On top of
-whichever mode applies, `hoistedCandidatesOf` adds a direct arm for every
+whichever mode applies, `authoredArmCandidatesOf` adds a direct arm for every
 hoisted kind seated in any OTHER non-multiple choice slot, and is the only
 source when the parent has no lone slot at all (`for_header` with a kind
 slot and a left-hand slot, `export_statement` with its default arms): a
@@ -15233,22 +15233,30 @@ that entry's name. A node entry is named for its leaf kind; a value entry
 (a token arm such as rust `range_pattern_with_left_with_right`'s `..=`) keeps
 its own name. `emittedArmPath` nests every one of them under the host arm,
 so `rangePattern.withLeft.withRight.dotDotEq` exists. The forwarding
-(lone-slot) path, the choice-slot walk and `hoistedCandidatesOf` all derive
+(lone-slot) path, the choice-slot walk and `authoredArmCandidatesOf` all derive
 grand-arms here. If one of them skipped value entries, the child's token arms
 would be emitted with nothing referencing them.
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::hoistedCandidatesOf`
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::authoredArmCandidatesOf`
 
-The shape-1 seat for a hoisted arm: one candidate per hoisted compound
-(`AbstractAssembledCompound` with `hoisted`) in every non-multiple slot with
-two or more values, except the slot `derive` already walks. Each candidate
+The arms of a node with more than one choice slot, where `derive` has no
+single slot to walk: one candidate per arm the grammar author made, meaning a
+hoisted compound (`AbstractAssembledCompound` with `hoisted`, the shape-1
+seat) or a variant arm (`value.variant`), in every non-multiple slot with two
+or more values, except the slot `derive` already walks. Each candidate
 carries its own residual (the parent's other slots), which is why
 `resolveCandidates` reads the residual off the entry. A single-valued slot
 is not a choice; a hoisted kind there is a splice seat (shape 2), not an
 arm.
 
-A hoisted LEAF in such a slot mounts too, the way the lone-slot loop mounts
-leaves: a keyword or token with no factory, or one the factories do not
+An authored variant arm (`value.variant`) mounts whether or not it is
+hoisted: a variant whose body lexes as one token is a leaf subtype, not a
+group (`transform.ts::hoistedUnlessToken`), yet it is an arm the author named
+and keeps its surface (rust `rangePatternWithLeft.bare`), the way an enum's
+arms do.
+
+A hoisted or variant LEAF in such a slot mounts the way the lone-slot loop
+mounts leaves: a keyword or token with no factory, or one the factories do not
 emit (a parameterless token such as rust `_pointer_type_const`), becomes a
 value arm carrying its kind-id storage, a pattern becomes a node arm on its
 text factory. The seat

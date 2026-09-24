@@ -13438,9 +13438,6 @@
           "type": "PATTERN",
           "value": ".*"
         }
-      },
-      "annotations": {
-        "hoisted": true
       }
     },
     "block_comment_doc_outer": {
@@ -14272,10 +14269,7 @@
     },
     "range_pattern_with_left_bare": {
       "type": "STRING",
-      "value": "..",
-      "annotations": {
-        "hoisted": true
-      }
+      "value": ".."
     },
     "range_pattern_with_left": {
       "type": "SEQ",

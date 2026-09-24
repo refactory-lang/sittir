@@ -165,7 +165,7 @@ function grandArmCandidates(
 	});
 }
 
-function hoistedCandidatesOf(
+function authoredArmCandidatesOf(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	isEmitted: IsEmittedPredicate,
@@ -182,7 +182,7 @@ function hoistedCandidatesOf(
 		for (const value of values) {
 			if (!isNodeRef(value)) continue;
 			const child = nodeMap.nodes.get(storageKindOfRef(value.node));
-			if (child === undefined || child.annotations?.hoisted !== true) continue;
+			if (child === undefined || (child.annotations?.hoisted !== true && value.variant === undefined)) continue;
 			const naming = armNaming(node, value, nodeMap);
 			if (naming === undefined) continue;
 			if (child.rawFactoryName === undefined || !isEmitted(child.kind)) {
@@ -242,7 +242,7 @@ function derive(
 		if (forwardChild === undefined || !isEmitted(forwardChild.kind) || visiting.has(forwardChild.kind)) {
 			const enumSlot = loneEnumChoiceSlot(node);
 			if (enumSlot === undefined) {
-				const hoisted = hoistedCandidatesOf(node, nodeMap, isEmitted, undefined, nextVisiting);
+				const hoisted = authoredArmCandidatesOf(node, nodeMap, isEmitted, undefined, nextVisiting);
 				return hoisted.length === 0 ? EMPTY : resolveCandidates(node, hoisted, nodeMap, isEmitted, nextVisiting);
 			}
 			slot = enumSlot;
@@ -291,7 +291,7 @@ function derive(
 		if (nextVisiting.has(child.kind)) continue;
 		candidates.push(...grandArmCandidates(node, child, slot, residual, nodeMap, isEmitted, nextVisiting));
 	}
-	candidates.push(...hoistedCandidatesOf(node, nodeMap, isEmitted, slot, nextVisiting));
+	candidates.push(...authoredArmCandidatesOf(node, nodeMap, isEmitted, slot, nextVisiting));
 
 	return resolveCandidates(node, candidates, nodeMap, isEmitted, nextVisiting);
 }

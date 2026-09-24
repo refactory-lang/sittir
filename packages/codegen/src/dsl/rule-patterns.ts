@@ -539,7 +539,7 @@ export interface ParserSymbolCtx {
 	readonly tokenUses: ReadonlyMap<string, number>;
 }
 
-type TokenShape = { readonly type: string; readonly value?: unknown; readonly content?: TokenShape };
+export type TokenShape = { readonly type: string; readonly value?: unknown; readonly content?: TokenShape };
 
 interface ExtractedToken {
 	readonly key: string;
@@ -590,6 +590,10 @@ export function tokenUseCounts(rules: Readonly<Record<string, AnyRule>>): Map<st
 	};
 	for (const rule of Object.values(rules)) visit(rule as unknown as TokenShape);
 	return counts;
+}
+
+export function lexesAsOneToken(rule: TokenShape): boolean {
+	return extractedToken(rule) !== undefined;
 }
 
 export function parserSymbolClassOf(name: string, ctx: ParserSymbolCtx): ParserSymbolClass {

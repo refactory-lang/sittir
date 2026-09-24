@@ -15222,12 +15222,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "line_comment_content",
-              "parseKind": "line_comment_content",
-              "seat": {
-                "kind": "line_comment_content",
-                "shape": "arm",
-                "mount": "content"
-              }
+              "parseKind": "line_comment_content"
             }
           ]
         }
@@ -15251,9 +15246,6 @@
       "factoryName": "lineCommentContent",
       "irKey": "lineCommentContent",
       "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
       "pattern": ".*",
       "leafPattern": "/^(?:(?:.*))$/u",
       "factoryShape": "text"
@@ -18831,12 +18823,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "range_pattern_with_left_bare",
-              "parseKind": "range_pattern_with_left_bare",
-              "seat": {
-                "kind": "range_pattern_with_left_bare",
-                "shape": "arm",
-                "mount": "bare"
-              }
+              "parseKind": "range_pattern_with_left_bare"
             }
           ]
         }
@@ -18855,9 +18842,6 @@
       "factoryName": "rangePatternWithLeftBare",
       "irKey": "rangePatternWithLeftBare",
       "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
       "isParameterless": true,
       "stampExpression": "\"..\" as const",
       "text": "..",

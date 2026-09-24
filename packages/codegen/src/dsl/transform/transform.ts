@@ -55,7 +55,7 @@ import {
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
-import { isHiddenKind } from '../rule-patterns.ts';
+import { isHiddenKind, lexesAsOneToken } from '../rule-patterns.ts';
 import { nativeRuleFn } from '../enrich.ts';
 
 function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string, arm?: unknown): RuntimeRule {
@@ -889,7 +889,7 @@ function resolveAliasPlaceholder(
 	const lift = enrichLiftArmOf(originalMember);
 	if (lift !== null) return renameEnrichLift(originalMember, lift, ruleName, patch.name);
 	if ((originalMember as { type?: string }).type === 'ALIAS') {
-		return { ...(originalMember as object), value: patch.name } as unknown as RuntimeRule;
+		return { ...(originalMember as object), named: true, value: patch.name } as unknown as RuntimeRule;
 	}
 	return registerAliasedVariant(ruleName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
 }
@@ -920,7 +920,7 @@ export function registerAliasedVariant(
 		);
 	}
 	const body = factored ? factored.nonEmpty : originalMember;
-	if (!wireRegisterSyntheticRule(ruleName, bodyWrapper(withHoistedAnnotation(body as RuntimeRule)))) {
+	if (!wireRegisterSyntheticRule(ruleName, bodyWrapper(hoistedUnlessToken(body as RuntimeRule)))) {
 		throw new Error(`registerSyntheticRule('${ruleName}'): no active wire() context`);
 	}
 	const aliasNode = ruleRef(ruleName, nodeName);
@@ -934,6 +934,10 @@ export function registerAliasedVariant(
 		return optional(aliasNode) as RuntimeRule;
 	}
 	return aliasNode;
+}
+
+function hoistedUnlessToken(body: RuntimeRule): RuntimeRule {
+	return lexesAsOneToken(body) ? body : withHoistedAnnotation(body);
 }
 
 function factorOutEmptiness(rule: RuntimeRule): { nonEmpty: unknown } | null {
