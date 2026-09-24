@@ -2961,6 +2961,13 @@ for a named non-word literal kind so it keeps its factory and type.
  *  `resolvedByText` order — what a reference to this enum stamps. */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.literalMembers`
+
+```text
+The enum's literal arms with nested choices flattened, the list its `values` read. An inline alias of a keyword
+choice onto a display arrives as a choice inside a choice.
+```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.constructor`
 
 #### body
@@ -3034,6 +3041,13 @@ emission).
 // second reference vocabulary for the same kind of fact. No stamped ids
 // (`storageKindId`/`parseKindId` absent) — this closure only needs to
 // answer "is this parse kind reachable here", by name.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.optionDefaultArm`
+
+```text
+The arm an `options:` choice at the supertype's variant site names as default. A slot holding the supertype falls
+back to it when the slot has no default of its own.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.constructor`
@@ -3702,6 +3716,13 @@ SYMBOL carrying a `literal` and no field. Whitespace-only text is not a
 token, and a literal with no catalog kind gets no site. A keyword seam is
 what reaches `from 'x'`, which the lexical rule leaves tight.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::isDisplayedLiteral`
+
+A literal member shown under another kind's name: a string, or a symbol carrying `literal`, with an `aliasedTo`
+display (a contextual keyword distributed as `alias('default', $.identifier)`). It renders as that display, so it
+names no seam of its own: `literalTokenOf`, `punctuationReferenceTokenOf` and `armSeamName` pass over it, and its
+spacing is addressed through the display like any other member of that kind.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::literalSlotOf`
 
 The slot name of a member that renders a literal chosen per node: a
@@ -4237,6 +4258,20 @@ The candidate a slot offers when it holds more than one value and every value
 names an arm. Arms come from the slot's own members, the way a separated
 list's arms come from its separator rule.
 
+### `packages/codegen/src/compiler/model/site-preferences.ts::variantChoiceCandidate`
+
+```text
+The options site of a supertype's choice between its variants, addressed `<kind>/variant` and labelled
+`VARIANT_LABEL`. It lets a binding pick a default variant at the kind itself (typescript `string/variant` →
+quote style) rather than at each slot that holds it.
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::armsOf`
+
+```text
+The arms of a choice site with the kind each resolves to, shared by slot choices and supertype variant choices.
+```
+
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::stampResolvedDefaults`
 
@@ -4351,3 +4386,11 @@ The alias envelope an alias-site ref displays as, if any. Slot values and
 supertype members at such a site resolve to the envelope, not the storage
 kind, so types, transports and factories agree with what the read delivers.
 ```
+
+### `packages/codegen/src/compiler/model/node-map.ts::resolveSlotAliasPairs`
+
+The name-keyed display → storage redirects a slot needs when a node arrives under its display name: from the slot's
+aliased values whose parse id differs from their storage id, and from the restamp pairs of any supertype the slot
+holds. A redirect is kept only when it is unambiguous — the display has exactly one storage in the slot and is not
+itself a storage there. `identifier` over a dozen keyword storages beside `identifier` itself redirects nowhere; the
+read's own storage id decides.

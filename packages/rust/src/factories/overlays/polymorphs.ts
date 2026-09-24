@@ -415,26 +415,148 @@ export const expressionStatement: typeof B.expressionStatement & {
 	}
 };
 
-const macroRule$paren =
+const macroRule$tokenTreePatternParen =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
 	};
-const macroRule$bracket =
+const macroRule$tokenTreePatternBracket =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
 	};
-const macroRule$brace =
+const macroRule$tokenTreePatternBrace =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const macroRule$tokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
+	};
+const macroRule$tokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
+	};
+const macroRule$tokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
+	};
+const macroRule$tokenTreePatternParen$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'left'> & { left: ArgsOf<typeof F.buildTokenTreePatternParen> },
+	options?: OptionsArg<typeof F.buildMacroRule>
+) => ReturnType<typeof F.buildMacroRule> = macroRule$tokenTreePatternParen(
+	F.buildMacroRule,
+	F.buildTokenTreePatternParen
+);
+const macroRule$tokenTreePatternParen$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'left'> & {
+		left: ArgsOf<typeof C.coerceToTokenTreePatternParen>;
+	},
+	options?: OptionsArg<typeof C.coerceToMacroRule>
+) => ReturnType<typeof C.coerceToMacroRule> = macroRule$tokenTreePatternParen(
+	C.coerceToMacroRule,
+	C.coerceToTokenTreePatternParen
+);
+const macroRule$tokenTreePatternParen$tokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
+	};
+const macroRule$tokenTreePatternParen$tokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
+	};
+const macroRule$tokenTreePatternParen$tokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
+	};
+const macroRule$tokenTreePatternBracket$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'left'> & {
+		left: ArgsOf<typeof F.buildTokenTreePatternBracket>;
+	},
+	options?: OptionsArg<typeof F.buildMacroRule>
+) => ReturnType<typeof F.buildMacroRule> = macroRule$tokenTreePatternBracket(
+	F.buildMacroRule,
+	F.buildTokenTreePatternBracket
+);
+const macroRule$tokenTreePatternBracket$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'left'> & {
+		left: ArgsOf<typeof C.coerceToTokenTreePatternBracket>;
+	},
+	options?: OptionsArg<typeof C.coerceToMacroRule>
+) => ReturnType<typeof C.coerceToMacroRule> = macroRule$tokenTreePatternBracket(
+	C.coerceToMacroRule,
+	C.coerceToTokenTreePatternBracket
+);
+const macroRule$tokenTreePatternBracket$tokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
+	};
+const macroRule$tokenTreePatternBracket$tokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
+	};
+const macroRule$tokenTreePatternBracket$tokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
+	};
+const macroRule$tokenTreePatternBrace$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'left'> & { left: ArgsOf<typeof F.buildTokenTreePatternBrace> },
+	options?: OptionsArg<typeof F.buildMacroRule>
+) => ReturnType<typeof F.buildMacroRule> = macroRule$tokenTreePatternBrace(
+	F.buildMacroRule,
+	F.buildTokenTreePatternBrace
+);
+const macroRule$tokenTreePatternBrace$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'left'> & {
+		left: ArgsOf<typeof C.coerceToTokenTreePatternBrace>;
+	},
+	options?: OptionsArg<typeof C.coerceToMacroRule>
+) => ReturnType<typeof C.coerceToMacroRule> = macroRule$tokenTreePatternBrace(
+	C.coerceToMacroRule,
+	C.coerceToTokenTreePatternBrace
+);
+const macroRule$tokenTreePatternBrace$tokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
+	};
+const macroRule$tokenTreePatternBrace$tokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
+	};
+const macroRule$tokenTreePatternBrace$tokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { right: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
 	};
 export const macroRule: typeof B.macroRule & {
-	paren: {
+	tokenTreePatternParen: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'left'> & {
 				left: ArgsOf<typeof F.buildTokenTreePatternParen>;
@@ -447,8 +569,50 @@ export const macroRule: typeof B.macroRule & {
 			},
 			options?: OptionsArg<typeof C.coerceToMacroRule>
 		) => ReturnType<typeof C.coerceToMacroRule>;
+		tokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternParen$applied>[0], 'right'> & {
+					right: ArgsOf<typeof F.buildTokenTreeParen>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternParen$applied>
+			) => ReturnType<typeof macroRule$tokenTreePatternParen$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternParen$appliedCoerce>[0], 'right'> & {
+					right: ArgsOf<typeof C.coerceToTokenTreeParen>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternParen$appliedCoerce>
+			) => ReturnType<typeof macroRule$tokenTreePatternParen$appliedCoerce>;
+		};
+		tokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternParen$applied>[0], 'right'> & {
+					right: ArgsOf<typeof F.buildTokenTreeBracket>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternParen$applied>
+			) => ReturnType<typeof macroRule$tokenTreePatternParen$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternParen$appliedCoerce>[0], 'right'> & {
+					right: ArgsOf<typeof C.coerceToTokenTreeBracket>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternParen$appliedCoerce>
+			) => ReturnType<typeof macroRule$tokenTreePatternParen$appliedCoerce>;
+		};
+		tokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternParen$applied>[0], 'right'> & {
+					right: ArgsOf<typeof F.buildTokenTreeBrace>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternParen$applied>
+			) => ReturnType<typeof macroRule$tokenTreePatternParen$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternParen$appliedCoerce>[0], 'right'> & {
+					right: ArgsOf<typeof C.coerceToTokenTreeBrace>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternParen$appliedCoerce>
+			) => ReturnType<typeof macroRule$tokenTreePatternParen$appliedCoerce>;
+		};
 	};
-	bracket: {
+	tokenTreePatternBracket: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'left'> & {
 				left: ArgsOf<typeof F.buildTokenTreePatternBracket>;
@@ -461,8 +625,50 @@ export const macroRule: typeof B.macroRule & {
 			},
 			options?: OptionsArg<typeof C.coerceToMacroRule>
 		) => ReturnType<typeof C.coerceToMacroRule>;
+		tokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBracket$applied>[0], 'right'> & {
+					right: ArgsOf<typeof F.buildTokenTreeParen>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternBracket$applied>
+			) => ReturnType<typeof macroRule$tokenTreePatternBracket$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBracket$appliedCoerce>[0], 'right'> & {
+					right: ArgsOf<typeof C.coerceToTokenTreeParen>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternBracket$appliedCoerce>
+			) => ReturnType<typeof macroRule$tokenTreePatternBracket$appliedCoerce>;
+		};
+		tokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBracket$applied>[0], 'right'> & {
+					right: ArgsOf<typeof F.buildTokenTreeBracket>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternBracket$applied>
+			) => ReturnType<typeof macroRule$tokenTreePatternBracket$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBracket$appliedCoerce>[0], 'right'> & {
+					right: ArgsOf<typeof C.coerceToTokenTreeBracket>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternBracket$appliedCoerce>
+			) => ReturnType<typeof macroRule$tokenTreePatternBracket$appliedCoerce>;
+		};
+		tokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBracket$applied>[0], 'right'> & {
+					right: ArgsOf<typeof F.buildTokenTreeBrace>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternBracket$applied>
+			) => ReturnType<typeof macroRule$tokenTreePatternBracket$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBracket$appliedCoerce>[0], 'right'> & {
+					right: ArgsOf<typeof C.coerceToTokenTreeBrace>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternBracket$appliedCoerce>
+			) => ReturnType<typeof macroRule$tokenTreePatternBracket$appliedCoerce>;
+		};
 	};
-	brace: {
+	tokenTreePatternBrace: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'left'> & {
 				left: ArgsOf<typeof F.buildTokenTreePatternBrace>;
@@ -475,20 +681,200 @@ export const macroRule: typeof B.macroRule & {
 			},
 			options?: OptionsArg<typeof C.coerceToMacroRule>
 		) => ReturnType<typeof C.coerceToMacroRule>;
+		tokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBrace$applied>[0], 'right'> & {
+					right: ArgsOf<typeof F.buildTokenTreeParen>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternBrace$applied>
+			) => ReturnType<typeof macroRule$tokenTreePatternBrace$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBrace$appliedCoerce>[0], 'right'> & {
+					right: ArgsOf<typeof C.coerceToTokenTreeParen>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternBrace$appliedCoerce>
+			) => ReturnType<typeof macroRule$tokenTreePatternBrace$appliedCoerce>;
+		};
+		tokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBrace$applied>[0], 'right'> & {
+					right: ArgsOf<typeof F.buildTokenTreeBracket>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternBrace$applied>
+			) => ReturnType<typeof macroRule$tokenTreePatternBrace$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBrace$appliedCoerce>[0], 'right'> & {
+					right: ArgsOf<typeof C.coerceToTokenTreeBracket>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternBrace$appliedCoerce>
+			) => ReturnType<typeof macroRule$tokenTreePatternBrace$appliedCoerce>;
+		};
+		tokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBrace$applied>[0], 'right'> & {
+					right: ArgsOf<typeof F.buildTokenTreeBrace>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternBrace$applied>
+			) => ReturnType<typeof macroRule$tokenTreePatternBrace$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBrace$appliedCoerce>[0], 'right'> & {
+					right: ArgsOf<typeof C.coerceToTokenTreeBrace>;
+				},
+				options?: OptionsArg<typeof macroRule$tokenTreePatternBrace$appliedCoerce>
+			) => ReturnType<typeof macroRule$tokenTreePatternBrace$appliedCoerce>;
+		};
+	};
+	tokenTreeParen: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'right'> & { right: ArgsOf<typeof F.buildTokenTreeParen> },
+			options?: OptionsArg<typeof F.buildMacroRule>
+		) => ReturnType<typeof F.buildMacroRule>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'right'> & {
+				right: ArgsOf<typeof C.coerceToTokenTreeParen>;
+			},
+			options?: OptionsArg<typeof C.coerceToMacroRule>
+		) => ReturnType<typeof C.coerceToMacroRule>;
+	};
+	tokenTreeBracket: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'right'> & { right: ArgsOf<typeof F.buildTokenTreeBracket> },
+			options?: OptionsArg<typeof F.buildMacroRule>
+		) => ReturnType<typeof F.buildMacroRule>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'right'> & {
+				right: ArgsOf<typeof C.coerceToTokenTreeBracket>;
+			},
+			options?: OptionsArg<typeof C.coerceToMacroRule>
+		) => ReturnType<typeof C.coerceToMacroRule>;
+	};
+	tokenTreeBrace: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'right'> & { right: ArgsOf<typeof F.buildTokenTreeBrace> },
+			options?: OptionsArg<typeof F.buildMacroRule>
+		) => ReturnType<typeof F.buildMacroRule>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'right'> & {
+				right: ArgsOf<typeof C.coerceToTokenTreeBrace>;
+			},
+			options?: OptionsArg<typeof C.coerceToMacroRule>
+		) => ReturnType<typeof C.coerceToMacroRule>;
 	};
 } = {
 	...B.macroRule,
-	paren: {
-		strict: macroRule$paren(F.buildMacroRule, F.buildTokenTreePatternParen),
-		coerce: macroRule$paren(C.coerceToMacroRule, C.coerceToTokenTreePatternParen)
+	tokenTreePatternParen: {
+		strict: macroRule$tokenTreePatternParen(F.buildMacroRule, F.buildTokenTreePatternParen),
+		coerce: macroRule$tokenTreePatternParen(C.coerceToMacroRule, C.coerceToTokenTreePatternParen),
+		tokenTreeParen: {
+			strict: macroRule$tokenTreePatternParen$tokenTreeParen(
+				macroRule$tokenTreePatternParen$applied,
+				F.buildTokenTreeParen
+			),
+			coerce: macroRule$tokenTreePatternParen$tokenTreeParen(
+				macroRule$tokenTreePatternParen$appliedCoerce,
+				C.coerceToTokenTreeParen
+			)
+		},
+		tokenTreeBracket: {
+			strict: macroRule$tokenTreePatternParen$tokenTreeBracket(
+				macroRule$tokenTreePatternParen$applied,
+				F.buildTokenTreeBracket
+			),
+			coerce: macroRule$tokenTreePatternParen$tokenTreeBracket(
+				macroRule$tokenTreePatternParen$appliedCoerce,
+				C.coerceToTokenTreeBracket
+			)
+		},
+		tokenTreeBrace: {
+			strict: macroRule$tokenTreePatternParen$tokenTreeBrace(
+				macroRule$tokenTreePatternParen$applied,
+				F.buildTokenTreeBrace
+			),
+			coerce: macroRule$tokenTreePatternParen$tokenTreeBrace(
+				macroRule$tokenTreePatternParen$appliedCoerce,
+				C.coerceToTokenTreeBrace
+			)
+		}
 	},
-	bracket: {
-		strict: macroRule$bracket(F.buildMacroRule, F.buildTokenTreePatternBracket),
-		coerce: macroRule$bracket(C.coerceToMacroRule, C.coerceToTokenTreePatternBracket)
+	tokenTreePatternBracket: {
+		strict: macroRule$tokenTreePatternBracket(F.buildMacroRule, F.buildTokenTreePatternBracket),
+		coerce: macroRule$tokenTreePatternBracket(C.coerceToMacroRule, C.coerceToTokenTreePatternBracket),
+		tokenTreeParen: {
+			strict: macroRule$tokenTreePatternBracket$tokenTreeParen(
+				macroRule$tokenTreePatternBracket$applied,
+				F.buildTokenTreeParen
+			),
+			coerce: macroRule$tokenTreePatternBracket$tokenTreeParen(
+				macroRule$tokenTreePatternBracket$appliedCoerce,
+				C.coerceToTokenTreeParen
+			)
+		},
+		tokenTreeBracket: {
+			strict: macroRule$tokenTreePatternBracket$tokenTreeBracket(
+				macroRule$tokenTreePatternBracket$applied,
+				F.buildTokenTreeBracket
+			),
+			coerce: macroRule$tokenTreePatternBracket$tokenTreeBracket(
+				macroRule$tokenTreePatternBracket$appliedCoerce,
+				C.coerceToTokenTreeBracket
+			)
+		},
+		tokenTreeBrace: {
+			strict: macroRule$tokenTreePatternBracket$tokenTreeBrace(
+				macroRule$tokenTreePatternBracket$applied,
+				F.buildTokenTreeBrace
+			),
+			coerce: macroRule$tokenTreePatternBracket$tokenTreeBrace(
+				macroRule$tokenTreePatternBracket$appliedCoerce,
+				C.coerceToTokenTreeBrace
+			)
+		}
 	},
-	brace: {
-		strict: macroRule$brace(F.buildMacroRule, F.buildTokenTreePatternBrace),
-		coerce: macroRule$brace(C.coerceToMacroRule, C.coerceToTokenTreePatternBrace)
+	tokenTreePatternBrace: {
+		strict: macroRule$tokenTreePatternBrace(F.buildMacroRule, F.buildTokenTreePatternBrace),
+		coerce: macroRule$tokenTreePatternBrace(C.coerceToMacroRule, C.coerceToTokenTreePatternBrace),
+		tokenTreeParen: {
+			strict: macroRule$tokenTreePatternBrace$tokenTreeParen(
+				macroRule$tokenTreePatternBrace$applied,
+				F.buildTokenTreeParen
+			),
+			coerce: macroRule$tokenTreePatternBrace$tokenTreeParen(
+				macroRule$tokenTreePatternBrace$appliedCoerce,
+				C.coerceToTokenTreeParen
+			)
+		},
+		tokenTreeBracket: {
+			strict: macroRule$tokenTreePatternBrace$tokenTreeBracket(
+				macroRule$tokenTreePatternBrace$applied,
+				F.buildTokenTreeBracket
+			),
+			coerce: macroRule$tokenTreePatternBrace$tokenTreeBracket(
+				macroRule$tokenTreePatternBrace$appliedCoerce,
+				C.coerceToTokenTreeBracket
+			)
+		},
+		tokenTreeBrace: {
+			strict: macroRule$tokenTreePatternBrace$tokenTreeBrace(
+				macroRule$tokenTreePatternBrace$applied,
+				F.buildTokenTreeBrace
+			),
+			coerce: macroRule$tokenTreePatternBrace$tokenTreeBrace(
+				macroRule$tokenTreePatternBrace$appliedCoerce,
+				C.coerceToTokenTreeBrace
+			)
+		}
+	},
+	tokenTreeParen: {
+		strict: macroRule$tokenTreeParen(F.buildMacroRule, F.buildTokenTreeParen),
+		coerce: macroRule$tokenTreeParen(C.coerceToMacroRule, C.coerceToTokenTreeParen)
+	},
+	tokenTreeBracket: {
+		strict: macroRule$tokenTreeBracket(F.buildMacroRule, F.buildTokenTreeBracket),
+		coerce: macroRule$tokenTreeBracket(C.coerceToMacroRule, C.coerceToTokenTreeBracket)
+	},
+	tokenTreeBrace: {
+		strict: macroRule$tokenTreeBrace(F.buildMacroRule, F.buildTokenTreeBrace),
+		coerce: macroRule$tokenTreeBrace(C.coerceToMacroRule, C.coerceToTokenTreeBrace)
 	}
 };
 
@@ -548,47 +934,6 @@ export const tokenRepetitionPattern: typeof B.tokenRepetitionPattern & {
 	qmark: {
 		strict: tokenRepetitionPattern$qmark(F.buildTokenRepetitionPattern, TSKindId.Qmark),
 		coerce: tokenRepetitionPattern$qmark(C.coerceToTokenRepetitionPattern, TSKindId.Qmark)
-	}
-};
-
-const tokenTree$paren =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const tokenTree$bracket =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const tokenTree$brace =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const tokenTree: typeof B.tokenTree & {
-	paren: {
-		strict: (...args: ArgsOf<typeof F.buildTokenTreeParen>) => ReturnType<typeof F.buildTokenTree>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTokenTreeParen>) => ReturnType<typeof F.buildTokenTree>;
-	};
-	bracket: {
-		strict: (...args: ArgsOf<typeof F.buildTokenTreeBracket>) => ReturnType<typeof F.buildTokenTree>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTokenTreeBracket>) => ReturnType<typeof F.buildTokenTree>;
-	};
-	brace: {
-		strict: (...args: ArgsOf<typeof F.buildTokenTreeBrace>) => ReturnType<typeof F.buildTokenTree>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTokenTreeBrace>) => ReturnType<typeof F.buildTokenTree>;
-	};
-} = {
-	...B.tokenTree,
-	paren: {
-		strict: tokenTree$paren(F.buildTokenTree, F.buildTokenTreeParen),
-		coerce: tokenTree$paren(F.buildTokenTree, C.coerceToTokenTreeParen)
-	},
-	bracket: {
-		strict: tokenTree$bracket(F.buildTokenTree, F.buildTokenTreeBracket),
-		coerce: tokenTree$bracket(F.buildTokenTree, C.coerceToTokenTreeBracket)
-	},
-	brace: {
-		strict: tokenTree$brace(F.buildTokenTree, F.buildTokenTreeBrace),
-		coerce: tokenTree$brace(F.buildTokenTree, C.coerceToTokenTreeBrace)
 	}
 };
 
@@ -740,12 +1085,74 @@ const attribute$self =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const attribute$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
-	};
+const attribute$u8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$i8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$u16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$i16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$u32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$i32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$u64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$i64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$u128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$i128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$isize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$usize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$f32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$f64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$bool =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$str =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$char =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
 const attribute$metavariable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -760,6 +1167,12 @@ const attribute$crate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
+const attribute$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { path: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
+	};
 const attribute$scopedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -771,12 +1184,18 @@ const attribute$scopedIdentifier =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) } as never, options as never);
 	};
-const attribute$reservedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
-	};
+const attribute$default =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$union =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const attribute$gen =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
 const attribute$input =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -843,15 +1262,15 @@ const attribute$self$delimTokenTreeBrace =
 		const { input: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
 	};
-const attribute$identifier$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'> & { path: ArgsOf<typeof F.buildIdentifier> },
+const attribute$u8$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
 	options?: OptionsArg<typeof F.buildAttribute>
-) => ReturnType<typeof F.buildAttribute> = attribute$identifier(F.buildAttribute, F.buildIdentifier);
-const attribute$identifier$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'> & { path: ArgsOf<typeof C.coerceToIdentifier> },
+) => ReturnType<typeof F.buildAttribute> = attribute$u8(F.buildAttribute, TSKindId.U8Keyword);
+const attribute$u8$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
 	options?: OptionsArg<typeof C.coerceToAttribute>
-) => ReturnType<typeof C.coerceToAttribute> = attribute$identifier(C.coerceToAttribute, C.coerceToIdentifier);
-const attribute$identifier$input =
+) => ReturnType<typeof C.coerceToAttribute> = attribute$u8(C.coerceToAttribute, TSKindId.U8Keyword);
+const attribute$u8$input =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -862,19 +1281,611 @@ const attribute$identifier$input =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
 	};
-const attribute$identifier$delimTokenTreeParen =
+const attribute$u8$delimTokenTreeParen =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { input: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
 	};
-const attribute$identifier$delimTokenTreeBracket =
+const attribute$u8$delimTokenTreeBracket =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { input: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
 	};
-const attribute$identifier$delimTokenTreeBrace =
+const attribute$u8$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i8$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$i8(F.buildAttribute, TSKindId.I8Keyword);
+const attribute$i8$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$i8(C.coerceToAttribute, TSKindId.I8Keyword);
+const attribute$i8$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$i8$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i8$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i8$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$u16$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$u16(F.buildAttribute, TSKindId.U16Keyword);
+const attribute$u16$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$u16(C.coerceToAttribute, TSKindId.U16Keyword);
+const attribute$u16$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$u16$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$u16$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$u16$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i16$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$i16(F.buildAttribute, TSKindId.I16Keyword);
+const attribute$i16$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$i16(C.coerceToAttribute, TSKindId.I16Keyword);
+const attribute$i16$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$i16$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i16$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i16$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$u32$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$u32(F.buildAttribute, TSKindId.U32Keyword);
+const attribute$u32$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$u32(C.coerceToAttribute, TSKindId.U32Keyword);
+const attribute$u32$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$u32$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$u32$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$u32$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i32$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$i32(F.buildAttribute, TSKindId.I32Keyword);
+const attribute$i32$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$i32(C.coerceToAttribute, TSKindId.I32Keyword);
+const attribute$i32$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$i32$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i32$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i32$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$u64$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$u64(F.buildAttribute, TSKindId.U64Keyword);
+const attribute$u64$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$u64(C.coerceToAttribute, TSKindId.U64Keyword);
+const attribute$u64$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$u64$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$u64$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$u64$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i64$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$i64(F.buildAttribute, TSKindId.I64Keyword);
+const attribute$i64$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$i64(C.coerceToAttribute, TSKindId.I64Keyword);
+const attribute$i64$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$i64$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i64$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i64$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$u128$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$u128(F.buildAttribute, TSKindId.U128Keyword);
+const attribute$u128$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$u128(C.coerceToAttribute, TSKindId.U128Keyword);
+const attribute$u128$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$u128$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$u128$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$u128$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i128$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$i128(F.buildAttribute, TSKindId.I128Keyword);
+const attribute$i128$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$i128(C.coerceToAttribute, TSKindId.I128Keyword);
+const attribute$i128$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$i128$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i128$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$i128$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$isize$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$isize(F.buildAttribute, TSKindId.IsizeKeyword);
+const attribute$isize$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$isize(C.coerceToAttribute, TSKindId.IsizeKeyword);
+const attribute$isize$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$isize$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$isize$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$isize$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$usize$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$usize(F.buildAttribute, TSKindId.UsizeKeyword);
+const attribute$usize$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$usize(C.coerceToAttribute, TSKindId.UsizeKeyword);
+const attribute$usize$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$usize$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$usize$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$usize$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$f32$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$f32(F.buildAttribute, TSKindId.F32Keyword);
+const attribute$f32$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$f32(C.coerceToAttribute, TSKindId.F32Keyword);
+const attribute$f32$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$f32$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$f32$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$f32$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$f64$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$f64(F.buildAttribute, TSKindId.F64Keyword);
+const attribute$f64$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$f64(C.coerceToAttribute, TSKindId.F64Keyword);
+const attribute$f64$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$f64$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$f64$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$f64$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$bool$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$bool(F.buildAttribute, TSKindId.BoolKeyword);
+const attribute$bool$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$bool(C.coerceToAttribute, TSKindId.BoolKeyword);
+const attribute$bool$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$bool$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$bool$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$bool$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$str$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$str(F.buildAttribute, TSKindId.StrKeyword);
+const attribute$str$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$str(C.coerceToAttribute, TSKindId.StrKeyword);
+const attribute$str$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$str$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$str$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$str$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$char$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$char(F.buildAttribute, TSKindId.CharKeyword);
+const attribute$char$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$char(C.coerceToAttribute, TSKindId.CharKeyword);
+const attribute$char$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$char$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$char$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$char$delimTokenTreeBrace =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { input: seated, ...rest } = config;
@@ -991,6 +2002,43 @@ const attribute$crate$delimTokenTreeBrace =
 		const { input: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
 	};
+const attribute$identifier$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'> & { path: ArgsOf<typeof F.buildIdentifier> },
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$identifier(F.buildAttribute, F.buildIdentifier);
+const attribute$identifier$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'> & { path: ArgsOf<typeof C.coerceToIdentifier> },
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$identifier(C.coerceToAttribute, C.coerceToIdentifier);
+const attribute$identifier$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$identifier$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$identifier$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$identifier$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
 const attribute$scopedIdentifier$applied: (
 	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'> & ArgsOf<typeof F.buildScopedIdentifier>[0],
 	options?: OptionsArg<typeof F.buildAttribute>
@@ -1031,20 +2079,15 @@ const attribute$scopedIdentifier$delimTokenTreeBrace =
 		const { input: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
 	};
-const attribute$reservedIdentifier$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'> & { path: ArgsOf<typeof F.buildReservedIdentifier>[0] },
+const attribute$default$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
 	options?: OptionsArg<typeof F.buildAttribute>
-) => ReturnType<typeof F.buildAttribute> = attribute$reservedIdentifier(F.buildAttribute, F.buildReservedIdentifier);
-const attribute$reservedIdentifier$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'> & {
-		path: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
-	},
+) => ReturnType<typeof F.buildAttribute> = attribute$default(F.buildAttribute, TSKindId.DefaultKeyword);
+const attribute$default$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
 	options?: OptionsArg<typeof C.coerceToAttribute>
-) => ReturnType<typeof C.coerceToAttribute> = attribute$reservedIdentifier(
-	C.coerceToAttribute,
-	C.coerceToReservedIdentifier
-);
-const attribute$reservedIdentifier$input =
+) => ReturnType<typeof C.coerceToAttribute> = attribute$default(C.coerceToAttribute, TSKindId.DefaultKeyword);
+const attribute$default$input =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -1055,19 +2098,93 @@ const attribute$reservedIdentifier$input =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
 	};
-const attribute$reservedIdentifier$delimTokenTreeParen =
+const attribute$default$delimTokenTreeParen =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { input: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
 	};
-const attribute$reservedIdentifier$delimTokenTreeBracket =
+const attribute$default$delimTokenTreeBracket =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { input: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
 	};
-const attribute$reservedIdentifier$delimTokenTreeBrace =
+const attribute$default$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$union$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$union(F.buildAttribute, TSKindId.UnionKeyword);
+const attribute$union$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$union(C.coerceToAttribute, TSKindId.UnionKeyword);
+const attribute$union$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$union$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$union$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$union$delimTokenTreeBrace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$gen$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof F.buildAttribute>
+) => ReturnType<typeof F.buildAttribute> = attribute$gen(F.buildAttribute, TSKindId.GenKeyword);
+const attribute$gen$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+	options?: OptionsArg<typeof C.coerceToAttribute>
+) => ReturnType<typeof C.coerceToAttribute> = attribute$gen(C.coerceToAttribute, TSKindId.GenKeyword);
+const attribute$gen$input =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'value' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
+	};
+const attribute$gen$delimTokenTreeParen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$gen$delimTokenTreeBracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { input: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(...seated) } as never, options as never);
+	};
+const attribute$gen$delimTokenTreeBrace =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'input'> & { input: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { input: seated, ...rest } = config;
@@ -1137,68 +2254,1075 @@ export const attribute: typeof B.attribute & {
 			) => ReturnType<typeof attribute$self$appliedCoerce>;
 		};
 	};
-	identifier: {
+	u8: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'> & { path: ArgsOf<typeof F.buildIdentifier> },
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
 			options?: OptionsArg<typeof F.buildAttribute>
 		) => ReturnType<typeof F.buildAttribute>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'> & { path: ArgsOf<typeof C.coerceToIdentifier> },
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
 			options?: OptionsArg<typeof C.coerceToAttribute>
 		) => ReturnType<typeof C.coerceToAttribute>;
 		input: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof attribute$identifier$applied>[0], 'input'> &
-					ArgsOf<typeof F.buildAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$identifier$applied>
-			) => ReturnType<typeof attribute$identifier$applied>;
+				config: OmitEach<ArgsOf<typeof attribute$u8$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$u8$applied>
+			) => ReturnType<typeof attribute$u8$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof attribute$identifier$appliedCoerce>[0], 'input'> &
+				config: OmitEach<ArgsOf<typeof attribute$u8$appliedCoerce>[0], 'input'> &
 					ArgsOf<typeof C.coerceToAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$identifier$appliedCoerce>
-			) => ReturnType<typeof attribute$identifier$appliedCoerce>;
+				options?: OptionsArg<typeof attribute$u8$appliedCoerce>
+			) => ReturnType<typeof attribute$u8$appliedCoerce>;
 		};
 		delimTokenTreeParen: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof attribute$identifier$applied>[0], 'input'> & {
+				config: OmitEach<ArgsOf<typeof attribute$u8$applied>[0], 'input'> & {
 					input: ArgsOf<typeof attributeInput.paren.strict>;
 				},
-				options?: OptionsArg<typeof attribute$identifier$applied>
-			) => ReturnType<typeof attribute$identifier$applied>;
+				options?: OptionsArg<typeof attribute$u8$applied>
+			) => ReturnType<typeof attribute$u8$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof attribute$identifier$appliedCoerce>[0], 'input'> & {
+				config: OmitEach<ArgsOf<typeof attribute$u8$appliedCoerce>[0], 'input'> & {
 					input: ArgsOf<typeof attributeInput.paren.coerce>;
 				},
-				options?: OptionsArg<typeof attribute$identifier$appliedCoerce>
-			) => ReturnType<typeof attribute$identifier$appliedCoerce>;
+				options?: OptionsArg<typeof attribute$u8$appliedCoerce>
+			) => ReturnType<typeof attribute$u8$appliedCoerce>;
 		};
 		delimTokenTreeBracket: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof attribute$identifier$applied>[0], 'input'> & {
+				config: OmitEach<ArgsOf<typeof attribute$u8$applied>[0], 'input'> & {
 					input: ArgsOf<typeof attributeInput.bracket.strict>;
 				},
-				options?: OptionsArg<typeof attribute$identifier$applied>
-			) => ReturnType<typeof attribute$identifier$applied>;
+				options?: OptionsArg<typeof attribute$u8$applied>
+			) => ReturnType<typeof attribute$u8$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof attribute$identifier$appliedCoerce>[0], 'input'> & {
+				config: OmitEach<ArgsOf<typeof attribute$u8$appliedCoerce>[0], 'input'> & {
 					input: ArgsOf<typeof attributeInput.bracket.coerce>;
 				},
-				options?: OptionsArg<typeof attribute$identifier$appliedCoerce>
-			) => ReturnType<typeof attribute$identifier$appliedCoerce>;
+				options?: OptionsArg<typeof attribute$u8$appliedCoerce>
+			) => ReturnType<typeof attribute$u8$appliedCoerce>;
 		};
 		delimTokenTreeBrace: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof attribute$identifier$applied>[0], 'input'> & {
+				config: OmitEach<ArgsOf<typeof attribute$u8$applied>[0], 'input'> & {
 					input: ArgsOf<typeof attributeInput.brace.strict>;
 				},
-				options?: OptionsArg<typeof attribute$identifier$applied>
-			) => ReturnType<typeof attribute$identifier$applied>;
+				options?: OptionsArg<typeof attribute$u8$applied>
+			) => ReturnType<typeof attribute$u8$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof attribute$identifier$appliedCoerce>[0], 'input'> & {
+				config: OmitEach<ArgsOf<typeof attribute$u8$appliedCoerce>[0], 'input'> & {
 					input: ArgsOf<typeof attributeInput.brace.coerce>;
 				},
-				options?: OptionsArg<typeof attribute$identifier$appliedCoerce>
-			) => ReturnType<typeof attribute$identifier$appliedCoerce>;
+				options?: OptionsArg<typeof attribute$u8$appliedCoerce>
+			) => ReturnType<typeof attribute$u8$appliedCoerce>;
+		};
+	};
+	i8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i8$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$i8$applied>
+			) => ReturnType<typeof attribute$i8$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i8$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$i8$appliedCoerce>
+			) => ReturnType<typeof attribute$i8$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i8$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i8$applied>
+			) => ReturnType<typeof attribute$i8$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i8$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i8$appliedCoerce>
+			) => ReturnType<typeof attribute$i8$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i8$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i8$applied>
+			) => ReturnType<typeof attribute$i8$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i8$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i8$appliedCoerce>
+			) => ReturnType<typeof attribute$i8$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i8$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i8$applied>
+			) => ReturnType<typeof attribute$i8$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i8$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i8$appliedCoerce>
+			) => ReturnType<typeof attribute$i8$appliedCoerce>;
+		};
+	};
+	u16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u16$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$u16$applied>
+			) => ReturnType<typeof attribute$u16$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u16$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$u16$appliedCoerce>
+			) => ReturnType<typeof attribute$u16$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u16$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$u16$applied>
+			) => ReturnType<typeof attribute$u16$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u16$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$u16$appliedCoerce>
+			) => ReturnType<typeof attribute$u16$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u16$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$u16$applied>
+			) => ReturnType<typeof attribute$u16$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u16$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$u16$appliedCoerce>
+			) => ReturnType<typeof attribute$u16$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u16$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$u16$applied>
+			) => ReturnType<typeof attribute$u16$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u16$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$u16$appliedCoerce>
+			) => ReturnType<typeof attribute$u16$appliedCoerce>;
+		};
+	};
+	i16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i16$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$i16$applied>
+			) => ReturnType<typeof attribute$i16$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i16$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$i16$appliedCoerce>
+			) => ReturnType<typeof attribute$i16$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i16$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i16$applied>
+			) => ReturnType<typeof attribute$i16$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i16$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i16$appliedCoerce>
+			) => ReturnType<typeof attribute$i16$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i16$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i16$applied>
+			) => ReturnType<typeof attribute$i16$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i16$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i16$appliedCoerce>
+			) => ReturnType<typeof attribute$i16$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i16$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i16$applied>
+			) => ReturnType<typeof attribute$i16$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i16$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i16$appliedCoerce>
+			) => ReturnType<typeof attribute$i16$appliedCoerce>;
+		};
+	};
+	u32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u32$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$u32$applied>
+			) => ReturnType<typeof attribute$u32$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u32$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$u32$appliedCoerce>
+			) => ReturnType<typeof attribute$u32$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u32$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$u32$applied>
+			) => ReturnType<typeof attribute$u32$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u32$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$u32$appliedCoerce>
+			) => ReturnType<typeof attribute$u32$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u32$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$u32$applied>
+			) => ReturnType<typeof attribute$u32$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u32$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$u32$appliedCoerce>
+			) => ReturnType<typeof attribute$u32$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u32$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$u32$applied>
+			) => ReturnType<typeof attribute$u32$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u32$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$u32$appliedCoerce>
+			) => ReturnType<typeof attribute$u32$appliedCoerce>;
+		};
+	};
+	i32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i32$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$i32$applied>
+			) => ReturnType<typeof attribute$i32$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i32$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$i32$appliedCoerce>
+			) => ReturnType<typeof attribute$i32$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i32$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i32$applied>
+			) => ReturnType<typeof attribute$i32$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i32$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i32$appliedCoerce>
+			) => ReturnType<typeof attribute$i32$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i32$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i32$applied>
+			) => ReturnType<typeof attribute$i32$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i32$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i32$appliedCoerce>
+			) => ReturnType<typeof attribute$i32$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i32$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i32$applied>
+			) => ReturnType<typeof attribute$i32$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i32$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i32$appliedCoerce>
+			) => ReturnType<typeof attribute$i32$appliedCoerce>;
+		};
+	};
+	u64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u64$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$u64$applied>
+			) => ReturnType<typeof attribute$u64$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u64$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$u64$appliedCoerce>
+			) => ReturnType<typeof attribute$u64$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u64$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$u64$applied>
+			) => ReturnType<typeof attribute$u64$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u64$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$u64$appliedCoerce>
+			) => ReturnType<typeof attribute$u64$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u64$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$u64$applied>
+			) => ReturnType<typeof attribute$u64$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u64$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$u64$appliedCoerce>
+			) => ReturnType<typeof attribute$u64$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u64$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$u64$applied>
+			) => ReturnType<typeof attribute$u64$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u64$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$u64$appliedCoerce>
+			) => ReturnType<typeof attribute$u64$appliedCoerce>;
+		};
+	};
+	i64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i64$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$i64$applied>
+			) => ReturnType<typeof attribute$i64$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i64$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$i64$appliedCoerce>
+			) => ReturnType<typeof attribute$i64$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i64$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i64$applied>
+			) => ReturnType<typeof attribute$i64$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i64$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i64$appliedCoerce>
+			) => ReturnType<typeof attribute$i64$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i64$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i64$applied>
+			) => ReturnType<typeof attribute$i64$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i64$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i64$appliedCoerce>
+			) => ReturnType<typeof attribute$i64$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i64$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i64$applied>
+			) => ReturnType<typeof attribute$i64$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i64$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i64$appliedCoerce>
+			) => ReturnType<typeof attribute$i64$appliedCoerce>;
+		};
+	};
+	u128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u128$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$u128$applied>
+			) => ReturnType<typeof attribute$u128$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u128$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$u128$appliedCoerce>
+			) => ReturnType<typeof attribute$u128$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u128$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$u128$applied>
+			) => ReturnType<typeof attribute$u128$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u128$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$u128$appliedCoerce>
+			) => ReturnType<typeof attribute$u128$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u128$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$u128$applied>
+			) => ReturnType<typeof attribute$u128$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u128$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$u128$appliedCoerce>
+			) => ReturnType<typeof attribute$u128$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$u128$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$u128$applied>
+			) => ReturnType<typeof attribute$u128$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$u128$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$u128$appliedCoerce>
+			) => ReturnType<typeof attribute$u128$appliedCoerce>;
+		};
+	};
+	i128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i128$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$i128$applied>
+			) => ReturnType<typeof attribute$i128$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i128$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$i128$appliedCoerce>
+			) => ReturnType<typeof attribute$i128$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i128$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i128$applied>
+			) => ReturnType<typeof attribute$i128$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i128$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i128$appliedCoerce>
+			) => ReturnType<typeof attribute$i128$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i128$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i128$applied>
+			) => ReturnType<typeof attribute$i128$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i128$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i128$appliedCoerce>
+			) => ReturnType<typeof attribute$i128$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$i128$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$i128$applied>
+			) => ReturnType<typeof attribute$i128$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$i128$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$i128$appliedCoerce>
+			) => ReturnType<typeof attribute$i128$appliedCoerce>;
+		};
+	};
+	isize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$isize$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$isize$applied>
+			) => ReturnType<typeof attribute$isize$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$isize$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$isize$appliedCoerce>
+			) => ReturnType<typeof attribute$isize$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$isize$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$isize$applied>
+			) => ReturnType<typeof attribute$isize$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$isize$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$isize$appliedCoerce>
+			) => ReturnType<typeof attribute$isize$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$isize$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$isize$applied>
+			) => ReturnType<typeof attribute$isize$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$isize$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$isize$appliedCoerce>
+			) => ReturnType<typeof attribute$isize$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$isize$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$isize$applied>
+			) => ReturnType<typeof attribute$isize$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$isize$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$isize$appliedCoerce>
+			) => ReturnType<typeof attribute$isize$appliedCoerce>;
+		};
+	};
+	usize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$usize$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$usize$applied>
+			) => ReturnType<typeof attribute$usize$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$usize$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$usize$appliedCoerce>
+			) => ReturnType<typeof attribute$usize$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$usize$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$usize$applied>
+			) => ReturnType<typeof attribute$usize$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$usize$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$usize$appliedCoerce>
+			) => ReturnType<typeof attribute$usize$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$usize$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$usize$applied>
+			) => ReturnType<typeof attribute$usize$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$usize$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$usize$appliedCoerce>
+			) => ReturnType<typeof attribute$usize$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$usize$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$usize$applied>
+			) => ReturnType<typeof attribute$usize$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$usize$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$usize$appliedCoerce>
+			) => ReturnType<typeof attribute$usize$appliedCoerce>;
+		};
+	};
+	f32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$f32$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$f32$applied>
+			) => ReturnType<typeof attribute$f32$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$f32$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$f32$appliedCoerce>
+			) => ReturnType<typeof attribute$f32$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$f32$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$f32$applied>
+			) => ReturnType<typeof attribute$f32$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$f32$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$f32$appliedCoerce>
+			) => ReturnType<typeof attribute$f32$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$f32$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$f32$applied>
+			) => ReturnType<typeof attribute$f32$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$f32$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$f32$appliedCoerce>
+			) => ReturnType<typeof attribute$f32$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$f32$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$f32$applied>
+			) => ReturnType<typeof attribute$f32$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$f32$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$f32$appliedCoerce>
+			) => ReturnType<typeof attribute$f32$appliedCoerce>;
+		};
+	};
+	f64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$f64$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$f64$applied>
+			) => ReturnType<typeof attribute$f64$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$f64$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$f64$appliedCoerce>
+			) => ReturnType<typeof attribute$f64$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$f64$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$f64$applied>
+			) => ReturnType<typeof attribute$f64$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$f64$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$f64$appliedCoerce>
+			) => ReturnType<typeof attribute$f64$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$f64$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$f64$applied>
+			) => ReturnType<typeof attribute$f64$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$f64$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$f64$appliedCoerce>
+			) => ReturnType<typeof attribute$f64$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$f64$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$f64$applied>
+			) => ReturnType<typeof attribute$f64$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$f64$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$f64$appliedCoerce>
+			) => ReturnType<typeof attribute$f64$appliedCoerce>;
+		};
+	};
+	bool: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$bool$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$bool$applied>
+			) => ReturnType<typeof attribute$bool$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$bool$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$bool$appliedCoerce>
+			) => ReturnType<typeof attribute$bool$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$bool$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$bool$applied>
+			) => ReturnType<typeof attribute$bool$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$bool$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$bool$appliedCoerce>
+			) => ReturnType<typeof attribute$bool$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$bool$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$bool$applied>
+			) => ReturnType<typeof attribute$bool$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$bool$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$bool$appliedCoerce>
+			) => ReturnType<typeof attribute$bool$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$bool$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$bool$applied>
+			) => ReturnType<typeof attribute$bool$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$bool$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$bool$appliedCoerce>
+			) => ReturnType<typeof attribute$bool$appliedCoerce>;
+		};
+	};
+	str: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$str$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$str$applied>
+			) => ReturnType<typeof attribute$str$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$str$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$str$appliedCoerce>
+			) => ReturnType<typeof attribute$str$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$str$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$str$applied>
+			) => ReturnType<typeof attribute$str$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$str$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$str$appliedCoerce>
+			) => ReturnType<typeof attribute$str$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$str$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$str$applied>
+			) => ReturnType<typeof attribute$str$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$str$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$str$appliedCoerce>
+			) => ReturnType<typeof attribute$str$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$str$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$str$applied>
+			) => ReturnType<typeof attribute$str$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$str$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$str$appliedCoerce>
+			) => ReturnType<typeof attribute$str$appliedCoerce>;
+		};
+	};
+	char: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$char$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$char$applied>
+			) => ReturnType<typeof attribute$char$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$char$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$char$appliedCoerce>
+			) => ReturnType<typeof attribute$char$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$char$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$char$applied>
+			) => ReturnType<typeof attribute$char$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$char$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$char$appliedCoerce>
+			) => ReturnType<typeof attribute$char$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$char$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$char$applied>
+			) => ReturnType<typeof attribute$char$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$char$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$char$appliedCoerce>
+			) => ReturnType<typeof attribute$char$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$char$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$char$applied>
+			) => ReturnType<typeof attribute$char$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$char$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$char$appliedCoerce>
+			) => ReturnType<typeof attribute$char$appliedCoerce>;
 		};
 	};
 	metavariable: {
@@ -1393,6 +3517,70 @@ export const attribute: typeof B.attribute & {
 			) => ReturnType<typeof attribute$crate$appliedCoerce>;
 		};
 	};
+	identifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'> & { path: ArgsOf<typeof F.buildIdentifier> },
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'> & { path: ArgsOf<typeof C.coerceToIdentifier> },
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$identifier$applied>[0], 'input'> &
+					ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$identifier$applied>
+			) => ReturnType<typeof attribute$identifier$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$identifier$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$identifier$appliedCoerce>
+			) => ReturnType<typeof attribute$identifier$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$identifier$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$identifier$applied>
+			) => ReturnType<typeof attribute$identifier$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$identifier$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$identifier$appliedCoerce>
+			) => ReturnType<typeof attribute$identifier$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$identifier$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$identifier$applied>
+			) => ReturnType<typeof attribute$identifier$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$identifier$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$identifier$appliedCoerce>
+			) => ReturnType<typeof attribute$identifier$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$identifier$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$identifier$applied>
+			) => ReturnType<typeof attribute$identifier$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$identifier$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$identifier$appliedCoerce>
+			) => ReturnType<typeof attribute$identifier$appliedCoerce>;
+		};
+	};
 	scopedIdentifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'> & ArgsOf<typeof F.buildScopedIdentifier>[0],
@@ -1457,72 +3645,194 @@ export const attribute: typeof B.attribute & {
 			) => ReturnType<typeof attribute$scopedIdentifier$appliedCoerce>;
 		};
 	};
-	reservedIdentifier: {
+	default: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
 			options?: OptionsArg<typeof F.buildAttribute>
 		) => ReturnType<typeof F.buildAttribute>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
 			options?: OptionsArg<typeof C.coerceToAttribute>
 		) => ReturnType<typeof C.coerceToAttribute>;
 		input: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof attribute$reservedIdentifier$applied>[0], 'input'> &
+				config: OmitEach<ArgsOf<typeof attribute$default$applied>[0], 'input'> &
 					ArgsOf<typeof F.buildAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$reservedIdentifier$applied>
-			) => ReturnType<typeof attribute$reservedIdentifier$applied>;
+				options?: OptionsArg<typeof attribute$default$applied>
+			) => ReturnType<typeof attribute$default$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof attribute$reservedIdentifier$appliedCoerce>[0], 'input'> &
+				config: OmitEach<ArgsOf<typeof attribute$default$appliedCoerce>[0], 'input'> &
 					ArgsOf<typeof C.coerceToAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$reservedIdentifier$appliedCoerce>
-			) => ReturnType<typeof attribute$reservedIdentifier$appliedCoerce>;
+				options?: OptionsArg<typeof attribute$default$appliedCoerce>
+			) => ReturnType<typeof attribute$default$appliedCoerce>;
 		};
 		delimTokenTreeParen: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof attribute$reservedIdentifier$applied>[0], 'input'> & {
+				config: OmitEach<ArgsOf<typeof attribute$default$applied>[0], 'input'> & {
 					input: ArgsOf<typeof attributeInput.paren.strict>;
 				},
-				options?: OptionsArg<typeof attribute$reservedIdentifier$applied>
-			) => ReturnType<typeof attribute$reservedIdentifier$applied>;
+				options?: OptionsArg<typeof attribute$default$applied>
+			) => ReturnType<typeof attribute$default$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof attribute$reservedIdentifier$appliedCoerce>[0], 'input'> & {
+				config: OmitEach<ArgsOf<typeof attribute$default$appliedCoerce>[0], 'input'> & {
 					input: ArgsOf<typeof attributeInput.paren.coerce>;
 				},
-				options?: OptionsArg<typeof attribute$reservedIdentifier$appliedCoerce>
-			) => ReturnType<typeof attribute$reservedIdentifier$appliedCoerce>;
+				options?: OptionsArg<typeof attribute$default$appliedCoerce>
+			) => ReturnType<typeof attribute$default$appliedCoerce>;
 		};
 		delimTokenTreeBracket: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof attribute$reservedIdentifier$applied>[0], 'input'> & {
+				config: OmitEach<ArgsOf<typeof attribute$default$applied>[0], 'input'> & {
 					input: ArgsOf<typeof attributeInput.bracket.strict>;
 				},
-				options?: OptionsArg<typeof attribute$reservedIdentifier$applied>
-			) => ReturnType<typeof attribute$reservedIdentifier$applied>;
+				options?: OptionsArg<typeof attribute$default$applied>
+			) => ReturnType<typeof attribute$default$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof attribute$reservedIdentifier$appliedCoerce>[0], 'input'> & {
+				config: OmitEach<ArgsOf<typeof attribute$default$appliedCoerce>[0], 'input'> & {
 					input: ArgsOf<typeof attributeInput.bracket.coerce>;
 				},
-				options?: OptionsArg<typeof attribute$reservedIdentifier$appliedCoerce>
-			) => ReturnType<typeof attribute$reservedIdentifier$appliedCoerce>;
+				options?: OptionsArg<typeof attribute$default$appliedCoerce>
+			) => ReturnType<typeof attribute$default$appliedCoerce>;
 		};
 		delimTokenTreeBrace: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof attribute$reservedIdentifier$applied>[0], 'input'> & {
+				config: OmitEach<ArgsOf<typeof attribute$default$applied>[0], 'input'> & {
 					input: ArgsOf<typeof attributeInput.brace.strict>;
 				},
-				options?: OptionsArg<typeof attribute$reservedIdentifier$applied>
-			) => ReturnType<typeof attribute$reservedIdentifier$applied>;
+				options?: OptionsArg<typeof attribute$default$applied>
+			) => ReturnType<typeof attribute$default$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof attribute$reservedIdentifier$appliedCoerce>[0], 'input'> & {
+				config: OmitEach<ArgsOf<typeof attribute$default$appliedCoerce>[0], 'input'> & {
 					input: ArgsOf<typeof attributeInput.brace.coerce>;
 				},
-				options?: OptionsArg<typeof attribute$reservedIdentifier$appliedCoerce>
-			) => ReturnType<typeof attribute$reservedIdentifier$appliedCoerce>;
+				options?: OptionsArg<typeof attribute$default$appliedCoerce>
+			) => ReturnType<typeof attribute$default$appliedCoerce>;
+		};
+	};
+	union: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$union$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$union$applied>
+			) => ReturnType<typeof attribute$union$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$union$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$union$appliedCoerce>
+			) => ReturnType<typeof attribute$union$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$union$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$union$applied>
+			) => ReturnType<typeof attribute$union$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$union$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$union$appliedCoerce>
+			) => ReturnType<typeof attribute$union$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$union$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$union$applied>
+			) => ReturnType<typeof attribute$union$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$union$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$union$appliedCoerce>
+			) => ReturnType<typeof attribute$union$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$union$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$union$applied>
+			) => ReturnType<typeof attribute$union$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$union$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$union$appliedCoerce>
+			) => ReturnType<typeof attribute$union$appliedCoerce>;
+		};
+	};
+	gen: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildAttribute>
+		) => ReturnType<typeof F.buildAttribute>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToAttribute>
+		) => ReturnType<typeof C.coerceToAttribute>;
+		input: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$gen$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$gen$applied>
+			) => ReturnType<typeof attribute$gen$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$gen$appliedCoerce>[0], 'input'> &
+					ArgsOf<typeof C.coerceToAttributeInput>[0],
+				options?: OptionsArg<typeof attribute$gen$appliedCoerce>
+			) => ReturnType<typeof attribute$gen$appliedCoerce>;
+		};
+		delimTokenTreeParen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$gen$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.strict>;
+				},
+				options?: OptionsArg<typeof attribute$gen$applied>
+			) => ReturnType<typeof attribute$gen$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$gen$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.paren.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$gen$appliedCoerce>
+			) => ReturnType<typeof attribute$gen$appliedCoerce>;
+		};
+		delimTokenTreeBracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$gen$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.strict>;
+				},
+				options?: OptionsArg<typeof attribute$gen$applied>
+			) => ReturnType<typeof attribute$gen$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$gen$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.bracket.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$gen$appliedCoerce>
+			) => ReturnType<typeof attribute$gen$appliedCoerce>;
+		};
+		delimTokenTreeBrace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof attribute$gen$applied>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.strict>;
+				},
+				options?: OptionsArg<typeof attribute$gen$applied>
+			) => ReturnType<typeof attribute$gen$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof attribute$gen$appliedCoerce>[0], 'input'> & {
+					input: ArgsOf<typeof attributeInput.brace.coerce>;
+				},
+				options?: OptionsArg<typeof attribute$gen$appliedCoerce>
+			) => ReturnType<typeof attribute$gen$appliedCoerce>;
 		};
 	};
 	input: {
@@ -1599,27 +3909,344 @@ export const attribute: typeof B.attribute & {
 			coerce: attribute$self$delimTokenTreeBrace(attribute$self$appliedCoerce, attributeInput.brace.coerce)
 		}
 	},
-	identifier: {
-		strict: attribute$identifier(F.buildAttribute, F.buildIdentifier),
-		coerce: attribute$identifier(C.coerceToAttribute, C.coerceToIdentifier),
+	u8: {
+		strict: attribute$u8(F.buildAttribute, TSKindId.U8Keyword),
+		coerce: attribute$u8(C.coerceToAttribute, TSKindId.U8Keyword),
 		input: {
-			strict: attribute$identifier$input(attribute$identifier$applied, F.buildAttributeInput),
-			coerce: attribute$identifier$input(attribute$identifier$appliedCoerce, C.coerceToAttributeInput)
+			strict: attribute$u8$input(attribute$u8$applied, F.buildAttributeInput),
+			coerce: attribute$u8$input(attribute$u8$appliedCoerce, C.coerceToAttributeInput)
 		},
 		delimTokenTreeParen: {
-			strict: attribute$identifier$delimTokenTreeParen(attribute$identifier$applied, attributeInput.paren.strict),
-			coerce: attribute$identifier$delimTokenTreeParen(attribute$identifier$appliedCoerce, attributeInput.paren.coerce)
+			strict: attribute$u8$delimTokenTreeParen(attribute$u8$applied, attributeInput.paren.strict),
+			coerce: attribute$u8$delimTokenTreeParen(attribute$u8$appliedCoerce, attributeInput.paren.coerce)
 		},
 		delimTokenTreeBracket: {
-			strict: attribute$identifier$delimTokenTreeBracket(attribute$identifier$applied, attributeInput.bracket.strict),
-			coerce: attribute$identifier$delimTokenTreeBracket(
-				attribute$identifier$appliedCoerce,
-				attributeInput.bracket.coerce
-			)
+			strict: attribute$u8$delimTokenTreeBracket(attribute$u8$applied, attributeInput.bracket.strict),
+			coerce: attribute$u8$delimTokenTreeBracket(attribute$u8$appliedCoerce, attributeInput.bracket.coerce)
 		},
 		delimTokenTreeBrace: {
-			strict: attribute$identifier$delimTokenTreeBrace(attribute$identifier$applied, attributeInput.brace.strict),
-			coerce: attribute$identifier$delimTokenTreeBrace(attribute$identifier$appliedCoerce, attributeInput.brace.coerce)
+			strict: attribute$u8$delimTokenTreeBrace(attribute$u8$applied, attributeInput.brace.strict),
+			coerce: attribute$u8$delimTokenTreeBrace(attribute$u8$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	i8: {
+		strict: attribute$i8(F.buildAttribute, TSKindId.I8Keyword),
+		coerce: attribute$i8(C.coerceToAttribute, TSKindId.I8Keyword),
+		input: {
+			strict: attribute$i8$input(attribute$i8$applied, F.buildAttributeInput),
+			coerce: attribute$i8$input(attribute$i8$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$i8$delimTokenTreeParen(attribute$i8$applied, attributeInput.paren.strict),
+			coerce: attribute$i8$delimTokenTreeParen(attribute$i8$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$i8$delimTokenTreeBracket(attribute$i8$applied, attributeInput.bracket.strict),
+			coerce: attribute$i8$delimTokenTreeBracket(attribute$i8$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$i8$delimTokenTreeBrace(attribute$i8$applied, attributeInput.brace.strict),
+			coerce: attribute$i8$delimTokenTreeBrace(attribute$i8$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	u16: {
+		strict: attribute$u16(F.buildAttribute, TSKindId.U16Keyword),
+		coerce: attribute$u16(C.coerceToAttribute, TSKindId.U16Keyword),
+		input: {
+			strict: attribute$u16$input(attribute$u16$applied, F.buildAttributeInput),
+			coerce: attribute$u16$input(attribute$u16$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$u16$delimTokenTreeParen(attribute$u16$applied, attributeInput.paren.strict),
+			coerce: attribute$u16$delimTokenTreeParen(attribute$u16$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$u16$delimTokenTreeBracket(attribute$u16$applied, attributeInput.bracket.strict),
+			coerce: attribute$u16$delimTokenTreeBracket(attribute$u16$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$u16$delimTokenTreeBrace(attribute$u16$applied, attributeInput.brace.strict),
+			coerce: attribute$u16$delimTokenTreeBrace(attribute$u16$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	i16: {
+		strict: attribute$i16(F.buildAttribute, TSKindId.I16Keyword),
+		coerce: attribute$i16(C.coerceToAttribute, TSKindId.I16Keyword),
+		input: {
+			strict: attribute$i16$input(attribute$i16$applied, F.buildAttributeInput),
+			coerce: attribute$i16$input(attribute$i16$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$i16$delimTokenTreeParen(attribute$i16$applied, attributeInput.paren.strict),
+			coerce: attribute$i16$delimTokenTreeParen(attribute$i16$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$i16$delimTokenTreeBracket(attribute$i16$applied, attributeInput.bracket.strict),
+			coerce: attribute$i16$delimTokenTreeBracket(attribute$i16$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$i16$delimTokenTreeBrace(attribute$i16$applied, attributeInput.brace.strict),
+			coerce: attribute$i16$delimTokenTreeBrace(attribute$i16$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	u32: {
+		strict: attribute$u32(F.buildAttribute, TSKindId.U32Keyword),
+		coerce: attribute$u32(C.coerceToAttribute, TSKindId.U32Keyword),
+		input: {
+			strict: attribute$u32$input(attribute$u32$applied, F.buildAttributeInput),
+			coerce: attribute$u32$input(attribute$u32$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$u32$delimTokenTreeParen(attribute$u32$applied, attributeInput.paren.strict),
+			coerce: attribute$u32$delimTokenTreeParen(attribute$u32$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$u32$delimTokenTreeBracket(attribute$u32$applied, attributeInput.bracket.strict),
+			coerce: attribute$u32$delimTokenTreeBracket(attribute$u32$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$u32$delimTokenTreeBrace(attribute$u32$applied, attributeInput.brace.strict),
+			coerce: attribute$u32$delimTokenTreeBrace(attribute$u32$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	i32: {
+		strict: attribute$i32(F.buildAttribute, TSKindId.I32Keyword),
+		coerce: attribute$i32(C.coerceToAttribute, TSKindId.I32Keyword),
+		input: {
+			strict: attribute$i32$input(attribute$i32$applied, F.buildAttributeInput),
+			coerce: attribute$i32$input(attribute$i32$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$i32$delimTokenTreeParen(attribute$i32$applied, attributeInput.paren.strict),
+			coerce: attribute$i32$delimTokenTreeParen(attribute$i32$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$i32$delimTokenTreeBracket(attribute$i32$applied, attributeInput.bracket.strict),
+			coerce: attribute$i32$delimTokenTreeBracket(attribute$i32$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$i32$delimTokenTreeBrace(attribute$i32$applied, attributeInput.brace.strict),
+			coerce: attribute$i32$delimTokenTreeBrace(attribute$i32$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	u64: {
+		strict: attribute$u64(F.buildAttribute, TSKindId.U64Keyword),
+		coerce: attribute$u64(C.coerceToAttribute, TSKindId.U64Keyword),
+		input: {
+			strict: attribute$u64$input(attribute$u64$applied, F.buildAttributeInput),
+			coerce: attribute$u64$input(attribute$u64$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$u64$delimTokenTreeParen(attribute$u64$applied, attributeInput.paren.strict),
+			coerce: attribute$u64$delimTokenTreeParen(attribute$u64$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$u64$delimTokenTreeBracket(attribute$u64$applied, attributeInput.bracket.strict),
+			coerce: attribute$u64$delimTokenTreeBracket(attribute$u64$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$u64$delimTokenTreeBrace(attribute$u64$applied, attributeInput.brace.strict),
+			coerce: attribute$u64$delimTokenTreeBrace(attribute$u64$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	i64: {
+		strict: attribute$i64(F.buildAttribute, TSKindId.I64Keyword),
+		coerce: attribute$i64(C.coerceToAttribute, TSKindId.I64Keyword),
+		input: {
+			strict: attribute$i64$input(attribute$i64$applied, F.buildAttributeInput),
+			coerce: attribute$i64$input(attribute$i64$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$i64$delimTokenTreeParen(attribute$i64$applied, attributeInput.paren.strict),
+			coerce: attribute$i64$delimTokenTreeParen(attribute$i64$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$i64$delimTokenTreeBracket(attribute$i64$applied, attributeInput.bracket.strict),
+			coerce: attribute$i64$delimTokenTreeBracket(attribute$i64$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$i64$delimTokenTreeBrace(attribute$i64$applied, attributeInput.brace.strict),
+			coerce: attribute$i64$delimTokenTreeBrace(attribute$i64$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	u128: {
+		strict: attribute$u128(F.buildAttribute, TSKindId.U128Keyword),
+		coerce: attribute$u128(C.coerceToAttribute, TSKindId.U128Keyword),
+		input: {
+			strict: attribute$u128$input(attribute$u128$applied, F.buildAttributeInput),
+			coerce: attribute$u128$input(attribute$u128$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$u128$delimTokenTreeParen(attribute$u128$applied, attributeInput.paren.strict),
+			coerce: attribute$u128$delimTokenTreeParen(attribute$u128$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$u128$delimTokenTreeBracket(attribute$u128$applied, attributeInput.bracket.strict),
+			coerce: attribute$u128$delimTokenTreeBracket(attribute$u128$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$u128$delimTokenTreeBrace(attribute$u128$applied, attributeInput.brace.strict),
+			coerce: attribute$u128$delimTokenTreeBrace(attribute$u128$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	i128: {
+		strict: attribute$i128(F.buildAttribute, TSKindId.I128Keyword),
+		coerce: attribute$i128(C.coerceToAttribute, TSKindId.I128Keyword),
+		input: {
+			strict: attribute$i128$input(attribute$i128$applied, F.buildAttributeInput),
+			coerce: attribute$i128$input(attribute$i128$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$i128$delimTokenTreeParen(attribute$i128$applied, attributeInput.paren.strict),
+			coerce: attribute$i128$delimTokenTreeParen(attribute$i128$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$i128$delimTokenTreeBracket(attribute$i128$applied, attributeInput.bracket.strict),
+			coerce: attribute$i128$delimTokenTreeBracket(attribute$i128$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$i128$delimTokenTreeBrace(attribute$i128$applied, attributeInput.brace.strict),
+			coerce: attribute$i128$delimTokenTreeBrace(attribute$i128$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	isize: {
+		strict: attribute$isize(F.buildAttribute, TSKindId.IsizeKeyword),
+		coerce: attribute$isize(C.coerceToAttribute, TSKindId.IsizeKeyword),
+		input: {
+			strict: attribute$isize$input(attribute$isize$applied, F.buildAttributeInput),
+			coerce: attribute$isize$input(attribute$isize$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$isize$delimTokenTreeParen(attribute$isize$applied, attributeInput.paren.strict),
+			coerce: attribute$isize$delimTokenTreeParen(attribute$isize$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$isize$delimTokenTreeBracket(attribute$isize$applied, attributeInput.bracket.strict),
+			coerce: attribute$isize$delimTokenTreeBracket(attribute$isize$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$isize$delimTokenTreeBrace(attribute$isize$applied, attributeInput.brace.strict),
+			coerce: attribute$isize$delimTokenTreeBrace(attribute$isize$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	usize: {
+		strict: attribute$usize(F.buildAttribute, TSKindId.UsizeKeyword),
+		coerce: attribute$usize(C.coerceToAttribute, TSKindId.UsizeKeyword),
+		input: {
+			strict: attribute$usize$input(attribute$usize$applied, F.buildAttributeInput),
+			coerce: attribute$usize$input(attribute$usize$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$usize$delimTokenTreeParen(attribute$usize$applied, attributeInput.paren.strict),
+			coerce: attribute$usize$delimTokenTreeParen(attribute$usize$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$usize$delimTokenTreeBracket(attribute$usize$applied, attributeInput.bracket.strict),
+			coerce: attribute$usize$delimTokenTreeBracket(attribute$usize$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$usize$delimTokenTreeBrace(attribute$usize$applied, attributeInput.brace.strict),
+			coerce: attribute$usize$delimTokenTreeBrace(attribute$usize$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	f32: {
+		strict: attribute$f32(F.buildAttribute, TSKindId.F32Keyword),
+		coerce: attribute$f32(C.coerceToAttribute, TSKindId.F32Keyword),
+		input: {
+			strict: attribute$f32$input(attribute$f32$applied, F.buildAttributeInput),
+			coerce: attribute$f32$input(attribute$f32$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$f32$delimTokenTreeParen(attribute$f32$applied, attributeInput.paren.strict),
+			coerce: attribute$f32$delimTokenTreeParen(attribute$f32$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$f32$delimTokenTreeBracket(attribute$f32$applied, attributeInput.bracket.strict),
+			coerce: attribute$f32$delimTokenTreeBracket(attribute$f32$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$f32$delimTokenTreeBrace(attribute$f32$applied, attributeInput.brace.strict),
+			coerce: attribute$f32$delimTokenTreeBrace(attribute$f32$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	f64: {
+		strict: attribute$f64(F.buildAttribute, TSKindId.F64Keyword),
+		coerce: attribute$f64(C.coerceToAttribute, TSKindId.F64Keyword),
+		input: {
+			strict: attribute$f64$input(attribute$f64$applied, F.buildAttributeInput),
+			coerce: attribute$f64$input(attribute$f64$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$f64$delimTokenTreeParen(attribute$f64$applied, attributeInput.paren.strict),
+			coerce: attribute$f64$delimTokenTreeParen(attribute$f64$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$f64$delimTokenTreeBracket(attribute$f64$applied, attributeInput.bracket.strict),
+			coerce: attribute$f64$delimTokenTreeBracket(attribute$f64$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$f64$delimTokenTreeBrace(attribute$f64$applied, attributeInput.brace.strict),
+			coerce: attribute$f64$delimTokenTreeBrace(attribute$f64$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	bool: {
+		strict: attribute$bool(F.buildAttribute, TSKindId.BoolKeyword),
+		coerce: attribute$bool(C.coerceToAttribute, TSKindId.BoolKeyword),
+		input: {
+			strict: attribute$bool$input(attribute$bool$applied, F.buildAttributeInput),
+			coerce: attribute$bool$input(attribute$bool$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$bool$delimTokenTreeParen(attribute$bool$applied, attributeInput.paren.strict),
+			coerce: attribute$bool$delimTokenTreeParen(attribute$bool$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$bool$delimTokenTreeBracket(attribute$bool$applied, attributeInput.bracket.strict),
+			coerce: attribute$bool$delimTokenTreeBracket(attribute$bool$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$bool$delimTokenTreeBrace(attribute$bool$applied, attributeInput.brace.strict),
+			coerce: attribute$bool$delimTokenTreeBrace(attribute$bool$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	str: {
+		strict: attribute$str(F.buildAttribute, TSKindId.StrKeyword),
+		coerce: attribute$str(C.coerceToAttribute, TSKindId.StrKeyword),
+		input: {
+			strict: attribute$str$input(attribute$str$applied, F.buildAttributeInput),
+			coerce: attribute$str$input(attribute$str$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$str$delimTokenTreeParen(attribute$str$applied, attributeInput.paren.strict),
+			coerce: attribute$str$delimTokenTreeParen(attribute$str$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$str$delimTokenTreeBracket(attribute$str$applied, attributeInput.bracket.strict),
+			coerce: attribute$str$delimTokenTreeBracket(attribute$str$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$str$delimTokenTreeBrace(attribute$str$applied, attributeInput.brace.strict),
+			coerce: attribute$str$delimTokenTreeBrace(attribute$str$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	char: {
+		strict: attribute$char(F.buildAttribute, TSKindId.CharKeyword),
+		coerce: attribute$char(C.coerceToAttribute, TSKindId.CharKeyword),
+		input: {
+			strict: attribute$char$input(attribute$char$applied, F.buildAttributeInput),
+			coerce: attribute$char$input(attribute$char$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$char$delimTokenTreeParen(attribute$char$applied, attributeInput.paren.strict),
+			coerce: attribute$char$delimTokenTreeParen(attribute$char$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$char$delimTokenTreeBracket(attribute$char$applied, attributeInput.bracket.strict),
+			coerce: attribute$char$delimTokenTreeBracket(attribute$char$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$char$delimTokenTreeBrace(attribute$char$applied, attributeInput.brace.strict),
+			coerce: attribute$char$delimTokenTreeBrace(attribute$char$appliedCoerce, attributeInput.brace.coerce)
 		}
 	},
 	metavariable: {
@@ -1694,6 +4321,29 @@ export const attribute: typeof B.attribute & {
 			coerce: attribute$crate$delimTokenTreeBrace(attribute$crate$appliedCoerce, attributeInput.brace.coerce)
 		}
 	},
+	identifier: {
+		strict: attribute$identifier(F.buildAttribute, F.buildIdentifier),
+		coerce: attribute$identifier(C.coerceToAttribute, C.coerceToIdentifier),
+		input: {
+			strict: attribute$identifier$input(attribute$identifier$applied, F.buildAttributeInput),
+			coerce: attribute$identifier$input(attribute$identifier$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$identifier$delimTokenTreeParen(attribute$identifier$applied, attributeInput.paren.strict),
+			coerce: attribute$identifier$delimTokenTreeParen(attribute$identifier$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$identifier$delimTokenTreeBracket(attribute$identifier$applied, attributeInput.bracket.strict),
+			coerce: attribute$identifier$delimTokenTreeBracket(
+				attribute$identifier$appliedCoerce,
+				attributeInput.bracket.coerce
+			)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$identifier$delimTokenTreeBrace(attribute$identifier$applied, attributeInput.brace.strict),
+			coerce: attribute$identifier$delimTokenTreeBrace(attribute$identifier$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
 	scopedIdentifier: {
 		strict: attribute$scopedIdentifier(F.buildAttribute, F.buildScopedIdentifier),
 		coerce: attribute$scopedIdentifier(C.coerceToAttribute, C.coerceToScopedIdentifier),
@@ -1732,42 +4382,64 @@ export const attribute: typeof B.attribute & {
 			)
 		}
 	},
-	reservedIdentifier: {
-		strict: attribute$reservedIdentifier(F.buildAttribute, F.buildReservedIdentifier),
-		coerce: attribute$reservedIdentifier(C.coerceToAttribute, C.coerceToReservedIdentifier),
+	default: {
+		strict: attribute$default(F.buildAttribute, TSKindId.DefaultKeyword),
+		coerce: attribute$default(C.coerceToAttribute, TSKindId.DefaultKeyword),
 		input: {
-			strict: attribute$reservedIdentifier$input(attribute$reservedIdentifier$applied, F.buildAttributeInput),
-			coerce: attribute$reservedIdentifier$input(attribute$reservedIdentifier$appliedCoerce, C.coerceToAttributeInput)
+			strict: attribute$default$input(attribute$default$applied, F.buildAttributeInput),
+			coerce: attribute$default$input(attribute$default$appliedCoerce, C.coerceToAttributeInput)
 		},
 		delimTokenTreeParen: {
-			strict: attribute$reservedIdentifier$delimTokenTreeParen(
-				attribute$reservedIdentifier$applied,
-				attributeInput.paren.strict
-			),
-			coerce: attribute$reservedIdentifier$delimTokenTreeParen(
-				attribute$reservedIdentifier$appliedCoerce,
-				attributeInput.paren.coerce
-			)
+			strict: attribute$default$delimTokenTreeParen(attribute$default$applied, attributeInput.paren.strict),
+			coerce: attribute$default$delimTokenTreeParen(attribute$default$appliedCoerce, attributeInput.paren.coerce)
 		},
 		delimTokenTreeBracket: {
-			strict: attribute$reservedIdentifier$delimTokenTreeBracket(
-				attribute$reservedIdentifier$applied,
-				attributeInput.bracket.strict
-			),
-			coerce: attribute$reservedIdentifier$delimTokenTreeBracket(
-				attribute$reservedIdentifier$appliedCoerce,
-				attributeInput.bracket.coerce
-			)
+			strict: attribute$default$delimTokenTreeBracket(attribute$default$applied, attributeInput.bracket.strict),
+			coerce: attribute$default$delimTokenTreeBracket(attribute$default$appliedCoerce, attributeInput.bracket.coerce)
 		},
 		delimTokenTreeBrace: {
-			strict: attribute$reservedIdentifier$delimTokenTreeBrace(
-				attribute$reservedIdentifier$applied,
-				attributeInput.brace.strict
-			),
-			coerce: attribute$reservedIdentifier$delimTokenTreeBrace(
-				attribute$reservedIdentifier$appliedCoerce,
-				attributeInput.brace.coerce
-			)
+			strict: attribute$default$delimTokenTreeBrace(attribute$default$applied, attributeInput.brace.strict),
+			coerce: attribute$default$delimTokenTreeBrace(attribute$default$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	union: {
+		strict: attribute$union(F.buildAttribute, TSKindId.UnionKeyword),
+		coerce: attribute$union(C.coerceToAttribute, TSKindId.UnionKeyword),
+		input: {
+			strict: attribute$union$input(attribute$union$applied, F.buildAttributeInput),
+			coerce: attribute$union$input(attribute$union$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$union$delimTokenTreeParen(attribute$union$applied, attributeInput.paren.strict),
+			coerce: attribute$union$delimTokenTreeParen(attribute$union$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$union$delimTokenTreeBracket(attribute$union$applied, attributeInput.bracket.strict),
+			coerce: attribute$union$delimTokenTreeBracket(attribute$union$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$union$delimTokenTreeBrace(attribute$union$applied, attributeInput.brace.strict),
+			coerce: attribute$union$delimTokenTreeBrace(attribute$union$appliedCoerce, attributeInput.brace.coerce)
+		}
+	},
+	gen: {
+		strict: attribute$gen(F.buildAttribute, TSKindId.GenKeyword),
+		coerce: attribute$gen(C.coerceToAttribute, TSKindId.GenKeyword),
+		input: {
+			strict: attribute$gen$input(attribute$gen$applied, F.buildAttributeInput),
+			coerce: attribute$gen$input(attribute$gen$appliedCoerce, C.coerceToAttributeInput)
+		},
+		delimTokenTreeParen: {
+			strict: attribute$gen$delimTokenTreeParen(attribute$gen$applied, attributeInput.paren.strict),
+			coerce: attribute$gen$delimTokenTreeParen(attribute$gen$appliedCoerce, attributeInput.paren.coerce)
+		},
+		delimTokenTreeBracket: {
+			strict: attribute$gen$delimTokenTreeBracket(attribute$gen$applied, attributeInput.bracket.strict),
+			coerce: attribute$gen$delimTokenTreeBracket(attribute$gen$appliedCoerce, attributeInput.bracket.coerce)
+		},
+		delimTokenTreeBrace: {
+			strict: attribute$gen$delimTokenTreeBrace(attribute$gen$applied, attributeInput.brace.strict),
+			coerce: attribute$gen$delimTokenTreeBrace(attribute$gen$appliedCoerce, attributeInput.brace.coerce)
 		}
 	},
 	input: {
@@ -1792,7 +4464,71 @@ const attributeItem$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const attributeItem$identifier =
+const attributeItem$u8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$i8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$u16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$i16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$u32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$i32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$u64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$i64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$u128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$i128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$isize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$usize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$f32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$f64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$bool =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$str =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$char =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -1808,11 +4544,23 @@ const attributeItem$crate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const attributeItem$scopedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const attributeItem$reservedIdentifier =
+const attributeItem$default =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$union =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const attributeItem$gen =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -1837,9 +4585,73 @@ export const attributeItem: typeof B.attributeItem & {
 		strict: (...args: ArgsOf<typeof attribute.self.strict>) => ReturnType<typeof F.buildAttributeItem>;
 		coerce: (...args: ArgsOf<typeof attribute.self.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
-	identifier: {
-		strict: (...args: ArgsOf<typeof attribute.identifier.strict>) => ReturnType<typeof F.buildAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.identifier.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	u8: {
+		strict: (...args: ArgsOf<typeof attribute.u8.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.u8.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	i8: {
+		strict: (...args: ArgsOf<typeof attribute.i8.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.i8.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	u16: {
+		strict: (...args: ArgsOf<typeof attribute.u16.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.u16.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	i16: {
+		strict: (...args: ArgsOf<typeof attribute.i16.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.i16.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	u32: {
+		strict: (...args: ArgsOf<typeof attribute.u32.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.u32.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	i32: {
+		strict: (...args: ArgsOf<typeof attribute.i32.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.i32.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	u64: {
+		strict: (...args: ArgsOf<typeof attribute.u64.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.u64.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	i64: {
+		strict: (...args: ArgsOf<typeof attribute.i64.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.i64.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	u128: {
+		strict: (...args: ArgsOf<typeof attribute.u128.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.u128.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	i128: {
+		strict: (...args: ArgsOf<typeof attribute.i128.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.i128.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	isize: {
+		strict: (...args: ArgsOf<typeof attribute.isize.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.isize.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	usize: {
+		strict: (...args: ArgsOf<typeof attribute.usize.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.usize.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	f32: {
+		strict: (...args: ArgsOf<typeof attribute.f32.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.f32.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	f64: {
+		strict: (...args: ArgsOf<typeof attribute.f64.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.f64.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	bool: {
+		strict: (...args: ArgsOf<typeof attribute.bool.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.bool.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	str: {
+		strict: (...args: ArgsOf<typeof attribute.str.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.str.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	char: {
+		strict: (...args: ArgsOf<typeof attribute.char.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.char.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
 	metavariable: {
 		strict: (...args: ArgsOf<typeof attribute.metavariable.strict>) => ReturnType<typeof F.buildAttributeItem>;
@@ -1853,13 +4665,25 @@ export const attributeItem: typeof B.attributeItem & {
 		strict: (...args: ArgsOf<typeof attribute.crate.strict>) => ReturnType<typeof F.buildAttributeItem>;
 		coerce: (...args: ArgsOf<typeof attribute.crate.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
+	identifier: {
+		strict: (...args: ArgsOf<typeof attribute.identifier.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.identifier.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
 	scopedIdentifier: {
 		strict: (...args: ArgsOf<typeof attribute.scopedIdentifier.strict>) => ReturnType<typeof F.buildAttributeItem>;
 		coerce: (...args: ArgsOf<typeof attribute.scopedIdentifier.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
-	reservedIdentifier: {
-		strict: (...args: ArgsOf<typeof attribute.reservedIdentifier.strict>) => ReturnType<typeof F.buildAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.reservedIdentifier.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	default: {
+		strict: (...args: ArgsOf<typeof attribute.default.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.default.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	union: {
+		strict: (...args: ArgsOf<typeof attribute.union.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.union.coerce>) => ReturnType<typeof F.buildAttributeItem>;
+	};
+	gen: {
+		strict: (...args: ArgsOf<typeof attribute.gen.strict>) => ReturnType<typeof F.buildAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.gen.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
 	attributeInput: {
 		strict: (...args: ArgsOf<typeof attribute.input.strict>) => ReturnType<typeof F.buildAttributeItem>;
@@ -1883,9 +4707,73 @@ export const attributeItem: typeof B.attributeItem & {
 		strict: attributeItem$self(F.buildAttributeItem, attribute.self.strict),
 		coerce: attributeItem$self(F.buildAttributeItem, attribute.self.coerce)
 	},
-	identifier: {
-		strict: attributeItem$identifier(F.buildAttributeItem, attribute.identifier.strict),
-		coerce: attributeItem$identifier(F.buildAttributeItem, attribute.identifier.coerce)
+	u8: {
+		strict: attributeItem$u8(F.buildAttributeItem, attribute.u8.strict),
+		coerce: attributeItem$u8(F.buildAttributeItem, attribute.u8.coerce)
+	},
+	i8: {
+		strict: attributeItem$i8(F.buildAttributeItem, attribute.i8.strict),
+		coerce: attributeItem$i8(F.buildAttributeItem, attribute.i8.coerce)
+	},
+	u16: {
+		strict: attributeItem$u16(F.buildAttributeItem, attribute.u16.strict),
+		coerce: attributeItem$u16(F.buildAttributeItem, attribute.u16.coerce)
+	},
+	i16: {
+		strict: attributeItem$i16(F.buildAttributeItem, attribute.i16.strict),
+		coerce: attributeItem$i16(F.buildAttributeItem, attribute.i16.coerce)
+	},
+	u32: {
+		strict: attributeItem$u32(F.buildAttributeItem, attribute.u32.strict),
+		coerce: attributeItem$u32(F.buildAttributeItem, attribute.u32.coerce)
+	},
+	i32: {
+		strict: attributeItem$i32(F.buildAttributeItem, attribute.i32.strict),
+		coerce: attributeItem$i32(F.buildAttributeItem, attribute.i32.coerce)
+	},
+	u64: {
+		strict: attributeItem$u64(F.buildAttributeItem, attribute.u64.strict),
+		coerce: attributeItem$u64(F.buildAttributeItem, attribute.u64.coerce)
+	},
+	i64: {
+		strict: attributeItem$i64(F.buildAttributeItem, attribute.i64.strict),
+		coerce: attributeItem$i64(F.buildAttributeItem, attribute.i64.coerce)
+	},
+	u128: {
+		strict: attributeItem$u128(F.buildAttributeItem, attribute.u128.strict),
+		coerce: attributeItem$u128(F.buildAttributeItem, attribute.u128.coerce)
+	},
+	i128: {
+		strict: attributeItem$i128(F.buildAttributeItem, attribute.i128.strict),
+		coerce: attributeItem$i128(F.buildAttributeItem, attribute.i128.coerce)
+	},
+	isize: {
+		strict: attributeItem$isize(F.buildAttributeItem, attribute.isize.strict),
+		coerce: attributeItem$isize(F.buildAttributeItem, attribute.isize.coerce)
+	},
+	usize: {
+		strict: attributeItem$usize(F.buildAttributeItem, attribute.usize.strict),
+		coerce: attributeItem$usize(F.buildAttributeItem, attribute.usize.coerce)
+	},
+	f32: {
+		strict: attributeItem$f32(F.buildAttributeItem, attribute.f32.strict),
+		coerce: attributeItem$f32(F.buildAttributeItem, attribute.f32.coerce)
+	},
+	f64: {
+		strict: attributeItem$f64(F.buildAttributeItem, attribute.f64.strict),
+		coerce: attributeItem$f64(F.buildAttributeItem, attribute.f64.coerce)
+	},
+	bool: {
+		strict: attributeItem$bool(F.buildAttributeItem, attribute.bool.strict),
+		coerce: attributeItem$bool(F.buildAttributeItem, attribute.bool.coerce)
+	},
+	str: {
+		strict: attributeItem$str(F.buildAttributeItem, attribute.str.strict),
+		coerce: attributeItem$str(F.buildAttributeItem, attribute.str.coerce)
+	},
+	char: {
+		strict: attributeItem$char(F.buildAttributeItem, attribute.char.strict),
+		coerce: attributeItem$char(F.buildAttributeItem, attribute.char.coerce)
 	},
 	metavariable: {
 		strict: attributeItem$metavariable(F.buildAttributeItem, attribute.metavariable.strict),
@@ -1899,13 +4787,25 @@ export const attributeItem: typeof B.attributeItem & {
 		strict: attributeItem$crate(F.buildAttributeItem, attribute.crate.strict),
 		coerce: attributeItem$crate(F.buildAttributeItem, attribute.crate.coerce)
 	},
+	identifier: {
+		strict: attributeItem$identifier(F.buildAttributeItem, attribute.identifier.strict),
+		coerce: attributeItem$identifier(F.buildAttributeItem, attribute.identifier.coerce)
+	},
 	scopedIdentifier: {
 		strict: attributeItem$scopedIdentifier(F.buildAttributeItem, attribute.scopedIdentifier.strict),
 		coerce: attributeItem$scopedIdentifier(F.buildAttributeItem, attribute.scopedIdentifier.coerce)
 	},
-	reservedIdentifier: {
-		strict: attributeItem$reservedIdentifier(F.buildAttributeItem, attribute.reservedIdentifier.strict),
-		coerce: attributeItem$reservedIdentifier(F.buildAttributeItem, attribute.reservedIdentifier.coerce)
+	default: {
+		strict: attributeItem$default(F.buildAttributeItem, attribute.default.strict),
+		coerce: attributeItem$default(F.buildAttributeItem, attribute.default.coerce)
+	},
+	union: {
+		strict: attributeItem$union(F.buildAttributeItem, attribute.union.strict),
+		coerce: attributeItem$union(F.buildAttributeItem, attribute.union.coerce)
+	},
+	gen: {
+		strict: attributeItem$gen(F.buildAttributeItem, attribute.gen.strict),
+		coerce: attributeItem$gen(F.buildAttributeItem, attribute.gen.coerce)
 	},
 	attributeInput: {
 		strict: attributeItem$attributeInput(F.buildAttributeItem, attribute.input.strict),
@@ -1929,7 +4829,71 @@ const innerAttributeItem$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const innerAttributeItem$identifier =
+const innerAttributeItem$u8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$i8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$u16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$i16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$u32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$i32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$u64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$i64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$u128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$i128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$isize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$usize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$f32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$f64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$bool =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$str =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$char =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -1945,11 +4909,23 @@ const innerAttributeItem$crate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const innerAttributeItem$scopedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const innerAttributeItem$reservedIdentifier =
+const innerAttributeItem$default =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$union =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const innerAttributeItem$gen =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -1974,9 +4950,73 @@ export const innerAttributeItem: typeof B.innerAttributeItem & {
 		strict: (...args: ArgsOf<typeof attribute.self.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
 		coerce: (...args: ArgsOf<typeof attribute.self.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
-	identifier: {
-		strict: (...args: ArgsOf<typeof attribute.identifier.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.identifier.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	u8: {
+		strict: (...args: ArgsOf<typeof attribute.u8.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.u8.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	i8: {
+		strict: (...args: ArgsOf<typeof attribute.i8.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.i8.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	u16: {
+		strict: (...args: ArgsOf<typeof attribute.u16.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.u16.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	i16: {
+		strict: (...args: ArgsOf<typeof attribute.i16.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.i16.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	u32: {
+		strict: (...args: ArgsOf<typeof attribute.u32.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.u32.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	i32: {
+		strict: (...args: ArgsOf<typeof attribute.i32.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.i32.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	u64: {
+		strict: (...args: ArgsOf<typeof attribute.u64.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.u64.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	i64: {
+		strict: (...args: ArgsOf<typeof attribute.i64.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.i64.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	u128: {
+		strict: (...args: ArgsOf<typeof attribute.u128.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.u128.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	i128: {
+		strict: (...args: ArgsOf<typeof attribute.i128.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.i128.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	isize: {
+		strict: (...args: ArgsOf<typeof attribute.isize.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.isize.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	usize: {
+		strict: (...args: ArgsOf<typeof attribute.usize.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.usize.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	f32: {
+		strict: (...args: ArgsOf<typeof attribute.f32.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.f32.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	f64: {
+		strict: (...args: ArgsOf<typeof attribute.f64.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.f64.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	bool: {
+		strict: (...args: ArgsOf<typeof attribute.bool.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.bool.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	str: {
+		strict: (...args: ArgsOf<typeof attribute.str.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.str.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	char: {
+		strict: (...args: ArgsOf<typeof attribute.char.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.char.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
 	metavariable: {
 		strict: (...args: ArgsOf<typeof attribute.metavariable.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
@@ -1990,17 +5030,25 @@ export const innerAttributeItem: typeof B.innerAttributeItem & {
 		strict: (...args: ArgsOf<typeof attribute.crate.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
 		coerce: (...args: ArgsOf<typeof attribute.crate.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
+	identifier: {
+		strict: (...args: ArgsOf<typeof attribute.identifier.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.identifier.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
 	scopedIdentifier: {
 		strict: (...args: ArgsOf<typeof attribute.scopedIdentifier.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
 		coerce: (...args: ArgsOf<typeof attribute.scopedIdentifier.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
-	reservedIdentifier: {
-		strict: (
-			...args: ArgsOf<typeof attribute.reservedIdentifier.strict>
-		) => ReturnType<typeof F.buildInnerAttributeItem>;
-		coerce: (
-			...args: ArgsOf<typeof attribute.reservedIdentifier.coerce>
-		) => ReturnType<typeof F.buildInnerAttributeItem>;
+	default: {
+		strict: (...args: ArgsOf<typeof attribute.default.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.default.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	union: {
+		strict: (...args: ArgsOf<typeof attribute.union.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.union.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
+	};
+	gen: {
+		strict: (...args: ArgsOf<typeof attribute.gen.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.gen.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
 	attributeInput: {
 		strict: (...args: ArgsOf<typeof attribute.input.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
@@ -2024,9 +5072,73 @@ export const innerAttributeItem: typeof B.innerAttributeItem & {
 		strict: innerAttributeItem$self(F.buildInnerAttributeItem, attribute.self.strict),
 		coerce: innerAttributeItem$self(F.buildInnerAttributeItem, attribute.self.coerce)
 	},
-	identifier: {
-		strict: innerAttributeItem$identifier(F.buildInnerAttributeItem, attribute.identifier.strict),
-		coerce: innerAttributeItem$identifier(F.buildInnerAttributeItem, attribute.identifier.coerce)
+	u8: {
+		strict: innerAttributeItem$u8(F.buildInnerAttributeItem, attribute.u8.strict),
+		coerce: innerAttributeItem$u8(F.buildInnerAttributeItem, attribute.u8.coerce)
+	},
+	i8: {
+		strict: innerAttributeItem$i8(F.buildInnerAttributeItem, attribute.i8.strict),
+		coerce: innerAttributeItem$i8(F.buildInnerAttributeItem, attribute.i8.coerce)
+	},
+	u16: {
+		strict: innerAttributeItem$u16(F.buildInnerAttributeItem, attribute.u16.strict),
+		coerce: innerAttributeItem$u16(F.buildInnerAttributeItem, attribute.u16.coerce)
+	},
+	i16: {
+		strict: innerAttributeItem$i16(F.buildInnerAttributeItem, attribute.i16.strict),
+		coerce: innerAttributeItem$i16(F.buildInnerAttributeItem, attribute.i16.coerce)
+	},
+	u32: {
+		strict: innerAttributeItem$u32(F.buildInnerAttributeItem, attribute.u32.strict),
+		coerce: innerAttributeItem$u32(F.buildInnerAttributeItem, attribute.u32.coerce)
+	},
+	i32: {
+		strict: innerAttributeItem$i32(F.buildInnerAttributeItem, attribute.i32.strict),
+		coerce: innerAttributeItem$i32(F.buildInnerAttributeItem, attribute.i32.coerce)
+	},
+	u64: {
+		strict: innerAttributeItem$u64(F.buildInnerAttributeItem, attribute.u64.strict),
+		coerce: innerAttributeItem$u64(F.buildInnerAttributeItem, attribute.u64.coerce)
+	},
+	i64: {
+		strict: innerAttributeItem$i64(F.buildInnerAttributeItem, attribute.i64.strict),
+		coerce: innerAttributeItem$i64(F.buildInnerAttributeItem, attribute.i64.coerce)
+	},
+	u128: {
+		strict: innerAttributeItem$u128(F.buildInnerAttributeItem, attribute.u128.strict),
+		coerce: innerAttributeItem$u128(F.buildInnerAttributeItem, attribute.u128.coerce)
+	},
+	i128: {
+		strict: innerAttributeItem$i128(F.buildInnerAttributeItem, attribute.i128.strict),
+		coerce: innerAttributeItem$i128(F.buildInnerAttributeItem, attribute.i128.coerce)
+	},
+	isize: {
+		strict: innerAttributeItem$isize(F.buildInnerAttributeItem, attribute.isize.strict),
+		coerce: innerAttributeItem$isize(F.buildInnerAttributeItem, attribute.isize.coerce)
+	},
+	usize: {
+		strict: innerAttributeItem$usize(F.buildInnerAttributeItem, attribute.usize.strict),
+		coerce: innerAttributeItem$usize(F.buildInnerAttributeItem, attribute.usize.coerce)
+	},
+	f32: {
+		strict: innerAttributeItem$f32(F.buildInnerAttributeItem, attribute.f32.strict),
+		coerce: innerAttributeItem$f32(F.buildInnerAttributeItem, attribute.f32.coerce)
+	},
+	f64: {
+		strict: innerAttributeItem$f64(F.buildInnerAttributeItem, attribute.f64.strict),
+		coerce: innerAttributeItem$f64(F.buildInnerAttributeItem, attribute.f64.coerce)
+	},
+	bool: {
+		strict: innerAttributeItem$bool(F.buildInnerAttributeItem, attribute.bool.strict),
+		coerce: innerAttributeItem$bool(F.buildInnerAttributeItem, attribute.bool.coerce)
+	},
+	str: {
+		strict: innerAttributeItem$str(F.buildInnerAttributeItem, attribute.str.strict),
+		coerce: innerAttributeItem$str(F.buildInnerAttributeItem, attribute.str.coerce)
+	},
+	char: {
+		strict: innerAttributeItem$char(F.buildInnerAttributeItem, attribute.char.strict),
+		coerce: innerAttributeItem$char(F.buildInnerAttributeItem, attribute.char.coerce)
 	},
 	metavariable: {
 		strict: innerAttributeItem$metavariable(F.buildInnerAttributeItem, attribute.metavariable.strict),
@@ -2040,13 +5152,25 @@ export const innerAttributeItem: typeof B.innerAttributeItem & {
 		strict: innerAttributeItem$crate(F.buildInnerAttributeItem, attribute.crate.strict),
 		coerce: innerAttributeItem$crate(F.buildInnerAttributeItem, attribute.crate.coerce)
 	},
+	identifier: {
+		strict: innerAttributeItem$identifier(F.buildInnerAttributeItem, attribute.identifier.strict),
+		coerce: innerAttributeItem$identifier(F.buildInnerAttributeItem, attribute.identifier.coerce)
+	},
 	scopedIdentifier: {
 		strict: innerAttributeItem$scopedIdentifier(F.buildInnerAttributeItem, attribute.scopedIdentifier.strict),
 		coerce: innerAttributeItem$scopedIdentifier(F.buildInnerAttributeItem, attribute.scopedIdentifier.coerce)
 	},
-	reservedIdentifier: {
-		strict: innerAttributeItem$reservedIdentifier(F.buildInnerAttributeItem, attribute.reservedIdentifier.strict),
-		coerce: innerAttributeItem$reservedIdentifier(F.buildInnerAttributeItem, attribute.reservedIdentifier.coerce)
+	default: {
+		strict: innerAttributeItem$default(F.buildInnerAttributeItem, attribute.default.strict),
+		coerce: innerAttributeItem$default(F.buildInnerAttributeItem, attribute.default.coerce)
+	},
+	union: {
+		strict: innerAttributeItem$union(F.buildInnerAttributeItem, attribute.union.strict),
+		coerce: innerAttributeItem$union(F.buildInnerAttributeItem, attribute.union.coerce)
+	},
+	gen: {
+		strict: innerAttributeItem$gen(F.buildInnerAttributeItem, attribute.gen.strict),
+		coerce: innerAttributeItem$gen(F.buildInnerAttributeItem, attribute.gen.coerce)
 	},
 	attributeInput: {
 		strict: innerAttributeItem$attributeInput(F.buildInnerAttributeItem, attribute.input.strict),
@@ -2300,12 +5424,18 @@ const genericType$typeIdentifier =
 		const { type: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(seated) } as never, options as never);
 	};
-const genericType$reservedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { type: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(seated) } as never, options as never);
-	};
+const genericType$default =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, type: value } as never, options as never);
+const genericType$union =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, type: value } as never, options as never);
+const genericType$gen =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, type: value } as never, options as never);
 const genericType$scopedTypeIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'type'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2332,17 +5462,33 @@ export const genericType: typeof B.genericType & {
 			options?: OptionsArg<typeof C.coerceToGenericType>
 		) => ReturnType<typeof C.coerceToGenericType>;
 	};
-	reservedIdentifier: {
+	default: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildGenericType>[0], 'type'> & {
-				type: ArgsOf<typeof F.buildReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof F.buildGenericType>[0], 'type'>,
 			options?: OptionsArg<typeof F.buildGenericType>
 		) => ReturnType<typeof F.buildGenericType>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToGenericType>[0], 'type'> & {
-				type: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToGenericType>[0], 'type'>,
+			options?: OptionsArg<typeof C.coerceToGenericType>
+		) => ReturnType<typeof C.coerceToGenericType>;
+	};
+	union: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildGenericType>[0], 'type'>,
+			options?: OptionsArg<typeof F.buildGenericType>
+		) => ReturnType<typeof F.buildGenericType>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToGenericType>[0], 'type'>,
+			options?: OptionsArg<typeof C.coerceToGenericType>
+		) => ReturnType<typeof C.coerceToGenericType>;
+	};
+	gen: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildGenericType>[0], 'type'>,
+			options?: OptionsArg<typeof F.buildGenericType>
+		) => ReturnType<typeof F.buildGenericType>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToGenericType>[0], 'type'>,
 			options?: OptionsArg<typeof C.coerceToGenericType>
 		) => ReturnType<typeof C.coerceToGenericType>;
 	};
@@ -2363,9 +5509,17 @@ export const genericType: typeof B.genericType & {
 		strict: genericType$typeIdentifier(F.buildGenericType, F.buildTypeIdentifier),
 		coerce: genericType$typeIdentifier(C.coerceToGenericType, C.coerceToTypeIdentifier)
 	},
-	reservedIdentifier: {
-		strict: genericType$reservedIdentifier(F.buildGenericType, F.buildReservedIdentifier),
-		coerce: genericType$reservedIdentifier(C.coerceToGenericType, C.coerceToReservedIdentifier)
+	default: {
+		strict: genericType$default(F.buildGenericType, TSKindId.DefaultKeyword),
+		coerce: genericType$default(C.coerceToGenericType, TSKindId.DefaultKeyword)
+	},
+	union: {
+		strict: genericType$union(F.buildGenericType, TSKindId.UnionKeyword),
+		coerce: genericType$union(C.coerceToGenericType, TSKindId.UnionKeyword)
+	},
+	gen: {
+		strict: genericType$gen(F.buildGenericType, TSKindId.GenKeyword),
+		coerce: genericType$gen(C.coerceToGenericType, TSKindId.GenKeyword)
 	},
 	scopedTypeIdentifier: {
 		strict: genericType$scopedTypeIdentifier(F.buildGenericType, F.buildScopedTypeIdentifier),
@@ -2377,12 +5531,74 @@ const scopedTypeIdentifier$self =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const scopedTypeIdentifier$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
-	};
+const scopedTypeIdentifier$u8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$i8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$u16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$i16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$u32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$i32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$u64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$i64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$u128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$i128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$isize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$usize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$f32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$f64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$bool =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$str =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$char =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
 const scopedTypeIdentifier$metavariable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2397,18 +5613,30 @@ const scopedTypeIdentifier$crate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
+const scopedTypeIdentifier$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { path: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
+	};
 const scopedTypeIdentifier$scopedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { path: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
 	};
-const scopedTypeIdentifier$reservedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
-	};
+const scopedTypeIdentifier$default =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$union =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifier$gen =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
 const scopedTypeIdentifier$genericTypeWithTurbofish =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2460,17 +5688,173 @@ export const scopedTypeIdentifier: typeof B.scopedTypeIdentifier & {
 			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
 		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
 	};
-	identifier: {
+	u8: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildIdentifier>;
-			},
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
 			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
 		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToIdentifier>;
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	i8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	u16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	i16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	u32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	i32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	u64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	i64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	u128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	i128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	isize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	usize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	f32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	f64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	bool: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	str: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	char: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
 			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
 		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
 	};
@@ -2508,6 +5892,20 @@ export const scopedTypeIdentifier: typeof B.scopedTypeIdentifier & {
 			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
 		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
 	};
+	identifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'> & {
+				path: ArgsOf<typeof F.buildIdentifier>;
+			},
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'> & {
+				path: ArgsOf<typeof C.coerceToIdentifier>;
+			},
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
 	scopedIdentifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'> & {
@@ -2522,17 +5920,33 @@ export const scopedTypeIdentifier: typeof B.scopedTypeIdentifier & {
 			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
 		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
 	};
-	reservedIdentifier: {
+	default: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
 			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
 		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	union: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+	};
+	gen: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
+		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
 			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
 		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
 	};
@@ -2607,9 +6021,73 @@ export const scopedTypeIdentifier: typeof B.scopedTypeIdentifier & {
 		strict: scopedTypeIdentifier$self(F.buildScopedTypeIdentifier, F.buildSelf),
 		coerce: scopedTypeIdentifier$self(C.coerceToScopedTypeIdentifier, C.coerceToSelf)
 	},
-	identifier: {
-		strict: scopedTypeIdentifier$identifier(F.buildScopedTypeIdentifier, F.buildIdentifier),
-		coerce: scopedTypeIdentifier$identifier(C.coerceToScopedTypeIdentifier, C.coerceToIdentifier)
+	u8: {
+		strict: scopedTypeIdentifier$u8(F.buildScopedTypeIdentifier, TSKindId.U8Keyword),
+		coerce: scopedTypeIdentifier$u8(C.coerceToScopedTypeIdentifier, TSKindId.U8Keyword)
+	},
+	i8: {
+		strict: scopedTypeIdentifier$i8(F.buildScopedTypeIdentifier, TSKindId.I8Keyword),
+		coerce: scopedTypeIdentifier$i8(C.coerceToScopedTypeIdentifier, TSKindId.I8Keyword)
+	},
+	u16: {
+		strict: scopedTypeIdentifier$u16(F.buildScopedTypeIdentifier, TSKindId.U16Keyword),
+		coerce: scopedTypeIdentifier$u16(C.coerceToScopedTypeIdentifier, TSKindId.U16Keyword)
+	},
+	i16: {
+		strict: scopedTypeIdentifier$i16(F.buildScopedTypeIdentifier, TSKindId.I16Keyword),
+		coerce: scopedTypeIdentifier$i16(C.coerceToScopedTypeIdentifier, TSKindId.I16Keyword)
+	},
+	u32: {
+		strict: scopedTypeIdentifier$u32(F.buildScopedTypeIdentifier, TSKindId.U32Keyword),
+		coerce: scopedTypeIdentifier$u32(C.coerceToScopedTypeIdentifier, TSKindId.U32Keyword)
+	},
+	i32: {
+		strict: scopedTypeIdentifier$i32(F.buildScopedTypeIdentifier, TSKindId.I32Keyword),
+		coerce: scopedTypeIdentifier$i32(C.coerceToScopedTypeIdentifier, TSKindId.I32Keyword)
+	},
+	u64: {
+		strict: scopedTypeIdentifier$u64(F.buildScopedTypeIdentifier, TSKindId.U64Keyword),
+		coerce: scopedTypeIdentifier$u64(C.coerceToScopedTypeIdentifier, TSKindId.U64Keyword)
+	},
+	i64: {
+		strict: scopedTypeIdentifier$i64(F.buildScopedTypeIdentifier, TSKindId.I64Keyword),
+		coerce: scopedTypeIdentifier$i64(C.coerceToScopedTypeIdentifier, TSKindId.I64Keyword)
+	},
+	u128: {
+		strict: scopedTypeIdentifier$u128(F.buildScopedTypeIdentifier, TSKindId.U128Keyword),
+		coerce: scopedTypeIdentifier$u128(C.coerceToScopedTypeIdentifier, TSKindId.U128Keyword)
+	},
+	i128: {
+		strict: scopedTypeIdentifier$i128(F.buildScopedTypeIdentifier, TSKindId.I128Keyword),
+		coerce: scopedTypeIdentifier$i128(C.coerceToScopedTypeIdentifier, TSKindId.I128Keyword)
+	},
+	isize: {
+		strict: scopedTypeIdentifier$isize(F.buildScopedTypeIdentifier, TSKindId.IsizeKeyword),
+		coerce: scopedTypeIdentifier$isize(C.coerceToScopedTypeIdentifier, TSKindId.IsizeKeyword)
+	},
+	usize: {
+		strict: scopedTypeIdentifier$usize(F.buildScopedTypeIdentifier, TSKindId.UsizeKeyword),
+		coerce: scopedTypeIdentifier$usize(C.coerceToScopedTypeIdentifier, TSKindId.UsizeKeyword)
+	},
+	f32: {
+		strict: scopedTypeIdentifier$f32(F.buildScopedTypeIdentifier, TSKindId.F32Keyword),
+		coerce: scopedTypeIdentifier$f32(C.coerceToScopedTypeIdentifier, TSKindId.F32Keyword)
+	},
+	f64: {
+		strict: scopedTypeIdentifier$f64(F.buildScopedTypeIdentifier, TSKindId.F64Keyword),
+		coerce: scopedTypeIdentifier$f64(C.coerceToScopedTypeIdentifier, TSKindId.F64Keyword)
+	},
+	bool: {
+		strict: scopedTypeIdentifier$bool(F.buildScopedTypeIdentifier, TSKindId.BoolKeyword),
+		coerce: scopedTypeIdentifier$bool(C.coerceToScopedTypeIdentifier, TSKindId.BoolKeyword)
+	},
+	str: {
+		strict: scopedTypeIdentifier$str(F.buildScopedTypeIdentifier, TSKindId.StrKeyword),
+		coerce: scopedTypeIdentifier$str(C.coerceToScopedTypeIdentifier, TSKindId.StrKeyword)
+	},
+	char: {
+		strict: scopedTypeIdentifier$char(F.buildScopedTypeIdentifier, TSKindId.CharKeyword),
+		coerce: scopedTypeIdentifier$char(C.coerceToScopedTypeIdentifier, TSKindId.CharKeyword)
 	},
 	metavariable: {
 		strict: scopedTypeIdentifier$metavariable(F.buildScopedTypeIdentifier, F.buildMetavariable),
@@ -2623,13 +6101,25 @@ export const scopedTypeIdentifier: typeof B.scopedTypeIdentifier & {
 		strict: scopedTypeIdentifier$crate(F.buildScopedTypeIdentifier, F.buildCrate),
 		coerce: scopedTypeIdentifier$crate(C.coerceToScopedTypeIdentifier, C.coerceToCrate)
 	},
+	identifier: {
+		strict: scopedTypeIdentifier$identifier(F.buildScopedTypeIdentifier, F.buildIdentifier),
+		coerce: scopedTypeIdentifier$identifier(C.coerceToScopedTypeIdentifier, C.coerceToIdentifier)
+	},
 	scopedIdentifier: {
 		strict: scopedTypeIdentifier$scopedIdentifier(F.buildScopedTypeIdentifier, F.buildScopedIdentifier),
 		coerce: scopedTypeIdentifier$scopedIdentifier(C.coerceToScopedTypeIdentifier, C.coerceToScopedIdentifier)
 	},
-	reservedIdentifier: {
-		strict: scopedTypeIdentifier$reservedIdentifier(F.buildScopedTypeIdentifier, F.buildReservedIdentifier),
-		coerce: scopedTypeIdentifier$reservedIdentifier(C.coerceToScopedTypeIdentifier, C.coerceToReservedIdentifier)
+	default: {
+		strict: scopedTypeIdentifier$default(F.buildScopedTypeIdentifier, TSKindId.DefaultKeyword),
+		coerce: scopedTypeIdentifier$default(C.coerceToScopedTypeIdentifier, TSKindId.DefaultKeyword)
+	},
+	union: {
+		strict: scopedTypeIdentifier$union(F.buildScopedTypeIdentifier, TSKindId.UnionKeyword),
+		coerce: scopedTypeIdentifier$union(C.coerceToScopedTypeIdentifier, TSKindId.UnionKeyword)
+	},
+	gen: {
+		strict: scopedTypeIdentifier$gen(F.buildScopedTypeIdentifier, TSKindId.GenKeyword),
+		coerce: scopedTypeIdentifier$gen(C.coerceToScopedTypeIdentifier, TSKindId.GenKeyword)
 	},
 	genericTypeWithTurbofish: {
 		strict: scopedTypeIdentifier$genericTypeWithTurbofish(F.buildScopedTypeIdentifier, F.buildGenericTypeWithTurbofish),
@@ -2691,7 +6181,103 @@ const wherePredicate$self =
 		const { left: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
 	};
-const wherePredicate$identifier =
+const wherePredicate$u8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$i8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$u16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$i16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$u32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$i32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$u64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$i64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$u128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$i128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$isize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$usize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$f32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$f64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$bool =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$str =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$char =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
@@ -2715,19 +6301,49 @@ const wherePredicate$crate =
 		const { left: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
 	};
+const wherePredicate$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
 const wherePredicate$scopedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
 	};
-const wherePredicate$scopedTypeIdentifierReservedIdentifier =
+const wherePredicate$scopedTypeIdentifierDefault =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
 	};
-const wherePredicate$genericTypeReservedIdentifier =
+const wherePredicate$genericTypeDefault =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$scopedTypeIdentifierUnion =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$genericTypeUnion =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$scopedTypeIdentifierGen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const wherePredicate$genericTypeGen =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
@@ -2864,16 +6480,240 @@ export const wherePredicate: typeof B.wherePredicate & {
 				options?: OptionsArg<typeof C.coerceToWherePredicate>
 			) => ReturnType<typeof C.coerceToWherePredicate>;
 		};
-		identifier: {
+		u8: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
-					left: ArgsOf<typeof scopedTypeIdentifier.identifier.strict>;
+					left: ArgsOf<typeof scopedTypeIdentifier.u8.strict>;
 				},
 				options?: OptionsArg<typeof F.buildWherePredicate>
 			) => ReturnType<typeof F.buildWherePredicate>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
-					left: ArgsOf<typeof scopedTypeIdentifier.identifier.coerce>;
+					left: ArgsOf<typeof scopedTypeIdentifier.u8.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		i8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.i8.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.i8.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		u16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.u16.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.u16.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		i16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.i16.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.i16.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		u32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.u32.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.u32.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		i32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.i32.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.i32.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		u64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.u64.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.u64.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		i64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.i64.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.i64.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		u128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.u128.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.u128.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		i128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.i128.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.i128.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		isize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.isize.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.isize.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		usize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.usize.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.usize.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		f32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.f32.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.f32.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		f64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.f64.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.f64.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		bool: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.bool.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.bool.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		str: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.str.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.str.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		char: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.char.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.char.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToWherePredicate>
 			) => ReturnType<typeof C.coerceToWherePredicate>;
@@ -2920,6 +6760,20 @@ export const wherePredicate: typeof B.wherePredicate & {
 				options?: OptionsArg<typeof C.coerceToWherePredicate>
 			) => ReturnType<typeof C.coerceToWherePredicate>;
 		};
+		identifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.identifier.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.identifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
 		scopedIdentifier: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
@@ -2934,16 +6788,44 @@ export const wherePredicate: typeof B.wherePredicate & {
 				options?: OptionsArg<typeof C.coerceToWherePredicate>
 			) => ReturnType<typeof C.coerceToWherePredicate>;
 		};
-		reservedIdentifier: {
+		default: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
-					left: ArgsOf<typeof scopedTypeIdentifier.reservedIdentifier.strict>;
+					left: ArgsOf<typeof scopedTypeIdentifier.default.strict>;
 				},
 				options?: OptionsArg<typeof F.buildWherePredicate>
 			) => ReturnType<typeof F.buildWherePredicate>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
-					left: ArgsOf<typeof scopedTypeIdentifier.reservedIdentifier.coerce>;
+					left: ArgsOf<typeof scopedTypeIdentifier.default.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		union: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.union.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.union.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		gen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.gen.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof scopedTypeIdentifier.gen.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToWherePredicate>
 			) => ReturnType<typeof C.coerceToWherePredicate>;
@@ -3000,16 +6882,44 @@ export const wherePredicate: typeof B.wherePredicate & {
 			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & ArgsOf<typeof C.coerceToGenericType>[0],
 			options?: OptionsArg<typeof C.coerceToWherePredicate>
 		) => ReturnType<typeof C.coerceToWherePredicate>;
-		reservedIdentifier: {
+		default: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
-					left: ArgsOf<typeof genericType.reservedIdentifier.strict>;
+					left: ArgsOf<typeof genericType.default.strict>;
 				},
 				options?: OptionsArg<typeof F.buildWherePredicate>
 			) => ReturnType<typeof F.buildWherePredicate>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
-					left: ArgsOf<typeof genericType.reservedIdentifier.coerce>;
+					left: ArgsOf<typeof genericType.default.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		union: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof genericType.union.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof genericType.union.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToWherePredicate>
+			) => ReturnType<typeof C.coerceToWherePredicate>;
+		};
+		gen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof genericType.gen.strict>;
+				},
+				options?: OptionsArg<typeof F.buildWherePredicate>
+			) => ReturnType<typeof F.buildWherePredicate>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
+					left: ArgsOf<typeof genericType.gen.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToWherePredicate>
 			) => ReturnType<typeof C.coerceToWherePredicate>;
@@ -3104,9 +7014,73 @@ export const wherePredicate: typeof B.wherePredicate & {
 			strict: wherePredicate$self(F.buildWherePredicate, scopedTypeIdentifier.self.strict),
 			coerce: wherePredicate$self(C.coerceToWherePredicate, scopedTypeIdentifier.self.coerce)
 		},
-		identifier: {
-			strict: wherePredicate$identifier(F.buildWherePredicate, scopedTypeIdentifier.identifier.strict),
-			coerce: wherePredicate$identifier(C.coerceToWherePredicate, scopedTypeIdentifier.identifier.coerce)
+		u8: {
+			strict: wherePredicate$u8(F.buildWherePredicate, scopedTypeIdentifier.u8.strict),
+			coerce: wherePredicate$u8(C.coerceToWherePredicate, scopedTypeIdentifier.u8.coerce)
+		},
+		i8: {
+			strict: wherePredicate$i8(F.buildWherePredicate, scopedTypeIdentifier.i8.strict),
+			coerce: wherePredicate$i8(C.coerceToWherePredicate, scopedTypeIdentifier.i8.coerce)
+		},
+		u16: {
+			strict: wherePredicate$u16(F.buildWherePredicate, scopedTypeIdentifier.u16.strict),
+			coerce: wherePredicate$u16(C.coerceToWherePredicate, scopedTypeIdentifier.u16.coerce)
+		},
+		i16: {
+			strict: wherePredicate$i16(F.buildWherePredicate, scopedTypeIdentifier.i16.strict),
+			coerce: wherePredicate$i16(C.coerceToWherePredicate, scopedTypeIdentifier.i16.coerce)
+		},
+		u32: {
+			strict: wherePredicate$u32(F.buildWherePredicate, scopedTypeIdentifier.u32.strict),
+			coerce: wherePredicate$u32(C.coerceToWherePredicate, scopedTypeIdentifier.u32.coerce)
+		},
+		i32: {
+			strict: wherePredicate$i32(F.buildWherePredicate, scopedTypeIdentifier.i32.strict),
+			coerce: wherePredicate$i32(C.coerceToWherePredicate, scopedTypeIdentifier.i32.coerce)
+		},
+		u64: {
+			strict: wherePredicate$u64(F.buildWherePredicate, scopedTypeIdentifier.u64.strict),
+			coerce: wherePredicate$u64(C.coerceToWherePredicate, scopedTypeIdentifier.u64.coerce)
+		},
+		i64: {
+			strict: wherePredicate$i64(F.buildWherePredicate, scopedTypeIdentifier.i64.strict),
+			coerce: wherePredicate$i64(C.coerceToWherePredicate, scopedTypeIdentifier.i64.coerce)
+		},
+		u128: {
+			strict: wherePredicate$u128(F.buildWherePredicate, scopedTypeIdentifier.u128.strict),
+			coerce: wherePredicate$u128(C.coerceToWherePredicate, scopedTypeIdentifier.u128.coerce)
+		},
+		i128: {
+			strict: wherePredicate$i128(F.buildWherePredicate, scopedTypeIdentifier.i128.strict),
+			coerce: wherePredicate$i128(C.coerceToWherePredicate, scopedTypeIdentifier.i128.coerce)
+		},
+		isize: {
+			strict: wherePredicate$isize(F.buildWherePredicate, scopedTypeIdentifier.isize.strict),
+			coerce: wherePredicate$isize(C.coerceToWherePredicate, scopedTypeIdentifier.isize.coerce)
+		},
+		usize: {
+			strict: wherePredicate$usize(F.buildWherePredicate, scopedTypeIdentifier.usize.strict),
+			coerce: wherePredicate$usize(C.coerceToWherePredicate, scopedTypeIdentifier.usize.coerce)
+		},
+		f32: {
+			strict: wherePredicate$f32(F.buildWherePredicate, scopedTypeIdentifier.f32.strict),
+			coerce: wherePredicate$f32(C.coerceToWherePredicate, scopedTypeIdentifier.f32.coerce)
+		},
+		f64: {
+			strict: wherePredicate$f64(F.buildWherePredicate, scopedTypeIdentifier.f64.strict),
+			coerce: wherePredicate$f64(C.coerceToWherePredicate, scopedTypeIdentifier.f64.coerce)
+		},
+		bool: {
+			strict: wherePredicate$bool(F.buildWherePredicate, scopedTypeIdentifier.bool.strict),
+			coerce: wherePredicate$bool(C.coerceToWherePredicate, scopedTypeIdentifier.bool.coerce)
+		},
+		str: {
+			strict: wherePredicate$str(F.buildWherePredicate, scopedTypeIdentifier.str.strict),
+			coerce: wherePredicate$str(C.coerceToWherePredicate, scopedTypeIdentifier.str.coerce)
+		},
+		char: {
+			strict: wherePredicate$char(F.buildWherePredicate, scopedTypeIdentifier.char.strict),
+			coerce: wherePredicate$char(C.coerceToWherePredicate, scopedTypeIdentifier.char.coerce)
 		},
 		metavariable: {
 			strict: wherePredicate$metavariable(F.buildWherePredicate, scopedTypeIdentifier.metavariable.strict),
@@ -3120,19 +7094,25 @@ export const wherePredicate: typeof B.wherePredicate & {
 			strict: wherePredicate$crate(F.buildWherePredicate, scopedTypeIdentifier.crate.strict),
 			coerce: wherePredicate$crate(C.coerceToWherePredicate, scopedTypeIdentifier.crate.coerce)
 		},
+		identifier: {
+			strict: wherePredicate$identifier(F.buildWherePredicate, scopedTypeIdentifier.identifier.strict),
+			coerce: wherePredicate$identifier(C.coerceToWherePredicate, scopedTypeIdentifier.identifier.coerce)
+		},
 		scopedIdentifier: {
 			strict: wherePredicate$scopedIdentifier(F.buildWherePredicate, scopedTypeIdentifier.scopedIdentifier.strict),
 			coerce: wherePredicate$scopedIdentifier(C.coerceToWherePredicate, scopedTypeIdentifier.scopedIdentifier.coerce)
 		},
-		reservedIdentifier: {
-			strict: wherePredicate$scopedTypeIdentifierReservedIdentifier(
-				F.buildWherePredicate,
-				scopedTypeIdentifier.reservedIdentifier.strict
-			),
-			coerce: wherePredicate$scopedTypeIdentifierReservedIdentifier(
-				C.coerceToWherePredicate,
-				scopedTypeIdentifier.reservedIdentifier.coerce
-			)
+		default: {
+			strict: wherePredicate$scopedTypeIdentifierDefault(F.buildWherePredicate, scopedTypeIdentifier.default.strict),
+			coerce: wherePredicate$scopedTypeIdentifierDefault(C.coerceToWherePredicate, scopedTypeIdentifier.default.coerce)
+		},
+		union: {
+			strict: wherePredicate$scopedTypeIdentifierUnion(F.buildWherePredicate, scopedTypeIdentifier.union.strict),
+			coerce: wherePredicate$scopedTypeIdentifierUnion(C.coerceToWherePredicate, scopedTypeIdentifier.union.coerce)
+		},
+		gen: {
+			strict: wherePredicate$scopedTypeIdentifierGen(F.buildWherePredicate, scopedTypeIdentifier.gen.strict),
+			coerce: wherePredicate$scopedTypeIdentifierGen(C.coerceToWherePredicate, scopedTypeIdentifier.gen.coerce)
 		},
 		genericTypeWithTurbofish: {
 			strict: wherePredicate$genericTypeWithTurbofish(
@@ -3162,15 +7142,17 @@ export const wherePredicate: typeof B.wherePredicate & {
 	genericType: {
 		strict: wherePredicate$genericType(F.buildWherePredicate, F.buildGenericType),
 		coerce: wherePredicate$genericType(C.coerceToWherePredicate, C.coerceToGenericType),
-		reservedIdentifier: {
-			strict: wherePredicate$genericTypeReservedIdentifier(
-				F.buildWherePredicate,
-				genericType.reservedIdentifier.strict
-			),
-			coerce: wherePredicate$genericTypeReservedIdentifier(
-				C.coerceToWherePredicate,
-				genericType.reservedIdentifier.coerce
-			)
+		default: {
+			strict: wherePredicate$genericTypeDefault(F.buildWherePredicate, genericType.default.strict),
+			coerce: wherePredicate$genericTypeDefault(C.coerceToWherePredicate, genericType.default.coerce)
+		},
+		union: {
+			strict: wherePredicate$genericTypeUnion(F.buildWherePredicate, genericType.union.strict),
+			coerce: wherePredicate$genericTypeUnion(C.coerceToWherePredicate, genericType.union.coerce)
+		},
+		gen: {
+			strict: wherePredicate$genericTypeGen(F.buildWherePredicate, genericType.gen.strict),
+			coerce: wherePredicate$genericTypeGen(C.coerceToWherePredicate, genericType.gen.coerce)
 		}
 	},
 	referenceType: {
@@ -5160,12 +9142,74 @@ const useAsClause$self =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const useAsClause$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
-	};
+const useAsClause$u8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$i8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$u16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$i16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$u32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$i32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$u64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$i64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$u128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$i128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$isize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$usize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$f32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$f64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$bool =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$str =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$char =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
 const useAsClause$metavariable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -5180,6 +9224,12 @@ const useAsClause$crate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
+const useAsClause$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { path: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
+	};
 const useAsClause$scopedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -5191,12 +9241,18 @@ const useAsClause$scopedIdentifier =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) } as never, options as never);
 	};
-const useAsClause$reservedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
-	};
+const useAsClause$default =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$union =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const useAsClause$gen =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
 export const useAsClause: typeof B.useAsClause & {
 	self: {
 		strict: (
@@ -5208,13 +9264,173 @@ export const useAsClause: typeof B.useAsClause & {
 			options?: OptionsArg<typeof C.coerceToUseAsClause>
 		) => ReturnType<typeof C.coerceToUseAsClause>;
 	};
-	identifier: {
+	u8: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'> & { path: ArgsOf<typeof F.buildIdentifier> },
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
 			options?: OptionsArg<typeof F.buildUseAsClause>
 		) => ReturnType<typeof F.buildUseAsClause>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'> & { path: ArgsOf<typeof C.coerceToIdentifier> },
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	i8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	u16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	i16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	u32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	i32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	u64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	i64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	u128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	i128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	isize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	usize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	f32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	f64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	bool: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	str: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	char: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
 			options?: OptionsArg<typeof C.coerceToUseAsClause>
 		) => ReturnType<typeof C.coerceToUseAsClause>;
 	};
@@ -5250,6 +9466,16 @@ export const useAsClause: typeof B.useAsClause & {
 			options?: OptionsArg<typeof C.coerceToUseAsClause>
 		) => ReturnType<typeof C.coerceToUseAsClause>;
 	};
+	identifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'> & { path: ArgsOf<typeof F.buildIdentifier> },
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'> & { path: ArgsOf<typeof C.coerceToIdentifier> },
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
 	scopedIdentifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'> & ArgsOf<typeof F.buildScopedIdentifier>[0],
@@ -5260,17 +9486,33 @@ export const useAsClause: typeof B.useAsClause & {
 			options?: OptionsArg<typeof C.coerceToUseAsClause>
 		) => ReturnType<typeof C.coerceToUseAsClause>;
 	};
-	reservedIdentifier: {
+	default: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
 			options?: OptionsArg<typeof F.buildUseAsClause>
 		) => ReturnType<typeof F.buildUseAsClause>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	union: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToUseAsClause>
+		) => ReturnType<typeof C.coerceToUseAsClause>;
+	};
+	gen: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildUseAsClause>
+		) => ReturnType<typeof F.buildUseAsClause>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
 			options?: OptionsArg<typeof C.coerceToUseAsClause>
 		) => ReturnType<typeof C.coerceToUseAsClause>;
 	};
@@ -5280,9 +9522,73 @@ export const useAsClause: typeof B.useAsClause & {
 		strict: useAsClause$self(F.buildUseAsClause, F.buildSelf),
 		coerce: useAsClause$self(C.coerceToUseAsClause, C.coerceToSelf)
 	},
-	identifier: {
-		strict: useAsClause$identifier(F.buildUseAsClause, F.buildIdentifier),
-		coerce: useAsClause$identifier(C.coerceToUseAsClause, C.coerceToIdentifier)
+	u8: {
+		strict: useAsClause$u8(F.buildUseAsClause, TSKindId.U8Keyword),
+		coerce: useAsClause$u8(C.coerceToUseAsClause, TSKindId.U8Keyword)
+	},
+	i8: {
+		strict: useAsClause$i8(F.buildUseAsClause, TSKindId.I8Keyword),
+		coerce: useAsClause$i8(C.coerceToUseAsClause, TSKindId.I8Keyword)
+	},
+	u16: {
+		strict: useAsClause$u16(F.buildUseAsClause, TSKindId.U16Keyword),
+		coerce: useAsClause$u16(C.coerceToUseAsClause, TSKindId.U16Keyword)
+	},
+	i16: {
+		strict: useAsClause$i16(F.buildUseAsClause, TSKindId.I16Keyword),
+		coerce: useAsClause$i16(C.coerceToUseAsClause, TSKindId.I16Keyword)
+	},
+	u32: {
+		strict: useAsClause$u32(F.buildUseAsClause, TSKindId.U32Keyword),
+		coerce: useAsClause$u32(C.coerceToUseAsClause, TSKindId.U32Keyword)
+	},
+	i32: {
+		strict: useAsClause$i32(F.buildUseAsClause, TSKindId.I32Keyword),
+		coerce: useAsClause$i32(C.coerceToUseAsClause, TSKindId.I32Keyword)
+	},
+	u64: {
+		strict: useAsClause$u64(F.buildUseAsClause, TSKindId.U64Keyword),
+		coerce: useAsClause$u64(C.coerceToUseAsClause, TSKindId.U64Keyword)
+	},
+	i64: {
+		strict: useAsClause$i64(F.buildUseAsClause, TSKindId.I64Keyword),
+		coerce: useAsClause$i64(C.coerceToUseAsClause, TSKindId.I64Keyword)
+	},
+	u128: {
+		strict: useAsClause$u128(F.buildUseAsClause, TSKindId.U128Keyword),
+		coerce: useAsClause$u128(C.coerceToUseAsClause, TSKindId.U128Keyword)
+	},
+	i128: {
+		strict: useAsClause$i128(F.buildUseAsClause, TSKindId.I128Keyword),
+		coerce: useAsClause$i128(C.coerceToUseAsClause, TSKindId.I128Keyword)
+	},
+	isize: {
+		strict: useAsClause$isize(F.buildUseAsClause, TSKindId.IsizeKeyword),
+		coerce: useAsClause$isize(C.coerceToUseAsClause, TSKindId.IsizeKeyword)
+	},
+	usize: {
+		strict: useAsClause$usize(F.buildUseAsClause, TSKindId.UsizeKeyword),
+		coerce: useAsClause$usize(C.coerceToUseAsClause, TSKindId.UsizeKeyword)
+	},
+	f32: {
+		strict: useAsClause$f32(F.buildUseAsClause, TSKindId.F32Keyword),
+		coerce: useAsClause$f32(C.coerceToUseAsClause, TSKindId.F32Keyword)
+	},
+	f64: {
+		strict: useAsClause$f64(F.buildUseAsClause, TSKindId.F64Keyword),
+		coerce: useAsClause$f64(C.coerceToUseAsClause, TSKindId.F64Keyword)
+	},
+	bool: {
+		strict: useAsClause$bool(F.buildUseAsClause, TSKindId.BoolKeyword),
+		coerce: useAsClause$bool(C.coerceToUseAsClause, TSKindId.BoolKeyword)
+	},
+	str: {
+		strict: useAsClause$str(F.buildUseAsClause, TSKindId.StrKeyword),
+		coerce: useAsClause$str(C.coerceToUseAsClause, TSKindId.StrKeyword)
+	},
+	char: {
+		strict: useAsClause$char(F.buildUseAsClause, TSKindId.CharKeyword),
+		coerce: useAsClause$char(C.coerceToUseAsClause, TSKindId.CharKeyword)
 	},
 	metavariable: {
 		strict: useAsClause$metavariable(F.buildUseAsClause, F.buildMetavariable),
@@ -5296,13 +9602,25 @@ export const useAsClause: typeof B.useAsClause & {
 		strict: useAsClause$crate(F.buildUseAsClause, F.buildCrate),
 		coerce: useAsClause$crate(C.coerceToUseAsClause, C.coerceToCrate)
 	},
+	identifier: {
+		strict: useAsClause$identifier(F.buildUseAsClause, F.buildIdentifier),
+		coerce: useAsClause$identifier(C.coerceToUseAsClause, C.coerceToIdentifier)
+	},
 	scopedIdentifier: {
 		strict: useAsClause$scopedIdentifier(F.buildUseAsClause, F.buildScopedIdentifier),
 		coerce: useAsClause$scopedIdentifier(C.coerceToUseAsClause, C.coerceToScopedIdentifier)
 	},
-	reservedIdentifier: {
-		strict: useAsClause$reservedIdentifier(F.buildUseAsClause, F.buildReservedIdentifier),
-		coerce: useAsClause$reservedIdentifier(C.coerceToUseAsClause, C.coerceToReservedIdentifier)
+	default: {
+		strict: useAsClause$default(F.buildUseAsClause, TSKindId.DefaultKeyword),
+		coerce: useAsClause$default(C.coerceToUseAsClause, TSKindId.DefaultKeyword)
+	},
+	union: {
+		strict: useAsClause$union(F.buildUseAsClause, TSKindId.UnionKeyword),
+		coerce: useAsClause$union(C.coerceToUseAsClause, TSKindId.UnionKeyword)
+	},
+	gen: {
+		strict: useAsClause$gen(F.buildUseAsClause, TSKindId.GenKeyword),
+		coerce: useAsClause$gen(C.coerceToUseAsClause, TSKindId.GenKeyword)
 	}
 };
 
@@ -5310,12 +9628,74 @@ const scopedUseList$self =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const scopedUseList$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
-	};
+const scopedUseList$u8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$i8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$u16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$i16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$u32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$i32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$u64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$i64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$u128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$i128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$isize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$usize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$f32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$f64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$bool =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$str =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$char =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
 const scopedUseList$metavariable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -5330,6 +9710,12 @@ const scopedUseList$crate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
+const scopedUseList$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { path: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
+	};
 const scopedUseList$scopedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -5341,12 +9727,18 @@ const scopedUseList$scopedIdentifier =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) } as never, options as never);
 	};
-const scopedUseList$reservedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
-	};
+const scopedUseList$default =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$union =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedUseList$gen =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
 export const scopedUseList: typeof B.scopedUseList & {
 	self: {
 		strict: (
@@ -5358,15 +9750,173 @@ export const scopedUseList: typeof B.scopedUseList & {
 			options?: OptionsArg<typeof C.coerceToScopedUseList>
 		) => ReturnType<typeof C.coerceToScopedUseList>;
 	};
-	identifier: {
+	u8: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'> & { path: ArgsOf<typeof F.buildIdentifier> },
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
 			options?: OptionsArg<typeof F.buildScopedUseList>
 		) => ReturnType<typeof F.buildScopedUseList>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToIdentifier>;
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	i8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	u16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	i16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	u32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	i32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	u64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	i64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	u128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	i128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	isize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	usize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	f32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	f64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	bool: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	str: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	char: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
 			options?: OptionsArg<typeof C.coerceToScopedUseList>
 		) => ReturnType<typeof C.coerceToScopedUseList>;
 	};
@@ -5404,6 +9954,18 @@ export const scopedUseList: typeof B.scopedUseList & {
 			options?: OptionsArg<typeof C.coerceToScopedUseList>
 		) => ReturnType<typeof C.coerceToScopedUseList>;
 	};
+	identifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'> & { path: ArgsOf<typeof F.buildIdentifier> },
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'> & {
+				path: ArgsOf<typeof C.coerceToIdentifier>;
+			},
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
 	scopedIdentifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'> & ArgsOf<typeof F.buildScopedIdentifier>[0],
@@ -5415,17 +9977,33 @@ export const scopedUseList: typeof B.scopedUseList & {
 			options?: OptionsArg<typeof C.coerceToScopedUseList>
 		) => ReturnType<typeof C.coerceToScopedUseList>;
 	};
-	reservedIdentifier: {
+	default: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
 			options?: OptionsArg<typeof F.buildScopedUseList>
 		) => ReturnType<typeof F.buildScopedUseList>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	union: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedUseList>
+		) => ReturnType<typeof C.coerceToScopedUseList>;
+	};
+	gen: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedUseList>
+		) => ReturnType<typeof F.buildScopedUseList>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
 			options?: OptionsArg<typeof C.coerceToScopedUseList>
 		) => ReturnType<typeof C.coerceToScopedUseList>;
 	};
@@ -5435,9 +10013,73 @@ export const scopedUseList: typeof B.scopedUseList & {
 		strict: scopedUseList$self(F.buildScopedUseList, F.buildSelf),
 		coerce: scopedUseList$self(C.coerceToScopedUseList, C.coerceToSelf)
 	},
-	identifier: {
-		strict: scopedUseList$identifier(F.buildScopedUseList, F.buildIdentifier),
-		coerce: scopedUseList$identifier(C.coerceToScopedUseList, C.coerceToIdentifier)
+	u8: {
+		strict: scopedUseList$u8(F.buildScopedUseList, TSKindId.U8Keyword),
+		coerce: scopedUseList$u8(C.coerceToScopedUseList, TSKindId.U8Keyword)
+	},
+	i8: {
+		strict: scopedUseList$i8(F.buildScopedUseList, TSKindId.I8Keyword),
+		coerce: scopedUseList$i8(C.coerceToScopedUseList, TSKindId.I8Keyword)
+	},
+	u16: {
+		strict: scopedUseList$u16(F.buildScopedUseList, TSKindId.U16Keyword),
+		coerce: scopedUseList$u16(C.coerceToScopedUseList, TSKindId.U16Keyword)
+	},
+	i16: {
+		strict: scopedUseList$i16(F.buildScopedUseList, TSKindId.I16Keyword),
+		coerce: scopedUseList$i16(C.coerceToScopedUseList, TSKindId.I16Keyword)
+	},
+	u32: {
+		strict: scopedUseList$u32(F.buildScopedUseList, TSKindId.U32Keyword),
+		coerce: scopedUseList$u32(C.coerceToScopedUseList, TSKindId.U32Keyword)
+	},
+	i32: {
+		strict: scopedUseList$i32(F.buildScopedUseList, TSKindId.I32Keyword),
+		coerce: scopedUseList$i32(C.coerceToScopedUseList, TSKindId.I32Keyword)
+	},
+	u64: {
+		strict: scopedUseList$u64(F.buildScopedUseList, TSKindId.U64Keyword),
+		coerce: scopedUseList$u64(C.coerceToScopedUseList, TSKindId.U64Keyword)
+	},
+	i64: {
+		strict: scopedUseList$i64(F.buildScopedUseList, TSKindId.I64Keyword),
+		coerce: scopedUseList$i64(C.coerceToScopedUseList, TSKindId.I64Keyword)
+	},
+	u128: {
+		strict: scopedUseList$u128(F.buildScopedUseList, TSKindId.U128Keyword),
+		coerce: scopedUseList$u128(C.coerceToScopedUseList, TSKindId.U128Keyword)
+	},
+	i128: {
+		strict: scopedUseList$i128(F.buildScopedUseList, TSKindId.I128Keyword),
+		coerce: scopedUseList$i128(C.coerceToScopedUseList, TSKindId.I128Keyword)
+	},
+	isize: {
+		strict: scopedUseList$isize(F.buildScopedUseList, TSKindId.IsizeKeyword),
+		coerce: scopedUseList$isize(C.coerceToScopedUseList, TSKindId.IsizeKeyword)
+	},
+	usize: {
+		strict: scopedUseList$usize(F.buildScopedUseList, TSKindId.UsizeKeyword),
+		coerce: scopedUseList$usize(C.coerceToScopedUseList, TSKindId.UsizeKeyword)
+	},
+	f32: {
+		strict: scopedUseList$f32(F.buildScopedUseList, TSKindId.F32Keyword),
+		coerce: scopedUseList$f32(C.coerceToScopedUseList, TSKindId.F32Keyword)
+	},
+	f64: {
+		strict: scopedUseList$f64(F.buildScopedUseList, TSKindId.F64Keyword),
+		coerce: scopedUseList$f64(C.coerceToScopedUseList, TSKindId.F64Keyword)
+	},
+	bool: {
+		strict: scopedUseList$bool(F.buildScopedUseList, TSKindId.BoolKeyword),
+		coerce: scopedUseList$bool(C.coerceToScopedUseList, TSKindId.BoolKeyword)
+	},
+	str: {
+		strict: scopedUseList$str(F.buildScopedUseList, TSKindId.StrKeyword),
+		coerce: scopedUseList$str(C.coerceToScopedUseList, TSKindId.StrKeyword)
+	},
+	char: {
+		strict: scopedUseList$char(F.buildScopedUseList, TSKindId.CharKeyword),
+		coerce: scopedUseList$char(C.coerceToScopedUseList, TSKindId.CharKeyword)
 	},
 	metavariable: {
 		strict: scopedUseList$metavariable(F.buildScopedUseList, F.buildMetavariable),
@@ -5451,13 +10093,25 @@ export const scopedUseList: typeof B.scopedUseList & {
 		strict: scopedUseList$crate(F.buildScopedUseList, F.buildCrate),
 		coerce: scopedUseList$crate(C.coerceToScopedUseList, C.coerceToCrate)
 	},
+	identifier: {
+		strict: scopedUseList$identifier(F.buildScopedUseList, F.buildIdentifier),
+		coerce: scopedUseList$identifier(C.coerceToScopedUseList, C.coerceToIdentifier)
+	},
 	scopedIdentifier: {
 		strict: scopedUseList$scopedIdentifier(F.buildScopedUseList, F.buildScopedIdentifier),
 		coerce: scopedUseList$scopedIdentifier(C.coerceToScopedUseList, C.coerceToScopedIdentifier)
 	},
-	reservedIdentifier: {
-		strict: scopedUseList$reservedIdentifier(F.buildScopedUseList, F.buildReservedIdentifier),
-		coerce: scopedUseList$reservedIdentifier(C.coerceToScopedUseList, C.coerceToReservedIdentifier)
+	default: {
+		strict: scopedUseList$default(F.buildScopedUseList, TSKindId.DefaultKeyword),
+		coerce: scopedUseList$default(C.coerceToScopedUseList, TSKindId.DefaultKeyword)
+	},
+	union: {
+		strict: scopedUseList$union(F.buildScopedUseList, TSKindId.UnionKeyword),
+		coerce: scopedUseList$union(C.coerceToScopedUseList, TSKindId.UnionKeyword)
+	},
+	gen: {
+		strict: scopedUseList$gen(F.buildScopedUseList, TSKindId.GenKeyword),
+		coerce: scopedUseList$gen(C.coerceToScopedUseList, TSKindId.GenKeyword)
 	}
 };
 
@@ -5465,10 +10119,74 @@ const useWildcardGroup$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const useWildcardGroup$identifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcardGroup$u8 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$i8 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$u16 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$i16 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$u32 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$i32 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$u64 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$i64 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$u128 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$i128 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$isize =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$usize =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$f32 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$f64 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$bool =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$str =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$char =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
 const useWildcardGroup$metavariable =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -5481,22 +10199,98 @@ const useWildcardGroup$crate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcardGroup$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const useWildcardGroup$scopedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const useWildcardGroup$reservedIdentifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcardGroup$default =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$union =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const useWildcardGroup$gen =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
 export const useWildcardGroup: typeof B.useWildcardGroup & {
 	self: {
 		strict: (...args: ArgsOf<typeof F.buildSelf>) => ReturnType<typeof F.buildUseWildcardGroup>;
 		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof F.buildUseWildcardGroup>;
 	};
-	identifier: {
-		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
+	u8: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	i8: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	u16: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	i16: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	u32: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	i32: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	u64: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	i64: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	u128: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	i128: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	isize: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	usize: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	f32: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	f64: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	bool: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	str: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	char: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
 	};
 	metavariable: {
 		strict: (...args: ArgsOf<typeof F.buildMetavariable>) => ReturnType<typeof F.buildUseWildcardGroup>;
@@ -5510,13 +10304,25 @@ export const useWildcardGroup: typeof B.useWildcardGroup & {
 		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildUseWildcardGroup>;
 		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof F.buildUseWildcardGroup>;
 	};
+	identifier: {
+		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
+	};
 	scopedIdentifier: {
 		strict: (...args: ArgsOf<typeof F.buildScopedIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
 		coerce: (...args: ArgsOf<typeof C.coerceToScopedIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
 	};
-	reservedIdentifier: {
-		strict: (...args: ArgsOf<typeof F.buildReservedIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToReservedIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
+	default: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	union: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	gen: {
+		strict: (options?: OptionsArg<typeof F.buildUseWildcardGroup>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (options?: OptionsArg<typeof C.coerceToUseWildcardGroup>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
 	};
 } = {
 	...B.useWildcardGroup,
@@ -5524,9 +10330,73 @@ export const useWildcardGroup: typeof B.useWildcardGroup & {
 		strict: useWildcardGroup$self(F.buildUseWildcardGroup, F.buildSelf),
 		coerce: useWildcardGroup$self(F.buildUseWildcardGroup, C.coerceToSelf)
 	},
-	identifier: {
-		strict: useWildcardGroup$identifier(F.buildUseWildcardGroup, F.buildIdentifier),
-		coerce: useWildcardGroup$identifier(F.buildUseWildcardGroup, C.coerceToIdentifier)
+	u8: {
+		strict: useWildcardGroup$u8(F.buildUseWildcardGroup, TSKindId.U8Keyword),
+		coerce: useWildcardGroup$u8(C.coerceToUseWildcardGroup, TSKindId.U8Keyword)
+	},
+	i8: {
+		strict: useWildcardGroup$i8(F.buildUseWildcardGroup, TSKindId.I8Keyword),
+		coerce: useWildcardGroup$i8(C.coerceToUseWildcardGroup, TSKindId.I8Keyword)
+	},
+	u16: {
+		strict: useWildcardGroup$u16(F.buildUseWildcardGroup, TSKindId.U16Keyword),
+		coerce: useWildcardGroup$u16(C.coerceToUseWildcardGroup, TSKindId.U16Keyword)
+	},
+	i16: {
+		strict: useWildcardGroup$i16(F.buildUseWildcardGroup, TSKindId.I16Keyword),
+		coerce: useWildcardGroup$i16(C.coerceToUseWildcardGroup, TSKindId.I16Keyword)
+	},
+	u32: {
+		strict: useWildcardGroup$u32(F.buildUseWildcardGroup, TSKindId.U32Keyword),
+		coerce: useWildcardGroup$u32(C.coerceToUseWildcardGroup, TSKindId.U32Keyword)
+	},
+	i32: {
+		strict: useWildcardGroup$i32(F.buildUseWildcardGroup, TSKindId.I32Keyword),
+		coerce: useWildcardGroup$i32(C.coerceToUseWildcardGroup, TSKindId.I32Keyword)
+	},
+	u64: {
+		strict: useWildcardGroup$u64(F.buildUseWildcardGroup, TSKindId.U64Keyword),
+		coerce: useWildcardGroup$u64(C.coerceToUseWildcardGroup, TSKindId.U64Keyword)
+	},
+	i64: {
+		strict: useWildcardGroup$i64(F.buildUseWildcardGroup, TSKindId.I64Keyword),
+		coerce: useWildcardGroup$i64(C.coerceToUseWildcardGroup, TSKindId.I64Keyword)
+	},
+	u128: {
+		strict: useWildcardGroup$u128(F.buildUseWildcardGroup, TSKindId.U128Keyword),
+		coerce: useWildcardGroup$u128(C.coerceToUseWildcardGroup, TSKindId.U128Keyword)
+	},
+	i128: {
+		strict: useWildcardGroup$i128(F.buildUseWildcardGroup, TSKindId.I128Keyword),
+		coerce: useWildcardGroup$i128(C.coerceToUseWildcardGroup, TSKindId.I128Keyword)
+	},
+	isize: {
+		strict: useWildcardGroup$isize(F.buildUseWildcardGroup, TSKindId.IsizeKeyword),
+		coerce: useWildcardGroup$isize(C.coerceToUseWildcardGroup, TSKindId.IsizeKeyword)
+	},
+	usize: {
+		strict: useWildcardGroup$usize(F.buildUseWildcardGroup, TSKindId.UsizeKeyword),
+		coerce: useWildcardGroup$usize(C.coerceToUseWildcardGroup, TSKindId.UsizeKeyword)
+	},
+	f32: {
+		strict: useWildcardGroup$f32(F.buildUseWildcardGroup, TSKindId.F32Keyword),
+		coerce: useWildcardGroup$f32(C.coerceToUseWildcardGroup, TSKindId.F32Keyword)
+	},
+	f64: {
+		strict: useWildcardGroup$f64(F.buildUseWildcardGroup, TSKindId.F64Keyword),
+		coerce: useWildcardGroup$f64(C.coerceToUseWildcardGroup, TSKindId.F64Keyword)
+	},
+	bool: {
+		strict: useWildcardGroup$bool(F.buildUseWildcardGroup, TSKindId.BoolKeyword),
+		coerce: useWildcardGroup$bool(C.coerceToUseWildcardGroup, TSKindId.BoolKeyword)
+	},
+	str: {
+		strict: useWildcardGroup$str(F.buildUseWildcardGroup, TSKindId.StrKeyword),
+		coerce: useWildcardGroup$str(C.coerceToUseWildcardGroup, TSKindId.StrKeyword)
+	},
+	char: {
+		strict: useWildcardGroup$char(F.buildUseWildcardGroup, TSKindId.CharKeyword),
+		coerce: useWildcardGroup$char(C.coerceToUseWildcardGroup, TSKindId.CharKeyword)
 	},
 	metavariable: {
 		strict: useWildcardGroup$metavariable(F.buildUseWildcardGroup, F.buildMetavariable),
@@ -5540,13 +10410,25 @@ export const useWildcardGroup: typeof B.useWildcardGroup & {
 		strict: useWildcardGroup$crate(F.buildUseWildcardGroup, F.buildCrate),
 		coerce: useWildcardGroup$crate(F.buildUseWildcardGroup, C.coerceToCrate)
 	},
+	identifier: {
+		strict: useWildcardGroup$identifier(F.buildUseWildcardGroup, F.buildIdentifier),
+		coerce: useWildcardGroup$identifier(F.buildUseWildcardGroup, C.coerceToIdentifier)
+	},
 	scopedIdentifier: {
 		strict: useWildcardGroup$scopedIdentifier(F.buildUseWildcardGroup, F.buildScopedIdentifier),
 		coerce: useWildcardGroup$scopedIdentifier(F.buildUseWildcardGroup, C.coerceToScopedIdentifier)
 	},
-	reservedIdentifier: {
-		strict: useWildcardGroup$reservedIdentifier(F.buildUseWildcardGroup, F.buildReservedIdentifier),
-		coerce: useWildcardGroup$reservedIdentifier(F.buildUseWildcardGroup, C.coerceToReservedIdentifier)
+	default: {
+		strict: useWildcardGroup$default(F.buildUseWildcardGroup, TSKindId.DefaultKeyword),
+		coerce: useWildcardGroup$default(C.coerceToUseWildcardGroup, TSKindId.DefaultKeyword)
+	},
+	union: {
+		strict: useWildcardGroup$union(F.buildUseWildcardGroup, TSKindId.UnionKeyword),
+		coerce: useWildcardGroup$union(C.coerceToUseWildcardGroup, TSKindId.UnionKeyword)
+	},
+	gen: {
+		strict: useWildcardGroup$gen(F.buildUseWildcardGroup, TSKindId.GenKeyword),
+		coerce: useWildcardGroup$gen(C.coerceToUseWildcardGroup, TSKindId.GenKeyword)
 	}
 };
 
@@ -5554,7 +10436,71 @@ const useWildcard$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const useWildcard$identifier =
+const useWildcard$u8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$i8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$u16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$i16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$u32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$i32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$u64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$i64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$u128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$i128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$isize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$usize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$f32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$f64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$bool =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$str =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$char =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -5570,11 +10516,23 @@ const useWildcard$crate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const useWildcard$scopedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const useWildcard$reservedIdentifier =
+const useWildcard$default =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$union =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcard$gen =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -5583,9 +10541,73 @@ export const useWildcard: typeof B.useWildcard & {
 		strict: (...args: ArgsOf<typeof useWildcardGroup.self.strict>) => ReturnType<typeof F.buildUseWildcard>;
 		coerce: (...args: ArgsOf<typeof useWildcardGroup.self.coerce>) => ReturnType<typeof F.buildUseWildcard>;
 	};
-	identifier: {
-		strict: (...args: ArgsOf<typeof useWildcardGroup.identifier.strict>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof useWildcardGroup.identifier.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	u8: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.u8.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.u8.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	i8: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.i8.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.i8.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	u16: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.u16.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.u16.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	i16: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.i16.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.i16.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	u32: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.u32.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.u32.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	i32: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.i32.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.i32.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	u64: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.u64.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.u64.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	i64: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.i64.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.i64.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	u128: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.u128.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.u128.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	i128: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.i128.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.i128.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	isize: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.isize.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.isize.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	usize: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.usize.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.usize.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	f32: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.f32.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.f32.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	f64: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.f64.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.f64.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	bool: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.bool.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.bool.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	str: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.str.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.str.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	char: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.char.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.char.coerce>) => ReturnType<typeof F.buildUseWildcard>;
 	};
 	metavariable: {
 		strict: (...args: ArgsOf<typeof useWildcardGroup.metavariable.strict>) => ReturnType<typeof F.buildUseWildcard>;
@@ -5599,17 +10621,25 @@ export const useWildcard: typeof B.useWildcard & {
 		strict: (...args: ArgsOf<typeof useWildcardGroup.crate.strict>) => ReturnType<typeof F.buildUseWildcard>;
 		coerce: (...args: ArgsOf<typeof useWildcardGroup.crate.coerce>) => ReturnType<typeof F.buildUseWildcard>;
 	};
+	identifier: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.identifier.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.identifier.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
 	scopedIdentifier: {
 		strict: (...args: ArgsOf<typeof useWildcardGroup.scopedIdentifier.strict>) => ReturnType<typeof F.buildUseWildcard>;
 		coerce: (...args: ArgsOf<typeof useWildcardGroup.scopedIdentifier.coerce>) => ReturnType<typeof F.buildUseWildcard>;
 	};
-	reservedIdentifier: {
-		strict: (
-			...args: ArgsOf<typeof useWildcardGroup.reservedIdentifier.strict>
-		) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (
-			...args: ArgsOf<typeof useWildcardGroup.reservedIdentifier.coerce>
-		) => ReturnType<typeof F.buildUseWildcard>;
+	default: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.default.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.default.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	union: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.union.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.union.coerce>) => ReturnType<typeof F.buildUseWildcard>;
+	};
+	gen: {
+		strict: (...args: ArgsOf<typeof useWildcardGroup.gen.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.gen.coerce>) => ReturnType<typeof F.buildUseWildcard>;
 	};
 } = {
 	...B.useWildcard,
@@ -5617,9 +10647,73 @@ export const useWildcard: typeof B.useWildcard & {
 		strict: useWildcard$self(F.buildUseWildcard, useWildcardGroup.self.strict),
 		coerce: useWildcard$self(F.buildUseWildcard, useWildcardGroup.self.coerce)
 	},
-	identifier: {
-		strict: useWildcard$identifier(F.buildUseWildcard, useWildcardGroup.identifier.strict),
-		coerce: useWildcard$identifier(F.buildUseWildcard, useWildcardGroup.identifier.coerce)
+	u8: {
+		strict: useWildcard$u8(F.buildUseWildcard, useWildcardGroup.u8.strict),
+		coerce: useWildcard$u8(F.buildUseWildcard, useWildcardGroup.u8.coerce)
+	},
+	i8: {
+		strict: useWildcard$i8(F.buildUseWildcard, useWildcardGroup.i8.strict),
+		coerce: useWildcard$i8(F.buildUseWildcard, useWildcardGroup.i8.coerce)
+	},
+	u16: {
+		strict: useWildcard$u16(F.buildUseWildcard, useWildcardGroup.u16.strict),
+		coerce: useWildcard$u16(F.buildUseWildcard, useWildcardGroup.u16.coerce)
+	},
+	i16: {
+		strict: useWildcard$i16(F.buildUseWildcard, useWildcardGroup.i16.strict),
+		coerce: useWildcard$i16(F.buildUseWildcard, useWildcardGroup.i16.coerce)
+	},
+	u32: {
+		strict: useWildcard$u32(F.buildUseWildcard, useWildcardGroup.u32.strict),
+		coerce: useWildcard$u32(F.buildUseWildcard, useWildcardGroup.u32.coerce)
+	},
+	i32: {
+		strict: useWildcard$i32(F.buildUseWildcard, useWildcardGroup.i32.strict),
+		coerce: useWildcard$i32(F.buildUseWildcard, useWildcardGroup.i32.coerce)
+	},
+	u64: {
+		strict: useWildcard$u64(F.buildUseWildcard, useWildcardGroup.u64.strict),
+		coerce: useWildcard$u64(F.buildUseWildcard, useWildcardGroup.u64.coerce)
+	},
+	i64: {
+		strict: useWildcard$i64(F.buildUseWildcard, useWildcardGroup.i64.strict),
+		coerce: useWildcard$i64(F.buildUseWildcard, useWildcardGroup.i64.coerce)
+	},
+	u128: {
+		strict: useWildcard$u128(F.buildUseWildcard, useWildcardGroup.u128.strict),
+		coerce: useWildcard$u128(F.buildUseWildcard, useWildcardGroup.u128.coerce)
+	},
+	i128: {
+		strict: useWildcard$i128(F.buildUseWildcard, useWildcardGroup.i128.strict),
+		coerce: useWildcard$i128(F.buildUseWildcard, useWildcardGroup.i128.coerce)
+	},
+	isize: {
+		strict: useWildcard$isize(F.buildUseWildcard, useWildcardGroup.isize.strict),
+		coerce: useWildcard$isize(F.buildUseWildcard, useWildcardGroup.isize.coerce)
+	},
+	usize: {
+		strict: useWildcard$usize(F.buildUseWildcard, useWildcardGroup.usize.strict),
+		coerce: useWildcard$usize(F.buildUseWildcard, useWildcardGroup.usize.coerce)
+	},
+	f32: {
+		strict: useWildcard$f32(F.buildUseWildcard, useWildcardGroup.f32.strict),
+		coerce: useWildcard$f32(F.buildUseWildcard, useWildcardGroup.f32.coerce)
+	},
+	f64: {
+		strict: useWildcard$f64(F.buildUseWildcard, useWildcardGroup.f64.strict),
+		coerce: useWildcard$f64(F.buildUseWildcard, useWildcardGroup.f64.coerce)
+	},
+	bool: {
+		strict: useWildcard$bool(F.buildUseWildcard, useWildcardGroup.bool.strict),
+		coerce: useWildcard$bool(F.buildUseWildcard, useWildcardGroup.bool.coerce)
+	},
+	str: {
+		strict: useWildcard$str(F.buildUseWildcard, useWildcardGroup.str.strict),
+		coerce: useWildcard$str(F.buildUseWildcard, useWildcardGroup.str.coerce)
+	},
+	char: {
+		strict: useWildcard$char(F.buildUseWildcard, useWildcardGroup.char.strict),
+		coerce: useWildcard$char(F.buildUseWildcard, useWildcardGroup.char.coerce)
 	},
 	metavariable: {
 		strict: useWildcard$metavariable(F.buildUseWildcard, useWildcardGroup.metavariable.strict),
@@ -5633,13 +10727,25 @@ export const useWildcard: typeof B.useWildcard & {
 		strict: useWildcard$crate(F.buildUseWildcard, useWildcardGroup.crate.strict),
 		coerce: useWildcard$crate(F.buildUseWildcard, useWildcardGroup.crate.coerce)
 	},
+	identifier: {
+		strict: useWildcard$identifier(F.buildUseWildcard, useWildcardGroup.identifier.strict),
+		coerce: useWildcard$identifier(F.buildUseWildcard, useWildcardGroup.identifier.coerce)
+	},
 	scopedIdentifier: {
 		strict: useWildcard$scopedIdentifier(F.buildUseWildcard, useWildcardGroup.scopedIdentifier.strict),
 		coerce: useWildcard$scopedIdentifier(F.buildUseWildcard, useWildcardGroup.scopedIdentifier.coerce)
 	},
-	reservedIdentifier: {
-		strict: useWildcard$reservedIdentifier(F.buildUseWildcard, useWildcardGroup.reservedIdentifier.strict),
-		coerce: useWildcard$reservedIdentifier(F.buildUseWildcard, useWildcardGroup.reservedIdentifier.coerce)
+	default: {
+		strict: useWildcard$default(F.buildUseWildcard, useWildcardGroup.default.strict),
+		coerce: useWildcard$default(F.buildUseWildcard, useWildcardGroup.default.coerce)
+	},
+	union: {
+		strict: useWildcard$union(F.buildUseWildcard, useWildcardGroup.union.strict),
+		coerce: useWildcard$union(F.buildUseWildcard, useWildcardGroup.union.coerce)
+	},
+	gen: {
+		strict: useWildcard$gen(F.buildUseWildcard, useWildcardGroup.gen.strict),
+		coerce: useWildcard$gen(F.buildUseWildcard, useWildcardGroup.gen.coerce)
 	}
 };
 
@@ -5647,15 +10753,74 @@ const useDeclaration$self =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, argument: _c(child)() } as never, options as never);
-const useDeclaration$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { argument: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(...seated) } as never, options as never);
-	};
+const useDeclaration$u8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$i8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$u16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$i16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$u32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$i32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$u64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$i64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$u128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$i128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$isize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$usize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$f32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$f64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$bool =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$str =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$char =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
 const useDeclaration$metavariable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -5673,6 +10838,15 @@ const useDeclaration$crate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, argument: _c(child)() } as never, options as never);
+const useDeclaration$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { argument: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(...seated) } as never, options as never);
+	};
 const useDeclaration$scopedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -5684,15 +10858,18 @@ const useDeclaration$scopedIdentifier =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) } as never, options as never);
 	};
-const useDeclaration$reservedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { argument: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(seated) } as never, options as never);
-	};
+const useDeclaration$default =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$union =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
+const useDeclaration$gen =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, argument: value } as never, options as never);
 const useDeclaration$useAsClause =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -5744,17 +10921,173 @@ export const useDeclaration: typeof B.useDeclaration & {
 			options?: OptionsArg<typeof C.coerceToUseDeclaration>
 		) => ReturnType<typeof C.coerceToUseDeclaration>;
 	};
-	identifier: {
+	u8: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'> & {
-				argument: ArgsOf<typeof F.buildIdentifier>;
-			},
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
 			options?: OptionsArg<typeof F.buildUseDeclaration>
 		) => ReturnType<typeof F.buildUseDeclaration>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'> & {
-				argument: ArgsOf<typeof C.coerceToIdentifier>;
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	i8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	u16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	i16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	u32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	i32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	u64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	i64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	u128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	i128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	isize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	usize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	f32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	f64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	bool: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	str: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	char: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
 			options?: OptionsArg<typeof C.coerceToUseDeclaration>
 		) => ReturnType<typeof C.coerceToUseDeclaration>;
 	};
@@ -5792,6 +11125,20 @@ export const useDeclaration: typeof B.useDeclaration & {
 			options?: OptionsArg<typeof C.coerceToUseDeclaration>
 		) => ReturnType<typeof C.coerceToUseDeclaration>;
 	};
+	identifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'> & {
+				argument: ArgsOf<typeof F.buildIdentifier>;
+			},
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'> & {
+				argument: ArgsOf<typeof C.coerceToIdentifier>;
+			},
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
 	scopedIdentifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'> & ArgsOf<typeof F.buildScopedIdentifier>[0],
@@ -5803,17 +11150,33 @@ export const useDeclaration: typeof B.useDeclaration & {
 			options?: OptionsArg<typeof C.coerceToUseDeclaration>
 		) => ReturnType<typeof C.coerceToUseDeclaration>;
 	};
-	reservedIdentifier: {
+	default: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'> & {
-				argument: ArgsOf<typeof F.buildReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
 			options?: OptionsArg<typeof F.buildUseDeclaration>
 		) => ReturnType<typeof F.buildUseDeclaration>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'> & {
-				argument: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	union: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof C.coerceToUseDeclaration>
+		) => ReturnType<typeof C.coerceToUseDeclaration>;
+	};
+	gen: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
+			options?: OptionsArg<typeof F.buildUseDeclaration>
+		) => ReturnType<typeof F.buildUseDeclaration>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
 			options?: OptionsArg<typeof C.coerceToUseDeclaration>
 		) => ReturnType<typeof C.coerceToUseDeclaration>;
 	};
@@ -5873,9 +11236,73 @@ export const useDeclaration: typeof B.useDeclaration & {
 		strict: useDeclaration$self(F.buildUseDeclaration, F.buildSelf),
 		coerce: useDeclaration$self(C.coerceToUseDeclaration, C.coerceToSelf)
 	},
-	identifier: {
-		strict: useDeclaration$identifier(F.buildUseDeclaration, F.buildIdentifier),
-		coerce: useDeclaration$identifier(C.coerceToUseDeclaration, C.coerceToIdentifier)
+	u8: {
+		strict: useDeclaration$u8(F.buildUseDeclaration, TSKindId.U8Keyword),
+		coerce: useDeclaration$u8(C.coerceToUseDeclaration, TSKindId.U8Keyword)
+	},
+	i8: {
+		strict: useDeclaration$i8(F.buildUseDeclaration, TSKindId.I8Keyword),
+		coerce: useDeclaration$i8(C.coerceToUseDeclaration, TSKindId.I8Keyword)
+	},
+	u16: {
+		strict: useDeclaration$u16(F.buildUseDeclaration, TSKindId.U16Keyword),
+		coerce: useDeclaration$u16(C.coerceToUseDeclaration, TSKindId.U16Keyword)
+	},
+	i16: {
+		strict: useDeclaration$i16(F.buildUseDeclaration, TSKindId.I16Keyword),
+		coerce: useDeclaration$i16(C.coerceToUseDeclaration, TSKindId.I16Keyword)
+	},
+	u32: {
+		strict: useDeclaration$u32(F.buildUseDeclaration, TSKindId.U32Keyword),
+		coerce: useDeclaration$u32(C.coerceToUseDeclaration, TSKindId.U32Keyword)
+	},
+	i32: {
+		strict: useDeclaration$i32(F.buildUseDeclaration, TSKindId.I32Keyword),
+		coerce: useDeclaration$i32(C.coerceToUseDeclaration, TSKindId.I32Keyword)
+	},
+	u64: {
+		strict: useDeclaration$u64(F.buildUseDeclaration, TSKindId.U64Keyword),
+		coerce: useDeclaration$u64(C.coerceToUseDeclaration, TSKindId.U64Keyword)
+	},
+	i64: {
+		strict: useDeclaration$i64(F.buildUseDeclaration, TSKindId.I64Keyword),
+		coerce: useDeclaration$i64(C.coerceToUseDeclaration, TSKindId.I64Keyword)
+	},
+	u128: {
+		strict: useDeclaration$u128(F.buildUseDeclaration, TSKindId.U128Keyword),
+		coerce: useDeclaration$u128(C.coerceToUseDeclaration, TSKindId.U128Keyword)
+	},
+	i128: {
+		strict: useDeclaration$i128(F.buildUseDeclaration, TSKindId.I128Keyword),
+		coerce: useDeclaration$i128(C.coerceToUseDeclaration, TSKindId.I128Keyword)
+	},
+	isize: {
+		strict: useDeclaration$isize(F.buildUseDeclaration, TSKindId.IsizeKeyword),
+		coerce: useDeclaration$isize(C.coerceToUseDeclaration, TSKindId.IsizeKeyword)
+	},
+	usize: {
+		strict: useDeclaration$usize(F.buildUseDeclaration, TSKindId.UsizeKeyword),
+		coerce: useDeclaration$usize(C.coerceToUseDeclaration, TSKindId.UsizeKeyword)
+	},
+	f32: {
+		strict: useDeclaration$f32(F.buildUseDeclaration, TSKindId.F32Keyword),
+		coerce: useDeclaration$f32(C.coerceToUseDeclaration, TSKindId.F32Keyword)
+	},
+	f64: {
+		strict: useDeclaration$f64(F.buildUseDeclaration, TSKindId.F64Keyword),
+		coerce: useDeclaration$f64(C.coerceToUseDeclaration, TSKindId.F64Keyword)
+	},
+	bool: {
+		strict: useDeclaration$bool(F.buildUseDeclaration, TSKindId.BoolKeyword),
+		coerce: useDeclaration$bool(C.coerceToUseDeclaration, TSKindId.BoolKeyword)
+	},
+	str: {
+		strict: useDeclaration$str(F.buildUseDeclaration, TSKindId.StrKeyword),
+		coerce: useDeclaration$str(C.coerceToUseDeclaration, TSKindId.StrKeyword)
+	},
+	char: {
+		strict: useDeclaration$char(F.buildUseDeclaration, TSKindId.CharKeyword),
+		coerce: useDeclaration$char(C.coerceToUseDeclaration, TSKindId.CharKeyword)
 	},
 	metavariable: {
 		strict: useDeclaration$metavariable(F.buildUseDeclaration, F.buildMetavariable),
@@ -5889,13 +11316,25 @@ export const useDeclaration: typeof B.useDeclaration & {
 		strict: useDeclaration$crate(F.buildUseDeclaration, F.buildCrate),
 		coerce: useDeclaration$crate(C.coerceToUseDeclaration, C.coerceToCrate)
 	},
+	identifier: {
+		strict: useDeclaration$identifier(F.buildUseDeclaration, F.buildIdentifier),
+		coerce: useDeclaration$identifier(C.coerceToUseDeclaration, C.coerceToIdentifier)
+	},
 	scopedIdentifier: {
 		strict: useDeclaration$scopedIdentifier(F.buildUseDeclaration, F.buildScopedIdentifier),
 		coerce: useDeclaration$scopedIdentifier(C.coerceToUseDeclaration, C.coerceToScopedIdentifier)
 	},
-	reservedIdentifier: {
-		strict: useDeclaration$reservedIdentifier(F.buildUseDeclaration, F.buildReservedIdentifier),
-		coerce: useDeclaration$reservedIdentifier(C.coerceToUseDeclaration, C.coerceToReservedIdentifier)
+	default: {
+		strict: useDeclaration$default(F.buildUseDeclaration, TSKindId.DefaultKeyword),
+		coerce: useDeclaration$default(C.coerceToUseDeclaration, TSKindId.DefaultKeyword)
+	},
+	union: {
+		strict: useDeclaration$union(F.buildUseDeclaration, TSKindId.UnionKeyword),
+		coerce: useDeclaration$union(C.coerceToUseDeclaration, TSKindId.UnionKeyword)
+	},
+	gen: {
+		strict: useDeclaration$gen(F.buildUseDeclaration, TSKindId.GenKeyword),
+		coerce: useDeclaration$gen(C.coerceToUseDeclaration, TSKindId.GenKeyword)
 	},
 	useAsClause: {
 		strict: useDeclaration$useAsClause(F.buildUseDeclaration, F.buildUseAsClause),
@@ -5942,10 +11381,74 @@ const visibilityModifierPubInPath$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPubInPath$identifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierPubInPath$u8 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$i8 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$u16 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$i16 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$u32 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$i32 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$u64 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$i64 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$u128 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$i128 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$isize =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$usize =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$f32 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$f64 =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$bool =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$str =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$char =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
 const visibilityModifierPubInPath$metavariable =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -5958,22 +11461,166 @@ const visibilityModifierPubInPath$crate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierPubInPath$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const visibilityModifierPubInPath$scopedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPubInPath$reservedIdentifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierPubInPath$default =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$union =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubInPath$gen =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
 const visibilityModifierPubInPath: {
 	self: {
 		strict: (...args: ArgsOf<typeof F.buildSelf>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 	};
-	identifier: {
-		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+	u8: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	i8: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	u16: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	i16: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	u32: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	i32: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	u64: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	i64: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	u128: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	i128: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	isize: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	usize: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	f32: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	f64: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	bool: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	str: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	char: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
 	};
 	metavariable: {
 		strict: (...args: ArgsOf<typeof F.buildMetavariable>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
@@ -5987,28 +11634,112 @@ const visibilityModifierPubInPath: {
 		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 	};
+	identifier: {
+		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+	};
 	scopedIdentifier: {
 		strict: (...args: ArgsOf<typeof F.buildScopedIdentifier>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToScopedIdentifier>
 		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 	};
-	reservedIdentifier: {
+	default: {
 		strict: (
-			...args: ArgsOf<typeof F.buildReservedIdentifier>
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
 		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 		coerce: (
-			...args: ArgsOf<typeof C.coerceToReservedIdentifier>
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	union: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
 		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+	};
+	gen: {
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
 	};
 } = {
 	self: {
 		strict: visibilityModifierPubInPath$self(F.buildVisibilityModifierPubInPath, F.buildSelf),
 		coerce: visibilityModifierPubInPath$self(F.buildVisibilityModifierPubInPath, C.coerceToSelf)
 	},
-	identifier: {
-		strict: visibilityModifierPubInPath$identifier(F.buildVisibilityModifierPubInPath, F.buildIdentifier),
-		coerce: visibilityModifierPubInPath$identifier(F.buildVisibilityModifierPubInPath, C.coerceToIdentifier)
+	u8: {
+		strict: visibilityModifierPubInPath$u8(F.buildVisibilityModifierPubInPath, TSKindId.U8Keyword),
+		coerce: visibilityModifierPubInPath$u8(C.coerceToVisibilityModifierPubInPath, TSKindId.U8Keyword)
+	},
+	i8: {
+		strict: visibilityModifierPubInPath$i8(F.buildVisibilityModifierPubInPath, TSKindId.I8Keyword),
+		coerce: visibilityModifierPubInPath$i8(C.coerceToVisibilityModifierPubInPath, TSKindId.I8Keyword)
+	},
+	u16: {
+		strict: visibilityModifierPubInPath$u16(F.buildVisibilityModifierPubInPath, TSKindId.U16Keyword),
+		coerce: visibilityModifierPubInPath$u16(C.coerceToVisibilityModifierPubInPath, TSKindId.U16Keyword)
+	},
+	i16: {
+		strict: visibilityModifierPubInPath$i16(F.buildVisibilityModifierPubInPath, TSKindId.I16Keyword),
+		coerce: visibilityModifierPubInPath$i16(C.coerceToVisibilityModifierPubInPath, TSKindId.I16Keyword)
+	},
+	u32: {
+		strict: visibilityModifierPubInPath$u32(F.buildVisibilityModifierPubInPath, TSKindId.U32Keyword),
+		coerce: visibilityModifierPubInPath$u32(C.coerceToVisibilityModifierPubInPath, TSKindId.U32Keyword)
+	},
+	i32: {
+		strict: visibilityModifierPubInPath$i32(F.buildVisibilityModifierPubInPath, TSKindId.I32Keyword),
+		coerce: visibilityModifierPubInPath$i32(C.coerceToVisibilityModifierPubInPath, TSKindId.I32Keyword)
+	},
+	u64: {
+		strict: visibilityModifierPubInPath$u64(F.buildVisibilityModifierPubInPath, TSKindId.U64Keyword),
+		coerce: visibilityModifierPubInPath$u64(C.coerceToVisibilityModifierPubInPath, TSKindId.U64Keyword)
+	},
+	i64: {
+		strict: visibilityModifierPubInPath$i64(F.buildVisibilityModifierPubInPath, TSKindId.I64Keyword),
+		coerce: visibilityModifierPubInPath$i64(C.coerceToVisibilityModifierPubInPath, TSKindId.I64Keyword)
+	},
+	u128: {
+		strict: visibilityModifierPubInPath$u128(F.buildVisibilityModifierPubInPath, TSKindId.U128Keyword),
+		coerce: visibilityModifierPubInPath$u128(C.coerceToVisibilityModifierPubInPath, TSKindId.U128Keyword)
+	},
+	i128: {
+		strict: visibilityModifierPubInPath$i128(F.buildVisibilityModifierPubInPath, TSKindId.I128Keyword),
+		coerce: visibilityModifierPubInPath$i128(C.coerceToVisibilityModifierPubInPath, TSKindId.I128Keyword)
+	},
+	isize: {
+		strict: visibilityModifierPubInPath$isize(F.buildVisibilityModifierPubInPath, TSKindId.IsizeKeyword),
+		coerce: visibilityModifierPubInPath$isize(C.coerceToVisibilityModifierPubInPath, TSKindId.IsizeKeyword)
+	},
+	usize: {
+		strict: visibilityModifierPubInPath$usize(F.buildVisibilityModifierPubInPath, TSKindId.UsizeKeyword),
+		coerce: visibilityModifierPubInPath$usize(C.coerceToVisibilityModifierPubInPath, TSKindId.UsizeKeyword)
+	},
+	f32: {
+		strict: visibilityModifierPubInPath$f32(F.buildVisibilityModifierPubInPath, TSKindId.F32Keyword),
+		coerce: visibilityModifierPubInPath$f32(C.coerceToVisibilityModifierPubInPath, TSKindId.F32Keyword)
+	},
+	f64: {
+		strict: visibilityModifierPubInPath$f64(F.buildVisibilityModifierPubInPath, TSKindId.F64Keyword),
+		coerce: visibilityModifierPubInPath$f64(C.coerceToVisibilityModifierPubInPath, TSKindId.F64Keyword)
+	},
+	bool: {
+		strict: visibilityModifierPubInPath$bool(F.buildVisibilityModifierPubInPath, TSKindId.BoolKeyword),
+		coerce: visibilityModifierPubInPath$bool(C.coerceToVisibilityModifierPubInPath, TSKindId.BoolKeyword)
+	},
+	str: {
+		strict: visibilityModifierPubInPath$str(F.buildVisibilityModifierPubInPath, TSKindId.StrKeyword),
+		coerce: visibilityModifierPubInPath$str(C.coerceToVisibilityModifierPubInPath, TSKindId.StrKeyword)
+	},
+	char: {
+		strict: visibilityModifierPubInPath$char(F.buildVisibilityModifierPubInPath, TSKindId.CharKeyword),
+		coerce: visibilityModifierPubInPath$char(C.coerceToVisibilityModifierPubInPath, TSKindId.CharKeyword)
 	},
 	metavariable: {
 		strict: visibilityModifierPubInPath$metavariable(F.buildVisibilityModifierPubInPath, F.buildMetavariable),
@@ -6022,19 +11753,25 @@ const visibilityModifierPubInPath: {
 		strict: visibilityModifierPubInPath$crate(F.buildVisibilityModifierPubInPath, F.buildCrate),
 		coerce: visibilityModifierPubInPath$crate(F.buildVisibilityModifierPubInPath, C.coerceToCrate)
 	},
+	identifier: {
+		strict: visibilityModifierPubInPath$identifier(F.buildVisibilityModifierPubInPath, F.buildIdentifier),
+		coerce: visibilityModifierPubInPath$identifier(F.buildVisibilityModifierPubInPath, C.coerceToIdentifier)
+	},
 	scopedIdentifier: {
 		strict: visibilityModifierPubInPath$scopedIdentifier(F.buildVisibilityModifierPubInPath, F.buildScopedIdentifier),
 		coerce: visibilityModifierPubInPath$scopedIdentifier(F.buildVisibilityModifierPubInPath, C.coerceToScopedIdentifier)
 	},
-	reservedIdentifier: {
-		strict: visibilityModifierPubInPath$reservedIdentifier(
-			F.buildVisibilityModifierPubInPath,
-			F.buildReservedIdentifier
-		),
-		coerce: visibilityModifierPubInPath$reservedIdentifier(
-			F.buildVisibilityModifierPubInPath,
-			C.coerceToReservedIdentifier
-		)
+	default: {
+		strict: visibilityModifierPubInPath$default(F.buildVisibilityModifierPubInPath, TSKindId.DefaultKeyword),
+		coerce: visibilityModifierPubInPath$default(C.coerceToVisibilityModifierPubInPath, TSKindId.DefaultKeyword)
+	},
+	union: {
+		strict: visibilityModifierPubInPath$union(F.buildVisibilityModifierPubInPath, TSKindId.UnionKeyword),
+		coerce: visibilityModifierPubInPath$union(C.coerceToVisibilityModifierPubInPath, TSKindId.UnionKeyword)
+	},
+	gen: {
+		strict: visibilityModifierPubInPath$gen(F.buildVisibilityModifierPubInPath, TSKindId.GenKeyword),
+		coerce: visibilityModifierPubInPath$gen(C.coerceToVisibilityModifierPubInPath, TSKindId.GenKeyword)
 	}
 };
 
@@ -6054,7 +11791,71 @@ const visibilityModifierGroup$inPath =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$identifier =
+const visibilityModifierGroup$u8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$i8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$u16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$i16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$u32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$i32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$u64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$i64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$u128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$i128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$isize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$usize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$f32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$f64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$bool =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$str =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$char =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -6062,11 +11863,23 @@ const visibilityModifierGroup$metavariable =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const visibilityModifierGroup$scopedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$reservedIdentifier =
+const visibilityModifierGroup$default =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$union =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierGroup$gen =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -6090,12 +11903,140 @@ export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToVisibilityModifierPubInPath>
 		) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		identifier: {
+		u8: {
 			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.identifier.strict>
+				...args: ArgsOf<typeof visibilityModifierPubInPath.u8.strict>
 			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.identifier.coerce>
+				...args: ArgsOf<typeof visibilityModifierPubInPath.u8.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		i8: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.i8.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.i8.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		u16: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.u16.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.u16.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		i16: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.i16.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.i16.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		u32: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.u32.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.u32.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		i32: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.i32.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.i32.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		u64: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.u64.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.u64.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		i64: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.i64.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.i64.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		u128: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.u128.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.u128.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		i128: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.i128.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.i128.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		isize: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.isize.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.isize.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		usize: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.usize.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.usize.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		f32: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.f32.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.f32.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		f64: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.f64.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.f64.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		bool: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.bool.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.bool.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		str: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.str.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.str.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		char: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.char.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.char.coerce>
 			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 		};
 		metavariable: {
@@ -6106,6 +12047,14 @@ export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
 				...args: ArgsOf<typeof visibilityModifierPubInPath.metavariable.coerce>
 			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 		};
+		identifier: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.identifier.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.identifier.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
 		scopedIdentifier: {
 			strict: (
 				...args: ArgsOf<typeof visibilityModifierPubInPath.scopedIdentifier.strict>
@@ -6114,12 +12063,28 @@ export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
 				...args: ArgsOf<typeof visibilityModifierPubInPath.scopedIdentifier.coerce>
 			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 		};
-		reservedIdentifier: {
+		default: {
 			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.reservedIdentifier.strict>
+				...args: ArgsOf<typeof visibilityModifierPubInPath.default.strict>
 			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.reservedIdentifier.coerce>
+				...args: ArgsOf<typeof visibilityModifierPubInPath.default.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		union: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.union.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.union.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+		};
+		gen: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.gen.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubInPath.gen.coerce>
 			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 		};
 	};
@@ -6140,15 +12105,73 @@ export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
 	inPath: {
 		strict: visibilityModifierGroup$inPath(F.buildVisibilityModifierGroup, F.buildVisibilityModifierPubInPath),
 		coerce: visibilityModifierGroup$inPath(F.buildVisibilityModifierGroup, C.coerceToVisibilityModifierPubInPath),
-		identifier: {
-			strict: visibilityModifierGroup$identifier(
-				F.buildVisibilityModifierGroup,
-				visibilityModifierPubInPath.identifier.strict
-			),
-			coerce: visibilityModifierGroup$identifier(
-				F.buildVisibilityModifierGroup,
-				visibilityModifierPubInPath.identifier.coerce
-			)
+		u8: {
+			strict: visibilityModifierGroup$u8(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u8.strict),
+			coerce: visibilityModifierGroup$u8(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u8.coerce)
+		},
+		i8: {
+			strict: visibilityModifierGroup$i8(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i8.strict),
+			coerce: visibilityModifierGroup$i8(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i8.coerce)
+		},
+		u16: {
+			strict: visibilityModifierGroup$u16(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u16.strict),
+			coerce: visibilityModifierGroup$u16(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u16.coerce)
+		},
+		i16: {
+			strict: visibilityModifierGroup$i16(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i16.strict),
+			coerce: visibilityModifierGroup$i16(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i16.coerce)
+		},
+		u32: {
+			strict: visibilityModifierGroup$u32(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u32.strict),
+			coerce: visibilityModifierGroup$u32(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u32.coerce)
+		},
+		i32: {
+			strict: visibilityModifierGroup$i32(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i32.strict),
+			coerce: visibilityModifierGroup$i32(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i32.coerce)
+		},
+		u64: {
+			strict: visibilityModifierGroup$u64(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u64.strict),
+			coerce: visibilityModifierGroup$u64(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u64.coerce)
+		},
+		i64: {
+			strict: visibilityModifierGroup$i64(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i64.strict),
+			coerce: visibilityModifierGroup$i64(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i64.coerce)
+		},
+		u128: {
+			strict: visibilityModifierGroup$u128(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u128.strict),
+			coerce: visibilityModifierGroup$u128(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u128.coerce)
+		},
+		i128: {
+			strict: visibilityModifierGroup$i128(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i128.strict),
+			coerce: visibilityModifierGroup$i128(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i128.coerce)
+		},
+		isize: {
+			strict: visibilityModifierGroup$isize(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.isize.strict),
+			coerce: visibilityModifierGroup$isize(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.isize.coerce)
+		},
+		usize: {
+			strict: visibilityModifierGroup$usize(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.usize.strict),
+			coerce: visibilityModifierGroup$usize(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.usize.coerce)
+		},
+		f32: {
+			strict: visibilityModifierGroup$f32(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.f32.strict),
+			coerce: visibilityModifierGroup$f32(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.f32.coerce)
+		},
+		f64: {
+			strict: visibilityModifierGroup$f64(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.f64.strict),
+			coerce: visibilityModifierGroup$f64(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.f64.coerce)
+		},
+		bool: {
+			strict: visibilityModifierGroup$bool(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.bool.strict),
+			coerce: visibilityModifierGroup$bool(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.bool.coerce)
+		},
+		str: {
+			strict: visibilityModifierGroup$str(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.str.strict),
+			coerce: visibilityModifierGroup$str(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.str.coerce)
+		},
+		char: {
+			strict: visibilityModifierGroup$char(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.char.strict),
+			coerce: visibilityModifierGroup$char(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.char.coerce)
 		},
 		metavariable: {
 			strict: visibilityModifierGroup$metavariable(
@@ -6158,6 +12181,16 @@ export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
 			coerce: visibilityModifierGroup$metavariable(
 				F.buildVisibilityModifierGroup,
 				visibilityModifierPubInPath.metavariable.coerce
+			)
+		},
+		identifier: {
+			strict: visibilityModifierGroup$identifier(
+				F.buildVisibilityModifierGroup,
+				visibilityModifierPubInPath.identifier.strict
+			),
+			coerce: visibilityModifierGroup$identifier(
+				F.buildVisibilityModifierGroup,
+				visibilityModifierPubInPath.identifier.coerce
 			)
 		},
 		scopedIdentifier: {
@@ -6170,15 +12203,23 @@ export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
 				visibilityModifierPubInPath.scopedIdentifier.coerce
 			)
 		},
-		reservedIdentifier: {
-			strict: visibilityModifierGroup$reservedIdentifier(
+		default: {
+			strict: visibilityModifierGroup$default(
 				F.buildVisibilityModifierGroup,
-				visibilityModifierPubInPath.reservedIdentifier.strict
+				visibilityModifierPubInPath.default.strict
 			),
-			coerce: visibilityModifierGroup$reservedIdentifier(
+			coerce: visibilityModifierGroup$default(
 				F.buildVisibilityModifierGroup,
-				visibilityModifierPubInPath.reservedIdentifier.coerce
+				visibilityModifierPubInPath.default.coerce
 			)
+		},
+		union: {
+			strict: visibilityModifierGroup$union(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.union.strict),
+			coerce: visibilityModifierGroup$union(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.union.coerce)
+		},
+		gen: {
+			strict: visibilityModifierGroup$gen(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.gen.strict),
+			coerce: visibilityModifierGroup$gen(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.gen.coerce)
 		}
 	}
 };
@@ -6199,19 +12240,15 @@ const visibilityModifierPub$inPath =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPub$identifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const visibilityModifierPub$metavariable =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPub$scopedIdentifier =
+const visibilityModifierPub$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPub$reservedIdentifier =
+const visibilityModifierPub$scopedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -6248,14 +12285,6 @@ const visibilityModifierPub: {
 			...args: ArgsOf<typeof visibilityModifierGroup.inPath.coerce>
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 	};
-	identifier: {
-		strict: (
-			...args: ArgsOf<typeof visibilityModifierGroup.inPath.identifier.strict>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-		coerce: (
-			...args: ArgsOf<typeof visibilityModifierGroup.inPath.identifier.coerce>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-	};
 	metavariable: {
 		strict: (
 			...args: ArgsOf<typeof visibilityModifierGroup.inPath.metavariable.strict>
@@ -6264,20 +12293,20 @@ const visibilityModifierPub: {
 			...args: ArgsOf<typeof visibilityModifierGroup.inPath.metavariable.coerce>
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 	};
+	identifier: {
+		strict: (
+			...args: ArgsOf<typeof visibilityModifierGroup.inPath.identifier.strict>
+		) => ReturnType<typeof F.buildVisibilityModifierPub>;
+		coerce: (
+			...args: ArgsOf<typeof visibilityModifierGroup.inPath.identifier.coerce>
+		) => ReturnType<typeof F.buildVisibilityModifierPub>;
+	};
 	scopedIdentifier: {
 		strict: (
 			...args: ArgsOf<typeof visibilityModifierGroup.inPath.scopedIdentifier.strict>
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		coerce: (
 			...args: ArgsOf<typeof visibilityModifierGroup.inPath.scopedIdentifier.coerce>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-	};
-	reservedIdentifier: {
-		strict: (
-			...args: ArgsOf<typeof visibilityModifierGroup.inPath.reservedIdentifier.strict>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-		coerce: (
-			...args: ArgsOf<typeof visibilityModifierGroup.inPath.reservedIdentifier.coerce>
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 	};
 } = {
@@ -6297,16 +12326,6 @@ const visibilityModifierPub: {
 		strict: visibilityModifierPub$inPath(F.buildVisibilityModifierPub, visibilityModifierGroup.inPath.strict),
 		coerce: visibilityModifierPub$inPath(F.buildVisibilityModifierPub, visibilityModifierGroup.inPath.coerce)
 	},
-	identifier: {
-		strict: visibilityModifierPub$identifier(
-			F.buildVisibilityModifierPub,
-			visibilityModifierGroup.inPath.identifier.strict
-		),
-		coerce: visibilityModifierPub$identifier(
-			F.buildVisibilityModifierPub,
-			visibilityModifierGroup.inPath.identifier.coerce
-		)
-	},
 	metavariable: {
 		strict: visibilityModifierPub$metavariable(
 			F.buildVisibilityModifierPub,
@@ -6317,6 +12336,16 @@ const visibilityModifierPub: {
 			visibilityModifierGroup.inPath.metavariable.coerce
 		)
 	},
+	identifier: {
+		strict: visibilityModifierPub$identifier(
+			F.buildVisibilityModifierPub,
+			visibilityModifierGroup.inPath.identifier.strict
+		),
+		coerce: visibilityModifierPub$identifier(
+			F.buildVisibilityModifierPub,
+			visibilityModifierGroup.inPath.identifier.coerce
+		)
+	},
 	scopedIdentifier: {
 		strict: visibilityModifierPub$scopedIdentifier(
 			F.buildVisibilityModifierPub,
@@ -6325,16 +12354,6 @@ const visibilityModifierPub: {
 		coerce: visibilityModifierPub$scopedIdentifier(
 			F.buildVisibilityModifierPub,
 			visibilityModifierGroup.inPath.scopedIdentifier.coerce
-		)
-	},
-	reservedIdentifier: {
-		strict: visibilityModifierPub$reservedIdentifier(
-			F.buildVisibilityModifierPub,
-			visibilityModifierGroup.inPath.reservedIdentifier.strict
-		),
-		coerce: visibilityModifierPub$reservedIdentifier(
-			F.buildVisibilityModifierPub,
-			visibilityModifierGroup.inPath.reservedIdentifier.coerce
 		)
 	}
 };
@@ -6359,19 +12378,15 @@ const visibilityModifier$pubInPath =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifier$identifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const visibilityModifier$metavariable =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifier$scopedIdentifier =
+const visibilityModifier$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifier$reservedIdentifier =
+const visibilityModifier$scopedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -6407,14 +12422,6 @@ export const visibilityModifier: typeof B.visibilityModifier & {
 				...args: ArgsOf<typeof visibilityModifierPub.inPath.coerce>
 			) => ReturnType<typeof F.buildVisibilityModifier>;
 		};
-		identifier: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPub.identifier.strict>
-			) => ReturnType<typeof F.buildVisibilityModifier>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPub.identifier.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifier>;
-		};
 		metavariable: {
 			strict: (
 				...args: ArgsOf<typeof visibilityModifierPub.metavariable.strict>
@@ -6423,20 +12430,20 @@ export const visibilityModifier: typeof B.visibilityModifier & {
 				...args: ArgsOf<typeof visibilityModifierPub.metavariable.coerce>
 			) => ReturnType<typeof F.buildVisibilityModifier>;
 		};
+		identifier: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPub.identifier.strict>
+			) => ReturnType<typeof F.buildVisibilityModifier>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPub.identifier.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifier>;
+		};
 		scopedIdentifier: {
 			strict: (
 				...args: ArgsOf<typeof visibilityModifierPub.scopedIdentifier.strict>
 			) => ReturnType<typeof F.buildVisibilityModifier>;
 			coerce: (
 				...args: ArgsOf<typeof visibilityModifierPub.scopedIdentifier.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifier>;
-		};
-		reservedIdentifier: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPub.reservedIdentifier.strict>
-			) => ReturnType<typeof F.buildVisibilityModifier>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPub.reservedIdentifier.coerce>
 			) => ReturnType<typeof F.buildVisibilityModifier>;
 		};
 	};
@@ -6461,13 +12468,13 @@ export const visibilityModifier: typeof B.visibilityModifier & {
 			strict: visibilityModifier$pubInPath(F.buildVisibilityModifier, visibilityModifierPub.inPath.strict),
 			coerce: visibilityModifier$pubInPath(F.buildVisibilityModifier, visibilityModifierPub.inPath.coerce)
 		},
-		identifier: {
-			strict: visibilityModifier$identifier(F.buildVisibilityModifier, visibilityModifierPub.identifier.strict),
-			coerce: visibilityModifier$identifier(F.buildVisibilityModifier, visibilityModifierPub.identifier.coerce)
-		},
 		metavariable: {
 			strict: visibilityModifier$metavariable(F.buildVisibilityModifier, visibilityModifierPub.metavariable.strict),
 			coerce: visibilityModifier$metavariable(F.buildVisibilityModifier, visibilityModifierPub.metavariable.coerce)
+		},
+		identifier: {
+			strict: visibilityModifier$identifier(F.buildVisibilityModifier, visibilityModifierPub.identifier.strict),
+			coerce: visibilityModifier$identifier(F.buildVisibilityModifier, visibilityModifierPub.identifier.coerce)
 		},
 		scopedIdentifier: {
 			strict: visibilityModifier$scopedIdentifier(
@@ -6477,16 +12484,6 @@ export const visibilityModifier: typeof B.visibilityModifier & {
 			coerce: visibilityModifier$scopedIdentifier(
 				F.buildVisibilityModifier,
 				visibilityModifierPub.scopedIdentifier.coerce
-			)
-		},
-		reservedIdentifier: {
-			strict: visibilityModifier$reservedIdentifier(
-				F.buildVisibilityModifier,
-				visibilityModifierPub.reservedIdentifier.strict
-			),
-			coerce: visibilityModifier$reservedIdentifier(
-				F.buildVisibilityModifier,
-				visibilityModifierPub.reservedIdentifier.coerce
 			)
 		}
 	}
@@ -6504,7 +12501,71 @@ const functionTypeTraitForm$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const functionTypeTraitForm$identifier =
+const functionTypeTraitForm$u8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$i8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$u16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$i16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$u32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$i32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$u64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$i64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$u128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$i128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$isize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$usize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$f32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$f64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$bool =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$str =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$char =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -6520,11 +12581,23 @@ const functionTypeTraitForm$crate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const functionTypeTraitForm$scopedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const functionTypeTraitForm$reservedIdentifier =
+const functionTypeTraitForm$default =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$union =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const functionTypeTraitForm$gen =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -6560,12 +12633,140 @@ const functionTypeTraitForm: {
 				...args: ArgsOf<typeof scopedTypeIdentifier.self.coerce>
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		};
-		identifier: {
+		u8: {
 			strict: (
-				...args: ArgsOf<typeof scopedTypeIdentifier.identifier.strict>
+				...args: ArgsOf<typeof scopedTypeIdentifier.u8.strict>
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 			coerce: (
-				...args: ArgsOf<typeof scopedTypeIdentifier.identifier.coerce>
+				...args: ArgsOf<typeof scopedTypeIdentifier.u8.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		i8: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i8.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i8.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		u16: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u16.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u16.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		i16: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i16.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i16.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		u32: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u32.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u32.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		i32: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i32.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i32.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		u64: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u64.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u64.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		i64: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i64.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i64.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		u128: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u128.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u128.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		i128: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i128.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i128.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		isize: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.isize.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.isize.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		usize: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.usize.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.usize.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		f32: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.f32.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.f32.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		f64: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.f64.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.f64.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		bool: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.bool.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.bool.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		str: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.str.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.str.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		char: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.char.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.char.coerce>
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		};
 		metavariable: {
@@ -6592,6 +12793,14 @@ const functionTypeTraitForm: {
 				...args: ArgsOf<typeof scopedTypeIdentifier.crate.coerce>
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		};
+		identifier: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.identifier.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.identifier.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
 		scopedIdentifier: {
 			strict: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.scopedIdentifier.strict>
@@ -6600,12 +12809,28 @@ const functionTypeTraitForm: {
 				...args: ArgsOf<typeof scopedTypeIdentifier.scopedIdentifier.coerce>
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		};
-		reservedIdentifier: {
+		default: {
 			strict: (
-				...args: ArgsOf<typeof scopedTypeIdentifier.reservedIdentifier.strict>
+				...args: ArgsOf<typeof scopedTypeIdentifier.default.strict>
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 			coerce: (
-				...args: ArgsOf<typeof scopedTypeIdentifier.reservedIdentifier.coerce>
+				...args: ArgsOf<typeof scopedTypeIdentifier.default.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		union: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.union.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.union.coerce>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+		};
+		gen: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.gen.strict>
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.gen.coerce>
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		};
 		genericTypeWithTurbofish: {
@@ -6653,9 +12878,73 @@ const functionTypeTraitForm: {
 			strict: functionTypeTraitForm$self(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.self.strict),
 			coerce: functionTypeTraitForm$self(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.self.coerce)
 		},
-		identifier: {
-			strict: functionTypeTraitForm$identifier(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.identifier.strict),
-			coerce: functionTypeTraitForm$identifier(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.identifier.coerce)
+		u8: {
+			strict: functionTypeTraitForm$u8(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.u8.strict),
+			coerce: functionTypeTraitForm$u8(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.u8.coerce)
+		},
+		i8: {
+			strict: functionTypeTraitForm$i8(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.i8.strict),
+			coerce: functionTypeTraitForm$i8(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.i8.coerce)
+		},
+		u16: {
+			strict: functionTypeTraitForm$u16(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.u16.strict),
+			coerce: functionTypeTraitForm$u16(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.u16.coerce)
+		},
+		i16: {
+			strict: functionTypeTraitForm$i16(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.i16.strict),
+			coerce: functionTypeTraitForm$i16(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.i16.coerce)
+		},
+		u32: {
+			strict: functionTypeTraitForm$u32(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.u32.strict),
+			coerce: functionTypeTraitForm$u32(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.u32.coerce)
+		},
+		i32: {
+			strict: functionTypeTraitForm$i32(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.i32.strict),
+			coerce: functionTypeTraitForm$i32(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.i32.coerce)
+		},
+		u64: {
+			strict: functionTypeTraitForm$u64(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.u64.strict),
+			coerce: functionTypeTraitForm$u64(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.u64.coerce)
+		},
+		i64: {
+			strict: functionTypeTraitForm$i64(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.i64.strict),
+			coerce: functionTypeTraitForm$i64(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.i64.coerce)
+		},
+		u128: {
+			strict: functionTypeTraitForm$u128(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.u128.strict),
+			coerce: functionTypeTraitForm$u128(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.u128.coerce)
+		},
+		i128: {
+			strict: functionTypeTraitForm$i128(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.i128.strict),
+			coerce: functionTypeTraitForm$i128(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.i128.coerce)
+		},
+		isize: {
+			strict: functionTypeTraitForm$isize(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.isize.strict),
+			coerce: functionTypeTraitForm$isize(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.isize.coerce)
+		},
+		usize: {
+			strict: functionTypeTraitForm$usize(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.usize.strict),
+			coerce: functionTypeTraitForm$usize(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.usize.coerce)
+		},
+		f32: {
+			strict: functionTypeTraitForm$f32(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.f32.strict),
+			coerce: functionTypeTraitForm$f32(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.f32.coerce)
+		},
+		f64: {
+			strict: functionTypeTraitForm$f64(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.f64.strict),
+			coerce: functionTypeTraitForm$f64(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.f64.coerce)
+		},
+		bool: {
+			strict: functionTypeTraitForm$bool(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.bool.strict),
+			coerce: functionTypeTraitForm$bool(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.bool.coerce)
+		},
+		str: {
+			strict: functionTypeTraitForm$str(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.str.strict),
+			coerce: functionTypeTraitForm$str(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.str.coerce)
+		},
+		char: {
+			strict: functionTypeTraitForm$char(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.char.strict),
+			coerce: functionTypeTraitForm$char(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.char.coerce)
 		},
 		metavariable: {
 			strict: functionTypeTraitForm$metavariable(
@@ -6672,6 +12961,10 @@ const functionTypeTraitForm: {
 			strict: functionTypeTraitForm$crate(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.crate.strict),
 			coerce: functionTypeTraitForm$crate(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.crate.coerce)
 		},
+		identifier: {
+			strict: functionTypeTraitForm$identifier(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.identifier.strict),
+			coerce: functionTypeTraitForm$identifier(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.identifier.coerce)
+		},
 		scopedIdentifier: {
 			strict: functionTypeTraitForm$scopedIdentifier(
 				F.buildFunctionTypeTraitForm,
@@ -6682,15 +12975,17 @@ const functionTypeTraitForm: {
 				scopedTypeIdentifier.scopedIdentifier.coerce
 			)
 		},
-		reservedIdentifier: {
-			strict: functionTypeTraitForm$reservedIdentifier(
-				F.buildFunctionTypeTraitForm,
-				scopedTypeIdentifier.reservedIdentifier.strict
-			),
-			coerce: functionTypeTraitForm$reservedIdentifier(
-				F.buildFunctionTypeTraitForm,
-				scopedTypeIdentifier.reservedIdentifier.coerce
-			)
+		default: {
+			strict: functionTypeTraitForm$default(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.default.strict),
+			coerce: functionTypeTraitForm$default(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.default.coerce)
+		},
+		union: {
+			strict: functionTypeTraitForm$union(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.union.strict),
+			coerce: functionTypeTraitForm$union(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.union.coerce)
+		},
+		gen: {
+			strict: functionTypeTraitForm$gen(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.gen.strict),
+			coerce: functionTypeTraitForm$gen(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.gen.coerce)
 		},
 		genericTypeWithTurbofish: {
 			strict: functionTypeTraitForm$genericTypeWithTurbofish(
@@ -6756,12 +13051,6 @@ const functionType$self =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
-const functionType$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
 const functionType$metavariable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -6780,13 +13069,13 @@ const functionType$crate =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
-const functionType$scopedIdentifier =
+const functionType$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
-const functionType$reservedIdentifier =
+const functionType$scopedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
@@ -6878,20 +13167,6 @@ export const functionType: typeof B.functionType & {
 				options?: OptionsArg<typeof C.coerceToFunctionType>
 			) => ReturnType<typeof C.coerceToFunctionType>;
 		};
-		identifier: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
-					content: ArgsOf<typeof functionTypeTraitForm.scopedTypeIdentifier.identifier.strict>;
-				},
-				options?: OptionsArg<typeof F.buildFunctionType>
-			) => ReturnType<typeof F.buildFunctionType>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
-					content: ArgsOf<typeof functionTypeTraitForm.scopedTypeIdentifier.identifier.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToFunctionType>
-			) => ReturnType<typeof C.coerceToFunctionType>;
-		};
 		metavariable: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
@@ -6934,6 +13209,20 @@ export const functionType: typeof B.functionType & {
 				options?: OptionsArg<typeof C.coerceToFunctionType>
 			) => ReturnType<typeof C.coerceToFunctionType>;
 		};
+		identifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
+					content: ArgsOf<typeof functionTypeTraitForm.scopedTypeIdentifier.identifier.strict>;
+				},
+				options?: OptionsArg<typeof F.buildFunctionType>
+			) => ReturnType<typeof F.buildFunctionType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
+					content: ArgsOf<typeof functionTypeTraitForm.scopedTypeIdentifier.identifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToFunctionType>
+			) => ReturnType<typeof C.coerceToFunctionType>;
+		};
 		scopedIdentifier: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
@@ -6944,20 +13233,6 @@ export const functionType: typeof B.functionType & {
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
 					content: ArgsOf<typeof functionTypeTraitForm.scopedTypeIdentifier.scopedIdentifier.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToFunctionType>
-			) => ReturnType<typeof C.coerceToFunctionType>;
-		};
-		reservedIdentifier: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
-					content: ArgsOf<typeof functionTypeTraitForm.scopedTypeIdentifier.reservedIdentifier.strict>;
-				},
-				options?: OptionsArg<typeof F.buildFunctionType>
-			) => ReturnType<typeof F.buildFunctionType>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
-					content: ArgsOf<typeof functionTypeTraitForm.scopedTypeIdentifier.reservedIdentifier.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToFunctionType>
 			) => ReturnType<typeof C.coerceToFunctionType>;
@@ -7053,16 +13328,6 @@ export const functionType: typeof B.functionType & {
 			strict: functionType$self(F.buildFunctionType, functionTypeTraitForm.scopedTypeIdentifier.self.strict),
 			coerce: functionType$self(C.coerceToFunctionType, functionTypeTraitForm.scopedTypeIdentifier.self.coerce)
 		},
-		identifier: {
-			strict: functionType$identifier(
-				F.buildFunctionType,
-				functionTypeTraitForm.scopedTypeIdentifier.identifier.strict
-			),
-			coerce: functionType$identifier(
-				C.coerceToFunctionType,
-				functionTypeTraitForm.scopedTypeIdentifier.identifier.coerce
-			)
-		},
 		metavariable: {
 			strict: functionType$metavariable(
 				F.buildFunctionType,
@@ -7081,6 +13346,16 @@ export const functionType: typeof B.functionType & {
 			strict: functionType$crate(F.buildFunctionType, functionTypeTraitForm.scopedTypeIdentifier.crate.strict),
 			coerce: functionType$crate(C.coerceToFunctionType, functionTypeTraitForm.scopedTypeIdentifier.crate.coerce)
 		},
+		identifier: {
+			strict: functionType$identifier(
+				F.buildFunctionType,
+				functionTypeTraitForm.scopedTypeIdentifier.identifier.strict
+			),
+			coerce: functionType$identifier(
+				C.coerceToFunctionType,
+				functionTypeTraitForm.scopedTypeIdentifier.identifier.coerce
+			)
+		},
 		scopedIdentifier: {
 			strict: functionType$scopedIdentifier(
 				F.buildFunctionType,
@@ -7089,16 +13364,6 @@ export const functionType: typeof B.functionType & {
 			coerce: functionType$scopedIdentifier(
 				C.coerceToFunctionType,
 				functionTypeTraitForm.scopedTypeIdentifier.scopedIdentifier.coerce
-			)
-		},
-		reservedIdentifier: {
-			strict: functionType$reservedIdentifier(
-				F.buildFunctionType,
-				functionTypeTraitForm.scopedTypeIdentifier.reservedIdentifier.strict
-			),
-			coerce: functionType$reservedIdentifier(
-				C.coerceToFunctionType,
-				functionTypeTraitForm.scopedTypeIdentifier.reservedIdentifier.coerce
 			)
 		},
 		genericTypeWithTurbofish: {
@@ -8871,7 +15136,103 @@ const abstractType$self =
 		const { trait: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
 	};
-const abstractType$identifier =
+const abstractType$u8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$i8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$u16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$i16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$u32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$i32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$u64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$i64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$u128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$i128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$isize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$usize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$f32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$f64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$bool =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$str =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$char =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { trait: seated, ...rest } = config;
@@ -8895,19 +15256,49 @@ const abstractType$crate =
 		const { trait: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
 	};
+const abstractType$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
 const abstractType$scopedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { trait: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
 	};
-const abstractType$scopedTypeIdentifierReservedIdentifier =
+const abstractType$scopedTypeIdentifierDefault =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { trait: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
 	};
-const abstractType$genericTypeReservedIdentifier =
+const abstractType$genericTypeDefault =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$scopedTypeIdentifierUnion =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$genericTypeUnion =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$scopedTypeIdentifierGen =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { trait: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(...seated) } as never, options as never);
+	};
+const abstractType$genericTypeGen =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { trait: seated, ...rest } = config;
@@ -9028,16 +15419,240 @@ export const abstractType: typeof B.abstractType & {
 				options?: OptionsArg<typeof C.coerceToAbstractType>
 			) => ReturnType<typeof C.coerceToAbstractType>;
 		};
-		identifier: {
+		u8: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
-					trait: ArgsOf<typeof scopedTypeIdentifier.identifier.strict>;
+					trait: ArgsOf<typeof scopedTypeIdentifier.u8.strict>;
 				},
 				options?: OptionsArg<typeof F.buildAbstractType>
 			) => ReturnType<typeof F.buildAbstractType>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
-					trait: ArgsOf<typeof scopedTypeIdentifier.identifier.coerce>;
+					trait: ArgsOf<typeof scopedTypeIdentifier.u8.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		i8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.i8.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.i8.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		u16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.u16.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.u16.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		i16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.i16.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.i16.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		u32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.u32.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.u32.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		i32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.i32.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.i32.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		u64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.u64.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.u64.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		i64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.i64.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.i64.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		u128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.u128.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.u128.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		i128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.i128.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.i128.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		isize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.isize.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.isize.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		usize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.usize.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.usize.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		f32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.f32.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.f32.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		f64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.f64.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.f64.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		bool: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.bool.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.bool.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		str: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.str.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.str.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		char: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.char.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.char.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToAbstractType>
 			) => ReturnType<typeof C.coerceToAbstractType>;
@@ -9084,6 +15699,20 @@ export const abstractType: typeof B.abstractType & {
 				options?: OptionsArg<typeof C.coerceToAbstractType>
 			) => ReturnType<typeof C.coerceToAbstractType>;
 		};
+		identifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.identifier.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.identifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
 		scopedIdentifier: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
@@ -9098,16 +15727,44 @@ export const abstractType: typeof B.abstractType & {
 				options?: OptionsArg<typeof C.coerceToAbstractType>
 			) => ReturnType<typeof C.coerceToAbstractType>;
 		};
-		reservedIdentifier: {
+		default: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
-					trait: ArgsOf<typeof scopedTypeIdentifier.reservedIdentifier.strict>;
+					trait: ArgsOf<typeof scopedTypeIdentifier.default.strict>;
 				},
 				options?: OptionsArg<typeof F.buildAbstractType>
 			) => ReturnType<typeof F.buildAbstractType>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
-					trait: ArgsOf<typeof scopedTypeIdentifier.reservedIdentifier.coerce>;
+					trait: ArgsOf<typeof scopedTypeIdentifier.default.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		union: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.union.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.union.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		gen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.gen.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof scopedTypeIdentifier.gen.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToAbstractType>
 			) => ReturnType<typeof C.coerceToAbstractType>;
@@ -9164,16 +15821,44 @@ export const abstractType: typeof B.abstractType & {
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & ArgsOf<typeof C.coerceToGenericType>[0],
 			options?: OptionsArg<typeof C.coerceToAbstractType>
 		) => ReturnType<typeof C.coerceToAbstractType>;
-		reservedIdentifier: {
+		default: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
-					trait: ArgsOf<typeof genericType.reservedIdentifier.strict>;
+					trait: ArgsOf<typeof genericType.default.strict>;
 				},
 				options?: OptionsArg<typeof F.buildAbstractType>
 			) => ReturnType<typeof F.buildAbstractType>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
-					trait: ArgsOf<typeof genericType.reservedIdentifier.coerce>;
+					trait: ArgsOf<typeof genericType.default.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		union: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof genericType.union.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof genericType.union.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAbstractType>
+			) => ReturnType<typeof C.coerceToAbstractType>;
+		};
+		gen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof genericType.gen.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAbstractType>
+			) => ReturnType<typeof F.buildAbstractType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
+					trait: ArgsOf<typeof genericType.gen.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToAbstractType>
 			) => ReturnType<typeof C.coerceToAbstractType>;
@@ -9266,9 +15951,73 @@ export const abstractType: typeof B.abstractType & {
 			strict: abstractType$self(F.buildAbstractType, scopedTypeIdentifier.self.strict),
 			coerce: abstractType$self(C.coerceToAbstractType, scopedTypeIdentifier.self.coerce)
 		},
-		identifier: {
-			strict: abstractType$identifier(F.buildAbstractType, scopedTypeIdentifier.identifier.strict),
-			coerce: abstractType$identifier(C.coerceToAbstractType, scopedTypeIdentifier.identifier.coerce)
+		u8: {
+			strict: abstractType$u8(F.buildAbstractType, scopedTypeIdentifier.u8.strict),
+			coerce: abstractType$u8(C.coerceToAbstractType, scopedTypeIdentifier.u8.coerce)
+		},
+		i8: {
+			strict: abstractType$i8(F.buildAbstractType, scopedTypeIdentifier.i8.strict),
+			coerce: abstractType$i8(C.coerceToAbstractType, scopedTypeIdentifier.i8.coerce)
+		},
+		u16: {
+			strict: abstractType$u16(F.buildAbstractType, scopedTypeIdentifier.u16.strict),
+			coerce: abstractType$u16(C.coerceToAbstractType, scopedTypeIdentifier.u16.coerce)
+		},
+		i16: {
+			strict: abstractType$i16(F.buildAbstractType, scopedTypeIdentifier.i16.strict),
+			coerce: abstractType$i16(C.coerceToAbstractType, scopedTypeIdentifier.i16.coerce)
+		},
+		u32: {
+			strict: abstractType$u32(F.buildAbstractType, scopedTypeIdentifier.u32.strict),
+			coerce: abstractType$u32(C.coerceToAbstractType, scopedTypeIdentifier.u32.coerce)
+		},
+		i32: {
+			strict: abstractType$i32(F.buildAbstractType, scopedTypeIdentifier.i32.strict),
+			coerce: abstractType$i32(C.coerceToAbstractType, scopedTypeIdentifier.i32.coerce)
+		},
+		u64: {
+			strict: abstractType$u64(F.buildAbstractType, scopedTypeIdentifier.u64.strict),
+			coerce: abstractType$u64(C.coerceToAbstractType, scopedTypeIdentifier.u64.coerce)
+		},
+		i64: {
+			strict: abstractType$i64(F.buildAbstractType, scopedTypeIdentifier.i64.strict),
+			coerce: abstractType$i64(C.coerceToAbstractType, scopedTypeIdentifier.i64.coerce)
+		},
+		u128: {
+			strict: abstractType$u128(F.buildAbstractType, scopedTypeIdentifier.u128.strict),
+			coerce: abstractType$u128(C.coerceToAbstractType, scopedTypeIdentifier.u128.coerce)
+		},
+		i128: {
+			strict: abstractType$i128(F.buildAbstractType, scopedTypeIdentifier.i128.strict),
+			coerce: abstractType$i128(C.coerceToAbstractType, scopedTypeIdentifier.i128.coerce)
+		},
+		isize: {
+			strict: abstractType$isize(F.buildAbstractType, scopedTypeIdentifier.isize.strict),
+			coerce: abstractType$isize(C.coerceToAbstractType, scopedTypeIdentifier.isize.coerce)
+		},
+		usize: {
+			strict: abstractType$usize(F.buildAbstractType, scopedTypeIdentifier.usize.strict),
+			coerce: abstractType$usize(C.coerceToAbstractType, scopedTypeIdentifier.usize.coerce)
+		},
+		f32: {
+			strict: abstractType$f32(F.buildAbstractType, scopedTypeIdentifier.f32.strict),
+			coerce: abstractType$f32(C.coerceToAbstractType, scopedTypeIdentifier.f32.coerce)
+		},
+		f64: {
+			strict: abstractType$f64(F.buildAbstractType, scopedTypeIdentifier.f64.strict),
+			coerce: abstractType$f64(C.coerceToAbstractType, scopedTypeIdentifier.f64.coerce)
+		},
+		bool: {
+			strict: abstractType$bool(F.buildAbstractType, scopedTypeIdentifier.bool.strict),
+			coerce: abstractType$bool(C.coerceToAbstractType, scopedTypeIdentifier.bool.coerce)
+		},
+		str: {
+			strict: abstractType$str(F.buildAbstractType, scopedTypeIdentifier.str.strict),
+			coerce: abstractType$str(C.coerceToAbstractType, scopedTypeIdentifier.str.coerce)
+		},
+		char: {
+			strict: abstractType$char(F.buildAbstractType, scopedTypeIdentifier.char.strict),
+			coerce: abstractType$char(C.coerceToAbstractType, scopedTypeIdentifier.char.coerce)
 		},
 		metavariable: {
 			strict: abstractType$metavariable(F.buildAbstractType, scopedTypeIdentifier.metavariable.strict),
@@ -9282,19 +16031,25 @@ export const abstractType: typeof B.abstractType & {
 			strict: abstractType$crate(F.buildAbstractType, scopedTypeIdentifier.crate.strict),
 			coerce: abstractType$crate(C.coerceToAbstractType, scopedTypeIdentifier.crate.coerce)
 		},
+		identifier: {
+			strict: abstractType$identifier(F.buildAbstractType, scopedTypeIdentifier.identifier.strict),
+			coerce: abstractType$identifier(C.coerceToAbstractType, scopedTypeIdentifier.identifier.coerce)
+		},
 		scopedIdentifier: {
 			strict: abstractType$scopedIdentifier(F.buildAbstractType, scopedTypeIdentifier.scopedIdentifier.strict),
 			coerce: abstractType$scopedIdentifier(C.coerceToAbstractType, scopedTypeIdentifier.scopedIdentifier.coerce)
 		},
-		reservedIdentifier: {
-			strict: abstractType$scopedTypeIdentifierReservedIdentifier(
-				F.buildAbstractType,
-				scopedTypeIdentifier.reservedIdentifier.strict
-			),
-			coerce: abstractType$scopedTypeIdentifierReservedIdentifier(
-				C.coerceToAbstractType,
-				scopedTypeIdentifier.reservedIdentifier.coerce
-			)
+		default: {
+			strict: abstractType$scopedTypeIdentifierDefault(F.buildAbstractType, scopedTypeIdentifier.default.strict),
+			coerce: abstractType$scopedTypeIdentifierDefault(C.coerceToAbstractType, scopedTypeIdentifier.default.coerce)
+		},
+		union: {
+			strict: abstractType$scopedTypeIdentifierUnion(F.buildAbstractType, scopedTypeIdentifier.union.strict),
+			coerce: abstractType$scopedTypeIdentifierUnion(C.coerceToAbstractType, scopedTypeIdentifier.union.coerce)
+		},
+		gen: {
+			strict: abstractType$scopedTypeIdentifierGen(F.buildAbstractType, scopedTypeIdentifier.gen.strict),
+			coerce: abstractType$scopedTypeIdentifierGen(C.coerceToAbstractType, scopedTypeIdentifier.gen.coerce)
 		},
 		genericTypeWithTurbofish: {
 			strict: abstractType$genericTypeWithTurbofish(
@@ -9321,9 +16076,17 @@ export const abstractType: typeof B.abstractType & {
 	genericType: {
 		strict: abstractType$genericType(F.buildAbstractType, F.buildGenericType),
 		coerce: abstractType$genericType(C.coerceToAbstractType, C.coerceToGenericType),
-		reservedIdentifier: {
-			strict: abstractType$genericTypeReservedIdentifier(F.buildAbstractType, genericType.reservedIdentifier.strict),
-			coerce: abstractType$genericTypeReservedIdentifier(C.coerceToAbstractType, genericType.reservedIdentifier.coerce)
+		default: {
+			strict: abstractType$genericTypeDefault(F.buildAbstractType, genericType.default.strict),
+			coerce: abstractType$genericTypeDefault(C.coerceToAbstractType, genericType.default.coerce)
+		},
+		union: {
+			strict: abstractType$genericTypeUnion(F.buildAbstractType, genericType.union.strict),
+			coerce: abstractType$genericTypeUnion(C.coerceToAbstractType, genericType.union.coerce)
+		},
+		gen: {
+			strict: abstractType$genericTypeGen(F.buildAbstractType, genericType.gen.strict),
+			coerce: abstractType$genericTypeGen(C.coerceToAbstractType, genericType.gen.coerce)
 		}
 	},
 	removedTraitBound: {
@@ -9368,7 +16131,71 @@ const dynamicType$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const dynamicType$identifier =
+const dynamicType$u8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$i8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$u16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$i16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$u32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$i32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$u64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$i64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$u128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$i128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$isize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$usize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$f32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$f64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$bool =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$str =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$char =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -9384,15 +16211,35 @@ const dynamicType$crate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const dynamicType$scopedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const dynamicType$scopedTypeIdentifierReservedIdentifier =
+const dynamicType$scopedTypeIdentifierDefault =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const dynamicType$genericTypeReservedIdentifier =
+const dynamicType$genericTypeDefault =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$scopedTypeIdentifierUnion =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$genericTypeUnion =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$scopedTypeIdentifierGen =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const dynamicType$genericTypeGen =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -9444,9 +16291,73 @@ export const dynamicType: typeof B.dynamicType & {
 			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.self.strict>) => ReturnType<typeof F.buildDynamicType>;
 			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.self.coerce>) => ReturnType<typeof F.buildDynamicType>;
 		};
-		identifier: {
-			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.identifier.strict>) => ReturnType<typeof F.buildDynamicType>;
-			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.identifier.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		u8: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.u8.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.u8.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		i8: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.i8.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.i8.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		u16: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.u16.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.u16.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		i16: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.i16.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.i16.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		u32: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.u32.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.u32.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		i32: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.i32.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.i32.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		u64: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.u64.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.u64.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		i64: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.i64.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.i64.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		u128: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.u128.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.u128.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		i128: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.i128.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.i128.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		isize: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.isize.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.isize.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		usize: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.usize.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.usize.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		f32: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.f32.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.f32.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		f64: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.f64.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.f64.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		bool: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.bool.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.bool.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		str: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.str.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.str.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		char: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.char.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.char.coerce>) => ReturnType<typeof F.buildDynamicType>;
 		};
 		metavariable: {
 			strict: (
@@ -9464,6 +16375,10 @@ export const dynamicType: typeof B.dynamicType & {
 			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.crate.strict>) => ReturnType<typeof F.buildDynamicType>;
 			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.crate.coerce>) => ReturnType<typeof F.buildDynamicType>;
 		};
+		identifier: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.identifier.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.identifier.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
 		scopedIdentifier: {
 			strict: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.scopedIdentifier.strict>
@@ -9472,13 +16387,17 @@ export const dynamicType: typeof B.dynamicType & {
 				...args: ArgsOf<typeof scopedTypeIdentifier.scopedIdentifier.coerce>
 			) => ReturnType<typeof F.buildDynamicType>;
 		};
-		reservedIdentifier: {
-			strict: (
-				...args: ArgsOf<typeof scopedTypeIdentifier.reservedIdentifier.strict>
-			) => ReturnType<typeof F.buildDynamicType>;
-			coerce: (
-				...args: ArgsOf<typeof scopedTypeIdentifier.reservedIdentifier.coerce>
-			) => ReturnType<typeof F.buildDynamicType>;
+		default: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.default.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.default.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		union: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.union.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.union.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		gen: {
+			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.gen.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.gen.coerce>) => ReturnType<typeof F.buildDynamicType>;
 		};
 		genericTypeWithTurbofish: {
 			strict: (
@@ -9508,9 +16427,17 @@ export const dynamicType: typeof B.dynamicType & {
 	genericType: {
 		strict: (...args: ArgsOf<typeof F.buildGenericType>) => ReturnType<typeof F.buildDynamicType>;
 		coerce: (...args: ArgsOf<typeof C.coerceToGenericType>) => ReturnType<typeof F.buildDynamicType>;
-		reservedIdentifier: {
-			strict: (...args: ArgsOf<typeof genericType.reservedIdentifier.strict>) => ReturnType<typeof F.buildDynamicType>;
-			coerce: (...args: ArgsOf<typeof genericType.reservedIdentifier.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		default: {
+			strict: (...args: ArgsOf<typeof genericType.default.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof genericType.default.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		union: {
+			strict: (...args: ArgsOf<typeof genericType.union.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof genericType.union.coerce>) => ReturnType<typeof F.buildDynamicType>;
+		};
+		gen: {
+			strict: (...args: ArgsOf<typeof genericType.gen.strict>) => ReturnType<typeof F.buildDynamicType>;
+			coerce: (...args: ArgsOf<typeof genericType.gen.coerce>) => ReturnType<typeof F.buildDynamicType>;
 		};
 	};
 	functionType: {
@@ -9546,9 +16473,73 @@ export const dynamicType: typeof B.dynamicType & {
 			strict: dynamicType$self(F.buildDynamicType, scopedTypeIdentifier.self.strict),
 			coerce: dynamicType$self(F.buildDynamicType, scopedTypeIdentifier.self.coerce)
 		},
-		identifier: {
-			strict: dynamicType$identifier(F.buildDynamicType, scopedTypeIdentifier.identifier.strict),
-			coerce: dynamicType$identifier(F.buildDynamicType, scopedTypeIdentifier.identifier.coerce)
+		u8: {
+			strict: dynamicType$u8(F.buildDynamicType, scopedTypeIdentifier.u8.strict),
+			coerce: dynamicType$u8(F.buildDynamicType, scopedTypeIdentifier.u8.coerce)
+		},
+		i8: {
+			strict: dynamicType$i8(F.buildDynamicType, scopedTypeIdentifier.i8.strict),
+			coerce: dynamicType$i8(F.buildDynamicType, scopedTypeIdentifier.i8.coerce)
+		},
+		u16: {
+			strict: dynamicType$u16(F.buildDynamicType, scopedTypeIdentifier.u16.strict),
+			coerce: dynamicType$u16(F.buildDynamicType, scopedTypeIdentifier.u16.coerce)
+		},
+		i16: {
+			strict: dynamicType$i16(F.buildDynamicType, scopedTypeIdentifier.i16.strict),
+			coerce: dynamicType$i16(F.buildDynamicType, scopedTypeIdentifier.i16.coerce)
+		},
+		u32: {
+			strict: dynamicType$u32(F.buildDynamicType, scopedTypeIdentifier.u32.strict),
+			coerce: dynamicType$u32(F.buildDynamicType, scopedTypeIdentifier.u32.coerce)
+		},
+		i32: {
+			strict: dynamicType$i32(F.buildDynamicType, scopedTypeIdentifier.i32.strict),
+			coerce: dynamicType$i32(F.buildDynamicType, scopedTypeIdentifier.i32.coerce)
+		},
+		u64: {
+			strict: dynamicType$u64(F.buildDynamicType, scopedTypeIdentifier.u64.strict),
+			coerce: dynamicType$u64(F.buildDynamicType, scopedTypeIdentifier.u64.coerce)
+		},
+		i64: {
+			strict: dynamicType$i64(F.buildDynamicType, scopedTypeIdentifier.i64.strict),
+			coerce: dynamicType$i64(F.buildDynamicType, scopedTypeIdentifier.i64.coerce)
+		},
+		u128: {
+			strict: dynamicType$u128(F.buildDynamicType, scopedTypeIdentifier.u128.strict),
+			coerce: dynamicType$u128(F.buildDynamicType, scopedTypeIdentifier.u128.coerce)
+		},
+		i128: {
+			strict: dynamicType$i128(F.buildDynamicType, scopedTypeIdentifier.i128.strict),
+			coerce: dynamicType$i128(F.buildDynamicType, scopedTypeIdentifier.i128.coerce)
+		},
+		isize: {
+			strict: dynamicType$isize(F.buildDynamicType, scopedTypeIdentifier.isize.strict),
+			coerce: dynamicType$isize(F.buildDynamicType, scopedTypeIdentifier.isize.coerce)
+		},
+		usize: {
+			strict: dynamicType$usize(F.buildDynamicType, scopedTypeIdentifier.usize.strict),
+			coerce: dynamicType$usize(F.buildDynamicType, scopedTypeIdentifier.usize.coerce)
+		},
+		f32: {
+			strict: dynamicType$f32(F.buildDynamicType, scopedTypeIdentifier.f32.strict),
+			coerce: dynamicType$f32(F.buildDynamicType, scopedTypeIdentifier.f32.coerce)
+		},
+		f64: {
+			strict: dynamicType$f64(F.buildDynamicType, scopedTypeIdentifier.f64.strict),
+			coerce: dynamicType$f64(F.buildDynamicType, scopedTypeIdentifier.f64.coerce)
+		},
+		bool: {
+			strict: dynamicType$bool(F.buildDynamicType, scopedTypeIdentifier.bool.strict),
+			coerce: dynamicType$bool(F.buildDynamicType, scopedTypeIdentifier.bool.coerce)
+		},
+		str: {
+			strict: dynamicType$str(F.buildDynamicType, scopedTypeIdentifier.str.strict),
+			coerce: dynamicType$str(F.buildDynamicType, scopedTypeIdentifier.str.coerce)
+		},
+		char: {
+			strict: dynamicType$char(F.buildDynamicType, scopedTypeIdentifier.char.strict),
+			coerce: dynamicType$char(F.buildDynamicType, scopedTypeIdentifier.char.coerce)
 		},
 		metavariable: {
 			strict: dynamicType$metavariable(F.buildDynamicType, scopedTypeIdentifier.metavariable.strict),
@@ -9562,19 +16553,25 @@ export const dynamicType: typeof B.dynamicType & {
 			strict: dynamicType$crate(F.buildDynamicType, scopedTypeIdentifier.crate.strict),
 			coerce: dynamicType$crate(F.buildDynamicType, scopedTypeIdentifier.crate.coerce)
 		},
+		identifier: {
+			strict: dynamicType$identifier(F.buildDynamicType, scopedTypeIdentifier.identifier.strict),
+			coerce: dynamicType$identifier(F.buildDynamicType, scopedTypeIdentifier.identifier.coerce)
+		},
 		scopedIdentifier: {
 			strict: dynamicType$scopedIdentifier(F.buildDynamicType, scopedTypeIdentifier.scopedIdentifier.strict),
 			coerce: dynamicType$scopedIdentifier(F.buildDynamicType, scopedTypeIdentifier.scopedIdentifier.coerce)
 		},
-		reservedIdentifier: {
-			strict: dynamicType$scopedTypeIdentifierReservedIdentifier(
-				F.buildDynamicType,
-				scopedTypeIdentifier.reservedIdentifier.strict
-			),
-			coerce: dynamicType$scopedTypeIdentifierReservedIdentifier(
-				F.buildDynamicType,
-				scopedTypeIdentifier.reservedIdentifier.coerce
-			)
+		default: {
+			strict: dynamicType$scopedTypeIdentifierDefault(F.buildDynamicType, scopedTypeIdentifier.default.strict),
+			coerce: dynamicType$scopedTypeIdentifierDefault(F.buildDynamicType, scopedTypeIdentifier.default.coerce)
+		},
+		union: {
+			strict: dynamicType$scopedTypeIdentifierUnion(F.buildDynamicType, scopedTypeIdentifier.union.strict),
+			coerce: dynamicType$scopedTypeIdentifierUnion(F.buildDynamicType, scopedTypeIdentifier.union.coerce)
+		},
+		gen: {
+			strict: dynamicType$scopedTypeIdentifierGen(F.buildDynamicType, scopedTypeIdentifier.gen.strict),
+			coerce: dynamicType$scopedTypeIdentifierGen(F.buildDynamicType, scopedTypeIdentifier.gen.coerce)
 		},
 		genericTypeWithTurbofish: {
 			strict: dynamicType$genericTypeWithTurbofish(
@@ -9598,9 +16595,17 @@ export const dynamicType: typeof B.dynamicType & {
 	genericType: {
 		strict: dynamicType$genericType(F.buildDynamicType, F.buildGenericType),
 		coerce: dynamicType$genericType(F.buildDynamicType, C.coerceToGenericType),
-		reservedIdentifier: {
-			strict: dynamicType$genericTypeReservedIdentifier(F.buildDynamicType, genericType.reservedIdentifier.strict),
-			coerce: dynamicType$genericTypeReservedIdentifier(F.buildDynamicType, genericType.reservedIdentifier.coerce)
+		default: {
+			strict: dynamicType$genericTypeDefault(F.buildDynamicType, genericType.default.strict),
+			coerce: dynamicType$genericTypeDefault(F.buildDynamicType, genericType.default.coerce)
+		},
+		union: {
+			strict: dynamicType$genericTypeUnion(F.buildDynamicType, genericType.union.strict),
+			coerce: dynamicType$genericTypeUnion(F.buildDynamicType, genericType.union.coerce)
+		},
+		gen: {
+			strict: dynamicType$genericTypeGen(F.buildDynamicType, genericType.gen.strict),
+			coerce: dynamicType$genericTypeGen(F.buildDynamicType, genericType.gen.coerce)
 		}
 	},
 	functionType: {
@@ -9638,12 +16643,18 @@ const macroInvocation$identifier =
 		const { macro: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, macro: _c(child)(...seated) } as never, options as never);
 	};
-const macroInvocation$reservedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'macro'> & { macro: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { macro: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, macro: _c(child)(seated) } as never, options as never);
-	};
+const macroInvocation$default =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'macro'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, macro: value } as never, options as never);
+const macroInvocation$union =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'macro'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, macro: value } as never, options as never);
+const macroInvocation$gen =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'macro'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, macro: value } as never, options as never);
 const macroInvocation$paren =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -9752,25 +16763,21 @@ const macroInvocation$identifier$brace =
 		const { arguments: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
 	};
-const macroInvocation$reservedIdentifier$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'macro'> & {
-		macro: ArgsOf<typeof F.buildReservedIdentifier>[0];
-	},
+const macroInvocation$default$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'macro'>,
 	options?: OptionsArg<typeof F.buildMacroInvocation>
-) => ReturnType<typeof F.buildMacroInvocation> = macroInvocation$reservedIdentifier(
+) => ReturnType<typeof F.buildMacroInvocation> = macroInvocation$default(
 	F.buildMacroInvocation,
-	F.buildReservedIdentifier
+	TSKindId.DefaultKeyword
 );
-const macroInvocation$reservedIdentifier$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'macro'> & {
-		macro: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
-	},
+const macroInvocation$default$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'macro'>,
 	options?: OptionsArg<typeof C.coerceToMacroInvocation>
-) => ReturnType<typeof C.coerceToMacroInvocation> = macroInvocation$reservedIdentifier(
+) => ReturnType<typeof C.coerceToMacroInvocation> = macroInvocation$default(
 	C.coerceToMacroInvocation,
-	C.coerceToReservedIdentifier
+	TSKindId.DefaultKeyword
 );
-const macroInvocation$reservedIdentifier$paren =
+const macroInvocation$default$paren =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
@@ -9779,7 +16786,7 @@ const macroInvocation$reservedIdentifier$paren =
 		const { arguments: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
 	};
-const macroInvocation$reservedIdentifier$bracket =
+const macroInvocation$default$bracket =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
@@ -9788,7 +16795,80 @@ const macroInvocation$reservedIdentifier$bracket =
 		const { arguments: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
 	};
-const macroInvocation$reservedIdentifier$brace =
+const macroInvocation$default$brace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { arguments: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
+	};
+const macroInvocation$union$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'macro'>,
+	options?: OptionsArg<typeof F.buildMacroInvocation>
+) => ReturnType<typeof F.buildMacroInvocation> = macroInvocation$union(F.buildMacroInvocation, TSKindId.UnionKeyword);
+const macroInvocation$union$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'macro'>,
+	options?: OptionsArg<typeof C.coerceToMacroInvocation>
+) => ReturnType<typeof C.coerceToMacroInvocation> = macroInvocation$union(
+	C.coerceToMacroInvocation,
+	TSKindId.UnionKeyword
+);
+const macroInvocation$union$paren =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { arguments: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
+	};
+const macroInvocation$union$bracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { arguments: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
+	};
+const macroInvocation$union$brace =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { arguments: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
+	};
+const macroInvocation$gen$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'macro'>,
+	options?: OptionsArg<typeof F.buildMacroInvocation>
+) => ReturnType<typeof F.buildMacroInvocation> = macroInvocation$gen(F.buildMacroInvocation, TSKindId.GenKeyword);
+const macroInvocation$gen$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'macro'>,
+	options?: OptionsArg<typeof C.coerceToMacroInvocation>
+) => ReturnType<typeof C.coerceToMacroInvocation> = macroInvocation$gen(C.coerceToMacroInvocation, TSKindId.GenKeyword);
+const macroInvocation$gen$paren =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { arguments: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
+	};
+const macroInvocation$gen$bracket =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { arguments: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
+	};
+const macroInvocation$gen$brace =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
@@ -9905,60 +16985,160 @@ export const macroInvocation: typeof B.macroInvocation & {
 			) => ReturnType<typeof macroInvocation$identifier$appliedCoerce>;
 		};
 	};
-	reservedIdentifier: {
+	default: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'macro'> & {
-				macro: ArgsOf<typeof F.buildReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'macro'>,
 			options?: OptionsArg<typeof F.buildMacroInvocation>
 		) => ReturnType<typeof F.buildMacroInvocation>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'macro'> & {
-				macro: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'macro'>,
 			options?: OptionsArg<typeof C.coerceToMacroInvocation>
 		) => ReturnType<typeof C.coerceToMacroInvocation>;
 		paren: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$reservedIdentifier$applied>[0], 'arguments'> & {
+				config: OmitEach<ArgsOf<typeof macroInvocation$default$applied>[0], 'arguments'> & {
 					arguments: ArgsOf<typeof F.buildDelimTokenTreeParen>;
 				},
-				options?: OptionsArg<typeof macroInvocation$reservedIdentifier$applied>
-			) => ReturnType<typeof macroInvocation$reservedIdentifier$applied>;
+				options?: OptionsArg<typeof macroInvocation$default$applied>
+			) => ReturnType<typeof macroInvocation$default$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$reservedIdentifier$appliedCoerce>[0], 'arguments'> & {
+				config: OmitEach<ArgsOf<typeof macroInvocation$default$appliedCoerce>[0], 'arguments'> & {
 					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeParen>;
 				},
-				options?: OptionsArg<typeof macroInvocation$reservedIdentifier$appliedCoerce>
-			) => ReturnType<typeof macroInvocation$reservedIdentifier$appliedCoerce>;
+				options?: OptionsArg<typeof macroInvocation$default$appliedCoerce>
+			) => ReturnType<typeof macroInvocation$default$appliedCoerce>;
 		};
 		bracket: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$reservedIdentifier$applied>[0], 'arguments'> & {
+				config: OmitEach<ArgsOf<typeof macroInvocation$default$applied>[0], 'arguments'> & {
 					arguments: ArgsOf<typeof F.buildDelimTokenTreeBracket>;
 				},
-				options?: OptionsArg<typeof macroInvocation$reservedIdentifier$applied>
-			) => ReturnType<typeof macroInvocation$reservedIdentifier$applied>;
+				options?: OptionsArg<typeof macroInvocation$default$applied>
+			) => ReturnType<typeof macroInvocation$default$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$reservedIdentifier$appliedCoerce>[0], 'arguments'> & {
+				config: OmitEach<ArgsOf<typeof macroInvocation$default$appliedCoerce>[0], 'arguments'> & {
 					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeBracket>;
 				},
-				options?: OptionsArg<typeof macroInvocation$reservedIdentifier$appliedCoerce>
-			) => ReturnType<typeof macroInvocation$reservedIdentifier$appliedCoerce>;
+				options?: OptionsArg<typeof macroInvocation$default$appliedCoerce>
+			) => ReturnType<typeof macroInvocation$default$appliedCoerce>;
 		};
 		brace: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$reservedIdentifier$applied>[0], 'arguments'> & {
+				config: OmitEach<ArgsOf<typeof macroInvocation$default$applied>[0], 'arguments'> & {
 					arguments: ArgsOf<typeof F.buildDelimTokenTreeBrace>;
 				},
-				options?: OptionsArg<typeof macroInvocation$reservedIdentifier$applied>
-			) => ReturnType<typeof macroInvocation$reservedIdentifier$applied>;
+				options?: OptionsArg<typeof macroInvocation$default$applied>
+			) => ReturnType<typeof macroInvocation$default$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$reservedIdentifier$appliedCoerce>[0], 'arguments'> & {
+				config: OmitEach<ArgsOf<typeof macroInvocation$default$appliedCoerce>[0], 'arguments'> & {
 					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeBrace>;
 				},
-				options?: OptionsArg<typeof macroInvocation$reservedIdentifier$appliedCoerce>
-			) => ReturnType<typeof macroInvocation$reservedIdentifier$appliedCoerce>;
+				options?: OptionsArg<typeof macroInvocation$default$appliedCoerce>
+			) => ReturnType<typeof macroInvocation$default$appliedCoerce>;
+		};
+	};
+	union: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'macro'>,
+			options?: OptionsArg<typeof F.buildMacroInvocation>
+		) => ReturnType<typeof F.buildMacroInvocation>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'macro'>,
+			options?: OptionsArg<typeof C.coerceToMacroInvocation>
+		) => ReturnType<typeof C.coerceToMacroInvocation>;
+		paren: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroInvocation$union$applied>[0], 'arguments'> & {
+					arguments: ArgsOf<typeof F.buildDelimTokenTreeParen>;
+				},
+				options?: OptionsArg<typeof macroInvocation$union$applied>
+			) => ReturnType<typeof macroInvocation$union$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroInvocation$union$appliedCoerce>[0], 'arguments'> & {
+					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeParen>;
+				},
+				options?: OptionsArg<typeof macroInvocation$union$appliedCoerce>
+			) => ReturnType<typeof macroInvocation$union$appliedCoerce>;
+		};
+		bracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroInvocation$union$applied>[0], 'arguments'> & {
+					arguments: ArgsOf<typeof F.buildDelimTokenTreeBracket>;
+				},
+				options?: OptionsArg<typeof macroInvocation$union$applied>
+			) => ReturnType<typeof macroInvocation$union$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroInvocation$union$appliedCoerce>[0], 'arguments'> & {
+					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeBracket>;
+				},
+				options?: OptionsArg<typeof macroInvocation$union$appliedCoerce>
+			) => ReturnType<typeof macroInvocation$union$appliedCoerce>;
+		};
+		brace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroInvocation$union$applied>[0], 'arguments'> & {
+					arguments: ArgsOf<typeof F.buildDelimTokenTreeBrace>;
+				},
+				options?: OptionsArg<typeof macroInvocation$union$applied>
+			) => ReturnType<typeof macroInvocation$union$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroInvocation$union$appliedCoerce>[0], 'arguments'> & {
+					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeBrace>;
+				},
+				options?: OptionsArg<typeof macroInvocation$union$appliedCoerce>
+			) => ReturnType<typeof macroInvocation$union$appliedCoerce>;
+		};
+	};
+	gen: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'macro'>,
+			options?: OptionsArg<typeof F.buildMacroInvocation>
+		) => ReturnType<typeof F.buildMacroInvocation>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'macro'>,
+			options?: OptionsArg<typeof C.coerceToMacroInvocation>
+		) => ReturnType<typeof C.coerceToMacroInvocation>;
+		paren: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroInvocation$gen$applied>[0], 'arguments'> & {
+					arguments: ArgsOf<typeof F.buildDelimTokenTreeParen>;
+				},
+				options?: OptionsArg<typeof macroInvocation$gen$applied>
+			) => ReturnType<typeof macroInvocation$gen$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroInvocation$gen$appliedCoerce>[0], 'arguments'> & {
+					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeParen>;
+				},
+				options?: OptionsArg<typeof macroInvocation$gen$appliedCoerce>
+			) => ReturnType<typeof macroInvocation$gen$appliedCoerce>;
+		};
+		bracket: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroInvocation$gen$applied>[0], 'arguments'> & {
+					arguments: ArgsOf<typeof F.buildDelimTokenTreeBracket>;
+				},
+				options?: OptionsArg<typeof macroInvocation$gen$applied>
+			) => ReturnType<typeof macroInvocation$gen$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroInvocation$gen$appliedCoerce>[0], 'arguments'> & {
+					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeBracket>;
+				},
+				options?: OptionsArg<typeof macroInvocation$gen$appliedCoerce>
+			) => ReturnType<typeof macroInvocation$gen$appliedCoerce>;
+		};
+		brace: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof macroInvocation$gen$applied>[0], 'arguments'> & {
+					arguments: ArgsOf<typeof F.buildDelimTokenTreeBrace>;
+				},
+				options?: OptionsArg<typeof macroInvocation$gen$applied>
+			) => ReturnType<typeof macroInvocation$gen$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof macroInvocation$gen$appliedCoerce>[0], 'arguments'> & {
+					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeBrace>;
+				},
+				options?: OptionsArg<typeof macroInvocation$gen$appliedCoerce>
+			) => ReturnType<typeof macroInvocation$gen$appliedCoerce>;
 		};
 	};
 	paren: {
@@ -10058,38 +17238,52 @@ export const macroInvocation: typeof B.macroInvocation & {
 			coerce: macroInvocation$identifier$brace(macroInvocation$identifier$appliedCoerce, C.coerceToDelimTokenTreeBrace)
 		}
 	},
-	reservedIdentifier: {
-		strict: macroInvocation$reservedIdentifier(F.buildMacroInvocation, F.buildReservedIdentifier),
-		coerce: macroInvocation$reservedIdentifier(C.coerceToMacroInvocation, C.coerceToReservedIdentifier),
+	default: {
+		strict: macroInvocation$default(F.buildMacroInvocation, TSKindId.DefaultKeyword),
+		coerce: macroInvocation$default(C.coerceToMacroInvocation, TSKindId.DefaultKeyword),
 		paren: {
-			strict: macroInvocation$reservedIdentifier$paren(
-				macroInvocation$reservedIdentifier$applied,
-				F.buildDelimTokenTreeParen
-			),
-			coerce: macroInvocation$reservedIdentifier$paren(
-				macroInvocation$reservedIdentifier$appliedCoerce,
-				C.coerceToDelimTokenTreeParen
-			)
+			strict: macroInvocation$default$paren(macroInvocation$default$applied, F.buildDelimTokenTreeParen),
+			coerce: macroInvocation$default$paren(macroInvocation$default$appliedCoerce, C.coerceToDelimTokenTreeParen)
 		},
 		bracket: {
-			strict: macroInvocation$reservedIdentifier$bracket(
-				macroInvocation$reservedIdentifier$applied,
-				F.buildDelimTokenTreeBracket
-			),
-			coerce: macroInvocation$reservedIdentifier$bracket(
-				macroInvocation$reservedIdentifier$appliedCoerce,
-				C.coerceToDelimTokenTreeBracket
-			)
+			strict: macroInvocation$default$bracket(macroInvocation$default$applied, F.buildDelimTokenTreeBracket),
+			coerce: macroInvocation$default$bracket(macroInvocation$default$appliedCoerce, C.coerceToDelimTokenTreeBracket)
 		},
 		brace: {
-			strict: macroInvocation$reservedIdentifier$brace(
-				macroInvocation$reservedIdentifier$applied,
-				F.buildDelimTokenTreeBrace
-			),
-			coerce: macroInvocation$reservedIdentifier$brace(
-				macroInvocation$reservedIdentifier$appliedCoerce,
-				C.coerceToDelimTokenTreeBrace
-			)
+			strict: macroInvocation$default$brace(macroInvocation$default$applied, F.buildDelimTokenTreeBrace),
+			coerce: macroInvocation$default$brace(macroInvocation$default$appliedCoerce, C.coerceToDelimTokenTreeBrace)
+		}
+	},
+	union: {
+		strict: macroInvocation$union(F.buildMacroInvocation, TSKindId.UnionKeyword),
+		coerce: macroInvocation$union(C.coerceToMacroInvocation, TSKindId.UnionKeyword),
+		paren: {
+			strict: macroInvocation$union$paren(macroInvocation$union$applied, F.buildDelimTokenTreeParen),
+			coerce: macroInvocation$union$paren(macroInvocation$union$appliedCoerce, C.coerceToDelimTokenTreeParen)
+		},
+		bracket: {
+			strict: macroInvocation$union$bracket(macroInvocation$union$applied, F.buildDelimTokenTreeBracket),
+			coerce: macroInvocation$union$bracket(macroInvocation$union$appliedCoerce, C.coerceToDelimTokenTreeBracket)
+		},
+		brace: {
+			strict: macroInvocation$union$brace(macroInvocation$union$applied, F.buildDelimTokenTreeBrace),
+			coerce: macroInvocation$union$brace(macroInvocation$union$appliedCoerce, C.coerceToDelimTokenTreeBrace)
+		}
+	},
+	gen: {
+		strict: macroInvocation$gen(F.buildMacroInvocation, TSKindId.GenKeyword),
+		coerce: macroInvocation$gen(C.coerceToMacroInvocation, TSKindId.GenKeyword),
+		paren: {
+			strict: macroInvocation$gen$paren(macroInvocation$gen$applied, F.buildDelimTokenTreeParen),
+			coerce: macroInvocation$gen$paren(macroInvocation$gen$appliedCoerce, C.coerceToDelimTokenTreeParen)
+		},
+		bracket: {
+			strict: macroInvocation$gen$bracket(macroInvocation$gen$applied, F.buildDelimTokenTreeBracket),
+			coerce: macroInvocation$gen$bracket(macroInvocation$gen$appliedCoerce, C.coerceToDelimTokenTreeBracket)
+		},
+		brace: {
+			strict: macroInvocation$gen$brace(macroInvocation$gen$applied, F.buildDelimTokenTreeBrace),
+			coerce: macroInvocation$gen$brace(macroInvocation$gen$appliedCoerce, C.coerceToDelimTokenTreeBrace)
 		}
 	},
 	paren: {
@@ -10110,12 +17304,74 @@ const scopedTypeIdentifierInExpressionPosition$self =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const scopedTypeIdentifierInExpressionPosition$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
-	};
+const scopedTypeIdentifierInExpressionPosition$u8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$i8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$u16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$i16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$u32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$i32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$u64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$i64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$u128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$i128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$isize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$usize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$f32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$f64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$bool =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$str =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$char =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
 const scopedTypeIdentifierInExpressionPosition$metavariable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -10130,18 +17386,30 @@ const scopedTypeIdentifierInExpressionPosition$crate =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { path: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
+	};
 const scopedTypeIdentifierInExpressionPosition$scopedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { path: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
 	};
-const scopedTypeIdentifierInExpressionPosition$reservedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
-	};
+const scopedTypeIdentifierInExpressionPosition$default =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$union =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
+const scopedTypeIdentifierInExpressionPosition$gen =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, path: value } as never, options as never);
 const scopedTypeIdentifierInExpressionPosition$genericTypeWithTurbofish =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -10170,17 +17438,173 @@ export const scopedTypeIdentifierInExpressionPosition: typeof B.scopedTypeIdenti
 			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
 		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
 	};
-	identifier: {
+	u8: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildIdentifier>;
-			},
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
 			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
 		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToIdentifier>;
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	i8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	u16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	i16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	u32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	i32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	u64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	i64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	u128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	i128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	isize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	usize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	f32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	f64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	bool: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	str: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	char: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
 			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
 		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
 	};
@@ -10218,6 +17642,20 @@ export const scopedTypeIdentifierInExpressionPosition: typeof B.scopedTypeIdenti
 			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
 		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
 	};
+	identifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'> & {
+				path: ArgsOf<typeof F.buildIdentifier>;
+			},
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'> & {
+				path: ArgsOf<typeof C.coerceToIdentifier>;
+			},
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
 	scopedIdentifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'> & {
@@ -10232,17 +17670,33 @@ export const scopedTypeIdentifierInExpressionPosition: typeof B.scopedTypeIdenti
 			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
 		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
 	};
-	reservedIdentifier: {
+	default: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
 			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
 		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	union: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	};
+	gen: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
+			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
+		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
 			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
 		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
 	};
@@ -10281,14 +17735,174 @@ export const scopedTypeIdentifierInExpressionPosition: typeof B.scopedTypeIdenti
 			C.coerceToSelf
 		)
 	},
-	identifier: {
-		strict: scopedTypeIdentifierInExpressionPosition$identifier(
+	u8: {
+		strict: scopedTypeIdentifierInExpressionPosition$u8(
 			F.buildScopedTypeIdentifierInExpressionPosition,
-			F.buildIdentifier
+			TSKindId.U8Keyword
 		),
-		coerce: scopedTypeIdentifierInExpressionPosition$identifier(
+		coerce: scopedTypeIdentifierInExpressionPosition$u8(
 			C.coerceToScopedTypeIdentifierInExpressionPosition,
-			C.coerceToIdentifier
+			TSKindId.U8Keyword
+		)
+	},
+	i8: {
+		strict: scopedTypeIdentifierInExpressionPosition$i8(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.I8Keyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$i8(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.I8Keyword
+		)
+	},
+	u16: {
+		strict: scopedTypeIdentifierInExpressionPosition$u16(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.U16Keyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$u16(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.U16Keyword
+		)
+	},
+	i16: {
+		strict: scopedTypeIdentifierInExpressionPosition$i16(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.I16Keyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$i16(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.I16Keyword
+		)
+	},
+	u32: {
+		strict: scopedTypeIdentifierInExpressionPosition$u32(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.U32Keyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$u32(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.U32Keyword
+		)
+	},
+	i32: {
+		strict: scopedTypeIdentifierInExpressionPosition$i32(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.I32Keyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$i32(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.I32Keyword
+		)
+	},
+	u64: {
+		strict: scopedTypeIdentifierInExpressionPosition$u64(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.U64Keyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$u64(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.U64Keyword
+		)
+	},
+	i64: {
+		strict: scopedTypeIdentifierInExpressionPosition$i64(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.I64Keyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$i64(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.I64Keyword
+		)
+	},
+	u128: {
+		strict: scopedTypeIdentifierInExpressionPosition$u128(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.U128Keyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$u128(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.U128Keyword
+		)
+	},
+	i128: {
+		strict: scopedTypeIdentifierInExpressionPosition$i128(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.I128Keyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$i128(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.I128Keyword
+		)
+	},
+	isize: {
+		strict: scopedTypeIdentifierInExpressionPosition$isize(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.IsizeKeyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$isize(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.IsizeKeyword
+		)
+	},
+	usize: {
+		strict: scopedTypeIdentifierInExpressionPosition$usize(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.UsizeKeyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$usize(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.UsizeKeyword
+		)
+	},
+	f32: {
+		strict: scopedTypeIdentifierInExpressionPosition$f32(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.F32Keyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$f32(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.F32Keyword
+		)
+	},
+	f64: {
+		strict: scopedTypeIdentifierInExpressionPosition$f64(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.F64Keyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$f64(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.F64Keyword
+		)
+	},
+	bool: {
+		strict: scopedTypeIdentifierInExpressionPosition$bool(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.BoolKeyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$bool(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.BoolKeyword
+		)
+	},
+	str: {
+		strict: scopedTypeIdentifierInExpressionPosition$str(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.StrKeyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$str(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.StrKeyword
+		)
+	},
+	char: {
+		strict: scopedTypeIdentifierInExpressionPosition$char(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.CharKeyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$char(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.CharKeyword
 		)
 	},
 	metavariable: {
@@ -10321,6 +17935,16 @@ export const scopedTypeIdentifierInExpressionPosition: typeof B.scopedTypeIdenti
 			C.coerceToCrate
 		)
 	},
+	identifier: {
+		strict: scopedTypeIdentifierInExpressionPosition$identifier(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			F.buildIdentifier
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$identifier(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			C.coerceToIdentifier
+		)
+	},
 	scopedIdentifier: {
 		strict: scopedTypeIdentifierInExpressionPosition$scopedIdentifier(
 			F.buildScopedTypeIdentifierInExpressionPosition,
@@ -10331,14 +17955,34 @@ export const scopedTypeIdentifierInExpressionPosition: typeof B.scopedTypeIdenti
 			C.coerceToScopedIdentifier
 		)
 	},
-	reservedIdentifier: {
-		strict: scopedTypeIdentifierInExpressionPosition$reservedIdentifier(
+	default: {
+		strict: scopedTypeIdentifierInExpressionPosition$default(
 			F.buildScopedTypeIdentifierInExpressionPosition,
-			F.buildReservedIdentifier
+			TSKindId.DefaultKeyword
 		),
-		coerce: scopedTypeIdentifierInExpressionPosition$reservedIdentifier(
+		coerce: scopedTypeIdentifierInExpressionPosition$default(
 			C.coerceToScopedTypeIdentifierInExpressionPosition,
-			C.coerceToReservedIdentifier
+			TSKindId.DefaultKeyword
+		)
+	},
+	union: {
+		strict: scopedTypeIdentifierInExpressionPosition$union(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.UnionKeyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$union(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.UnionKeyword
+		)
+	},
+	gen: {
+		strict: scopedTypeIdentifierInExpressionPosition$gen(
+			F.buildScopedTypeIdentifierInExpressionPosition,
+			TSKindId.GenKeyword
+		),
+		coerce: scopedTypeIdentifierInExpressionPosition$gen(
+			C.coerceToScopedTypeIdentifierInExpressionPosition,
+			TSKindId.GenKeyword
 		)
 	},
 	genericTypeWithTurbofish: {
@@ -11069,7 +18713,103 @@ const structExpression$self =
 		const { name: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
 	};
-const structExpression$identifier =
+const structExpression$u8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$i8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$u16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$i16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$u32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$i32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$u64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$i64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$u128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$i128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$isize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$usize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$f32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$f64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$bool =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$str =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$char =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -11093,6 +18833,12 @@ const structExpression$crate =
 		const { name: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
 	};
+const structExpression$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
 const structExpression$scopedTypeIdentifierInExpressionPositionScopedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -11105,7 +18851,19 @@ const structExpression$genericTypeWithTurbofishScopedIdentifier =
 		const { name: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
 	};
-const structExpression$reservedIdentifier =
+const structExpression$default =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$union =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
+const structExpression$gen =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -11162,16 +18920,240 @@ export const structExpression: typeof B.structExpression & {
 				options?: OptionsArg<typeof C.coerceToStructExpression>
 			) => ReturnType<typeof C.coerceToStructExpression>;
 		};
-		identifier: {
+		u8: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
-					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.identifier.strict>;
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.u8.strict>;
 				},
 				options?: OptionsArg<typeof F.buildStructExpression>
 			) => ReturnType<typeof F.buildStructExpression>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
-					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.identifier.coerce>;
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.u8.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		i8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.i8.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.i8.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		u16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.u16.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.u16.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		i16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.i16.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.i16.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		u32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.u32.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.u32.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		i32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.i32.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.i32.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		u64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.u64.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.u64.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		i64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.i64.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.i64.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		u128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.u128.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.u128.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		i128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.i128.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.i128.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		isize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.isize.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.isize.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		usize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.usize.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.usize.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		f32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.f32.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.f32.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		f64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.f64.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.f64.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		bool: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.bool.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.bool.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		str: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.str.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.str.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		char: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.char.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.char.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToStructExpression>
 			) => ReturnType<typeof C.coerceToStructExpression>;
@@ -11218,6 +19200,20 @@ export const structExpression: typeof B.structExpression & {
 				options?: OptionsArg<typeof C.coerceToStructExpression>
 			) => ReturnType<typeof C.coerceToStructExpression>;
 		};
+		identifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.identifier.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.identifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
 		scopedIdentifier: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
@@ -11232,16 +19228,44 @@ export const structExpression: typeof B.structExpression & {
 				options?: OptionsArg<typeof C.coerceToStructExpression>
 			) => ReturnType<typeof C.coerceToStructExpression>;
 		};
-		reservedIdentifier: {
+		default: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
-					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.reservedIdentifier.strict>;
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.default.strict>;
 				},
 				options?: OptionsArg<typeof F.buildStructExpression>
 			) => ReturnType<typeof F.buildStructExpression>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
-					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.reservedIdentifier.coerce>;
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.default.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		union: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.union.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.union.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToStructExpression>
+			) => ReturnType<typeof C.coerceToStructExpression>;
+		};
+		gen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.gen.strict>;
+				},
+				options?: OptionsArg<typeof F.buildStructExpression>
+			) => ReturnType<typeof F.buildStructExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
+					name: ArgsOf<typeof scopedTypeIdentifierInExpressionPosition.gen.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToStructExpression>
 			) => ReturnType<typeof C.coerceToStructExpression>;
@@ -11292,15 +19316,73 @@ export const structExpression: typeof B.structExpression & {
 			strict: structExpression$self(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.self.strict),
 			coerce: structExpression$self(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.self.coerce)
 		},
-		identifier: {
-			strict: structExpression$identifier(
-				F.buildStructExpression,
-				scopedTypeIdentifierInExpressionPosition.identifier.strict
-			),
-			coerce: structExpression$identifier(
-				C.coerceToStructExpression,
-				scopedTypeIdentifierInExpressionPosition.identifier.coerce
-			)
+		u8: {
+			strict: structExpression$u8(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.u8.strict),
+			coerce: structExpression$u8(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.u8.coerce)
+		},
+		i8: {
+			strict: structExpression$i8(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.i8.strict),
+			coerce: structExpression$i8(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.i8.coerce)
+		},
+		u16: {
+			strict: structExpression$u16(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.u16.strict),
+			coerce: structExpression$u16(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.u16.coerce)
+		},
+		i16: {
+			strict: structExpression$i16(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.i16.strict),
+			coerce: structExpression$i16(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.i16.coerce)
+		},
+		u32: {
+			strict: structExpression$u32(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.u32.strict),
+			coerce: structExpression$u32(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.u32.coerce)
+		},
+		i32: {
+			strict: structExpression$i32(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.i32.strict),
+			coerce: structExpression$i32(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.i32.coerce)
+		},
+		u64: {
+			strict: structExpression$u64(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.u64.strict),
+			coerce: structExpression$u64(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.u64.coerce)
+		},
+		i64: {
+			strict: structExpression$i64(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.i64.strict),
+			coerce: structExpression$i64(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.i64.coerce)
+		},
+		u128: {
+			strict: structExpression$u128(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.u128.strict),
+			coerce: structExpression$u128(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.u128.coerce)
+		},
+		i128: {
+			strict: structExpression$i128(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.i128.strict),
+			coerce: structExpression$i128(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.i128.coerce)
+		},
+		isize: {
+			strict: structExpression$isize(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.isize.strict),
+			coerce: structExpression$isize(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.isize.coerce)
+		},
+		usize: {
+			strict: structExpression$usize(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.usize.strict),
+			coerce: structExpression$usize(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.usize.coerce)
+		},
+		f32: {
+			strict: structExpression$f32(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.f32.strict),
+			coerce: structExpression$f32(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.f32.coerce)
+		},
+		f64: {
+			strict: structExpression$f64(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.f64.strict),
+			coerce: structExpression$f64(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.f64.coerce)
+		},
+		bool: {
+			strict: structExpression$bool(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.bool.strict),
+			coerce: structExpression$bool(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.bool.coerce)
+		},
+		str: {
+			strict: structExpression$str(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.str.strict),
+			coerce: structExpression$str(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.str.coerce)
+		},
+		char: {
+			strict: structExpression$char(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.char.strict),
+			coerce: structExpression$char(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.char.coerce)
 		},
 		metavariable: {
 			strict: structExpression$metavariable(
@@ -11320,6 +19402,16 @@ export const structExpression: typeof B.structExpression & {
 			strict: structExpression$crate(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.crate.strict),
 			coerce: structExpression$crate(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.crate.coerce)
 		},
+		identifier: {
+			strict: structExpression$identifier(
+				F.buildStructExpression,
+				scopedTypeIdentifierInExpressionPosition.identifier.strict
+			),
+			coerce: structExpression$identifier(
+				C.coerceToStructExpression,
+				scopedTypeIdentifierInExpressionPosition.identifier.coerce
+			)
+		},
 		scopedIdentifier: {
 			strict: structExpression$scopedTypeIdentifierInExpressionPositionScopedIdentifier(
 				F.buildStructExpression,
@@ -11330,15 +19422,23 @@ export const structExpression: typeof B.structExpression & {
 				scopedTypeIdentifierInExpressionPosition.scopedIdentifier.coerce
 			)
 		},
-		reservedIdentifier: {
-			strict: structExpression$reservedIdentifier(
+		default: {
+			strict: structExpression$default(
 				F.buildStructExpression,
-				scopedTypeIdentifierInExpressionPosition.reservedIdentifier.strict
+				scopedTypeIdentifierInExpressionPosition.default.strict
 			),
-			coerce: structExpression$reservedIdentifier(
+			coerce: structExpression$default(
 				C.coerceToStructExpression,
-				scopedTypeIdentifierInExpressionPosition.reservedIdentifier.coerce
+				scopedTypeIdentifierInExpressionPosition.default.coerce
 			)
+		},
+		union: {
+			strict: structExpression$union(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.union.strict),
+			coerce: structExpression$union(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.union.coerce)
+		},
+		gen: {
+			strict: structExpression$gen(F.buildStructExpression, scopedTypeIdentifierInExpressionPosition.gen.strict),
+			coerce: structExpression$gen(C.coerceToStructExpression, scopedTypeIdentifierInExpressionPosition.gen.coerce)
 		}
 	},
 	genericTypeWithTurbofish: {
@@ -11682,15 +19782,86 @@ const callExpression$identifier =
 		const { function: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) } as never, options as never);
 	};
-const callExpression$reservedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
+const callExpression$u8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$i8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$u16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$i16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$u32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$i32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$u64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$i64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$u128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$i128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$isize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$usize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$f32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$f64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$bool =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$str =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$char =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$default =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$union =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
+const callExpression$gen =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, function: value } as never, options as never);
 const callExpression$self =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
@@ -12636,17 +20807,203 @@ export const callExpression: typeof B.callExpression & {
 			options?: OptionsArg<typeof C.coerceToCallExpression>
 		) => ReturnType<typeof C.coerceToCallExpression>;
 	};
-	reservedIdentifier: {
+	u8: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
 			options?: OptionsArg<typeof F.buildCallExpression>
 		) => ReturnType<typeof F.buildCallExpression>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	i8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	u16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	i16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	u32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	i32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	u64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	i64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	u128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	i128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	isize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	usize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	f32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	f64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	bool: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	str: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	char: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	default: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	union: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof C.coerceToCallExpression>
+		) => ReturnType<typeof C.coerceToCallExpression>;
+	};
+	gen: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
+			options?: OptionsArg<typeof F.buildCallExpression>
+		) => ReturnType<typeof F.buildCallExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
 			options?: OptionsArg<typeof C.coerceToCallExpression>
 		) => ReturnType<typeof C.coerceToCallExpression>;
 	};
@@ -13386,9 +21743,85 @@ export const callExpression: typeof B.callExpression & {
 		strict: callExpression$identifier(F.buildCallExpression, F.buildIdentifier),
 		coerce: callExpression$identifier(C.coerceToCallExpression, C.coerceToIdentifier)
 	},
-	reservedIdentifier: {
-		strict: callExpression$reservedIdentifier(F.buildCallExpression, F.buildReservedIdentifier),
-		coerce: callExpression$reservedIdentifier(C.coerceToCallExpression, C.coerceToReservedIdentifier)
+	u8: {
+		strict: callExpression$u8(F.buildCallExpression, TSKindId.U8Keyword),
+		coerce: callExpression$u8(C.coerceToCallExpression, TSKindId.U8Keyword)
+	},
+	i8: {
+		strict: callExpression$i8(F.buildCallExpression, TSKindId.I8Keyword),
+		coerce: callExpression$i8(C.coerceToCallExpression, TSKindId.I8Keyword)
+	},
+	u16: {
+		strict: callExpression$u16(F.buildCallExpression, TSKindId.U16Keyword),
+		coerce: callExpression$u16(C.coerceToCallExpression, TSKindId.U16Keyword)
+	},
+	i16: {
+		strict: callExpression$i16(F.buildCallExpression, TSKindId.I16Keyword),
+		coerce: callExpression$i16(C.coerceToCallExpression, TSKindId.I16Keyword)
+	},
+	u32: {
+		strict: callExpression$u32(F.buildCallExpression, TSKindId.U32Keyword),
+		coerce: callExpression$u32(C.coerceToCallExpression, TSKindId.U32Keyword)
+	},
+	i32: {
+		strict: callExpression$i32(F.buildCallExpression, TSKindId.I32Keyword),
+		coerce: callExpression$i32(C.coerceToCallExpression, TSKindId.I32Keyword)
+	},
+	u64: {
+		strict: callExpression$u64(F.buildCallExpression, TSKindId.U64Keyword),
+		coerce: callExpression$u64(C.coerceToCallExpression, TSKindId.U64Keyword)
+	},
+	i64: {
+		strict: callExpression$i64(F.buildCallExpression, TSKindId.I64Keyword),
+		coerce: callExpression$i64(C.coerceToCallExpression, TSKindId.I64Keyword)
+	},
+	u128: {
+		strict: callExpression$u128(F.buildCallExpression, TSKindId.U128Keyword),
+		coerce: callExpression$u128(C.coerceToCallExpression, TSKindId.U128Keyword)
+	},
+	i128: {
+		strict: callExpression$i128(F.buildCallExpression, TSKindId.I128Keyword),
+		coerce: callExpression$i128(C.coerceToCallExpression, TSKindId.I128Keyword)
+	},
+	isize: {
+		strict: callExpression$isize(F.buildCallExpression, TSKindId.IsizeKeyword),
+		coerce: callExpression$isize(C.coerceToCallExpression, TSKindId.IsizeKeyword)
+	},
+	usize: {
+		strict: callExpression$usize(F.buildCallExpression, TSKindId.UsizeKeyword),
+		coerce: callExpression$usize(C.coerceToCallExpression, TSKindId.UsizeKeyword)
+	},
+	f32: {
+		strict: callExpression$f32(F.buildCallExpression, TSKindId.F32Keyword),
+		coerce: callExpression$f32(C.coerceToCallExpression, TSKindId.F32Keyword)
+	},
+	f64: {
+		strict: callExpression$f64(F.buildCallExpression, TSKindId.F64Keyword),
+		coerce: callExpression$f64(C.coerceToCallExpression, TSKindId.F64Keyword)
+	},
+	bool: {
+		strict: callExpression$bool(F.buildCallExpression, TSKindId.BoolKeyword),
+		coerce: callExpression$bool(C.coerceToCallExpression, TSKindId.BoolKeyword)
+	},
+	str: {
+		strict: callExpression$str(F.buildCallExpression, TSKindId.StrKeyword),
+		coerce: callExpression$str(C.coerceToCallExpression, TSKindId.StrKeyword)
+	},
+	char: {
+		strict: callExpression$char(F.buildCallExpression, TSKindId.CharKeyword),
+		coerce: callExpression$char(C.coerceToCallExpression, TSKindId.CharKeyword)
+	},
+	default: {
+		strict: callExpression$default(F.buildCallExpression, TSKindId.DefaultKeyword),
+		coerce: callExpression$default(C.coerceToCallExpression, TSKindId.DefaultKeyword)
+	},
+	union: {
+		strict: callExpression$union(F.buildCallExpression, TSKindId.UnionKeyword),
+		coerce: callExpression$union(C.coerceToCallExpression, TSKindId.UnionKeyword)
+	},
+	gen: {
+		strict: callExpression$gen(F.buildCallExpression, TSKindId.GenKeyword),
+		coerce: callExpression$gen(C.coerceToCallExpression, TSKindId.GenKeyword)
 	},
 	self: {
 		strict: callExpression$self(F.buildCallExpression, F.buildSelf),
@@ -15536,7 +23969,103 @@ const structPattern$self =
 		const { type: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
 	};
-const structPattern$identifier =
+const structPattern$u8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$i8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$u16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$i16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$u32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$i32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$u64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$i64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$u128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$i128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$isize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$usize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$f32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$f64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$bool =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$str =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$char =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { type: seated, ...rest } = config;
@@ -15560,13 +24089,31 @@ const structPattern$crate =
 		const { type: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
 	};
+const structPattern$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
 const structPattern$scopedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { type: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
 	};
-const structPattern$reservedIdentifier =
+const structPattern$default =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$union =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { type: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
+	};
+const structPattern$gen =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { type: seated, ...rest } = config;
@@ -15635,16 +24182,240 @@ export const structPattern: typeof B.structPattern & {
 				options?: OptionsArg<typeof structPattern$seatedCoerce>
 			) => ReturnType<typeof structPattern$seatedCoerce>;
 		};
-		identifier: {
+		u8: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
-					type: ArgsOf<typeof scopedTypeIdentifier.identifier.strict>;
+					type: ArgsOf<typeof scopedTypeIdentifier.u8.strict>;
 				},
 				options?: OptionsArg<typeof structPattern$seated>
 			) => ReturnType<typeof structPattern$seated>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
-					type: ArgsOf<typeof scopedTypeIdentifier.identifier.coerce>;
+					type: ArgsOf<typeof scopedTypeIdentifier.u8.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		i8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.i8.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.i8.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		u16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.u16.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.u16.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		i16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.i16.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.i16.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		u32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.u32.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.u32.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		i32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.i32.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.i32.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		u64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.u64.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.u64.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		i64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.i64.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.i64.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		u128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.u128.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.u128.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		i128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.i128.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.i128.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		isize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.isize.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.isize.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		usize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.usize.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.usize.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		f32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.f32.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.f32.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		f64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.f64.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.f64.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		bool: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.bool.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.bool.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		str: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.str.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.str.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		char: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.char.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.char.coerce>;
 				},
 				options?: OptionsArg<typeof structPattern$seatedCoerce>
 			) => ReturnType<typeof structPattern$seatedCoerce>;
@@ -15691,6 +24462,20 @@ export const structPattern: typeof B.structPattern & {
 				options?: OptionsArg<typeof structPattern$seatedCoerce>
 			) => ReturnType<typeof structPattern$seatedCoerce>;
 		};
+		identifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.identifier.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.identifier.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
 		scopedIdentifier: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
@@ -15705,16 +24490,44 @@ export const structPattern: typeof B.structPattern & {
 				options?: OptionsArg<typeof structPattern$seatedCoerce>
 			) => ReturnType<typeof structPattern$seatedCoerce>;
 		};
-		reservedIdentifier: {
+		default: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
-					type: ArgsOf<typeof scopedTypeIdentifier.reservedIdentifier.strict>;
+					type: ArgsOf<typeof scopedTypeIdentifier.default.strict>;
 				},
 				options?: OptionsArg<typeof structPattern$seated>
 			) => ReturnType<typeof structPattern$seated>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
-					type: ArgsOf<typeof scopedTypeIdentifier.reservedIdentifier.coerce>;
+					type: ArgsOf<typeof scopedTypeIdentifier.default.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		union: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.union.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.union.coerce>;
+				},
+				options?: OptionsArg<typeof structPattern$seatedCoerce>
+			) => ReturnType<typeof structPattern$seatedCoerce>;
+		};
+		gen: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.gen.strict>;
+				},
+				options?: OptionsArg<typeof structPattern$seated>
+			) => ReturnType<typeof structPattern$seated>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
+					type: ArgsOf<typeof scopedTypeIdentifier.gen.coerce>;
 				},
 				options?: OptionsArg<typeof structPattern$seatedCoerce>
 			) => ReturnType<typeof structPattern$seatedCoerce>;
@@ -15791,9 +24604,73 @@ export const structPattern: typeof B.structPattern & {
 			strict: structPattern$self(structPattern$seated, scopedTypeIdentifier.self.strict),
 			coerce: structPattern$self(structPattern$seatedCoerce, scopedTypeIdentifier.self.coerce)
 		},
-		identifier: {
-			strict: structPattern$identifier(structPattern$seated, scopedTypeIdentifier.identifier.strict),
-			coerce: structPattern$identifier(structPattern$seatedCoerce, scopedTypeIdentifier.identifier.coerce)
+		u8: {
+			strict: structPattern$u8(structPattern$seated, scopedTypeIdentifier.u8.strict),
+			coerce: structPattern$u8(structPattern$seatedCoerce, scopedTypeIdentifier.u8.coerce)
+		},
+		i8: {
+			strict: structPattern$i8(structPattern$seated, scopedTypeIdentifier.i8.strict),
+			coerce: structPattern$i8(structPattern$seatedCoerce, scopedTypeIdentifier.i8.coerce)
+		},
+		u16: {
+			strict: structPattern$u16(structPattern$seated, scopedTypeIdentifier.u16.strict),
+			coerce: structPattern$u16(structPattern$seatedCoerce, scopedTypeIdentifier.u16.coerce)
+		},
+		i16: {
+			strict: structPattern$i16(structPattern$seated, scopedTypeIdentifier.i16.strict),
+			coerce: structPattern$i16(structPattern$seatedCoerce, scopedTypeIdentifier.i16.coerce)
+		},
+		u32: {
+			strict: structPattern$u32(structPattern$seated, scopedTypeIdentifier.u32.strict),
+			coerce: structPattern$u32(structPattern$seatedCoerce, scopedTypeIdentifier.u32.coerce)
+		},
+		i32: {
+			strict: structPattern$i32(structPattern$seated, scopedTypeIdentifier.i32.strict),
+			coerce: structPattern$i32(structPattern$seatedCoerce, scopedTypeIdentifier.i32.coerce)
+		},
+		u64: {
+			strict: structPattern$u64(structPattern$seated, scopedTypeIdentifier.u64.strict),
+			coerce: structPattern$u64(structPattern$seatedCoerce, scopedTypeIdentifier.u64.coerce)
+		},
+		i64: {
+			strict: structPattern$i64(structPattern$seated, scopedTypeIdentifier.i64.strict),
+			coerce: structPattern$i64(structPattern$seatedCoerce, scopedTypeIdentifier.i64.coerce)
+		},
+		u128: {
+			strict: structPattern$u128(structPattern$seated, scopedTypeIdentifier.u128.strict),
+			coerce: structPattern$u128(structPattern$seatedCoerce, scopedTypeIdentifier.u128.coerce)
+		},
+		i128: {
+			strict: structPattern$i128(structPattern$seated, scopedTypeIdentifier.i128.strict),
+			coerce: structPattern$i128(structPattern$seatedCoerce, scopedTypeIdentifier.i128.coerce)
+		},
+		isize: {
+			strict: structPattern$isize(structPattern$seated, scopedTypeIdentifier.isize.strict),
+			coerce: structPattern$isize(structPattern$seatedCoerce, scopedTypeIdentifier.isize.coerce)
+		},
+		usize: {
+			strict: structPattern$usize(structPattern$seated, scopedTypeIdentifier.usize.strict),
+			coerce: structPattern$usize(structPattern$seatedCoerce, scopedTypeIdentifier.usize.coerce)
+		},
+		f32: {
+			strict: structPattern$f32(structPattern$seated, scopedTypeIdentifier.f32.strict),
+			coerce: structPattern$f32(structPattern$seatedCoerce, scopedTypeIdentifier.f32.coerce)
+		},
+		f64: {
+			strict: structPattern$f64(structPattern$seated, scopedTypeIdentifier.f64.strict),
+			coerce: structPattern$f64(structPattern$seatedCoerce, scopedTypeIdentifier.f64.coerce)
+		},
+		bool: {
+			strict: structPattern$bool(structPattern$seated, scopedTypeIdentifier.bool.strict),
+			coerce: structPattern$bool(structPattern$seatedCoerce, scopedTypeIdentifier.bool.coerce)
+		},
+		str: {
+			strict: structPattern$str(structPattern$seated, scopedTypeIdentifier.str.strict),
+			coerce: structPattern$str(structPattern$seatedCoerce, scopedTypeIdentifier.str.coerce)
+		},
+		char: {
+			strict: structPattern$char(structPattern$seated, scopedTypeIdentifier.char.strict),
+			coerce: structPattern$char(structPattern$seatedCoerce, scopedTypeIdentifier.char.coerce)
 		},
 		metavariable: {
 			strict: structPattern$metavariable(structPattern$seated, scopedTypeIdentifier.metavariable.strict),
@@ -15807,16 +24684,25 @@ export const structPattern: typeof B.structPattern & {
 			strict: structPattern$crate(structPattern$seated, scopedTypeIdentifier.crate.strict),
 			coerce: structPattern$crate(structPattern$seatedCoerce, scopedTypeIdentifier.crate.coerce)
 		},
+		identifier: {
+			strict: structPattern$identifier(structPattern$seated, scopedTypeIdentifier.identifier.strict),
+			coerce: structPattern$identifier(structPattern$seatedCoerce, scopedTypeIdentifier.identifier.coerce)
+		},
 		scopedIdentifier: {
 			strict: structPattern$scopedIdentifier(structPattern$seated, scopedTypeIdentifier.scopedIdentifier.strict),
 			coerce: structPattern$scopedIdentifier(structPattern$seatedCoerce, scopedTypeIdentifier.scopedIdentifier.coerce)
 		},
-		reservedIdentifier: {
-			strict: structPattern$reservedIdentifier(structPattern$seated, scopedTypeIdentifier.reservedIdentifier.strict),
-			coerce: structPattern$reservedIdentifier(
-				structPattern$seatedCoerce,
-				scopedTypeIdentifier.reservedIdentifier.coerce
-			)
+		default: {
+			strict: structPattern$default(structPattern$seated, scopedTypeIdentifier.default.strict),
+			coerce: structPattern$default(structPattern$seatedCoerce, scopedTypeIdentifier.default.coerce)
+		},
+		union: {
+			strict: structPattern$union(structPattern$seated, scopedTypeIdentifier.union.strict),
+			coerce: structPattern$union(structPattern$seatedCoerce, scopedTypeIdentifier.union.coerce)
+		},
+		gen: {
+			strict: structPattern$gen(structPattern$seated, scopedTypeIdentifier.gen.strict),
+			coerce: structPattern$gen(structPattern$seatedCoerce, scopedTypeIdentifier.gen.coerce)
 		},
 		genericTypeWithTurbofish: {
 			strict: structPattern$genericTypeWithTurbofish(
@@ -16937,7 +25823,71 @@ const implItemPositiveClause$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const implItemPositiveClause$identifier =
+const implItemPositiveClause$u8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$i8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$u16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$i16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$u32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$i32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$u64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$i64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$u128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$i128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$isize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$usize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$f32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$f64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$bool =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$str =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$char =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -16953,15 +25903,35 @@ const implItemPositiveClause$crate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const implItemPositiveClause$scopedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const implItemPositiveClause$scopedTypeIdentifierReservedIdentifier =
+const implItemPositiveClause$scopedTypeIdentifierDefault =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const implItemPositiveClause$genericTypeReservedIdentifier =
+const implItemPositiveClause$genericTypeDefault =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$scopedTypeIdentifierUnion =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$genericTypeUnion =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$scopedTypeIdentifierGen =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemPositiveClause$genericTypeGen =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -16999,12 +25969,140 @@ const implItemPositiveClause: {
 				...args: ArgsOf<typeof scopedTypeIdentifier.self.coerce>
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		};
-		identifier: {
+		u8: {
 			strict: (
-				...args: ArgsOf<typeof scopedTypeIdentifier.identifier.strict>
+				...args: ArgsOf<typeof scopedTypeIdentifier.u8.strict>
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 			coerce: (
-				...args: ArgsOf<typeof scopedTypeIdentifier.identifier.coerce>
+				...args: ArgsOf<typeof scopedTypeIdentifier.u8.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		i8: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i8.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i8.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		u16: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u16.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u16.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		i16: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i16.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i16.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		u32: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u32.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u32.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		i32: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i32.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i32.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		u64: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u64.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u64.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		i64: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i64.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i64.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		u128: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u128.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u128.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		i128: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i128.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i128.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		isize: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.isize.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.isize.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		usize: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.usize.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.usize.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		f32: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.f32.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.f32.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		f64: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.f64.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.f64.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		bool: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.bool.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.bool.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		str: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.str.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.str.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		char: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.char.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.char.coerce>
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		};
 		metavariable: {
@@ -17031,6 +26129,14 @@ const implItemPositiveClause: {
 				...args: ArgsOf<typeof scopedTypeIdentifier.crate.coerce>
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		};
+		identifier: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.identifier.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.identifier.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
 		scopedIdentifier: {
 			strict: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.scopedIdentifier.strict>
@@ -17039,12 +26145,28 @@ const implItemPositiveClause: {
 				...args: ArgsOf<typeof scopedTypeIdentifier.scopedIdentifier.coerce>
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		};
-		reservedIdentifier: {
+		default: {
 			strict: (
-				...args: ArgsOf<typeof scopedTypeIdentifier.reservedIdentifier.strict>
+				...args: ArgsOf<typeof scopedTypeIdentifier.default.strict>
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 			coerce: (
-				...args: ArgsOf<typeof scopedTypeIdentifier.reservedIdentifier.coerce>
+				...args: ArgsOf<typeof scopedTypeIdentifier.default.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		union: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.union.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.union.coerce>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		gen: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.gen.strict>
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.gen.coerce>
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		};
 		genericTypeWithTurbofish: {
@@ -17075,13 +26197,17 @@ const implItemPositiveClause: {
 	genericType: {
 		strict: (...args: ArgsOf<typeof F.buildGenericType>) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		coerce: (...args: ArgsOf<typeof C.coerceToGenericType>) => ReturnType<typeof F.buildImplItemPositiveClause>;
-		reservedIdentifier: {
-			strict: (
-				...args: ArgsOf<typeof genericType.reservedIdentifier.strict>
-			) => ReturnType<typeof F.buildImplItemPositiveClause>;
-			coerce: (
-				...args: ArgsOf<typeof genericType.reservedIdentifier.coerce>
-			) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		default: {
+			strict: (...args: ArgsOf<typeof genericType.default.strict>) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (...args: ArgsOf<typeof genericType.default.coerce>) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		union: {
+			strict: (...args: ArgsOf<typeof genericType.union.strict>) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (...args: ArgsOf<typeof genericType.union.coerce>) => ReturnType<typeof F.buildImplItemPositiveClause>;
+		};
+		gen: {
+			strict: (...args: ArgsOf<typeof genericType.gen.strict>) => ReturnType<typeof F.buildImplItemPositiveClause>;
+			coerce: (...args: ArgsOf<typeof genericType.gen.coerce>) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		};
 	};
 } = {
@@ -17096,9 +26222,73 @@ const implItemPositiveClause: {
 			strict: implItemPositiveClause$self(F.buildImplItemPositiveClause, scopedTypeIdentifier.self.strict),
 			coerce: implItemPositiveClause$self(F.buildImplItemPositiveClause, scopedTypeIdentifier.self.coerce)
 		},
-		identifier: {
-			strict: implItemPositiveClause$identifier(F.buildImplItemPositiveClause, scopedTypeIdentifier.identifier.strict),
-			coerce: implItemPositiveClause$identifier(F.buildImplItemPositiveClause, scopedTypeIdentifier.identifier.coerce)
+		u8: {
+			strict: implItemPositiveClause$u8(F.buildImplItemPositiveClause, scopedTypeIdentifier.u8.strict),
+			coerce: implItemPositiveClause$u8(F.buildImplItemPositiveClause, scopedTypeIdentifier.u8.coerce)
+		},
+		i8: {
+			strict: implItemPositiveClause$i8(F.buildImplItemPositiveClause, scopedTypeIdentifier.i8.strict),
+			coerce: implItemPositiveClause$i8(F.buildImplItemPositiveClause, scopedTypeIdentifier.i8.coerce)
+		},
+		u16: {
+			strict: implItemPositiveClause$u16(F.buildImplItemPositiveClause, scopedTypeIdentifier.u16.strict),
+			coerce: implItemPositiveClause$u16(F.buildImplItemPositiveClause, scopedTypeIdentifier.u16.coerce)
+		},
+		i16: {
+			strict: implItemPositiveClause$i16(F.buildImplItemPositiveClause, scopedTypeIdentifier.i16.strict),
+			coerce: implItemPositiveClause$i16(F.buildImplItemPositiveClause, scopedTypeIdentifier.i16.coerce)
+		},
+		u32: {
+			strict: implItemPositiveClause$u32(F.buildImplItemPositiveClause, scopedTypeIdentifier.u32.strict),
+			coerce: implItemPositiveClause$u32(F.buildImplItemPositiveClause, scopedTypeIdentifier.u32.coerce)
+		},
+		i32: {
+			strict: implItemPositiveClause$i32(F.buildImplItemPositiveClause, scopedTypeIdentifier.i32.strict),
+			coerce: implItemPositiveClause$i32(F.buildImplItemPositiveClause, scopedTypeIdentifier.i32.coerce)
+		},
+		u64: {
+			strict: implItemPositiveClause$u64(F.buildImplItemPositiveClause, scopedTypeIdentifier.u64.strict),
+			coerce: implItemPositiveClause$u64(F.buildImplItemPositiveClause, scopedTypeIdentifier.u64.coerce)
+		},
+		i64: {
+			strict: implItemPositiveClause$i64(F.buildImplItemPositiveClause, scopedTypeIdentifier.i64.strict),
+			coerce: implItemPositiveClause$i64(F.buildImplItemPositiveClause, scopedTypeIdentifier.i64.coerce)
+		},
+		u128: {
+			strict: implItemPositiveClause$u128(F.buildImplItemPositiveClause, scopedTypeIdentifier.u128.strict),
+			coerce: implItemPositiveClause$u128(F.buildImplItemPositiveClause, scopedTypeIdentifier.u128.coerce)
+		},
+		i128: {
+			strict: implItemPositiveClause$i128(F.buildImplItemPositiveClause, scopedTypeIdentifier.i128.strict),
+			coerce: implItemPositiveClause$i128(F.buildImplItemPositiveClause, scopedTypeIdentifier.i128.coerce)
+		},
+		isize: {
+			strict: implItemPositiveClause$isize(F.buildImplItemPositiveClause, scopedTypeIdentifier.isize.strict),
+			coerce: implItemPositiveClause$isize(F.buildImplItemPositiveClause, scopedTypeIdentifier.isize.coerce)
+		},
+		usize: {
+			strict: implItemPositiveClause$usize(F.buildImplItemPositiveClause, scopedTypeIdentifier.usize.strict),
+			coerce: implItemPositiveClause$usize(F.buildImplItemPositiveClause, scopedTypeIdentifier.usize.coerce)
+		},
+		f32: {
+			strict: implItemPositiveClause$f32(F.buildImplItemPositiveClause, scopedTypeIdentifier.f32.strict),
+			coerce: implItemPositiveClause$f32(F.buildImplItemPositiveClause, scopedTypeIdentifier.f32.coerce)
+		},
+		f64: {
+			strict: implItemPositiveClause$f64(F.buildImplItemPositiveClause, scopedTypeIdentifier.f64.strict),
+			coerce: implItemPositiveClause$f64(F.buildImplItemPositiveClause, scopedTypeIdentifier.f64.coerce)
+		},
+		bool: {
+			strict: implItemPositiveClause$bool(F.buildImplItemPositiveClause, scopedTypeIdentifier.bool.strict),
+			coerce: implItemPositiveClause$bool(F.buildImplItemPositiveClause, scopedTypeIdentifier.bool.coerce)
+		},
+		str: {
+			strict: implItemPositiveClause$str(F.buildImplItemPositiveClause, scopedTypeIdentifier.str.strict),
+			coerce: implItemPositiveClause$str(F.buildImplItemPositiveClause, scopedTypeIdentifier.str.coerce)
+		},
+		char: {
+			strict: implItemPositiveClause$char(F.buildImplItemPositiveClause, scopedTypeIdentifier.char.strict),
+			coerce: implItemPositiveClause$char(F.buildImplItemPositiveClause, scopedTypeIdentifier.char.coerce)
 		},
 		metavariable: {
 			strict: implItemPositiveClause$metavariable(
@@ -17118,6 +26308,10 @@ const implItemPositiveClause: {
 			strict: implItemPositiveClause$crate(F.buildImplItemPositiveClause, scopedTypeIdentifier.crate.strict),
 			coerce: implItemPositiveClause$crate(F.buildImplItemPositiveClause, scopedTypeIdentifier.crate.coerce)
 		},
+		identifier: {
+			strict: implItemPositiveClause$identifier(F.buildImplItemPositiveClause, scopedTypeIdentifier.identifier.strict),
+			coerce: implItemPositiveClause$identifier(F.buildImplItemPositiveClause, scopedTypeIdentifier.identifier.coerce)
+		},
 		scopedIdentifier: {
 			strict: implItemPositiveClause$scopedIdentifier(
 				F.buildImplItemPositiveClause,
@@ -17128,14 +26322,34 @@ const implItemPositiveClause: {
 				scopedTypeIdentifier.scopedIdentifier.coerce
 			)
 		},
-		reservedIdentifier: {
-			strict: implItemPositiveClause$scopedTypeIdentifierReservedIdentifier(
+		default: {
+			strict: implItemPositiveClause$scopedTypeIdentifierDefault(
 				F.buildImplItemPositiveClause,
-				scopedTypeIdentifier.reservedIdentifier.strict
+				scopedTypeIdentifier.default.strict
 			),
-			coerce: implItemPositiveClause$scopedTypeIdentifierReservedIdentifier(
+			coerce: implItemPositiveClause$scopedTypeIdentifierDefault(
 				F.buildImplItemPositiveClause,
-				scopedTypeIdentifier.reservedIdentifier.coerce
+				scopedTypeIdentifier.default.coerce
+			)
+		},
+		union: {
+			strict: implItemPositiveClause$scopedTypeIdentifierUnion(
+				F.buildImplItemPositiveClause,
+				scopedTypeIdentifier.union.strict
+			),
+			coerce: implItemPositiveClause$scopedTypeIdentifierUnion(
+				F.buildImplItemPositiveClause,
+				scopedTypeIdentifier.union.coerce
+			)
+		},
+		gen: {
+			strict: implItemPositiveClause$scopedTypeIdentifierGen(
+				F.buildImplItemPositiveClause,
+				scopedTypeIdentifier.gen.strict
+			),
+			coerce: implItemPositiveClause$scopedTypeIdentifierGen(
+				F.buildImplItemPositiveClause,
+				scopedTypeIdentifier.gen.coerce
 			)
 		},
 		genericTypeWithTurbofish: {
@@ -17172,15 +26386,17 @@ const implItemPositiveClause: {
 	genericType: {
 		strict: implItemPositiveClause$genericType(F.buildImplItemPositiveClause, F.buildGenericType),
 		coerce: implItemPositiveClause$genericType(F.buildImplItemPositiveClause, C.coerceToGenericType),
-		reservedIdentifier: {
-			strict: implItemPositiveClause$genericTypeReservedIdentifier(
-				F.buildImplItemPositiveClause,
-				genericType.reservedIdentifier.strict
-			),
-			coerce: implItemPositiveClause$genericTypeReservedIdentifier(
-				F.buildImplItemPositiveClause,
-				genericType.reservedIdentifier.coerce
-			)
+		default: {
+			strict: implItemPositiveClause$genericTypeDefault(F.buildImplItemPositiveClause, genericType.default.strict),
+			coerce: implItemPositiveClause$genericTypeDefault(F.buildImplItemPositiveClause, genericType.default.coerce)
+		},
+		union: {
+			strict: implItemPositiveClause$genericTypeUnion(F.buildImplItemPositiveClause, genericType.union.strict),
+			coerce: implItemPositiveClause$genericTypeUnion(F.buildImplItemPositiveClause, genericType.union.coerce)
+		},
+		gen: {
+			strict: implItemPositiveClause$genericTypeGen(F.buildImplItemPositiveClause, genericType.gen.strict),
+			coerce: implItemPositiveClause$genericTypeGen(F.buildImplItemPositiveClause, genericType.gen.coerce)
 		}
 	}
 };
@@ -17197,7 +26413,71 @@ const implItemNegativeClause$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const implItemNegativeClause$identifier =
+const implItemNegativeClause$u8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$i8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$u16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$i16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$u32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$i32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$u64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$i64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$u128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$i128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$isize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$usize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$f32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$f64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$bool =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$str =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$char =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -17213,15 +26493,35 @@ const implItemNegativeClause$crate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const implItemNegativeClause$scopedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const implItemNegativeClause$scopedTypeIdentifierReservedIdentifier =
+const implItemNegativeClause$scopedTypeIdentifierDefault =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const implItemNegativeClause$genericTypeReservedIdentifier =
+const implItemNegativeClause$genericTypeDefault =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$scopedTypeIdentifierUnion =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$genericTypeUnion =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$scopedTypeIdentifierGen =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const implItemNegativeClause$genericTypeGen =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -17259,12 +26559,140 @@ const implItemNegativeClause: {
 				...args: ArgsOf<typeof scopedTypeIdentifier.self.coerce>
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		};
-		identifier: {
+		u8: {
 			strict: (
-				...args: ArgsOf<typeof scopedTypeIdentifier.identifier.strict>
+				...args: ArgsOf<typeof scopedTypeIdentifier.u8.strict>
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 			coerce: (
-				...args: ArgsOf<typeof scopedTypeIdentifier.identifier.coerce>
+				...args: ArgsOf<typeof scopedTypeIdentifier.u8.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		i8: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i8.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i8.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		u16: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u16.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u16.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		i16: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i16.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i16.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		u32: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u32.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u32.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		i32: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i32.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i32.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		u64: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u64.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u64.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		i64: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i64.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i64.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		u128: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u128.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.u128.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		i128: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i128.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.i128.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		isize: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.isize.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.isize.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		usize: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.usize.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.usize.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		f32: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.f32.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.f32.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		f64: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.f64.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.f64.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		bool: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.bool.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.bool.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		str: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.str.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.str.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		char: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.char.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.char.coerce>
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		};
 		metavariable: {
@@ -17291,6 +26719,14 @@ const implItemNegativeClause: {
 				...args: ArgsOf<typeof scopedTypeIdentifier.crate.coerce>
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		};
+		identifier: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.identifier.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.identifier.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
 		scopedIdentifier: {
 			strict: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.scopedIdentifier.strict>
@@ -17299,12 +26735,28 @@ const implItemNegativeClause: {
 				...args: ArgsOf<typeof scopedTypeIdentifier.scopedIdentifier.coerce>
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		};
-		reservedIdentifier: {
+		default: {
 			strict: (
-				...args: ArgsOf<typeof scopedTypeIdentifier.reservedIdentifier.strict>
+				...args: ArgsOf<typeof scopedTypeIdentifier.default.strict>
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 			coerce: (
-				...args: ArgsOf<typeof scopedTypeIdentifier.reservedIdentifier.coerce>
+				...args: ArgsOf<typeof scopedTypeIdentifier.default.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		union: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.union.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.union.coerce>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		gen: {
+			strict: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.gen.strict>
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (
+				...args: ArgsOf<typeof scopedTypeIdentifier.gen.coerce>
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		};
 		genericTypeWithTurbofish: {
@@ -17335,13 +26787,17 @@ const implItemNegativeClause: {
 	genericType: {
 		strict: (...args: ArgsOf<typeof F.buildGenericType>) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		coerce: (...args: ArgsOf<typeof C.coerceToGenericType>) => ReturnType<typeof F.buildImplItemNegativeClause>;
-		reservedIdentifier: {
-			strict: (
-				...args: ArgsOf<typeof genericType.reservedIdentifier.strict>
-			) => ReturnType<typeof F.buildImplItemNegativeClause>;
-			coerce: (
-				...args: ArgsOf<typeof genericType.reservedIdentifier.coerce>
-			) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		default: {
+			strict: (...args: ArgsOf<typeof genericType.default.strict>) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (...args: ArgsOf<typeof genericType.default.coerce>) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		union: {
+			strict: (...args: ArgsOf<typeof genericType.union.strict>) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (...args: ArgsOf<typeof genericType.union.coerce>) => ReturnType<typeof F.buildImplItemNegativeClause>;
+		};
+		gen: {
+			strict: (...args: ArgsOf<typeof genericType.gen.strict>) => ReturnType<typeof F.buildImplItemNegativeClause>;
+			coerce: (...args: ArgsOf<typeof genericType.gen.coerce>) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		};
 	};
 } = {
@@ -17356,9 +26812,73 @@ const implItemNegativeClause: {
 			strict: implItemNegativeClause$self(F.buildImplItemNegativeClause, scopedTypeIdentifier.self.strict),
 			coerce: implItemNegativeClause$self(F.buildImplItemNegativeClause, scopedTypeIdentifier.self.coerce)
 		},
-		identifier: {
-			strict: implItemNegativeClause$identifier(F.buildImplItemNegativeClause, scopedTypeIdentifier.identifier.strict),
-			coerce: implItemNegativeClause$identifier(F.buildImplItemNegativeClause, scopedTypeIdentifier.identifier.coerce)
+		u8: {
+			strict: implItemNegativeClause$u8(F.buildImplItemNegativeClause, scopedTypeIdentifier.u8.strict),
+			coerce: implItemNegativeClause$u8(F.buildImplItemNegativeClause, scopedTypeIdentifier.u8.coerce)
+		},
+		i8: {
+			strict: implItemNegativeClause$i8(F.buildImplItemNegativeClause, scopedTypeIdentifier.i8.strict),
+			coerce: implItemNegativeClause$i8(F.buildImplItemNegativeClause, scopedTypeIdentifier.i8.coerce)
+		},
+		u16: {
+			strict: implItemNegativeClause$u16(F.buildImplItemNegativeClause, scopedTypeIdentifier.u16.strict),
+			coerce: implItemNegativeClause$u16(F.buildImplItemNegativeClause, scopedTypeIdentifier.u16.coerce)
+		},
+		i16: {
+			strict: implItemNegativeClause$i16(F.buildImplItemNegativeClause, scopedTypeIdentifier.i16.strict),
+			coerce: implItemNegativeClause$i16(F.buildImplItemNegativeClause, scopedTypeIdentifier.i16.coerce)
+		},
+		u32: {
+			strict: implItemNegativeClause$u32(F.buildImplItemNegativeClause, scopedTypeIdentifier.u32.strict),
+			coerce: implItemNegativeClause$u32(F.buildImplItemNegativeClause, scopedTypeIdentifier.u32.coerce)
+		},
+		i32: {
+			strict: implItemNegativeClause$i32(F.buildImplItemNegativeClause, scopedTypeIdentifier.i32.strict),
+			coerce: implItemNegativeClause$i32(F.buildImplItemNegativeClause, scopedTypeIdentifier.i32.coerce)
+		},
+		u64: {
+			strict: implItemNegativeClause$u64(F.buildImplItemNegativeClause, scopedTypeIdentifier.u64.strict),
+			coerce: implItemNegativeClause$u64(F.buildImplItemNegativeClause, scopedTypeIdentifier.u64.coerce)
+		},
+		i64: {
+			strict: implItemNegativeClause$i64(F.buildImplItemNegativeClause, scopedTypeIdentifier.i64.strict),
+			coerce: implItemNegativeClause$i64(F.buildImplItemNegativeClause, scopedTypeIdentifier.i64.coerce)
+		},
+		u128: {
+			strict: implItemNegativeClause$u128(F.buildImplItemNegativeClause, scopedTypeIdentifier.u128.strict),
+			coerce: implItemNegativeClause$u128(F.buildImplItemNegativeClause, scopedTypeIdentifier.u128.coerce)
+		},
+		i128: {
+			strict: implItemNegativeClause$i128(F.buildImplItemNegativeClause, scopedTypeIdentifier.i128.strict),
+			coerce: implItemNegativeClause$i128(F.buildImplItemNegativeClause, scopedTypeIdentifier.i128.coerce)
+		},
+		isize: {
+			strict: implItemNegativeClause$isize(F.buildImplItemNegativeClause, scopedTypeIdentifier.isize.strict),
+			coerce: implItemNegativeClause$isize(F.buildImplItemNegativeClause, scopedTypeIdentifier.isize.coerce)
+		},
+		usize: {
+			strict: implItemNegativeClause$usize(F.buildImplItemNegativeClause, scopedTypeIdentifier.usize.strict),
+			coerce: implItemNegativeClause$usize(F.buildImplItemNegativeClause, scopedTypeIdentifier.usize.coerce)
+		},
+		f32: {
+			strict: implItemNegativeClause$f32(F.buildImplItemNegativeClause, scopedTypeIdentifier.f32.strict),
+			coerce: implItemNegativeClause$f32(F.buildImplItemNegativeClause, scopedTypeIdentifier.f32.coerce)
+		},
+		f64: {
+			strict: implItemNegativeClause$f64(F.buildImplItemNegativeClause, scopedTypeIdentifier.f64.strict),
+			coerce: implItemNegativeClause$f64(F.buildImplItemNegativeClause, scopedTypeIdentifier.f64.coerce)
+		},
+		bool: {
+			strict: implItemNegativeClause$bool(F.buildImplItemNegativeClause, scopedTypeIdentifier.bool.strict),
+			coerce: implItemNegativeClause$bool(F.buildImplItemNegativeClause, scopedTypeIdentifier.bool.coerce)
+		},
+		str: {
+			strict: implItemNegativeClause$str(F.buildImplItemNegativeClause, scopedTypeIdentifier.str.strict),
+			coerce: implItemNegativeClause$str(F.buildImplItemNegativeClause, scopedTypeIdentifier.str.coerce)
+		},
+		char: {
+			strict: implItemNegativeClause$char(F.buildImplItemNegativeClause, scopedTypeIdentifier.char.strict),
+			coerce: implItemNegativeClause$char(F.buildImplItemNegativeClause, scopedTypeIdentifier.char.coerce)
 		},
 		metavariable: {
 			strict: implItemNegativeClause$metavariable(
@@ -17378,6 +26898,10 @@ const implItemNegativeClause: {
 			strict: implItemNegativeClause$crate(F.buildImplItemNegativeClause, scopedTypeIdentifier.crate.strict),
 			coerce: implItemNegativeClause$crate(F.buildImplItemNegativeClause, scopedTypeIdentifier.crate.coerce)
 		},
+		identifier: {
+			strict: implItemNegativeClause$identifier(F.buildImplItemNegativeClause, scopedTypeIdentifier.identifier.strict),
+			coerce: implItemNegativeClause$identifier(F.buildImplItemNegativeClause, scopedTypeIdentifier.identifier.coerce)
+		},
 		scopedIdentifier: {
 			strict: implItemNegativeClause$scopedIdentifier(
 				F.buildImplItemNegativeClause,
@@ -17388,14 +26912,34 @@ const implItemNegativeClause: {
 				scopedTypeIdentifier.scopedIdentifier.coerce
 			)
 		},
-		reservedIdentifier: {
-			strict: implItemNegativeClause$scopedTypeIdentifierReservedIdentifier(
+		default: {
+			strict: implItemNegativeClause$scopedTypeIdentifierDefault(
 				F.buildImplItemNegativeClause,
-				scopedTypeIdentifier.reservedIdentifier.strict
+				scopedTypeIdentifier.default.strict
 			),
-			coerce: implItemNegativeClause$scopedTypeIdentifierReservedIdentifier(
+			coerce: implItemNegativeClause$scopedTypeIdentifierDefault(
 				F.buildImplItemNegativeClause,
-				scopedTypeIdentifier.reservedIdentifier.coerce
+				scopedTypeIdentifier.default.coerce
+			)
+		},
+		union: {
+			strict: implItemNegativeClause$scopedTypeIdentifierUnion(
+				F.buildImplItemNegativeClause,
+				scopedTypeIdentifier.union.strict
+			),
+			coerce: implItemNegativeClause$scopedTypeIdentifierUnion(
+				F.buildImplItemNegativeClause,
+				scopedTypeIdentifier.union.coerce
+			)
+		},
+		gen: {
+			strict: implItemNegativeClause$scopedTypeIdentifierGen(
+				F.buildImplItemNegativeClause,
+				scopedTypeIdentifier.gen.strict
+			),
+			coerce: implItemNegativeClause$scopedTypeIdentifierGen(
+				F.buildImplItemNegativeClause,
+				scopedTypeIdentifier.gen.coerce
 			)
 		},
 		genericTypeWithTurbofish: {
@@ -17432,15 +26976,17 @@ const implItemNegativeClause: {
 	genericType: {
 		strict: implItemNegativeClause$genericType(F.buildImplItemNegativeClause, F.buildGenericType),
 		coerce: implItemNegativeClause$genericType(F.buildImplItemNegativeClause, C.coerceToGenericType),
-		reservedIdentifier: {
-			strict: implItemNegativeClause$genericTypeReservedIdentifier(
-				F.buildImplItemNegativeClause,
-				genericType.reservedIdentifier.strict
-			),
-			coerce: implItemNegativeClause$genericTypeReservedIdentifier(
-				F.buildImplItemNegativeClause,
-				genericType.reservedIdentifier.coerce
-			)
+		default: {
+			strict: implItemNegativeClause$genericTypeDefault(F.buildImplItemNegativeClause, genericType.default.strict),
+			coerce: implItemNegativeClause$genericTypeDefault(F.buildImplItemNegativeClause, genericType.default.coerce)
+		},
+		union: {
+			strict: implItemNegativeClause$genericTypeUnion(F.buildImplItemNegativeClause, genericType.union.strict),
+			coerce: implItemNegativeClause$genericTypeUnion(F.buildImplItemNegativeClause, genericType.union.coerce)
+		},
+		gen: {
+			strict: implItemNegativeClause$genericTypeGen(F.buildImplItemNegativeClause, genericType.gen.strict),
+			coerce: implItemNegativeClause$genericTypeGen(F.buildImplItemNegativeClause, genericType.gen.coerce)
 		}
 	}
 };
@@ -17508,24 +27054,6 @@ const implItemBody$negativeClauseSelf =
 		const { traitClause: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
 	};
-const implItemBody$positiveClauseIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { traitClause: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
-	};
-const implItemBody$negativeClauseIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { traitClause: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
-	};
 const implItemBody$positiveClauseMetavariable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -17580,6 +27108,24 @@ const implItemBody$negativeClauseCrate =
 		const { traitClause: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
 	};
+const implItemBody$positiveClauseIdentifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { traitClause: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
+	};
+const implItemBody$negativeClauseIdentifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { traitClause: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
+	};
 const implItemBody$positiveClauseScopedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -17590,6 +27136,24 @@ const implItemBody$positiveClauseScopedIdentifier =
 		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
 	};
 const implItemBody$negativeClauseScopedIdentifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { traitClause: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
+	};
+const implItemBody$positiveClauseGenericType =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { traitClause: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
+	};
+const implItemBody$negativeClauseGenericType =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
@@ -17644,24 +27208,6 @@ const implItemBody$positiveClauseQualifiedType =
 		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
 	};
 const implItemBody$negativeClauseQualifiedType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { traitClause: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
-	};
-const implItemBody$positiveClauseGenericType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { traitClause: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
-	};
-const implItemBody$negativeClauseGenericType =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
@@ -17735,20 +27281,6 @@ const implItemBody: {
 				options?: OptionsArg<typeof C.coerceToImplItemBody>
 			) => ReturnType<typeof C.coerceToImplItemBody>;
 		};
-		identifier: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemPositiveClause.scopedTypeIdentifier.identifier.strict>;
-				},
-				options?: OptionsArg<typeof F.buildImplItemBody>
-			) => ReturnType<typeof F.buildImplItemBody>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemPositiveClause.scopedTypeIdentifier.identifier.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToImplItemBody>
-			) => ReturnType<typeof C.coerceToImplItemBody>;
-		};
 		metavariable: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
@@ -17791,6 +27323,20 @@ const implItemBody: {
 				options?: OptionsArg<typeof C.coerceToImplItemBody>
 			) => ReturnType<typeof C.coerceToImplItemBody>;
 		};
+		identifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemPositiveClause.scopedTypeIdentifier.identifier.strict>;
+				},
+				options?: OptionsArg<typeof F.buildImplItemBody>
+			) => ReturnType<typeof F.buildImplItemBody>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemPositiveClause.scopedTypeIdentifier.identifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToImplItemBody>
+			) => ReturnType<typeof C.coerceToImplItemBody>;
+		};
 		scopedIdentifier: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
@@ -17801,6 +27347,20 @@ const implItemBody: {
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
 					traitClause: ArgsOf<typeof implItemPositiveClause.scopedTypeIdentifier.scopedIdentifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToImplItemBody>
+			) => ReturnType<typeof C.coerceToImplItemBody>;
+		};
+		genericType: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemPositiveClause.genericType.strict>;
+				},
+				options?: OptionsArg<typeof F.buildImplItemBody>
+			) => ReturnType<typeof F.buildImplItemBody>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemPositiveClause.genericType.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToImplItemBody>
 			) => ReturnType<typeof C.coerceToImplItemBody>;
@@ -17843,20 +27403,6 @@ const implItemBody: {
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
 					traitClause: ArgsOf<typeof implItemPositiveClause.scopedTypeIdentifier.qualifiedType.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToImplItemBody>
-			) => ReturnType<typeof C.coerceToImplItemBody>;
-		};
-		genericType: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemPositiveClause.genericType.strict>;
-				},
-				options?: OptionsArg<typeof F.buildImplItemBody>
-			) => ReturnType<typeof F.buildImplItemBody>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemPositiveClause.genericType.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToImplItemBody>
 			) => ReturnType<typeof C.coerceToImplItemBody>;
@@ -17917,20 +27463,6 @@ const implItemBody: {
 				options?: OptionsArg<typeof C.coerceToImplItemBody>
 			) => ReturnType<typeof C.coerceToImplItemBody>;
 		};
-		identifier: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemNegativeClause.scopedTypeIdentifier.identifier.strict>;
-				},
-				options?: OptionsArg<typeof F.buildImplItemBody>
-			) => ReturnType<typeof F.buildImplItemBody>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemNegativeClause.scopedTypeIdentifier.identifier.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToImplItemBody>
-			) => ReturnType<typeof C.coerceToImplItemBody>;
-		};
 		metavariable: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
@@ -17973,6 +27505,20 @@ const implItemBody: {
 				options?: OptionsArg<typeof C.coerceToImplItemBody>
 			) => ReturnType<typeof C.coerceToImplItemBody>;
 		};
+		identifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemNegativeClause.scopedTypeIdentifier.identifier.strict>;
+				},
+				options?: OptionsArg<typeof F.buildImplItemBody>
+			) => ReturnType<typeof F.buildImplItemBody>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemNegativeClause.scopedTypeIdentifier.identifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToImplItemBody>
+			) => ReturnType<typeof C.coerceToImplItemBody>;
+		};
 		scopedIdentifier: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
@@ -17983,6 +27529,20 @@ const implItemBody: {
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
 					traitClause: ArgsOf<typeof implItemNegativeClause.scopedTypeIdentifier.scopedIdentifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToImplItemBody>
+			) => ReturnType<typeof C.coerceToImplItemBody>;
+		};
+		genericType: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemNegativeClause.genericType.strict>;
+				},
+				options?: OptionsArg<typeof F.buildImplItemBody>
+			) => ReturnType<typeof F.buildImplItemBody>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemNegativeClause.genericType.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToImplItemBody>
 			) => ReturnType<typeof C.coerceToImplItemBody>;
@@ -18029,20 +27589,6 @@ const implItemBody: {
 				options?: OptionsArg<typeof C.coerceToImplItemBody>
 			) => ReturnType<typeof C.coerceToImplItemBody>;
 		};
-		genericType: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemNegativeClause.genericType.strict>;
-				},
-				options?: OptionsArg<typeof F.buildImplItemBody>
-			) => ReturnType<typeof F.buildImplItemBody>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemNegativeClause.genericType.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToImplItemBody>
-			) => ReturnType<typeof C.coerceToImplItemBody>;
-		};
 	};
 } = {
 	positiveClause: {
@@ -18078,16 +27624,6 @@ const implItemBody: {
 				implItemPositiveClause.scopedTypeIdentifier.self.coerce
 			)
 		},
-		identifier: {
-			strict: implItemBody$positiveClauseIdentifier(
-				F.buildImplItemBody,
-				implItemPositiveClause.scopedTypeIdentifier.identifier.strict
-			),
-			coerce: implItemBody$positiveClauseIdentifier(
-				C.coerceToImplItemBody,
-				implItemPositiveClause.scopedTypeIdentifier.identifier.coerce
-			)
-		},
 		metavariable: {
 			strict: implItemBody$positiveClauseMetavariable(
 				F.buildImplItemBody,
@@ -18118,6 +27654,16 @@ const implItemBody: {
 				implItemPositiveClause.scopedTypeIdentifier.crate.coerce
 			)
 		},
+		identifier: {
+			strict: implItemBody$positiveClauseIdentifier(
+				F.buildImplItemBody,
+				implItemPositiveClause.scopedTypeIdentifier.identifier.strict
+			),
+			coerce: implItemBody$positiveClauseIdentifier(
+				C.coerceToImplItemBody,
+				implItemPositiveClause.scopedTypeIdentifier.identifier.coerce
+			)
+		},
 		scopedIdentifier: {
 			strict: implItemBody$positiveClauseScopedIdentifier(
 				F.buildImplItemBody,
@@ -18127,6 +27673,10 @@ const implItemBody: {
 				C.coerceToImplItemBody,
 				implItemPositiveClause.scopedTypeIdentifier.scopedIdentifier.coerce
 			)
+		},
+		genericType: {
+			strict: implItemBody$positiveClauseGenericType(F.buildImplItemBody, implItemPositiveClause.genericType.strict),
+			coerce: implItemBody$positiveClauseGenericType(C.coerceToImplItemBody, implItemPositiveClause.genericType.coerce)
 		},
 		genericTypeWithTurbofish: {
 			strict: implItemBody$positiveClauseGenericTypeWithTurbofish(
@@ -18157,10 +27707,6 @@ const implItemBody: {
 				C.coerceToImplItemBody,
 				implItemPositiveClause.scopedTypeIdentifier.qualifiedType.coerce
 			)
-		},
-		genericType: {
-			strict: implItemBody$positiveClauseGenericType(F.buildImplItemBody, implItemPositiveClause.genericType.strict),
-			coerce: implItemBody$positiveClauseGenericType(C.coerceToImplItemBody, implItemPositiveClause.genericType.coerce)
 		}
 	},
 	negativeClause: {
@@ -18196,16 +27742,6 @@ const implItemBody: {
 				implItemNegativeClause.scopedTypeIdentifier.self.coerce
 			)
 		},
-		identifier: {
-			strict: implItemBody$negativeClauseIdentifier(
-				F.buildImplItemBody,
-				implItemNegativeClause.scopedTypeIdentifier.identifier.strict
-			),
-			coerce: implItemBody$negativeClauseIdentifier(
-				C.coerceToImplItemBody,
-				implItemNegativeClause.scopedTypeIdentifier.identifier.coerce
-			)
-		},
 		metavariable: {
 			strict: implItemBody$negativeClauseMetavariable(
 				F.buildImplItemBody,
@@ -18236,6 +27772,16 @@ const implItemBody: {
 				implItemNegativeClause.scopedTypeIdentifier.crate.coerce
 			)
 		},
+		identifier: {
+			strict: implItemBody$negativeClauseIdentifier(
+				F.buildImplItemBody,
+				implItemNegativeClause.scopedTypeIdentifier.identifier.strict
+			),
+			coerce: implItemBody$negativeClauseIdentifier(
+				C.coerceToImplItemBody,
+				implItemNegativeClause.scopedTypeIdentifier.identifier.coerce
+			)
+		},
 		scopedIdentifier: {
 			strict: implItemBody$negativeClauseScopedIdentifier(
 				F.buildImplItemBody,
@@ -18245,6 +27791,10 @@ const implItemBody: {
 				C.coerceToImplItemBody,
 				implItemNegativeClause.scopedTypeIdentifier.scopedIdentifier.coerce
 			)
+		},
+		genericType: {
+			strict: implItemBody$negativeClauseGenericType(F.buildImplItemBody, implItemNegativeClause.genericType.strict),
+			coerce: implItemBody$negativeClauseGenericType(C.coerceToImplItemBody, implItemNegativeClause.genericType.coerce)
 		},
 		genericTypeWithTurbofish: {
 			strict: implItemBody$negativeClauseGenericTypeWithTurbofish(
@@ -18275,10 +27825,6 @@ const implItemBody: {
 				C.coerceToImplItemBody,
 				implItemNegativeClause.scopedTypeIdentifier.qualifiedType.coerce
 			)
-		},
-		genericType: {
-			strict: implItemBody$negativeClauseGenericType(F.buildImplItemBody, implItemNegativeClause.genericType.strict),
-			coerce: implItemBody$negativeClauseGenericType(C.coerceToImplItemBody, implItemNegativeClause.genericType.coerce)
 		}
 	}
 };
@@ -18346,24 +27892,6 @@ const implItemSemi$negativeClauseSelf =
 		const { traitClause: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
 	};
-const implItemSemi$positiveClauseIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { traitClause: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
-	};
-const implItemSemi$negativeClauseIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { traitClause: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
-	};
 const implItemSemi$positiveClauseMetavariable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -18418,6 +27946,24 @@ const implItemSemi$negativeClauseCrate =
 		const { traitClause: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
 	};
+const implItemSemi$positiveClauseIdentifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { traitClause: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
+	};
+const implItemSemi$negativeClauseIdentifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { traitClause: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
+	};
 const implItemSemi$positiveClauseScopedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -18428,6 +27974,24 @@ const implItemSemi$positiveClauseScopedIdentifier =
 		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
 	};
 const implItemSemi$negativeClauseScopedIdentifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { traitClause: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
+	};
+const implItemSemi$positiveClauseGenericType =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { traitClause: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
+	};
+const implItemSemi$negativeClauseGenericType =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
@@ -18482,24 +28046,6 @@ const implItemSemi$positiveClauseQualifiedType =
 		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
 	};
 const implItemSemi$negativeClauseQualifiedType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { traitClause: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
-	};
-const implItemSemi$positiveClauseGenericType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { traitClause: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(...seated) } as never, options as never);
-	};
-const implItemSemi$negativeClauseGenericType =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config: OmitEach<ArgsOf<PF>[0], 'traitClause'> & { traitClause: ArgsOf<CF> },
@@ -18573,20 +28119,6 @@ const implItemSemi: {
 				options?: OptionsArg<typeof C.coerceToImplItemSemi>
 			) => ReturnType<typeof C.coerceToImplItemSemi>;
 		};
-		identifier: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemPositiveClause.scopedTypeIdentifier.identifier.strict>;
-				},
-				options?: OptionsArg<typeof F.buildImplItemSemi>
-			) => ReturnType<typeof F.buildImplItemSemi>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemPositiveClause.scopedTypeIdentifier.identifier.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToImplItemSemi>
-			) => ReturnType<typeof C.coerceToImplItemSemi>;
-		};
 		metavariable: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
@@ -18629,6 +28161,20 @@ const implItemSemi: {
 				options?: OptionsArg<typeof C.coerceToImplItemSemi>
 			) => ReturnType<typeof C.coerceToImplItemSemi>;
 		};
+		identifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemPositiveClause.scopedTypeIdentifier.identifier.strict>;
+				},
+				options?: OptionsArg<typeof F.buildImplItemSemi>
+			) => ReturnType<typeof F.buildImplItemSemi>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemPositiveClause.scopedTypeIdentifier.identifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToImplItemSemi>
+			) => ReturnType<typeof C.coerceToImplItemSemi>;
+		};
 		scopedIdentifier: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
@@ -18639,6 +28185,20 @@ const implItemSemi: {
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
 					traitClause: ArgsOf<typeof implItemPositiveClause.scopedTypeIdentifier.scopedIdentifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToImplItemSemi>
+			) => ReturnType<typeof C.coerceToImplItemSemi>;
+		};
+		genericType: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemPositiveClause.genericType.strict>;
+				},
+				options?: OptionsArg<typeof F.buildImplItemSemi>
+			) => ReturnType<typeof F.buildImplItemSemi>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemPositiveClause.genericType.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToImplItemSemi>
 			) => ReturnType<typeof C.coerceToImplItemSemi>;
@@ -18681,20 +28241,6 @@ const implItemSemi: {
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
 					traitClause: ArgsOf<typeof implItemPositiveClause.scopedTypeIdentifier.qualifiedType.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToImplItemSemi>
-			) => ReturnType<typeof C.coerceToImplItemSemi>;
-		};
-		genericType: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemPositiveClause.genericType.strict>;
-				},
-				options?: OptionsArg<typeof F.buildImplItemSemi>
-			) => ReturnType<typeof F.buildImplItemSemi>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemPositiveClause.genericType.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToImplItemSemi>
 			) => ReturnType<typeof C.coerceToImplItemSemi>;
@@ -18755,20 +28301,6 @@ const implItemSemi: {
 				options?: OptionsArg<typeof C.coerceToImplItemSemi>
 			) => ReturnType<typeof C.coerceToImplItemSemi>;
 		};
-		identifier: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemNegativeClause.scopedTypeIdentifier.identifier.strict>;
-				},
-				options?: OptionsArg<typeof F.buildImplItemSemi>
-			) => ReturnType<typeof F.buildImplItemSemi>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemNegativeClause.scopedTypeIdentifier.identifier.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToImplItemSemi>
-			) => ReturnType<typeof C.coerceToImplItemSemi>;
-		};
 		metavariable: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
@@ -18811,6 +28343,20 @@ const implItemSemi: {
 				options?: OptionsArg<typeof C.coerceToImplItemSemi>
 			) => ReturnType<typeof C.coerceToImplItemSemi>;
 		};
+		identifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemNegativeClause.scopedTypeIdentifier.identifier.strict>;
+				},
+				options?: OptionsArg<typeof F.buildImplItemSemi>
+			) => ReturnType<typeof F.buildImplItemSemi>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemNegativeClause.scopedTypeIdentifier.identifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToImplItemSemi>
+			) => ReturnType<typeof C.coerceToImplItemSemi>;
+		};
 		scopedIdentifier: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
@@ -18821,6 +28367,20 @@ const implItemSemi: {
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
 					traitClause: ArgsOf<typeof implItemNegativeClause.scopedTypeIdentifier.scopedIdentifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToImplItemSemi>
+			) => ReturnType<typeof C.coerceToImplItemSemi>;
+		};
+		genericType: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemNegativeClause.genericType.strict>;
+				},
+				options?: OptionsArg<typeof F.buildImplItemSemi>
+			) => ReturnType<typeof F.buildImplItemSemi>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
+					traitClause: ArgsOf<typeof implItemNegativeClause.genericType.coerce>;
 				},
 				options?: OptionsArg<typeof C.coerceToImplItemSemi>
 			) => ReturnType<typeof C.coerceToImplItemSemi>;
@@ -18867,20 +28427,6 @@ const implItemSemi: {
 				options?: OptionsArg<typeof C.coerceToImplItemSemi>
 			) => ReturnType<typeof C.coerceToImplItemSemi>;
 		};
-		genericType: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemNegativeClause.genericType.strict>;
-				},
-				options?: OptionsArg<typeof F.buildImplItemSemi>
-			) => ReturnType<typeof F.buildImplItemSemi>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
-					traitClause: ArgsOf<typeof implItemNegativeClause.genericType.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToImplItemSemi>
-			) => ReturnType<typeof C.coerceToImplItemSemi>;
-		};
 	};
 } = {
 	positiveClause: {
@@ -18916,16 +28462,6 @@ const implItemSemi: {
 				implItemPositiveClause.scopedTypeIdentifier.self.coerce
 			)
 		},
-		identifier: {
-			strict: implItemSemi$positiveClauseIdentifier(
-				F.buildImplItemSemi,
-				implItemPositiveClause.scopedTypeIdentifier.identifier.strict
-			),
-			coerce: implItemSemi$positiveClauseIdentifier(
-				C.coerceToImplItemSemi,
-				implItemPositiveClause.scopedTypeIdentifier.identifier.coerce
-			)
-		},
 		metavariable: {
 			strict: implItemSemi$positiveClauseMetavariable(
 				F.buildImplItemSemi,
@@ -18956,6 +28492,16 @@ const implItemSemi: {
 				implItemPositiveClause.scopedTypeIdentifier.crate.coerce
 			)
 		},
+		identifier: {
+			strict: implItemSemi$positiveClauseIdentifier(
+				F.buildImplItemSemi,
+				implItemPositiveClause.scopedTypeIdentifier.identifier.strict
+			),
+			coerce: implItemSemi$positiveClauseIdentifier(
+				C.coerceToImplItemSemi,
+				implItemPositiveClause.scopedTypeIdentifier.identifier.coerce
+			)
+		},
 		scopedIdentifier: {
 			strict: implItemSemi$positiveClauseScopedIdentifier(
 				F.buildImplItemSemi,
@@ -18965,6 +28511,10 @@ const implItemSemi: {
 				C.coerceToImplItemSemi,
 				implItemPositiveClause.scopedTypeIdentifier.scopedIdentifier.coerce
 			)
+		},
+		genericType: {
+			strict: implItemSemi$positiveClauseGenericType(F.buildImplItemSemi, implItemPositiveClause.genericType.strict),
+			coerce: implItemSemi$positiveClauseGenericType(C.coerceToImplItemSemi, implItemPositiveClause.genericType.coerce)
 		},
 		genericTypeWithTurbofish: {
 			strict: implItemSemi$positiveClauseGenericTypeWithTurbofish(
@@ -18995,10 +28545,6 @@ const implItemSemi: {
 				C.coerceToImplItemSemi,
 				implItemPositiveClause.scopedTypeIdentifier.qualifiedType.coerce
 			)
-		},
-		genericType: {
-			strict: implItemSemi$positiveClauseGenericType(F.buildImplItemSemi, implItemPositiveClause.genericType.strict),
-			coerce: implItemSemi$positiveClauseGenericType(C.coerceToImplItemSemi, implItemPositiveClause.genericType.coerce)
 		}
 	},
 	negativeClause: {
@@ -19034,16 +28580,6 @@ const implItemSemi: {
 				implItemNegativeClause.scopedTypeIdentifier.self.coerce
 			)
 		},
-		identifier: {
-			strict: implItemSemi$negativeClauseIdentifier(
-				F.buildImplItemSemi,
-				implItemNegativeClause.scopedTypeIdentifier.identifier.strict
-			),
-			coerce: implItemSemi$negativeClauseIdentifier(
-				C.coerceToImplItemSemi,
-				implItemNegativeClause.scopedTypeIdentifier.identifier.coerce
-			)
-		},
 		metavariable: {
 			strict: implItemSemi$negativeClauseMetavariable(
 				F.buildImplItemSemi,
@@ -19074,6 +28610,16 @@ const implItemSemi: {
 				implItemNegativeClause.scopedTypeIdentifier.crate.coerce
 			)
 		},
+		identifier: {
+			strict: implItemSemi$negativeClauseIdentifier(
+				F.buildImplItemSemi,
+				implItemNegativeClause.scopedTypeIdentifier.identifier.strict
+			),
+			coerce: implItemSemi$negativeClauseIdentifier(
+				C.coerceToImplItemSemi,
+				implItemNegativeClause.scopedTypeIdentifier.identifier.coerce
+			)
+		},
 		scopedIdentifier: {
 			strict: implItemSemi$negativeClauseScopedIdentifier(
 				F.buildImplItemSemi,
@@ -19083,6 +28629,10 @@ const implItemSemi: {
 				C.coerceToImplItemSemi,
 				implItemNegativeClause.scopedTypeIdentifier.scopedIdentifier.coerce
 			)
+		},
+		genericType: {
+			strict: implItemSemi$negativeClauseGenericType(F.buildImplItemSemi, implItemNegativeClause.genericType.strict),
+			coerce: implItemSemi$negativeClauseGenericType(C.coerceToImplItemSemi, implItemNegativeClause.genericType.coerce)
 		},
 		genericTypeWithTurbofish: {
 			strict: implItemSemi$negativeClauseGenericTypeWithTurbofish(
@@ -19113,10 +28663,6 @@ const implItemSemi: {
 				C.coerceToImplItemSemi,
 				implItemNegativeClause.scopedTypeIdentifier.qualifiedType.coerce
 			)
-		},
-		genericType: {
-			strict: implItemSemi$negativeClauseGenericType(F.buildImplItemSemi, implItemNegativeClause.genericType.strict),
-			coerce: implItemSemi$negativeClauseGenericType(C.coerceToImplItemSemi, implItemNegativeClause.genericType.coerce)
 		}
 	}
 };
@@ -19670,12 +29216,18 @@ const macroDefinitionParen$identifier =
 		const { name: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
 	};
-const macroDefinitionParen$reservedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) } as never, options as never);
-	};
+const macroDefinitionParen$default =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
+const macroDefinitionParen$union =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
+const macroDefinitionParen$gen =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
 const macroDefinitionParen: {
 	identifier: {
 		strict: (
@@ -19691,17 +29243,33 @@ const macroDefinitionParen: {
 			options?: OptionsArg<typeof macroDefinitionParen$seatedCoerce>
 		) => ReturnType<typeof macroDefinitionParen$seatedCoerce>;
 	};
-	reservedIdentifier: {
+	default: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof macroDefinitionParen$seated>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof macroDefinitionParen$seated>[0], 'name'>,
 			options?: OptionsArg<typeof macroDefinitionParen$seated>
 		) => ReturnType<typeof macroDefinitionParen$seated>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof macroDefinitionParen$seatedCoerce>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof macroDefinitionParen$seatedCoerce>[0], 'name'>,
+			options?: OptionsArg<typeof macroDefinitionParen$seatedCoerce>
+		) => ReturnType<typeof macroDefinitionParen$seatedCoerce>;
+	};
+	union: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof macroDefinitionParen$seated>[0], 'name'>,
+			options?: OptionsArg<typeof macroDefinitionParen$seated>
+		) => ReturnType<typeof macroDefinitionParen$seated>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof macroDefinitionParen$seatedCoerce>[0], 'name'>,
+			options?: OptionsArg<typeof macroDefinitionParen$seatedCoerce>
+		) => ReturnType<typeof macroDefinitionParen$seatedCoerce>;
+	};
+	gen: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof macroDefinitionParen$seated>[0], 'name'>,
+			options?: OptionsArg<typeof macroDefinitionParen$seated>
+		) => ReturnType<typeof macroDefinitionParen$seated>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof macroDefinitionParen$seatedCoerce>[0], 'name'>,
 			options?: OptionsArg<typeof macroDefinitionParen$seatedCoerce>
 		) => ReturnType<typeof macroDefinitionParen$seatedCoerce>;
 	};
@@ -19712,9 +29280,17 @@ const macroDefinitionParen: {
 		strict: macroDefinitionParen$identifier(macroDefinitionParen$seated, F.buildIdentifier),
 		coerce: macroDefinitionParen$identifier(macroDefinitionParen$seatedCoerce, C.coerceToIdentifier)
 	},
-	reservedIdentifier: {
-		strict: macroDefinitionParen$reservedIdentifier(macroDefinitionParen$seated, F.buildReservedIdentifier),
-		coerce: macroDefinitionParen$reservedIdentifier(macroDefinitionParen$seatedCoerce, C.coerceToReservedIdentifier)
+	default: {
+		strict: macroDefinitionParen$default(macroDefinitionParen$seated, TSKindId.DefaultKeyword),
+		coerce: macroDefinitionParen$default(macroDefinitionParen$seatedCoerce, TSKindId.DefaultKeyword)
+	},
+	union: {
+		strict: macroDefinitionParen$union(macroDefinitionParen$seated, TSKindId.UnionKeyword),
+		coerce: macroDefinitionParen$union(macroDefinitionParen$seatedCoerce, TSKindId.UnionKeyword)
+	},
+	gen: {
+		strict: macroDefinitionParen$gen(macroDefinitionParen$seated, TSKindId.GenKeyword),
+		coerce: macroDefinitionParen$gen(macroDefinitionParen$seatedCoerce, TSKindId.GenKeyword)
 	},
 	strict: macroDefinitionParen$seated,
 	coerce: macroDefinitionParen$seatedCoerce
@@ -19763,12 +29339,18 @@ const macroDefinitionBracket$identifier =
 		const { name: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
 	};
-const macroDefinitionBracket$reservedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) } as never, options as never);
-	};
+const macroDefinitionBracket$default =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
+const macroDefinitionBracket$union =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
+const macroDefinitionBracket$gen =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
 const macroDefinitionBracket: {
 	identifier: {
 		strict: (
@@ -19784,17 +29366,33 @@ const macroDefinitionBracket: {
 			options?: OptionsArg<typeof macroDefinitionBracket$seatedCoerce>
 		) => ReturnType<typeof macroDefinitionBracket$seatedCoerce>;
 	};
-	reservedIdentifier: {
+	default: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof macroDefinitionBracket$seated>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof macroDefinitionBracket$seated>[0], 'name'>,
 			options?: OptionsArg<typeof macroDefinitionBracket$seated>
 		) => ReturnType<typeof macroDefinitionBracket$seated>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof macroDefinitionBracket$seatedCoerce>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof macroDefinitionBracket$seatedCoerce>[0], 'name'>,
+			options?: OptionsArg<typeof macroDefinitionBracket$seatedCoerce>
+		) => ReturnType<typeof macroDefinitionBracket$seatedCoerce>;
+	};
+	union: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof macroDefinitionBracket$seated>[0], 'name'>,
+			options?: OptionsArg<typeof macroDefinitionBracket$seated>
+		) => ReturnType<typeof macroDefinitionBracket$seated>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof macroDefinitionBracket$seatedCoerce>[0], 'name'>,
+			options?: OptionsArg<typeof macroDefinitionBracket$seatedCoerce>
+		) => ReturnType<typeof macroDefinitionBracket$seatedCoerce>;
+	};
+	gen: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof macroDefinitionBracket$seated>[0], 'name'>,
+			options?: OptionsArg<typeof macroDefinitionBracket$seated>
+		) => ReturnType<typeof macroDefinitionBracket$seated>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof macroDefinitionBracket$seatedCoerce>[0], 'name'>,
 			options?: OptionsArg<typeof macroDefinitionBracket$seatedCoerce>
 		) => ReturnType<typeof macroDefinitionBracket$seatedCoerce>;
 	};
@@ -19805,9 +29403,17 @@ const macroDefinitionBracket: {
 		strict: macroDefinitionBracket$identifier(macroDefinitionBracket$seated, F.buildIdentifier),
 		coerce: macroDefinitionBracket$identifier(macroDefinitionBracket$seatedCoerce, C.coerceToIdentifier)
 	},
-	reservedIdentifier: {
-		strict: macroDefinitionBracket$reservedIdentifier(macroDefinitionBracket$seated, F.buildReservedIdentifier),
-		coerce: macroDefinitionBracket$reservedIdentifier(macroDefinitionBracket$seatedCoerce, C.coerceToReservedIdentifier)
+	default: {
+		strict: macroDefinitionBracket$default(macroDefinitionBracket$seated, TSKindId.DefaultKeyword),
+		coerce: macroDefinitionBracket$default(macroDefinitionBracket$seatedCoerce, TSKindId.DefaultKeyword)
+	},
+	union: {
+		strict: macroDefinitionBracket$union(macroDefinitionBracket$seated, TSKindId.UnionKeyword),
+		coerce: macroDefinitionBracket$union(macroDefinitionBracket$seatedCoerce, TSKindId.UnionKeyword)
+	},
+	gen: {
+		strict: macroDefinitionBracket$gen(macroDefinitionBracket$seated, TSKindId.GenKeyword),
+		coerce: macroDefinitionBracket$gen(macroDefinitionBracket$seatedCoerce, TSKindId.GenKeyword)
 	},
 	strict: macroDefinitionBracket$seated,
 	coerce: macroDefinitionBracket$seatedCoerce
@@ -19856,12 +29462,18 @@ const macroDefinitionBrace$identifier =
 		const { name: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
 	};
-const macroDefinitionBrace$reservedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) } as never, options as never);
-	};
+const macroDefinitionBrace$default =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
+const macroDefinitionBrace$union =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
+const macroDefinitionBrace$gen =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
 const macroDefinitionBrace: {
 	identifier: {
 		strict: (
@@ -19877,17 +29489,33 @@ const macroDefinitionBrace: {
 			options?: OptionsArg<typeof macroDefinitionBrace$seatedCoerce>
 		) => ReturnType<typeof macroDefinitionBrace$seatedCoerce>;
 	};
-	reservedIdentifier: {
+	default: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof macroDefinitionBrace$seated>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof macroDefinitionBrace$seated>[0], 'name'>,
 			options?: OptionsArg<typeof macroDefinitionBrace$seated>
 		) => ReturnType<typeof macroDefinitionBrace$seated>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof macroDefinitionBrace$seatedCoerce>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof macroDefinitionBrace$seatedCoerce>[0], 'name'>,
+			options?: OptionsArg<typeof macroDefinitionBrace$seatedCoerce>
+		) => ReturnType<typeof macroDefinitionBrace$seatedCoerce>;
+	};
+	union: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof macroDefinitionBrace$seated>[0], 'name'>,
+			options?: OptionsArg<typeof macroDefinitionBrace$seated>
+		) => ReturnType<typeof macroDefinitionBrace$seated>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof macroDefinitionBrace$seatedCoerce>[0], 'name'>,
+			options?: OptionsArg<typeof macroDefinitionBrace$seatedCoerce>
+		) => ReturnType<typeof macroDefinitionBrace$seatedCoerce>;
+	};
+	gen: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof macroDefinitionBrace$seated>[0], 'name'>,
+			options?: OptionsArg<typeof macroDefinitionBrace$seated>
+		) => ReturnType<typeof macroDefinitionBrace$seated>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof macroDefinitionBrace$seatedCoerce>[0], 'name'>,
 			options?: OptionsArg<typeof macroDefinitionBrace$seatedCoerce>
 		) => ReturnType<typeof macroDefinitionBrace$seatedCoerce>;
 	};
@@ -19898,9 +29526,17 @@ const macroDefinitionBrace: {
 		strict: macroDefinitionBrace$identifier(macroDefinitionBrace$seated, F.buildIdentifier),
 		coerce: macroDefinitionBrace$identifier(macroDefinitionBrace$seatedCoerce, C.coerceToIdentifier)
 	},
-	reservedIdentifier: {
-		strict: macroDefinitionBrace$reservedIdentifier(macroDefinitionBrace$seated, F.buildReservedIdentifier),
-		coerce: macroDefinitionBrace$reservedIdentifier(macroDefinitionBrace$seatedCoerce, C.coerceToReservedIdentifier)
+	default: {
+		strict: macroDefinitionBrace$default(macroDefinitionBrace$seated, TSKindId.DefaultKeyword),
+		coerce: macroDefinitionBrace$default(macroDefinitionBrace$seatedCoerce, TSKindId.DefaultKeyword)
+	},
+	union: {
+		strict: macroDefinitionBrace$union(macroDefinitionBrace$seated, TSKindId.UnionKeyword),
+		coerce: macroDefinitionBrace$union(macroDefinitionBrace$seatedCoerce, TSKindId.UnionKeyword)
+	},
+	gen: {
+		strict: macroDefinitionBrace$gen(macroDefinitionBrace$seated, TSKindId.GenKeyword),
+		coerce: macroDefinitionBrace$gen(macroDefinitionBrace$seatedCoerce, TSKindId.GenKeyword)
 	},
 	strict: macroDefinitionBrace$seated,
 	coerce: macroDefinitionBrace$seatedCoerce
@@ -20152,6 +29788,16 @@ export const tokenTreePattern: {
 	paren: { strict: F.buildTokenTreePatternParen, coerce: C.coerceToTokenTreePatternParen },
 	bracket: { strict: F.buildTokenTreePatternBracket, coerce: C.coerceToTokenTreePatternBracket },
 	brace: { strict: F.buildTokenTreePatternBrace, coerce: C.coerceToTokenTreePatternBrace }
+};
+
+export const tokenTree: {
+	readonly paren: { strict: typeof F.buildTokenTreeParen; coerce: typeof C.coerceToTokenTreeParen };
+	readonly bracket: { strict: typeof F.buildTokenTreeBracket; coerce: typeof C.coerceToTokenTreeBracket };
+	readonly brace: { strict: typeof F.buildTokenTreeBrace; coerce: typeof C.coerceToTokenTreeBrace };
+} = {
+	paren: { strict: F.buildTokenTreeParen, coerce: C.coerceToTokenTreeParen },
+	bracket: { strict: F.buildTokenTreeBracket, coerce: C.coerceToTokenTreeBracket },
+	brace: { strict: F.buildTokenTreeBrace, coerce: C.coerceToTokenTreeBrace }
 };
 
 export const modItem: {

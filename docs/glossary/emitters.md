@@ -7156,6 +7156,11 @@ The bare slot of a coercer row is the direct slot, or the content slot of a lexe
  */
 ```
 
+#### `BaseBooleanKeyword`
+
+The keyword-presence brand is imported as `BaseBooleanKeyword`, the same `Base` prefix the other vocabulary imports
+take, because a grammar may have a kind whose type is named `BooleanKeyword` (typescript's `boolean` keyword).
+
 ### `packages/codegen/src/emitters/types.ts::quoteKey`
 
 ```text
@@ -12999,6 +13004,13 @@ The config type the passthrough narrows to gains `string` when the kind accepts 
  */
 ```
 
+### `packages/codegen/src/emitters/from.ts::resolvesLooseInput`
+
+Whether a slot's `from()` coercer resolves loose input rather than passing it to the raw factory as it stands: always
+when the slot has no literal values, and also when it mixes literals with leaf or branch kinds, so a bare string
+still reaches the slot's node kinds (`object_pattern` properties beside the keyword arms a shorthand property
+admits). A slot of literals only passes its input through; the raw factory's literal coercion handles it.
+
 ### `packages/codegen/src/emitters/from.ts::emitChildrenFrom`
 
 #### body
@@ -13187,6 +13199,9 @@ The storage kind of the slot value an author marked `arm.default`, or
 `undefined`. The fact rides the value bag next to `variant`/`variantOf`
 (`armFactsOf`); this is its only reader. Two flagged arms on one slot is an
 authoring error and throws here rather than emitting an arbitrary winner.
+
+With no default of its own, a slot takes the default of a supertype it holds, when exactly one such supertype
+declares one.
 
 ### `packages/codegen/src/emitters/from.ts::emitPickArmHelper`
 
@@ -14445,6 +14460,12 @@ enum's `Verbatim` arm and its render helper's, so the two cannot disagree.
 // the occurrence (only the kind survives as a subtype), so the token
 // ids reach decode arms only through this kind-level stamp.
 ```
+
+#### supertype dispatch order
+
+A supertype's decoder claims every member's own storage ids before any id a member accepts only through its display
+(`parseName`). A keyword shown as `identifier` accepts identifier's id through its display; claiming own ids first
+keeps that id on the `Identifier` member, where a read identifier belongs.
 
 ### `packages/codegen/src/emitters/render-module.ts::kindIdStoredFirst`
 

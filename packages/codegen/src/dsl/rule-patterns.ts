@@ -528,6 +528,82 @@ export function isParserHiddenName(name: string): boolean {
 	return name.startsWith('_');
 }
 
+export type ParserSymbolClass = 'terminal' | 'nonterminal' | 'inlined';
+
+export interface ParserSymbolCtx {
+	readonly rules: Readonly<Record<string, AnyRule>>;
+	readonly externals: ReadonlySet<string>;
+	readonly inline: ReadonlySet<string>;
+	readonly tokenUses: ReadonlyMap<string, number>;
+}
+
+type TokenShape = { readonly type: string; readonly value?: unknown; readonly content?: TokenShape };
+
+interface ExtractedToken {
+	readonly key: string;
+	readonly anonymous: boolean;
+}
+
+function isTokenWrapper(type: string): boolean {
+	return type === TOKEN || type === 'IMMEDIATE_TOKEN';
+}
+
+function extractedToken(rule: TokenShape): ExtractedToken | undefined {
+	const params: string[] = [];
+	let tokenized = false;
+	let current = rule;
+	for (;;) {
+		if (isTokenWrapper(current.type)) {
+			tokenized = true;
+			if (current.type === 'IMMEDIATE_TOKEN') params.push('immediate');
+		} else if (isPrecWrapper(current)) {
+			params.push(`${current.type}:${String(current.value)}`);
+		} else break;
+		current = current.content!;
+	}
+	if (!tokenized && params.length > 0) return undefined;
+	if (!tokenized && current.type !== STRING && current.type !== PATTERN) return undefined;
+	const inner = current.type === STRING || current.type === PATTERN ? `${current.type}:${String(current.value)}` : JSON.stringify(stripRuleAnnotations(current));
+	return { key: [...params.sort(), inner].join('|'), anonymous: current.type === STRING };
+}
+
+function stripRuleAnnotations(rule: unknown): unknown {
+	if (Array.isArray(rule)) return rule.map(stripRuleAnnotations);
+	if (rule === null || typeof rule !== 'object') return rule;
+	const out: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(rule)) {
+		if (key === 'annotations' || key === 'metadata' || key === 'id') continue;
+		out[key] = stripRuleAnnotations(value);
+	}
+	return out;
+}
+
+export function tokenUseCounts(rules: Readonly<Record<string, AnyRule>>): Map<string, number> {
+	const counts = new Map<string, number>();
+	const visit = (rule: TokenShape | undefined): void => {
+		if (rule === undefined || rule === null || typeof rule !== 'object') return;
+		if (isTokenWrapper(rule.type) || rule.type === STRING || rule.type === PATTERN) {
+			const token = extractedToken(rule);
+			if (token !== undefined) counts.set(token.key, (counts.get(token.key) ?? 0) + 1);
+			return;
+		}
+		if (rule.content !== undefined) visit(rule.content);
+		for (const member of (rule as { members?: readonly TokenShape[] }).members ?? []) visit(member);
+	};
+	for (const rule of Object.values(rules)) visit(rule as unknown as TokenShape);
+	return counts;
+}
+
+export function parserSymbolClassOf(name: string, ctx: ParserSymbolCtx): ParserSymbolClass {
+	if (ctx.externals.has(name)) return 'terminal';
+	if (ctx.inline.has(name)) return 'inlined';
+	const rule = ctx.rules[name] as unknown as TokenShape | undefined;
+	if (rule === undefined) return 'nonterminal';
+	const token = extractedToken(rule);
+	if (token === undefined || ctx.tokenUses.get(token.key) !== 1) return 'nonterminal';
+	return token.anonymous && isParserHiddenName(name) ? 'nonterminal' : 'terminal';
+}
+
 export function selfReferentialFoldOf(name: string, rule: Rule<'link'>): { separator: Rule<'link'> } | undefined {
 	if (rule.type !== CHOICE) return undefined;
 	const fieldOf = (member: Rule<'link'>): string | undefined => (member.type === FIELD ? member.name : undefined);

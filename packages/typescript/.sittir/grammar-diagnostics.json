@@ -42,11 +42,34 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "enum_body_elements",
-    "message": "[collect-slots] kind 'enum_body_elements': choice rule:enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 6 label-routed arm(s) [field(name):identifier, field(name):_reserved_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
+    "message": "[collect-slots] kind 'enum_body_elements': choice rule:enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 29 label-routed arm(s) [field(name):identifier, field(name):declare_keyword, field(name):namespace_keyword, field(name):type_keyword, field(name):public_keyword, field(name):private_keyword, field(name):protected_keyword, field(name):override_keyword, field(name):readonly_keyword, field(name):module_keyword, field(name):any_keyword, field(name):number_keyword, field(name):boolean_keyword, field(name):string_keyword, field(name):symbol_keyword, field(name):export_keyword, field(name):object_keyword, field(name):new_keyword, field(name):readonly_keyword, field(name):get_keyword, field(name):set_keyword, field(name):async_keyword, field(name):static_keyword, field(name):export_keyword, field(name):let_keyword, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
       "degenerateFields": [
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
         "name",
         "name",
         "name",
@@ -172,22 +195,6 @@
   },
   {
     "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_reserved_identifier",
-    "message": "[assemble] typeName collision: kind '_reserved_identifier' renamed 'ReservedIdentifier' → '_ReservedIdentifier' (visible sibling(s): 'reserved_identifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "ReservedIdentifier",
-      "newType": "_ReservedIdentifier",
-      "visibleKinds": [
-        "reserved_identifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "multi-slot-nested-seq",
     "severity": "warning",
     "grammar": "typescript",
@@ -201,14 +208,13 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "5 referenced kind(s) resolved no parser kindId",
+    "message": "4 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "__number_operator",
         "_augmented_assignment_expression_operator",
         "_operator",
-        "_reserved_identifier",
         "_unary_expression_operator"
       ]
     },
@@ -232,19 +238,6 @@
       ]
     },
     "severity": "warning",
-    "scope": "grammar",
-    "grammar": "typescript"
-  },
-  {
-    "code": "kindid-inline-excluded-symbols",
-    "message": "1 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "_reserved_identifier"
-      ]
-    },
     "scope": "grammar",
     "grammar": "typescript"
   },

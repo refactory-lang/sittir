@@ -16,7 +16,7 @@ import type {
 	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
-	BooleanKeyword,
+	BooleanKeyword as BaseBooleanKeyword,
 	KindEnum,
 	HiddenLeaf,
 	OmitEach
@@ -73,6 +73,12 @@ export type LeafStringMap = {
 	[TSKindId.FutureUKeyword]: '__future__';
 	[TSKindId.AsKeyword]: 'as';
 	[TSKindId.AssertKeyword]: 'assert';
+	[TSKindId.PrintKeyword]: 'print';
+	[TSKindId.ExecKeyword]: 'exec';
+	[TSKindId.AsyncKeyword]: 'async';
+	[TSKindId.AwaitKeyword]: 'await';
+	[TSKindId.TypeKeyword]: 'type';
+	[TSKindId.MatchKeyword]: 'match';
 	[TSKindId.ReturnKeyword]: 'return';
 	[TSKindId.DelKeyword]: 'del';
 	[TSKindId.RaiseKeyword]: 'raise';
@@ -82,7 +88,6 @@ export type LeafStringMap = {
 	[TSKindId.IfKeyword]: 'if';
 	[TSKindId.ElifKeyword]: 'elif';
 	[TSKindId.ElseKeyword]: 'else';
-	[TSKindId.MatchKeyword]: 'match';
 	[TSKindId.CaseKeyword]: 'case';
 	[TSKindId.ForKeyword]: 'for';
 	[TSKindId.InKeyword]: 'in';
@@ -94,8 +99,6 @@ export type LeafStringMap = {
 	[TSKindId.DefKeyword]: 'def';
 	[TSKindId.GlobalKeyword]: 'global';
 	[TSKindId.NonlocalKeyword]: 'nonlocal';
-	[TSKindId.ExecKeyword]: 'exec';
-	[TSKindId.TypeKeyword]: 'type';
 	[TSKindId.ClassKeyword]: 'class';
 	[TSKindId.Underscore]: '_';
 	[TSKindId.NotKeyword]: 'not';
@@ -103,9 +106,6 @@ export type LeafStringMap = {
 	[TSKindId.OrKeyword]: 'or';
 	[TSKindId.LambdaKeyword]: 'lambda';
 	[TSKindId.YieldKeyword]: 'yield';
-	[TSKindId.AwaitKeyword]: 'await';
-	[TSKindId.AsyncKeyword]: 'async';
-	[TSKindId.PrintKeyword]: 'print';
 	[TSKindId.IsKeyword]: 'is';
 };
 
@@ -935,7 +935,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[148, 'elif_clause'],
 	[149, 'else_clause'],
 	[150, 'match_statement'],
-	[151, 'block'],
+	[151, 'match_block'],
 	[152, 'case_clause'],
 	[153, 'for_statement'],
 	[154, 'while_statement'],
@@ -1965,6 +1965,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.SimpleStatements;
 		case 'import_list':
 			return TSKindId.ImportList;
+		case 'match_block':
+			return TSKindId.MatchBlock;
 		case 'key_value_pattern':
 			return TSKindId.KeyValuePattern;
 		case 'parameters_elements':
@@ -2040,7 +2042,13 @@ export enum SimpleStatementKind {
 }
 
 export enum NamedExpressionLhsKind {
-	Identifier = 'identifier'
+	Identifier = 'identifier',
+	PrintKeyword = 'print_keyword',
+	ExecKeyword = 'exec_keyword',
+	AsyncKeyword = 'async_keyword',
+	AwaitKeyword = 'await_keyword',
+	TypeKeyword = 'type_keyword',
+	MatchKeyword = 'match_keyword'
 }
 
 export enum ExpressionsKind {
@@ -2103,6 +2111,12 @@ export enum ParameterKind {
 
 export enum PatternKind {
 	Identifier = 'identifier',
+	PrintKeyword = 'print_keyword',
+	ExecKeyword = 'exec_keyword',
+	AsyncKeyword = 'async_keyword',
+	AwaitKeyword = 'await_keyword',
+	TypeKeyword = 'type_keyword',
+	MatchKeyword = 'match_keyword',
 	Subscript = 'subscript',
 	Attribute = 'attribute',
 	ListSplatPattern = 'list_splat_pattern',
@@ -2130,6 +2144,12 @@ export enum PrimaryExpressionKind {
 	Await = 'await',
 	BinaryOperator = 'binary_operator',
 	Identifier = 'identifier',
+	PrintKeyword = 'print_keyword',
+	ExecKeyword = 'exec_keyword',
+	AsyncKeyword = 'async_keyword',
+	AwaitKeyword = 'await_keyword',
+	TypeKeyword = 'type_keyword',
+	MatchKeyword = 'match_keyword',
 	String = 'string',
 	ConcatenatedString = 'concatenated_string',
 	Integer = 'integer',
@@ -2202,10 +2222,6 @@ export enum FloatKind {
 	FloatPoint = 'float_point',
 	FloatLeadingPoint = 'float_leading_point',
 	FloatScientific = 'float_scientific'
-}
-
-export enum KeywordIdentifierKind {
-	Identifier = 'identifier'
 }
 
 export enum LineContinuationKind {
@@ -2337,14 +2353,39 @@ export interface ExpressionStatement {
 
 export interface NamedExpression {
 	readonly $type: TSKindId.NamedExpression;
-	readonly _name: Identifier;
+	readonly _name:
+		| Identifier
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword;
 	readonly _value: Expression;
 	readonly __inputHints__?: {
+		readonly name:
+			| KindEnum<
+					'print' | 'exec' | 'async' | 'await' | 'type' | 'match',
+					| TSKindId.PrintKeyword
+					| TSKindId.ExecKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.MatchKeyword
+			  >
+			| Identifier;
 		readonly value:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
 	};
-	name(): Identifier;
+	name():
+		| Identifier
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword;
 	value(): Expression;
 }
 
@@ -2466,7 +2507,7 @@ export interface ForStatement {
 	readonly _body: Suite;
 	readonly _alternative?: ElseClause;
 	readonly __inputHints__?: {
-		readonly async_marker?: BooleanKeyword<'async'>;
+		readonly async_marker?: BaseBooleanKeyword<'async'>;
 		readonly right:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression
@@ -2523,7 +2564,7 @@ export interface ExceptClause {
 	readonly _exception?: ExceptClauseException;
 	readonly _suite: Suite;
 	readonly __inputHints__?: {
-		readonly star_marker?: BooleanKeyword<'*'>;
+		readonly star_marker?: BaseBooleanKeyword<'*'>;
 	};
 	readonly __looseHints__?: {
 		readonly exception?: readonly (ExceptClauseExceptionAs | ExceptClauseExceptionList)[];
@@ -2545,7 +2586,7 @@ export interface WithStatement {
 	readonly _with_clause: WithClause;
 	readonly _body: Suite;
 	readonly __inputHints__?: {
-		readonly async_marker?: BooleanKeyword<'async'>;
+		readonly async_marker?: BaseBooleanKeyword<'async'>;
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
@@ -2575,7 +2616,7 @@ export interface FunctionDefinition {
 	readonly _return_type?: Type;
 	readonly _body: Suite;
 	readonly __inputHints__?: {
-		readonly async_marker?: BooleanKeyword<'async'>;
+		readonly async_marker?: BaseBooleanKeyword<'async'>;
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
@@ -3065,7 +3106,7 @@ export interface ComplexPattern {
 	readonly _operator: number;
 	readonly _content: Integer | Float;
 	readonly __inputHints__?: {
-		readonly real?: BooleanKeyword<'-'>;
+		readonly real?: BaseBooleanKeyword<'-'>;
 		readonly operator: KindEnum<'+' | '-', TSKindId.Plus | TSKindId.Dash>;
 	};
 	real(): boolean | undefined;
@@ -3137,14 +3178,80 @@ export interface TypedDefaultParameter {
 
 export interface ListSplatPattern {
 	readonly $type: TSKindId.ListSplatPattern;
-	readonly _content: Identifier | Subscript | Attribute;
-	content(): Identifier | Subscript | Attribute;
+	readonly _content:
+		| Identifier
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword
+		| Subscript
+		| Attribute;
+	readonly __inputHints__?: {
+		readonly content:
+			| KindEnum<
+					'print' | 'exec' | 'async' | 'await' | 'type' | 'match',
+					| TSKindId.PrintKeyword
+					| TSKindId.ExecKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.MatchKeyword
+			  >
+			| Identifier
+			| Subscript
+			| Attribute;
+	};
+	content():
+		| Identifier
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword
+		| Subscript
+		| Attribute;
 }
 
 export interface DictionarySplatPattern {
 	readonly $type: TSKindId.DictionarySplatPattern;
-	readonly _content: Identifier | Subscript | Attribute;
-	content(): Identifier | Subscript | Attribute;
+	readonly _content:
+		| Identifier
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword
+		| Subscript
+		| Attribute;
+	readonly __inputHints__?: {
+		readonly content:
+			| KindEnum<
+					'print' | 'exec' | 'async' | 'await' | 'type' | 'match',
+					| TSKindId.PrintKeyword
+					| TSKindId.ExecKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.MatchKeyword
+			  >
+			| Identifier
+			| Subscript
+			| Attribute;
+	};
+	content():
+		| Identifier
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword
+		| Subscript
+		| Attribute;
 }
 
 export interface AsPattern {
@@ -3502,14 +3609,39 @@ export interface MemberType {
 
 export interface KeywordArgument {
 	readonly $type: TSKindId.KeywordArgument;
-	readonly _name: Identifier;
+	readonly _name:
+		| Identifier
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword;
 	readonly _value: Expression;
 	readonly __inputHints__?: {
+		readonly name:
+			| KindEnum<
+					'print' | 'exec' | 'async' | 'await' | 'type' | 'match',
+					| TSKindId.PrintKeyword
+					| TSKindId.ExecKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.MatchKeyword
+			  >
+			| Identifier;
 		readonly value:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
 	};
-	name(): Identifier;
+	name():
+		| Identifier
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword;
 	value(): Expression;
 }
 
@@ -3626,15 +3758,14 @@ export interface GeneratorExpression {
 
 export interface ParenthesizedExpression {
 	readonly $type: TSKindId.ParenthesizedExpression;
-	readonly _content: Expression | Yield | ListSplat;
+	readonly _content: Expression | Yield;
 	readonly __inputHints__?: {
 		readonly content:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression
-			| Yield
-			| ListSplat;
+			| Yield;
 	};
-	content(): Expression | Yield | ListSplat;
+	content(): Expression | Yield;
 }
 
 export interface CollectionElements {
@@ -3650,13 +3781,13 @@ export interface ForInClause {
 	readonly _right: NonEmptyArray<Expression | LambdaWithinForInClause>;
 	readonly _comma?: boolean;
 	readonly __inputHints__?: {
-		readonly async_marker?: BooleanKeyword<'async'>;
+		readonly async_marker?: BaseBooleanKeyword<'async'>;
 		readonly right: NonEmptyArray<
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression
 			| LambdaWithinForInClause
 		>;
-		readonly comma?: BooleanKeyword<','>;
+		readonly comma?: BaseBooleanKeyword<','>;
 	};
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
@@ -3742,7 +3873,7 @@ export interface Interpolation {
 			| ExpressionList
 			| PatternList
 			| Yield;
-		readonly eq_marker?: BooleanKeyword<'='>;
+		readonly eq_marker?: BaseBooleanKeyword<'='>;
 	};
 	readonly __looseHints__?: {
 		readonly format_specifier?: readonly ('[^{}\\n]+' | FormatExpression)[];
@@ -3757,6 +3888,15 @@ export interface FormatSpecifier {
 	readonly $type: TSKindId.FormatSpecifier;
 	readonly _content?: readonly ('[^{}\\n]+' | FormatExpression)[];
 	contents(): readonly ('[^{}\\n]+' | FormatExpression)[];
+}
+
+export interface KeywordIdentifier {
+	readonly $type: 'keyword_identifier';
+	readonly _identifier: number;
+	readonly __inputHints__?: {
+		readonly identifier: KindEnum<'print', TSKindId.Identifier | TSKindId.PrintKeyword>;
+	};
+	identifier(): number;
 }
 
 export interface Await {
@@ -4096,7 +4236,7 @@ export interface SimplePatternNegative {
 	readonly _sign?: boolean;
 	readonly _content: Integer | Float;
 	readonly __inputHints__?: {
-		readonly sign?: BooleanKeyword<'-'>;
+		readonly sign?: BaseBooleanKeyword<'-'>;
 	};
 	sign(): boolean | undefined;
 	content(): Integer | Float;
@@ -4323,6 +4463,12 @@ export type EscapeInterpolation = Terminal<TSKindId.EscapeInterpolation, string>
 export type StringEnd = Terminal<TSKindId.StringEnd, string>;
 export type Indent = Terminal<TSKindId.Indent, string>;
 export type Dedent = Terminal<TSKindId.Dedent, string>;
+export type PrintKeyword = TSKindId.PrintKeyword;
+export type ExecKeyword = TSKindId.ExecKeyword;
+export type AsyncKeyword = TSKindId.AsyncKeyword;
+export type AwaitKeyword = TSKindId.AwaitKeyword;
+export type TypeKeyword = TSKindId.TypeKeyword;
+export type MatchKeyword = TSKindId.MatchKeyword;
 
 // Tree types
 export interface ModuleTree extends TreeNode<'module'> {}
@@ -4444,6 +4590,9 @@ export interface StringTree extends TreeNode<'string'> {}
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface InterpolationTree extends TreeNode<'interpolation'> {}
 export interface FormatSpecifierTree extends TreeNode<'format_specifier'> {}
+export interface KeywordIdentifierTree extends AnyTreeNode {
+	readonly type: 'keyword_identifier';
+}
 export interface AwaitTree extends TreeNode<'await'> {}
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface SimpleStatementsElementsTree extends TreeNode<'simple_statements_elements'> {}
@@ -4588,6 +4737,24 @@ export interface AsKeywordTree extends AnyTreeNode {
 export interface AssertKeywordTree extends AnyTreeNode {
 	readonly type: 'assert_keyword';
 }
+export interface PrintKeywordTree extends AnyTreeNode {
+	readonly type: 'print_keyword';
+}
+export interface ExecKeywordTree extends AnyTreeNode {
+	readonly type: 'exec_keyword';
+}
+export interface AsyncKeywordTree extends AnyTreeNode {
+	readonly type: 'async_keyword';
+}
+export interface AwaitKeywordTree extends AnyTreeNode {
+	readonly type: 'await_keyword';
+}
+export interface TypeKeywordTree extends AnyTreeNode {
+	readonly type: 'type_keyword';
+}
+export interface MatchKeywordTree extends AnyTreeNode {
+	readonly type: 'match_keyword';
+}
 export interface ReturnKeywordTree extends AnyTreeNode {
 	readonly type: 'return_keyword';
 }
@@ -4614,9 +4781,6 @@ export interface ElifKeywordTree extends AnyTreeNode {
 }
 export interface ElseKeywordTree extends AnyTreeNode {
 	readonly type: 'else_keyword';
-}
-export interface MatchKeywordTree extends AnyTreeNode {
-	readonly type: 'match_keyword';
 }
 export interface CaseKeywordTree extends AnyTreeNode {
 	readonly type: 'case_keyword';
@@ -4651,12 +4815,6 @@ export interface GlobalKeywordTree extends AnyTreeNode {
 export interface NonlocalKeywordTree extends AnyTreeNode {
 	readonly type: 'nonlocal_keyword';
 }
-export interface ExecKeywordTree extends AnyTreeNode {
-	readonly type: 'exec_keyword';
-}
-export interface TypeKeywordTree extends AnyTreeNode {
-	readonly type: 'type_keyword';
-}
 export interface ClassKeywordTree extends AnyTreeNode {
 	readonly type: 'class_keyword';
 }
@@ -4677,15 +4835,6 @@ export interface LambdaKeywordTree extends AnyTreeNode {
 }
 export interface YieldKeywordTree extends AnyTreeNode {
 	readonly type: 'yield_keyword';
-}
-export interface AwaitKeywordTree extends AnyTreeNode {
-	readonly type: 'await_keyword';
-}
-export interface AsyncKeywordTree extends AnyTreeNode {
-	readonly type: 'async_keyword';
-}
-export interface PrintKeywordTree extends AnyTreeNode {
-	readonly type: 'print_keyword';
 }
 export interface IsKeywordTree extends AnyTreeNode {
 	readonly type: 'is_keyword';
@@ -4753,9 +4902,23 @@ export type SimpleStatementTree =
 	| ExecStatementTree
 	| TypeAliasStatementTree;
 
-export type NamedExpressionLhs = Identifier;
+export type NamedExpressionLhs =
+	| Identifier
+	| PrintKeyword
+	| ExecKeyword
+	| AsyncKeyword
+	| AwaitKeyword
+	| TypeKeyword
+	| MatchKeyword;
 
-export type NamedExpressionLhsTree = IdentifierTree;
+export type NamedExpressionLhsTree =
+	| IdentifierTree
+	| PrintKeywordTree
+	| ExecKeywordTree
+	| AsyncKeywordTree
+	| AwaitKeywordTree
+	| TypeKeywordTree
+	| MatchKeywordTree;
 
 export type Expressions = Expression | ExpressionList;
 
@@ -4847,10 +5010,28 @@ export type ParameterTree =
 	| PositionalSeparatorTree
 	| DictionarySplatPatternTree;
 
-export type Pattern = Identifier | Subscript | Attribute | ListSplatPattern | TuplePattern | ListPattern;
+export type Pattern =
+	| Identifier
+	| PrintKeyword
+	| ExecKeyword
+	| AsyncKeyword
+	| AwaitKeyword
+	| TypeKeyword
+	| MatchKeyword
+	| Subscript
+	| Attribute
+	| ListSplatPattern
+	| TuplePattern
+	| ListPattern;
 
 export type PatternTree =
 	| IdentifierTree
+	| PrintKeywordTree
+	| ExecKeywordTree
+	| AsyncKeywordTree
+	| AwaitKeywordTree
+	| TypeKeywordTree
+	| MatchKeywordTree
 	| SubscriptTree
 	| AttributeTree
 	| ListSplatPatternTree
@@ -4884,6 +5065,12 @@ export type PrimaryExpression =
 	| Await
 	| BinaryOperator
 	| Identifier
+	| PrintKeyword
+	| ExecKeyword
+	| AsyncKeyword
+	| AwaitKeyword
+	| TypeKeyword
+	| MatchKeyword
 	| String
 	| ConcatenatedString
 	| Integer
@@ -4911,6 +5098,12 @@ export type PrimaryExpressionTree =
 	| AwaitTree
 	| BinaryOperatorTree
 	| IdentifierTree
+	| PrintKeywordTree
+	| ExecKeywordTree
+	| AsyncKeywordTree
+	| AwaitKeywordTree
+	| TypeKeywordTree
+	| MatchKeywordTree
 	| StringTree
 	| ConcatenatedStringTree
 	| TrueTree
@@ -4973,10 +5166,6 @@ export type IntegerTree = IntegerHexTree | IntegerOctalTree | IntegerBinaryTree 
 export type Float = FloatPoint | FloatLeadingPoint | FloatScientific;
 
 export type FloatTree = FloatPointTree | FloatLeadingPointTree | FloatScientificTree;
-
-export type KeywordIdentifier = Identifier;
-
-export type KeywordIdentifierTree = IdentifierTree;
 
 export type LineContinuation = LineContinuationNewline | LineContinuationNul;
 
@@ -5116,6 +5305,7 @@ export type PythonNode =
 	| StringContent
 	| Interpolation
 	| FormatSpecifier
+	| KeywordIdentifier
 	| Await
 	| Comment
 	| SimpleStatementsElements
@@ -5278,6 +5468,7 @@ export interface KindMap {
 	string_content: StringContent;
 	interpolation: Interpolation;
 	format_specifier: FormatSpecifier;
+	keyword_identifier: KeywordIdentifier;
 	await: Await;
 	comment: Comment;
 	simple_statements_elements: SimpleStatementsElements;
@@ -5359,6 +5550,12 @@ export interface KindMap {
 	string_end: StringEnd;
 	_indent: Indent;
 	_dedent: Dedent;
+	print_keyword: PrintKeyword;
+	exec_keyword: ExecKeyword;
+	async_keyword: AsyncKeyword;
+	await_keyword: AwaitKeyword;
+	type_keyword: TypeKeyword;
+	match_keyword: MatchKeyword;
 }
 
 // Per-kind namespace interfaces — one computed base per kind
@@ -7180,6 +7377,12 @@ export interface LineContinuationNulNs extends KeywordNs<
 	LineContinuationNulTree,
 	'line_continuation_nul'
 > {}
+export interface PrintKeywordNs extends KeywordNs<TSKindId.PrintKeyword, 'print', PrintKeywordTree, 'print_keyword'> {}
+export interface ExecKeywordNs extends KeywordNs<TSKindId.ExecKeyword, 'exec', ExecKeywordTree, 'exec_keyword'> {}
+export interface AsyncKeywordNs extends KeywordNs<TSKindId.AsyncKeyword, 'async', AsyncKeywordTree, 'async_keyword'> {}
+export interface AwaitKeywordNs extends KeywordNs<TSKindId.AwaitKeyword, 'await', AwaitKeywordTree, 'await_keyword'> {}
+export interface TypeKeywordNs extends KeywordNs<TSKindId.TypeKeyword, 'type', TypeKeywordTree, 'type_keyword'> {}
+export interface MatchKeywordNs extends KeywordNs<TSKindId.MatchKeyword, 'match', MatchKeywordTree, 'match_keyword'> {}
 export interface ImportPrefixNs extends LeafNs<
 	ImportPrefix,
 	string,
@@ -7408,6 +7611,12 @@ export interface NamespaceMap {
 	[TSKindId.KwAsyncMarker]: KwAsyncMarkerNs;
 	[TSKindId.WildcardPattern]: WildcardPatternNs;
 	[TSKindId.LineContinuationNul]: LineContinuationNulNs;
+	[TSKindId.PrintKeyword]: PrintKeywordNs;
+	[TSKindId.ExecKeyword]: ExecKeywordNs;
+	[TSKindId.AsyncKeyword]: AsyncKeywordNs;
+	[TSKindId.AwaitKeyword]: AwaitKeywordNs;
+	[TSKindId.TypeKeyword]: TypeKeywordNs;
+	[TSKindId.MatchKeyword]: MatchKeywordNs;
 	[TSKindId.ImportPrefix]: ImportPrefixNs;
 	[TSKindId.TypeConversion]: TypeConversionNs;
 	[TSKindId.Identifier]: IdentifierNs;
@@ -7669,7 +7878,7 @@ export namespace NamedExpression {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			name(value: T.Identifier): T.NamedExpression.Built;
+			name(value: NonNullable<T.NamedExpression.Config>['name']): T.NamedExpression.Built;
 			value(value: NonNullable<T.NamedExpression.Config>['value']): T.NamedExpression.Built;
 		};
 	}
@@ -8698,14 +8907,50 @@ export namespace ListSplatPattern {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: T.Identifier | T.Subscript | T.Attribute): T.ListSplatPattern.Built;
+			content(
+				value: NonNullable<
+					| T.Identifier
+					| TSKindId.PrintKeyword
+					| TSKindId.ExecKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.MatchKeyword
+					| T.Subscript
+					| T.Attribute
+				>
+			): T.ListSplatPattern.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ListSplatPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListSplatPattern>;
-	export type BuildArgs = [value: T.Identifier | T.Subscript | T.Attribute];
+	export type BuildArgs = [
+		value:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute
+	];
 	export type LooseArgs = [
-		value: LooseValue<T.Identifier | T.Subscript | T.Attribute, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		value: LooseValue<
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
 	];
 	export type Tree = TreeFor<TSKindId.ListSplatPattern>;
 	export type Kind = 'list_splat_pattern';
@@ -8716,14 +8961,50 @@ export namespace DictionarySplatPattern {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: T.Identifier | T.Subscript | T.Attribute): T.DictionarySplatPattern.Built;
+			content(
+				value: NonNullable<
+					| T.Identifier
+					| TSKindId.PrintKeyword
+					| TSKindId.ExecKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.MatchKeyword
+					| T.Subscript
+					| T.Attribute
+				>
+			): T.DictionarySplatPattern.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.DictionarySplatPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionarySplatPattern>;
-	export type BuildArgs = [value: T.Identifier | T.Subscript | T.Attribute];
+	export type BuildArgs = [
+		value:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute
+	];
 	export type LooseArgs = [
-		value: LooseValue<T.Identifier | T.Subscript | T.Attribute, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		value: LooseValue<
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
 	];
 	export type Tree = TreeFor<TSKindId.DictionarySplatPattern>;
 	export type Kind = 'dictionary_splat_pattern';
@@ -9171,7 +9452,7 @@ export namespace KeywordArgument {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			name(value: T.Identifier): T.KeywordArgument.Built;
+			name(value: NonNullable<T.KeywordArgument.Config>['name']): T.KeywordArgument.Built;
 			value(value: NonNullable<T.KeywordArgument.Config>['value']): T.KeywordArgument.Built;
 		};
 	}
@@ -9355,15 +9636,13 @@ export namespace ParenthesizedExpression {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: NonNullable<T.Expression | T.Yield | T.ListSplat>): T.ParenthesizedExpression.Built;
+			content(value: NonNullable<T.Expression | T.Yield>): T.ParenthesizedExpression.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ParenthesizedExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpression>;
-	export type BuildArgs = [value: T.Expression | T.Yield | T.ListSplat];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.Yield | T.ListSplat, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Expression | T.Yield];
+	export type LooseArgs = [value: LooseValue<T.Expression | T.Yield, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.ParenthesizedExpression>;
 	export type Kind = 'parenthesized_expression';
 }
@@ -10808,6 +11087,66 @@ export namespace LineContinuationNul {
 	export type LooseArgs = LineContinuationNulNs['LooseArgs'];
 	export type Tree = LineContinuationNulNs['Tree'];
 	export type Kind = 'line_continuation_nul';
+}
+export namespace PrintKeyword {
+	export type Config = PrintKeywordNs['Config'];
+	export type Built = PrintKeywordNs['Built'];
+	export type Loose = PrintKeywordNs['Loose'];
+	export type LooseConfig = PrintKeywordNs['LooseConfig'];
+	export type BuildArgs = PrintKeywordNs['BuildArgs'];
+	export type LooseArgs = PrintKeywordNs['LooseArgs'];
+	export type Tree = PrintKeywordNs['Tree'];
+	export type Kind = 'print_keyword';
+}
+export namespace ExecKeyword {
+	export type Config = ExecKeywordNs['Config'];
+	export type Built = ExecKeywordNs['Built'];
+	export type Loose = ExecKeywordNs['Loose'];
+	export type LooseConfig = ExecKeywordNs['LooseConfig'];
+	export type BuildArgs = ExecKeywordNs['BuildArgs'];
+	export type LooseArgs = ExecKeywordNs['LooseArgs'];
+	export type Tree = ExecKeywordNs['Tree'];
+	export type Kind = 'exec_keyword';
+}
+export namespace AsyncKeyword {
+	export type Config = AsyncKeywordNs['Config'];
+	export type Built = AsyncKeywordNs['Built'];
+	export type Loose = AsyncKeywordNs['Loose'];
+	export type LooseConfig = AsyncKeywordNs['LooseConfig'];
+	export type BuildArgs = AsyncKeywordNs['BuildArgs'];
+	export type LooseArgs = AsyncKeywordNs['LooseArgs'];
+	export type Tree = AsyncKeywordNs['Tree'];
+	export type Kind = 'async_keyword';
+}
+export namespace AwaitKeyword {
+	export type Config = AwaitKeywordNs['Config'];
+	export type Built = AwaitKeywordNs['Built'];
+	export type Loose = AwaitKeywordNs['Loose'];
+	export type LooseConfig = AwaitKeywordNs['LooseConfig'];
+	export type BuildArgs = AwaitKeywordNs['BuildArgs'];
+	export type LooseArgs = AwaitKeywordNs['LooseArgs'];
+	export type Tree = AwaitKeywordNs['Tree'];
+	export type Kind = 'await_keyword';
+}
+export namespace TypeKeyword {
+	export type Config = TypeKeywordNs['Config'];
+	export type Built = TypeKeywordNs['Built'];
+	export type Loose = TypeKeywordNs['Loose'];
+	export type LooseConfig = TypeKeywordNs['LooseConfig'];
+	export type BuildArgs = TypeKeywordNs['BuildArgs'];
+	export type LooseArgs = TypeKeywordNs['LooseArgs'];
+	export type Tree = TypeKeywordNs['Tree'];
+	export type Kind = 'type_keyword';
+}
+export namespace MatchKeyword {
+	export type Config = MatchKeywordNs['Config'];
+	export type Built = MatchKeywordNs['Built'];
+	export type Loose = MatchKeywordNs['Loose'];
+	export type LooseConfig = MatchKeywordNs['LooseConfig'];
+	export type BuildArgs = MatchKeywordNs['BuildArgs'];
+	export type LooseArgs = MatchKeywordNs['LooseArgs'];
+	export type Tree = MatchKeywordNs['Tree'];
+	export type Kind = 'match_keyword';
 }
 export namespace ImportPrefix {
 	export type Config = ImportPrefixNs['Config'];

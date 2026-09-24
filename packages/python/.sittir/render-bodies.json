@@ -2667,6 +2667,12 @@
 			"field": "keyword_argument_after"
 		}
 	],
+	"keyword_identifier": [
+		{
+			"kind": "text",
+			"text": "print"
+		}
+	],
 	"keyword_pattern": [
 		{
 			"kind": "seam",

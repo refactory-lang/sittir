@@ -568,7 +568,7 @@ export function wrapForReparse(
 ): WrapForReparseResult | null {
 	const wrappers = REPARSE_WRAPPERS[grammar];
 	if (!wrappers) return null;
-	const visibleKind = kind.startsWith('_') && !wrappers[kind] ? kind.replace(/^_+/, '') : kind;
+	const visibleKind = wrappers[kind] !== undefined ? kind : (opts?.targetKind ?? kind);
 	const direct = wrappers[kind] ?? wrappers[visibleKind];
 	if (direct) {
 		const gateKey = wrappers[kind] ? kind : visibleKind;

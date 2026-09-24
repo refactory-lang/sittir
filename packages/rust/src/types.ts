@@ -16,7 +16,7 @@ import type {
 	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
-	BooleanKeyword,
+	BooleanKeyword as BaseBooleanKeyword,
 	KindEnum,
 	HiddenLeaf
 } from '@sittir/types';
@@ -60,7 +60,6 @@ export type LeafStringMap = {
 	[TSKindId.UnitExpression]: '()';
 	[TSKindId.RemainingFieldPattern]: '..';
 	[TSKindId.BooleanLiteral]: 'true' | 'false';
-	['_reserved_identifier']: 'default' | 'union' | 'gen';
 	[TSKindId.Self]: 'self';
 	[TSKindId.Super]: 'super';
 	[TSKindId.Crate]: 'crate';
@@ -136,8 +135,7 @@ export type LeafStringMap = {
 		| '->'
 		| '=>'
 		| '#'
-		| '?'
-		| '$';
+		| '?';
 	[TSKindId.TokenKeywords]:
 		| "'"
 		| 'as'
@@ -186,7 +184,26 @@ export type LeafStringMap = {
 	[TSKindId.TtKeyword]: 'tt';
 	[TSKindId.TyKeyword]: 'ty';
 	[TSKindId.VisKeyword]: 'vis';
+	[TSKindId.U8Keyword]: 'u8';
+	[TSKindId.I8Keyword]: 'i8';
+	[TSKindId.U16Keyword]: 'u16';
+	[TSKindId.I16Keyword]: 'i16';
+	[TSKindId.U32Keyword]: 'u32';
+	[TSKindId.I32Keyword]: 'i32';
+	[TSKindId.U64Keyword]: 'u64';
+	[TSKindId.I64Keyword]: 'i64';
+	[TSKindId.U128Keyword]: 'u128';
+	[TSKindId.I128Keyword]: 'i128';
+	[TSKindId.IsizeKeyword]: 'isize';
+	[TSKindId.UsizeKeyword]: 'usize';
+	[TSKindId.F32Keyword]: 'f32';
+	[TSKindId.F64Keyword]: 'f64';
+	[TSKindId.BoolKeyword]: 'bool';
+	[TSKindId.StrKeyword]: 'str';
+	[TSKindId.CharKeyword]: 'char';
+	[TSKindId.DefaultKeyword]: 'default';
 	[TSKindId.UnionKeyword]: 'union';
+	[TSKindId.GenKeyword]: 'gen';
 	[TSKindId.EnumKeyword]: 'enum';
 	[TSKindId.ExternKeyword]: 'extern';
 	[TSKindId.AsKeyword]: 'as';
@@ -214,29 +231,10 @@ export type LeafStringMap = {
 	[TSKindId.AwaitKeyword]: 'await';
 	[TSKindId.UnsafeKeyword]: 'unsafe';
 	[TSKindId.AsyncKeyword]: 'async';
-	[TSKindId.GenKeyword]: 'gen';
 	[TSKindId.TryKeyword]: 'try';
 	[TSKindId.RefKeyword]: 'ref';
 	[TSKindId.TrueKeyword]: 'true';
 	[TSKindId.FalseKeyword]: 'false';
-	[TSKindId.DefaultKeyword]: 'default';
-	[TSKindId.U8Keyword]: 'u8';
-	[TSKindId.I8Keyword]: 'i8';
-	[TSKindId.U16Keyword]: 'u16';
-	[TSKindId.I16Keyword]: 'i16';
-	[TSKindId.U32Keyword]: 'u32';
-	[TSKindId.I32Keyword]: 'i32';
-	[TSKindId.U64Keyword]: 'u64';
-	[TSKindId.I64Keyword]: 'i64';
-	[TSKindId.U128Keyword]: 'u128';
-	[TSKindId.I128Keyword]: 'i128';
-	[TSKindId.IsizeKeyword]: 'isize';
-	[TSKindId.UsizeKeyword]: 'usize';
-	[TSKindId.F32Keyword]: 'f32';
-	[TSKindId.F64Keyword]: 'f64';
-	[TSKindId.BoolKeyword]: 'bool';
-	[TSKindId.StrKeyword]: 'str';
-	[TSKindId.CharKeyword]: 'char';
 	[TSKindId.MoveKeyword]: 'move';
 	[TSKindId.Underscore]: '_';
 	[TSKindId.ModKeyword]: 'mod';
@@ -297,80 +295,80 @@ export enum TSKindId {
 	AsKeyword = 49,
 	DotDotDot = 50,
 	Squote = 51,
-	Lt2 = 52,
-	Amp = 53,
-	ImplKeyword = 54,
-	DynKeyword = 55,
-	MutableSpecifier = 56,
-	U8Keyword = 57,
-	I8Keyword = 58,
-	U16Keyword = 59,
-	I16Keyword = 60,
-	U32Keyword = 61,
-	I32Keyword = 62,
-	U64Keyword = 63,
-	I64Keyword = 64,
-	U128Keyword = 65,
-	I128Keyword = 66,
-	IsizeKeyword = 67,
-	UsizeKeyword = 68,
-	F32Keyword = 69,
-	F64Keyword = 70,
-	BoolKeyword = 71,
-	StrKeyword = 72,
-	CharKeyword = 73,
-	Dash = 74,
-	AmpAmp = 75,
-	PipePipe = 76,
-	Pipe = 77,
-	Caret = 78,
-	EqEq = 79,
-	BangEq = 80,
-	LtEq = 81,
-	GtEq = 82,
-	LtLt = 83,
-	GtGt = 84,
-	Slash = 85,
-	Percent = 86,
-	PlusEq = 87,
-	DashEq = 88,
-	StarEq = 89,
-	SlashEq = 90,
-	PercentEq = 91,
-	AmpEq = 92,
-	PipeEq = 93,
-	CaretEq = 94,
-	LtLtEq = 95,
-	GtGtEq = 96,
-	ReturnKeyword = 97,
-	YieldKeyword = 98,
-	DotDot = 99,
-	IfKeyword = 100,
-	ElseKeyword = 101,
-	MatchKeyword = 102,
-	WhileKeyword = 103,
-	LoopKeyword = 104,
-	InKeyword = 105,
-	BreakKeyword = 106,
-	ContinueKeyword = 107,
-	Dot = 108,
-	AwaitKeyword = 109,
-	UnsafeKeyword = 110,
-	AsyncKeyword = 111,
-	GenKeyword = 112,
-	TryKeyword = 113,
-	RefKeyword = 114,
-	At = 115,
-	Dquote = 116,
-	TrueKeyword = 117,
-	FalseKeyword = 118,
-	SlashSlash = 119,
-	Bang2 = 120,
-	Slash2 = 121,
-	SlashStar = 122,
-	StarSlash = 123,
-	Shebang = 124,
-	DefaultKeyword = 125,
+	DefaultKeyword = 52,
+	GenKeyword = 53,
+	Lt2 = 54,
+	Amp = 55,
+	ImplKeyword = 56,
+	DynKeyword = 57,
+	MutableSpecifier = 58,
+	U8Keyword = 59,
+	I8Keyword = 60,
+	U16Keyword = 61,
+	I16Keyword = 62,
+	U32Keyword = 63,
+	I32Keyword = 64,
+	U64Keyword = 65,
+	I64Keyword = 66,
+	U128Keyword = 67,
+	I128Keyword = 68,
+	IsizeKeyword = 69,
+	UsizeKeyword = 70,
+	F32Keyword = 71,
+	F64Keyword = 72,
+	BoolKeyword = 73,
+	StrKeyword = 74,
+	CharKeyword = 75,
+	Dash = 76,
+	AmpAmp = 77,
+	PipePipe = 78,
+	Pipe = 79,
+	Caret = 80,
+	EqEq = 81,
+	BangEq = 82,
+	LtEq = 83,
+	GtEq = 84,
+	LtLt = 85,
+	GtGt = 86,
+	Slash = 87,
+	Percent = 88,
+	PlusEq = 89,
+	DashEq = 90,
+	StarEq = 91,
+	SlashEq = 92,
+	PercentEq = 93,
+	AmpEq = 94,
+	PipeEq = 95,
+	CaretEq = 96,
+	LtLtEq = 97,
+	GtGtEq = 98,
+	ReturnKeyword = 99,
+	YieldKeyword = 100,
+	DotDot = 101,
+	IfKeyword = 102,
+	ElseKeyword = 103,
+	MatchKeyword = 104,
+	WhileKeyword = 105,
+	LoopKeyword = 106,
+	InKeyword = 107,
+	BreakKeyword = 108,
+	ContinueKeyword = 109,
+	Dot = 110,
+	AwaitKeyword = 111,
+	UnsafeKeyword = 112,
+	AsyncKeyword = 113,
+	TryKeyword = 114,
+	RefKeyword = 115,
+	At = 116,
+	Dquote = 117,
+	TrueKeyword = 118,
+	FalseKeyword = 119,
+	SlashSlash = 120,
+	Bang2 = 121,
+	Slash2 = 122,
+	SlashStar = 123,
+	StarSlash = 124,
+	Shebang = 125,
 	Self = 126,
 	Super = 127,
 	Crate = 128,
@@ -712,9 +710,8 @@ export enum TSKindId {
 	DelimTokenTreeParenRepeat1 = 464,
 	_MatchBlockArmsRepeat1 = 465,
 	_FieldIdentifier = 466,
-	_ReservedIdentifier = 468,
-	_ShorthandFieldIdentifier = 469,
-	_TypeIdentifier = 470
+	_ShorthandFieldIdentifier = 468,
+	_TypeIdentifier = 469
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -769,80 +766,80 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[49, 'as_keyword'],
 	[50, 'dot_dot_dot'],
 	[51, 'squote'],
-	[52, 'lt2'],
-	[53, 'amp'],
-	[54, 'impl_keyword'],
-	[55, 'dyn_keyword'],
-	[56, 'mutable_specifier'],
-	[57, 'u8_keyword'],
-	[58, 'i8_keyword'],
-	[59, 'u16_keyword'],
-	[60, 'i16_keyword'],
-	[61, 'u32_keyword'],
-	[62, 'i32_keyword'],
-	[63, 'u64_keyword'],
-	[64, 'i64_keyword'],
-	[65, 'u128_keyword'],
-	[66, 'i128_keyword'],
-	[67, 'isize_keyword'],
-	[68, 'usize_keyword'],
-	[69, 'f32_keyword'],
-	[70, 'f64_keyword'],
-	[71, 'bool_keyword'],
-	[72, 'str_keyword'],
-	[73, 'char_keyword'],
-	[74, 'dash'],
-	[75, 'amp_amp'],
-	[76, 'pipe_pipe'],
-	[77, 'pipe'],
-	[78, 'caret'],
-	[79, 'eq_eq'],
-	[80, 'bang_eq'],
-	[81, 'lt_eq'],
-	[82, 'gt_eq'],
-	[83, 'lt_lt'],
-	[84, 'gt_gt'],
-	[85, 'slash'],
-	[86, 'percent'],
-	[87, 'plus_eq'],
-	[88, 'dash_eq'],
-	[89, 'star_eq'],
-	[90, 'slash_eq'],
-	[91, 'percent_eq'],
-	[92, 'amp_eq'],
-	[93, 'pipe_eq'],
-	[94, 'caret_eq'],
-	[95, 'lt_lt_eq'],
-	[96, 'gt_gt_eq'],
-	[97, 'return_keyword'],
-	[98, 'yield_keyword'],
-	[99, 'dot_dot'],
-	[100, 'if_keyword'],
-	[101, 'else_keyword'],
-	[102, 'match_keyword'],
-	[103, 'while_keyword'],
-	[104, 'loop_keyword'],
-	[105, 'in_keyword'],
-	[106, 'break_keyword'],
-	[107, 'continue_keyword'],
-	[108, 'dot'],
-	[109, 'await_keyword'],
-	[110, 'unsafe_keyword'],
-	[111, 'async_keyword'],
-	[112, 'gen_keyword'],
-	[113, 'try_keyword'],
-	[114, 'ref_keyword'],
-	[115, 'at'],
-	[116, 'dquote'],
-	[117, 'true_keyword'],
-	[118, 'false_keyword'],
-	[119, 'slash_slash'],
-	[120, 'bang2'],
-	[121, 'slash2'],
-	[122, 'slash_star'],
-	[123, 'star_slash'],
-	[124, 'shebang'],
-	[125, 'default_keyword'],
+	[52, 'default_keyword'],
+	[53, 'gen_keyword'],
+	[54, 'lt2'],
+	[55, 'amp'],
+	[56, 'impl_keyword'],
+	[57, 'dyn_keyword'],
+	[58, 'mutable_specifier'],
+	[59, 'u8_keyword'],
+	[60, 'i8_keyword'],
+	[61, 'u16_keyword'],
+	[62, 'i16_keyword'],
+	[63, 'u32_keyword'],
+	[64, 'i32_keyword'],
+	[65, 'u64_keyword'],
+	[66, 'i64_keyword'],
+	[67, 'u128_keyword'],
+	[68, 'i128_keyword'],
+	[69, 'isize_keyword'],
+	[70, 'usize_keyword'],
+	[71, 'f32_keyword'],
+	[72, 'f64_keyword'],
+	[73, 'bool_keyword'],
+	[74, 'str_keyword'],
+	[75, 'char_keyword'],
+	[76, 'dash'],
+	[77, 'amp_amp'],
+	[78, 'pipe_pipe'],
+	[79, 'pipe'],
+	[80, 'caret'],
+	[81, 'eq_eq'],
+	[82, 'bang_eq'],
+	[83, 'lt_eq'],
+	[84, 'gt_eq'],
+	[85, 'lt_lt'],
+	[86, 'gt_gt'],
+	[87, 'slash'],
+	[88, 'percent'],
+	[89, 'plus_eq'],
+	[90, 'dash_eq'],
+	[91, 'star_eq'],
+	[92, 'slash_eq'],
+	[93, 'percent_eq'],
+	[94, 'amp_eq'],
+	[95, 'pipe_eq'],
+	[96, 'caret_eq'],
+	[97, 'lt_lt_eq'],
+	[98, 'gt_gt_eq'],
+	[99, 'return_keyword'],
+	[100, 'yield_keyword'],
+	[101, 'dot_dot'],
+	[102, 'if_keyword'],
+	[103, 'else_keyword'],
+	[104, 'match_keyword'],
+	[105, 'while_keyword'],
+	[106, 'loop_keyword'],
+	[107, 'in_keyword'],
+	[108, 'break_keyword'],
+	[109, 'continue_keyword'],
+	[110, 'dot'],
+	[111, 'await_keyword'],
+	[112, 'unsafe_keyword'],
+	[113, 'async_keyword'],
+	[114, 'try_keyword'],
+	[115, 'ref_keyword'],
+	[116, 'at'],
+	[117, 'dquote'],
+	[118, 'true_keyword'],
+	[119, 'false_keyword'],
+	[120, 'slash_slash'],
+	[121, 'bang2'],
+	[122, 'slash2'],
+	[123, 'slash_star'],
+	[124, 'star_slash'],
+	[125, 'shebang'],
 	[126, 'self'],
 	[127, 'super'],
 	[128, 'crate'],
@@ -1185,9 +1182,8 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[464, 'delim_token_tree_paren_repeat1'],
 	[465, '_match_block_arms_repeat1'],
 	[466, 'field_identifier'],
-	[468, 'reserved_identifier'],
-	[469, 'shorthand_field_identifier'],
-	[470, 'type_identifier']
+	[468, 'shorthand_field_identifier'],
+	[469, 'type_identifier']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1243,80 +1239,80 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[49, 'as'],
 	[50, '...'],
 	[51, "'"],
-	[52, '<'],
-	[53, '&'],
-	[54, 'impl'],
-	[55, 'dyn'],
-	[56, 'mutable_specifier'],
-	[57, 'u8'],
-	[58, 'i8'],
-	[59, 'u16'],
-	[60, 'i16'],
-	[61, 'u32'],
-	[62, 'i32'],
-	[63, 'u64'],
-	[64, 'i64'],
-	[65, 'u128'],
-	[66, 'i128'],
-	[67, 'isize'],
-	[68, 'usize'],
-	[69, 'f32'],
-	[70, 'f64'],
-	[71, 'bool'],
-	[72, 'str'],
-	[73, 'char'],
-	[74, '-'],
-	[75, '&&'],
-	[76, '||'],
-	[77, '|'],
-	[78, '^'],
-	[79, '=='],
-	[80, '!='],
-	[81, '<='],
-	[82, '>='],
-	[83, '<<'],
-	[84, '>>'],
-	[85, '/'],
-	[86, '%'],
-	[87, '+='],
-	[88, '-='],
-	[89, '*='],
-	[90, '/='],
-	[91, '%='],
-	[92, '&='],
-	[93, '|='],
-	[94, '^='],
-	[95, '<<='],
-	[96, '>>='],
-	[97, 'return'],
-	[98, 'yield'],
-	[99, '..'],
-	[100, 'if'],
-	[101, 'else'],
-	[102, 'match'],
-	[103, 'while'],
-	[104, 'loop'],
-	[105, 'in'],
-	[106, 'break'],
-	[107, 'continue'],
-	[108, '.'],
-	[109, 'await'],
-	[110, 'unsafe'],
-	[111, 'async'],
-	[112, 'gen'],
-	[113, 'try'],
-	[114, 'ref'],
-	[115, '@'],
-	[116, '"'],
-	[117, 'true'],
-	[118, 'false'],
-	[119, '//'],
-	[120, '!'],
-	[121, '/'],
-	[122, '/*'],
-	[123, '*/'],
-	[124, 'shebang'],
-	[125, 'default'],
+	[52, 'default'],
+	[53, 'gen'],
+	[54, '<'],
+	[55, '&'],
+	[56, 'impl'],
+	[57, 'dyn'],
+	[58, 'mutable_specifier'],
+	[59, 'u8'],
+	[60, 'i8'],
+	[61, 'u16'],
+	[62, 'i16'],
+	[63, 'u32'],
+	[64, 'i32'],
+	[65, 'u64'],
+	[66, 'i64'],
+	[67, 'u128'],
+	[68, 'i128'],
+	[69, 'isize'],
+	[70, 'usize'],
+	[71, 'f32'],
+	[72, 'f64'],
+	[73, 'bool'],
+	[74, 'str'],
+	[75, 'char'],
+	[76, '-'],
+	[77, '&&'],
+	[78, '||'],
+	[79, '|'],
+	[80, '^'],
+	[81, '=='],
+	[82, '!='],
+	[83, '<='],
+	[84, '>='],
+	[85, '<<'],
+	[86, '>>'],
+	[87, '/'],
+	[88, '%'],
+	[89, '+='],
+	[90, '-='],
+	[91, '*='],
+	[92, '/='],
+	[93, '%='],
+	[94, '&='],
+	[95, '|='],
+	[96, '^='],
+	[97, '<<='],
+	[98, '>>='],
+	[99, 'return'],
+	[100, 'yield'],
+	[101, '..'],
+	[102, 'if'],
+	[103, 'else'],
+	[104, 'match'],
+	[105, 'while'],
+	[106, 'loop'],
+	[107, 'in'],
+	[108, 'break'],
+	[109, 'continue'],
+	[110, '.'],
+	[111, 'await'],
+	[112, 'unsafe'],
+	[113, 'async'],
+	[114, 'try'],
+	[115, 'ref'],
+	[116, '@'],
+	[117, '"'],
+	[118, 'true'],
+	[119, 'false'],
+	[120, '//'],
+	[121, '!'],
+	[122, '/'],
+	[123, '/*'],
+	[124, '*/'],
+	[125, 'shebang'],
 	[126, 'self'],
 	[127, 'super'],
 	[128, 'crate'],
@@ -1446,11 +1442,11 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[252, '_expression_except_range'],
 	[253, '_expression'],
 	[254, 'macro_invocation'],
-	[255, 'token_tree'],
+	[255, 'delim_token_tree'],
 	[256, '_delim_tokens'],
 	[257, '_non_delim_token'],
 	[258, 'scoped_identifier'],
-	[259, 'scoped_type_identifier'],
+	[259, 'scoped_type_identifier_in_expression_position'],
 	[260, 'scoped_type_identifier'],
 	[261, 'range_expression'],
 	[262, 'unary_expression'],
@@ -1525,8 +1521,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[330, 'escape_sequence'],
 	[331, 'boolean_literal'],
 	[332, 'line_comment'],
-	[333, 'inner_doc_comment_marker'],
-	[334, 'outer_doc_comment_marker'],
+	[333, 'inner_line_doc_comment_marker'],
+	[334, 'outer_line_doc_comment_marker'],
 	[335, 'block_comment'],
 	[336, 'primitive_type'],
 	[337, '_kw_ref_marker'],
@@ -1659,9 +1655,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[464, 'delim_token_tree_paren_repeat1'],
 	[465, '_match_block_arms_repeat1'],
 	[466, 'field_identifier'],
-	[468, 'reserved_identifier'],
-	[469, 'shorthand_field_identifier'],
-	[470, 'type_identifier']
+	[468, 'shorthand_field_identifier'],
+	[469, 'type_identifier']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -1771,6 +1766,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DotDotDot;
 		case 'squote':
 			return TSKindId.Squote;
+		case 'default_keyword':
+			return TSKindId.DefaultKeyword;
+		case 'gen_keyword':
+			return TSKindId.GenKeyword;
 		case 'lt2':
 			return TSKindId.Lt2;
 		case 'amp':
@@ -1891,8 +1890,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.UnsafeKeyword;
 		case 'async_keyword':
 			return TSKindId.AsyncKeyword;
-		case 'gen_keyword':
-			return TSKindId.GenKeyword;
 		case 'try_keyword':
 			return TSKindId.TryKeyword;
 		case 'ref_keyword':
@@ -1917,8 +1914,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StarSlash;
 		case 'shebang':
 			return TSKindId.Shebang;
-		case 'default_keyword':
-			return TSKindId.DefaultKeyword;
 		case 'self':
 			return TSKindId.Self;
 		case 'super':
@@ -2601,8 +2596,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._MatchBlockArmsRepeat1;
 		case 'field_identifier':
 			return TSKindId._FieldIdentifier;
-		case 'reserved_identifier':
-			return TSKindId._ReservedIdentifier;
 		case 'shorthand_field_identifier':
 			return TSKindId._ShorthandFieldIdentifier;
 		case 'type_identifier':
@@ -2701,6 +2694,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DotDotDot;
 		case "'":
 			return TSKindId.Squote;
+		case 'default':
+			return TSKindId.DefaultKeyword;
+		case 'gen':
+			return TSKindId.GenKeyword;
 		case '&':
 			return TSKindId.Amp;
 		case 'impl':
@@ -2817,8 +2814,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.UnsafeKeyword;
 		case 'async':
 			return TSKindId.AsyncKeyword;
-		case 'gen':
-			return TSKindId.GenKeyword;
 		case 'try':
 			return TSKindId.TryKeyword;
 		case 'ref':
@@ -2837,8 +2832,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.SlashStar;
 		case '*/':
 			return TSKindId.StarSlash;
-		case 'default':
-			return TSKindId.DefaultKeyword;
 		case 'move':
 			return TSKindId.MoveKeyword;
 		case ',':
@@ -2875,6 +2868,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._NonSpecialToken;
 		case 'let_chain':
 			return TSKindId.LetChain;
+		case 'inner_line_doc_comment_marker':
+			return TSKindId.InnerLineDocCommentMarker;
+		case 'outer_line_doc_comment_marker':
+			return TSKindId.OuterLineDocCommentMarker;
 		case 'primitive_type':
 			return TSKindId.PrimitiveType;
 		case 'tuple_type_elements':
@@ -3025,6 +3022,12 @@ export enum TokensKind {
 	TokenKeywords = '_token_keywords'
 }
 
+export enum TokenTreeKind {
+	TokenTreeParen = 'token_tree_paren',
+	TokenTreeBracket = 'token_tree_bracket',
+	TokenTreeBrace = 'token_tree_brace'
+}
+
 export enum _NonSpecialTokenKind {
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
@@ -3066,12 +3069,31 @@ export enum ImplItemKind {
 
 export enum UseClauseKind {
 	Self = 'self',
-	Identifier = 'identifier',
+	U8Keyword = 'u8_keyword',
+	I8Keyword = 'i8_keyword',
+	U16Keyword = 'u16_keyword',
+	I16Keyword = 'i16_keyword',
+	U32Keyword = 'u32_keyword',
+	I32Keyword = 'i32_keyword',
+	U64Keyword = 'u64_keyword',
+	I64Keyword = 'i64_keyword',
+	U128Keyword = 'u128_keyword',
+	I128Keyword = 'i128_keyword',
+	IsizeKeyword = 'isize_keyword',
+	UsizeKeyword = 'usize_keyword',
+	F32Keyword = 'f32_keyword',
+	F64Keyword = 'f64_keyword',
+	BoolKeyword = 'bool_keyword',
+	StrKeyword = 'str_keyword',
+	CharKeyword = 'char_keyword',
 	Metavariable = 'metavariable',
 	Super = 'super',
 	Crate = 'crate',
+	Identifier = 'identifier',
 	ScopedIdentifier = 'scoped_identifier',
-	ReservedIdentifier = 'reserved_identifier',
+	DefaultKeyword = 'default_keyword',
+	UnionKeyword = 'union_keyword',
+	GenKeyword = 'gen_keyword',
 	UseAsClause = 'use_as_clause',
 	UseList = 'use_list',
 	ScopedUseList = 'scoped_use_list',
@@ -3122,7 +3144,26 @@ export enum ExpressionExceptRangeKind {
 	IntegerLiteral = 'integer_literal',
 	FloatLiteral = 'float_literal',
 	Identifier = 'identifier',
-	ReservedIdentifier = 'reserved_identifier',
+	U8Keyword = 'u8_keyword',
+	I8Keyword = 'i8_keyword',
+	U16Keyword = 'u16_keyword',
+	I16Keyword = 'i16_keyword',
+	U32Keyword = 'u32_keyword',
+	I32Keyword = 'i32_keyword',
+	U64Keyword = 'u64_keyword',
+	I64Keyword = 'i64_keyword',
+	U128Keyword = 'u128_keyword',
+	I128Keyword = 'i128_keyword',
+	IsizeKeyword = 'isize_keyword',
+	UsizeKeyword = 'usize_keyword',
+	F32Keyword = 'f32_keyword',
+	F64Keyword = 'f64_keyword',
+	BoolKeyword = 'bool_keyword',
+	StrKeyword = 'str_keyword',
+	CharKeyword = 'char_keyword',
+	DefaultKeyword = 'default_keyword',
+	UnionKeyword = 'union_keyword',
+	GenKeyword = 'gen_keyword',
 	Self = 'self',
 	ScopedIdentifier = 'scoped_identifier',
 	GenericFunction = 'generic_function',
@@ -3171,7 +3212,26 @@ export enum ExpressionKind {
 	IntegerLiteral = 'integer_literal',
 	FloatLiteral = 'float_literal',
 	Identifier = 'identifier',
-	ReservedIdentifier = 'reserved_identifier',
+	U8Keyword = 'u8_keyword',
+	I8Keyword = 'i8_keyword',
+	U16Keyword = 'u16_keyword',
+	I16Keyword = 'i16_keyword',
+	U32Keyword = 'u32_keyword',
+	I32Keyword = 'i32_keyword',
+	U64Keyword = 'u64_keyword',
+	I64Keyword = 'i64_keyword',
+	U128Keyword = 'u128_keyword',
+	I128Keyword = 'i128_keyword',
+	IsizeKeyword = 'isize_keyword',
+	UsizeKeyword = 'usize_keyword',
+	F32Keyword = 'f32_keyword',
+	F64Keyword = 'f64_keyword',
+	BoolKeyword = 'bool_keyword',
+	StrKeyword = 'str_keyword',
+	CharKeyword = 'char_keyword',
+	DefaultKeyword = 'default_keyword',
+	UnionKeyword = 'union_keyword',
+	GenKeyword = 'gen_keyword',
 	Self = 'self',
 	ScopedIdentifier = 'scoped_identifier',
 	GenericFunction = 'generic_function',
@@ -3295,7 +3355,26 @@ export enum ConditionKind {
 	IntegerLiteral = 'integer_literal',
 	FloatLiteral = 'float_literal',
 	Identifier = 'identifier',
-	ReservedIdentifier = 'reserved_identifier',
+	U8Keyword = 'u8_keyword',
+	I8Keyword = 'i8_keyword',
+	U16Keyword = 'u16_keyword',
+	I16Keyword = 'i16_keyword',
+	U32Keyword = 'u32_keyword',
+	I32Keyword = 'i32_keyword',
+	U64Keyword = 'u64_keyword',
+	I64Keyword = 'i64_keyword',
+	U128Keyword = 'u128_keyword',
+	I128Keyword = 'i128_keyword',
+	IsizeKeyword = 'isize_keyword',
+	UsizeKeyword = 'usize_keyword',
+	F32Keyword = 'f32_keyword',
+	F64Keyword = 'f64_keyword',
+	BoolKeyword = 'bool_keyword',
+	StrKeyword = 'str_keyword',
+	CharKeyword = 'char_keyword',
+	DefaultKeyword = 'default_keyword',
+	UnionKeyword = 'union_keyword',
+	GenKeyword = 'gen_keyword',
 	Self = 'self',
 	ScopedIdentifier = 'scoped_identifier',
 	GenericFunction = 'generic_function',
@@ -3347,13 +3426,32 @@ export enum PatternKind {
 	IntegerLiteral = 'integer_literal',
 	FloatLiteral = 'float_literal',
 	NegativeLiteral = 'negative_literal',
+	U8Keyword = 'u8_keyword',
+	I8Keyword = 'i8_keyword',
+	U16Keyword = 'u16_keyword',
+	I16Keyword = 'i16_keyword',
+	U32Keyword = 'u32_keyword',
+	I32Keyword = 'i32_keyword',
+	U64Keyword = 'u64_keyword',
+	I64Keyword = 'i64_keyword',
+	U128Keyword = 'u128_keyword',
+	I128Keyword = 'i128_keyword',
+	IsizeKeyword = 'isize_keyword',
+	UsizeKeyword = 'usize_keyword',
+	F32Keyword = 'f32_keyword',
+	F64Keyword = 'f64_keyword',
+	BoolKeyword = 'bool_keyword',
+	StrKeyword = 'str_keyword',
+	CharKeyword = 'char_keyword',
 	Identifier = 'identifier',
 	ScopedIdentifier = 'scoped_identifier',
 	GenericPattern = 'generic_pattern',
 	TuplePattern = 'tuple_pattern',
 	TupleStructPattern = 'tuple_struct_pattern',
 	StructPattern = 'struct_pattern',
-	ReservedIdentifier = 'reserved_identifier',
+	DefaultKeyword = 'default_keyword',
+	UnionKeyword = 'union_keyword',
+	GenKeyword = 'gen_keyword',
 	RefPattern = 'ref_pattern',
 	SlicePattern = 'slice_pattern',
 	CapturedPattern = 'captured_pattern',
@@ -3423,12 +3521,31 @@ export enum EscapeSequenceKind {
 
 export enum PathKind {
 	Self = 'self',
-	Identifier = 'identifier',
+	U8Keyword = 'u8_keyword',
+	I8Keyword = 'i8_keyword',
+	U16Keyword = 'u16_keyword',
+	I16Keyword = 'i16_keyword',
+	U32Keyword = 'u32_keyword',
+	I32Keyword = 'i32_keyword',
+	U64Keyword = 'u64_keyword',
+	I64Keyword = 'i64_keyword',
+	U128Keyword = 'u128_keyword',
+	I128Keyword = 'i128_keyword',
+	IsizeKeyword = 'isize_keyword',
+	UsizeKeyword = 'usize_keyword',
+	F32Keyword = 'f32_keyword',
+	F64Keyword = 'f64_keyword',
+	BoolKeyword = 'bool_keyword',
+	StrKeyword = 'str_keyword',
+	CharKeyword = 'char_keyword',
 	Metavariable = 'metavariable',
 	Super = 'super',
 	Crate = 'crate',
+	Identifier = 'identifier',
 	ScopedIdentifier = 'scoped_identifier',
-	ReservedIdentifier = 'reserved_identifier'
+	DefaultKeyword = 'default_keyword',
+	UnionKeyword = 'union_keyword',
+	GenKeyword = 'gen_keyword'
 }
 
 export enum WhitespaceKind {
@@ -3504,9 +3621,6 @@ export interface MacroRule {
 	readonly $type: TSKindId.MacroRule;
 	readonly _left: TokenTreePattern;
 	readonly _right: TokenTree;
-	readonly __looseHints__?: {
-		readonly right: readonly (TokenTreeParen | TokenTreeBracket | TokenTreeBrace)[];
-	};
 	left(): TokenTreePattern;
 	right(): TokenTree;
 }
@@ -3634,7 +3748,6 @@ export interface TokenRepetitionPattern {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -3731,7 +3844,6 @@ export interface TokenRepetitionPattern {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -3779,12 +3891,6 @@ export interface TokenRepetitionPattern {
 	)[];
 	separator(): string | undefined;
 	operator(): number;
-}
-
-export interface TokenTree {
-	readonly $type: TSKindId.TokenTree;
-	readonly _content: TokenTreeParen | TokenTreeBracket | TokenTreeBrace;
-	content(): TokenTreeParen | TokenTreeBracket | TokenTreeBrace;
 }
 
 export interface TokenRepetition {
@@ -3862,7 +3968,6 @@ export interface TokenRepetition {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -3959,7 +4064,6 @@ export interface TokenRepetition {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -4018,29 +4122,113 @@ export interface Attribute {
 	readonly $type: TSKindId.Attribute;
 	readonly _path:
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier;
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly _input?: AttributeInput;
 	readonly __inputHints__?: {
 		readonly path:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
-			| ScopedIdentifier
-			| ReservedIdentifier;
+			| Identifier
+			| ScopedIdentifier;
 	};
 	path():
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier;
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	input(): AttributeInput | undefined;
 }
 
@@ -4280,8 +4468,8 @@ export interface StaticItem {
 	readonly _type: Type;
 	readonly _value?: Expression;
 	readonly __inputHints__?: {
-		readonly ref_marker?: BooleanKeyword<'ref'>;
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly ref_marker?: BaseBooleanKeyword<'ref'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 		readonly type:
 			| KindEnum<
 					| '!'
@@ -4689,7 +4877,7 @@ export interface TraitItem {
 	readonly _where_clause?: WhereClause;
 	readonly _body: DeclarationList;
 	readonly __inputHints__?: {
-		readonly unsafe_marker?: BooleanKeyword<'unsafe'>;
+		readonly unsafe_marker?: BaseBooleanKeyword<'unsafe'>;
 	};
 	readonly __looseHints__?: {
 		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
@@ -5021,7 +5209,7 @@ export interface LetDeclaration {
 	readonly _value?: Expression;
 	readonly _alternative?: Block;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
@@ -5087,23 +5275,88 @@ export interface UseDeclaration {
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _argument:
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| UseAsClause
 		| UseList
 		| ScopedUseList
 		| UseWildcard;
 	readonly __inputHints__?: {
 		readonly argument:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier
-			| ReservedIdentifier
 			| UseAsClause
 			| UseList
 			| ScopedUseList
@@ -5115,12 +5368,31 @@ export interface UseDeclaration {
 	visibilityModifier(): VisibilityModifier | undefined;
 	argument():
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| UseAsClause
 		| UseList
 		| ScopedUseList
@@ -5131,30 +5403,114 @@ export interface ScopedUseList {
 	readonly $type: TSKindId.ScopedUseList;
 	readonly _path?:
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier;
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly _list: UseList;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
-			| ScopedIdentifier
-			| ReservedIdentifier;
+			| Identifier
+			| ScopedIdentifier;
 	};
 	readonly __looseHints__?: {
 		readonly list: readonly (
 			| 'self'
-			| Identifier
+			| 'u8'
+			| 'i8'
+			| 'u16'
+			| 'i16'
+			| 'u32'
+			| 'i32'
+			| 'u64'
+			| 'i64'
+			| 'u128'
+			| 'i128'
+			| 'isize'
+			| 'usize'
+			| 'f32'
+			| 'f64'
+			| 'bool'
+			| 'str'
+			| 'char'
 			| Metavariable
 			| 'super'
 			| 'crate'
+			| Identifier
 			| ScopedIdentifier
-			| ReservedIdentifier
+			| 'default'
+			| 'union'
+			| 'gen'
 			| UseAsClause
 			| UseList
 			| ScopedUseList
@@ -5163,12 +5519,31 @@ export interface ScopedUseList {
 	};
 	path():
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| undefined;
 	list(): UseList;
 }
@@ -5179,12 +5554,31 @@ export interface UseList {
 	readonly __looseHints__?: {
 		readonly use_clauses?: readonly (
 			| 'self'
-			| Identifier
+			| 'u8'
+			| 'i8'
+			| 'u16'
+			| 'i16'
+			| 'u32'
+			| 'i32'
+			| 'u64'
+			| 'i64'
+			| 'u128'
+			| 'i128'
+			| 'isize'
+			| 'usize'
+			| 'f32'
+			| 'f64'
+			| 'bool'
+			| 'str'
+			| 'char'
 			| Metavariable
 			| 'super'
 			| 'crate'
+			| Identifier
 			| ScopedIdentifier
-			| ReservedIdentifier
+			| 'default'
+			| 'union'
+			| 'gen'
 			| UseAsClause
 			| UseList
 			| ScopedUseList
@@ -5198,29 +5592,113 @@ export interface UseAsClause {
 	readonly $type: TSKindId.UseAsClause;
 	readonly _path:
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier;
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly _alias: Identifier;
 	readonly __inputHints__?: {
 		readonly path:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
-			| ScopedIdentifier
-			| ReservedIdentifier;
+			| Identifier
+			| ScopedIdentifier;
 	};
 	path():
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier;
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	alias(): Identifier;
 }
 
@@ -5233,7 +5711,34 @@ export interface UseWildcard {
 			| 'self'
 			| 'super'
 			| 'crate'
-			| readonly ('self' | Identifier | Metavariable | 'super' | 'crate' | ScopedIdentifier | ReservedIdentifier)[];
+			| readonly (
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| Metavariable
+					| 'super'
+					| 'crate'
+					| Identifier
+					| ScopedIdentifier
+					| 'default'
+					| 'union'
+					| 'gen'
+			  )[];
 	};
 	useWildcardGroup(): UseWildcardGroup | undefined;
 }
@@ -5253,8 +5758,8 @@ export interface SelfParameter {
 	readonly _lifetime?: Lifetime;
 	readonly _mutable_specifier?: boolean;
 	readonly __inputHints__?: {
-		readonly reference?: BooleanKeyword<'&'>;
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly reference?: BaseBooleanKeyword<'&'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 	};
 	readonly __looseHints__?: {
 		readonly mutable_specifier?: 'mut' | 'mut';
@@ -5269,7 +5774,7 @@ export interface VariadicParameter {
 	readonly _mutable_specifier?: boolean;
 	readonly _pattern?: Pattern;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 		readonly pattern?:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
@@ -5290,7 +5795,7 @@ export interface Parameter {
 	readonly _name: Pattern | TSKindId.Self;
 	readonly _type: Type;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 		readonly name:
 			| KindEnum<
 					'true' | 'false' | '..' | '_' | 'self',
@@ -5648,12 +6153,23 @@ export interface GenericFunction {
 
 export interface GenericType {
 	readonly $type: TSKindId.GenericType;
-	readonly _type: TypeIdentifier | ReservedIdentifier | ScopedTypeIdentifier;
+	readonly _type:
+		| TypeIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
+		| ScopedTypeIdentifier;
 	readonly _type_arguments: TypeArguments;
+	readonly __inputHints__?: {
+		readonly type:
+			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
+			| TypeIdentifier
+			| ScopedTypeIdentifier;
+	};
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly TypeArgument[];
 	};
-	type(): TypeIdentifier | ReservedIdentifier | ScopedTypeIdentifier;
+	type(): TypeIdentifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword | ScopedTypeIdentifier;
 	typeArguments(): TypeArguments;
 }
 
@@ -5842,7 +6358,7 @@ export interface ReferenceType {
 	readonly _mutable_specifier?: boolean;
 	readonly _type: Type;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 		readonly type:
 			| KindEnum<
 					| '!'
@@ -5931,9 +6447,20 @@ export interface DynamicType {
 
 export interface MacroInvocation {
 	readonly $type: TSKindId.MacroInvocation;
-	readonly _macro: ScopedIdentifier | Identifier | ReservedIdentifier;
+	readonly _macro:
+		| ScopedIdentifier
+		| Identifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly _arguments: DelimTokenTree;
-	macro(): ScopedIdentifier | Identifier | ReservedIdentifier;
+	readonly __inputHints__?: {
+		readonly macro:
+			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
+			| ScopedIdentifier
+			| Identifier;
+	};
+	macro(): ScopedIdentifier | Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
 	arguments(): DelimTokenTree;
 }
 
@@ -5941,34 +6468,118 @@ export interface ScopedIdentifier {
 	readonly $type: TSKindId.ScopedIdentifier;
 	readonly _path?:
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| BracketedType
 		| GenericTypeWithTurbofish;
 	readonly _name: Identifier | TSKindId.Super;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier
-			| ReservedIdentifier
 			| BracketedType
 			| GenericTypeWithTurbofish;
 		readonly name: KindEnum<'super', TSKindId.Super> | Identifier;
 	};
 	path():
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| BracketedType
 		| GenericTypeWithTurbofish
 		| undefined;
@@ -5979,21 +6590,86 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 	readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
 	readonly _path?:
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| GenericTypeWithTurbofish;
 	readonly _name: TypeIdentifier;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier
-			| ReservedIdentifier
 			| GenericTypeWithTurbofish;
 	};
 	readonly __looseHints__?: {
@@ -6001,12 +6677,31 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 	};
 	path():
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| GenericTypeWithTurbofish
 		| undefined;
 	name(): TypeIdentifier;
@@ -6016,23 +6711,88 @@ export interface ScopedTypeIdentifier {
 	readonly $type: TSKindId.ScopedTypeIdentifier;
 	readonly _path?:
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| GenericTypeWithTurbofish
 		| BracketedType
 		| GenericType;
 	readonly _name: TypeIdentifier;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
+			| Identifier
 			| ScopedIdentifier
-			| ReservedIdentifier
 			| GenericTypeWithTurbofish
 			| BracketedType
 			| GenericType;
@@ -6042,12 +6802,31 @@ export interface ScopedTypeIdentifier {
 	};
 	path():
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| GenericTypeWithTurbofish
 		| BracketedType
 		| GenericType
@@ -6273,7 +7052,26 @@ export interface CallExpression {
 		| YieldExpression
 		| Literal
 		| Identifier
-		| ReservedIdentifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| TSKindId.Self
 		| ScopedIdentifier
 		| GenericFunction
@@ -6305,8 +7103,54 @@ export interface CallExpression {
 	readonly __inputHints__?: {
 		readonly function:
 			| KindEnum<
-					'true' | 'false' | 'self' | '()',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.UnitExpression
+					| 'true'
+					| 'false'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'default'
+					| 'union'
+					| 'gen'
+					| 'self'
+					| '()',
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.Self
+					| TSKindId.UnitExpression
 			  >
 			| UnaryExpression
 			| ReferenceExpression
@@ -6320,7 +7164,6 @@ export interface CallExpression {
 			| YieldExpression
 			| Literal
 			| Identifier
-			| ReservedIdentifier
 			| ScopedIdentifier
 			| GenericFunction
 			| AwaitExpression
@@ -6363,7 +7206,26 @@ export interface CallExpression {
 		| YieldExpression
 		| Literal
 		| Identifier
-		| ReservedIdentifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| TSKindId.Self
 		| ScopedIdentifier
 		| GenericFunction
@@ -6576,7 +7438,7 @@ export interface LastMatchArm {
 		readonly value:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
-		readonly comma?: BooleanKeyword<','>;
+		readonly comma?: BaseBooleanKeyword<','>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
 	pattern(): MatchPattern;
@@ -6751,7 +7613,7 @@ export interface AsyncBlock {
 	readonly _move_marker?: boolean;
 	readonly _body: Block;
 	readonly __inputHints__?: {
-		readonly move_marker?: BooleanKeyword<'move'>;
+		readonly move_marker?: BaseBooleanKeyword<'move'>;
 	};
 	readonly __looseHints__?: {
 		readonly move_marker?: 'move' | 'move';
@@ -6765,7 +7627,7 @@ export interface GenBlock {
 	readonly _move_marker?: boolean;
 	readonly _body: Block;
 	readonly __inputHints__?: {
-		readonly move_marker?: BooleanKeyword<'move'>;
+		readonly move_marker?: BaseBooleanKeyword<'move'>;
 	};
 	readonly __looseHints__?: {
 		readonly move_marker?: 'move' | 'move';
@@ -6896,7 +7758,7 @@ export interface ReferencePattern {
 	readonly _mutable_specifier?: boolean;
 	readonly _pattern: Pattern;
 	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
@@ -7013,12 +7875,31 @@ export interface UseClauses {
 	readonly $type: TSKindId.UseClauses;
 	readonly _use_clause: NonEmptyArray<
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| UseAsClause
 		| UseList
 		| ScopedUseList
@@ -7026,12 +7907,31 @@ export interface UseClauses {
 	>;
 	useClauses(): NonEmptyArray<
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| UseAsClause
 		| UseList
 		| ScopedUseList
@@ -7083,7 +7983,7 @@ export interface ArgumentsElements {
 	readonly $type: TSKindId.ArgumentsElements;
 	readonly _element: NonEmptyArray<AttributedArgument>;
 	readonly __inputHints__?: {
-		readonly element: NonEmptyArray<T.AttributedArgument | T.Expression | T.ReservedIdentifier.Types>;
+		readonly element: NonEmptyArray<T.AttributedArgument | T.Expression>;
 	};
 	elements(): NonEmptyArray<AttributedArgument>;
 }
@@ -7116,28 +8016,112 @@ export interface UseWildcardGroup {
 	readonly $type: TSKindId.UseWildcardGroup;
 	readonly _path?:
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier;
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
-			| ScopedIdentifier
-			| ReservedIdentifier;
+			| Identifier
+			| ScopedIdentifier;
 	};
 	path():
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
 		| undefined;
 }
 
@@ -7317,7 +8301,7 @@ export interface CharLiteralEscaped {
 	readonly _b?: boolean;
 	readonly _content: string;
 	readonly __inputHints__?: {
-		readonly b?: BooleanKeyword<'b'>;
+		readonly b?: BaseBooleanKeyword<'b'>;
 	};
 	b(): boolean | undefined;
 	content(): string;
@@ -7328,7 +8312,7 @@ export interface CharLiteralPlain {
 	readonly _b?: boolean;
 	readonly _content: string;
 	readonly __inputHints__?: {
-		readonly b?: BooleanKeyword<'b'>;
+		readonly b?: BaseBooleanKeyword<'b'>;
 	};
 	b(): boolean | undefined;
 	content(): string;
@@ -7409,9 +8393,9 @@ export interface ClosureExpressionBlock {
 	readonly _return_type?: Type;
 	readonly _body: Block;
 	readonly __inputHints__?: {
-		readonly static_marker?: BooleanKeyword<'static'>;
-		readonly async_marker?: BooleanKeyword<'async'>;
-		readonly move_marker?: BooleanKeyword<'move'>;
+		readonly static_marker?: BaseBooleanKeyword<'static'>;
+		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly move_marker?: BaseBooleanKeyword<'move'>;
 		readonly return_type?:
 			| KindEnum<
 					| '!'
@@ -7475,9 +8459,9 @@ export interface ClosureExpressionExpr {
 	readonly _parameters: ClosureParameters;
 	readonly _body: Expression | TSKindId.Underscore;
 	readonly __inputHints__?: {
-		readonly static_marker?: BooleanKeyword<'static'>;
-		readonly async_marker?: BooleanKeyword<'async'>;
-		readonly move_marker?: BooleanKeyword<'move'>;
+		readonly static_marker?: BaseBooleanKeyword<'static'>;
+		readonly async_marker?: BaseBooleanKeyword<'async'>;
+		readonly move_marker?: BaseBooleanKeyword<'move'>;
 		readonly body:
 			| KindEnum<
 					'true' | 'false' | 'self' | '_',
@@ -7563,7 +8547,7 @@ export interface ImplItemBody {
 	readonly _where_clause?: WhereClause;
 	readonly _declaration_list: DeclarationList;
 	readonly __inputHints__?: {
-		readonly unsafe_marker?: BooleanKeyword<'unsafe'>;
+		readonly unsafe_marker?: BaseBooleanKeyword<'unsafe'>;
 		readonly type:
 			| KindEnum<
 					| '!'
@@ -7627,7 +8611,7 @@ export interface ImplItemSemi {
 	readonly _type: Type;
 	readonly _where_clause?: WhereClause;
 	readonly __inputHints__?: {
-		readonly unsafe_marker?: BooleanKeyword<'unsafe'>;
+		readonly unsafe_marker?: BaseBooleanKeyword<'unsafe'>;
 		readonly type:
 			| KindEnum<
 					| '!'
@@ -7699,28 +8683,112 @@ export interface VisibilityModifierPubInPath {
 	readonly $type: TSKindId.VisibilityModifierPubInPath;
 	readonly _path:
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier;
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly __inputHints__?: {
 		readonly path:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
+			| KindEnum<
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
+			  >
 			| Metavariable
-			| ScopedIdentifier
-			| ReservedIdentifier;
+			| Identifier
+			| ScopedIdentifier;
 	};
 	path():
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier;
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 }
 
 export interface FunctionTypeTraitForm {
@@ -8124,7 +9192,6 @@ export interface TokenTreePatternParen {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -8221,7 +9288,6 @@ export interface TokenTreePatternParen {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -8347,7 +9413,6 @@ export interface TokenTreePatternBracket {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -8444,7 +9509,6 @@ export interface TokenTreePatternBracket {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -8570,7 +9634,6 @@ export interface TokenTreePatternBrace {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -8667,7 +9730,6 @@ export interface TokenTreePatternBrace {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -8787,7 +9849,6 @@ export interface TokenTreeParen {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -8884,7 +9945,6 @@ export interface TokenTreeParen {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -8997,7 +10057,6 @@ export interface TokenTreeBracket {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -9094,7 +10153,6 @@ export interface TokenTreeBracket {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -9207,7 +10265,6 @@ export interface TokenTreeBrace {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -9304,7 +10361,6 @@ export interface TokenTreeBrace {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -9417,7 +10473,6 @@ export interface DelimTokenTreeParen {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -9446,7 +10501,8 @@ export interface DelimTokenTreeParen {
 					| 'unsafe'
 					| 'use'
 					| 'where'
-					| 'while',
+					| 'while'
+					| '$',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
 					| TSKindId.MutableSpecifier
@@ -9514,7 +10570,6 @@ export interface DelimTokenTreeParen {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -9544,6 +10599,7 @@ export interface DelimTokenTreeParen {
 					| TSKindId.UseKeyword
 					| TSKindId.WhereKeyword
 					| TSKindId.WhileKeyword
+					| TSKindId.Dollar
 			  >
 			| _NonSpecialToken
 			| DelimTokenTree
@@ -9625,7 +10681,6 @@ export interface DelimTokenTreeBracket {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -9654,7 +10709,8 @@ export interface DelimTokenTreeBracket {
 					| 'unsafe'
 					| 'use'
 					| 'where'
-					| 'while',
+					| 'while'
+					| '$',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
 					| TSKindId.MutableSpecifier
@@ -9722,7 +10778,6 @@ export interface DelimTokenTreeBracket {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -9752,6 +10807,7 @@ export interface DelimTokenTreeBracket {
 					| TSKindId.UseKeyword
 					| TSKindId.WhereKeyword
 					| TSKindId.WhileKeyword
+					| TSKindId.Dollar
 			  >
 			| _NonSpecialToken
 			| DelimTokenTree
@@ -9833,7 +10889,6 @@ export interface DelimTokenTreeBrace {
 					| '=>'
 					| '#'
 					| '?'
-					| '$'
 					| "'"
 					| 'as'
 					| 'async'
@@ -9862,7 +10917,8 @@ export interface DelimTokenTreeBrace {
 					| 'unsafe'
 					| 'use'
 					| 'where'
-					| 'while',
+					| 'while'
+					| '$',
 					| TSKindId.TrueKeyword
 					| TSKindId.FalseKeyword
 					| TSKindId.MutableSpecifier
@@ -9930,7 +10986,6 @@ export interface DelimTokenTreeBrace {
 					| TSKindId.EqGt
 					| TSKindId.Pound
 					| TSKindId.Qmark
-					| TSKindId.Dollar
 					| TSKindId.Squote
 					| TSKindId.AsKeyword
 					| TSKindId.AsyncKeyword
@@ -9960,6 +11015,7 @@ export interface DelimTokenTreeBrace {
 					| TSKindId.UseKeyword
 					| TSKindId.WhereKeyword
 					| TSKindId.WhileKeyword
+					| TSKindId.Dollar
 			  >
 			| _NonSpecialToken
 			| DelimTokenTree
@@ -9974,8 +11030,8 @@ export interface FieldPatternShorthand {
 	readonly _mutable_specifier?: boolean;
 	readonly _name: ShorthandFieldIdentifier;
 	readonly __inputHints__?: {
-		readonly ref_marker?: BooleanKeyword<'ref'>;
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly ref_marker?: BaseBooleanKeyword<'ref'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 	};
 	readonly __looseHints__?: {
 		readonly ref_marker?: 'ref' | 'ref';
@@ -9994,8 +11050,8 @@ export interface FieldPatternNamed {
 	readonly _name: FieldIdentifier;
 	readonly _pattern: Pattern;
 	readonly __inputHints__?: {
-		readonly ref_marker?: BooleanKeyword<'ref'>;
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly ref_marker?: BaseBooleanKeyword<'ref'>;
+		readonly mutable_specifier?: BaseBooleanKeyword<'mut'>;
 		readonly pattern:
 			| KindEnum<
 					'true' | 'false' | '..' | '_',
@@ -10016,34 +11072,49 @@ export interface FieldPatternNamed {
 
 export interface MacroDefinitionParen {
 	readonly $type: TSKindId.MacroDefinitionParen;
-	readonly _name: Identifier | ReservedIdentifier;
+	readonly _name: Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
 	readonly _macro_rules?: MacroRules;
+	readonly __inputHints__?: {
+		readonly name:
+			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
+			| Identifier;
+	};
 	readonly __looseHints__?: {
 		readonly macro_rules?: readonly MacroRule[];
 	};
-	name(): Identifier | ReservedIdentifier;
+	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
 	macroRules(): MacroRules | undefined;
 }
 
 export interface MacroDefinitionBracket {
 	readonly $type: TSKindId.MacroDefinitionBracket;
-	readonly _name: Identifier | ReservedIdentifier;
+	readonly _name: Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
 	readonly _macro_rules?: MacroRules;
+	readonly __inputHints__?: {
+		readonly name:
+			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
+			| Identifier;
+	};
 	readonly __looseHints__?: {
 		readonly macro_rules?: readonly MacroRule[];
 	};
-	name(): Identifier | ReservedIdentifier;
+	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
 	macroRules(): MacroRules | undefined;
 }
 
 export interface MacroDefinitionBrace {
 	readonly $type: TSKindId.MacroDefinitionBrace;
-	readonly _name: Identifier | ReservedIdentifier;
+	readonly _name: Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
 	readonly _macro_rules?: MacroRules;
+	readonly __inputHints__?: {
+		readonly name:
+			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
+			| Identifier;
+	};
 	readonly __looseHints__?: {
 		readonly macro_rules?: readonly MacroRule[];
 	};
-	name(): Identifier | ReservedIdentifier;
+	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
 	macroRules(): MacroRules | undefined;
 }
 
@@ -10053,35 +11124,120 @@ export interface RangePatternPrefix {
 	readonly _right:
 		| LiteralPattern
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier;
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly __inputHints__?: {
 		readonly content: KindEnum<'..=' | '..', TSKindId.DotDotEq | TSKindId.DotDot>;
 		readonly right:
 			| KindEnum<
-					'true' | 'false' | 'self' | 'super' | 'crate',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
+					| 'true'
+					| 'false'
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
 			  >
 			| LiteralPattern
-			| Identifier
 			| Metavariable
-			| ScopedIdentifier
-			| ReservedIdentifier;
+			| Identifier
+			| ScopedIdentifier;
 	};
 	content(): number;
 	right():
 		| LiteralPattern
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier;
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 }
 
 export interface RangePatternWithLeftWithRight {
@@ -10090,35 +11246,120 @@ export interface RangePatternWithLeftWithRight {
 	readonly _right:
 		| LiteralPattern
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier;
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly __inputHints__?: {
 		readonly content: KindEnum<'...' | '..=' | '..', TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot>;
 		readonly right:
 			| KindEnum<
-					'true' | 'false' | 'self' | 'super' | 'crate',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
+					| 'true'
+					| 'false'
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
 			  >
 			| LiteralPattern
-			| Identifier
 			| Metavariable
-			| ScopedIdentifier
-			| ReservedIdentifier;
+			| Identifier
+			| ScopedIdentifier;
 	};
 	content(): number;
 	right():
 		| LiteralPattern
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier;
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 }
 
 export interface RangePatternWithLeft {
@@ -10126,24 +11367,90 @@ export interface RangePatternWithLeft {
 	readonly _left:
 		| LiteralPattern
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier;
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	readonly _content: RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare;
 	readonly __inputHints__?: {
 		readonly left:
 			| KindEnum<
-					'true' | 'false' | 'self' | 'super' | 'crate',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
+					| 'true'
+					| 'false'
+					| 'self'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char'
+					| 'super'
+					| 'crate'
+					| 'default'
+					| 'union'
+					| 'gen',
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
 			  >
 			| LiteralPattern
-			| Identifier
 			| Metavariable
-			| ScopedIdentifier
-			| ReservedIdentifier;
+			| Identifier
+			| ScopedIdentifier;
 		readonly content:
 			| KindEnum<'..', TSKindId.RangePatternWithLeftBare | TSKindId.DotDot>
 			| RangePatternWithLeftWithRight;
@@ -10151,12 +11458,31 @@ export interface RangePatternWithLeft {
 	left():
 		| LiteralPattern
 		| TSKindId.Self
-		| Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
+		| Identifier
 		| ScopedIdentifier
-		| ReservedIdentifier;
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword;
 	content(): RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare;
 }
 
@@ -10287,12 +11613,31 @@ export interface AttributedParameter {
 	readonly __looseHints__?: {
 		readonly attribute_item?: readonly (
 			| 'self'
-			| Identifier
+			| 'u8'
+			| 'i8'
+			| 'u16'
+			| 'i16'
+			| 'u32'
+			| 'i32'
+			| 'u64'
+			| 'i64'
+			| 'u128'
+			| 'i128'
+			| 'isize'
+			| 'usize'
+			| 'f32'
+			| 'f64'
+			| 'bool'
+			| 'str'
+			| 'char'
 			| Metavariable
 			| 'super'
 			| 'crate'
+			| Identifier
 			| ScopedIdentifier
-			| ReservedIdentifier
+			| 'default'
+			| 'union'
+			| 'gen'
 		)[];
 	};
 	attributeItem(): AttributeItem | undefined;
@@ -10444,19 +11789,6 @@ export interface MatchBlockArms {
 	lastArm(): LastMatchArm;
 }
 
-export interface ReservedIdentifier {
-	readonly $type: TSKindId._ReservedIdentifier;
-	readonly _content: number;
-	readonly __inputHints__?: {
-		readonly content: KindEnum<
-			'default' | 'union' | 'gen',
-			TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword
-		>;
-	};
-	readonly __aliasContent__?: ReservedIdentifier.Types;
-	content(): number;
-}
-
 export interface TypeIdentifier {
 	readonly $type: TSKindId._TypeIdentifier;
 	readonly _content: Identifier;
@@ -10588,8 +11920,7 @@ export type TokenTreePunctuation =
 	| TSKindId.DashGt
 	| TSKindId.EqGt
 	| TSKindId.Pound
-	| TSKindId.Qmark
-	| TSKindId.Dollar;
+	| TSKindId.Qmark;
 export type TokenKeywords =
 	| TSKindId.Squote
 	| TSKindId.AsKeyword
@@ -10635,6 +11966,26 @@ export type BlockCommentContent = HiddenLeaf<Terminal<TSKindId.BlockCommentConte
 export type RawStringLiteralStart = HiddenLeaf<Terminal<TSKindId.RawStringLiteralStart, string>>;
 export type RawStringLiteralEnd = HiddenLeaf<Terminal<TSKindId.RawStringLiteralEnd, string>>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
+export type U8Keyword = TSKindId.U8Keyword;
+export type I8Keyword = TSKindId.I8Keyword;
+export type U16Keyword = TSKindId.U16Keyword;
+export type I16Keyword = TSKindId.I16Keyword;
+export type U32Keyword = TSKindId.U32Keyword;
+export type I32Keyword = TSKindId.I32Keyword;
+export type U64Keyword = TSKindId.U64Keyword;
+export type I64Keyword = TSKindId.I64Keyword;
+export type U128Keyword = TSKindId.U128Keyword;
+export type I128Keyword = TSKindId.I128Keyword;
+export type IsizeKeyword = TSKindId.IsizeKeyword;
+export type UsizeKeyword = TSKindId.UsizeKeyword;
+export type F32Keyword = TSKindId.F32Keyword;
+export type F64Keyword = TSKindId.F64Keyword;
+export type BoolKeyword = TSKindId.BoolKeyword;
+export type StrKeyword = TSKindId.StrKeyword;
+export type CharKeyword = TSKindId.CharKeyword;
+export type DefaultKeyword = TSKindId.DefaultKeyword;
+export type UnionKeyword = TSKindId.UnionKeyword;
+export type GenKeyword = TSKindId.GenKeyword;
 
 // Tree types
 export interface SourceFileTree extends TreeNode<'source_file'> {}
@@ -10642,7 +11993,6 @@ export interface ExpressionStatementTree extends TreeNode<'expression_statement'
 export interface MacroRuleTree extends TreeNode<'macro_rule'> {}
 export interface TokenBindingPatternTree extends TreeNode<'token_binding_pattern'> {}
 export interface TokenRepetitionPatternTree extends TreeNode<'token_repetition_pattern'> {}
-export interface TokenTreeTree extends TreeNode<'token_tree'> {}
 export interface TokenRepetitionTree extends TreeNode<'token_repetition'> {}
 export interface AttributeItemTree extends TreeNode<'attribute_item'> {}
 export interface InnerAttributeItemTree extends TreeNode<'inner_attribute_item'> {}
@@ -10704,9 +12054,7 @@ export interface AbstractTypeTree extends TreeNode<'abstract_type'> {}
 export interface DynamicTypeTree extends TreeNode<'dynamic_type'> {}
 export interface MacroInvocationTree extends TreeNode<'macro_invocation'> {}
 export interface ScopedIdentifierTree extends TreeNode<'scoped_identifier'> {}
-export interface ScopedTypeIdentifierInExpressionPositionTree extends AnyTreeNode {
-	readonly type: 'scoped_type_identifier_in_expression_position';
-}
+export interface ScopedTypeIdentifierInExpressionPositionTree extends TreeNode<'scoped_type_identifier_in_expression_position'> {}
 export interface ScopedTypeIdentifierTree extends TreeNode<'scoped_type_identifier'> {}
 export interface RangeExpressionTree extends TreeNode<'range_expression'> {}
 export interface UnaryExpressionTree extends TreeNode<'unary_expression'> {}
@@ -10881,9 +12229,6 @@ export interface TypeArgumentTree extends AnyTreeNode {
 export interface MatchBlockArmsTree extends AnyTreeNode {
 	readonly type: '_match_block_arms';
 }
-export interface ReservedIdentifierTree extends AnyTreeNode {
-	readonly type: 'reserved_identifier';
-}
 export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
 export interface FieldIdentifierTree extends TreeNode<'field_identifier'> {}
 export interface ShorthandFieldIdentifierTree extends TreeNode<'shorthand_field_identifier'> {}
@@ -10908,9 +12253,6 @@ export interface RemainingFieldPatternTree extends AnyTreeNode {
 }
 export interface BooleanLiteralTree extends TreeNode<'boolean_literal'> {}
 export interface IdentifierTree extends TreeNode<'identifier'> {}
-export interface _ReservedIdentifierTree extends AnyTreeNode {
-	readonly type: '_reserved_identifier';
-}
 export interface SelfTree extends AnyTreeNode {
 	readonly type: 'self';
 }
@@ -11039,8 +12381,65 @@ export interface TyKeywordTree extends AnyTreeNode {
 export interface VisKeywordTree extends AnyTreeNode {
 	readonly type: 'vis_keyword';
 }
+export interface U8KeywordTree extends AnyTreeNode {
+	readonly type: 'u8_keyword';
+}
+export interface I8KeywordTree extends AnyTreeNode {
+	readonly type: 'i8_keyword';
+}
+export interface U16KeywordTree extends AnyTreeNode {
+	readonly type: 'u16_keyword';
+}
+export interface I16KeywordTree extends AnyTreeNode {
+	readonly type: 'i16_keyword';
+}
+export interface U32KeywordTree extends AnyTreeNode {
+	readonly type: 'u32_keyword';
+}
+export interface I32KeywordTree extends AnyTreeNode {
+	readonly type: 'i32_keyword';
+}
+export interface U64KeywordTree extends AnyTreeNode {
+	readonly type: 'u64_keyword';
+}
+export interface I64KeywordTree extends AnyTreeNode {
+	readonly type: 'i64_keyword';
+}
+export interface U128KeywordTree extends AnyTreeNode {
+	readonly type: 'u128_keyword';
+}
+export interface I128KeywordTree extends AnyTreeNode {
+	readonly type: 'i128_keyword';
+}
+export interface IsizeKeywordTree extends AnyTreeNode {
+	readonly type: 'isize_keyword';
+}
+export interface UsizeKeywordTree extends AnyTreeNode {
+	readonly type: 'usize_keyword';
+}
+export interface F32KeywordTree extends AnyTreeNode {
+	readonly type: 'f32_keyword';
+}
+export interface F64KeywordTree extends AnyTreeNode {
+	readonly type: 'f64_keyword';
+}
+export interface BoolKeywordTree extends AnyTreeNode {
+	readonly type: 'bool_keyword';
+}
+export interface StrKeywordTree extends AnyTreeNode {
+	readonly type: 'str_keyword';
+}
+export interface CharKeywordTree extends AnyTreeNode {
+	readonly type: 'char_keyword';
+}
+export interface DefaultKeywordTree extends AnyTreeNode {
+	readonly type: 'default_keyword';
+}
 export interface UnionKeywordTree extends AnyTreeNode {
 	readonly type: 'union_keyword';
+}
+export interface GenKeywordTree extends AnyTreeNode {
+	readonly type: 'gen_keyword';
 }
 export interface EnumKeywordTree extends AnyTreeNode {
 	readonly type: 'enum_keyword';
@@ -11123,9 +12522,6 @@ export interface UnsafeKeywordTree extends AnyTreeNode {
 export interface AsyncKeywordTree extends AnyTreeNode {
 	readonly type: 'async_keyword';
 }
-export interface GenKeywordTree extends AnyTreeNode {
-	readonly type: 'gen_keyword';
-}
 export interface TryKeywordTree extends AnyTreeNode {
 	readonly type: 'try_keyword';
 }
@@ -11137,60 +12533,6 @@ export interface TrueKeywordTree extends AnyTreeNode {
 }
 export interface FalseKeywordTree extends AnyTreeNode {
 	readonly type: 'false_keyword';
-}
-export interface DefaultKeywordTree extends AnyTreeNode {
-	readonly type: 'default_keyword';
-}
-export interface U8KeywordTree extends AnyTreeNode {
-	readonly type: 'u8_keyword';
-}
-export interface I8KeywordTree extends AnyTreeNode {
-	readonly type: 'i8_keyword';
-}
-export interface U16KeywordTree extends AnyTreeNode {
-	readonly type: 'u16_keyword';
-}
-export interface I16KeywordTree extends AnyTreeNode {
-	readonly type: 'i16_keyword';
-}
-export interface U32KeywordTree extends AnyTreeNode {
-	readonly type: 'u32_keyword';
-}
-export interface I32KeywordTree extends AnyTreeNode {
-	readonly type: 'i32_keyword';
-}
-export interface U64KeywordTree extends AnyTreeNode {
-	readonly type: 'u64_keyword';
-}
-export interface I64KeywordTree extends AnyTreeNode {
-	readonly type: 'i64_keyword';
-}
-export interface U128KeywordTree extends AnyTreeNode {
-	readonly type: 'u128_keyword';
-}
-export interface I128KeywordTree extends AnyTreeNode {
-	readonly type: 'i128_keyword';
-}
-export interface IsizeKeywordTree extends AnyTreeNode {
-	readonly type: 'isize_keyword';
-}
-export interface UsizeKeywordTree extends AnyTreeNode {
-	readonly type: 'usize_keyword';
-}
-export interface F32KeywordTree extends AnyTreeNode {
-	readonly type: 'f32_keyword';
-}
-export interface F64KeywordTree extends AnyTreeNode {
-	readonly type: 'f64_keyword';
-}
-export interface BoolKeywordTree extends AnyTreeNode {
-	readonly type: 'bool_keyword';
-}
-export interface StrKeywordTree extends AnyTreeNode {
-	readonly type: 'str_keyword';
-}
-export interface CharKeywordTree extends AnyTreeNode {
-	readonly type: 'char_keyword';
 }
 export interface MoveKeywordTree extends AnyTreeNode {
 	readonly type: 'move_keyword';
@@ -11366,7 +12708,6 @@ export type Tokens =
 	| TokenKeywords;
 
 export type TokensTree =
-	| TokenTreeTree
 	| TokenRepetitionTree
 	| MetavariableTree
 	| StringLiteralTree
@@ -11381,6 +12722,10 @@ export type TokensTree =
 	| PrimitiveTypeTree
 	| TokenTreePunctuationTree
 	| TokenKeywordsTree;
+
+export type TokenTree = TokenTreeParen | TokenTreeBracket | TokenTreeBrace;
+
+export type TokenTreeTree = TokenTreeParenTree | TokenTreeBracketTree | TokenTreeBraceTree;
 
 export type _NonSpecialToken =
 	| Literal
@@ -11431,12 +12776,31 @@ export type ImplItemTree = ImplItemBodyTree | ImplItemSemiTree;
 
 export type UseClause =
 	| Self
-	| Identifier
+	| U8Keyword
+	| I8Keyword
+	| U16Keyword
+	| I16Keyword
+	| U32Keyword
+	| I32Keyword
+	| U64Keyword
+	| I64Keyword
+	| U128Keyword
+	| I128Keyword
+	| IsizeKeyword
+	| UsizeKeyword
+	| F32Keyword
+	| F64Keyword
+	| BoolKeyword
+	| StrKeyword
+	| CharKeyword
 	| Metavariable
 	| Super
 	| Crate
+	| Identifier
 	| ScopedIdentifier
-	| ReservedIdentifier
+	| DefaultKeyword
+	| UnionKeyword
+	| GenKeyword
 	| UseAsClause
 	| UseList
 	| ScopedUseList
@@ -11444,12 +12808,31 @@ export type UseClause =
 
 export type UseClauseTree =
 	| SelfTree
-	| IdentifierTree
+	| U8KeywordTree
+	| I8KeywordTree
+	| U16KeywordTree
+	| I16KeywordTree
+	| U32KeywordTree
+	| I32KeywordTree
+	| U64KeywordTree
+	| I64KeywordTree
+	| U128KeywordTree
+	| I128KeywordTree
+	| IsizeKeywordTree
+	| UsizeKeywordTree
+	| F32KeywordTree
+	| F64KeywordTree
+	| BoolKeywordTree
+	| StrKeywordTree
+	| CharKeywordTree
 	| MetavariableTree
 	| SuperTree
 	| CrateTree
+	| IdentifierTree
 	| ScopedIdentifierTree
-	| ReservedIdentifierTree
+	| DefaultKeywordTree
+	| UnionKeywordTree
+	| GenKeywordTree
 	| UseAsClauseTree
 	| UseListTree
 	| ScopedUseListTree
@@ -11515,7 +12898,26 @@ export type ExpressionExceptRange =
 	| IntegerLiteral
 	| FloatLiteral
 	| Identifier
-	| ReservedIdentifier
+	| U8Keyword
+	| I8Keyword
+	| U16Keyword
+	| I16Keyword
+	| U32Keyword
+	| I32Keyword
+	| U64Keyword
+	| I64Keyword
+	| U128Keyword
+	| I128Keyword
+	| IsizeKeyword
+	| UsizeKeyword
+	| F32Keyword
+	| F64Keyword
+	| BoolKeyword
+	| StrKeyword
+	| CharKeyword
+	| DefaultKeyword
+	| UnionKeyword
+	| GenKeyword
 	| Self
 	| ScopedIdentifier
 	| GenericFunction
@@ -11559,7 +12961,26 @@ export type ExpressionExceptRangeTree =
 	| BooleanLiteralTree
 	| FloatLiteralTree
 	| IdentifierTree
-	| ReservedIdentifierTree
+	| U8KeywordTree
+	| I8KeywordTree
+	| U16KeywordTree
+	| I16KeywordTree
+	| U32KeywordTree
+	| I32KeywordTree
+	| U64KeywordTree
+	| I64KeywordTree
+	| U128KeywordTree
+	| I128KeywordTree
+	| IsizeKeywordTree
+	| UsizeKeywordTree
+	| F32KeywordTree
+	| F64KeywordTree
+	| BoolKeywordTree
+	| StrKeywordTree
+	| CharKeywordTree
+	| DefaultKeywordTree
+	| UnionKeywordTree
+	| GenKeywordTree
 	| SelfTree
 	| ScopedIdentifierTree
 	| GenericFunctionTree
@@ -11605,7 +13026,26 @@ export type Expression =
 	| IntegerLiteral
 	| FloatLiteral
 	| Identifier
-	| ReservedIdentifier
+	| U8Keyword
+	| I8Keyword
+	| U16Keyword
+	| I16Keyword
+	| U32Keyword
+	| I32Keyword
+	| U64Keyword
+	| I64Keyword
+	| U128Keyword
+	| I128Keyword
+	| IsizeKeyword
+	| UsizeKeyword
+	| F32Keyword
+	| F64Keyword
+	| BoolKeyword
+	| StrKeyword
+	| CharKeyword
+	| DefaultKeyword
+	| UnionKeyword
+	| GenKeyword
 	| Self
 	| ScopedIdentifier
 	| GenericFunction
@@ -11650,7 +13090,26 @@ export type ExpressionTree =
 	| BooleanLiteralTree
 	| FloatLiteralTree
 	| IdentifierTree
-	| ReservedIdentifierTree
+	| U8KeywordTree
+	| I8KeywordTree
+	| U16KeywordTree
+	| I16KeywordTree
+	| U32KeywordTree
+	| I32KeywordTree
+	| U64KeywordTree
+	| I64KeywordTree
+	| U128KeywordTree
+	| I128KeywordTree
+	| IsizeKeywordTree
+	| UsizeKeywordTree
+	| F32KeywordTree
+	| F64KeywordTree
+	| BoolKeywordTree
+	| StrKeywordTree
+	| CharKeywordTree
+	| DefaultKeywordTree
+	| UnionKeywordTree
+	| GenKeywordTree
 	| SelfTree
 	| ScopedIdentifierTree
 	| GenericFunctionTree
@@ -11811,7 +13270,26 @@ export type Condition =
 	| IntegerLiteral
 	| FloatLiteral
 	| Identifier
-	| ReservedIdentifier
+	| U8Keyword
+	| I8Keyword
+	| U16Keyword
+	| I16Keyword
+	| U32Keyword
+	| I32Keyword
+	| U64Keyword
+	| I64Keyword
+	| U128Keyword
+	| I128Keyword
+	| IsizeKeyword
+	| UsizeKeyword
+	| F32Keyword
+	| F64Keyword
+	| BoolKeyword
+	| StrKeyword
+	| CharKeyword
+	| DefaultKeyword
+	| UnionKeyword
+	| GenKeyword
 	| Self
 	| ScopedIdentifier
 	| GenericFunction
@@ -11858,7 +13336,26 @@ export type ConditionTree =
 	| BooleanLiteralTree
 	| FloatLiteralTree
 	| IdentifierTree
-	| ReservedIdentifierTree
+	| U8KeywordTree
+	| I8KeywordTree
+	| U16KeywordTree
+	| I16KeywordTree
+	| U32KeywordTree
+	| I32KeywordTree
+	| U64KeywordTree
+	| I64KeywordTree
+	| U128KeywordTree
+	| I128KeywordTree
+	| IsizeKeywordTree
+	| UsizeKeywordTree
+	| F32KeywordTree
+	| F64KeywordTree
+	| BoolKeywordTree
+	| StrKeywordTree
+	| CharKeywordTree
+	| DefaultKeywordTree
+	| UnionKeywordTree
+	| GenKeywordTree
 	| SelfTree
 	| ScopedIdentifierTree
 	| GenericFunctionTree
@@ -11905,13 +13402,32 @@ export type Pattern =
 	| IntegerLiteral
 	| FloatLiteral
 	| NegativeLiteral
+	| U8Keyword
+	| I8Keyword
+	| U16Keyword
+	| I16Keyword
+	| U32Keyword
+	| I32Keyword
+	| U64Keyword
+	| I64Keyword
+	| U128Keyword
+	| I128Keyword
+	| IsizeKeyword
+	| UsizeKeyword
+	| F32Keyword
+	| F64Keyword
+	| BoolKeyword
+	| StrKeyword
+	| CharKeyword
 	| Identifier
 	| ScopedIdentifier
 	| GenericPattern
 	| TuplePattern
 	| TupleStructPattern
 	| StructPattern
-	| ReservedIdentifier
+	| DefaultKeyword
+	| UnionKeyword
+	| GenKeyword
 	| RefPattern
 	| SlicePattern
 	| CapturedPattern
@@ -11930,13 +13446,32 @@ export type PatternTree =
 	| BooleanLiteralTree
 	| FloatLiteralTree
 	| NegativeLiteralTree
+	| U8KeywordTree
+	| I8KeywordTree
+	| U16KeywordTree
+	| I16KeywordTree
+	| U32KeywordTree
+	| I32KeywordTree
+	| U64KeywordTree
+	| I64KeywordTree
+	| U128KeywordTree
+	| I128KeywordTree
+	| IsizeKeywordTree
+	| UsizeKeywordTree
+	| F32KeywordTree
+	| F64KeywordTree
+	| BoolKeywordTree
+	| StrKeywordTree
+	| CharKeywordTree
 	| IdentifierTree
 	| ScopedIdentifierTree
 	| GenericPatternTree
 	| TuplePatternTree
 	| TupleStructPatternTree
 	| StructPatternTree
-	| ReservedIdentifierTree
+	| DefaultKeywordTree
+	| UnionKeywordTree
+	| GenKeywordTree
 	| RefPatternTree
 	| SlicePatternTree
 	| CapturedPatternTree
@@ -12003,16 +13538,61 @@ export type EscapeSequenceTree =
 	| EscapeSequenceUnicodeBracedTree
 	| EscapeSequenceHexTree;
 
-export type Path = Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier | ReservedIdentifier;
+export type Path =
+	| Self
+	| U8Keyword
+	| I8Keyword
+	| U16Keyword
+	| I16Keyword
+	| U32Keyword
+	| I32Keyword
+	| U64Keyword
+	| I64Keyword
+	| U128Keyword
+	| I128Keyword
+	| IsizeKeyword
+	| UsizeKeyword
+	| F32Keyword
+	| F64Keyword
+	| BoolKeyword
+	| StrKeyword
+	| CharKeyword
+	| Metavariable
+	| Super
+	| Crate
+	| Identifier
+	| ScopedIdentifier
+	| DefaultKeyword
+	| UnionKeyword
+	| GenKeyword;
 
 export type PathTree =
 	| SelfTree
-	| IdentifierTree
+	| U8KeywordTree
+	| I8KeywordTree
+	| U16KeywordTree
+	| I16KeywordTree
+	| U32KeywordTree
+	| I32KeywordTree
+	| U64KeywordTree
+	| I64KeywordTree
+	| U128KeywordTree
+	| I128KeywordTree
+	| IsizeKeywordTree
+	| UsizeKeywordTree
+	| F32KeywordTree
+	| F64KeywordTree
+	| BoolKeywordTree
+	| StrKeywordTree
+	| CharKeywordTree
 	| MetavariableTree
 	| SuperTree
 	| CrateTree
+	| IdentifierTree
 	| ScopedIdentifierTree
-	| ReservedIdentifierTree;
+	| DefaultKeywordTree
+	| UnionKeywordTree
+	| GenKeywordTree;
 
 export type Whitespace = Tight | Space | Newline | Blankline | Indent | Dedent;
 
@@ -12087,7 +13667,6 @@ export type RustNode =
 	| MacroRule
 	| TokenBindingPattern
 	| TokenRepetitionPattern
-	| TokenTree
 	| TokenRepetition
 	| AttributeItem
 	| InnerAttributeItem
@@ -12302,7 +13881,6 @@ export type RustNode =
 	| AttributedOrderedField
 	| TypeArgument
 	| MatchBlockArms
-	| ReservedIdentifier
 	| TypeIdentifier
 	| FieldIdentifier
 	| ShorthandFieldIdentifier;
@@ -12313,7 +13891,6 @@ export interface KindMap {
 	macro_rule: MacroRule;
 	token_binding_pattern: TokenBindingPattern;
 	token_repetition_pattern: TokenRepetitionPattern;
-	token_tree: TokenTree;
 	token_repetition: TokenRepetition;
 	attribute_item: AttributeItem;
 	inner_attribute_item: InnerAttributeItem;
@@ -12528,7 +14105,6 @@ export interface KindMap {
 	_attributed_ordered_field: AttributedOrderedField;
 	_type_argument: TypeArgument;
 	_match_block_arms: MatchBlockArms;
-	reserved_identifier: ReservedIdentifier;
 	type_identifier: TypeIdentifier;
 	field_identifier: FieldIdentifier;
 	shorthand_field_identifier: ShorthandFieldIdentifier;
@@ -12572,6 +14148,26 @@ export interface KindMap {
 	_raw_string_literal_start: RawStringLiteralStart;
 	_raw_string_literal_end: RawStringLiteralEnd;
 	_error_sentinel: ErrorSentinel;
+	u8_keyword: U8Keyword;
+	i8_keyword: I8Keyword;
+	u16_keyword: U16Keyword;
+	i16_keyword: I16Keyword;
+	u32_keyword: U32Keyword;
+	i32_keyword: I32Keyword;
+	u64_keyword: U64Keyword;
+	i64_keyword: I64Keyword;
+	u128_keyword: U128Keyword;
+	i128_keyword: I128Keyword;
+	isize_keyword: IsizeKeyword;
+	usize_keyword: UsizeKeyword;
+	f32_keyword: F32Keyword;
+	f64_keyword: F64Keyword;
+	bool_keyword: BoolKeyword;
+	str_keyword: StrKeyword;
+	char_keyword: CharKeyword;
+	default_keyword: DefaultKeyword;
+	union_keyword: UnionKeyword;
+	gen_keyword: GenKeyword;
 }
 
 // Per-kind namespace interfaces — one computed base per kind
@@ -12629,17 +14225,6 @@ export interface TokenRepetitionPatternNs extends NodeNs<
 	TokenRepetitionPattern.LooseArgs,
 	never,
 	'token_repetition_pattern'
-> {}
-export interface TokenTreeNs extends NodeNs<
-	TokenTree,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	TokenTree.Built,
-	TokenTree.BuildArgs,
-	TokenTree.LooseArgs,
-	'content',
-	'token_tree'
 > {}
 export interface TokenRepetitionNs extends NodeNs<
 	TokenRepetition,
@@ -14995,17 +16580,6 @@ export interface MatchBlockArmsNs extends NodeNs<
 	never,
 	'_match_block_arms'
 > {}
-export interface ReservedIdentifierNs extends NodeNs<
-	ReservedIdentifier,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	ReservedIdentifier.Built,
-	ReservedIdentifier.BuildArgs,
-	ReservedIdentifier.LooseArgs,
-	'content',
-	'reserved_identifier'
-> {}
 export interface TypeIdentifierNs extends NodeNs<
 	TypeIdentifier,
 	LeafScalarMap,
@@ -15110,6 +16684,31 @@ export interface RangePatternWithLeftBareNs extends KeywordNs<
 	RangePatternWithLeftBareTree,
 	'range_pattern_with_left_bare'
 > {}
+export interface U8KeywordNs extends KeywordNs<TSKindId.U8Keyword, 'u8', U8KeywordTree, 'u8_keyword'> {}
+export interface I8KeywordNs extends KeywordNs<TSKindId.I8Keyword, 'i8', I8KeywordTree, 'i8_keyword'> {}
+export interface U16KeywordNs extends KeywordNs<TSKindId.U16Keyword, 'u16', U16KeywordTree, 'u16_keyword'> {}
+export interface I16KeywordNs extends KeywordNs<TSKindId.I16Keyword, 'i16', I16KeywordTree, 'i16_keyword'> {}
+export interface U32KeywordNs extends KeywordNs<TSKindId.U32Keyword, 'u32', U32KeywordTree, 'u32_keyword'> {}
+export interface I32KeywordNs extends KeywordNs<TSKindId.I32Keyword, 'i32', I32KeywordTree, 'i32_keyword'> {}
+export interface U64KeywordNs extends KeywordNs<TSKindId.U64Keyword, 'u64', U64KeywordTree, 'u64_keyword'> {}
+export interface I64KeywordNs extends KeywordNs<TSKindId.I64Keyword, 'i64', I64KeywordTree, 'i64_keyword'> {}
+export interface U128KeywordNs extends KeywordNs<TSKindId.U128Keyword, 'u128', U128KeywordTree, 'u128_keyword'> {}
+export interface I128KeywordNs extends KeywordNs<TSKindId.I128Keyword, 'i128', I128KeywordTree, 'i128_keyword'> {}
+export interface IsizeKeywordNs extends KeywordNs<TSKindId.IsizeKeyword, 'isize', IsizeKeywordTree, 'isize_keyword'> {}
+export interface UsizeKeywordNs extends KeywordNs<TSKindId.UsizeKeyword, 'usize', UsizeKeywordTree, 'usize_keyword'> {}
+export interface F32KeywordNs extends KeywordNs<TSKindId.F32Keyword, 'f32', F32KeywordTree, 'f32_keyword'> {}
+export interface F64KeywordNs extends KeywordNs<TSKindId.F64Keyword, 'f64', F64KeywordTree, 'f64_keyword'> {}
+export interface BoolKeywordNs extends KeywordNs<TSKindId.BoolKeyword, 'bool', BoolKeywordTree, 'bool_keyword'> {}
+export interface StrKeywordNs extends KeywordNs<TSKindId.StrKeyword, 'str', StrKeywordTree, 'str_keyword'> {}
+export interface CharKeywordNs extends KeywordNs<TSKindId.CharKeyword, 'char', CharKeywordTree, 'char_keyword'> {}
+export interface DefaultKeywordNs extends KeywordNs<
+	TSKindId.DefaultKeyword,
+	'default',
+	DefaultKeywordTree,
+	'default_keyword'
+> {}
+export interface UnionKeywordNs extends KeywordNs<TSKindId.UnionKeyword, 'union', UnionKeywordTree, 'union_keyword'> {}
+export interface GenKeywordNs extends KeywordNs<TSKindId.GenKeyword, 'gen', GenKeywordTree, 'gen_keyword'> {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Built, IdentifierTree, 'identifier'> {}
 export interface StringLiteralOpenNs extends LeafNs<
 	StringLiteralOpen,
@@ -15202,7 +16801,6 @@ export interface NamespaceMap {
 	[TSKindId.MacroRule]: MacroRuleNs;
 	[TSKindId.TokenBindingPattern]: TokenBindingPatternNs;
 	[TSKindId.TokenRepetitionPattern]: TokenRepetitionPatternNs;
-	[TSKindId.TokenTree]: TokenTreeNs;
 	[TSKindId.TokenRepetition]: TokenRepetitionNs;
 	[TSKindId.AttributeItem]: AttributeItemNs;
 	[TSKindId.InnerAttributeItem]: InnerAttributeItemNs;
@@ -15417,7 +17015,6 @@ export interface NamespaceMap {
 	[TSKindId.AttributedOrderedField]: AttributedOrderedFieldNs;
 	[TSKindId.TypeArgument]: TypeArgumentNs;
 	[TSKindId.MatchBlockArms]: MatchBlockArmsNs;
-	[TSKindId._ReservedIdentifier]: ReservedIdentifierNs;
 	[TSKindId._TypeIdentifier]: TypeIdentifierNs;
 	[TSKindId._FieldIdentifier]: FieldIdentifierNs;
 	[TSKindId._ShorthandFieldIdentifier]: ShorthandFieldIdentifierNs;
@@ -15442,6 +17039,26 @@ export interface NamespaceMap {
 	[TSKindId.WildcardPattern]: WildcardPatternNs;
 	[TSKindId.ImplItemUnsafeMarker]: ImplItemUnsafeMarkerNs;
 	[TSKindId.RangePatternWithLeftBare]: RangePatternWithLeftBareNs;
+	[TSKindId.U8Keyword]: U8KeywordNs;
+	[TSKindId.I8Keyword]: I8KeywordNs;
+	[TSKindId.U16Keyword]: U16KeywordNs;
+	[TSKindId.I16Keyword]: I16KeywordNs;
+	[TSKindId.U32Keyword]: U32KeywordNs;
+	[TSKindId.I32Keyword]: I32KeywordNs;
+	[TSKindId.U64Keyword]: U64KeywordNs;
+	[TSKindId.I64Keyword]: I64KeywordNs;
+	[TSKindId.U128Keyword]: U128KeywordNs;
+	[TSKindId.I128Keyword]: I128KeywordNs;
+	[TSKindId.IsizeKeyword]: IsizeKeywordNs;
+	[TSKindId.UsizeKeyword]: UsizeKeywordNs;
+	[TSKindId.F32Keyword]: F32KeywordNs;
+	[TSKindId.F64Keyword]: F64KeywordNs;
+	[TSKindId.BoolKeyword]: BoolKeywordNs;
+	[TSKindId.StrKeyword]: StrKeywordNs;
+	[TSKindId.CharKeyword]: CharKeywordNs;
+	[TSKindId.DefaultKeyword]: DefaultKeywordNs;
+	[TSKindId.UnionKeyword]: UnionKeywordNs;
+	[TSKindId.GenKeyword]: GenKeywordNs;
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.StringLiteralOpen]: StringLiteralOpenNs;
 	[TSKindId.CharLiteralEmpty]: CharLiteralEmptyNs;
@@ -15611,29 +17228,6 @@ export namespace TokenRepetitionPattern {
 	];
 	export type Tree = TreeFor<TSKindId.TokenRepetitionPattern>;
 	export type Kind = 'token_repetition_pattern';
-}
-export namespace TokenTree {
-	export type Config = ConfigFor<TSKindId.TokenTree>;
-	export interface Built extends T.TokenTree, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: T.TokenTreeParen | T.TokenTreeBracket | T.TokenTreeBrace): T.TokenTree.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.TokenTree>;
-	export type LooseConfig = LooseConfigFor<TSKindId.TokenTree>;
-	export type BuildArgs = [value: T.TokenTreeParen | T.TokenTreeBracket | T.TokenTreeBrace];
-	export type LooseArgs = [
-		value: LooseValue<
-			T.TokenTreeParen | T.TokenTreeBracket | T.TokenTreeBrace,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
-	export type Tree = TreeFor<TSKindId.TokenTree>;
-	export type Kind = 'token_tree';
 }
 export namespace TokenRepetition {
 	export type Config = ConfigFor<TSKindId.TokenRepetition>;
@@ -16644,14 +18238,7 @@ export namespace GenericType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			type(
-				value:
-					| T.TypeIdentifier
-					| T.ReservedIdentifier
-					| T.ScopedTypeIdentifier
-					| T.TypeIdentifier.Types
-					| T.ReservedIdentifier.Types
-			): T.GenericType.Built;
+			type(value: NonNullable<T.GenericType.Config>['type']): T.GenericType.Built;
 			typeArguments(value: T.TypeArguments): T.GenericType.Built;
 		};
 	}
@@ -16866,9 +18453,7 @@ export namespace MacroInvocation {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			macro(
-				value: T.ScopedIdentifier | T.Identifier | T.ReservedIdentifier | T.ReservedIdentifier.Types
-			): T.MacroInvocation.Built;
+			macro(value: NonNullable<T.MacroInvocation.Config>['macro']): T.MacroInvocation.Built;
 			arguments(value: T.DelimTokenTree): T.MacroInvocation.Built;
 		};
 	}
@@ -16998,15 +18583,13 @@ export namespace TryExpression {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			value(value: NonNullable<T.Expression | T.ReservedIdentifier.Types>): T.TryExpression.Built;
+			value(value: NonNullable<T.Expression>): T.TryExpression.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TryExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TryExpression>;
-	export type BuildArgs = [value: T.Expression | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.TryExpression>;
 	export type Kind = 'try_expression';
 }
@@ -17100,15 +18683,13 @@ export namespace ReturnExpression {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			expression(value?: NonNullable<T.Expression | T.ReservedIdentifier.Types>): T.ReturnExpression.Built;
+			expression(value?: NonNullable<T.Expression>): T.ReturnExpression.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ReturnExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ReturnExpression>;
-	export type BuildArgs = [value?: T.Expression | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value?: LooseValue<T.Expression | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value?: T.Expression];
+	export type LooseArgs = [value?: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.ReturnExpression>;
 	export type Kind = 'return_expression';
 }
@@ -17118,15 +18699,13 @@ export namespace YieldExpression {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			expression(value?: NonNullable<T.Expression | T.ReservedIdentifier.Types>): T.YieldExpression.Built;
+			expression(value?: NonNullable<T.Expression>): T.YieldExpression.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.YieldExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.YieldExpression>;
-	export type BuildArgs = [value?: T.Expression | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value?: LooseValue<T.Expression | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value?: T.Expression];
+	export type LooseArgs = [value?: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.YieldExpression>;
 	export type Kind = 'yield_expression';
 }
@@ -17171,15 +18750,13 @@ export namespace ParenthesizedExpression {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			expression(value: NonNullable<T.Expression | T.ReservedIdentifier.Types>): T.ParenthesizedExpression.Built;
+			expression(value: NonNullable<T.Expression>): T.ParenthesizedExpression.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ParenthesizedExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpression>;
-	export type BuildArgs = [value: T.Expression | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.ParenthesizedExpression>;
 	export type Kind = 'parenthesized_expression';
 }
@@ -17292,15 +18869,13 @@ export namespace BaseFieldInitializer {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			value(value: NonNullable<T.Expression | T.ReservedIdentifier.Types>): T.BaseFieldInitializer.Built;
+			value(value: NonNullable<T.Expression>): T.BaseFieldInitializer.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.BaseFieldInitializer>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BaseFieldInitializer>;
-	export type BuildArgs = [value: T.Expression | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.BaseFieldInitializer>;
 	export type Kind = 'base_field_initializer';
 }
@@ -17537,19 +19112,14 @@ export namespace ClosureParameters {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			parameters(...vs: ((T.Pattern | T.Parameter) | T.ReservedIdentifier.Types)[]): T.ClosureParameters.Built;
+			parameters(...vs: (T.Pattern | T.Parameter)[]): T.ClosureParameters.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ClosureParameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClosureParameters>;
-	export type BuildArgs = [...children: ((T.Pattern | T.Parameter) | T.ReservedIdentifier.Types)[]];
+	export type BuildArgs = [...children: (T.Pattern | T.Parameter)[]];
 	export type LooseArgs = [
-		...children: LooseValue<
-			(T.Pattern | T.Parameter) | T.ReservedIdentifier.Types,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
+		...children: LooseValue<T.Pattern | T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.ClosureParameters>;
 	export type Kind = 'closure_parameters';
@@ -17630,15 +19200,13 @@ export namespace AwaitExpression {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			expression(value: NonNullable<T.Expression | T.ReservedIdentifier.Types>): T.AwaitExpression.Built;
+			expression(value: NonNullable<T.Expression>): T.AwaitExpression.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.AwaitExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AwaitExpression>;
-	export type BuildArgs = [value: T.Expression | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.AwaitExpression>;
 	export type Kind = 'await_expression';
 }
@@ -17850,15 +19418,13 @@ export namespace MutPattern {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			pattern(value: NonNullable<T.Pattern | T.ReservedIdentifier.Types>): T.MutPattern.Built;
+			pattern(value: NonNullable<T.Pattern>): T.MutPattern.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.MutPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MutPattern>;
-	export type BuildArgs = [value: T.Pattern | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value: LooseValue<T.Pattern | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Pattern];
+	export type LooseArgs = [value: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.MutPattern>;
 	export type Kind = 'mut_pattern';
 }
@@ -17868,15 +19434,13 @@ export namespace RefPattern {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			pattern(value: NonNullable<T.Pattern | T.ReservedIdentifier.Types>): T.RefPattern.Built;
+			pattern(value: NonNullable<T.Pattern>): T.RefPattern.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.RefPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RefPattern>;
-	export type BuildArgs = [value: T.Pattern | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value: LooseValue<T.Pattern | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Pattern];
+	export type LooseArgs = [value: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.RefPattern>;
 	export type Kind = 'ref_pattern';
 }
@@ -18251,17 +19815,35 @@ export namespace UseClauses {
 			useClauses(
 				...vs: NonEmptyArray<
 					| TSKindId.Self
-					| T.Identifier
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
 					| T.Metavariable
 					| TSKindId.Super
 					| TSKindId.Crate
+					| T.Identifier
 					| T.ScopedIdentifier
-					| T.ReservedIdentifier
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
 					| T.UseAsClause
 					| T.UseList
 					| T.ScopedUseList
 					| T.UseWildcard
-					| T.ReservedIdentifier.Types
 				>
 			): T.UseClauses.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.UseClauses.Built;
@@ -18272,63 +19854,135 @@ export namespace UseClauses {
 	export type BuildArgs = [
 		element:
 			| TSKindId.Self
-			| T.Identifier
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
+			| T.Identifier
 			| T.ScopedIdentifier
-			| T.ReservedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
-			| T.UseWildcard
-			| T.ReservedIdentifier.Types,
+			| T.UseWildcard,
 		...elements: (
 			| TSKindId.Self
-			| T.Identifier
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
+			| T.Identifier
 			| T.ScopedIdentifier
-			| T.ReservedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
 			| T.UseWildcard
-			| T.ReservedIdentifier.Types
 		)[]
 	];
 	export type LooseArgs = [
 		element: LooseValue<
 			| TSKindId.Self
-			| T.Identifier
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
+			| T.Identifier
 			| T.ScopedIdentifier
-			| T.ReservedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
-			| T.UseWildcard
-			| T.ReservedIdentifier.Types,
+			| T.UseWildcard,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
 		>,
 		...elements: LooseValue<
 			| TSKindId.Self
-			| T.Identifier
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
+			| T.Identifier
 			| T.ScopedIdentifier
-			| T.ReservedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
-			| T.UseWildcard
-			| T.ReservedIdentifier.Types,
+			| T.UseWildcard,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -18508,31 +20162,19 @@ export namespace ArgumentsElements {
 		readonly $named: true;
 		readonly _delimiter: Delimiter;
 		readonly $with: {
-			elements(
-				...vs: NonEmptyArray<T.AttributedArgument | T.Expression | T.ReservedIdentifier.Types>
-			): T.ArgumentsElements.Built;
+			elements(...vs: NonEmptyArray<T.AttributedArgument | T.Expression>): T.ArgumentsElements.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ArgumentsElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ArgumentsElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArgumentsElements>;
 	export type BuildArgs = [
-		element: T.AttributedArgument | T.Expression | T.ReservedIdentifier.Types,
-		...elements: (T.AttributedArgument | T.Expression | T.ReservedIdentifier.Types)[]
+		element: T.AttributedArgument | T.Expression,
+		...elements: (T.AttributedArgument | T.Expression)[]
 	];
 	export type LooseArgs = [
-		element: LooseValue<
-			T.AttributedArgument | T.Expression | T.ReservedIdentifier.Types,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>,
-		...elements: LooseValue<
-			T.AttributedArgument | T.Expression | T.ReservedIdentifier.Types,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
+		element: LooseValue<T.AttributedArgument | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.AttributedArgument | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.ArgumentsElements>;
 	export type Kind = 'arguments_elements';
@@ -18580,31 +20222,16 @@ export namespace TuplePatternElements {
 		readonly $named: true;
 		readonly _delimiter: Delimiter;
 		readonly $with: {
-			elements(
-				...vs: NonEmptyArray<T.Pattern | T.ClosureExpression | T.ReservedIdentifier.Types>
-			): T.TuplePatternElements.Built;
+			elements(...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>): T.TuplePatternElements.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TuplePatternElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TuplePatternElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TuplePatternElements>;
-	export type BuildArgs = [
-		element: T.Pattern | T.ClosureExpression | T.ReservedIdentifier.Types,
-		...elements: (T.Pattern | T.ClosureExpression | T.ReservedIdentifier.Types)[]
-	];
+	export type BuildArgs = [element: T.Pattern | T.ClosureExpression, ...elements: (T.Pattern | T.ClosureExpression)[]];
 	export type LooseArgs = [
-		element: LooseValue<
-			T.Pattern | T.ClosureExpression | T.ReservedIdentifier.Types,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>,
-		...elements: LooseValue<
-			T.Pattern | T.ClosureExpression | T.ReservedIdentifier.Types,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
+		element: LooseValue<T.Pattern | T.ClosureExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Pattern | T.ClosureExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.TuplePatternElements>;
 	export type Kind = 'tuple_pattern_elements';
@@ -18616,19 +20243,16 @@ export namespace Patterns {
 		readonly $named: true;
 		readonly _delimiter: Delimiter;
 		readonly $with: {
-			patterns(...vs: NonEmptyArray<T.Pattern | T.ReservedIdentifier.Types>): T.Patterns.Built;
+			patterns(...vs: NonEmptyArray<T.Pattern>): T.Patterns.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.Patterns.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Patterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Patterns>;
-	export type BuildArgs = [
-		element: T.Pattern | T.ReservedIdentifier.Types,
-		...elements: (T.Pattern | T.ReservedIdentifier.Types)[]
-	];
+	export type BuildArgs = [element: T.Pattern, ...elements: T.Pattern[]];
 	export type LooseArgs = [
-		element: LooseValue<T.Pattern | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.Pattern | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		element: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.Patterns>;
 	export type Kind = 'patterns';
@@ -18675,16 +20299,32 @@ export namespace UseWildcardGroup {
 		readonly $with: {
 			path(
 				value?: NonNullable<
-					| (
-							| TSKindId.Self
-							| T.Identifier
-							| T.Metavariable
-							| TSKindId.Super
-							| TSKindId.Crate
-							| T.ScopedIdentifier
-							| T.ReservedIdentifier
-					  )
-					| T.ReservedIdentifier.Types
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| T.Metavariable
+					| TSKindId.Super
+					| TSKindId.Crate
+					| T.Identifier
+					| T.ScopedIdentifier
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
 				>
 			): T.UseWildcardGroup.Built;
 		};
@@ -18693,29 +20333,61 @@ export namespace UseWildcardGroup {
 	export type LooseConfig = LooseConfigFor<TSKindId.UseWildcardGroup>;
 	export type BuildArgs = [
 		value?:
-			| (
-					| TSKindId.Self
-					| T.Identifier
-					| T.Metavariable
-					| TSKindId.Super
-					| TSKindId.Crate
-					| T.ScopedIdentifier
-					| T.ReservedIdentifier
-			  )
-			| T.ReservedIdentifier.Types
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
 	];
 	export type LooseArgs = [
 		value?: LooseValue<
-			| (
-					| TSKindId.Self
-					| T.Identifier
-					| T.Metavariable
-					| TSKindId.Super
-					| TSKindId.Crate
-					| T.ScopedIdentifier
-					| T.ReservedIdentifier
-			  )
-			| T.ReservedIdentifier.Types,
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -18777,24 +20449,16 @@ export namespace TupleExpressionElements {
 		readonly $named: true;
 		readonly _delimiter: Delimiter;
 		readonly $with: {
-			elements(...vs: NonEmptyArray<T.Expression | T.ReservedIdentifier.Types>): T.TupleExpressionElements.Built;
+			elements(...vs: NonEmptyArray<T.Expression>): T.TupleExpressionElements.Built;
 			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TupleExpressionElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TupleExpressionElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleExpressionElements>;
-	export type BuildArgs = [
-		element: T.Expression | T.ReservedIdentifier.Types,
-		...elements: (T.Expression | T.ReservedIdentifier.Types)[]
-	];
+	export type BuildArgs = [element: T.Expression, ...elements: T.Expression[]];
 	export type LooseArgs = [
-		element: LooseValue<T.Expression | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<
-			T.Expression | T.ReservedIdentifier.Types,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
+		element: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		...elements: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.TupleExpressionElements>;
 	export type Kind = '_tuple_expression_elements';
@@ -19194,15 +20858,13 @@ export namespace ReferenceExpressionRawConst {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			value(value: NonNullable<T.Expression | T.ReservedIdentifier.Types>): T.ReferenceExpressionRawConst.Built;
+			value(value: NonNullable<T.Expression>): T.ReferenceExpressionRawConst.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ReferenceExpressionRawConst>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ReferenceExpressionRawConst>;
-	export type BuildArgs = [value: T.Expression | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.ReferenceExpressionRawConst>;
 	export type Kind = 'reference_expression_raw_const';
 }
@@ -19212,15 +20874,13 @@ export namespace ReferenceExpressionRawMut {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			value(value: NonNullable<T.Expression | T.ReservedIdentifier.Types>): T.ReferenceExpressionRawMut.Built;
+			value(value: NonNullable<T.Expression>): T.ReferenceExpressionRawMut.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ReferenceExpressionRawMut>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ReferenceExpressionRawMut>;
-	export type BuildArgs = [value: T.Expression | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.ReferenceExpressionRawMut>;
 	export type Kind = 'reference_expression_raw_mut';
 }
@@ -19230,15 +20890,13 @@ export namespace ReferenceExpressionMut {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			value(value: NonNullable<T.Expression | T.ReservedIdentifier.Types>): T.ReferenceExpressionMut.Built;
+			value(value: NonNullable<T.Expression>): T.ReferenceExpressionMut.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ReferenceExpressionMut>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ReferenceExpressionMut>;
-	export type BuildArgs = [value: T.Expression | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.ReferenceExpressionMut>;
 	export type Kind = 'reference_expression_mut';
 }
@@ -19248,15 +20906,13 @@ export namespace ReferenceExpressionBare {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			value(value: NonNullable<T.Expression | T.ReservedIdentifier.Types>): T.ReferenceExpressionBare.Built;
+			value(value: NonNullable<T.Expression>): T.ReferenceExpressionBare.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ReferenceExpressionBare>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ReferenceExpressionBare>;
-	export type BuildArgs = [value: T.Expression | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.ReferenceExpressionBare>;
 	export type Kind = 'reference_expression_bare';
 }
@@ -19381,16 +21037,32 @@ export namespace VisibilityModifierPubInPath {
 		readonly $with: {
 			path(
 				value: NonNullable<
-					| (
-							| TSKindId.Self
-							| T.Identifier
-							| T.Metavariable
-							| TSKindId.Super
-							| TSKindId.Crate
-							| T.ScopedIdentifier
-							| T.ReservedIdentifier
-					  )
-					| T.ReservedIdentifier.Types
+					| TSKindId.Self
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| T.Metavariable
+					| TSKindId.Super
+					| TSKindId.Crate
+					| T.Identifier
+					| T.ScopedIdentifier
+					| TSKindId.DefaultKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.GenKeyword
 				>
 			): T.VisibilityModifierPubInPath.Built;
 		};
@@ -19399,29 +21071,61 @@ export namespace VisibilityModifierPubInPath {
 	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPubInPath>;
 	export type BuildArgs = [
 		value:
-			| (
-					| TSKindId.Self
-					| T.Identifier
-					| T.Metavariable
-					| TSKindId.Super
-					| TSKindId.Crate
-					| T.ScopedIdentifier
-					| T.ReservedIdentifier
-			  )
-			| T.ReservedIdentifier.Types
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
 	];
 	export type LooseArgs = [
 		value: LooseValue<
-			| (
-					| TSKindId.Self
-					| T.Identifier
-					| T.Metavariable
-					| TSKindId.Super
-					| TSKindId.Crate
-					| T.ScopedIdentifier
-					| T.ReservedIdentifier
-			  )
-			| T.ReservedIdentifier.Types,
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -19533,15 +21237,13 @@ export namespace OrPatternPrefix {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			right(value: NonNullable<T.Pattern | T.ReservedIdentifier.Types>): T.OrPatternPrefix.Built;
+			right(value: NonNullable<T.Pattern>): T.OrPatternPrefix.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.OrPatternPrefix>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OrPatternPrefix>;
-	export type BuildArgs = [value: T.Pattern | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value: LooseValue<T.Pattern | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Pattern];
+	export type LooseArgs = [value: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.OrPatternPrefix>;
 	export type Kind = 'or_pattern_prefix';
 }
@@ -19609,15 +21311,13 @@ export namespace RangeExpressionPostfix {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			start(value: NonNullable<T.Expression | T.ReservedIdentifier.Types>): T.RangeExpressionPostfix.Built;
+			start(value: NonNullable<T.Expression>): T.RangeExpressionPostfix.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.RangeExpressionPostfix>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RangeExpressionPostfix>;
-	export type BuildArgs = [value: T.Expression | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.RangeExpressionPostfix>;
 	export type Kind = 'range_expression_postfix';
 }
@@ -19627,15 +21327,13 @@ export namespace RangeExpressionPrefix {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			end(value: NonNullable<T.Expression | T.ReservedIdentifier.Types>): T.RangeExpressionPrefix.Built;
+			end(value: NonNullable<T.Expression>): T.RangeExpressionPrefix.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.RangeExpressionPrefix>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RangeExpressionPrefix>;
-	export type BuildArgs = [value: T.Expression | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.RangeExpressionPrefix>;
 	export type Kind = 'range_expression_prefix';
 }
@@ -19645,15 +21343,13 @@ export namespace ExpressionStatementWithSemi {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			expression(value: NonNullable<T.Expression | T.ReservedIdentifier.Types>): T.ExpressionStatementWithSemi.Built;
+			expression(value: NonNullable<T.Expression>): T.ExpressionStatementWithSemi.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ExpressionStatementWithSemi>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionStatementWithSemi>;
-	export type BuildArgs = [value: T.Expression | T.ReservedIdentifier.Types];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.ReservedIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.ExpressionStatementWithSemi>;
 	export type Kind = 'expression_statement_with_semi';
 }
@@ -20139,7 +21835,7 @@ export namespace MacroDefinitionParen {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			name(value: T.Identifier | T.ReservedIdentifier | T.ReservedIdentifier.Types): T.MacroDefinitionParen.Built;
+			name(value: NonNullable<T.MacroDefinitionParen.Config>['name']): T.MacroDefinitionParen.Built;
 			macroRules(value?: T.MacroRules): T.MacroDefinitionParen.Built;
 		};
 	}
@@ -20160,7 +21856,7 @@ export namespace MacroDefinitionBracket {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			name(value: T.Identifier | T.ReservedIdentifier | T.ReservedIdentifier.Types): T.MacroDefinitionBracket.Built;
+			name(value: NonNullable<T.MacroDefinitionBracket.Config>['name']): T.MacroDefinitionBracket.Built;
 			macroRules(value?: T.MacroRules): T.MacroDefinitionBracket.Built;
 		};
 	}
@@ -20181,7 +21877,7 @@ export namespace MacroDefinitionBrace {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			name(value: T.Identifier | T.ReservedIdentifier | T.ReservedIdentifier.Types): T.MacroDefinitionBrace.Built;
+			name(value: NonNullable<T.MacroDefinitionBrace.Config>['name']): T.MacroDefinitionBrace.Built;
 			macroRules(value?: T.MacroRules): T.MacroDefinitionBrace.Built;
 		};
 	}
@@ -20492,32 +22188,6 @@ export namespace MatchBlockArms {
 	export type Tree = TreeFor<TSKindId.MatchBlockArms>;
 	export type Kind = '_match_block_arms';
 }
-export namespace ReservedIdentifier {
-	export type Config = ConfigFor<TSKindId._ReservedIdentifier>;
-	export type Types = TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
-	export interface Built extends T.ReservedIdentifier, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(
-				value: NonNullable<TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
-			): T.ReservedIdentifier.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId._ReservedIdentifier>;
-	export type LooseConfig = LooseConfigFor<TSKindId._ReservedIdentifier>;
-	export type BuildArgs = [value: TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword];
-	export type LooseArgs = [
-		value: LooseValue<
-			TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
-	export type Tree = TreeFor<TSKindId._ReservedIdentifier>;
-	export type Kind = 'reserved_identifier';
-}
 export namespace TypeIdentifier {
 	export type Config = ConfigFor<TSKindId._TypeIdentifier>;
 	export type Types = Identifier;
@@ -20778,6 +22448,206 @@ export namespace RangePatternWithLeftBare {
 	export type LooseArgs = RangePatternWithLeftBareNs['LooseArgs'];
 	export type Tree = RangePatternWithLeftBareNs['Tree'];
 	export type Kind = 'range_pattern_with_left_bare';
+}
+export namespace U8Keyword {
+	export type Config = U8KeywordNs['Config'];
+	export type Built = U8KeywordNs['Built'];
+	export type Loose = U8KeywordNs['Loose'];
+	export type LooseConfig = U8KeywordNs['LooseConfig'];
+	export type BuildArgs = U8KeywordNs['BuildArgs'];
+	export type LooseArgs = U8KeywordNs['LooseArgs'];
+	export type Tree = U8KeywordNs['Tree'];
+	export type Kind = 'u8_keyword';
+}
+export namespace I8Keyword {
+	export type Config = I8KeywordNs['Config'];
+	export type Built = I8KeywordNs['Built'];
+	export type Loose = I8KeywordNs['Loose'];
+	export type LooseConfig = I8KeywordNs['LooseConfig'];
+	export type BuildArgs = I8KeywordNs['BuildArgs'];
+	export type LooseArgs = I8KeywordNs['LooseArgs'];
+	export type Tree = I8KeywordNs['Tree'];
+	export type Kind = 'i8_keyword';
+}
+export namespace U16Keyword {
+	export type Config = U16KeywordNs['Config'];
+	export type Built = U16KeywordNs['Built'];
+	export type Loose = U16KeywordNs['Loose'];
+	export type LooseConfig = U16KeywordNs['LooseConfig'];
+	export type BuildArgs = U16KeywordNs['BuildArgs'];
+	export type LooseArgs = U16KeywordNs['LooseArgs'];
+	export type Tree = U16KeywordNs['Tree'];
+	export type Kind = 'u16_keyword';
+}
+export namespace I16Keyword {
+	export type Config = I16KeywordNs['Config'];
+	export type Built = I16KeywordNs['Built'];
+	export type Loose = I16KeywordNs['Loose'];
+	export type LooseConfig = I16KeywordNs['LooseConfig'];
+	export type BuildArgs = I16KeywordNs['BuildArgs'];
+	export type LooseArgs = I16KeywordNs['LooseArgs'];
+	export type Tree = I16KeywordNs['Tree'];
+	export type Kind = 'i16_keyword';
+}
+export namespace U32Keyword {
+	export type Config = U32KeywordNs['Config'];
+	export type Built = U32KeywordNs['Built'];
+	export type Loose = U32KeywordNs['Loose'];
+	export type LooseConfig = U32KeywordNs['LooseConfig'];
+	export type BuildArgs = U32KeywordNs['BuildArgs'];
+	export type LooseArgs = U32KeywordNs['LooseArgs'];
+	export type Tree = U32KeywordNs['Tree'];
+	export type Kind = 'u32_keyword';
+}
+export namespace I32Keyword {
+	export type Config = I32KeywordNs['Config'];
+	export type Built = I32KeywordNs['Built'];
+	export type Loose = I32KeywordNs['Loose'];
+	export type LooseConfig = I32KeywordNs['LooseConfig'];
+	export type BuildArgs = I32KeywordNs['BuildArgs'];
+	export type LooseArgs = I32KeywordNs['LooseArgs'];
+	export type Tree = I32KeywordNs['Tree'];
+	export type Kind = 'i32_keyword';
+}
+export namespace U64Keyword {
+	export type Config = U64KeywordNs['Config'];
+	export type Built = U64KeywordNs['Built'];
+	export type Loose = U64KeywordNs['Loose'];
+	export type LooseConfig = U64KeywordNs['LooseConfig'];
+	export type BuildArgs = U64KeywordNs['BuildArgs'];
+	export type LooseArgs = U64KeywordNs['LooseArgs'];
+	export type Tree = U64KeywordNs['Tree'];
+	export type Kind = 'u64_keyword';
+}
+export namespace I64Keyword {
+	export type Config = I64KeywordNs['Config'];
+	export type Built = I64KeywordNs['Built'];
+	export type Loose = I64KeywordNs['Loose'];
+	export type LooseConfig = I64KeywordNs['LooseConfig'];
+	export type BuildArgs = I64KeywordNs['BuildArgs'];
+	export type LooseArgs = I64KeywordNs['LooseArgs'];
+	export type Tree = I64KeywordNs['Tree'];
+	export type Kind = 'i64_keyword';
+}
+export namespace U128Keyword {
+	export type Config = U128KeywordNs['Config'];
+	export type Built = U128KeywordNs['Built'];
+	export type Loose = U128KeywordNs['Loose'];
+	export type LooseConfig = U128KeywordNs['LooseConfig'];
+	export type BuildArgs = U128KeywordNs['BuildArgs'];
+	export type LooseArgs = U128KeywordNs['LooseArgs'];
+	export type Tree = U128KeywordNs['Tree'];
+	export type Kind = 'u128_keyword';
+}
+export namespace I128Keyword {
+	export type Config = I128KeywordNs['Config'];
+	export type Built = I128KeywordNs['Built'];
+	export type Loose = I128KeywordNs['Loose'];
+	export type LooseConfig = I128KeywordNs['LooseConfig'];
+	export type BuildArgs = I128KeywordNs['BuildArgs'];
+	export type LooseArgs = I128KeywordNs['LooseArgs'];
+	export type Tree = I128KeywordNs['Tree'];
+	export type Kind = 'i128_keyword';
+}
+export namespace IsizeKeyword {
+	export type Config = IsizeKeywordNs['Config'];
+	export type Built = IsizeKeywordNs['Built'];
+	export type Loose = IsizeKeywordNs['Loose'];
+	export type LooseConfig = IsizeKeywordNs['LooseConfig'];
+	export type BuildArgs = IsizeKeywordNs['BuildArgs'];
+	export type LooseArgs = IsizeKeywordNs['LooseArgs'];
+	export type Tree = IsizeKeywordNs['Tree'];
+	export type Kind = 'isize_keyword';
+}
+export namespace UsizeKeyword {
+	export type Config = UsizeKeywordNs['Config'];
+	export type Built = UsizeKeywordNs['Built'];
+	export type Loose = UsizeKeywordNs['Loose'];
+	export type LooseConfig = UsizeKeywordNs['LooseConfig'];
+	export type BuildArgs = UsizeKeywordNs['BuildArgs'];
+	export type LooseArgs = UsizeKeywordNs['LooseArgs'];
+	export type Tree = UsizeKeywordNs['Tree'];
+	export type Kind = 'usize_keyword';
+}
+export namespace F32Keyword {
+	export type Config = F32KeywordNs['Config'];
+	export type Built = F32KeywordNs['Built'];
+	export type Loose = F32KeywordNs['Loose'];
+	export type LooseConfig = F32KeywordNs['LooseConfig'];
+	export type BuildArgs = F32KeywordNs['BuildArgs'];
+	export type LooseArgs = F32KeywordNs['LooseArgs'];
+	export type Tree = F32KeywordNs['Tree'];
+	export type Kind = 'f32_keyword';
+}
+export namespace F64Keyword {
+	export type Config = F64KeywordNs['Config'];
+	export type Built = F64KeywordNs['Built'];
+	export type Loose = F64KeywordNs['Loose'];
+	export type LooseConfig = F64KeywordNs['LooseConfig'];
+	export type BuildArgs = F64KeywordNs['BuildArgs'];
+	export type LooseArgs = F64KeywordNs['LooseArgs'];
+	export type Tree = F64KeywordNs['Tree'];
+	export type Kind = 'f64_keyword';
+}
+export namespace BoolKeyword {
+	export type Config = BoolKeywordNs['Config'];
+	export type Built = BoolKeywordNs['Built'];
+	export type Loose = BoolKeywordNs['Loose'];
+	export type LooseConfig = BoolKeywordNs['LooseConfig'];
+	export type BuildArgs = BoolKeywordNs['BuildArgs'];
+	export type LooseArgs = BoolKeywordNs['LooseArgs'];
+	export type Tree = BoolKeywordNs['Tree'];
+	export type Kind = 'bool_keyword';
+}
+export namespace StrKeyword {
+	export type Config = StrKeywordNs['Config'];
+	export type Built = StrKeywordNs['Built'];
+	export type Loose = StrKeywordNs['Loose'];
+	export type LooseConfig = StrKeywordNs['LooseConfig'];
+	export type BuildArgs = StrKeywordNs['BuildArgs'];
+	export type LooseArgs = StrKeywordNs['LooseArgs'];
+	export type Tree = StrKeywordNs['Tree'];
+	export type Kind = 'str_keyword';
+}
+export namespace CharKeyword {
+	export type Config = CharKeywordNs['Config'];
+	export type Built = CharKeywordNs['Built'];
+	export type Loose = CharKeywordNs['Loose'];
+	export type LooseConfig = CharKeywordNs['LooseConfig'];
+	export type BuildArgs = CharKeywordNs['BuildArgs'];
+	export type LooseArgs = CharKeywordNs['LooseArgs'];
+	export type Tree = CharKeywordNs['Tree'];
+	export type Kind = 'char_keyword';
+}
+export namespace DefaultKeyword {
+	export type Config = DefaultKeywordNs['Config'];
+	export type Built = DefaultKeywordNs['Built'];
+	export type Loose = DefaultKeywordNs['Loose'];
+	export type LooseConfig = DefaultKeywordNs['LooseConfig'];
+	export type BuildArgs = DefaultKeywordNs['BuildArgs'];
+	export type LooseArgs = DefaultKeywordNs['LooseArgs'];
+	export type Tree = DefaultKeywordNs['Tree'];
+	export type Kind = 'default_keyword';
+}
+export namespace UnionKeyword {
+	export type Config = UnionKeywordNs['Config'];
+	export type Built = UnionKeywordNs['Built'];
+	export type Loose = UnionKeywordNs['Loose'];
+	export type LooseConfig = UnionKeywordNs['LooseConfig'];
+	export type BuildArgs = UnionKeywordNs['BuildArgs'];
+	export type LooseArgs = UnionKeywordNs['LooseArgs'];
+	export type Tree = UnionKeywordNs['Tree'];
+	export type Kind = 'union_keyword';
+}
+export namespace GenKeyword {
+	export type Config = GenKeywordNs['Config'];
+	export type Built = GenKeywordNs['Built'];
+	export type Loose = GenKeywordNs['Loose'];
+	export type LooseConfig = GenKeywordNs['LooseConfig'];
+	export type BuildArgs = GenKeywordNs['BuildArgs'];
+	export type LooseArgs = GenKeywordNs['LooseArgs'];
+	export type Tree = GenKeywordNs['Tree'];
+	export type Kind = 'gen_keyword';
 }
 export namespace Identifier {
 	export type Config = IdentifierNs['Config'];

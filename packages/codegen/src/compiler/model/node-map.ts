@@ -1297,22 +1297,30 @@ export function resolveSlotAliasPairs(
 	slot: { values: readonly NodeOrTerminal[] },
 	ctx: SlotAliasPairsCtx
 ): readonly (readonly [string, string])[] | undefined {
-	const byParseName = new Map<string, string>();
+	const candidates: (readonly [string, string])[] = [];
+	const ownStorages = new Set<string>();
 	for (const value of slot.values) {
 		if (!isNodeRef(value)) continue;
 		const parseKind = value.parseKind?.name;
 		const sourceKind = storageKindOfRef(value.node);
-		if (parseKind === undefined || parseKind === sourceKind) continue;
-		if (!aliasRestampRequired(value.parseKindId, value.storageKindId)) continue;
-		byParseName.set(parseKind, sourceKind);
+		if (parseKind === undefined || parseKind === sourceKind) {
+			ownStorages.add(sourceKind);
+			continue;
+		}
+		if (aliasRestampRequired(value.parseKindId, value.storageKindId)) candidates.push([parseKind, sourceKind]);
 	}
-	const pairs: (readonly [string, string])[] = [...byParseName.entries()];
 	for (const parseKind of valueParseKindsOf(slot)) {
 		const normalized = parseKind.startsWith('_') ? parseKind.slice(1) : parseKind;
 		const node = ctx.nodes.get(parseKind) ?? ctx.nodes.get(normalized);
-		if (node?.subtypeRestampPairs === undefined) continue;
-		for (const pair of node.subtypeRestampPairs ?? []) pairs.push(pair);
+		candidates.push(...(node?.subtypeRestampPairs ?? []));
 	}
+	const storagesByParseName = new Map<string, Set<string>>();
+	for (const [parseKind, storage] of candidates) {
+		storagesByParseName.set(parseKind, (storagesByParseName.get(parseKind) ?? new Set<string>()).add(storage));
+	}
+	const pairs = [...storagesByParseName].flatMap(([parseKind, storages]) =>
+		storages.size === 1 && !ownStorages.has(parseKind) ? [[parseKind, [...storages][0]!] as const] : []
+	);
 	return pairs.length > 0 ? pairs : undefined;
 }
 
@@ -1939,7 +1947,7 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 		const resolved: string[] = [];
 		const resolvedIds: number[] = [];
 		const byText = new Map<string, { kind: string; id: number }>();
-		for (const member of rule.members) {
+		for (const member of this.literalMembers) {
 			const text = literalTextOf(member);
 			if (text === undefined) continue;
 			const entry =
@@ -1960,8 +1968,14 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 		}
 	}
 
+	get literalMembers(): readonly RenderRule[] {
+		const flatten = (member: RenderRule): readonly RenderRule[] =>
+			member.type === CHOICE ? member.members.flatMap(flatten) : [member];
+		return this.rule.members.flatMap(flatten);
+	}
+
 	get values(): string[] {
-		return [...new Set(this.rule.members.map((m) => literalTextOf(m) ?? '').filter(Boolean))];
+		return [...new Set(this.literalMembers.map((m) => literalTextOf(m) ?? '').filter(Boolean))];
 	}
 
 	override get storage(): KindStorage {
@@ -1989,6 +2003,7 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 	}
 	readonly #subtypes: readonly NodeOrTerminal[];
 	transitiveParseKinds?: readonly NodeOrTerminal[];
+	optionDefaultArm?: string;
 
 	constructor(kind: string, rule: SupertypeRule | ChoiceRule, subtypes: readonly SubtypeRef[]) {
 		super(kind, rule, { hidden: true });

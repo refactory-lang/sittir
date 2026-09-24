@@ -778,7 +778,6 @@ export interface GenericTypeTransport {
   '$_trivia'?: TransportTrivia
   _name: SlotValue<GenericTypeNameTransportSlot>
   _type_parameter: SlotValue<TypeParameterTransport>
-  _type_keyword_after?: number
   _generic_type_before?: number
   _generic_type_after?: number
 }
@@ -886,12 +885,17 @@ export interface KeyValuePatternTransport {
 
 export interface KeywordArgumentTransport {
   '$_trivia'?: TransportTrivia
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<KeywordArgumentNameTransportSlot>
   _value: SlotValue<ExpressionTransport>
   _eq_before?: number
   _eq_after?: number
   _keyword_argument_before?: number
   _keyword_argument_after?: number
+}
+
+export interface KeywordIdentifierTransport {
+  '$_trivia'?: TransportTrivia
+  _identifier: string
 }
 
 export interface KeywordPatternTransport {
@@ -968,7 +972,7 @@ export interface ListSplatPatternTransport {
 
 export interface ListSplatTransport {
   '$_trivia'?: TransportTrivia
-  _expression: SlotValue<Box<ExpressionTransport>>
+  _expression: SlotValue<ExpressionTransport>
   _star_after?: number
   _list_splat_before?: number
   _list_splat_after?: number
@@ -1025,7 +1029,7 @@ export interface ModuleTransport {
 
 export interface NamedExpressionTransport {
   '$_trivia'?: TransportTrivia
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<NamedExpressionNameTransportSlot>
   _value: SlotValue<Box<ExpressionTransport>>
   _colon_eq_before?: number
   _colon_eq_after?: number

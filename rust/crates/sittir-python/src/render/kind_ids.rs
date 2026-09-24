@@ -496,7 +496,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         148 => "elif_clause", // "elif_clause"
         149 => "else_clause", // "else_clause"
         150 => "match_statement", // "match_statement"
-        151 => "block", // "_match_block"
+        151 => "match_block", // "_match_block"
         152 => "case_clause", // "case_clause"
         153 => "for_statement", // "for_statement"
         154 => "while_statement", // "while_statement"

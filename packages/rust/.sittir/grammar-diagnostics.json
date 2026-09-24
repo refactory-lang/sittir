@@ -66,30 +66,13 @@
     }
   },
   {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "rust",
-    "ownerKind": "_reserved_identifier",
-    "message": "[assemble] typeName collision: kind '_reserved_identifier' renamed 'ReservedIdentifier' → '_ReservedIdentifier' (visible sibling(s): 'reserved_identifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "ReservedIdentifier",
-      "newType": "_ReservedIdentifier",
-      "visibleKinds": [
-        "reserved_identifier"
-      ]
-    }
-  },
-  {
     "code": "kindid-unstamped-symbols",
-    "message": "3 referenced kind(s) resolved no parser kindId",
+    "message": "2 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "_compound_assignment_expr_operator",
-        "_declaration_statement",
-        "_reserved_identifier"
+        "_declaration_statement"
       ]
     },
     "severity": "warning",
@@ -117,13 +100,12 @@
   },
   {
     "code": "kindid-inline-excluded-symbols",
-    "message": "2 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "1 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "kinds": [
-        "_declaration_statement",
-        "_reserved_identifier"
+        "_declaration_statement"
       ]
     },
     "scope": "grammar",

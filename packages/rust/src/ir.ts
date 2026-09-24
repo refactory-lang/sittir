@@ -233,10 +233,10 @@ export const nonSpecialToken: {
 
 export const useClause: {
 	readonly self: typeof F.buildSelf;
-	readonly identifier: typeof F.buildIdentifier;
 	readonly metavariable: typeof F.metavariable;
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
+	readonly identifier: typeof F.buildIdentifier;
 	readonly scopedIdentifier: typeof F.scopedIdentifier;
 	readonly as: typeof F.useAsClause;
 	readonly list: typeof F.useList;
@@ -244,10 +244,10 @@ export const useClause: {
 	readonly wildcard: typeof F.useWildcard;
 } = {
 	self: F.buildSelf,
-	identifier: F.buildIdentifier,
 	metavariable: F.metavariable,
 	super: F.buildSuper,
 	crate: F.buildCrate,
+	identifier: F.buildIdentifier,
 	scopedIdentifier: F.scopedIdentifier,
 	as: F.useAsClause,
 	list: F.useList,
@@ -721,17 +721,17 @@ export const literalPattern: {
 
 export const path: {
 	readonly self: typeof F.buildSelf;
-	readonly identifier: typeof F.buildIdentifier;
 	readonly metavariable: typeof F.metavariable;
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
+	readonly identifier: typeof F.buildIdentifier;
 	readonly scopedIdentifier: typeof F.scopedIdentifier;
 } = {
 	self: F.buildSelf,
-	identifier: F.buildIdentifier,
 	metavariable: F.metavariable,
 	super: F.buildSuper,
 	crate: F.buildCrate,
+	identifier: F.buildIdentifier,
 	scopedIdentifier: F.scopedIdentifier
 };
 
@@ -741,7 +741,6 @@ export const ir: {
 	readonly macroRule: typeof F.macroRule;
 	readonly tokenBindingPattern: typeof F.tokenBindingPattern;
 	readonly tokenRepetitionPattern: typeof F.tokenRepetitionPattern;
-	readonly tokenTree: typeof F.tokenTree;
 	readonly tokenRepetition: typeof F.tokenRepetition;
 	readonly attributeItem: typeof F.attributeItem;
 	readonly innerAttributeItem: typeof F.innerAttributeItem;
@@ -885,6 +884,7 @@ export const ir: {
 	readonly tupleExpressionElements: typeof F.tupleExpressionElements;
 	readonly macroDefinition: typeof F.macroDefinition;
 	readonly tokenTreePattern: typeof F.tokenTreePattern;
+	readonly tokenTree: typeof F.tokenTree;
 	readonly modItem: typeof F.modItem;
 	readonly foreignModItem: typeof F.foreignModItem;
 	readonly structItem: typeof F.structItem;
@@ -1010,7 +1010,6 @@ export const ir: {
 	macroRule: F.macroRule,
 	tokenBindingPattern: F.tokenBindingPattern,
 	tokenRepetitionPattern: F.tokenRepetitionPattern,
-	tokenTree: F.tokenTree,
 	tokenRepetition: F.tokenRepetition,
 	attributeItem: F.attributeItem,
 	innerAttributeItem: F.innerAttributeItem,
@@ -1154,6 +1153,7 @@ export const ir: {
 	tupleExpressionElements: F.tupleExpressionElements,
 	macroDefinition: F.macroDefinition,
 	tokenTreePattern: F.tokenTreePattern,
+	tokenTree: F.tokenTree,
 	modItem: F.modItem,
 	foreignModItem: F.foreignModItem,
 	structItem: F.structItem,

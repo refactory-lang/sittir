@@ -1590,17 +1590,11 @@ function emitSupertypeTransportEnum(
 				emittedIds.add(aliasId);
 				arms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'self-alias', selfAliasLeafTrials));
 			}
-			for (const { subKind, subNode } of kindIdStoredFirst(validSubtypes, (s) => s.subNode)) {
+			const members = kindIdStoredFirst(validSubtypes, (s) => s.subNode).map(({ subKind, subNode }) => {
 				const variant = rustTypeIdent(subNode.typeName);
-				const typeName = rustTransportStructName(subNode);
-				const acceptedIds = resolveAcceptedTransportIds({
-					kind: subKind,
-					node: subNode,
-					nodeMap,
-					kindIdByKind,
-					kindEntries,
-					parseName: parseNames.get(subKind)
-				});
+				const idsOf = (parseName: string | undefined): number[] =>
+					resolveAcceptedTransportIds({ kind: subKind, node: subNode, nodeMap, kindIdByKind, kindEntries, parseName });
+				const acceptedIds = idsOf(parseNames.get(subKind));
 				assertRoutableTransportIds(
 					acceptedIds,
 					subKind,
@@ -1609,21 +1603,25 @@ function emitSupertypeTransportEnum(
 					`under supertype '${ownerKind}'`,
 					kindEntries
 				);
-				const boxed = isBoxed(subKind, subNode);
-				for (const id of acceptedIds) {
+				return { variant, typeName: rustTransportStructName(subNode), boxed: isBoxed(subKind, subNode), ownIds: idsOf(undefined), acceptedIds };
+			});
+			const claim = (member: (typeof members)[number], ids: readonly number[]): void => {
+				for (const id of ids) {
 					if (emittedIds.has(id)) continue;
 					emittedIds.add(id);
-					if (boxed) {
-						arms.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
-						arms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
+					if (member.boxed) {
+						arms.push(`                ${id} => Ok(Self::${member.variant}(Box::new(`);
+						arms.push(`                    ${member.typeName}::from_napi_value(env, napi_val)?`);
 						arms.push(`                ))),`);
 					} else {
-						arms.push(`                ${id} => Ok(Self::${variant}(`);
-						arms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
+						arms.push(`                ${id} => Ok(Self::${member.variant}(`);
+						arms.push(`                    ${member.typeName}::from_napi_value(env, napi_val)?`);
 						arms.push(`                )),`);
 					}
 				}
-			}
+			};
+			for (const member of members) claim(member, member.ownIds);
+			for (const member of members) claim(member, member.acceptedIds);
 			arms.push(`                other => Err(::napi::Error::from_reason(format!(`);
 			arms.push(`                    "unknown kind id {other} in ${enumName}",`);
 			arms.push(`                ))),`);

@@ -265,8 +265,6 @@ export interface AddressBranch {
 		| 'call_expression_member'
 		| 'call_expression_template_call'
 		| 'class'
-		| 'decorator_call_expression'
-		| 'decorator_member_expression'
 		| 'end'
 		| 'function_expression'
 		| 'generator_function'
@@ -303,8 +301,6 @@ export interface AddressBranch {
 	readonly 'arguments/arguments/call_expression_member': 'after';
 	readonly 'arguments/arguments/call_expression_template_call': 'after';
 	readonly 'arguments/arguments/class': 'after';
-	readonly 'arguments/arguments/decorator_call_expression': 'after';
-	readonly 'arguments/arguments/decorator_member_expression': 'after';
 	readonly 'arguments/arguments/function_expression': 'after';
 	readonly 'arguments/arguments/generator_function': 'after';
 	readonly 'arguments/arguments/instantiation_expression': 'after';
@@ -344,8 +340,6 @@ export interface AddressBranch {
 		| 'call_expression_member'
 		| 'call_expression_template_call'
 		| 'class'
-		| 'decorator_call_expression'
-		| 'decorator_member_expression'
 		| 'end'
 		| 'function_expression'
 		| 'generator_function'
@@ -382,8 +376,6 @@ export interface AddressBranch {
 	readonly 'array/elements/call_expression_member': 'after';
 	readonly 'array/elements/call_expression_template_call': 'after';
 	readonly 'array/elements/class': 'after';
-	readonly 'array/elements/decorator_call_expression': 'after';
-	readonly 'array/elements/decorator_member_expression': 'after';
 	readonly 'array/elements/function_expression': 'after';
 	readonly 'array/elements/generator_function': 'after';
 	readonly 'array/elements/instantiation_expression': 'after';
@@ -799,8 +791,7 @@ export interface AddressBranch {
 	readonly 'import_alias/semi': 'before';
 	readonly import_attribute: 'after' | 'attribute_kind' | 'before';
 	readonly 'import_attribute/attribute_kind': 'after';
-	readonly import_clause_default_import: 'after' | 'before' | 'type_keyword';
-	readonly 'import_clause_default_import/type_keyword': 'after';
+	readonly import_clause_default_import: 'after' | 'before';
 	readonly import_clause_group: 'after' | 'before' | 'comma';
 	readonly 'import_clause_group/comma': 'after';
 	readonly import_require_clause: 'after' | 'before' | 'eq' | 'lparen' | 'require_keyword' | 'rparen';
@@ -810,10 +801,10 @@ export interface AddressBranch {
 	readonly 'import_require_clause/rparen': 'before';
 	readonly import_specifier_as: 'after' | 'as_keyword' | 'before' | 'type_keyword' | 'typeof_keyword';
 	readonly 'import_specifier_as/as_keyword': 'after' | 'before';
-	readonly 'import_specifier_as/type_keyword': 'after' | 'before';
+	readonly 'import_specifier_as/type_keyword': 'after';
 	readonly 'import_specifier_as/typeof_keyword': 'after';
 	readonly import_specifier_name: 'after' | 'before' | 'type_keyword' | 'typeof_keyword';
-	readonly 'import_specifier_name/type_keyword': 'after' | 'before';
+	readonly 'import_specifier_name/type_keyword': 'after';
 	readonly 'import_specifier_name/typeof_keyword': 'after';
 	readonly import_specifiers: 'after' | 'before' | 'import_specifier';
 	readonly 'import_specifiers/import_specifier':
@@ -1199,8 +1190,6 @@ export interface AddressBranch {
 		| 'call_expression_member'
 		| 'call_expression_template_call'
 		| 'class'
-		| 'decorator_call_expression'
-		| 'decorator_member_expression'
 		| 'end'
 		| 'function_expression'
 		| 'generator_function'
@@ -1236,8 +1225,6 @@ export interface AddressBranch {
 	readonly 'sequence_expression/expression/call_expression_member': 'after';
 	readonly 'sequence_expression/expression/call_expression_template_call': 'after';
 	readonly 'sequence_expression/expression/class': 'after';
-	readonly 'sequence_expression/expression/decorator_call_expression': 'after';
-	readonly 'sequence_expression/expression/decorator_member_expression': 'after';
 	readonly 'sequence_expression/expression/function_expression': 'after';
 	readonly 'sequence_expression/expression/generator_function': 'after';
 	readonly 'sequence_expression/expression/instantiation_expression': 'after';
@@ -1344,7 +1331,7 @@ export interface AddressBranch {
 	readonly 'statement_block/statements/while_statement': 'after';
 	readonly 'statement_block/statements/with_statement': 'after';
 	readonly statements: 'terminator';
-	readonly string: 'content';
+	readonly string: 'variant';
 	readonly string_double: 'after' | 'before';
 	readonly string_single: 'after' | 'before';
 	readonly subscript_expression: 'after' | 'before' | 'lbrack' | 'qmark_dot' | 'rbrack';
@@ -1784,8 +1771,6 @@ export interface AddressLeaf {
 	readonly 'arguments/arguments/call_expression_member/after': WhitespaceArm;
 	readonly 'arguments/arguments/call_expression_template_call/after': WhitespaceArm;
 	readonly 'arguments/arguments/class/after': WhitespaceArm;
-	readonly 'arguments/arguments/decorator_call_expression/after': WhitespaceArm;
-	readonly 'arguments/arguments/decorator_member_expression/after': WhitespaceArm;
 	readonly 'arguments/arguments/end': WhitespaceArm;
 	readonly 'arguments/arguments/function_expression/after': WhitespaceArm;
 	readonly 'arguments/arguments/generator_function/after': WhitespaceArm;
@@ -1828,8 +1813,6 @@ export interface AddressLeaf {
 	readonly 'array/elements/call_expression_member/after': WhitespaceArm;
 	readonly 'array/elements/call_expression_template_call/after': WhitespaceArm;
 	readonly 'array/elements/class/after': WhitespaceArm;
-	readonly 'array/elements/decorator_call_expression/after': WhitespaceArm;
-	readonly 'array/elements/decorator_member_expression/after': WhitespaceArm;
 	readonly 'array/elements/end': WhitespaceArm;
 	readonly 'array/elements/function_expression/after': WhitespaceArm;
 	readonly 'array/elements/generator_function/after': WhitespaceArm;
@@ -2348,7 +2331,6 @@ export interface AddressLeaf {
 	readonly 'import_attribute/before': WhitespaceArm;
 	readonly 'import_clause_default_import/after': WhitespaceArm;
 	readonly 'import_clause_default_import/before': WhitespaceArm;
-	readonly 'import_clause_default_import/type_keyword/after': WhitespaceArm;
 	readonly 'import_clause_group/after': WhitespaceArm;
 	readonly 'import_clause_group/before': WhitespaceArm;
 	readonly 'import_clause_group/comma/after': WhitespaceArm;
@@ -2366,12 +2348,10 @@ export interface AddressLeaf {
 	readonly 'import_specifier_as/as_keyword/before': WhitespaceArm;
 	readonly 'import_specifier_as/before': WhitespaceArm;
 	readonly 'import_specifier_as/type_keyword/after': WhitespaceArm;
-	readonly 'import_specifier_as/type_keyword/before': WhitespaceArm;
 	readonly 'import_specifier_as/typeof_keyword/after': WhitespaceArm;
 	readonly 'import_specifier_name/after': WhitespaceArm;
 	readonly 'import_specifier_name/before': WhitespaceArm;
 	readonly 'import_specifier_name/type_keyword/after': WhitespaceArm;
-	readonly 'import_specifier_name/type_keyword/before': WhitespaceArm;
 	readonly 'import_specifier_name/typeof_keyword/after': WhitespaceArm;
 	readonly 'import_specifiers/after': WhitespaceArm;
 	readonly 'import_specifiers/before': WhitespaceArm;
@@ -2774,8 +2754,6 @@ export interface AddressLeaf {
 	readonly 'sequence_expression/expression/call_expression_member/after': WhitespaceArm;
 	readonly 'sequence_expression/expression/call_expression_template_call/after': WhitespaceArm;
 	readonly 'sequence_expression/expression/class/after': WhitespaceArm;
-	readonly 'sequence_expression/expression/decorator_call_expression/after': WhitespaceArm;
-	readonly 'sequence_expression/expression/decorator_member_expression/after': WhitespaceArm;
 	readonly 'sequence_expression/expression/end': WhitespaceArm;
 	readonly 'sequence_expression/expression/function_expression/after': WhitespaceArm;
 	readonly 'sequence_expression/expression/generator_function/after': WhitespaceArm;
@@ -2854,7 +2832,7 @@ export interface AddressLeaf {
 		| TSKindId.Semi
 		| TSKindId.Comma
 		| TSKindId.FunctionSignatureAutomaticSemicolon;
-	readonly 'string/content': TSKindId.StringDouble | TSKindId.StringSingle;
+	readonly 'string/variant': TSKindId.StringDouble | TSKindId.StringSingle;
 	readonly 'string_double/after': WhitespaceArm;
 	readonly 'string_double/before': WhitespaceArm;
 	readonly 'string_single/after': WhitespaceArm;

@@ -440,23 +440,20 @@ describe('render options on transports', () => {
 
 
 describe('the typed sink replaces the mark-based Display path', () => {
-	it('accepts a token the parser shows as a nested member kind under the token id', async () => {
-		// rust shows the `default` keyword as an `identifier` over `_reserved_identifier`;
-		// an expression slot decodes that storage as `ReservedIdentifier`, whose
-		// content decodes `{ $type: <default>, $text }`.
+	it('decodes a keyword the parser shows as an identifier under the keyword id', async () => {
+		// rust aliases the `default` keyword to `identifier` through the inlined
+		// `_reserved_identifier`; the node's storage is the keyword itself, so an
+		// expression slot decodes the keyword's id straight to its own transport.
 		const transportRs = await getRustTemplatesRs();
-		const bodyOf = (impl: string): string => {
-			const from = transportRs.indexOf(`impl ::napi::bindgen_prelude::FromNapiValue for ${impl} {`);
-			expect(from, impl).toBeGreaterThan(-1);
-			return transportRs.slice(from, transportRs.indexOf('\n}\n', from));
-		};
+		const from = transportRs.indexOf('impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {');
+		expect(from).toBeGreaterThan(-1);
+		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
 		const tokenId = _rustKindEntries?.find((entry) => entry.literalText === 'default' || entry.symbolName === 'default')?.id;
-		const storageId = _rustKindEntries?.find((entry) => entry.kind === '_reserved_identifier')?.id;
 		expect(tokenId).toBeDefined();
-		expect(storageId).toBeDefined();
-		expect(bodyOf('ExpressionTransport')).toContain(`${storageId} => Ok(Self::ReservedIdentifier(`);
-		expect(bodyOf('ReservedIdentifierContentTransportSlot')).toContain(`${tokenId} =>`);
+		expect(_rustKindEntries?.some((entry) => entry.kind === '_reserved_identifier')).toBe(false);
+		expect(body).toContain(`${tokenId} => Ok(Self::DefaultKeyword(`);
 	});
+
 	it('classifies a rebuilt list from the gaps between its coordinates before the table fills it', async () => {
 		const transportRs = await getRustTemplatesRs();
 		const from = transportRs.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {');
@@ -536,8 +533,8 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(transportRs).toContain('pub struct VerbatimTransport {');
 		// FunctionItem.name admits identifier and metavariable, both pattern-modeled.
 		expect(transportRs).toMatch(/pub enum FunctionItemNameTransportSlot \{[^}]*Verbatim\(VerbatimTransport\),/s);
-		// TokenTree.content admits three envelopes and no pattern kind.
-		expect(transportRs).toMatch(/pub enum TokenTreeContentTransportSlot \{(?:(?!Verbatim)[^}])*\}/s);
+		// EnumVariant.body admits two field lists and no pattern kind.
+		expect(transportRs).toMatch(/pub enum EnumVariantBodyTransportSlot \{(?:(?!Verbatim)[^}])*\}/s);
 	});
 
 	it('binds a list view over site ids and writes a seam site as a call', async () => {

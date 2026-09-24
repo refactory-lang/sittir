@@ -729,6 +729,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // whose display `lambda` is the name the supertype graph knows).
 ```
 
+The wrapper is chosen by the kind being rendered when it is visible, else by the parse kind the fixture targets —
+never by stripping underscores, which can land on an unrelated kind (`_number` is not `number`).
+
 ### `packages/tools/src/validate/common.ts::WASM_PATHS`
 
 ```text

@@ -1654,11 +1654,6 @@ export interface RemovedTraitBoundTransport {
   _removed_trait_bound_after?: number
 }
 
-export interface ReservedIdentifierTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<Box<AnyTransport>>
-}
-
 export interface ReturnExpressionTransport {
   '$_trivia'?: TransportTrivia
   _expression?: SlotValue<Box<ExpressionTransport>>
@@ -1979,11 +1974,6 @@ export interface TokenTreePatternParenTransport {
   _rparen_before?: number
   _token_tree_pattern_paren_before?: number
   _token_tree_pattern_paren_after?: number
-}
-
-export interface TokenTreeTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<TokenTreeContentTransportSlot>
 }
 
 export interface TraitBoundsTransport {

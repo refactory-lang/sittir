@@ -36,7 +36,6 @@ import { isComplexBody, isNonInlinableLeafShape, isParserHiddenName } from '../d
 import { collectOrphanedRules } from '../util/reachable-rules.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
-import { ENRICH_UNALIAS_DIAGNOSTICS_KEY, getEnrichUnaliasDiagnostics } from '../dsl/enrich.ts';
 import type { WireContext, RefineForm } from '../dsl/wire/wire.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
@@ -401,15 +400,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined,
 		desugarDivergences: ctx.desugarDivergences.length > 0 ? [...ctx.desugarDivergences] : undefined
 	} satisfies RawGrammar;
-	const inheritedUnaliasDiagnostics = getEnrichUnaliasDiagnostics(optionsOrBase);
-	if (inheritedUnaliasDiagnostics.length > 0) {
-		Object.defineProperty(grammarResult, ENRICH_UNALIAS_DIAGNOSTICS_KEY, {
-			value: inheritedUnaliasDiagnostics,
-			enumerable: false,
-			writable: false,
-			configurable: true
-		});
-	}
 	return { grammar: grammarResult };
 }
 

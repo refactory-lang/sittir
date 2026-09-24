@@ -3353,6 +3353,12 @@ An `alias_sym` row is never claimed by an exact parser-name match: its
 parser name is `_<display>`, which collides with hidden rules and minted
 content unions of that name. The row resolves only through its display name.
 modelKindOfEntry (kind-discriminant.ts) is the inverse.
+
+The exclusion covers the exact-name step only: the symbol-name steps (3, 4)
+still return an alias row whose display string matches. A caller that must
+never land on another kind's row resolves through `findOwnKindEntry`
+(kind-discriminant.ts), which keeps this chain's answer only when its
+`modelKindOfEntry` is the requested kind.
 ```
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::findAnonEntryForLiteralText`
@@ -8767,17 +8773,6 @@ carried through a side channel.
 // declares no roles.
 ```
 
-#### body
-
-```text
-// Propagate enrich()'s un-aliasing diagnostics from the base grammar result
-// (the `optionsOrBase` first arg in extension mode) onto this evaluated
-// grammar, so the downgraded parsekind-noninjective diagnostics travel with
-// the grammar object `evaluate()` returns — read by run-codegen's diagnostics
-// preflight via getEnrichUnaliasDiagnostics — instead of a module-global
-// accumulator. Non-enumerable, matching enrich()'s own attachment.
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::appendCallbackMetadataNames`
 
 ```text
@@ -9453,8 +9448,7 @@ parser rule; only the sittir-side rule the model reads changes.
 // KEEPING the ALIAS wrapper — not reducing it to a bespoke stamped
 // symbol — whether its content is a clause-hoist/visible-group mint's
 // freshly-synthesized `_<name>` rule or an authored relabel of a
-// pre-existing rule (PR3's `applyUnaliasDistinct` retarget, e.g.
-// `_simple_statements` → `simple_statements`). Both are
+// pre-existing rule. Both are
 // `alias(symbol(_<name>), $<value>)` with no independent rule under
 // `<value>` — structurally indistinguishable — and the OLD special-case
 // here (`isClauseHoistVisibleGroupAlias`, retired) tried to tell them
@@ -10699,6 +10693,8 @@ second, id-suffixed fallback.
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::collectAnonymousNodes`
+
+A literal ref whose storage name is its literal text (`name === literal`, a distributed literal arm such as `u8` under rust's `primitive_type`) is resolved by that name through `findEntryForKindName`, never by its text: parser.c rewrites the catalog's `literalText`/`symbolName` of an aliased anonymous token to the alias's display name, so `findEntryForLiteralText` cannot find it. A SYMBOL whose name differs from its literal (a named keyword rule over a differently spelled token, `in_keyword`/`in`) is not a literal ref and is excluded.
 
 ```text
 // ---------------------------------------------------------------------------

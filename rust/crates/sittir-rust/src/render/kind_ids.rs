@@ -59,80 +59,80 @@ pub const COLON_COLON: KindId = KindId(48);
 pub const AS_KEYWORD: KindId = KindId(49);
 pub const DOT_DOT_DOT: KindId = KindId(50);
 pub const SQUOTE: KindId = KindId(51);
-pub const LT2: KindId = KindId(52);
-pub const AMP: KindId = KindId(53);
-pub const IMPL_KEYWORD: KindId = KindId(54);
-pub const DYN_KEYWORD: KindId = KindId(55);
-pub const MUTABLE_SPECIFIER: KindId = KindId(56);
-pub const U8_KEYWORD: KindId = KindId(57);
-pub const I8_KEYWORD: KindId = KindId(58);
-pub const U16_KEYWORD: KindId = KindId(59);
-pub const I16_KEYWORD: KindId = KindId(60);
-pub const U32_KEYWORD: KindId = KindId(61);
-pub const I32_KEYWORD: KindId = KindId(62);
-pub const U64_KEYWORD: KindId = KindId(63);
-pub const I64_KEYWORD: KindId = KindId(64);
-pub const U128_KEYWORD: KindId = KindId(65);
-pub const I128_KEYWORD: KindId = KindId(66);
-pub const ISIZE_KEYWORD: KindId = KindId(67);
-pub const USIZE_KEYWORD: KindId = KindId(68);
-pub const F32_KEYWORD: KindId = KindId(69);
-pub const F64_KEYWORD: KindId = KindId(70);
-pub const BOOL_KEYWORD: KindId = KindId(71);
-pub const STR_KEYWORD: KindId = KindId(72);
-pub const CHAR_KEYWORD: KindId = KindId(73);
-pub const DASH: KindId = KindId(74);
-pub const AMP_AMP: KindId = KindId(75);
-pub const PIPE_PIPE: KindId = KindId(76);
-pub const PIPE: KindId = KindId(77);
-pub const CARET: KindId = KindId(78);
-pub const EQ_EQ: KindId = KindId(79);
-pub const BANG_EQ: KindId = KindId(80);
-pub const LT_EQ: KindId = KindId(81);
-pub const GT_EQ: KindId = KindId(82);
-pub const LT_LT: KindId = KindId(83);
-pub const GT_GT: KindId = KindId(84);
-pub const SLASH: KindId = KindId(85);
-pub const PERCENT: KindId = KindId(86);
-pub const PLUS_EQ: KindId = KindId(87);
-pub const DASH_EQ: KindId = KindId(88);
-pub const STAR_EQ: KindId = KindId(89);
-pub const SLASH_EQ: KindId = KindId(90);
-pub const PERCENT_EQ: KindId = KindId(91);
-pub const AMP_EQ: KindId = KindId(92);
-pub const PIPE_EQ: KindId = KindId(93);
-pub const CARET_EQ: KindId = KindId(94);
-pub const LT_LT_EQ: KindId = KindId(95);
-pub const GT_GT_EQ: KindId = KindId(96);
-pub const RETURN_KEYWORD: KindId = KindId(97);
-pub const YIELD_KEYWORD: KindId = KindId(98);
-pub const DOT_DOT: KindId = KindId(99);
-pub const IF_KEYWORD: KindId = KindId(100);
-pub const ELSE_KEYWORD: KindId = KindId(101);
-pub const MATCH_KEYWORD: KindId = KindId(102);
-pub const WHILE_KEYWORD: KindId = KindId(103);
-pub const LOOP_KEYWORD: KindId = KindId(104);
-pub const IN_KEYWORD: KindId = KindId(105);
-pub const BREAK_KEYWORD: KindId = KindId(106);
-pub const CONTINUE_KEYWORD: KindId = KindId(107);
-pub const DOT: KindId = KindId(108);
-pub const AWAIT_KEYWORD: KindId = KindId(109);
-pub const UNSAFE_KEYWORD: KindId = KindId(110);
-pub const ASYNC_KEYWORD: KindId = KindId(111);
-pub const GEN_KEYWORD: KindId = KindId(112);
-pub const TRY_KEYWORD: KindId = KindId(113);
-pub const REF_KEYWORD: KindId = KindId(114);
-pub const AT: KindId = KindId(115);
-pub const DQUOTE: KindId = KindId(116);
-pub const TRUE_KEYWORD: KindId = KindId(117);
-pub const FALSE_KEYWORD: KindId = KindId(118);
-pub const SLASH_SLASH: KindId = KindId(119);
-pub const BANG2: KindId = KindId(120);
-pub const SLASH2: KindId = KindId(121);
-pub const SLASH_STAR: KindId = KindId(122);
-pub const STAR_SLASH: KindId = KindId(123);
-pub const SHEBANG: KindId = KindId(124);
-pub const DEFAULT_KEYWORD: KindId = KindId(125);
+pub const DEFAULT_KEYWORD: KindId = KindId(52);
+pub const GEN_KEYWORD: KindId = KindId(53);
+pub const LT2: KindId = KindId(54);
+pub const AMP: KindId = KindId(55);
+pub const IMPL_KEYWORD: KindId = KindId(56);
+pub const DYN_KEYWORD: KindId = KindId(57);
+pub const MUTABLE_SPECIFIER: KindId = KindId(58);
+pub const U8_KEYWORD: KindId = KindId(59);
+pub const I8_KEYWORD: KindId = KindId(60);
+pub const U16_KEYWORD: KindId = KindId(61);
+pub const I16_KEYWORD: KindId = KindId(62);
+pub const U32_KEYWORD: KindId = KindId(63);
+pub const I32_KEYWORD: KindId = KindId(64);
+pub const U64_KEYWORD: KindId = KindId(65);
+pub const I64_KEYWORD: KindId = KindId(66);
+pub const U128_KEYWORD: KindId = KindId(67);
+pub const I128_KEYWORD: KindId = KindId(68);
+pub const ISIZE_KEYWORD: KindId = KindId(69);
+pub const USIZE_KEYWORD: KindId = KindId(70);
+pub const F32_KEYWORD: KindId = KindId(71);
+pub const F64_KEYWORD: KindId = KindId(72);
+pub const BOOL_KEYWORD: KindId = KindId(73);
+pub const STR_KEYWORD: KindId = KindId(74);
+pub const CHAR_KEYWORD: KindId = KindId(75);
+pub const DASH: KindId = KindId(76);
+pub const AMP_AMP: KindId = KindId(77);
+pub const PIPE_PIPE: KindId = KindId(78);
+pub const PIPE: KindId = KindId(79);
+pub const CARET: KindId = KindId(80);
+pub const EQ_EQ: KindId = KindId(81);
+pub const BANG_EQ: KindId = KindId(82);
+pub const LT_EQ: KindId = KindId(83);
+pub const GT_EQ: KindId = KindId(84);
+pub const LT_LT: KindId = KindId(85);
+pub const GT_GT: KindId = KindId(86);
+pub const SLASH: KindId = KindId(87);
+pub const PERCENT: KindId = KindId(88);
+pub const PLUS_EQ: KindId = KindId(89);
+pub const DASH_EQ: KindId = KindId(90);
+pub const STAR_EQ: KindId = KindId(91);
+pub const SLASH_EQ: KindId = KindId(92);
+pub const PERCENT_EQ: KindId = KindId(93);
+pub const AMP_EQ: KindId = KindId(94);
+pub const PIPE_EQ: KindId = KindId(95);
+pub const CARET_EQ: KindId = KindId(96);
+pub const LT_LT_EQ: KindId = KindId(97);
+pub const GT_GT_EQ: KindId = KindId(98);
+pub const RETURN_KEYWORD: KindId = KindId(99);
+pub const YIELD_KEYWORD: KindId = KindId(100);
+pub const DOT_DOT: KindId = KindId(101);
+pub const IF_KEYWORD: KindId = KindId(102);
+pub const ELSE_KEYWORD: KindId = KindId(103);
+pub const MATCH_KEYWORD: KindId = KindId(104);
+pub const WHILE_KEYWORD: KindId = KindId(105);
+pub const LOOP_KEYWORD: KindId = KindId(106);
+pub const IN_KEYWORD: KindId = KindId(107);
+pub const BREAK_KEYWORD: KindId = KindId(108);
+pub const CONTINUE_KEYWORD: KindId = KindId(109);
+pub const DOT: KindId = KindId(110);
+pub const AWAIT_KEYWORD: KindId = KindId(111);
+pub const UNSAFE_KEYWORD: KindId = KindId(112);
+pub const ASYNC_KEYWORD: KindId = KindId(113);
+pub const TRY_KEYWORD: KindId = KindId(114);
+pub const REF_KEYWORD: KindId = KindId(115);
+pub const AT: KindId = KindId(116);
+pub const DQUOTE: KindId = KindId(117);
+pub const TRUE_KEYWORD: KindId = KindId(118);
+pub const FALSE_KEYWORD: KindId = KindId(119);
+pub const SLASH_SLASH: KindId = KindId(120);
+pub const BANG2: KindId = KindId(121);
+pub const SLASH2: KindId = KindId(122);
+pub const SLASH_STAR: KindId = KindId(123);
+pub const STAR_SLASH: KindId = KindId(124);
+pub const SHEBANG: KindId = KindId(125);
 pub const SELF: KindId = KindId(126);
 pub const SUPER: KindId = KindId(127);
 pub const CRATE: KindId = KindId(128);
@@ -474,9 +474,8 @@ pub const _TUPLE_EXPRESSION_ELEMENTS_REPEAT1: KindId = KindId(463);
 pub const DELIM_TOKEN_TREE_PAREN_REPEAT1: KindId = KindId(464);
 pub const _MATCH_BLOCK_ARMS_REPEAT1: KindId = KindId(465);
 pub const _FIELD_IDENTIFIER: KindId = KindId(466);
-pub const _RESERVED_IDENTIFIER: KindId = KindId(468);
-pub const _SHORTHAND_FIELD_IDENTIFIER: KindId = KindId(469);
-pub const _TYPE_IDENTIFIER: KindId = KindId(470);
+pub const _SHORTHAND_FIELD_IDENTIFIER: KindId = KindId(468);
+pub const _TYPE_IDENTIFIER: KindId = KindId(469);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -533,80 +532,80 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         49 => "as", // "as_keyword"
         50 => "...", // "dot_dot_dot"
         51 => "'", // "squote"
-        52 => "<", // "lt2"
-        53 => "&", // "amp"
-        54 => "impl", // "impl_keyword"
-        55 => "dyn", // "dyn_keyword"
-        56 => "mutable_specifier", // "mutable_specifier"
-        57 => "u8", // "u8_keyword"
-        58 => "i8", // "i8_keyword"
-        59 => "u16", // "u16_keyword"
-        60 => "i16", // "i16_keyword"
-        61 => "u32", // "u32_keyword"
-        62 => "i32", // "i32_keyword"
-        63 => "u64", // "u64_keyword"
-        64 => "i64", // "i64_keyword"
-        65 => "u128", // "u128_keyword"
-        66 => "i128", // "i128_keyword"
-        67 => "isize", // "isize_keyword"
-        68 => "usize", // "usize_keyword"
-        69 => "f32", // "f32_keyword"
-        70 => "f64", // "f64_keyword"
-        71 => "bool", // "bool_keyword"
-        72 => "str", // "str_keyword"
-        73 => "char", // "char_keyword"
-        74 => "-", // "dash"
-        75 => "&&", // "amp_amp"
-        76 => "||", // "pipe_pipe"
-        77 => "|", // "pipe"
-        78 => "^", // "caret"
-        79 => "==", // "eq_eq"
-        80 => "!=", // "bang_eq"
-        81 => "<=", // "lt_eq"
-        82 => ">=", // "gt_eq"
-        83 => "<<", // "lt_lt"
-        84 => ">>", // "gt_gt"
-        85 => "/", // "slash"
-        86 => "%", // "percent"
-        87 => "+=", // "plus_eq"
-        88 => "-=", // "dash_eq"
-        89 => "*=", // "star_eq"
-        90 => "/=", // "slash_eq"
-        91 => "%=", // "percent_eq"
-        92 => "&=", // "amp_eq"
-        93 => "|=", // "pipe_eq"
-        94 => "^=", // "caret_eq"
-        95 => "<<=", // "lt_lt_eq"
-        96 => ">>=", // "gt_gt_eq"
-        97 => "return", // "return_keyword"
-        98 => "yield", // "yield_keyword"
-        99 => "..", // "dot_dot"
-        100 => "if", // "if_keyword"
-        101 => "else", // "else_keyword"
-        102 => "match", // "match_keyword"
-        103 => "while", // "while_keyword"
-        104 => "loop", // "loop_keyword"
-        105 => "in", // "in_keyword"
-        106 => "break", // "break_keyword"
-        107 => "continue", // "continue_keyword"
-        108 => ".", // "dot"
-        109 => "await", // "await_keyword"
-        110 => "unsafe", // "unsafe_keyword"
-        111 => "async", // "async_keyword"
-        112 => "gen", // "gen_keyword"
-        113 => "try", // "try_keyword"
-        114 => "ref", // "ref_keyword"
-        115 => "@", // "at"
-        116 => "\"", // "dquote"
-        117 => "true", // "true_keyword"
-        118 => "false", // "false_keyword"
-        119 => "//", // "slash_slash"
-        120 => "!", // "bang2"
-        121 => "/", // "slash2"
-        122 => "/*", // "slash_star"
-        123 => "*/", // "star_slash"
-        124 => "shebang", // "shebang"
-        125 => "default", // "default_keyword"
+        52 => "default", // "default_keyword"
+        53 => "gen", // "gen_keyword"
+        54 => "<", // "lt2"
+        55 => "&", // "amp"
+        56 => "impl", // "impl_keyword"
+        57 => "dyn", // "dyn_keyword"
+        58 => "mutable_specifier", // "mutable_specifier"
+        59 => "u8", // "u8_keyword"
+        60 => "i8", // "i8_keyword"
+        61 => "u16", // "u16_keyword"
+        62 => "i16", // "i16_keyword"
+        63 => "u32", // "u32_keyword"
+        64 => "i32", // "i32_keyword"
+        65 => "u64", // "u64_keyword"
+        66 => "i64", // "i64_keyword"
+        67 => "u128", // "u128_keyword"
+        68 => "i128", // "i128_keyword"
+        69 => "isize", // "isize_keyword"
+        70 => "usize", // "usize_keyword"
+        71 => "f32", // "f32_keyword"
+        72 => "f64", // "f64_keyword"
+        73 => "bool", // "bool_keyword"
+        74 => "str", // "str_keyword"
+        75 => "char", // "char_keyword"
+        76 => "-", // "dash"
+        77 => "&&", // "amp_amp"
+        78 => "||", // "pipe_pipe"
+        79 => "|", // "pipe"
+        80 => "^", // "caret"
+        81 => "==", // "eq_eq"
+        82 => "!=", // "bang_eq"
+        83 => "<=", // "lt_eq"
+        84 => ">=", // "gt_eq"
+        85 => "<<", // "lt_lt"
+        86 => ">>", // "gt_gt"
+        87 => "/", // "slash"
+        88 => "%", // "percent"
+        89 => "+=", // "plus_eq"
+        90 => "-=", // "dash_eq"
+        91 => "*=", // "star_eq"
+        92 => "/=", // "slash_eq"
+        93 => "%=", // "percent_eq"
+        94 => "&=", // "amp_eq"
+        95 => "|=", // "pipe_eq"
+        96 => "^=", // "caret_eq"
+        97 => "<<=", // "lt_lt_eq"
+        98 => ">>=", // "gt_gt_eq"
+        99 => "return", // "return_keyword"
+        100 => "yield", // "yield_keyword"
+        101 => "..", // "dot_dot"
+        102 => "if", // "if_keyword"
+        103 => "else", // "else_keyword"
+        104 => "match", // "match_keyword"
+        105 => "while", // "while_keyword"
+        106 => "loop", // "loop_keyword"
+        107 => "in", // "in_keyword"
+        108 => "break", // "break_keyword"
+        109 => "continue", // "continue_keyword"
+        110 => ".", // "dot"
+        111 => "await", // "await_keyword"
+        112 => "unsafe", // "unsafe_keyword"
+        113 => "async", // "async_keyword"
+        114 => "try", // "try_keyword"
+        115 => "ref", // "ref_keyword"
+        116 => "@", // "at"
+        117 => "\"", // "dquote"
+        118 => "true", // "true_keyword"
+        119 => "false", // "false_keyword"
+        120 => "//", // "slash_slash"
+        121 => "!", // "bang2"
+        122 => "/", // "slash2"
+        123 => "/*", // "slash_star"
+        124 => "*/", // "star_slash"
+        125 => "shebang", // "shebang"
         126 => "self", // "self"
         127 => "super", // "super"
         128 => "crate", // "crate"
@@ -736,11 +735,11 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         252 => "_expression_except_range", // "_expression_except_range"
         253 => "_expression", // "_expression"
         254 => "macro_invocation", // "macro_invocation"
-        255 => "token_tree", // "delim_token_tree"
+        255 => "delim_token_tree", // "delim_token_tree"
         256 => "_delim_tokens", // "_delim_tokens"
         257 => "_non_delim_token", // "_non_delim_token"
         258 => "scoped_identifier", // "scoped_identifier"
-        259 => "scoped_type_identifier", // "scoped_type_identifier_in_expression_position"
+        259 => "scoped_type_identifier_in_expression_position", // "scoped_type_identifier_in_expression_position"
         260 => "scoped_type_identifier", // "scoped_type_identifier"
         261 => "range_expression", // "range_expression"
         262 => "unary_expression", // "unary_expression"
@@ -814,8 +813,8 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         330 => "escape_sequence", // "escape_sequence"
         331 => "boolean_literal", // "boolean_literal"
         332 => "line_comment", // "line_comment"
-        333 => "inner_doc_comment_marker", // "_inner_line_doc_comment_marker"
-        334 => "outer_doc_comment_marker", // "_outer_line_doc_comment_marker"
+        333 => "inner_line_doc_comment_marker", // "_inner_line_doc_comment_marker"
+        334 => "outer_line_doc_comment_marker", // "_outer_line_doc_comment_marker"
         335 => "block_comment", // "block_comment"
         336 => "primitive_type", // "_primitive_type"
         337 => "_kw_ref_marker", // "_kw_ref_marker"
@@ -948,9 +947,8 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         464 => "delim_token_tree_paren_repeat1", // "delim_token_tree_paren_repeat1"
         465 => "_match_block_arms_repeat1", // "_match_block_arms_repeat1"
         466 => "field_identifier", // "_field_identifier"
-        468 => "reserved_identifier", // "_reserved_identifier"
-        469 => "shorthand_field_identifier", // "_shorthand_field_identifier"
-        470 => "type_identifier", // "_type_identifier"
+        468 => "shorthand_field_identifier", // "_shorthand_field_identifier"
+        469 => "type_identifier", // "_type_identifier"
         _ => "<unknown>",
     }
 }
@@ -959,14 +957,14 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
 /// template renders from that text, so the text is the node's content —
 /// free text for a pattern kind, the literal it holds for an enum kind.
 pub fn is_text_kind(kind: KindId) -> bool {
-    matches!(kind.0, 1 | 124 | 129 | 138 | 139 | 140 | 141 | 142 | 143 | 144 | 145 | 146 | 147 | 148 | 149 | 153 | 155 | 156 | 157 | 158 | 159 | 162 | 163 | 164 | 181 | 331 | 336 | 366 | 367 | 402 | 468)
+    matches!(kind.0, 1 | 125 | 129 | 138 | 139 | 140 | 141 | 142 | 143 | 144 | 145 | 146 | 147 | 148 | 149 | 153 | 155 | 156 | 157 | 158 | 159 | 162 | 163 | 164 | 181 | 331 | 336 | 366 | 367 | 402)
 }
 
 /// Whether this parse kind id is an alias envelope: the reader stamps the
 /// grammar symbol beside it when the node is the storage node shown under
 /// the alias, so the wrap layer can seat it as the envelope's content.
 pub fn is_alias_envelope(kind: KindId) -> bool {
-    matches!(kind.0, 466 | 468 | 469 | 470)
+    matches!(kind.0, 466 | 468 | 469)
 }
 
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every
@@ -977,7 +975,7 @@ pub fn is_alias_envelope(kind: KindId) -> bool {
 /// back the same slot contents.
 static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
     (211, "bounds", &[9]),
-    (284, "right", &[75]),
+    (284, "right", &[77]),
     (297, "parameters", &[131]),
     (342, "macro_rule", &[2]),
     (343, "element", &[131]),

@@ -202,10 +202,6 @@
         "named": true
       },
       {
-        "type": "reserved_identifier",
-        "named": true
-      },
-      {
         "type": "return_expression",
         "named": true
       },
@@ -373,10 +369,6 @@
       },
       {
         "type": "remaining_field_pattern",
-        "named": true
-      },
-      {
-        "type": "reserved_identifier",
         "named": true
       },
       {
@@ -758,6 +750,24 @@
     ]
   },
   {
+    "type": "token_tree",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "token_tree_brace",
+        "named": true
+      },
+      {
+        "type": "token_tree_bracket",
+        "named": true
+      },
+      {
+        "type": "token_tree_paren",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "token_tree_pattern",
     "named": true,
     "subtypes": [
@@ -1073,10 +1083,6 @@
             "named": true
           },
           {
-            "type": "reserved_identifier",
-            "named": true
-          },
-          {
             "type": "scoped_identifier",
             "named": true
           },
@@ -1101,7 +1107,7 @@
         "required": false,
         "types": [
           {
-            "type": "token_tree",
+            "type": "delim_token_tree",
             "named": true
           }
         ]
@@ -1746,10 +1752,6 @@
             "named": true
           },
           {
-            "type": "reserved_identifier",
-            "named": true
-          },
-          {
             "type": "return_expression",
             "named": true
           },
@@ -2200,15 +2202,15 @@
         "required": false,
         "types": [
           {
+            "type": "$",
+            "named": false
+          },
+          {
+            "type": "delim_token_tree",
+            "named": true
+          },
+          {
             "type": "non_special_token",
-            "named": true
-          },
-          {
-            "type": "token_tree",
-            "named": true
-          },
-          {
-            "type": "token_tree_punctuation",
             "named": true
           }
         ]
@@ -2224,15 +2226,15 @@
         "required": false,
         "types": [
           {
+            "type": "$",
+            "named": false
+          },
+          {
+            "type": "delim_token_tree",
+            "named": true
+          },
+          {
             "type": "non_special_token",
-            "named": true
-          },
-          {
-            "type": "token_tree",
-            "named": true
-          },
-          {
-            "type": "token_tree_punctuation",
             "named": true
           }
         ]
@@ -2248,15 +2250,15 @@
         "required": false,
         "types": [
           {
+            "type": "$",
+            "named": false
+          },
+          {
+            "type": "delim_token_tree",
+            "named": true
+          },
+          {
             "type": "non_special_token",
-            "named": true
-          },
-          {
-            "type": "token_tree",
-            "named": true
-          },
-          {
-            "type": "token_tree_punctuation",
             "named": true
           }
         ]
@@ -3370,11 +3372,7 @@
         "required": true,
         "types": [
           {
-            "type": "reserved_identifier",
-            "named": true
-          },
-          {
-            "type": "scoped_identifier",
+            "type": "identifier",
             "named": true
           },
           {
@@ -3720,7 +3718,7 @@
     }
   },
   {
-    "type": "inner_doc_comment_marker",
+    "type": "inner_line_doc_comment_marker",
     "named": true,
     "fields": {}
   },
@@ -4015,7 +4013,7 @@
         "required": true,
         "types": [
           {
-            "type": "inner_doc_comment_marker",
+            "type": "inner_line_doc_comment_marker",
             "named": true
           }
         ]
@@ -4041,7 +4039,7 @@
         "required": true,
         "types": [
           {
-            "type": "outer_doc_comment_marker",
+            "type": "outer_line_doc_comment_marker",
             "named": true
           }
         ]
@@ -4090,10 +4088,6 @@
           {
             "type": "identifier",
             "named": true
-          },
-          {
-            "type": "reserved_identifier",
-            "named": true
           }
         ]
       }
@@ -4119,10 +4113,6 @@
         "types": [
           {
             "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "reserved_identifier",
             "named": true
           }
         ]
@@ -4150,10 +4140,6 @@
           {
             "type": "identifier",
             "named": true
-          },
-          {
-            "type": "reserved_identifier",
-            "named": true
           }
         ]
       }
@@ -4178,7 +4164,7 @@
         "required": true,
         "types": [
           {
-            "type": "token_tree",
+            "type": "delim_token_tree",
             "named": true
           }
         ]
@@ -4189,10 +4175,6 @@
         "types": [
           {
             "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -4697,7 +4679,7 @@
     }
   },
   {
-    "type": "outer_doc_comment_marker",
+    "type": "outer_line_doc_comment_marker",
     "named": true,
     "fields": {}
   },
@@ -5030,10 +5012,6 @@
             "named": true
           },
           {
-            "type": "reserved_identifier",
-            "named": true
-          },
-          {
             "type": "scoped_identifier",
             "named": true
           },
@@ -5071,10 +5049,6 @@
           },
           {
             "type": "metavariable",
-            "named": true
-          },
-          {
-            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -5134,10 +5108,6 @@
           },
           {
             "type": "metavariable",
-            "named": true
-          },
-          {
-            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -5422,7 +5392,7 @@
             "named": true
           },
           {
-            "type": "generic_type",
+            "type": "generic_type_with_turbofish",
             "named": true
           },
           {
@@ -5431,10 +5401,6 @@
           },
           {
             "type": "metavariable",
-            "named": true
-          },
-          {
-            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -5496,7 +5462,53 @@
             "named": true
           },
           {
-            "type": "reserved_identifier",
+            "type": "scoped_identifier",
+            "named": true
+          },
+          {
+            "type": "self",
+            "named": true
+          },
+          {
+            "type": "super",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "scoped_type_identifier_in_expression_position",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      },
+      "path": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "crate",
+            "named": true
+          },
+          {
+            "type": "generic_type_with_turbofish",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "metavariable",
             "named": true
           },
           {
@@ -5543,10 +5555,6 @@
           },
           {
             "type": "metavariable",
-            "named": true
-          },
-          {
-            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -5802,7 +5810,7 @@
             "named": true
           },
           {
-            "type": "scoped_type_identifier",
+            "type": "scoped_type_identifier_in_expression_position",
             "named": true
           },
           {
@@ -6131,29 +6139,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "token_tree",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "token_tree_brace",
-          "named": true
-        },
-        {
-          "type": "token_tree_bracket",
-          "named": true
-        },
-        {
-          "type": "token_tree_paren",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -6560,7 +6545,7 @@
         "required": true,
         "types": [
           {
-            "type": "generic_type",
+            "type": "generic_type_with_turbofish",
             "named": true
           },
           {
@@ -7024,10 +7009,6 @@
             "named": true
           },
           {
-            "type": "reserved_identifier",
-            "named": true
-          },
-          {
             "type": "scoped_identifier",
             "named": true
           },
@@ -7100,10 +7081,6 @@
             "named": true
           },
           {
-            "type": "reserved_identifier",
-            "named": true
-          },
-          {
             "type": "scoped_identifier",
             "named": true
           },
@@ -7153,10 +7130,6 @@
           },
           {
             "type": "metavariable",
-            "named": true
-          },
-          {
-            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -7249,10 +7222,6 @@
           },
           {
             "type": "metavariable",
-            "named": true
-          },
-          {
-            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -7387,10 +7356,6 @@
         },
         {
           "type": "metavariable",
-          "named": true
-        },
-        {
-          "type": "reserved_identifier",
           "named": true
         },
         {
@@ -7943,6 +7908,10 @@
     "named": false
   },
   {
+    "type": "inner_doc_comment_marker",
+    "named": true
+  },
+  {
     "type": "integer_literal_binary",
     "named": true
   },
@@ -8012,6 +7981,10 @@
   },
   {
     "type": "mutable_specifier",
+    "named": true
+  },
+  {
+    "type": "outer_doc_comment_marker",
     "named": true
   },
   {

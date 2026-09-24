@@ -528,7 +528,7 @@ function emitRepeatedChildrenFrom(
 	intern: KindInterner,
 	storageKey: string
 ): string {
-	const resolvable = slotLiteralValues(slot).length === 0;
+	const resolvable = resolvesLooseInput(slot, nodeMap);
 	return emitRestParamFromResolver(
 		fn,
 		factory,
@@ -544,6 +544,15 @@ function emitRepeatedChildrenFrom(
 				? `${factory}(...(${resolveFieldCall(varExpr, slot, true, nodeMap, intern, false, elementType, kindEntries)} as unknown as Parameters<typeof ${factory}>))`
 				: `${factory}(...(${varExpr} as unknown as Parameters<typeof ${factory}>))`
 	);
+}
+
+function resolvesLooseInput(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
+	if (slotLiteralValues(slot).length === 0) return true;
+	const { leafKinds, branchKinds } = classifyKindsForResolver(
+		expandAndDedupeContentTypes(slotKindNames(slot), nodeMap, storageKindIdByNameOf(slot)),
+		nodeMap
+	);
+	return leafKinds.length + branchKinds.length > 0;
 }
 
 function looseElementType(elementType: string, slot: AssembledNonterminal, nodeMap: NodeMap): string {
@@ -579,14 +588,14 @@ function emitSingularChildrenFrom(
 		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
-		`export function ${fn}(input?: ${slotLiteralValues(slot).length === 0 ? looseElementType(elementType, slot, nodeMap) : elementType}${inputWiden !== undefined ? ` | ${inputWiden}` : ''} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
+		`export function ${fn}(input?: ${resolvesLooseInput(slot, nodeMap) ? looseElementType(elementType, slot, nodeMap) : elementType}${inputWiden !== undefined ? ` | ${inputWiden}` : ''} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
 		`  if (isNodeData(input) && input.$type === ${typeCheck}) {`,
 		`    const data = input;`,
 		`    const child = ${storageAccess};`,
 		`    return ${factory}(child as Parameters<typeof ${factory}>[0]);`,
 		`  }`,
 		`  return ${factory}(${
-			slotLiteralValues(slot).length === 0
+			resolvesLooseInput(slot, nodeMap)
 				? resolveFieldCall('input', slot, false, nodeMap, intern, false, elementType, kindEntries)
 				: `input as Parameters<typeof ${factory}>[0]`
 		});`,
@@ -826,12 +835,22 @@ function altKindDiscriminants(
  * kind/NodeData route re-targets, since that route is never ambiguous
  * about a value's own kind.
  */
-function defaultArmKindOf(field: { values: readonly NodeOrTerminal[]; optionDefaultArm?: string }): string | undefined {
+function defaultArmKindOf(
+	field: { values: readonly NodeOrTerminal[]; optionDefaultArm?: string },
+	nodeMap: NodeMap
+): string | undefined {
 	const declared = field.optionDefaultArm;
 	if (declared !== undefined) {
 		const chosen = field.values.find((v) => isNodeRef(v) && (v.variant ?? v.resolvedKind) === declared);
 		if (chosen !== undefined && isNodeRef(chosen)) return storageKindOfRef(chosen.node);
 	}
+	const supertypeDefaults = field.values.flatMap((v) => {
+		const node = isNodeRef(v) ? nodeMap.nodes.get(storageKindOfRef(v.node)) : undefined;
+		if (!(node instanceof AssembledSupertype) || node.optionDefaultArm === undefined) return [];
+		const chosen = node.variantSubtypes?.find((ref) => ref.variant === node.optionDefaultArm);
+		return chosen === undefined ? [] : [storageKindOfRef(chosen.node)];
+	});
+	if (supertypeDefaults.length === 1) return supertypeDefaults[0];
 	const flagged = field.values.filter((v) => v.default === true && isNodeRef(v));
 	if (flagged.length > 1) {
 		const names = flagged.filter(isNodeRef).map((v) => storageKindOfRef(v.node));
@@ -900,7 +919,7 @@ function resolveFieldCall(
 					fieldMultiple,
 					intern,
 					elementType,
-					defaultArmKindOf(field)
+					defaultArmKindOf(field, nodeMap)
 				);
 	if (storageInfo?.kind === 'kindEnum') {
 		const table = kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries);

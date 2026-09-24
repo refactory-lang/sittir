@@ -4540,9 +4540,6 @@
 			"text": "=>"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "eq_gt_after"
 		},
@@ -5686,12 +5683,6 @@
 			"field": "removed_trait_bound_after"
 		}
 	],
-	"reserved_identifier": [
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
 	"return_expression": [
 		{
 			"kind": "seam",
@@ -6702,12 +6693,6 @@
 		{
 			"kind": "seam",
 			"field": "token_repetition_pattern_after"
-		}
-	],
-	"token_tree": [
-		{
-			"kind": "slot",
-			"name": "content"
 		}
 	],
 	"token_tree_brace": [

@@ -354,11 +354,6 @@ export interface CallExpressionTemplateCallTransport {
   _call_expression_template_call_after?: number
 }
 
-export interface CallExpressionTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<Box<CallExpressionContentTransportSlot>>
-}
-
 export interface CallSignatureTransport {
   '$_trivia'?: TransportTrivia
   _type_parameters?: SlotValue<TypeParametersTransport>
@@ -1154,7 +1149,6 @@ export interface ImportClauseDefaultImportTransport {
   '$_trivia'?: TransportTrivia
   _identifier: SlotValue<ImportClauseDefaultImportIdentifierTransportSlot>
   _import_clause_group?: SlotValue<ImportClauseGroupTransport>
-  _type_keyword_after?: number
   _import_clause_default_import_before?: number
   _import_clause_default_import_after?: number
 }
@@ -1194,7 +1188,6 @@ export interface ImportSpecifierAsTransport {
   _alias: SlotValue<ImportSpecifierAsAliasTransportSlot>
   _as_keyword_before?: number
   _as_keyword_after?: number
-  _type_keyword_before?: number
   _type_keyword_after?: number
   _typeof_keyword_after?: number
   _import_specifier_as_before?: number
@@ -1205,7 +1198,6 @@ export interface ImportSpecifierNameTransport {
   '$_trivia'?: TransportTrivia
   _import_kind?: SlotValue<Box<AnyTransport>>
   _name: SlotValue<ImportSpecifierNameNameTransportSlot>
-  _type_keyword_before?: number
   _type_keyword_after?: number
   _typeof_keyword_after?: number
   _import_specifier_name_before?: number
@@ -1351,7 +1343,7 @@ export interface IntersectionTypeTransport {
 
 export interface LabeledStatementTransport {
   '$_trivia'?: TransportTrivia
-  _label: SlotValue<StatementIdentifierTransport>
+  _label: SlotValue<LabeledStatementLabelTransportSlot>
   _body: SlotValue<Box<StatementTransport>>
   _colon_before?: number
   _colon_after?: number
@@ -1752,11 +1744,6 @@ export interface ParenthesizedExpressionSequenceTransport {
   _parenthesized_expression_sequence_after?: number
 }
 
-export interface ParenthesizedExpressionTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<Box<ParenthesizedExpressionContentTransportSlot>>
-}
-
 export interface ParenthesizedExpressionTypedTransport {
   '$_trivia'?: TransportTrivia
   _type?: SlotValue<TypeAnnotationTransport>
@@ -1885,11 +1872,6 @@ export interface RequiredParameterTransport {
   _required_parameter_after?: number
 }
 
-export interface ReservedIdentifierTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<Box<AnyTransport>>
-}
-
 export interface RestPatternTransport {
   '$_trivia'?: TransportTrivia
   _lhs_expression: SlotValue<RestPatternLhsExpressionTransportSlot>
@@ -1991,11 +1973,6 @@ export interface StringSingleTransport {
   _elements?: Array<SlotValue<StringSingleElementsTransportSlot, true>>
   _string_single_before?: number
   _string_single_after?: number
-}
-
-export interface StringTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<StringContentTransportSlot>
 }
 
 export interface SubscriptExpressionTransport {

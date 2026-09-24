@@ -10,7 +10,6 @@ export const expressionStatement = bundle(F.buildExpressionStatement, C.coerceTo
 export const macroRule = bundle(F.buildMacroRule, C.coerceToMacroRule);
 export const tokenBindingPattern = bundle(F.buildTokenBindingPattern, C.coerceToTokenBindingPattern);
 export const tokenRepetitionPattern = bundle(F.buildTokenRepetitionPattern, C.coerceToTokenRepetitionPattern);
-export const tokenTree = bundle(F.buildTokenTree, C.coerceToTokenTree);
 export const tokenRepetition = bundle(F.buildTokenRepetition, C.coerceToTokenRepetition);
 export const attributeItem = bundle(F.buildAttributeItem, C.coerceToAttributeItem);
 export const innerAttributeItem = bundle(F.buildInnerAttributeItem, C.coerceToInnerAttributeItem);

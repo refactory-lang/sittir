@@ -1039,12 +1039,6 @@
 			"field": "break_statement_after"
 		}
 	],
-	"call_expression": [
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
 	"call_expression_call": [
 		{
 			"kind": "seam",
@@ -2083,9 +2077,6 @@
 			"text": "while"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "while_keyword_after"
 		},
@@ -2488,9 +2479,6 @@
 			"name": "content"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "slot",
 			"name": "automatic_semicolon"
 		},
@@ -2515,9 +2503,6 @@
 		{
 			"kind": "text",
 			"text": "from"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -2548,9 +2533,6 @@
 		{
 			"kind": "text",
 			"text": "from"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -2585,9 +2567,6 @@
 		{
 			"kind": "text",
 			"text": "from"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -3870,9 +3849,6 @@
 			"text": "if"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "if_keyword_after"
 		},
@@ -4093,9 +4069,6 @@
 			"text": "("
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "lparen_after"
 		},
@@ -4272,9 +4245,6 @@
 		{
 			"kind": "text",
 			"text": "from"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -6250,12 +6220,6 @@
 			"field": "pair_pattern_after"
 		}
 	],
-	"parenthesized_expression": [
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
 	"parenthesized_expression_sequence": [
 		{
 			"kind": "seam",
@@ -6925,12 +6889,6 @@
 			"field": "required_parameter_after"
 		}
 	],
-	"reserved_identifier": [
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
 	"rest_pattern": [
 		{
 			"kind": "seam",
@@ -7144,12 +7102,6 @@
 		}
 	],
 	"statement_identifier": [
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
-	"string": [
 		{
 			"kind": "slot",
 			"name": "content"
@@ -7371,18 +7323,12 @@
 			"text": "switch"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "switch_keyword_after"
 		},
 		{
 			"kind": "slot",
 			"name": "value"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "slot",
@@ -8237,9 +8183,6 @@
 			"text": "while"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "while_keyword_after"
 		},
@@ -8264,9 +8207,6 @@
 		{
 			"kind": "text",
 			"text": "with"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",

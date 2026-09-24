@@ -1458,7 +1458,6 @@ export interface AddressBranch {
 		| 'dash'
 		| 'dash_eq'
 		| 'dash_gt'
-		| 'dollar'
 		| 'dot'
 		| 'dot_dot'
 		| 'dot_dot_dot'
@@ -1503,7 +1502,6 @@ export interface AddressBranch {
 	readonly 'token_tree_punctuation/dash': 'after' | 'before';
 	readonly 'token_tree_punctuation/dash_eq': 'after' | 'before';
 	readonly 'token_tree_punctuation/dash_gt': 'after' | 'before';
-	readonly 'token_tree_punctuation/dollar': 'after' | 'before';
 	readonly 'token_tree_punctuation/dot': 'after' | 'before';
 	readonly 'token_tree_punctuation/dot_dot': 'after' | 'before';
 	readonly 'token_tree_punctuation/dot_dot_dot': 'after' | 'before';
@@ -3082,8 +3080,6 @@ export interface AddressLeaf {
 	readonly 'token_tree_punctuation/dash_eq/before': WhitespaceArm;
 	readonly 'token_tree_punctuation/dash_gt/after': WhitespaceArm;
 	readonly 'token_tree_punctuation/dash_gt/before': WhitespaceArm;
-	readonly 'token_tree_punctuation/dollar/after': WhitespaceArm;
-	readonly 'token_tree_punctuation/dollar/before': WhitespaceArm;
 	readonly 'token_tree_punctuation/dot/after': WhitespaceArm;
 	readonly 'token_tree_punctuation/dot/before': WhitespaceArm;
 	readonly 'token_tree_punctuation/dot_dot/after': WhitespaceArm;

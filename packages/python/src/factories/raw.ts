@@ -424,7 +424,14 @@ export function buildExpressionStatement(
 }
 
 export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedExpression.Built {
-	const _name = config.name;
+	const _name = coerceMixedEnumStorage<NonNullable<T.NamedExpression['_name']>>(config.name, [
+		['print', TSKindId.PrintKeyword] as const,
+		['exec', TSKindId.ExecKeyword] as const,
+		['async', TSKindId.AsyncKeyword] as const,
+		['await', TSKindId.AwaitKeyword] as const,
+		['type', TSKindId.TypeKeyword] as const,
+		['match', TSKindId.MatchKeyword] as const
+	]);
 	const _value = coerceMixedEnumStorage<NonNullable<T.NamedExpression['_value']>>(config.value, []);
 	return withMethods(
 		withAccessors(
@@ -435,7 +442,8 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 				_name,
 				_value,
 				$with: {
-					name: (value: T.Identifier) => buildNamedExpression({ ...config, name: value }),
+					name: (value: NonNullable<T.NamedExpression.Config>['name']) =>
+						buildNamedExpression({ ...config, name: value }),
 					value: (value: NonNullable<T.NamedExpression.Config>['value']) =>
 						buildNamedExpression({ ...config, value: value })
 				}
@@ -1950,8 +1958,26 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 	);
 }
 
-export function buildListSplatPattern(value: T.Identifier | T.Subscript | T.Attribute): T.ListSplatPattern.Built {
-	const _content = value;
+export function buildListSplatPattern(
+	value:
+		| T.Identifier
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword
+		| T.Subscript
+		| T.Attribute
+): T.ListSplatPattern.Built {
+	const _content = coerceMixedEnumStorage<NonNullable<T.ListSplatPattern['_content']>>(value, [
+		['print', TSKindId.PrintKeyword] as const,
+		['exec', TSKindId.ExecKeyword] as const,
+		['async', TSKindId.AsyncKeyword] as const,
+		['await', TSKindId.AwaitKeyword] as const,
+		['type', TSKindId.TypeKeyword] as const,
+		['match', TSKindId.MatchKeyword] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -1960,7 +1986,19 @@ export function buildListSplatPattern(value: T.Identifier | T.Subscript | T.Attr
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.Identifier | T.Subscript | T.Attribute) => buildListSplatPattern(value)
+					content: (
+						value: NonNullable<
+							| T.Identifier
+							| TSKindId.PrintKeyword
+							| TSKindId.ExecKeyword
+							| TSKindId.AsyncKeyword
+							| TSKindId.AwaitKeyword
+							| TSKindId.TypeKeyword
+							| TSKindId.MatchKeyword
+							| T.Subscript
+							| T.Attribute
+						>
+					) => buildListSplatPattern(value)
 				}
 			},
 			{
@@ -1972,9 +2010,25 @@ export function buildListSplatPattern(value: T.Identifier | T.Subscript | T.Attr
 }
 
 export function buildDictionarySplatPattern(
-	value: T.Identifier | T.Subscript | T.Attribute
+	value:
+		| T.Identifier
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword
+		| T.Subscript
+		| T.Attribute
 ): T.DictionarySplatPattern.Built {
-	const _content = value;
+	const _content = coerceMixedEnumStorage<NonNullable<T.DictionarySplatPattern['_content']>>(value, [
+		['print', TSKindId.PrintKeyword] as const,
+		['exec', TSKindId.ExecKeyword] as const,
+		['async', TSKindId.AsyncKeyword] as const,
+		['await', TSKindId.AwaitKeyword] as const,
+		['type', TSKindId.TypeKeyword] as const,
+		['match', TSKindId.MatchKeyword] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -1983,7 +2037,19 @@ export function buildDictionarySplatPattern(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.Identifier | T.Subscript | T.Attribute) => buildDictionarySplatPattern(value)
+					content: (
+						value: NonNullable<
+							| T.Identifier
+							| TSKindId.PrintKeyword
+							| TSKindId.ExecKeyword
+							| TSKindId.AsyncKeyword
+							| TSKindId.AwaitKeyword
+							| TSKindId.TypeKeyword
+							| TSKindId.MatchKeyword
+							| T.Subscript
+							| T.Attribute
+						>
+					) => buildDictionarySplatPattern(value)
 				}
 			},
 			{
@@ -1999,8 +2065,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				208, 202, 203, 209, 252, 204, 1, 243, 242, 90, 91, 92, 93, 94, 95, 96, 71, 72, 73, 205, 216, 217, 219, 228, 233,
-				231, 234, 229, 235, 230, 237, 236, 64, 196, 241, 139, 198
+				208, 202, 203, 209, 252, 204, 1, 68, 38, 69, 70, 39, 22, 243, 242, 90, 91, 92, 93, 94, 95, 96, 71, 72, 73, 205,
+				216, 217, 219, 228, 233, 231, 234, 229, 235, 230, 237, 236, 64, 196, 241, 139, 198
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -2627,7 +2693,14 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Built
 }
 
 export function buildKeywordArgument(config: T.KeywordArgument.Config): T.KeywordArgument.Built {
-	const _name = config.name;
+	const _name = coerceMixedEnumStorage<NonNullable<T.KeywordArgument['_name']>>(config.name, [
+		['print', TSKindId.PrintKeyword] as const,
+		['exec', TSKindId.ExecKeyword] as const,
+		['async', TSKindId.AsyncKeyword] as const,
+		['await', TSKindId.AwaitKeyword] as const,
+		['type', TSKindId.TypeKeyword] as const,
+		['match', TSKindId.MatchKeyword] as const
+	]);
 	const _value = coerceMixedEnumStorage<NonNullable<T.KeywordArgument['_value']>>(config.value, []);
 	return withMethods(
 		withAccessors(
@@ -2638,7 +2711,8 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 				_name,
 				_value,
 				$with: {
-					name: (value: T.Identifier) => buildKeywordArgument({ ...config, name: value }),
+					name: (value: NonNullable<T.KeywordArgument.Config>['name']) =>
+						buildKeywordArgument({ ...config, name: value }),
 					value: (value: NonNullable<T.KeywordArgument.Config>['value']) =>
 						buildKeywordArgument({ ...config, value: value })
 				}
@@ -2954,9 +3028,7 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 	);
 }
 
-export function buildParenthesizedExpression(
-	value: T.Expression | T.Yield | T.ListSplat
-): T.ParenthesizedExpression.Built {
+export function buildParenthesizedExpression(value: T.Expression | T.Yield): T.ParenthesizedExpression.Built {
 	const _content = coerceMixedEnumStorage<NonNullable<T.ParenthesizedExpression['_content']>>(value, []);
 	return withMethods(
 		withAccessors(
@@ -2966,7 +3038,7 @@ export function buildParenthesizedExpression(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: NonNullable<T.Expression | T.Yield | T.ListSplat>) => buildParenthesizedExpression(value)
+					content: (value: NonNullable<T.Expression | T.Yield>) => buildParenthesizedExpression(value)
 				}
 			},
 			{

@@ -78,6 +78,7 @@ const NODE_KINDS = [
 	'import_statement',
 	'interpolation',
 	'keyword_argument',
+	'keyword_identifier',
 	'keyword_pattern',
 	'lambda',
 	'lambda_parameters',

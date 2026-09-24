@@ -925,16 +925,6 @@ function collectAnonymousNodes(
 		}
 	}
 
-	// A distributed literal arm — the alias's own storage identity IS its
-	// literal text (`name === literal`; `u8` in rust's `primitive_type`) —
-	// is looked up by that name, not by literal text: tree-sitter's own
-	// parser.c overwrites the catalog's `literalText`/`symbolName` for an
-	// aliased anonymous token to the alias's display name, so
-	// `findEntryForLiteralText` can never find it — only
-	// `findEntryForKindName(kindEntries, name)` resolves it correctly. A
-	// SYMBOL whose `.name` differs from its `.literal` (an already-named
-	// keyword rule referencing a differently-spelled token, e.g.
-	// `in_keyword`/`in`) is a different, unrelated fact and excluded.
 	const literalRefNames = new Set<string>();
 	const literalRefWalkCtx: LiteralRefWalkCtx = { out: literalRefNames };
 	for (const rule of Object.values(rules)) {

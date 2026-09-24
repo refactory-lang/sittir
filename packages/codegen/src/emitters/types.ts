@@ -393,7 +393,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		'AnyTreeNodeOf as AnyTreeNode',
 		'Terminal',
 		'NonEmptyArray',
-		'BooleanKeyword',
+		'BooleanKeyword as BaseBooleanKeyword',
 		...(usesBitflag ? ['Bitflag'] : []),
 		...(usesKindEnum ? ['KindEnum'] : []),
 		...(usesHiddenLeaf ? ['HiddenLeaf'] : []),
@@ -995,7 +995,7 @@ function fieldInputHintTypeExpr(
 	}
 	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	if (storageInfo.kind === 'boolean') {
-		return `BooleanKeyword<${stringUnion(storageInfo.texts)}>`;
+		return `BaseBooleanKeyword<${stringUnion(storageInfo.texts)}>`;
 	}
 	if (storageInfo.kind === 'bitflag') {
 		const constName = resolveBitflagConstName(kind, f, nodeMap) ?? 'number';
