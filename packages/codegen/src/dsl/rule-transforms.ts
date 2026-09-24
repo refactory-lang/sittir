@@ -14,7 +14,7 @@ import {
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { withId } from './rule-attrs.ts';
-import { isParserHiddenName, parserSymbolClassOf, type ParserSymbolCtx } from './rule-patterns.ts';
+import { choiceArmsOf, isParserHiddenName, terminalContentOf, terminalSymbolOf, type ParserSymbolCtx } from './rule-patterns.ts';
 
 export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
 
@@ -32,10 +32,6 @@ export function innermostNamedAliasContent<R extends AnyRule>(rule: R): R {
 	return current;
 }
 
-function choiceArmsOf<R extends AnyRule>(content: R): readonly R[] | undefined {
-	if (content.type !== CHOICE) return undefined;
-	return (content as unknown as { members: readonly R[] }).members.flatMap((m) => choiceArmsOf(m) ?? [m]);
-}
 
 export interface DistributeAliasCtx {
 	readonly inlineBodyOf: (name: string) => AnyRule | undefined;
@@ -159,18 +155,8 @@ export function unaliasOverloadedDisplays<R extends AnyRule>(rules: Record<strin
 		const alias = r as unknown as NamedAliasShape<R>;
 		return alias.type === ALIAS && alias.named === true && alias.value ? (alias as AliasSite<R>) : undefined;
 	};
-	const terminalContent = (content: R): boolean => {
-		if (content.type === SYMBOL) return terminalSymbol((content as unknown as { name: string }).name);
-		if (content.type === STRING || content.type === PATTERN || content.type === TOKEN) return true;
-		const arms = choiceArmsOf(content);
-		return arms !== undefined && arms.every(terminalContent);
-	};
-	const terminalSymbol = (name: string): boolean => {
-		const cls = parserSymbolClassOf(name, ctx.symbols);
-		if (cls !== 'inlined') return cls === 'terminal';
-		const body = rules[name];
-		return body !== undefined && terminalContent(body);
-	};
+	const terminalContent = (content: R): boolean => terminalContentOf(content, rules, ctx.symbols);
+	const terminalSymbol = (name: string): boolean => terminalSymbolOf(name, rules, ctx.symbols);
 	const storageOf = (content: R): StorageOf => {
 		const symbol = content.type === SYMBOL ? (content as unknown as { name: string }).name : undefined;
 		return { key: symbol ?? JSON.stringify(content), symbol, terminal: terminalContent(content) };

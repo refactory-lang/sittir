@@ -437,7 +437,44 @@ construction sites, so this override never touches them.
 // Assemble warnings are observational — codegen continues.
 ```
 
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::diagnoseDistributedAliases`
+
+Blocks a named alias over content tree-sitter applies the alias to member by
+member: a sequence of two or more members or a repeat, reached through
+precedence, `optional` and `field` wrappers, or through a rule the parser
+inlines (`parserSymbolClassOf` says `inlined`: tree-sitter substitutes its
+body). The model would describe one node where the parser issues several.
+It never looks through `token()`, which lexes as one token, or through a
+hidden rule that is not inlined, which is a node of its own whatever its use
+count.
+
+Only named aliases are checked. An unnamed alias mints no kind, so there is
+no single model node to be wrong about. The known unnamed case is
+typescript's `predefined_type` arm `alias(seq('unique', 'symbol'),
+'unique symbol')`.
+
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::distributedShape`
+
+The distributed shape an alias's content has, described for the message, or
+`undefined` when the alias names one node.
+
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::diagnoseMixedDisplayUnions`
+
+An invariant guard, not a user-facing shape check: enrich
+(`unaliasOverloadedDisplays`) resolves every display that would sit over both
+a terminal and a nonterminal storage, so after enrich no display union holds
+both. Members are classified the way enrich classifies them
+(`terminalSymbolOf` over the same `ParserSymbolCtx` inputs), except that a
+literal member is a terminal by its own stamp (`DisplayUnionMember.literal`).
+A member that is neither a rule, an external nor a literal is reported
+rather than defaulted, since defaulting would make the guard guess.
+
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::collectGrammarDiagnosticsForGrammar`
+
+Builds one `ParserSymbolCtx` from the raw grammar (rules, externals, inline,
+token use counts), the same inputs enrich classifies with, and hands it to
+both alias diagnostics so they cannot disagree with the pass they guard.
+
 
 #### body
 

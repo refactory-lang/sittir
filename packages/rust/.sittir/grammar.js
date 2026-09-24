@@ -1338,6 +1338,22 @@ function tokenUseCounts(rules) {
   for (const rule of Object.values(rules)) visit(rule);
   return counts;
 }
+function choiceArmsOf(content) {
+  if (content.type !== CHOICE) return void 0;
+  return content.members.flatMap((m) => choiceArmsOf(m) ?? [m]);
+}
+function terminalContentOf(content, rules, symbols) {
+  if (content.type === SYMBOL) return terminalSymbolOf(content.name, rules, symbols);
+  if (content.type === STRING || content.type === PATTERN || content.type === TOKEN) return true;
+  const arms = choiceArmsOf(content);
+  return arms !== void 0 && arms.every((arm2) => terminalContentOf(arm2, rules, symbols));
+}
+function terminalSymbolOf(name, rules, symbols) {
+  const cls = parserSymbolClassOf(name, symbols);
+  if (cls !== "inlined") return cls === "terminal";
+  const body = rules[name];
+  return body !== void 0 && terminalContentOf(body, rules, symbols);
+}
 function lexesAsOneToken(rule) {
   return extractedToken(rule) !== void 0;
 }
@@ -1667,10 +1683,6 @@ function innermostNamedAliasContent(rule) {
   }
   return current;
 }
-function choiceArmsOf(content) {
-  if (content.type !== CHOICE) return void 0;
-  return content.members.flatMap((m) => choiceArmsOf(m) ?? [m]);
-}
 function distributeInlineAliasChoices(rule, ctx) {
   const walker = new RuleWalker();
   const distributed = /* @__PURE__ */ new WeakSet();
@@ -1777,18 +1789,8 @@ function unaliasOverloadedDisplays(rules, ctx) {
     const alias3 = r;
     return alias3.type === ALIAS && alias3.named === true && alias3.value ? alias3 : void 0;
   };
-  const terminalContent = (content) => {
-    if (content.type === SYMBOL) return terminalSymbol(content.name);
-    if (content.type === STRING || content.type === PATTERN || content.type === TOKEN) return true;
-    const arms = choiceArmsOf(content);
-    return arms !== void 0 && arms.every(terminalContent);
-  };
-  const terminalSymbol = (name) => {
-    const cls = parserSymbolClassOf(name, ctx.symbols);
-    if (cls !== "inlined") return cls === "terminal";
-    const body = rules[name];
-    return body !== void 0 && terminalContent(body);
-  };
+  const terminalContent = (content) => terminalContentOf(content, rules, ctx.symbols);
+  const terminalSymbol = (name) => terminalSymbolOf(name, rules, ctx.symbols);
   const storageOf = (content) => {
     const symbol = content.type === SYMBOL ? content.name : void 0;
     return { key: symbol ?? JSON.stringify(content), symbol, terminal: terminalContent(content) };

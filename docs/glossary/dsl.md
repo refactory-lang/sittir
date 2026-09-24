@@ -3525,6 +3525,25 @@ Predicts the parser class tree-sitter's extract_tokens gives a rule name, withou
 A unit test compares the prediction against every alias-site storage in the generated parser.c of each grammar.
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::choiceArmsOf`
+
+The arms of a choice, nested choices flattened, or `undefined` for content
+that is not a choice.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::terminalContentOf`
+
+Whether content the parser sees at a position is a terminal: a symbol by
+`terminalSymbolOf`, a string, pattern or token, or a choice whose every arm
+is terminal.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::terminalSymbolOf`
+
+Whether a name is a terminal to the parser: its `parserSymbolClassOf`, except
+that an inlined rule is classified by its body, since the parser substitutes
+it. Shared by enrich's `unaliasOverloadedDisplays` and the
+`display-union-mixed` guard, so the pass and its guard use one
+classification.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::lexesAsOneToken`
 
 Whether a rule body is one token as tree-sitter's extract_tokens sees it: a

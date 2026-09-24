@@ -545,7 +545,17 @@ git commit -m "feat(dsl): alias() promotes an unnamed alias; a literal mint is a
 
 ---
 
-### Task 5: `alias-distributed` preflight diagnostic
+### Task 5: `alias-distributed` preflight diagnostic (landed)
+
+**What landed:**
+- `display-union` members carry their literal stamp (`DisplayUnionMember { storage, literal }`), set where `collectDisplayUnions` records them. The minter resolves each member by the stamp instead of trying catalog lookups in order. This is its own commit and byte-identical.
+- `terminalContentOf` / `terminalSymbolOf` / `choiceArmsOf` moved from enrich's closures into rule-patterns beside `parserSymbolClassOf`; enrich calls them (byte-identical).
+- `compiler/diagnostics/alias-distributed.ts`:
+  - `diagnoseDistributedAliases` walks with `RuleWalker`. It checks named aliases only, and looks through precedence, `optional` and `field` wrappers and through inlined rules (by `parserSymbolClassOf`), never through `token()`.
+  - `diagnoseMixedDisplayUnions` classifies a literal member by its stamp and any other member by `terminalSymbolOf`; a member that is neither a rule, an external nor a literal is a `display-union-unknown-member` error.
+  - The collector builds one `ParserSymbolCtx` from the raw grammar for both.
+- Silent on all three grammars. The one census hit, typescript's unnamed `alias(seq('unique', 'symbol'), 'unique symbol')`, is out of scope by the named-only rule.
+
 
 > **Amended 2026-09-24** (spec §A.3, §A.4 as re-amended). Two changes
 > from the merged Task 1:

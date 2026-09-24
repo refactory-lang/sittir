@@ -592,6 +592,25 @@ export function tokenUseCounts(rules: Readonly<Record<string, AnyRule>>): Map<st
 	return counts;
 }
 
+export function choiceArmsOf<R extends AnyRule>(content: R): readonly R[] | undefined {
+	if (content.type !== CHOICE) return undefined;
+	return (content as unknown as { members: readonly R[] }).members.flatMap((m) => choiceArmsOf(m) ?? [m]);
+}
+
+export function terminalContentOf(content: AnyRule, rules: Readonly<Record<string, AnyRule>>, symbols: ParserSymbolCtx): boolean {
+	if (content.type === SYMBOL) return terminalSymbolOf((content as unknown as { name: string }).name, rules, symbols);
+	if (content.type === STRING || content.type === PATTERN || content.type === TOKEN) return true;
+	const arms = choiceArmsOf(content);
+	return arms !== undefined && arms.every((arm) => terminalContentOf(arm, rules, symbols));
+}
+
+export function terminalSymbolOf(name: string, rules: Readonly<Record<string, AnyRule>>, symbols: ParserSymbolCtx): boolean {
+	const cls = parserSymbolClassOf(name, symbols);
+	if (cls !== 'inlined') return cls === 'terminal';
+	const body = rules[name];
+	return body !== undefined && terminalContentOf(body, rules, symbols);
+}
+
 export function lexesAsOneToken(rule: TokenShape): boolean {
 	return extractedToken(rule) !== undefined;
 }

@@ -31,7 +31,7 @@ function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = []):
 }
 
 describe('grammar diagnostics preflight', () => {
-	it('emits parsekind-noninjective records from compiler-produced collisions', () => {
+	it('emits parsekind-noninjective from compiler-produced collisions, and display-union-mixed because the fixture skips the enrich pass that resolves a display over both a terminal and a nonterminal', () => {
 		const result = collectGrammarDiagnosticsForGrammar({
 			rawGrammar: buildRawGrammar({
 				host: structuralBuilder.choice(
@@ -70,6 +70,12 @@ describe('grammar diagnostics preflight', () => {
 				slotName: 'content',
 				// PR-L Task 5: assemble-time parsekind-noninjective now blocks.
 				canProceed: false
+			}),
+			expect.objectContaining({
+				code: 'display-union-mixed',
+				ownerKind: 'shared',
+				canProceed: false,
+				details: { display: 'shared', terminals: ['left', 'right'], nonterminals: ['shared'] }
 			})
 		]);
 	});
@@ -146,7 +152,7 @@ describe('grammar diagnostics preflight', () => {
 		expect(error.message).toContain('parsekind-noninjective');
 	});
 
-	it('parsekind-noninjective now blocks (canProceed: false)', () => {
+	it('parsekind-noninjective now blocks (canProceed: false), beside the mixed-display guard an enrich-skipping fixture trips', () => {
 		const result = collectGrammarDiagnosticsForGrammar({
 			rawGrammar: buildRawGrammar({
 				host: structuralBuilder.choice(
@@ -168,7 +174,8 @@ describe('grammar diagnostics preflight', () => {
 			})
 		});
 		expect(result.diagnostics).toEqual([
-			expect.objectContaining({ code: 'parsekind-noninjective', ownerKind: 'host', canProceed: false })
+			expect.objectContaining({ code: 'parsekind-noninjective', ownerKind: 'host', canProceed: false }),
+			expect.objectContaining({ code: 'display-union-mixed', ownerKind: 'shared', canProceed: false })
 		]);
 	});
 
