@@ -365,7 +365,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.site_with(arm, strength);
     }
 
-    fn edge(&mut self, kind: crate::types::KindId, side: crate::options::Side, stamped: Option<u16>) {
+    fn edge(&mut self, kind: crate::types::KindId, side: crate::options::Side, stamped: Option<crate::options::EdgeArm>) {
         debug_assert!(self.options.is_some(), "a render that writes kind edges must attach the resolved options");
         let Some(options) = self.options else {
             return;

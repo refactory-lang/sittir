@@ -5499,8 +5499,9 @@ whitespace becomes that call's argument. A residual gate chain is an
 
 A `seam` node that is the kind's own edge (the printer's `edge(name)`
 answers its kind id and side) prints as `w.edge(KindId(N), Side::…,
-node.edges.and_then(|e| e.<side>))`: the sink takes the stamped arm when the
-node carries one, else the kind's edge row, with the row's strength. Every
+node.edges.and_then(|e| e.<side>))`: the sink takes the node's stamp when it
+carries one (arm and strength, from the site that set it: the kind's own
+edge site or a list's seat), else the kind's edge row. Every
 other seam prints as `w.site_at(<SITE const>)`: the transport carries no
 field for it, and the sink reads the site's arm from its resolved options.
 The printer's `site(name)` names the `options::SITE_*` constant from the
@@ -8944,7 +8945,10 @@ omits `$_edges` fail with "missing field" — and no JS code sends it. `None`
 means "not yet prepared": `prepare_edges` is the only code that branches on
 it, filling each unset side from the kind's edge row, and a body passes
 `node.edges.and_then(|e| e.<side>)` to `w.edge`, which falls back to the row
-itself. No render path reads `None` as "this node has no edges".
+itself. No render path reads `None` as "this node has no edges". Each side is
+an `EdgeArm` (arm plus an optional strength): the render side stamps both, so
+a seated gap writes at its seat's strength, and a stamp that arrives without
+a strength writes at the strength the kind's edge site gives that arm.
 Every emission helper that produces the field declarations, the `None`
 initialisers or the `obj.get(...)` reads derives from this array. A
 transport carries no coordinate fields: a coordinate is the `Coord` arm of

@@ -46,13 +46,33 @@ impl SiteSpec {
     }
 }
 
-/// The two edges every transport carries in its base: arms only, since the
-/// strength comes from the kind's edge row when the edge is written.
+/// One edge a transport carries: the arm, and the strength it writes at when
+/// the stamp knows it. The render side stamps both, from the site that set the
+/// edge (the kind's own edge site, or the seat of the list that holds the
+/// node), so a seated gap writes at its own site's strength. A stamp without a
+/// strength writes at the strength the kind's edge site gives that arm; the
+/// field is optional because napi cannot skip a field and an arm-only object
+/// must still read.
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct EdgeArm {
+    pub arm: u16,
+    pub strength: Option<u8>,
+}
+
+impl From<crate::slot::SeamArm> for EdgeArm {
+    fn from(seam: crate::slot::SeamArm) -> Self {
+        EdgeArm { arm: seam.arm, strength: Some(seam.strength) }
+    }
+}
+
+/// The two edges every transport carries in its base. An unset side is
+/// filled by `prepare_edges` from the kind's edge row, or by a seat.
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct Edges {
-    pub before: Option<u16>,
-    pub after: Option<u16>,
+    pub before: Option<EdgeArm>,
+    pub after: Option<EdgeArm>,
 }
 
 impl Edges {
@@ -94,25 +114,28 @@ impl ResolvedOptions {
         self.spacing[site] = self.sites[site].seam(arm);
     }
 
-    /// The arm one side of a kind's edge writes: the stamped arm when one is set, else the site's resolved arm.
-    /// None when the kind owns no edge row or the row has no site on that side.
+    /// What one side of a kind's edge writes: the stamp when one is set (at its
+    /// own strength, or the site's spec strength for that arm when it carries
+    /// none), else the site's resolved arm. None when the kind owns no edge row
+    /// or the row has no site on that side.
     pub fn edge_arm(
         &self,
         kind: crate::types::KindId,
         side: Side,
-        stamped: Option<u16>,
+        stamped: Option<EdgeArm>,
     ) -> Option<crate::slot::SeamArm> {
         let row = self.edge_row(kind)?;
         self.edge_seam(match side { Side::Before => row.before, Side::After => row.after }, stamped)
     }
 
-    fn edge_seam(&self, site: u16, stamped: Option<u16>) -> Option<crate::slot::SeamArm> {
+    fn edge_seam(&self, site: u16, stamped: Option<EdgeArm>) -> Option<crate::slot::SeamArm> {
         if site == NO_SITE {
             return None;
         }
         let site = site as usize;
         Some(match stamped {
-            Some(arm) => self.sites[site].seam(arm),
+            Some(EdgeArm { arm, strength: Some(strength) }) => crate::slot::SeamArm { arm, strength },
+            Some(EdgeArm { arm, strength: None }) => self.sites[site].seam(arm),
             None => self.spacing[site],
         })
     }

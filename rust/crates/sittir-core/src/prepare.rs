@@ -4,7 +4,7 @@
 //! from the resolved options. The context is an argument at every level;
 //! nothing ambient carries the trees or the table.
 
-use crate::options::{Edged, Edges, ResolvedOptions, Side};
+use crate::options::{EdgeArm, Edged, Edges, ResolvedOptions, Side};
 use crate::types::KindId;
 use crate::render::{CoordinateError, SourceTable};
 use crate::slot::SlotValue;
@@ -20,10 +20,10 @@ pub fn prepare_edges<T: Edged + ?Sized>(t: &mut T, ctx: &RenderContext<'_>) {
     let kind = t.kind_id();
     let edges = t.edges_mut();
     if edges.before.is_none() {
-        edges.before = ctx.options.edge_arm(kind, Side::Before, None).map(|a| a.arm);
+        edges.before = ctx.options.edge_arm(kind, Side::Before, None).map(EdgeArm::from);
     }
     if edges.after.is_none() {
-        edges.after = ctx.options.edge_arm(kind, Side::After, None).map(|a| a.arm);
+        edges.after = ctx.options.edge_arm(kind, Side::After, None).map(EdgeArm::from);
     }
 }
 
@@ -50,7 +50,7 @@ pub fn seat_site(table: &[u16], kind: KindId) -> Option<usize> {
 
 /// Fill the gap after every present element but the last present one from
 /// the slot's seat table: a seated element's base `after` edge takes its
-/// site's arm unless the wire already set it. A coordinate is skipped; an
+/// seat's resolved arm and strength unless the wire already set it. A coordinate is skipped; an
 /// absent element renders nothing, so it neither takes a gap nor counts as
 /// the sibling that makes the gap before it.
 pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
@@ -63,7 +63,7 @@ pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
     for item in present {
         let SlotValue::Transport(t) = item else { continue };
         if let Some((edges, site)) = t.seat_target(table) {
-            edges.after.get_or_insert(ctx.options.spacing[site].arm);
+            edges.after.get_or_insert(EdgeArm::from(ctx.options.spacing[site]));
         }
     }
 }

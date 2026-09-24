@@ -121,7 +121,15 @@ fn a_nested_container_is_walked_to_the_bottom() {
     );
 }
 
-use sittir_core::options::{Edged, Edges, EdgeSite, Side, SiteSpec, NO_SITE};
+use sittir_core::options::{EdgeArm, Edged, Edges, EdgeSite, Side, SiteSpec, NO_SITE};
+
+fn wire(arm: u16) -> EdgeArm {
+    EdgeArm { arm, strength: None }
+}
+
+fn stamped(arm: u16, strength: u8) -> EdgeArm {
+    EdgeArm { arm, strength: Some(strength) }
+}
 use sittir_core::prepare::prepare_edges;
 use sittir_core::render::{RenderSink, WhitespaceTable};
 use sittir_core::slot::SeamArm;
@@ -199,19 +207,21 @@ fn an_edged_transport_prepares_its_edges_from_the_edge_row() {
     let sources = Sources(HashMap::new());
     let mut leaf = Edged3 { edges: Edges::default() };
     prepare_edges(&mut leaf, &ctx(&opts, &sources));
-    assert_eq!(leaf.edges, Edges { before: Some(5), after: Some(6) });
+    assert_eq!(leaf.edges, Edges { before: Some(stamped(5, 1)), after: Some(stamped(6, 1)) });
 }
 
 #[test]
-fn a_stamped_edge_keeps_its_arm_and_carries_declared_strength() {
+fn a_wire_stamp_takes_its_site_spec_strength_and_a_render_stamp_keeps_its_own() {
     let opts = edged_options();
-    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(9)), Some(SeamArm { arm: 9, strength: SEAM_DECLARED }));
+    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(wire(9))), Some(SeamArm { arm: 9, strength: SEAM_DECLARED }));
+    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(wire(6))), Some(SeamArm { arm: 6, strength: 1 }));
+    assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(stamped(6, 0))), Some(SeamArm { arm: 6, strength: 0 }));
     assert_eq!(opts.edge_arm(KindId(3), Side::Before, None), Some(SeamArm { arm: 5, strength: 1 }));
     assert_eq!(opts.edge_arm(KindId(4), Side::Before, None), None);
     let sources = Sources(HashMap::new());
-    let mut leaf = Edged3 { edges: Edges { before: None, after: Some(8) } };
+    let mut leaf = Edged3 { edges: Edges { before: None, after: Some(wire(8)) } };
     prepare_edges(&mut leaf, &ctx(&opts, &sources));
-    assert_eq!(leaf.edges, Edges { before: Some(5), after: Some(8) });
+    assert_eq!(leaf.edges, Edges { before: Some(stamped(5, 1)), after: Some(wire(8)) });
 }
 
 use sittir_core::prepare::{fill_seated_gaps, seat_site, SeatTarget};
@@ -245,7 +255,7 @@ fn seatable(kind: u16) -> Option<SlotValue<Seatable>> {
 
 fn after_of(item: &Option<SlotValue<Seatable>>) -> Option<u16> {
     match item {
-        Some(SlotValue::Transport(t)) => t.edges.after,
+        Some(SlotValue::Transport(t)) => t.edges.after.map(|e| e.arm),
         _ => None,
     }
 }
@@ -271,6 +281,17 @@ fn seated_gaps_fill_the_preceding_elements_after_edge_and_never_the_last() {
 }
 
 #[test]
+fn a_seated_gap_carries_its_own_sites_strength() {
+    let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
+    let opts = ResolvedOptions { spacing: vec![SeamArm { arm: 70, strength: 0 }], ..ResolvedOptions::default() };
+    let sources = Sources(HashMap::new());
+    let mut items = vec![seatable(3), seatable(3)];
+    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
+    let Some(SlotValue::Transport(first)) = &items[0] else { panic!() };
+    assert_eq!(first.edges.after, Some(stamped(70, 0)));
+}
+
+#[test]
 fn a_seated_gap_is_not_written_after_the_last_present_element() {
     let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
@@ -287,7 +308,7 @@ fn a_seated_gap_keeps_an_after_edge_the_element_already_carries() {
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
     let mut items = vec![
-        Some(SlotValue::Transport(Seatable { kind: 3, edges: Edges { before: None, after: Some(1) } })),
+        Some(SlotValue::Transport(Seatable { kind: 3, edges: Edges { before: None, after: Some(wire(1)) } })),
         seatable(3),
     ];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
@@ -303,6 +324,6 @@ fn a_wrapper_not_itself_seated_seats_the_node_it_wraps_and_keeps_its_own_edges()
     let mut items = vec![wrapped(), wrapped()];
     fill_seated_gaps(items.iter_mut().map(Some), table, &ctx(&opts, &sources));
     let SlotValue::Transport(first) = &items[0] else { panic!() };
-    assert_eq!(first.content.edges.after, Some(70));
+    assert_eq!(first.content.edges.after.map(|e| e.arm), Some(70));
     assert_eq!(first.edges, Edges::default());
 }

@@ -107,10 +107,10 @@ pub trait RenderSink {
     /// with the site's default strength when the arm is its default. Unlike
     /// `site`, which writes a given arm, this names a site and looks it up.
     fn site_at(&mut self, site: usize);
-    /// One side of a kind's edge: the stamped arm when the node carries one,
-    /// else the kind's edge row, with the row's strength when the arm is its
-    /// default. A kind with no edge site on that side writes nothing.
-    fn edge(&mut self, kind: KindId, side: crate::options::Side, stamped: Option<u16>);
+    /// One side of a kind's edge: the node's stamp when it carries one, else
+    /// the kind's edge row (`ResolvedOptions::edge_arm`). A kind with no edge
+    /// site on that side writes nothing.
+    fn edge(&mut self, kind: KindId, side: crate::options::Side, stamped: Option<crate::options::EdgeArm>);
     fn seam(&mut self, text: &str);
     fn token_seam(&mut self, text: &str);
     /// Write the bytes a coordinate names, from the tree table this writer
