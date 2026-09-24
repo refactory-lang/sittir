@@ -43,6 +43,7 @@ import {
 	type TSTree,
 	type WrappedNodeData,
 	type IrSurface,
+	type ValidatorSkip,
 	loadIrSurface,
 	buildFactoryNodeFromReference
 } from './common.ts';
@@ -296,6 +297,8 @@ export interface FactoryRenderParseResult {
 		start: number;
 		end: number;
 	}[];
+	skips: ValidatorSkip[];
+	excluded: ValidatorSkip[];
 }
 
 /**
@@ -562,8 +565,9 @@ export async function validateFactoryRenderParse(
 	}[] = [];
 	const testedPairs = initKindEntryDeduplicator();
 	let pass = 0;
-	let skip = 0;
 	let total = 0;
+	const skips: ValidatorSkip[] = [];
+	const excluded: ValidatorSkip[] = [];
 
 	recordFactoryModuleLoadFailure(importFailure, errors);
 	if (options.surface === 'ir' && surface === undefined) {
@@ -578,7 +582,9 @@ export async function validateFactoryRenderParse(
 			skip: 0,
 			astMatchPass: 0,
 			errors,
-			astMismatches: []
+			astMismatches: [],
+			skips: [],
+			excluded: []
 		};
 	}
 
@@ -612,13 +618,18 @@ export async function validateFactoryRenderParse(
 			skip: 0,
 			astMatchPass: 0,
 			errors,
-			astMismatches: []
+			astMismatches: [],
+			skips: [],
+			excluded: []
 		};
 	}
 
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;
-		if (tree1.rootNode.hasError) continue;
+		if (tree1.rootNode.hasError) {
+			excluded.push({ entry: entry.name, reason: 'parse-error', input: entry.source });
+			continue;
+		}
 
 		// Same read path as read-render-parse: build the native read handle,
 		// then walk the WRAPPED tree once. Every node arrives as its true
@@ -687,7 +698,7 @@ export async function validateFactoryRenderParse(
 				if (factoryData === null) {
 					// No factory for this kind, or the factory threw (already
 					// recorded). Either way there's nothing to compare.
-					skip++;
+					skips.push({ entry: entry.name, kind, reason: 'no-factory-data', input: inputSource });
 					continue;
 				}
 
@@ -719,11 +730,13 @@ export async function validateFactoryRenderParse(
 		grammar,
 		total,
 		pass,
-		fail: total - pass - skip,
-		skip,
+		fail: total - pass - skips.length,
+		skip: skips.length,
 		astMatchPass: pass,
 		errors,
-		astMismatches: dedupeMismatchesByContainment(astMismatches)
+		astMismatches: dedupeMismatchesByContainment(astMismatches),
+		skips,
+		excluded
 	};
 }
 
