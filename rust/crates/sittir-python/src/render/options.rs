@@ -2020,12 +2020,6 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16], u8)] = &[
     ("yield_from_clause", "yield_from_clause_after", "yield_from_clause_after", 121, &[120, 121, 113, 122, 123], 0),
 ];
 
-/// The strength a site's arm carries into the writer: its table strength when the arm is the table default, declared otherwise.
-pub fn site_strength(site: usize, arm: u16) -> u8 {
-    let row = &SPACING_SITES[site];
-    if arm == row.3 { row.5 } else { ::sittir_core::spacing::SEAM_DECLARED }
-}
-
 /// (kind id, before site, after site) of every kind that owns edge seams, sorted by kind id, so a coordinate meets the seams a rendered node writes.
 pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { kind: 126, before: ::sittir_core::options::EdgeSlot { site: 753, default_arm: 121, strength: 0 }, after: ::sittir_core::options::EdgeSlot { site: 754, default_arm: 121, strength: 0 } },

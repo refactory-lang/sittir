@@ -562,7 +562,7 @@ function printStatements(body: Body, printer: RustBodyPrinter, depth: number): s
 					const side = edge.side === 'before' ? 'Before' : 'After';
 					lines.push(`${pad}w.edge(::sittir_core::types::KindId(${edge.kindId}), ::sittir_core::options::Side::${side}, node.edges.and_then(|e| e.${edge.side}));`);
 				} else {
-					lines.push(`${pad}w.site_with(node.${printer.field(node.field)}.unwrap_or(0), options::site_strength(${printer.site(node.field)}, node.${printer.field(node.field)}.unwrap_or(0)));`);
+					lines.push(`${pad}w.site_at(${printer.site(node.field)});`);
 				}
 				break;
 			}

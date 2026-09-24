@@ -101,13 +101,7 @@ export interface AbstractClassDeclarationTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _heritage?: SlotValue<ClassHeritageTransport>
   _body: SlotValue<ClassBodyTransport>
-  _decorator_end?: number
-  _decorator_start?: number
   _decorator_separator_space?: number
-  _abstract_keyword_before?: number
-  _abstract_keyword_after?: number
-  _class_keyword_before?: number
-  _class_keyword_after?: number
 }
 
 export interface AbstractMethodSignatureTransport {
@@ -121,29 +115,18 @@ export interface AbstractMethodSignatureTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<AbstractMethodSignatureReturnTypeTransportSlot>
-  _accessibility_modifier_after?: number
-  _accessor_kind_before?: number
-  _accessor_kind_after?: number
-  _optional_marker_before?: number
-  _optional_marker_after?: number
-  _override_modifier_before?: number
-  _override_modifier_after?: number
-  _abstract_keyword_before?: number
-  _abstract_keyword_after?: number
 }
 
 export interface AddingTypeAnnotationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type: SlotValue<TypeTransport>
-  _plus_qmark_colon_after?: number
 }
 
 export interface AmbientDeclarationGlobalTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _body: SlotValue<StatementBlockTransport>
-  _global_keyword_after?: number
 }
 
 export interface AmbientDeclarationModuleTransport {
@@ -152,64 +135,42 @@ export interface AmbientDeclarationModuleTransport {
   _name: SlotValue<PropertyIdentifierTransport>
   _type: SlotValue<TypeTransport>
   _terminator?: SlotValue<AmbientDeclarationModuleTerminatorTransportSlot>
-  _dot_before?: number
-  _dot_after?: number
-  _colon_before?: number
-  _colon_after?: number
-  _semi_before?: number
-  _module_keyword_after?: number
 }
 
 export interface AmbientDeclarationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _content: SlotValue<Box<AmbientDeclarationContentTransportSlot>>
-  _declare_keyword_after?: number
 }
 
 export interface ArgumentsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _elements?: Array<SlotValue<ArgumentsElementsTransportSlot> | undefined | null>
-  _elements_end?: number
-  _elements_start?: number
   _elements_separator_space_before?: number
   _elements_separator_space_after?: number
-  _lparen_after?: number
-  _rparen_before?: number
 }
 
 export interface ArrayPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _elements?: Array<SlotValue<ArrayPatternElementsTransportSlot> | undefined | null>
-  _elements_end?: number
-  _elements_start?: number
   _elements_separator_space_before?: number
   _elements_separator_space_after?: number
-  _lbrack_after?: number
-  _rbrack_before?: number
 }
 
 export interface ArrayTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _elements?: Array<SlotValue<ArrayElementsTransportSlot> | undefined | null>
-  _elements_end?: number
-  _elements_start?: number
   _elements_separator_space_before?: number
   _elements_separator_space_after?: number
-  _lbrack_after?: number
-  _rbrack_before?: number
 }
 
 export interface ArrayTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type: SlotValue<Box<PrimaryTypeTransport>>
-  _lbrack_before?: number
-  _lbrack_after?: number
-  _rbrack_before?: number
 }
 
 export interface ArrowFunctionParameterTransport {
@@ -224,9 +185,6 @@ export interface ArrowFunctionTransport {
   _async_marker?: SlotValue<KwAsyncMarkerTransport>
   _body: SlotValue<Box<ArrowFunctionBodyTransportSlot>>
   _content: SlotValue<ArrowFunctionContentTransportSlot>
-  _async_marker_after?: number
-  _eq_gt_before?: number
-  _eq_gt_after?: number
 }
 
 export interface AsExpressionTransport {
@@ -234,23 +192,18 @@ export interface AsExpressionTransport {
   '$_edges'?: Edges
   _expression: SlotValue<Box<ExpressionTransport>>
   _type_annotation: SlotValue<AsExpressionTypeAnnotationTransportSlot>
-  _as_keyword_before?: number
-  _as_keyword_after?: number
-  _const_keyword_before?: number
 }
 
 export interface AssertsAnnotationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _asserts: SlotValue<AssertsTransport>
-  _colon_after?: number
 }
 
 export interface AssertsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _content: SlotValue<Box<AssertsContentTransportSlot>>
-  _asserts_keyword_after?: number
 }
 
 export interface AssignmentExpressionTransport {
@@ -259,9 +212,6 @@ export interface AssignmentExpressionTransport {
   _using_marker?: SlotValue<KwUsingMarkerTransport>
   _left: SlotValue<Box<AssignmentExpressionLeftTransportSlot>>
   _right: SlotValue<Box<ExpressionTransport>>
-  _using_marker_after?: number
-  _eq_before?: number
-  _eq_after?: number
 }
 
 export interface AssignmentPatternTransport {
@@ -269,8 +219,6 @@ export interface AssignmentPatternTransport {
   '$_edges'?: Edges
   _left: SlotValue<PatternTransport>
   _right: SlotValue<ExpressionTransport>
-  _eq_before?: number
-  _eq_after?: number
 }
 
 export interface AugmentedAssignmentExpressionTransport {
@@ -285,7 +233,6 @@ export interface AwaitExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _expression: SlotValue<Box<ExpressionTransport>>
-  _await_keyword_after?: number
 }
 
 export interface BinaryExpressionInTransport {
@@ -293,8 +240,6 @@ export interface BinaryExpressionInTransport {
   '$_edges'?: Edges
   _left: SlotValue<Box<BinaryExpressionInLeftTransportSlot>>
   _right: SlotValue<Box<ExpressionTransport>>
-  _operator_before?: number
-  _operator_after?: number
 }
 
 export interface BinaryExpressionTransport {
@@ -304,8 +249,6 @@ export interface BinaryExpressionTransport {
   _operator?: SlotValue<Box<AnyTransport>>
   _right?: SlotValue<Box<ExpressionTransport>>
   _binary_expression_in?: SlotValue<Box<BinaryExpressionInTransport>>
-  _operator_before?: number
-  _operator_after?: number
 }
 
 export interface BreakStatementTransport {
@@ -313,8 +256,6 @@ export interface BreakStatementTransport {
   '$_edges'?: Edges
   _label?: SlotValue<StatementIdentifierTransport>
   _terminator: SlotValue<BreakStatementTerminatorTransportSlot>
-  _semi_before?: number
-  _break_keyword_after?: number
 }
 
 export interface CallExpressionCallTransport {
@@ -331,8 +272,6 @@ export interface CallExpressionMemberTransport {
   _function: SlotValue<Box<PrimaryExpressionTransport>>
   _type_arguments?: SlotValue<TypeArgumentsTransport>
   _arguments: SlotValue<ArgumentsTransport>
-  _qmark_dot_before?: number
-  _qmark_dot_after?: number
 }
 
 export interface CallExpressionTemplateCallTransport {
@@ -355,8 +294,6 @@ export interface CatchClauseGroupTransport {
   '$_edges'?: Edges
   _parameter: SlotValue<CatchClauseGroupParameterTransportSlot>
   _type?: SlotValue<TypeAnnotationTransport>
-  _lparen_after?: number
-  _rparen_before?: number
 }
 
 export interface CatchClauseTransport {
@@ -364,7 +301,6 @@ export interface CatchClauseTransport {
   '$_edges'?: Edges
   _body: SlotValue<StatementBlockTransport>
   _catch_clause_group?: SlotValue<CatchClauseGroupTransport>
-  _catch_keyword_after?: number
 }
 
 export interface ClassBodyMemberTransport {
@@ -372,7 +308,6 @@ export interface ClassBodyMemberTransport {
   '$_edges'?: Edges
   _terminator: SlotValue<ClassBodyMemberTerminatorTransportSlot>
   _content: SlotValue<ClassBodyMemberContentTransportSlot>
-  _comma_before?: number
 }
 
 export interface ClassBodyMethodSigTransport {
@@ -380,7 +315,6 @@ export interface ClassBodyMethodSigTransport {
   '$_edges'?: Edges
   _terminator: SlotValue<ClassBodyMethodSigTerminatorTransportSlot>
   _method_signature: SlotValue<MethodSignatureTransport>
-  _comma_before?: number
 }
 
 export interface ClassBodyMethodTransport {
@@ -389,21 +323,14 @@ export interface ClassBodyMethodTransport {
   _decorator?: Array<SlotValue<DecoratorTransport>>
   _terminator?: SlotValue<ClassBodyMethodTerminatorTransportSlot>
   _method_definition: SlotValue<MethodDefinitionTransport>
-  _decorator_end?: number
-  _decorator_start?: number
   _decorator_separator_space?: number
-  _semi_before?: number
 }
 
 export interface ClassBodyTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _content?: Array<SlotValue<ClassBodyContentTransportSlot>>
-  _content_end?: number
-  _content_start?: number
   _content_separator_space?: number
-  _lbrace_after?: number
-  _rbrace_before?: number
 }
 
 export interface ClassDeclarationTransport {
@@ -415,11 +342,7 @@ export interface ClassDeclarationTransport {
   _heritage?: SlotValue<ClassHeritageTransport>
   _body: SlotValue<ClassBodyTransport>
   _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
-  _decorator_end?: number
-  _decorator_start?: number
   _decorator_separator_space?: number
-  _class_keyword_before?: number
-  _class_keyword_after?: number
 }
 
 export interface ClassHeritageExtendsClauseTransport {
@@ -440,7 +363,6 @@ export interface ClassStaticBlockTransport {
   '$_edges'?: Edges
   _body: SlotValue<StatementBlockTransport>
   _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
-  _static_keyword_after?: number
 }
 
 export interface ClassTransport {
@@ -451,11 +373,7 @@ export interface ClassTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _heritage?: SlotValue<ClassHeritageTransport>
   _body: SlotValue<ClassBodyTransport>
-  _decorator_end?: number
-  _decorator_start?: number
   _decorator_separator_space?: number
-  _class_keyword_before?: number
-  _class_keyword_after?: number
 }
 
 export interface CommentBlockTransport {
@@ -474,8 +392,6 @@ export interface ComputedPropertyNameTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _expression: SlotValue<ExpressionTransport>
-  _lbrack_after?: number
-  _rbrack_before?: number
 }
 
 export interface ConditionalTypeTransport {
@@ -485,12 +401,6 @@ export interface ConditionalTypeTransport {
   _right: SlotValue<Box<TypeTransport>>
   _consequence: SlotValue<Box<TypeTransport>>
   _alternative: SlotValue<Box<TypeTransport>>
-  _colon_before?: number
-  _colon_after?: number
-  _qmark_before?: number
-  _qmark_after?: number
-  _extends_keyword_before?: number
-  _extends_keyword_after?: number
 }
 
 export interface ConstraintTransport {
@@ -498,8 +408,6 @@ export interface ConstraintTransport {
   '$_edges'?: Edges
   _type: SlotValue<TypeTransport>
   _content: SlotValue<Box<AnyTransport>>
-  _colon_after?: number
-  _extends_keyword_after?: number
 }
 
 export interface ConstructorTypeTransport {
@@ -509,11 +417,6 @@ export interface ConstructorTypeTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _type: SlotValue<Box<TypeTransport>>
-  _abstract_marker_after?: number
-  _eq_gt_before?: number
-  _eq_gt_after?: number
-  _new_keyword_before?: number
-  _new_keyword_after?: number
 }
 
 export interface ConstructSignatureTransport {
@@ -523,9 +426,6 @@ export interface ConstructSignatureTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _type?: SlotValue<TypeAnnotationTransport>
-  _abstract_marker_after?: number
-  _new_keyword_before?: number
-  _new_keyword_after?: number
 }
 
 export interface ContinueStatementTransport {
@@ -533,16 +433,12 @@ export interface ContinueStatementTransport {
   '$_edges'?: Edges
   _label?: SlotValue<StatementIdentifierTransport>
   _terminator: SlotValue<ContinueStatementTerminatorTransportSlot>
-  _semi_before?: number
-  _continue_keyword_after?: number
 }
 
 export interface DebuggerStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _terminator: SlotValue<DebuggerStatementTerminatorTransportSlot>
-  _semi_before?: number
-  _debugger_keyword_after?: number
 }
 
 export interface DecoratorCallExpressionTransport {
@@ -558,30 +454,24 @@ export interface DecoratorMemberExpressionTransport {
   '$_edges'?: Edges
   _object: SlotValue<Box<DecoratorMemberExpressionObjectTransportSlot>>
   _property: SlotValue<PropertyIdentifierTransport>
-  _dot_before?: number
-  _dot_after?: number
 }
 
 export interface DecoratorParenthesizedExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _content: SlotValue<DecoratorParenthesizedExpressionContentTransportSlot>
-  _lparen_after?: number
-  _rparen_before?: number
 }
 
 export interface DecoratorTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _content: SlotValue<DecoratorContentTransportSlot>
-  _at_after?: number
 }
 
 export interface DefaultTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type: SlotValue<TypeTransport>
-  _eq_after?: number
 }
 
 export interface DoStatementTransport {
@@ -590,17 +480,12 @@ export interface DoStatementTransport {
   _body: SlotValue<Box<StatementTransport>>
   _condition: SlotValue<ParenthesizedExpressionTransport>
   _terminator?: SlotValue<DoStatementTerminatorTransportSlot>
-  _semi_before?: number
-  _do_keyword_after?: number
-  _while_keyword_before?: number
-  _while_keyword_after?: number
 }
 
 export interface ElseClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _body: SlotValue<Box<StatementTransport>>
-  _else_keyword_after?: number
 }
 
 export interface EngineOptions {
@@ -619,8 +504,6 @@ export interface EnumAssignmentTransport {
   '$_edges'?: Edges
   _name: SlotValue<EnumAssignmentNameTransportSlot>
   _value: SlotValue<ExpressionTransport>
-  _eq_before?: number
-  _eq_after?: number
 }
 
 export interface EnumBodyElementsTransport {
@@ -628,8 +511,6 @@ export interface EnumBodyElementsTransport {
   '$_edges'?: Edges
   _content?: Array<SlotValue<EnumBodyElementsContentTransportSlot>>
   _delimiter?: number
-  _content_end?: number
-  _content_start?: number
   _content_separator_space_before?: number
   _content_separator_space_after?: number
 }
@@ -638,8 +519,6 @@ export interface EnumBodyTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _enum_body_elements?: SlotValue<EnumBodyElementsTransport>
-  _lbrace_after?: number
-  _rbrace_before?: number
 }
 
 export interface EnumDeclarationTransport {
@@ -648,9 +527,6 @@ export interface EnumDeclarationTransport {
   _const_marker?: SlotValue<KwConstMarkerTransport>
   _name: SlotValue<IdentifierTransport>
   _body: SlotValue<EnumBodyTransport>
-  _const_marker_after?: number
-  _enum_keyword_before?: number
-  _enum_keyword_after?: number
 }
 
 export interface EscapeSequenceTransport {
@@ -663,8 +539,6 @@ export interface ExportClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _export_specifiers?: SlotValue<ExportSpecifiersTransport>
-  _lbrace_after?: number
-  _rbrace_before?: number
 }
 
 export interface ExportSpecifiersTransport {
@@ -672,8 +546,6 @@ export interface ExportSpecifiersTransport {
   '$_edges'?: Edges
   _export_specifier: Array<SlotValue<ExportSpecifierTransport>>
   _delimiter?: number
-  _export_specifier_end?: number
-  _export_specifier_start?: number
   _export_specifier_separator_space_before?: number
   _export_specifier_separator_space_after?: number
 }
@@ -684,17 +556,12 @@ export interface ExportSpecifierTransport {
   _export_kind?: SlotValue<Box<AnyTransport>>
   _name: SlotValue<ExportSpecifierNameTransportSlot>
   _alias?: SlotValue<ExportSpecifierAliasTransportSlot>
-  _as_keyword_before?: number
-  _as_keyword_after?: number
-  _type_keyword_after?: number
-  _typeof_keyword_after?: number
 }
 
 export interface ExportStatementDefaultDeclarationDefaultKwTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _content: SlotValue<ExportStatementDefaultDeclarationDefaultKwContentTransportSlot>
-  _default_keyword_after?: number
 }
 
 export interface ExportStatementDefaultDeclarationDefaultKwValueTransport {
@@ -702,7 +569,6 @@ export interface ExportStatementDefaultDeclarationDefaultKwValueTransport {
   '$_edges'?: Edges
   _value: SlotValue<ExpressionTransport>
   _automatic_semicolon: SlotValue<ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot>
-  _semi_before?: number
 }
 
 export interface ExportStatementDefaultDeclarationTransport {
@@ -710,11 +576,7 @@ export interface ExportStatementDefaultDeclarationTransport {
   '$_edges'?: Edges
   _decorator?: Array<SlotValue<DecoratorTransport>>
   _content: SlotValue<ExportStatementDefaultDeclarationContentTransportSlot>
-  _decorator_end?: number
-  _decorator_start?: number
   _decorator_separator_space?: number
-  _export_keyword_before?: number
-  _export_keyword_after?: number
 }
 
 export interface ExportStatementDefaultFromClauseFromTransport {
@@ -722,8 +584,6 @@ export interface ExportStatementDefaultFromClauseFromTransport {
   '$_edges'?: Edges
   _source: SlotValue<StringTransport>
   _export_clause: SlotValue<ExportClauseTransport>
-  _from_keyword_before?: number
-  _from_keyword_after?: number
 }
 
 export interface ExportStatementDefaultFromNsFromTransport {
@@ -731,17 +591,12 @@ export interface ExportStatementDefaultFromNsFromTransport {
   '$_edges'?: Edges
   _source: SlotValue<StringTransport>
   _namespace_export: SlotValue<NamespaceExportTransport>
-  _from_keyword_before?: number
-  _from_keyword_after?: number
 }
 
 export interface ExportStatementDefaultFromStarFromTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _source: SlotValue<StringTransport>
-  _star_after?: number
-  _from_keyword_before?: number
-  _from_keyword_after?: number
 }
 
 export interface ExportStatementDefaultFromTransport {
@@ -749,8 +604,6 @@ export interface ExportStatementDefaultFromTransport {
   '$_edges'?: Edges
   _content: SlotValue<ExportStatementDefaultFromContentTransportSlot>
   _automatic_semicolon: SlotValue<ExportStatementDefaultFromAutomaticSemicolonTransportSlot>
-  _semi_before?: number
-  _export_keyword_after?: number
 }
 
 export interface ExportStatementEqualsExportTransport {
@@ -758,10 +611,6 @@ export interface ExportStatementEqualsExportTransport {
   '$_edges'?: Edges
   _expression: SlotValue<ExpressionTransport>
   _terminator: SlotValue<ExportStatementEqualsExportTerminatorTransportSlot>
-  _semi_before?: number
-  _eq_before?: number
-  _eq_after?: number
-  _export_keyword_after?: number
 }
 
 export interface ExportStatementNamespaceExportTransport {
@@ -769,12 +618,6 @@ export interface ExportStatementNamespaceExportTransport {
   '$_edges'?: Edges
   _name: SlotValue<IdentifierTransport>
   _terminator: SlotValue<ExportStatementNamespaceExportTerminatorTransportSlot>
-  _semi_before?: number
-  _as_keyword_before?: number
-  _as_keyword_after?: number
-  _export_keyword_after?: number
-  _namespace_keyword_before?: number
-  _namespace_keyword_after?: number
 }
 
 export interface ExportStatementTypeExportTransport {
@@ -783,12 +626,6 @@ export interface ExportStatementTypeExportTransport {
   _export_clause: SlotValue<ExportClauseTransport>
   _source?: SlotValue<StringTransport>
   _terminator: SlotValue<ExportStatementTypeExportTerminatorTransportSlot>
-  _semi_before?: number
-  _export_keyword_after?: number
-  _from_keyword_before?: number
-  _from_keyword_after?: number
-  _type_keyword_before?: number
-  _type_keyword_after?: number
 }
 
 export interface ExpressionStatementTransport {
@@ -796,7 +633,6 @@ export interface ExpressionStatementTransport {
   '$_edges'?: Edges
   _expression: SlotValue<ExpressionStatementExpressionTransportSlot>
   _terminator: SlotValue<ExpressionStatementTerminatorTransportSlot>
-  _semi_before?: number
 }
 
 export interface ExtendsClauseSingleTransport {
@@ -810,36 +646,28 @@ export interface ExtendsClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _extends_clause_single: Array<SlotValue<ExtendsClauseSingleTransport>>
-  _extends_clause_single_end?: number
-  _extends_clause_single_start?: number
   _extends_clause_single_separator_space_before?: number
   _extends_clause_single_separator_space_after?: number
-  _extends_keyword_after?: number
 }
 
 export interface ExtendsTypeClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type: Array<SlotValue<ExtendsTypeClauseTypeTransportSlot>>
-  _type_end?: number
-  _type_start?: number
   _type_separator_space_before?: number
   _type_separator_space_after?: number
-  _extends_keyword_after?: number
 }
 
 export interface FinallyClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _body: SlotValue<StatementBlockTransport>
-  _finally_keyword_after?: number
 }
 
 export interface FlowMaybeTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type: SlotValue<Box<PrimaryTypeTransport>>
-  _qmark_after?: number
 }
 
 export interface ForHeaderLetConstKindTransport {
@@ -850,12 +678,6 @@ export interface ForHeaderLetConstKindTransport {
   _operator: SlotValue<ForHeaderOperatorEnum>
   _right: SlotValue<ForHeaderLetConstKindRightTransportSlot>
   _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
-  _kind_before?: number
-  _kind_after?: number
-  _operator_before?: number
-  _operator_after?: number
-  _lparen_after?: number
-  _rparen_before?: number
 }
 
 export interface ForHeaderLhsTransport {
@@ -864,10 +686,6 @@ export interface ForHeaderLhsTransport {
   _left: SlotValue<ForHeaderLhsLeftTransportSlot>
   _operator: SlotValue<ForHeaderOperatorEnum>
   _right: SlotValue<ForHeaderLhsRightTransportSlot>
-  _operator_before?: number
-  _operator_after?: number
-  _lparen_after?: number
-  _rparen_before?: number
 }
 
 export interface ForHeaderVarKindTransport {
@@ -877,14 +695,6 @@ export interface ForHeaderVarKindTransport {
   _value?: SlotValue<ExpressionTransport>
   _operator: SlotValue<ForHeaderOperatorEnum>
   _right: SlotValue<ForHeaderVarKindRightTransportSlot>
-  _kind_before?: number
-  _kind_after?: number
-  _operator_before?: number
-  _operator_after?: number
-  _lparen_after?: number
-  _rparen_before?: number
-  _eq_before?: number
-  _eq_after?: number
 }
 
 export interface ForInStatementTransport {
@@ -893,9 +703,6 @@ export interface ForInStatementTransport {
   _await_marker?: SlotValue<KwAwaitMarkerTransport>
   _body: SlotValue<Box<StatementTransport>>
   _for_header: SlotValue<ForHeaderTransport>
-  _await_marker_before?: number
-  _await_marker_after?: number
-  _for_keyword_after?: number
 }
 
 export interface FormalParametersElementsTransport {
@@ -903,8 +710,6 @@ export interface FormalParametersElementsTransport {
   '$_edges'?: Edges
   _formal_parameter: Array<SlotValue<FormalParametersElementsFormalParameterTransportSlot>>
   _delimiter?: number
-  _formal_parameter_end?: number
-  _formal_parameter_start?: number
   _formal_parameter_separator_space_before?: number
   _formal_parameter_separator_space_after?: number
 }
@@ -913,8 +718,6 @@ export interface FormalParametersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _formal_parameters_elements?: SlotValue<FormalParametersElementsTransport>
-  _lparen_after?: number
-  _rparen_before?: number
 }
 
 export interface ForStatementTransport {
@@ -924,13 +727,6 @@ export interface ForStatementTransport {
   _condition: SlotValue<ForStatementConditionTransportSlot>
   _increment?: SlotValue<ForStatementIncrementTransportSlot>
   _body: SlotValue<Box<StatementTransport>>
-  _lparen_before?: number
-  _lparen_after?: number
-  _rparen_before?: number
-  _rparen_after?: number
-  _semi_before?: number
-  _semi_after?: number
-  _for_keyword_after?: number
 }
 
 export interface FunctionDeclarationTransport {
@@ -943,9 +739,6 @@ export interface FunctionDeclarationTransport {
   _return_type?: SlotValue<FunctionDeclarationReturnTypeTransportSlot>
   _body: SlotValue<StatementBlockTransport>
   _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
-  _async_marker_after?: number
-  _function_keyword_before?: number
-  _function_keyword_after?: number
 }
 
 export interface FunctionExpressionTransport {
@@ -957,9 +750,6 @@ export interface FunctionExpressionTransport {
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<FunctionExpressionReturnTypeTransportSlot>
   _body: SlotValue<StatementBlockTransport>
-  _async_marker_after?: number
-  _function_keyword_before?: number
-  _function_keyword_after?: number
 }
 
 export interface FunctionSignatureTransport {
@@ -971,9 +761,6 @@ export interface FunctionSignatureTransport {
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<FunctionSignatureReturnTypeTransportSlot>
   _terminator: SlotValue<FunctionSignatureTerminatorTransportSlot>
-  _async_marker_after?: number
-  _function_keyword_before?: number
-  _function_keyword_after?: number
 }
 
 export interface FunctionTypeTransport {
@@ -982,8 +769,6 @@ export interface FunctionTypeTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _return_type: SlotValue<Box<FunctionTypeReturnTypeTransportSlot>>
-  _eq_gt_before?: number
-  _eq_gt_after?: number
 }
 
 export interface GeneratorFunctionDeclarationTransport {
@@ -996,11 +781,6 @@ export interface GeneratorFunctionDeclarationTransport {
   _return_type?: SlotValue<GeneratorFunctionDeclarationReturnTypeTransportSlot>
   _body: SlotValue<StatementBlockTransport>
   _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
-  _async_marker_after?: number
-  _star_before?: number
-  _star_after?: number
-  _function_keyword_before?: number
-  _function_keyword_after?: number
 }
 
 export interface GeneratorFunctionTransport {
@@ -1012,11 +792,6 @@ export interface GeneratorFunctionTransport {
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<GeneratorFunctionReturnTypeTransportSlot>
   _body: SlotValue<StatementBlockTransport>
-  _async_marker_after?: number
-  _star_before?: number
-  _star_after?: number
-  _function_keyword_before?: number
-  _function_keyword_after?: number
 }
 
 export interface GenericTypeTransport {
@@ -1038,18 +813,14 @@ export interface IfStatementTransport {
   _condition: SlotValue<ParenthesizedExpressionTransport>
   _consequence: SlotValue<Box<StatementTransport>>
   _alternative?: SlotValue<Box<ElseClauseTransport>>
-  _if_keyword_after?: number
 }
 
 export interface ImplementsClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type: Array<SlotValue<TypeTransport>>
-  _type_end?: number
-  _type_start?: number
   _type_separator_space_before?: number
   _type_separator_space_after?: number
-  _implements_keyword_after?: number
 }
 
 export interface ImportAliasTransport {
@@ -1058,10 +829,6 @@ export interface ImportAliasTransport {
   _name: SlotValue<IdentifierTransport>
   _value: SlotValue<ImportAliasValueTransportSlot>
   _terminator: SlotValue<ImportAliasTerminatorTransportSlot>
-  _semi_before?: number
-  _eq_before?: number
-  _eq_after?: number
-  _import_keyword_after?: number
 }
 
 export interface ImportAttributeTransport {
@@ -1069,7 +836,6 @@ export interface ImportAttributeTransport {
   '$_edges'?: Edges
   _attribute_kind: SlotValue<Box<AnyTransport>>
   _object: SlotValue<ObjectTransport>
-  _attribute_kind_after?: number
 }
 
 export interface ImportClauseDefaultImportTransport {
@@ -1083,7 +849,6 @@ export interface ImportClauseGroupTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _content: SlotValue<ImportClauseGroupContentTransportSlot>
-  _comma_after?: number
 }
 
 export interface ImportClauseTransport {
@@ -1097,13 +862,6 @@ export interface ImportRequireClauseTransport {
   '$_edges'?: Edges
   _name: SlotValue<IdentifierTransport>
   _source: SlotValue<StringTransport>
-  _lparen_before?: number
-  _lparen_after?: number
-  _rparen_before?: number
-  _eq_before?: number
-  _eq_after?: number
-  _require_keyword_before?: number
-  _require_keyword_after?: number
 }
 
 export interface ImportSpecifierAsTransport {
@@ -1112,10 +870,6 @@ export interface ImportSpecifierAsTransport {
   _import_kind?: SlotValue<Box<AnyTransport>>
   _name: SlotValue<ImportSpecifierAsNameTransportSlot>
   _alias: SlotValue<ImportSpecifierAsAliasTransportSlot>
-  _as_keyword_before?: number
-  _as_keyword_after?: number
-  _type_keyword_after?: number
-  _typeof_keyword_after?: number
 }
 
 export interface ImportSpecifierNameTransport {
@@ -1123,8 +877,6 @@ export interface ImportSpecifierNameTransport {
   '$_edges'?: Edges
   _import_kind?: SlotValue<Box<AnyTransport>>
   _name: SlotValue<ImportSpecifierNameNameTransportSlot>
-  _type_keyword_after?: number
-  _typeof_keyword_after?: number
 }
 
 export interface ImportSpecifiersTransport {
@@ -1132,8 +884,6 @@ export interface ImportSpecifiersTransport {
   '$_edges'?: Edges
   _import_specifier: Array<SlotValue<ImportSpecifierTransport>>
   _delimiter?: number
-  _import_specifier_end?: number
-  _import_specifier_start?: number
   _import_specifier_separator_space_before?: number
   _import_specifier_separator_space_after?: number
 }
@@ -1143,8 +893,6 @@ export interface ImportStatementClauseFromTransport {
   '$_edges'?: Edges
   _source: SlotValue<StringTransport>
   _import_clause: SlotValue<ImportClauseTransport>
-  _from_keyword_before?: number
-  _from_keyword_after?: number
 }
 
 export interface ImportStatementTransport {
@@ -1154,12 +902,6 @@ export interface ImportStatementTransport {
   _from_clause: SlotValue<ImportStatementFromClauseTransportSlot>
   _import_attribute?: SlotValue<ImportAttributeTransport>
   _terminator: SlotValue<ImportStatementTerminatorTransportSlot>
-  _semi_before?: number
-  _import_keyword_after?: number
-  _type_keyword_before?: number
-  _type_keyword_after?: number
-  _typeof_keyword_before?: number
-  _typeof_keyword_after?: number
 }
 
 export interface IndexSignatureColonTransport {
@@ -1170,15 +912,6 @@ export interface IndexSignatureColonTransport {
   _name: SlotValue<IndexSignatureColonNameTransportSlot>
   _index_type: SlotValue<TypeTransport>
   _type: SlotValue<IndexSignatureColonTypeTransportSlot>
-  _readonly_marker_before?: number
-  _readonly_marker_after?: number
-  _sign_after?: number
-  _colon_before?: number
-  _colon_after?: number
-  _lbrack_before?: number
-  _lbrack_after?: number
-  _rbrack_before?: number
-  _rbrack_after?: number
 }
 
 export interface IndexSignatureMappedTypeClauseTransport {
@@ -1188,20 +921,12 @@ export interface IndexSignatureMappedTypeClauseTransport {
   _readonly_marker?: boolean
   _type: SlotValue<IndexSignatureMappedTypeClauseTypeTransportSlot>
   _mapped_type_clause: SlotValue<MappedTypeClauseTransport>
-  _readonly_marker_before?: number
-  _readonly_marker_after?: number
-  _sign_after?: number
-  _lbrack_before?: number
-  _lbrack_after?: number
-  _rbrack_before?: number
-  _rbrack_after?: number
 }
 
 export interface IndexTypeQueryTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type: SlotValue<Box<PrimaryTypeTransport>>
-  _keyof_keyword_after?: number
 }
 
 export interface InferTypeTransport {
@@ -1209,9 +934,6 @@ export interface InferTypeTransport {
   '$_edges'?: Edges
   _name: SlotValue<TypeIdentifierTransport>
   _type?: SlotValue<Box<TypeTransport>>
-  _extends_keyword_before?: number
-  _extends_keyword_after?: number
-  _infer_keyword_after?: number
 }
 
 export interface InstantiationExpressionTransport {
@@ -1234,7 +956,6 @@ export interface InterfaceDeclarationTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _extends_type_clause?: SlotValue<ExtendsTypeClauseTransport>
   _body: SlotValue<InterfaceBodyTransport>
-  _interface_keyword_after?: number
 }
 
 export interface InternalModuleTransport {
@@ -1242,7 +963,6 @@ export interface InternalModuleTransport {
   '$_edges'?: Edges
   _name: SlotValue<InternalModuleNameTransportSlot>
   _body?: SlotValue<StatementBlockTransport>
-  _namespace_keyword_after?: number
 }
 
 export interface IntersectionTypeTransport {
@@ -1250,8 +970,6 @@ export interface IntersectionTypeTransport {
   '$_edges'?: Edges
   _left?: SlotValue<Box<TypeTransport>>
   _right: SlotValue<Box<TypeTransport>>
-  _amp_before?: number
-  _amp_after?: number
 }
 
 export interface LabeledStatementTransport {
@@ -1259,8 +977,6 @@ export interface LabeledStatementTransport {
   '$_edges'?: Edges
   _label: SlotValue<LabeledStatementLabelTransportSlot>
   _body: SlotValue<Box<StatementTransport>>
-  _colon_before?: number
-  _colon_after?: number
 }
 
 export interface LexicalDeclarationTransport {
@@ -1269,12 +985,8 @@ export interface LexicalDeclarationTransport {
   _kind: SlotValue<KindEnum>
   _declarators: Array<SlotValue<VariableDeclaratorTransport>>
   _terminator: SlotValue<LexicalDeclarationTerminatorTransportSlot>
-  _declarators_end?: number
-  _declarators_start?: number
   _declarators_separator_space_before?: number
   _declarators_separator_space_after?: number
-  _kind_after?: number
-  _semi_before?: number
 }
 
 export interface LiteralTypeTransport {
@@ -1288,9 +1000,6 @@ export interface LookupTypeTransport {
   '$_edges'?: Edges
   _type: SlotValue<Box<PrimaryTypeTransport>>
   _index_type: SlotValue<Box<TypeTransport>>
-  _lbrack_before?: number
-  _lbrack_after?: number
-  _rbrack_before?: number
 }
 
 export interface MappedTypeClauseTransport {
@@ -1299,10 +1008,6 @@ export interface MappedTypeClauseTransport {
   _name: SlotValue<TypeIdentifierTransport>
   _type: SlotValue<TypeTransport>
   _alias?: SlotValue<TypeTransport>
-  _as_keyword_before?: number
-  _as_keyword_after?: number
-  _in_keyword_before?: number
-  _in_keyword_after?: number
 }
 
 export interface MemberExpressionTransport {
@@ -1311,10 +1016,6 @@ export interface MemberExpressionTransport {
   _object: SlotValue<Box<MemberExpressionObjectTransportSlot>>
   _separator: SlotValue<MemberExpressionSeparatorTransportSlot>
   _property: SlotValue<MemberExpressionPropertyTransportSlot>
-  _dot_before?: number
-  _dot_after?: number
-  _qmark_dot_before?: number
-  _qmark_dot_after?: number
 }
 
 export interface MethodDefinitionTransport {
@@ -1332,19 +1033,6 @@ export interface MethodDefinitionTransport {
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<MethodDefinitionReturnTypeTransportSlot>
   _body: SlotValue<StatementBlockTransport>
-  _accessibility_modifier_after?: number
-  _accessor_kind_before?: number
-  _accessor_kind_after?: number
-  _async_marker_before?: number
-  _async_marker_after?: number
-  _optional_marker_before?: number
-  _optional_marker_after?: number
-  _override_modifier_before?: number
-  _override_modifier_after?: number
-  _readonly_marker_before?: number
-  _readonly_marker_after?: number
-  _static_marker_before?: number
-  _static_marker_after?: number
 }
 
 export interface MethodSignatureTransport {
@@ -1361,19 +1049,6 @@ export interface MethodSignatureTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _return_type?: SlotValue<MethodSignatureReturnTypeTransportSlot>
-  _accessibility_modifier_after?: number
-  _accessor_kind_before?: number
-  _accessor_kind_after?: number
-  _async_marker_before?: number
-  _async_marker_after?: number
-  _optional_marker_before?: number
-  _optional_marker_after?: number
-  _override_modifier_before?: number
-  _override_modifier_after?: number
-  _readonly_marker_before?: number
-  _readonly_marker_after?: number
-  _static_marker_before?: number
-  _static_marker_after?: number
 }
 
 export interface ModuleTransport {
@@ -1381,33 +1056,24 @@ export interface ModuleTransport {
   '$_edges'?: Edges
   _name: SlotValue<ModuleNameTransportSlot>
   _body?: SlotValue<StatementBlockTransport>
-  _module_keyword_after?: number
 }
 
 export interface NamedImportsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _import_specifiers?: SlotValue<ImportSpecifiersTransport>
-  _lbrace_after?: number
-  _rbrace_before?: number
 }
 
 export interface NamespaceExportTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _module_export_name: SlotValue<NamespaceExportModuleExportNameTransportSlot>
-  _star_after?: number
-  _as_keyword_before?: number
-  _as_keyword_after?: number
 }
 
 export interface NamespaceImportTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _name: SlotValue<IdentifierTransport>
-  _star_after?: number
-  _as_keyword_before?: number
-  _as_keyword_after?: number
 }
 
 export interface NestedIdentifierTransport {
@@ -1415,8 +1081,6 @@ export interface NestedIdentifierTransport {
   '$_edges'?: Edges
   _object: SlotValue<Box<NestedIdentifierObjectTransportSlot>>
   _property: SlotValue<PropertyIdentifierTransport>
-  _dot_before?: number
-  _dot_after?: number
 }
 
 export interface NestedTypeIdentifierTransport {
@@ -1424,8 +1088,6 @@ export interface NestedTypeIdentifierTransport {
   '$_edges'?: Edges
   _module: SlotValue<NestedTypeIdentifierModuleTransportSlot>
   _name: SlotValue<TypeIdentifierTransport>
-  _dot_before?: number
-  _dot_after?: number
 }
 
 export interface NewExpressionTransport {
@@ -1434,14 +1096,12 @@ export interface NewExpressionTransport {
   _constructor: SlotValue<Box<PrimaryExpressionTransport>>
   _type_arguments?: SlotValue<TypeArgumentsTransport>
   _arguments?: SlotValue<ArgumentsTransport>
-  _new_keyword_after?: number
 }
 
 export interface NonNullExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _expression: SlotValue<Box<ExpressionTransport>>
-  _bang_before?: number
 }
 
 export interface NumberBigintTransport {
@@ -1511,32 +1171,22 @@ export interface ObjectAssignmentPatternTransport {
   '$_edges'?: Edges
   _left: SlotValue<ObjectAssignmentPatternLeftTransportSlot>
   _right: SlotValue<ExpressionTransport>
-  _eq_before?: number
-  _eq_after?: number
 }
 
 export interface ObjectPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _properties?: Array<SlotValue<ObjectPatternPropertiesTransportSlot> | undefined | null>
-  _properties_end?: number
-  _properties_start?: number
   _properties_separator_space_before?: number
   _properties_separator_space_after?: number
-  _lbrace_after?: number
-  _rbrace_before?: number
 }
 
 export interface ObjectTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _properties?: Array<SlotValue<ObjectPropertiesTransportSlot> | undefined | null>
-  _properties_end?: number
-  _properties_start?: number
   _properties_separator_space_before?: number
   _properties_separator_space_after?: number
-  _lbrace_after?: number
-  _rbrace_before?: number
 }
 
 export interface ObjectTypeContentTransport {
@@ -1545,8 +1195,6 @@ export interface ObjectTypeContentTransport {
   _content?: Array<SlotValue<ObjectTypeContentContentTransportSlot>>
   _delimiter?: number
   _separator?: number
-  _content_end?: number
-  _content_start?: number
   _content_separator_space_before?: number
   _content_separator_space_after?: number
 }
@@ -1557,22 +1205,18 @@ export interface ObjectTypeTransport {
   _opening: SlotValue<Box<AnyTransport>>
   _members?: SlotValue<ObjectTypeContentTransport>
   _closing: SlotValue<Box<AnyTransport>>
-  _closing_before?: number
-  _opening_after?: number
 }
 
 export interface OmittingTypeAnnotationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type: SlotValue<TypeTransport>
-  _dash_qmark_colon_after?: number
 }
 
 export interface OptingTypeAnnotationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type: SlotValue<TypeTransport>
-  _qmark_colon_after?: number
 }
 
 export interface OptionalParameterTransport {
@@ -1585,15 +1229,7 @@ export interface OptionalParameterTransport {
   _value?: SlotValue<ExpressionTransport>
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _override_modifier?: SlotValue<OverrideModifierTransport>
-  _decorator_end?: number
-  _decorator_start?: number
   _decorator_separator_space?: number
-  _readonly_marker_before?: number
-  _readonly_marker_after?: number
-  _eq_before?: number
-  _eq_after?: number
-  _qmark_before?: number
-  _qmark_after?: number
 }
 
 export interface OptionalTupleParameterTransport {
@@ -1601,15 +1237,12 @@ export interface OptionalTupleParameterTransport {
   '$_edges'?: Edges
   _name: SlotValue<IdentifierTransport>
   _type: SlotValue<TypeAnnotationTransport>
-  _qmark_before?: number
-  _qmark_after?: number
 }
 
 export interface OptionalTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type: SlotValue<TypeTransport>
-  _qmark_before?: number
 }
 
 export interface PairPatternTransport {
@@ -1617,8 +1250,6 @@ export interface PairPatternTransport {
   '$_edges'?: Edges
   _key: SlotValue<PairPatternKeyTransportSlot>
   _value: SlotValue<PairPatternValueTransportSlot>
-  _colon_before?: number
-  _colon_after?: number
 }
 
 export interface PairTransport {
@@ -1626,16 +1257,12 @@ export interface PairTransport {
   '$_edges'?: Edges
   _key: SlotValue<PairKeyTransportSlot>
   _value: SlotValue<ExpressionTransport>
-  _colon_before?: number
-  _colon_after?: number
 }
 
 export interface ParenthesizedExpressionSequenceTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _sequence_expression: SlotValue<SequenceExpressionTransport>
-  _lparen_after?: number
-  _rparen_before?: number
 }
 
 export interface ParenthesizedExpressionTypedTransport {
@@ -1643,16 +1270,12 @@ export interface ParenthesizedExpressionTypedTransport {
   '$_edges'?: Edges
   _type?: SlotValue<TypeAnnotationTransport>
   _expression: SlotValue<Box<ExpressionTransport>>
-  _lparen_after?: number
-  _rparen_before?: number
 }
 
 export interface ParenthesizedTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type: SlotValue<Box<TypeTransport>>
-  _lparen_after?: number
-  _rparen_before?: number
 }
 
 export interface PrivatePropertyIdentifierTransport {
@@ -1666,8 +1289,6 @@ export interface ProgramTransport {
   '$_edges'?: Edges
   _hash_bang_line?: SlotValue<HashBangLineTransport>
   _statements?: Array<SlotValue<StatementTransport>>
-  _statements_end?: number
-  _statements_start?: number
   _statements_separator_space?: number
 }
 
@@ -1687,15 +1308,6 @@ export interface PropertySignatureTransport {
   _name: SlotValue<PropertySignatureNameTransportSlot>
   _optional_marker?: boolean
   _type?: SlotValue<TypeAnnotationTransport>
-  _accessibility_modifier_after?: number
-  _optional_marker_before?: number
-  _optional_marker_after?: number
-  _override_modifier_before?: number
-  _override_modifier_after?: number
-  _readonly_marker_before?: number
-  _readonly_marker_after?: number
-  _static_marker_before?: number
-  _static_marker_after?: number
 }
 
 export interface PublicFieldDefinitionTransport {
@@ -1713,24 +1325,13 @@ export interface PublicFieldDefinitionTransport {
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
   _override_modifier?: SlotValue<OverrideModifierTransport>
-  _accessibility_modifier_before?: number
-  _accessibility_modifier_after?: number
-  _declare_marker_before?: number
-  _declare_marker_after?: number
-  _decorator_end?: number
-  _decorator_start?: number
   _decorator_separator_space?: number
-  _optionality_marker_before?: number
-  _optionality_marker_after?: number
-  _eq_before?: number
-  _eq_after?: number
 }
 
 export interface ReadonlyTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type: SlotValue<Box<TypeTransport>>
-  _readonly_keyword_after?: number
 }
 
 export interface RegexTransport {
@@ -1738,7 +1339,6 @@ export interface RegexTransport {
   '$_edges'?: Edges
   _pattern: SlotValue<RegexPatternTransport, true>
   _flags?: SlotValue<RegexFlagsTransport, true>
-  _slash_after?: number
 }
 
 export interface RequiredParameterTransport {
@@ -1751,27 +1351,19 @@ export interface RequiredParameterTransport {
   _value?: SlotValue<ExpressionTransport>
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
   _override_modifier?: SlotValue<OverrideModifierTransport>
-  _decorator_end?: number
-  _decorator_start?: number
   _decorator_separator_space?: number
-  _readonly_marker_before?: number
-  _readonly_marker_after?: number
-  _eq_before?: number
-  _eq_after?: number
 }
 
 export interface RestPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _lhs_expression: SlotValue<RestPatternLhsExpressionTransportSlot>
-  _dot_dot_dot_after?: number
 }
 
 export interface RestTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type: SlotValue<TypeTransport>
-  _dot_dot_dot_after?: number
 }
 
 export interface ReturnStatementTransport {
@@ -1779,8 +1371,6 @@ export interface ReturnStatementTransport {
   '$_edges'?: Edges
   _expression?: SlotValue<ReturnStatementExpressionTransportSlot>
   _terminator: SlotValue<ReturnStatementTerminatorTransportSlot>
-  _semi_before?: number
-  _return_keyword_after?: number
 }
 
 export interface SatisfiesExpressionTransport {
@@ -1788,8 +1378,6 @@ export interface SatisfiesExpressionTransport {
   '$_edges'?: Edges
   _expression: SlotValue<Box<ExpressionTransport>>
   _type_annotation: SlotValue<TypeTransport>
-  _satisfies_keyword_before?: number
-  _satisfies_keyword_after?: number
 }
 
 export interface SemicolonTransport {
@@ -1802,8 +1390,6 @@ export interface SequenceExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _expression: Array<SlotValue<ExpressionTransport>>
-  _expression_end?: number
-  _expression_start?: number
   _expression_separator_space_before?: number
   _expression_separator_space_after?: number
 }
@@ -1824,7 +1410,6 @@ export interface SpreadElementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _expression: SlotValue<ExpressionTransport>
-  _dot_dot_dot_after?: number
 }
 
 export interface StatementBlockTransport {
@@ -1832,12 +1417,7 @@ export interface StatementBlockTransport {
   '$_edges'?: Edges
   _statements?: Array<SlotValue<StatementTransport>>
   _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
-  _statements_end?: number
-  _statements_start?: number
   _statements_separator_space?: number
-  _lbrace_after?: number
-  _rbrace_before?: number
-  _rbrace_after?: number
 }
 
 export interface StatementIdentifierTransport {
@@ -1864,22 +1444,13 @@ export interface SubscriptExpressionTransport {
   _object: SlotValue<Box<SubscriptExpressionObjectTransportSlot>>
   _optional_chain?: SlotValue<OptionalChainTransport>
   _index: SlotValue<Box<SubscriptExpressionIndexTransportSlot>>
-  _qmark_dot_before?: number
-  _qmark_dot_after?: number
-  _lbrack_before?: number
-  _lbrack_after?: number
-  _rbrack_before?: number
 }
 
 export interface SwitchBodyTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _cases?: Array<SlotValue<SwitchBodyCasesTransportSlot>>
-  _cases_end?: number
-  _cases_start?: number
   _cases_separator_space?: number
-  _lbrace_after?: number
-  _rbrace_before?: number
 }
 
 export interface SwitchCaseTransport {
@@ -1887,24 +1458,14 @@ export interface SwitchCaseTransport {
   '$_edges'?: Edges
   _value: SlotValue<SwitchCaseValueTransportSlot>
   _body?: Array<SlotValue<StatementTransport>>
-  _body_end?: number
-  _body_start?: number
   _body_separator_space?: number
-  _colon_before?: number
-  _colon_after?: number
-  _case_keyword_after?: number
 }
 
 export interface SwitchDefaultTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _body?: Array<SlotValue<StatementTransport>>
-  _body_end?: number
-  _body_start?: number
   _body_separator_space?: number
-  _colon_before?: number
-  _colon_after?: number
-  _default_keyword_after?: number
 }
 
 export interface SwitchStatementTransport {
@@ -1912,7 +1473,6 @@ export interface SwitchStatementTransport {
   '$_edges'?: Edges
   _value: SlotValue<ParenthesizedExpressionTransport>
   _body: SlotValue<SwitchBodyTransport>
-  _switch_keyword_after?: number
 }
 
 export interface TemplateLiteralTypeTransport {
@@ -1931,16 +1491,12 @@ export interface TemplateSubstitutionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _expression: SlotValue<TemplateSubstitutionExpressionTransportSlot>
-  _dollar_lbrace_after?: number
-  _rbrace_before?: number
 }
 
 export interface TemplateTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _content: SlotValue<TemplateTypeContentTransportSlot>
-  _dollar_lbrace_after?: number
-  _rbrace_before?: number
 }
 
 export interface TernaryExpressionTransport {
@@ -1949,10 +1505,6 @@ export interface TernaryExpressionTransport {
   _condition: SlotValue<Box<ExpressionTransport>>
   _consequence: SlotValue<Box<ExpressionTransport>>
   _alternative: SlotValue<Box<ExpressionTransport>>
-  _colon_before?: number
-  _colon_after?: number
-  _qmark_before?: number
-  _qmark_after?: number
 }
 
 export interface ThrowStatementTransport {
@@ -1960,8 +1512,6 @@ export interface ThrowStatementTransport {
   '$_edges'?: Edges
   _expression: SlotValue<ThrowStatementExpressionTransportSlot>
   _terminator: SlotValue<ThrowStatementTerminatorTransportSlot>
-  _semi_before?: number
-  _throw_keyword_after?: number
 }
 
 export interface TryStatementTransport {
@@ -1970,7 +1520,6 @@ export interface TryStatementTransport {
   _body: SlotValue<StatementBlockTransport>
   _handler?: SlotValue<CatchClauseTransport>
   _finalizer?: SlotValue<FinallyClauseTransport>
-  _try_keyword_after?: number
 }
 
 export interface TupleParameterTransport {
@@ -1985,8 +1534,6 @@ export interface TupleTypeMembersTransport {
   '$_edges'?: Edges
   _tuple_type_member: Array<SlotValue<TupleTypeMembersTupleTypeMemberTransportSlot>>
   _delimiter?: number
-  _tuple_type_member_end?: number
-  _tuple_type_member_start?: number
   _tuple_type_member_separator_space_before?: number
   _tuple_type_member_separator_space_after?: number
 }
@@ -1995,8 +1542,6 @@ export interface TupleTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _tuple_type_members?: SlotValue<TupleTypeMembersTransport>
-  _lbrack_after?: number
-  _rbrack_before?: number
 }
 
 export interface TypeAliasDeclarationTransport {
@@ -2006,25 +1551,18 @@ export interface TypeAliasDeclarationTransport {
   _type_parameters?: SlotValue<TypeParametersTransport>
   _value: SlotValue<TypeTransport>
   _terminator: SlotValue<TypeAliasDeclarationTerminatorTransportSlot>
-  _semi_before?: number
-  _eq_before?: number
-  _eq_after?: number
-  _type_keyword_after?: number
 }
 
 export interface TypeAnnotationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type: SlotValue<TypeTransport>
-  _colon_after?: number
 }
 
 export interface TypeArgumentsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _types: SlotValue<TypesTransport>
-  _lt_after?: number
-  _gt_before?: number
 }
 
 export interface TypeAssertionTransport {
@@ -2045,8 +1583,6 @@ export interface TypeParametersElementsTransport {
   '$_edges'?: Edges
   _type_parameter: Array<SlotValue<TypeParameterTransport>>
   _delimiter?: number
-  _type_parameter_end?: number
-  _type_parameter_start?: number
   _type_parameter_separator_space_before?: number
   _type_parameter_separator_space_after?: number
 }
@@ -2055,8 +1591,6 @@ export interface TypeParametersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type_parameters_elements: SlotValue<TypeParametersElementsTransport>
-  _lt_after?: number
-  _gt_before?: number
 }
 
 export interface TypeParameterTransport {
@@ -2066,14 +1600,12 @@ export interface TypeParameterTransport {
   _name: SlotValue<TypeIdentifierTransport>
   _constraint?: SlotValue<ConstraintTransport>
   _value?: SlotValue<DefaultTypeTransport>
-  _const_marker_after?: number
 }
 
 export interface TypePredicateAnnotationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _type_predicate: SlotValue<TypePredicateTransport>
-  _colon_after?: number
 }
 
 export interface TypePredicateTransport {
@@ -2081,8 +1613,6 @@ export interface TypePredicateTransport {
   '$_edges'?: Edges
   _name: SlotValue<TypePredicateNameTransportSlot>
   _type: SlotValue<Box<TypeTransport>>
-  _is_keyword_before?: number
-  _is_keyword_after?: number
 }
 
 export interface TypeQueryCallExpressionInTypeAnnotationTransport {
@@ -2111,8 +1641,6 @@ export interface TypeQueryMemberExpressionInTypeAnnotationTransport {
   '$_edges'?: Edges
   _object: SlotValue<Box<TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot>>
   _property: SlotValue<TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot>
-  _dot_before?: number
-  _dot_after?: number
 }
 
 export interface TypeQueryMemberExpressionTransport {
@@ -2121,10 +1649,6 @@ export interface TypeQueryMemberExpressionTransport {
   _object: SlotValue<Box<TypeQueryMemberExpressionObjectTransportSlot>>
   _property: SlotValue<TypeQueryMemberExpressionPropertyTransportSlot>
   _content: SlotValue<Box<AnyTransport>>
-  _dot_before?: number
-  _dot_after?: number
-  _qmark_dot_before?: number
-  _qmark_dot_after?: number
 }
 
 export interface TypeQuerySubscriptExpressionTransport {
@@ -2132,16 +1656,12 @@ export interface TypeQuerySubscriptExpressionTransport {
   '$_edges'?: Edges
   _object: SlotValue<Box<TypeQuerySubscriptExpressionObjectTransportSlot>>
   _index: SlotValue<TypeQuerySubscriptExpressionIndexTransportSlot>
-  _lbrack_before?: number
-  _lbrack_after?: number
-  _rbrack_before?: number
 }
 
 export interface TypeQueryTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _content: SlotValue<TypeQueryContentTransportSlot>
-  _typeof_keyword_after?: number
 }
 
 export interface TypesTransport {
@@ -2149,8 +1669,6 @@ export interface TypesTransport {
   '$_edges'?: Edges
   _type: Array<SlotValue<TypeTransport>>
   _delimiter?: number
-  _type_end?: number
-  _type_start?: number
   _type_separator_space_before?: number
   _type_separator_space_after?: number
 }
@@ -2167,8 +1685,6 @@ export interface UnionTypeTransport {
   '$_edges'?: Edges
   _left?: SlotValue<Box<TypeTransport>>
   _right: SlotValue<Box<TypeTransport>>
-  _pipe_before?: number
-  _pipe_after?: number
 }
 
 export interface UpdateExpressionPostfixTransport {
@@ -2190,12 +1706,8 @@ export interface VariableDeclarationTransport {
   '$_edges'?: Edges
   _declarators: Array<SlotValue<VariableDeclaratorTransport>>
   _terminator: SlotValue<VariableDeclarationTerminatorTransportSlot>
-  _declarators_end?: number
-  _declarators_start?: number
   _declarators_separator_space_before?: number
   _declarators_separator_space_after?: number
-  _semi_before?: number
-  _var_keyword_after?: number
 }
 
 export interface VariableDeclaratorDefiniteTransport {
@@ -2203,8 +1715,6 @@ export interface VariableDeclaratorDefiniteTransport {
   '$_edges'?: Edges
   _name: SlotValue<IdentifierTransport>
   _type: SlotValue<TypeAnnotationTransport>
-  _bang_before?: number
-  _bang_after?: number
 }
 
 export interface VariableDeclaratorPlainTransport {
@@ -2213,8 +1723,6 @@ export interface VariableDeclaratorPlainTransport {
   _name: SlotValue<VariableDeclaratorPlainNameTransportSlot>
   _type?: SlotValue<TypeAnnotationTransport>
   _value?: SlotValue<ExpressionTransport>
-  _eq_before?: number
-  _eq_after?: number
 }
 
 export interface WhileStatementTransport {
@@ -2222,7 +1730,6 @@ export interface WhileStatementTransport {
   '$_edges'?: Edges
   _condition: SlotValue<ParenthesizedExpressionTransport>
   _body: SlotValue<Box<StatementTransport>>
-  _while_keyword_after?: number
 }
 
 export interface WithStatementTransport {
@@ -2230,14 +1737,10 @@ export interface WithStatementTransport {
   '$_edges'?: Edges
   _object: SlotValue<ParenthesizedExpressionTransport>
   _body: SlotValue<Box<StatementTransport>>
-  _with_keyword_after?: number
 }
 
 export interface YieldExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _expression?: SlotValue<Box<ExpressionTransport>>
-  _star_before?: number
-  _star_after?: number
-  _yield_keyword_after?: number
 }

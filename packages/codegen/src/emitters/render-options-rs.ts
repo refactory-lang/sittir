@@ -160,7 +160,7 @@ export function planRenderOptions(
 			wireKey: `_${field}`,
 			defaultId: idOf(kindEntries, defaultArm.kind ?? defaultArm.value, at),
 			allowedIds,
-			strength: seamStrength(site.origin),
+			strength: isFlank ? 2 : seamStrength(site.origin),
 			...(site.side === undefined ? {} : { side: site.side }),
 			...(site.seat === undefined ? {} : { seat: site.seat }),
 			...(site.path === undefined ? {} : { path: site.path })
@@ -418,6 +418,10 @@ interface EdgeSiteRow {
 	readonly after?: EdgeSlotRow;
 }
 
+export function carriesPerNodeValue(site: SpacingSite): boolean {
+	return site.role === 'separator' || site.side === 'before' || site.side === 'after' || site.side === 'gap';
+}
+
 export function isKindEdge(site: SpacingSite): boolean {
 	return parseSeamLabel(site.address)?.token === site.kind;
 }
@@ -466,14 +470,6 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 		L.push(`    (${q(s.kind)}, ${q(s.address)}, ${q(s.label)}, ${s.defaultId}, &[${s.allowedIds.join(', ')}], ${s.strength}),`);
 	}
 	L.push('];', '');
-	L.push(
-		'/// The strength a site\'s arm carries into the writer: its table strength when the arm is the table default, declared otherwise.',
-		'pub fn site_strength(site: usize, arm: u16) -> u8 {',
-		'    let row = &SPACING_SITES[site];',
-		'    if arm == row.3 { row.5 } else { ::sittir_core::spacing::SEAM_DECLARED }',
-		'}',
-		''
-	);
 	L.push('/// (kind id, before site, after site) of every kind that owns edge seams, sorted by kind id, so a coordinate meets the seams a rendered node writes.');
 	L.push('pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[');
 	for (const e of edgeSitesOf(plan, kindEntries)) {

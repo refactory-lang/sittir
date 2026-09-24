@@ -20,65 +20,6 @@ use ::sittir_core::render_with_trivia;
 use ::sittir_core::options::Edged as _;
 use super::options;
 
-#[derive(Debug, Clone, Copy, Default)]
-pub struct LiteralSeams {
-    pub before: Option<u16>,
-    pub after: Option<u16>,
-}
-
-pub trait ArmSeams {
-    fn arm_seam_sites(&self) -> Option<(usize, usize)>;
-}
-
-#[derive(Debug, Clone)]
-pub struct Seamed<T> {
-    pub value: T,
-    pub seam_before: Option<u16>,
-    pub seam_after: Option<u16>,
-}
-
-impl<T> Seamed<T> {
-    pub fn new(value: T) -> Self {
-        Self { value, seam_before: None, seam_after: None }
-    }
-}
-
-impl<T: ::sittir_core::view::KindOf> ::sittir_core::view::KindOf for Seamed<T> {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        self.value.kind_in(kinds)
-    }
-}
-
-impl<T: ArmSeams> ::sittir_core::prepare::Prepare for Seamed<T> {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        if let Some((before, after)) = self.value.arm_seam_sites() {
-            self.seam_before.get_or_insert(ctx.options.spacing[before]);
-            self.seam_after.get_or_insert(ctx.options.spacing[after]);
-        }
-        Ok(())
-    }
-}
-
-impl<T: ::sittir_core::render::Render + ArmSeams> ::sittir_core::render::Render for Seamed<T> {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        let (before, after) = self.value.arm_seam_sites().map_or((0u8, 0u8), |(b, a)| (options::site_strength(b, self.seam_before.unwrap_or(0)), options::site_strength(a, self.seam_after.unwrap_or(0))));
-        w.site_with(self.seam_before.unwrap_or(0), before);
-        self.value.render(w)?;
-        w.site_with(self.seam_after.unwrap_or(0), after);
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue for Seamed<T> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        Ok(Self::new(unsafe { T::from_napi_value(env, napi_val)? }))
-    }
-}
-
 #[derive(Debug, Clone)]
 pub enum AnyTransport {
     Module(ModuleTransport),
@@ -4908,7 +4849,7 @@ impl ::sittir_core::render::Render for ImportFromStatementModuleNameTransportSlo
 pub enum ImportFromStatementContentTransportSlot {
     ImportList(ImportListTransport),
     ParenthesizedImportList(ParenthesizedImportListTransport),
-    Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74(LiteralSeams),
+    Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74,
 }
 
 impl ::sittir_core::prepare::Prepare for ImportFromStatementContentTransportSlot {
@@ -4916,10 +4857,7 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementContentTransportSlot
         match self {
             ImportFromStatementContentTransportSlot::ImportList(t) => t.prepare(ctx),
             ImportFromStatementContentTransportSlot::ParenthesizedImportList(t) => t.prepare(ctx),
-            ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74(t) => {
-                t.before.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_FROM_STATEMENT_STAR_BEFORE]);
-                Ok(())
-            }
+            ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => Ok(()),
         }
     }
 }
@@ -4929,7 +4867,7 @@ impl ::sittir_core::view::KindOf for ImportFromStatementContentTransportSlot {
         match self {
             Self::ImportList(inner) => inner.kind_in(kinds),
             Self::ParenthesizedImportList(inner) => inner.kind_in(kinds),
-            Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74(_) => [::sittir_core::types::KindId(134)].iter().any(|k| kinds.contains(k)),
+            Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => [::sittir_core::types::KindId(134)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -4943,7 +4881,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportFromStatementContentTransp
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    134 => Ok(Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74(LiteralSeams::default())),
+                    134 => Ok(Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74),
                     132 => Ok(Self::ImportList(
                         ImportListTransport::from_napi_value(env, napi_val)?
                     )),
@@ -4961,7 +4899,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportFromStatementContentTransp
                     ::napi::Error::from_reason("$type property missing in ImportFromStatementContentTransportSlot")
                 )?;
                 match kind_id {
-                    134 => Ok(Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74(LiteralSeams::default())),
+                    134 => Ok(Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74),
                     132 => Ok(Self::ImportList(
                         ImportListTransport::from_napi_value(env, napi_val)?
                     )),
@@ -5012,7 +4950,7 @@ fn import_from_statement_content_transport_slot_to_any(t: ImportFromStatementCon
     match t {
         ImportFromStatementContentTransportSlot::ImportList(inner) => AnyTransport::ImportList(inner),
         ImportFromStatementContentTransportSlot::ParenthesizedImportList(inner) => AnyTransport::ParenthesizedImportList(inner),
-        ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74(_) => AnyTransport::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74,
+        ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => AnyTransport::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74,
     }
 }
 
@@ -5021,8 +4959,8 @@ impl ::sittir_core::render::Render for ImportFromStatementContentTransportSlot {
         match self {
             ImportFromStatementContentTransportSlot::ImportList(inner) => inner.render(w),
             ImportFromStatementContentTransportSlot::ParenthesizedImportList(inner) => inner.render(w),
-            ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74(seams) => {
-                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_IMPORT_FROM_STATEMENT_STAR_BEFORE, seams.before.unwrap_or(0)));
+            ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => {
+                w.site_at(options::SITE_IMPORT_FROM_STATEMENT_STAR_BEFORE);
                 let written = w.text("*");
                 written?;
                 Ok(())
@@ -9793,17 +9731,14 @@ impl ::sittir_core::render::Render for BlockStatementsTransportSlot {
 #[derive(Debug, Clone)]
 pub enum ExpressionListTailTransportSlot {
     ExpressionListExpressions(ExpressionListExpressionsTransport),
-    Literal10_63_6f_6d_6d_61(LiteralSeams),
+    Literal10_63_6f_6d_6d_61,
 }
 
 impl ::sittir_core::prepare::Prepare for ExpressionListTailTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             ExpressionListTailTransportSlot::ExpressionListExpressions(t) => t.prepare(ctx),
-            ExpressionListTailTransportSlot::Literal10_63_6f_6d_6d_61(t) => {
-                t.before.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_LIST_COMMA_BEFORE]);
-                Ok(())
-            }
+            ExpressionListTailTransportSlot::Literal10_63_6f_6d_6d_61 => Ok(()),
         }
     }
 }
@@ -9812,7 +9747,7 @@ impl ::sittir_core::view::KindOf for ExpressionListTailTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ExpressionListExpressions(inner) => inner.kind_in(kinds),
-            Self::Literal10_63_6f_6d_6d_61(_) => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
+            Self::Literal10_63_6f_6d_6d_61 => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -9826,7 +9761,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListTailTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    6 => Ok(Self::Literal10_63_6f_6d_6d_61(LiteralSeams::default())),
+                    6 => Ok(Self::Literal10_63_6f_6d_6d_61),
                     262 => Ok(Self::ExpressionListExpressions(
                         ExpressionListExpressionsTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9841,7 +9776,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListTailTransportSlot 
                     ::napi::Error::from_reason("$type property missing in ExpressionListTailTransportSlot")
                 )?;
                 match kind_id {
-                    6 => Ok(Self::Literal10_63_6f_6d_6d_61(LiteralSeams::default())),
+                    6 => Ok(Self::Literal10_63_6f_6d_6d_61),
                     262 => Ok(Self::ExpressionListExpressions(
                         ExpressionListExpressionsTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9888,7 +9823,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionListTailTransportSlo
 fn expression_list_tail_transport_slot_to_any(t: ExpressionListTailTransportSlot) -> AnyTransport {
     match t {
         ExpressionListTailTransportSlot::ExpressionListExpressions(inner) => AnyTransport::ExpressionListExpressions(inner),
-        ExpressionListTailTransportSlot::Literal10_63_6f_6d_6d_61(_) => AnyTransport::Literal10_63_6f_6d_6d_61,
+        ExpressionListTailTransportSlot::Literal10_63_6f_6d_6d_61 => AnyTransport::Literal10_63_6f_6d_6d_61,
     }
 }
 
@@ -9896,8 +9831,8 @@ impl ::sittir_core::render::Render for ExpressionListTailTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             ExpressionListTailTransportSlot::ExpressionListExpressions(inner) => inner.render(w),
-            ExpressionListTailTransportSlot::Literal10_63_6f_6d_6d_61(seams) => {
-                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_EXPRESSION_LIST_COMMA_BEFORE, seams.before.unwrap_or(0)));
+            ExpressionListTailTransportSlot::Literal10_63_6f_6d_6d_61 => {
+                w.site_at(options::SITE_EXPRESSION_LIST_COMMA_BEFORE);
                 let written = w.text(",");
                 written?;
                 Ok(())
@@ -10991,7 +10926,7 @@ impl ::sittir_core::render::Render for SplatPatternOperatorTransportSlot {
 #[derive(Debug, Clone)]
 pub enum SplatPatternNameTransportSlot {
     Identifier(IdentifierTransport),
-    Literal16_75_6e_64_65_72_73_63_6f_72_65(LiteralSeams),
+    Literal16_75_6e_64_65_72_73_63_6f_72_65,
     Verbatim(VerbatimTransport),
 }
 
@@ -10999,10 +10934,7 @@ impl ::sittir_core::prepare::Prepare for SplatPatternNameTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             SplatPatternNameTransportSlot::Identifier(t) => t.prepare(ctx),
-            SplatPatternNameTransportSlot::Literal16_75_6e_64_65_72_73_63_6f_72_65(t) => {
-                t.before.get_or_insert(ctx.options.spacing[options::SITE_SPLAT_PATTERN_UNDERSCORE_BEFORE]);
-                Ok(())
-            }
+            SplatPatternNameTransportSlot::Literal16_75_6e_64_65_72_73_63_6f_72_65 => Ok(()),
             SplatPatternNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -11012,7 +10944,7 @@ impl ::sittir_core::view::KindOf for SplatPatternNameTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::Literal16_75_6e_64_65_72_73_63_6f_72_65(_) => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
+            Self::Literal16_75_6e_64_65_72_73_63_6f_72_65 => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -11027,7 +10959,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternNameTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    48 => Ok(Self::Literal16_75_6e_64_65_72_73_63_6f_72_65(LiteralSeams::default())),
+                    48 => Ok(Self::Literal16_75_6e_64_65_72_73_63_6f_72_65),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -11060,7 +10992,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternNameTransportSlot {
                     ::napi::Error::from_reason("$type property missing in SplatPatternNameTransportSlot")
                 )?;
                 match kind_id {
-                    48 => Ok(Self::Literal16_75_6e_64_65_72_73_63_6f_72_65(LiteralSeams::default())),
+                    48 => Ok(Self::Literal16_75_6e_64_65_72_73_63_6f_72_65),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -11126,7 +11058,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatPatternNameTransportSlot>
 fn splat_pattern_name_transport_slot_to_any(t: SplatPatternNameTransportSlot) -> AnyTransport {
     match t {
         SplatPatternNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        SplatPatternNameTransportSlot::Literal16_75_6e_64_65_72_73_63_6f_72_65(_) => AnyTransport::Literal16_75_6e_64_65_72_73_63_6f_72_65,
+        SplatPatternNameTransportSlot::Literal16_75_6e_64_65_72_73_63_6f_72_65 => AnyTransport::Literal16_75_6e_64_65_72_73_63_6f_72_65,
         SplatPatternNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -11135,8 +11067,8 @@ impl ::sittir_core::render::Render for SplatPatternNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             SplatPatternNameTransportSlot::Identifier(inner) => inner.render(w),
-            SplatPatternNameTransportSlot::Literal16_75_6e_64_65_72_73_63_6f_72_65(seams) => {
-                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_SPLAT_PATTERN_UNDERSCORE_BEFORE, seams.before.unwrap_or(0)));
+            SplatPatternNameTransportSlot::Literal16_75_6e_64_65_72_73_63_6f_72_65 => {
+                w.site_at(options::SITE_SPLAT_PATTERN_UNDERSCORE_BEFORE);
                 let written = w.text("_");
                 written?;
                 Ok(())
@@ -14234,17 +14166,14 @@ impl ::sittir_core::render::Render for AugmentedAssignmentRightTransportSlot {
 #[derive(Debug, Clone)]
 pub enum PatternListTailTransportSlot {
     PatternListPatterns(PatternListPatternsTransport),
-    Literal10_63_6f_6d_6d_61(LiteralSeams),
+    Literal10_63_6f_6d_6d_61,
 }
 
 impl ::sittir_core::prepare::Prepare for PatternListTailTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             PatternListTailTransportSlot::PatternListPatterns(t) => t.prepare(ctx),
-            PatternListTailTransportSlot::Literal10_63_6f_6d_6d_61(t) => {
-                t.before.get_or_insert(ctx.options.spacing[options::SITE_PATTERN_LIST_COMMA_BEFORE]);
-                Ok(())
-            }
+            PatternListTailTransportSlot::Literal10_63_6f_6d_6d_61 => Ok(()),
         }
     }
 }
@@ -14253,7 +14182,7 @@ impl ::sittir_core::view::KindOf for PatternListTailTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::PatternListPatterns(inner) => inner.kind_in(kinds),
-            Self::Literal10_63_6f_6d_6d_61(_) => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
+            Self::Literal10_63_6f_6d_6d_61 => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -14267,7 +14196,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternListTailTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    6 => Ok(Self::Literal10_63_6f_6d_6d_61(LiteralSeams::default())),
+                    6 => Ok(Self::Literal10_63_6f_6d_6d_61),
                     265 => Ok(Self::PatternListPatterns(
                         PatternListPatternsTransport::from_napi_value(env, napi_val)?
                     )),
@@ -14282,7 +14211,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternListTailTransportSlot {
                     ::napi::Error::from_reason("$type property missing in PatternListTailTransportSlot")
                 )?;
                 match kind_id {
-                    6 => Ok(Self::Literal10_63_6f_6d_6d_61(LiteralSeams::default())),
+                    6 => Ok(Self::Literal10_63_6f_6d_6d_61),
                     265 => Ok(Self::PatternListPatterns(
                         PatternListPatternsTransport::from_napi_value(env, napi_val)?
                     )),
@@ -14329,7 +14258,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternListTailTransportSlot> 
 fn pattern_list_tail_transport_slot_to_any(t: PatternListTailTransportSlot) -> AnyTransport {
     match t {
         PatternListTailTransportSlot::PatternListPatterns(inner) => AnyTransport::PatternListPatterns(inner),
-        PatternListTailTransportSlot::Literal10_63_6f_6d_6d_61(_) => AnyTransport::Literal10_63_6f_6d_6d_61,
+        PatternListTailTransportSlot::Literal10_63_6f_6d_6d_61 => AnyTransport::Literal10_63_6f_6d_6d_61,
     }
 }
 
@@ -14337,8 +14266,8 @@ impl ::sittir_core::render::Render for PatternListTailTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             PatternListTailTransportSlot::PatternListPatterns(inner) => inner.render(w),
-            PatternListTailTransportSlot::Literal10_63_6f_6d_6d_61(seams) => {
-                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_PATTERN_LIST_COMMA_BEFORE, seams.before.unwrap_or(0)));
+            PatternListTailTransportSlot::Literal10_63_6f_6d_6d_61 => {
+                w.site_at(options::SITE_PATTERN_LIST_COMMA_BEFORE);
                 let written = w.text(",");
                 written?;
                 Ok(())
@@ -18336,16 +18265,13 @@ impl ::sittir_core::render::Render for ForInClauseRightTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum ForInClauseCommaTransportSlot {
-    Literal10_63_6f_6d_6d_61(LiteralSeams),
+    Literal10_63_6f_6d_6d_61,
 }
 
 impl ::sittir_core::prepare::Prepare for ForInClauseCommaTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ForInClauseCommaTransportSlot::Literal10_63_6f_6d_6d_61(t) => {
-                t.before.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_COMMA_BEFORE]);
-                Ok(())
-            }
+            ForInClauseCommaTransportSlot::Literal10_63_6f_6d_6d_61 => Ok(()),
         }
     }
 }
@@ -18353,7 +18279,7 @@ impl ::sittir_core::prepare::Prepare for ForInClauseCommaTransportSlot {
 impl ::sittir_core::view::KindOf for ForInClauseCommaTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal10_63_6f_6d_6d_61(_) => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
+            Self::Literal10_63_6f_6d_6d_61 => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -18367,7 +18293,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseCommaTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    6 => Ok(Self::Literal10_63_6f_6d_6d_61(LiteralSeams::default())),
+                    6 => Ok(Self::Literal10_63_6f_6d_6d_61),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForInClauseCommaTransportSlot",
                     ))),
@@ -18379,7 +18305,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseCommaTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ForInClauseCommaTransportSlot")
                 )?;
                 match kind_id {
-                    6 => Ok(Self::Literal10_63_6f_6d_6d_61(LiteralSeams::default())),
+                    6 => Ok(Self::Literal10_63_6f_6d_6d_61),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForInClauseCommaTransportSlot",
                     ))),
@@ -18422,15 +18348,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForInClauseCommaTransportSlot>
 
 fn for_in_clause_comma_transport_slot_to_any(t: ForInClauseCommaTransportSlot) -> AnyTransport {
     match t {
-        ForInClauseCommaTransportSlot::Literal10_63_6f_6d_6d_61(_) => AnyTransport::Literal10_63_6f_6d_6d_61,
+        ForInClauseCommaTransportSlot::Literal10_63_6f_6d_6d_61 => AnyTransport::Literal10_63_6f_6d_6d_61,
     }
 }
 
 impl ::sittir_core::render::Render for ForInClauseCommaTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForInClauseCommaTransportSlot::Literal10_63_6f_6d_6d_61(seams) => {
-                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_FOR_IN_CLAUSE_COMMA_BEFORE, seams.before.unwrap_or(0)));
+            ForInClauseCommaTransportSlot::Literal10_63_6f_6d_6d_61 => {
+                w.site_at(options::SITE_FOR_IN_CLAUSE_COMMA_BEFORE);
                 let written = w.text(",");
                 written?;
                 Ok(())
@@ -21187,17 +21113,14 @@ impl ::sittir_core::render::Render for ComprehensionClausesContentTransportSlot 
 #[derive(Debug, Clone)]
 pub enum PrintStatementChevronPrintChevronArgumentsTransportSlot {
     PrintChevronArguments(PrintChevronArgumentsTransport),
-    Literal10_63_6f_6d_6d_61(LiteralSeams),
+    Literal10_63_6f_6d_6d_61,
 }
 
 impl ::sittir_core::prepare::Prepare for PrintStatementChevronPrintChevronArgumentsTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             PrintStatementChevronPrintChevronArgumentsTransportSlot::PrintChevronArguments(t) => t.prepare(ctx),
-            PrintStatementChevronPrintChevronArgumentsTransportSlot::Literal10_63_6f_6d_6d_61(t) => {
-                t.before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_COMMA_BEFORE]);
-                Ok(())
-            }
+            PrintStatementChevronPrintChevronArgumentsTransportSlot::Literal10_63_6f_6d_6d_61 => Ok(()),
         }
     }
 }
@@ -21206,7 +21129,7 @@ impl ::sittir_core::view::KindOf for PrintStatementChevronPrintChevronArgumentsT
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::PrintChevronArguments(inner) => inner.kind_in(kinds),
-            Self::Literal10_63_6f_6d_6d_61(_) => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
+            Self::Literal10_63_6f_6d_6d_61 => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -21220,7 +21143,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementChevronPrintChevro
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    6 => Ok(Self::Literal10_63_6f_6d_6d_61(LiteralSeams::default())),
+                    6 => Ok(Self::Literal10_63_6f_6d_6d_61),
                     276 => Ok(Self::PrintChevronArguments(
                         PrintChevronArgumentsTransport::from_napi_value(env, napi_val)?
                     )),
@@ -21235,7 +21158,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementChevronPrintChevro
                     ::napi::Error::from_reason("$type property missing in PrintStatementChevronPrintChevronArgumentsTransportSlot")
                 )?;
                 match kind_id {
-                    6 => Ok(Self::Literal10_63_6f_6d_6d_61(LiteralSeams::default())),
+                    6 => Ok(Self::Literal10_63_6f_6d_6d_61),
                     276 => Ok(Self::PrintChevronArguments(
                         PrintChevronArgumentsTransport::from_napi_value(env, napi_val)?
                     )),
@@ -21282,7 +21205,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintStatementChevronPrintChev
 fn print_statement_chevron_print_chevron_arguments_transport_slot_to_any(t: PrintStatementChevronPrintChevronArgumentsTransportSlot) -> AnyTransport {
     match t {
         PrintStatementChevronPrintChevronArgumentsTransportSlot::PrintChevronArguments(inner) => AnyTransport::PrintChevronArguments(inner),
-        PrintStatementChevronPrintChevronArgumentsTransportSlot::Literal10_63_6f_6d_6d_61(_) => AnyTransport::Literal10_63_6f_6d_6d_61,
+        PrintStatementChevronPrintChevronArgumentsTransportSlot::Literal10_63_6f_6d_6d_61 => AnyTransport::Literal10_63_6f_6d_6d_61,
     }
 }
 
@@ -21290,8 +21213,8 @@ impl ::sittir_core::render::Render for PrintStatementChevronPrintChevronArgument
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             PrintStatementChevronPrintChevronArgumentsTransportSlot::PrintChevronArguments(inner) => inner.render(w),
-            PrintStatementChevronPrintChevronArgumentsTransportSlot::Literal10_63_6f_6d_6d_61(seams) => {
-                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_PRINT_STATEMENT_CHEVRON_COMMA_BEFORE, seams.before.unwrap_or(0)));
+            PrintStatementChevronPrintChevronArgumentsTransportSlot::Literal10_63_6f_6d_6d_61 => {
+                w.site_at(options::SITE_PRINT_STATEMENT_CHEVRON_COMMA_BEFORE);
                 let written = w.text(",");
                 written?;
                 Ok(())
@@ -24430,8 +24353,6 @@ pub struct ImportStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_list"))]
     pub import_list: ::sittir_core::SlotValue<ImportListTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_after"))]
-    pub import_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ImportStatementTransport {
@@ -24455,7 +24376,6 @@ impl ::sittir_core::render::Render for ImportStatementTransport {
 impl ::sittir_core::prepare::Prepare for ImportStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.import_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER]);
         self.import_list.prepare(ctx)?;
         Ok(())
     }
@@ -24652,16 +24572,6 @@ pub struct FutureImportStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<FutureImportStatementContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future___keyword_before"))]
-    pub future___keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_future___keyword_after"))]
-    pub future___keyword_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_after"))]
-    pub from_keyword_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_before"))]
-    pub import_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_after"))]
-    pub import_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for FutureImportStatementTransport {
@@ -24685,11 +24595,6 @@ impl ::sittir_core::render::Render for FutureImportStatementTransport {
 impl ::sittir_core::prepare::Prepare for FutureImportStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.future___keyword_before.get_or_insert(ctx.options.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___KEYWORD_BEFORE]);
-        self.future___keyword_after.get_or_insert(ctx.options.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___KEYWORD_AFTER]);
-        self.from_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_FROM_KEYWORD_AFTER]);
-        self.import_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_KEYWORD_BEFORE]);
-        self.import_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER]);
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -24726,14 +24631,6 @@ pub struct ImportFromStatementTransport {
     pub module_name: ::sittir_core::SlotValue<ImportFromStatementModuleNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ImportFromStatementContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_before"))]
-    pub star_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_after"))]
-    pub from_keyword_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_before"))]
-    pub import_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_after"))]
-    pub import_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ImportFromStatementTransport {
@@ -24757,10 +24654,6 @@ impl ::sittir_core::render::Render for ImportFromStatementTransport {
 impl ::sittir_core::prepare::Prepare for ImportFromStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.star_before.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_FROM_STATEMENT_STAR_BEFORE]);
-        self.from_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_FROM_STATEMENT_FROM_KEYWORD_AFTER]);
-        self.import_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_BEFORE]);
-        self.import_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_AFTER]);
         self.module_name.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
@@ -24886,10 +24779,6 @@ pub struct AliasedImportTransport {
     pub name: ::sittir_core::SlotValue<DottedNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
     pub alias: ::sittir_core::SlotValue<IdentifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_before"))]
-    pub as_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_after"))]
-    pub as_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for AliasedImportTransport {
@@ -24913,8 +24802,6 @@ impl ::sittir_core::render::Render for AliasedImportTransport {
 impl ::sittir_core::prepare::Prepare for AliasedImportTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.as_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_ALIASED_IMPORT_AS_KEYWORD_BEFORE]);
-        self.as_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_ALIASED_IMPORT_AS_KEYWORD_AFTER]);
         self.name.prepare(ctx)?;
         self.alias.prepare(ctx)?;
         Ok(())
@@ -25110,8 +24997,6 @@ pub struct ChevronTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_gt_gt_after"))]
-    pub gt_gt_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ChevronTransport {
@@ -25135,7 +25020,6 @@ impl ::sittir_core::render::Render for ChevronTransport {
 impl ::sittir_core::prepare::Prepare for ChevronTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.gt_gt_after.get_or_insert(ctx.options.spacing[options::SITE_CHEVRON_GT_GT_AFTER]);
         self.expression.prepare(ctx)?;
         Ok(())
     }
@@ -25174,8 +25058,6 @@ pub struct AssertStatementTransport {
     pub expression_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_separator_space_after"))]
     pub expression_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assert_keyword_after"))]
-    pub assert_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for AssertStatementTransport {
@@ -25207,7 +25089,6 @@ impl ::sittir_core::prepare::Prepare for AssertStatementTransport {
         }
         self.expression_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_BEFORE]);
         self.expression_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_AFTER]);
-        self.assert_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_ASSERT_STATEMENT_ASSERT_KEYWORD_AFTER]);
         {
             let seated_items = &mut self.expression;
             let seated_last = seated_items.len().saturating_sub(1);
@@ -25395,10 +25276,6 @@ pub struct NamedExpressionTransport {
     pub name: ::sittir_core::SlotValue<NamedExpressionNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_eq_before"))]
-    pub colon_eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_eq_after"))]
-    pub colon_eq_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for NamedExpressionTransport {
@@ -25422,8 +25299,6 @@ impl ::sittir_core::render::Render for NamedExpressionTransport {
 impl ::sittir_core::prepare::Prepare for NamedExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_eq_before.get_or_insert(ctx.options.spacing[options::SITE_NAMED_EXPRESSION_COLON_EQ_BEFORE]);
-        self.colon_eq_after.get_or_insert(ctx.options.spacing[options::SITE_NAMED_EXPRESSION_COLON_EQ_AFTER]);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
@@ -25459,8 +25334,6 @@ pub struct ReturnStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: Option<::sittir_core::SlotValue<ReturnStatementExpressionsTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_keyword_after"))]
-    pub return_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ReturnStatementTransport {
@@ -25484,7 +25357,6 @@ impl ::sittir_core::render::Render for ReturnStatementTransport {
 impl ::sittir_core::prepare::Prepare for ReturnStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.return_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_RETURN_STATEMENT_RETURN_KEYWORD_AFTER]);
         self.expressions.prepare(ctx)?;
         Ok(())
     }
@@ -25519,8 +25391,6 @@ pub struct DeleteStatementTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: ::sittir_core::SlotValue<DeleteStatementExpressionsTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_del_keyword_after"))]
-    pub del_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for DeleteStatementTransport {
@@ -25544,7 +25414,6 @@ impl ::sittir_core::render::Render for DeleteStatementTransport {
 impl ::sittir_core::prepare::Prepare for DeleteStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.del_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_DELETE_STATEMENT_DEL_KEYWORD_AFTER]);
         self.expressions.prepare(ctx)?;
         Ok(())
     }
@@ -25581,12 +25450,6 @@ pub struct RaiseStatementTransport {
     pub cause: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: Option<::sittir_core::SlotValue<RaiseStatementExpressionsTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_before"))]
-    pub from_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_after"))]
-    pub from_keyword_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raise_keyword_after"))]
-    pub raise_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for RaiseStatementTransport {
@@ -25610,9 +25473,6 @@ impl ::sittir_core::render::Render for RaiseStatementTransport {
 impl ::sittir_core::prepare::Prepare for RaiseStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.from_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_RAISE_STATEMENT_FROM_KEYWORD_BEFORE]);
-        self.from_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_RAISE_STATEMENT_FROM_KEYWORD_AFTER]);
-        self.raise_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_RAISE_STATEMENT_RAISE_KEYWORD_AFTER]);
         self.cause.prepare(ctx)?;
         self.expressions.prepare(ctx)?;
         Ok(())
@@ -25966,12 +25826,6 @@ pub struct IfStatementTransport {
     pub alternative: Option<Vec<::sittir_core::SlotValue<IfStatementAlternativeTransportSlot>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative_separator_space"))]
     pub alternative_separator_space: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_after"))]
-    pub if_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for IfStatementTransport {
@@ -26002,9 +25856,6 @@ impl ::sittir_core::prepare::Prepare for IfStatementTransport {
             let _ = after;
         }
         self.alternative_separator_space.get_or_insert(ctx.options.spacing[options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE]);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_IF_STATEMENT_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_IF_STATEMENT_COLON_AFTER]);
-        self.if_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_IF_STATEMENT_IF_KEYWORD_AFTER]);
         if let Some(seated_items) = self.alternative.as_mut() {
             let seated_last = seated_items.len().saturating_sub(1);
             for (seated_at, item) in seated_items.iter_mut().enumerate() {
@@ -26062,12 +25913,6 @@ pub struct ElifClauseTransport {
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
     pub consequence: ::sittir_core::SlotValue<SuiteTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elif_keyword_after"))]
-    pub elif_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ElifClauseTransport {
@@ -26091,9 +25936,6 @@ impl ::sittir_core::render::Render for ElifClauseTransport {
 impl ::sittir_core::prepare::Prepare for ElifClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_ELIF_CLAUSE_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_ELIF_CLAUSE_COLON_AFTER]);
-        self.elif_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_ELIF_CLAUSE_ELIF_KEYWORD_AFTER]);
         self.condition.prepare(ctx)?;
         self.consequence.prepare(ctx)?;
         Ok(())
@@ -26129,12 +25971,6 @@ pub struct ElseClauseTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_keyword_after"))]
-    pub else_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ElseClauseTransport {
@@ -26158,9 +25994,6 @@ impl ::sittir_core::render::Render for ElseClauseTransport {
 impl ::sittir_core::prepare::Prepare for ElseClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_ELSE_CLAUSE_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_ELSE_CLAUSE_COLON_AFTER]);
-        self.else_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_ELSE_CLAUSE_ELSE_KEYWORD_AFTER]);
         self.body.prepare(ctx)?;
         Ok(())
     }
@@ -26197,12 +26030,6 @@ pub struct MatchStatementTransport {
     pub body: ::sittir_core::SlotValue<MatchBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subjects"))]
     pub subjects: ::sittir_core::SlotValue<SubjectsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_keyword_after"))]
-    pub match_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for MatchStatementTransport {
@@ -26226,9 +26053,6 @@ impl ::sittir_core::render::Render for MatchStatementTransport {
 impl ::sittir_core::prepare::Prepare for MatchStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_MATCH_STATEMENT_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_MATCH_STATEMENT_COLON_AFTER]);
-        self.match_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_MATCH_STATEMENT_MATCH_KEYWORD_AFTER]);
         self.body.prepare(ctx)?;
         self.subjects.prepare(ctx)?;
         Ok(())
@@ -26324,12 +26148,6 @@ pub struct CaseClauseTransport {
     pub consequence: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_patterns"))]
     pub case_patterns: ::sittir_core::SlotValue<CasePatternsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_keyword_after"))]
-    pub case_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for CaseClauseTransport {
@@ -26353,9 +26171,6 @@ impl ::sittir_core::render::Render for CaseClauseTransport {
 impl ::sittir_core::prepare::Prepare for CaseClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_CASE_CLAUSE_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_CASE_CLAUSE_COLON_AFTER]);
-        self.case_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_CASE_CLAUSE_CASE_KEYWORD_AFTER]);
         self.guard.prepare(ctx)?;
         self.consequence.prepare(ctx)?;
         self.case_patterns.prepare(ctx)?;
@@ -26400,20 +26215,6 @@ pub struct ForStatementTransport {
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<::sittir_core::SlotValue<ElseClauseTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker_after"))]
-    pub async_marker_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_keyword_before"))]
-    pub for_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_keyword_after"))]
-    pub for_keyword_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_before"))]
-    pub in_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_after"))]
-    pub in_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ForStatementTransport {
@@ -26437,13 +26238,6 @@ impl ::sittir_core::render::Render for ForStatementTransport {
 impl ::sittir_core::prepare::Prepare for ForStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.async_marker_after.get_or_insert(ctx.options.spacing[options::SITE_FOR_STATEMENT_ASYNC_MARKER_AFTER]);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_FOR_STATEMENT_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_FOR_STATEMENT_COLON_AFTER]);
-        self.for_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_FOR_STATEMENT_FOR_KEYWORD_BEFORE]);
-        self.for_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_FOR_STATEMENT_FOR_KEYWORD_AFTER]);
-        self.in_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_FOR_STATEMENT_IN_KEYWORD_BEFORE]);
-        self.in_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_FOR_STATEMENT_IN_KEYWORD_AFTER]);
         self.async_marker.prepare(ctx)?;
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
@@ -26486,12 +26280,6 @@ pub struct WhileStatementTransport {
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<::sittir_core::SlotValue<ElseClauseTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_while_keyword_after"))]
-    pub while_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for WhileStatementTransport {
@@ -26515,9 +26303,6 @@ impl ::sittir_core::render::Render for WhileStatementTransport {
 impl ::sittir_core::prepare::Prepare for WhileStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_WHILE_STATEMENT_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_WHILE_STATEMENT_COLON_AFTER]);
-        self.while_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER]);
         self.condition.prepare(ctx)?;
         self.body.prepare(ctx)?;
         self.alternative.prepare(ctx)?;
@@ -26562,12 +26347,6 @@ pub struct TryStatementTransport {
     pub finally_clause: Option<::sittir_core::SlotValue<FinallyClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clauses_separator_space"))]
     pub except_clauses_separator_space: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_try_keyword_after"))]
-    pub try_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for TryStatementTransport {
@@ -26598,9 +26377,6 @@ impl ::sittir_core::prepare::Prepare for TryStatementTransport {
             let _ = after;
         }
         self.except_clauses_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE]);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_TRY_STATEMENT_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_TRY_STATEMENT_COLON_AFTER]);
-        self.try_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_TRY_STATEMENT_TRY_KEYWORD_AFTER]);
         if let Some(seated_items) = self.except_clauses.as_mut() {
             let seated_last = seated_items.len().saturating_sub(1);
             for (seated_at, item) in seated_items.iter_mut().enumerate() {
@@ -26652,16 +26428,6 @@ pub struct ExceptClauseTransport {
     pub exception: Option<::sittir_core::SlotValue<ExceptClauseExceptionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_suite"))]
     pub suite: ::sittir_core::SlotValue<SuiteTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_marker_before"))]
-    pub star_marker_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_marker_after"))]
-    pub star_marker_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_keyword_after"))]
-    pub except_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ExceptClauseTransport {
@@ -26685,11 +26451,6 @@ impl ::sittir_core::render::Render for ExceptClauseTransport {
 impl ::sittir_core::prepare::Prepare for ExceptClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.star_marker_before.get_or_insert(ctx.options.spacing[options::SITE_EXCEPT_CLAUSE_STAR_MARKER_BEFORE]);
-        self.star_marker_after.get_or_insert(ctx.options.spacing[options::SITE_EXCEPT_CLAUSE_STAR_MARKER_AFTER]);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_EXCEPT_CLAUSE_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_EXCEPT_CLAUSE_COLON_AFTER]);
-        self.except_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_AFTER]);
         self.star_marker.prepare(ctx)?;
         self.exception.prepare(ctx)?;
         self.suite.prepare(ctx)?;
@@ -26726,12 +26487,6 @@ pub struct FinallyClauseTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block"))]
     pub block: ::sittir_core::SlotValue<SuiteTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_keyword_after"))]
-    pub finally_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for FinallyClauseTransport {
@@ -26755,9 +26510,6 @@ impl ::sittir_core::render::Render for FinallyClauseTransport {
 impl ::sittir_core::prepare::Prepare for FinallyClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_FINALLY_CLAUSE_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_FINALLY_CLAUSE_COLON_AFTER]);
-        self.finally_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_FINALLY_CLAUSE_FINALLY_KEYWORD_AFTER]);
         self.block.prepare(ctx)?;
         Ok(())
     }
@@ -26796,16 +26548,6 @@ pub struct WithStatementTransport {
     pub with_clause: ::sittir_core::SlotValue<WithClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker_after"))]
-    pub async_marker_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_keyword_before"))]
-    pub with_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_keyword_after"))]
-    pub with_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for WithStatementTransport {
@@ -26829,11 +26571,6 @@ impl ::sittir_core::render::Render for WithStatementTransport {
 impl ::sittir_core::prepare::Prepare for WithStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.async_marker_after.get_or_insert(ctx.options.spacing[options::SITE_WITH_STATEMENT_ASYNC_MARKER_AFTER]);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_WITH_STATEMENT_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_WITH_STATEMENT_COLON_AFTER]);
-        self.with_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_WITH_STATEMENT_WITH_KEYWORD_BEFORE]);
-        self.with_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_WITH_STATEMENT_WITH_KEYWORD_AFTER]);
         self.async_marker.prepare(ctx)?;
         self.with_clause.prepare(ctx)?;
         self.body.prepare(ctx)?;
@@ -26936,20 +26673,6 @@ pub struct FunctionDefinitionTransport {
     pub return_type: Option<::sittir_core::SlotValue<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker_after"))]
-    pub async_marker_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_before"))]
-    pub dash_gt_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_after"))]
-    pub dash_gt_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_def_keyword_before"))]
-    pub def_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_def_keyword_after"))]
-    pub def_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for FunctionDefinitionTransport {
@@ -26973,13 +26696,6 @@ impl ::sittir_core::render::Render for FunctionDefinitionTransport {
 impl ::sittir_core::prepare::Prepare for FunctionDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.async_marker_after.get_or_insert(ctx.options.spacing[options::SITE_FUNCTION_DEFINITION_ASYNC_MARKER_AFTER]);
-        self.dash_gt_before.get_or_insert(ctx.options.spacing[options::SITE_FUNCTION_DEFINITION_DASH_GT_BEFORE]);
-        self.dash_gt_after.get_or_insert(ctx.options.spacing[options::SITE_FUNCTION_DEFINITION_DASH_GT_AFTER]);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_FUNCTION_DEFINITION_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_FUNCTION_DEFINITION_COLON_AFTER]);
-        self.def_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_FUNCTION_DEFINITION_DEF_KEYWORD_BEFORE]);
-        self.def_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_FUNCTION_DEFINITION_DEF_KEYWORD_AFTER]);
         self.async_marker.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.type_parameters.prepare(ctx)?;
@@ -27023,10 +26739,6 @@ pub struct ParametersTransport {
     pub parameter_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter_separator_space_after"))]
     pub parameter_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
-    pub rparen_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ParametersTransport {
@@ -27052,8 +26764,6 @@ impl ::sittir_core::prepare::Prepare for ParametersTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.parameter_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_PARAMETER_SEPARATOR_SPACE_BEFORE]);
         self.parameter_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_PARAMETER_SEPARATOR_SPACE_AFTER]);
-        self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_LPAREN_AFTER]);
-        self.rparen_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_RPAREN_BEFORE]);
         self.elements.prepare(ctx)?;
         Ok(())
     }
@@ -27144,8 +26854,6 @@ pub struct ListSplatTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
-    pub star_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ListSplatTransport {
@@ -27169,7 +26877,6 @@ impl ::sittir_core::render::Render for ListSplatTransport {
 impl ::sittir_core::prepare::Prepare for ListSplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.star_after.get_or_insert(ctx.options.spacing[options::SITE_LIST_SPLAT_STAR_AFTER]);
         self.expression.prepare(ctx)?;
         Ok(())
     }
@@ -27204,8 +26911,6 @@ pub struct DictionarySplatTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_star_after"))]
-    pub star_star_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for DictionarySplatTransport {
@@ -27229,7 +26934,6 @@ impl ::sittir_core::render::Render for DictionarySplatTransport {
 impl ::sittir_core::prepare::Prepare for DictionarySplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.star_star_after.get_or_insert(ctx.options.spacing[options::SITE_DICTIONARY_SPLAT_STAR_STAR_AFTER]);
         self.expression.prepare(ctx)?;
         Ok(())
     }
@@ -27268,8 +26972,6 @@ pub struct GlobalStatementTransport {
     pub names_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_after"))]
     pub names_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_keyword_after"))]
-    pub global_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for GlobalStatementTransport {
@@ -27301,7 +27003,6 @@ impl ::sittir_core::prepare::Prepare for GlobalStatementTransport {
         }
         self.names_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE]);
         self.names_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER]);
-        self.global_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_GLOBAL_STATEMENT_GLOBAL_KEYWORD_AFTER]);
         self.names.prepare(ctx)?;
         Ok(())
     }
@@ -27340,8 +27041,6 @@ pub struct NonlocalStatementTransport {
     pub names_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_names_separator_space_after"))]
     pub names_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_nonlocal_keyword_after"))]
-    pub nonlocal_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for NonlocalStatementTransport {
@@ -27373,7 +27072,6 @@ impl ::sittir_core::prepare::Prepare for NonlocalStatementTransport {
         }
         self.names_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE]);
         self.names_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER]);
-        self.nonlocal_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_NONLOCAL_STATEMENT_NONLOCAL_KEYWORD_AFTER]);
         self.names.prepare(ctx)?;
         Ok(())
     }
@@ -27414,12 +27112,6 @@ pub struct ExecStatementTransport {
     pub in_clause_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_clause_separator_space_after"))]
     pub in_clause_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exec_keyword_after"))]
-    pub exec_keyword_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_before"))]
-    pub in_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_after"))]
-    pub in_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ExecStatementTransport {
@@ -27451,9 +27143,6 @@ impl ::sittir_core::prepare::Prepare for ExecStatementTransport {
         }
         self.in_clause_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE]);
         self.in_clause_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER]);
-        self.exec_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_EXEC_STATEMENT_EXEC_KEYWORD_AFTER]);
-        self.in_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_EXEC_STATEMENT_IN_KEYWORD_BEFORE]);
-        self.in_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_EXEC_STATEMENT_IN_KEYWORD_AFTER]);
         if let Some(seated_items) = self.in_clause.as_mut() {
             let seated_last = seated_items.len().saturating_sub(1);
             for (seated_at, item) in seated_items.iter_mut().enumerate() {
@@ -27585,12 +27274,6 @@ pub struct TypeAliasStatementTransport {
     pub left: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
-    pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_keyword_after"))]
-    pub type_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for TypeAliasStatementTransport {
@@ -27614,9 +27297,6 @@ impl ::sittir_core::render::Render for TypeAliasStatementTransport {
 impl ::sittir_core::prepare::Prepare for TypeAliasStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.eq_before.get_or_insert(ctx.options.spacing[options::SITE_TYPE_ALIAS_STATEMENT_EQ_BEFORE]);
-        self.eq_after.get_or_insert(ctx.options.spacing[options::SITE_TYPE_ALIAS_STATEMENT_EQ_AFTER]);
-        self.type_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_AFTER]);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
@@ -27658,12 +27338,6 @@ pub struct ClassDefinitionTransport {
     pub superclasses: Option<::sittir_core::SlotValue<ArgumentListTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_keyword_after"))]
-    pub class_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ClassDefinitionTransport {
@@ -27687,9 +27361,6 @@ impl ::sittir_core::render::Render for ClassDefinitionTransport {
 impl ::sittir_core::prepare::Prepare for ClassDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_CLASS_DEFINITION_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_CLASS_DEFINITION_COLON_AFTER]);
-        self.class_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_CLASS_DEFINITION_CLASS_KEYWORD_AFTER]);
         self.name.prepare(ctx)?;
         self.type_parameters.prepare(ctx)?;
         self.superclasses.prepare(ctx)?;
@@ -27727,10 +27398,6 @@ pub struct TypeParameterTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_types"))]
     pub types: ::sittir_core::SlotValue<TypesTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
-    pub rbrack_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for TypeParameterTransport {
@@ -27754,8 +27421,6 @@ impl ::sittir_core::render::Render for TypeParameterTransport {
 impl ::sittir_core::prepare::Prepare for TypeParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lbrack_after.get_or_insert(ctx.options.spacing[options::SITE_TYPE_PARAMETER_LBRACK_AFTER]);
-        self.rbrack_before.get_or_insert(ctx.options.spacing[options::SITE_TYPE_PARAMETER_RBRACK_BEFORE]);
         self.types.prepare(ctx)?;
         Ok(())
     }
@@ -27790,10 +27455,6 @@ pub struct ParenthesizedListSplatTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<ParenthesizedListSplatContentTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
-    pub rparen_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ParenthesizedListSplatTransport {
@@ -27817,8 +27478,6 @@ impl ::sittir_core::render::Render for ParenthesizedListSplatTransport {
 impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_PARENTHESIZED_LIST_SPLAT_LPAREN_AFTER]);
-        self.rparen_before.get_or_insert(ctx.options.spacing[options::SITE_PARENTHESIZED_LIST_SPLAT_RPAREN_BEFORE]);
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -27853,10 +27512,6 @@ pub struct ArgumentListTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
     pub arguments: Option<::sittir_core::SlotValue<ArgumentListElementsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
-    pub rparen_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ArgumentListTransport {
@@ -27880,8 +27535,6 @@ impl ::sittir_core::render::Render for ArgumentListTransport {
 impl ::sittir_core::prepare::Prepare for ArgumentListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENT_LIST_LPAREN_AFTER]);
-        self.rparen_before.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENT_LIST_RPAREN_BEFORE]);
         self.arguments.prepare(ctx)?;
         Ok(())
     }
@@ -27996,8 +27649,6 @@ pub struct DecoratorTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_at_after"))]
-    pub at_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for DecoratorTransport {
@@ -28021,7 +27672,6 @@ impl ::sittir_core::render::Render for DecoratorTransport {
 impl ::sittir_core::prepare::Prepare for DecoratorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.at_after.get_or_insert(ctx.options.spacing[options::SITE_DECORATOR_AT_AFTER]);
         self.expression.prepare(ctx)?;
         Ok(())
     }
@@ -28167,8 +27817,6 @@ pub struct ExpressionListTransport {
     pub tail: ::sittir_core::SlotValue<ExpressionListTailTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_before"))]
-    pub comma_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ExpressionListTransport {
@@ -28192,7 +27840,6 @@ impl ::sittir_core::render::Render for ExpressionListTransport {
 impl ::sittir_core::prepare::Prepare for ExpressionListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.comma_before.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_LIST_COMMA_BEFORE]);
         self.tail.prepare(ctx)?;
         self.expression.prepare(ctx)?;
         Ok(())
@@ -28461,10 +28108,6 @@ pub struct DictPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dict_pattern_elements"))]
     pub dict_pattern_elements: Option<::sittir_core::SlotValue<DictPatternElementsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
-    pub lbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
-    pub rbrace_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for DictPatternTransport {
@@ -28488,8 +28131,6 @@ impl ::sittir_core::render::Render for DictPatternTransport {
 impl ::sittir_core::prepare::Prepare for DictPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lbrace_after.get_or_insert(ctx.options.spacing[options::SITE_DICT_PATTERN_LBRACE_AFTER]);
-        self.rbrace_before.get_or_insert(ctx.options.spacing[options::SITE_DICT_PATTERN_RBRACE_BEFORE]);
         self.dict_pattern_elements.prepare(ctx)?;
         Ok(())
     }
@@ -28526,10 +28167,6 @@ pub struct KeyValuePatternTransport {
     pub key: ::sittir_core::SlotValue<KeyValuePatternKeyTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<CasePatternTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for KeyValuePatternTransport {
@@ -28553,8 +28190,6 @@ impl ::sittir_core::render::Render for KeyValuePatternTransport {
 impl ::sittir_core::prepare::Prepare for KeyValuePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_KEY_VALUE_PATTERN_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_KEY_VALUE_PATTERN_COLON_AFTER]);
         self.key.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
@@ -28592,10 +28227,6 @@ pub struct KeywordPatternTransport {
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<KeywordPatternValueTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
-    pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for KeywordPatternTransport {
@@ -28619,8 +28250,6 @@ impl ::sittir_core::render::Render for KeywordPatternTransport {
 impl ::sittir_core::prepare::Prepare for KeywordPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.eq_before.get_or_insert(ctx.options.spacing[options::SITE_KEYWORD_PATTERN_EQ_BEFORE]);
-        self.eq_after.get_or_insert(ctx.options.spacing[options::SITE_KEYWORD_PATTERN_EQ_AFTER]);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
@@ -28658,10 +28287,6 @@ pub struct SplatPatternTransport {
     pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<SplatPatternNameTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
-    pub operator_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_underscore_before"))]
-    pub underscore_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for SplatPatternTransport {
@@ -28685,8 +28310,6 @@ impl ::sittir_core::render::Render for SplatPatternTransport {
 impl ::sittir_core::prepare::Prepare for SplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.operator_after.get_or_insert(ctx.options.spacing[options::SITE_SPLAT_PATTERN_OPERATOR_AFTER]);
-        self.underscore_before.get_or_insert(ctx.options.spacing[options::SITE_SPLAT_PATTERN_UNDERSCORE_BEFORE]);
         self.operator.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
@@ -28724,12 +28347,6 @@ pub struct ClassPatternTransport {
     pub name: ::sittir_core::SlotValue<DottedNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
     pub arguments: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_before"))]
-    pub lparen_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
-    pub rparen_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ClassPatternTransport {
@@ -28753,9 +28370,6 @@ impl ::sittir_core::render::Render for ClassPatternTransport {
 impl ::sittir_core::prepare::Prepare for ClassPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lparen_before.get_or_insert(ctx.options.spacing[options::SITE_CLASS_PATTERN_LPAREN_BEFORE]);
-        self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_CLASS_PATTERN_LPAREN_AFTER]);
-        self.rparen_before.get_or_insert(ctx.options.spacing[options::SITE_CLASS_PATTERN_RPAREN_BEFORE]);
         self.name.prepare(ctx)?;
         self.arguments.prepare(ctx)?;
         Ok(())
@@ -28797,12 +28411,6 @@ pub struct ComplexPatternTransport {
     pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ComplexPatternContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_before"))]
-    pub operator_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
-    pub operator_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_real_after"))]
-    pub real_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ComplexPatternTransport {
@@ -28826,9 +28434,6 @@ impl ::sittir_core::render::Render for ComplexPatternTransport {
 impl ::sittir_core::prepare::Prepare for ComplexPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.operator_before.get_or_insert(ctx.options.spacing[options::SITE_COMPLEX_PATTERN_OPERATOR_BEFORE]);
-        self.operator_after.get_or_insert(ctx.options.spacing[options::SITE_COMPLEX_PATTERN_OPERATOR_AFTER]);
-        self.real_after.get_or_insert(ctx.options.spacing[options::SITE_COMPLEX_PATTERN_REAL_AFTER]);
         self.real.prepare(ctx)?;
         self.imaginary.prepare(ctx)?;
         self.operator.prepare(ctx)?;
@@ -28872,10 +28477,6 @@ pub struct _ParametersTransport {
     pub parameter_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter_separator_space_after"))]
     pub parameter_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
-    pub rparen_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for _ParametersTransport {
@@ -28907,8 +28508,6 @@ impl ::sittir_core::prepare::Prepare for _ParametersTransport {
         }
         self.parameter_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_PARAMETER_SEPARATOR_SPACE_BEFORE]);
         self.parameter_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_PARAMETER_SEPARATOR_SPACE_AFTER]);
-        self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_LPAREN_AFTER]);
-        self.rparen_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_RPAREN_BEFORE]);
         {
             let seated_items = &mut self.parameter;
             let seated_last = seated_items.len().saturating_sub(1);
@@ -29076,10 +28675,6 @@ pub struct TuplePatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns"))]
     pub patterns: Option<::sittir_core::SlotValue<PatternsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
-    pub rparen_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for TuplePatternTransport {
@@ -29103,8 +28698,6 @@ impl ::sittir_core::render::Render for TuplePatternTransport {
 impl ::sittir_core::prepare::Prepare for TuplePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_PATTERN_LPAREN_AFTER]);
-        self.rparen_before.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_PATTERN_RPAREN_BEFORE]);
         self.patterns.prepare(ctx)?;
         Ok(())
     }
@@ -29139,10 +28732,6 @@ pub struct ListPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_patterns"))]
     pub patterns: Option<::sittir_core::SlotValue<PatternsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
-    pub rbrack_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ListPatternTransport {
@@ -29166,8 +28755,6 @@ impl ::sittir_core::render::Render for ListPatternTransport {
 impl ::sittir_core::prepare::Prepare for ListPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lbrack_after.get_or_insert(ctx.options.spacing[options::SITE_LIST_PATTERN_LBRACK_AFTER]);
-        self.rbrack_before.get_or_insert(ctx.options.spacing[options::SITE_LIST_PATTERN_RBRACK_BEFORE]);
         self.patterns.prepare(ctx)?;
         Ok(())
     }
@@ -29204,10 +28791,6 @@ pub struct DefaultParameterTransport {
     pub name: ::sittir_core::SlotValue<DefaultParameterNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
-    pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for DefaultParameterTransport {
@@ -29231,8 +28814,6 @@ impl ::sittir_core::render::Render for DefaultParameterTransport {
 impl ::sittir_core::prepare::Prepare for DefaultParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.eq_before.get_or_insert(ctx.options.spacing[options::SITE_DEFAULT_PARAMETER_EQ_BEFORE]);
-        self.eq_after.get_or_insert(ctx.options.spacing[options::SITE_DEFAULT_PARAMETER_EQ_AFTER]);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
@@ -29272,14 +28853,6 @@ pub struct TypedDefaultParameterTransport {
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
-    pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for TypedDefaultParameterTransport {
@@ -29303,10 +28876,6 @@ impl ::sittir_core::render::Render for TypedDefaultParameterTransport {
 impl ::sittir_core::prepare::Prepare for TypedDefaultParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_TYPED_DEFAULT_PARAMETER_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_TYPED_DEFAULT_PARAMETER_COLON_AFTER]);
-        self.eq_before.get_or_insert(ctx.options.spacing[options::SITE_TYPED_DEFAULT_PARAMETER_EQ_BEFORE]);
-        self.eq_after.get_or_insert(ctx.options.spacing[options::SITE_TYPED_DEFAULT_PARAMETER_EQ_AFTER]);
         self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -29343,8 +28912,6 @@ pub struct ListSplatPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<ListSplatPatternContentTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
-    pub star_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ListSplatPatternTransport {
@@ -29368,7 +28935,6 @@ impl ::sittir_core::render::Render for ListSplatPatternTransport {
 impl ::sittir_core::prepare::Prepare for ListSplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.star_after.get_or_insert(ctx.options.spacing[options::SITE_LIST_SPLAT_PATTERN_STAR_AFTER]);
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -29403,8 +28969,6 @@ pub struct DictionarySplatPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<DictionarySplatPatternContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_star_after"))]
-    pub star_star_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for DictionarySplatPatternTransport {
@@ -29428,7 +28992,6 @@ impl ::sittir_core::render::Render for DictionarySplatPatternTransport {
 impl ::sittir_core::prepare::Prepare for DictionarySplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.star_star_after.get_or_insert(ctx.options.spacing[options::SITE_DICTIONARY_SPLAT_PATTERN_STAR_STAR_AFTER]);
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -29465,10 +29028,6 @@ pub struct AsPatternTransport {
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
     pub alias: ::sittir_core::SlotValue<Box<AsPatternTargetTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_before"))]
-    pub as_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_after"))]
-    pub as_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for AsPatternTransport {
@@ -29492,8 +29051,6 @@ impl ::sittir_core::render::Render for AsPatternTransport {
 impl ::sittir_core::prepare::Prepare for AsPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.as_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_AS_PATTERN_AS_KEYWORD_BEFORE]);
-        self.as_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_AS_PATTERN_AS_KEYWORD_AFTER]);
         self.expression.prepare(ctx)?;
         self.alias.prepare(ctx)?;
         Ok(())
@@ -29529,8 +29086,6 @@ pub struct NotOperatorTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_not_keyword_after"))]
-    pub not_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for NotOperatorTransport {
@@ -29554,7 +29109,6 @@ impl ::sittir_core::render::Render for NotOperatorTransport {
 impl ::sittir_core::prepare::Prepare for NotOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.not_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_NOT_OPERATOR_NOT_KEYWORD_AFTER]);
         self.argument.prepare(ctx)?;
         Ok(())
     }
@@ -29593,10 +29147,6 @@ pub struct BooleanOperatorTransport {
     pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_before"))]
-    pub operator_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
-    pub operator_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for BooleanOperatorTransport {
@@ -29620,8 +29170,6 @@ impl ::sittir_core::render::Render for BooleanOperatorTransport {
 impl ::sittir_core::prepare::Prepare for BooleanOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.operator_before.get_or_insert(ctx.options.spacing[options::SITE_BOOLEAN_OPERATOR_OPERATOR_BEFORE]);
-        self.operator_after.get_or_insert(ctx.options.spacing[options::SITE_BOOLEAN_OPERATOR_OPERATOR_AFTER]);
         self.left.prepare(ctx)?;
         self.operator.prepare(ctx)?;
         self.right.prepare(ctx)?;
@@ -29662,10 +29210,6 @@ pub struct BinaryOperatorTransport {
     pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_before"))]
-    pub operator_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
-    pub operator_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for BinaryOperatorTransport {
@@ -29689,8 +29233,6 @@ impl ::sittir_core::render::Render for BinaryOperatorTransport {
 impl ::sittir_core::prepare::Prepare for BinaryOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.operator_before.get_or_insert(ctx.options.spacing[options::SITE_BINARY_OPERATOR_OPERATOR_BEFORE]);
-        self.operator_after.get_or_insert(ctx.options.spacing[options::SITE_BINARY_OPERATOR_OPERATOR_AFTER]);
         self.left.prepare(ctx)?;
         self.operator.prepare(ctx)?;
         self.right.prepare(ctx)?;
@@ -29869,12 +29411,6 @@ pub struct LambdaTransport {
     pub parameters: Option<::sittir_core::SlotValue<LambdaParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_keyword_after"))]
-    pub lambda_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for LambdaTransport {
@@ -29898,9 +29434,6 @@ impl ::sittir_core::render::Render for LambdaTransport {
 impl ::sittir_core::prepare::Prepare for LambdaTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_LAMBDA_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_LAMBDA_COLON_AFTER]);
-        self.lambda_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_LAMBDA_LAMBDA_KEYWORD_AFTER]);
         self.parameters.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
@@ -29938,12 +29471,6 @@ pub struct LambdaWithinForInClauseTransport {
     pub parameters: Option<::sittir_core::SlotValue<LambdaParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ::sittir_core::SlotValue<Box<LambdaWithinForInClauseBodyTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lambda_keyword_after"))]
-    pub lambda_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for LambdaWithinForInClauseTransport {
@@ -29967,9 +29494,6 @@ impl ::sittir_core::render::Render for LambdaWithinForInClauseTransport {
 impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_AFTER]);
-        self.lambda_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER]);
         self.parameters.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
@@ -30070,8 +29594,6 @@ pub struct PatternListTransport {
     pub tail: ::sittir_core::SlotValue<PatternListTailTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_before"))]
-    pub comma_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for PatternListTransport {
@@ -30095,7 +29617,6 @@ impl ::sittir_core::render::Render for PatternListTransport {
 impl ::sittir_core::prepare::Prepare for PatternListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.comma_before.get_or_insert(ctx.options.spacing[options::SITE_PATTERN_LIST_COMMA_BEFORE]);
         self.tail.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         Ok(())
@@ -30131,8 +29652,6 @@ pub struct YieldTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<::sittir_core::SlotValue<Box<YieldContentTransportSlot>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_yield_keyword_after"))]
-    pub yield_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for YieldTransport {
@@ -30156,7 +29675,6 @@ impl ::sittir_core::render::Render for YieldTransport {
 impl ::sittir_core::prepare::Prepare for YieldTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.yield_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_YIELD_YIELD_KEYWORD_AFTER]);
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -30193,10 +29711,6 @@ pub struct AttributeTransport {
     pub object: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
     pub attribute: ::sittir_core::SlotValue<IdentifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_before"))]
-    pub dot_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
-    pub dot_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for AttributeTransport {
@@ -30220,8 +29734,6 @@ impl ::sittir_core::render::Render for AttributeTransport {
 impl ::sittir_core::prepare::Prepare for AttributeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.dot_before.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTE_DOT_BEFORE]);
-        self.dot_after.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTE_DOT_AFTER]);
         self.object.prepare(ctx)?;
         self.attribute.prepare(ctx)?;
         Ok(())
@@ -30259,12 +29771,6 @@ pub struct SubscriptTransport {
     pub value: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_subscripts"))]
     pub subscripts: ::sittir_core::SlotValue<SubscriptsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
-    pub lbrack_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
-    pub rbrack_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for SubscriptTransport {
@@ -30288,9 +29794,6 @@ impl ::sittir_core::render::Render for SubscriptTransport {
 impl ::sittir_core::prepare::Prepare for SubscriptTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lbrack_before.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPT_LBRACK_BEFORE]);
-        self.lbrack_after.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPT_LBRACK_AFTER]);
-        self.rbrack_before.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPT_RBRACK_BEFORE]);
         self.value.prepare(ctx)?;
         self.subscripts.prepare(ctx)?;
         Ok(())
@@ -30330,10 +29833,6 @@ pub struct SliceTransport {
     pub stop: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_step"))]
     pub step: Option<::sittir_core::SlotValue<SliceGroupTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for SliceTransport {
@@ -30357,8 +29856,6 @@ impl ::sittir_core::render::Render for SliceTransport {
 impl ::sittir_core::prepare::Prepare for SliceTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_SLICE_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_SLICE_COLON_AFTER]);
         self.start.prepare(ctx)?;
         self.stop.prepare(ctx)?;
         self.step.prepare(ctx)?;
@@ -30561,10 +30058,6 @@ pub struct TypedParameterTransport {
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<TypedParameterContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for TypedParameterTransport {
@@ -30588,8 +30081,6 @@ impl ::sittir_core::render::Render for TypedParameterTransport {
 impl ::sittir_core::prepare::Prepare for TypedParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_TYPED_PARAMETER_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_TYPED_PARAMETER_COLON_AFTER]);
         self.type_.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
@@ -30683,8 +30174,6 @@ pub struct SplatTypeTransport {
     pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator_after"))]
-    pub operator_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for SplatTypeTransport {
@@ -30708,7 +30197,6 @@ impl ::sittir_core::render::Render for SplatTypeTransport {
 impl ::sittir_core::prepare::Prepare for SplatTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.operator_after.get_or_insert(ctx.options.spacing[options::SITE_SPLAT_TYPE_OPERATOR_AFTER]);
         self.operator.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
@@ -30806,10 +30294,6 @@ pub struct UnionTypeTransport {
     pub left: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<Box<TypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pipe_before"))]
-    pub pipe_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pipe_after"))]
-    pub pipe_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for UnionTypeTransport {
@@ -30833,8 +30317,6 @@ impl ::sittir_core::render::Render for UnionTypeTransport {
 impl ::sittir_core::prepare::Prepare for UnionTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.pipe_before.get_or_insert(ctx.options.spacing[options::SITE_UNION_TYPE_PIPE_BEFORE]);
-        self.pipe_after.get_or_insert(ctx.options.spacing[options::SITE_UNION_TYPE_PIPE_AFTER]);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
@@ -30872,10 +30354,6 @@ pub struct ConstrainedTypeTransport {
     pub base_type: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constraint"))]
     pub constraint: ::sittir_core::SlotValue<Box<TypeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ConstrainedTypeTransport {
@@ -30899,8 +30377,6 @@ impl ::sittir_core::render::Render for ConstrainedTypeTransport {
 impl ::sittir_core::prepare::Prepare for ConstrainedTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_CONSTRAINED_TYPE_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_CONSTRAINED_TYPE_COLON_AFTER]);
         self.base_type.prepare(ctx)?;
         self.constraint.prepare(ctx)?;
         Ok(())
@@ -30938,10 +30414,6 @@ pub struct MemberTypeTransport {
     pub base_type: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_before"))]
-    pub dot_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
-    pub dot_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for MemberTypeTransport {
@@ -30965,8 +30437,6 @@ impl ::sittir_core::render::Render for MemberTypeTransport {
 impl ::sittir_core::prepare::Prepare for MemberTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.dot_before.get_or_insert(ctx.options.spacing[options::SITE_MEMBER_TYPE_DOT_BEFORE]);
-        self.dot_after.get_or_insert(ctx.options.spacing[options::SITE_MEMBER_TYPE_DOT_AFTER]);
         self.base_type.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
@@ -31004,10 +30474,6 @@ pub struct KeywordArgumentTransport {
     pub name: ::sittir_core::SlotValue<KeywordArgumentNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
-    pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for KeywordArgumentTransport {
@@ -31031,8 +30497,6 @@ impl ::sittir_core::render::Render for KeywordArgumentTransport {
 impl ::sittir_core::prepare::Prepare for KeywordArgumentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.eq_before.get_or_insert(ctx.options.spacing[options::SITE_KEYWORD_ARGUMENT_EQ_BEFORE]);
-        self.eq_after.get_or_insert(ctx.options.spacing[options::SITE_KEYWORD_ARGUMENT_EQ_AFTER]);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
@@ -31068,10 +30532,6 @@ pub struct ListTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_collection_elements"))]
     pub collection_elements: Option<::sittir_core::SlotValue<CollectionElementsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
-    pub rbrack_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ListTransport {
@@ -31095,8 +30555,6 @@ impl ::sittir_core::render::Render for ListTransport {
 impl ::sittir_core::prepare::Prepare for ListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lbrack_after.get_or_insert(ctx.options.spacing[options::SITE_LIST_LBRACK_AFTER]);
-        self.rbrack_before.get_or_insert(ctx.options.spacing[options::SITE_LIST_RBRACK_BEFORE]);
         self.collection_elements.prepare(ctx)?;
         Ok(())
     }
@@ -31131,10 +30589,6 @@ pub struct SetTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_collection_elements"))]
     pub collection_elements: ::sittir_core::SlotValue<CollectionElementsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
-    pub lbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
-    pub rbrace_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for SetTransport {
@@ -31158,8 +30612,6 @@ impl ::sittir_core::render::Render for SetTransport {
 impl ::sittir_core::prepare::Prepare for SetTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lbrace_after.get_or_insert(ctx.options.spacing[options::SITE_SET_LBRACE_AFTER]);
-        self.rbrace_before.get_or_insert(ctx.options.spacing[options::SITE_SET_RBRACE_BEFORE]);
         self.collection_elements.prepare(ctx)?;
         Ok(())
     }
@@ -31194,10 +30646,6 @@ pub struct TupleTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_collection_elements"))]
     pub collection_elements: Option<::sittir_core::SlotValue<CollectionElementsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
-    pub rparen_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for TupleTransport {
@@ -31221,8 +30669,6 @@ impl ::sittir_core::render::Render for TupleTransport {
 impl ::sittir_core::prepare::Prepare for TupleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_LPAREN_AFTER]);
-        self.rparen_before.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_RPAREN_BEFORE]);
         self.collection_elements.prepare(ctx)?;
         Ok(())
     }
@@ -31257,10 +30703,6 @@ pub struct DictionaryTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_entries"))]
     pub entries: Option<::sittir_core::SlotValue<DictionaryElementsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
-    pub lbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
-    pub rbrace_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for DictionaryTransport {
@@ -31284,8 +30726,6 @@ impl ::sittir_core::render::Render for DictionaryTransport {
 impl ::sittir_core::prepare::Prepare for DictionaryTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lbrace_after.get_or_insert(ctx.options.spacing[options::SITE_DICTIONARY_LBRACE_AFTER]);
-        self.rbrace_before.get_or_insert(ctx.options.spacing[options::SITE_DICTIONARY_RBRACE_BEFORE]);
         self.entries.prepare(ctx)?;
         Ok(())
     }
@@ -31322,10 +30762,6 @@ pub struct PairTransport {
     pub key: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for PairTransport {
@@ -31349,8 +30785,6 @@ impl ::sittir_core::render::Render for PairTransport {
 impl ::sittir_core::prepare::Prepare for PairTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_PAIR_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_PAIR_COLON_AFTER]);
         self.key.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
@@ -31388,10 +30822,6 @@ pub struct ListComprehensionTransport {
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
     pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
-    pub rbrack_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ListComprehensionTransport {
@@ -31415,8 +30845,6 @@ impl ::sittir_core::render::Render for ListComprehensionTransport {
 impl ::sittir_core::prepare::Prepare for ListComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lbrack_after.get_or_insert(ctx.options.spacing[options::SITE_LIST_COMPREHENSION_LBRACK_AFTER]);
-        self.rbrack_before.get_or_insert(ctx.options.spacing[options::SITE_LIST_COMPREHENSION_RBRACK_BEFORE]);
         self.body.prepare(ctx)?;
         self.comprehension_clauses.prepare(ctx)?;
         Ok(())
@@ -31454,10 +30882,6 @@ pub struct DictionaryComprehensionTransport {
     pub body: ::sittir_core::SlotValue<Box<PairTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
     pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
-    pub lbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
-    pub rbrace_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for DictionaryComprehensionTransport {
@@ -31481,8 +30905,6 @@ impl ::sittir_core::render::Render for DictionaryComprehensionTransport {
 impl ::sittir_core::prepare::Prepare for DictionaryComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lbrace_after.get_or_insert(ctx.options.spacing[options::SITE_DICTIONARY_COMPREHENSION_LBRACE_AFTER]);
-        self.rbrace_before.get_or_insert(ctx.options.spacing[options::SITE_DICTIONARY_COMPREHENSION_RBRACE_BEFORE]);
         self.body.prepare(ctx)?;
         self.comprehension_clauses.prepare(ctx)?;
         Ok(())
@@ -31520,10 +30942,6 @@ pub struct SetComprehensionTransport {
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
     pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
-    pub lbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
-    pub rbrace_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for SetComprehensionTransport {
@@ -31547,8 +30965,6 @@ impl ::sittir_core::render::Render for SetComprehensionTransport {
 impl ::sittir_core::prepare::Prepare for SetComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lbrace_after.get_or_insert(ctx.options.spacing[options::SITE_SET_COMPREHENSION_LBRACE_AFTER]);
-        self.rbrace_before.get_or_insert(ctx.options.spacing[options::SITE_SET_COMPREHENSION_RBRACE_BEFORE]);
         self.body.prepare(ctx)?;
         self.comprehension_clauses.prepare(ctx)?;
         Ok(())
@@ -31586,10 +31002,6 @@ pub struct GeneratorExpressionTransport {
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
     pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
-    pub rparen_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for GeneratorExpressionTransport {
@@ -31613,8 +31025,6 @@ impl ::sittir_core::render::Render for GeneratorExpressionTransport {
 impl ::sittir_core::prepare::Prepare for GeneratorExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_GENERATOR_EXPRESSION_LPAREN_AFTER]);
-        self.rparen_before.get_or_insert(ctx.options.spacing[options::SITE_GENERATOR_EXPRESSION_RPAREN_BEFORE]);
         self.body.prepare(ctx)?;
         self.comprehension_clauses.prepare(ctx)?;
         Ok(())
@@ -31650,10 +31060,6 @@ pub struct ParenthesizedExpressionTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<ParenthesizedExpressionContentTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
-    pub rparen_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ParenthesizedExpressionTransport {
@@ -31677,8 +31083,6 @@ impl ::sittir_core::render::Render for ParenthesizedExpressionTransport {
 impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_PARENTHESIZED_EXPRESSION_LPAREN_AFTER]);
-        self.rparen_before.get_or_insert(ctx.options.spacing[options::SITE_PARENTHESIZED_EXPRESSION_RPAREN_BEFORE]);
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -31888,22 +31292,10 @@ pub struct ForInClauseTransport {
     pub right: Vec<::sittir_core::SlotValue<ForInClauseRightTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma"))]
     pub comma: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker_after"))]
-    pub async_marker_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right_separator_space_before"))]
     pub right_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right_separator_space_after"))]
     pub right_separator_space_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_before"))]
-    pub comma_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_keyword_before"))]
-    pub for_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_keyword_after"))]
-    pub for_keyword_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_before"))]
-    pub in_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_keyword_after"))]
-    pub in_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ForInClauseTransport {
@@ -31933,14 +31325,8 @@ impl ::sittir_core::prepare::Prepare for ForInClauseTransport {
             if self.right_separator_space_before.is_none() { self.right_separator_space_before = before; }
             if self.right_separator_space_after.is_none() { self.right_separator_space_after = after; }
         }
-        self.async_marker_after.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_ASYNC_MARKER_AFTER]);
         self.right_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_BEFORE]);
         self.right_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_AFTER]);
-        self.comma_before.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_COMMA_BEFORE]);
-        self.for_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_FOR_KEYWORD_BEFORE]);
-        self.for_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_FOR_KEYWORD_AFTER]);
-        self.in_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_IN_KEYWORD_BEFORE]);
-        self.in_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_IN_KEYWORD_AFTER]);
         {
             let seated_items = &mut self.right;
             let seated_last = seated_items.len().saturating_sub(1);
@@ -32070,8 +31456,6 @@ pub struct IfClauseTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_after"))]
-    pub if_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for IfClauseTransport {
@@ -32095,7 +31479,6 @@ impl ::sittir_core::render::Render for IfClauseTransport {
 impl ::sittir_core::prepare::Prepare for IfClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.if_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_IF_CLAUSE_IF_KEYWORD_AFTER]);
         self.condition.prepare(ctx)?;
         Ok(())
     }
@@ -32134,14 +31517,6 @@ pub struct ConditionalExpressionTransport {
     pub condition: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_keyword_before"))]
-    pub else_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_keyword_after"))]
-    pub else_keyword_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_before"))]
-    pub if_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_if_keyword_after"))]
-    pub if_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ConditionalExpressionTransport {
@@ -32165,10 +31540,6 @@ impl ::sittir_core::render::Render for ConditionalExpressionTransport {
 impl ::sittir_core::prepare::Prepare for ConditionalExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.else_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_CONDITIONAL_EXPRESSION_ELSE_KEYWORD_BEFORE]);
-        self.else_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_CONDITIONAL_EXPRESSION_ELSE_KEYWORD_AFTER]);
-        self.if_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_BEFORE]);
-        self.if_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_AFTER]);
         self.body.prepare(ctx)?;
         self.condition.prepare(ctx)?;
         self.alternative.prepare(ctx)?;
@@ -32407,14 +31778,6 @@ pub struct InterpolationTransport {
     pub type_conversion: Option<::sittir_core::SlotValue<TypeConversionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_format_specifier"))]
     pub format_specifier: Option<::sittir_core::SlotValue<FormatSpecifierTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_marker_before"))]
-    pub eq_marker_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_marker_after"))]
-    pub eq_marker_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrace_after"))]
-    pub lbrace_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrace_before"))]
-    pub rbrace_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for InterpolationTransport {
@@ -32438,10 +31801,6 @@ impl ::sittir_core::render::Render for InterpolationTransport {
 impl ::sittir_core::prepare::Prepare for InterpolationTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.eq_marker_before.get_or_insert(ctx.options.spacing[options::SITE_INTERPOLATION_EQ_MARKER_BEFORE]);
-        self.eq_marker_after.get_or_insert(ctx.options.spacing[options::SITE_INTERPOLATION_EQ_MARKER_AFTER]);
-        self.lbrace_after.get_or_insert(ctx.options.spacing[options::SITE_INTERPOLATION_LBRACE_AFTER]);
-        self.rbrace_before.get_or_insert(ctx.options.spacing[options::SITE_INTERPOLATION_RBRACE_BEFORE]);
         self.expression.prepare(ctx)?;
         self.eq_marker.prepare(ctx)?;
         self.type_conversion.prepare(ctx)?;
@@ -32583,8 +31942,6 @@ pub struct FormatSpecifierTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<::sittir_core::SlotValue<FormatSpecifierContentTransportSlot>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for FormatSpecifierTransport {
@@ -32608,7 +31965,6 @@ impl ::sittir_core::render::Render for FormatSpecifierTransport {
 impl ::sittir_core::prepare::Prepare for FormatSpecifierTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAT_SPECIFIER_COLON_AFTER]);
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -33209,8 +32565,6 @@ pub struct AwaitTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_keyword_after"))]
-    pub await_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for AwaitTransport {
@@ -33234,7 +32588,6 @@ impl ::sittir_core::render::Render for AwaitTransport {
 impl ::sittir_core::prepare::Prepare for AwaitTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.await_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_AWAIT_AWAIT_KEYWORD_AFTER]);
         self.expression.prepare(ctx)?;
         Ok(())
     }
@@ -35336,8 +34689,6 @@ pub struct SliceGroupTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Option<::sittir_core::SlotValue<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for SliceGroupTransport {
@@ -35361,7 +34712,6 @@ impl ::sittir_core::render::Render for SliceGroupTransport {
 impl ::sittir_core::prepare::Prepare for SliceGroupTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_SLICE_GROUP_COLON_AFTER]);
         self.expression.prepare(ctx)?;
         Ok(())
     }
@@ -35388,20 +34738,20 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SliceGroupTransport> {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum UnaryOperatorOperatorArm {
+pub enum UnaryOperatorOperatorEnum {
     Plus,
     Minus,
     Tilde,
 }
 
-impl ::sittir_core::prepare::Prepare for UnaryOperatorOperatorArm {
+impl ::sittir_core::prepare::Prepare for UnaryOperatorOperatorEnum {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for UnaryOperatorOperatorArm {
+impl ::napi::bindgen_prelude::FromNapiValue for UnaryOperatorOperatorEnum {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -35449,21 +34799,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnaryOperatorOperatorArm {
             }
             _ => {}
         }
-        Err(::napi::Error::from_reason("unknown enum payload for UnaryOperatorOperatorArm"))
+        Err(::napi::Error::from_reason("unknown enum payload for UnaryOperatorOperatorEnum"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UnaryOperatorOperatorArm {
+impl ::napi::bindgen_prelude::ToNapiValue for UnaryOperatorOperatorEnum {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("UnaryOperatorOperatorArm is receive-only"))
+        Err(::napi::Error::from_reason("UnaryOperatorOperatorEnum is receive-only"))
     }
 }
 
-impl ::sittir_core::view::KindOf for UnaryOperatorOperatorArm {
+impl ::sittir_core::view::KindOf for UnaryOperatorOperatorEnum {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Plus => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
@@ -35473,30 +34823,18 @@ impl ::sittir_core::view::KindOf for UnaryOperatorOperatorArm {
     }
 }
 
-impl ::sittir_core::render::Render for UnaryOperatorOperatorArm {
+impl ::sittir_core::render::Render for UnaryOperatorOperatorEnum {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        w.text(match self {
-            Self::Plus => "+",
-            Self::Minus => "-",
-            Self::Tilde => "~",
-        })
-    }
-}
-
-impl ArmSeams for UnaryOperatorOperatorArm {
-    fn arm_seam_sites(&self) -> Option<(usize, usize)> {
         match self {
-            Self::Plus => Some((options::SITE_UNARY_OPERATOR_OPERATOR_PLUS_BEFORE, options::SITE_UNARY_OPERATOR_OPERATOR_PLUS_AFTER)),
-            Self::Minus => Some((options::SITE_UNARY_OPERATOR_OPERATOR_DASH_BEFORE, options::SITE_UNARY_OPERATOR_OPERATOR_DASH_AFTER)),
-            Self::Tilde => Some((options::SITE_UNARY_OPERATOR_OPERATOR_TILDE_BEFORE, options::SITE_UNARY_OPERATOR_OPERATOR_TILDE_AFTER)),
+            Self::Plus => { w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_PLUS_BEFORE); w.text("+")?; w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_PLUS_AFTER); Ok(()) }
+            Self::Minus => { w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_DASH_BEFORE); w.text("-")?; w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_DASH_AFTER); Ok(()) }
+            Self::Tilde => { w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_TILDE_BEFORE); w.text("~")?; w.site_at(options::SITE_UNARY_OPERATOR_OPERATOR_TILDE_AFTER); Ok(()) }
         }
     }
 }
 
-pub type UnaryOperatorOperatorEnum = Seamed<UnaryOperatorOperatorArm>;
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum AugmentedAssignmentOperatorArm {
+pub enum AugmentedAssignmentOperatorEnum {
     PlusEq,
     MinusEq,
     StarEq,
@@ -35512,14 +34850,14 @@ pub enum AugmentedAssignmentOperatorArm {
     PipeEq,
 }
 
-impl ::sittir_core::prepare::Prepare for AugmentedAssignmentOperatorArm {
+impl ::sittir_core::prepare::Prepare for AugmentedAssignmentOperatorEnum {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentOperatorArm {
+impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentOperatorEnum {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -35617,21 +34955,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentOperatorArm {
             }
             _ => {}
         }
-        Err(::napi::Error::from_reason("unknown enum payload for AugmentedAssignmentOperatorArm"))
+        Err(::napi::Error::from_reason("unknown enum payload for AugmentedAssignmentOperatorEnum"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AugmentedAssignmentOperatorArm {
+impl ::napi::bindgen_prelude::ToNapiValue for AugmentedAssignmentOperatorEnum {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("AugmentedAssignmentOperatorArm is receive-only"))
+        Err(::napi::Error::from_reason("AugmentedAssignmentOperatorEnum is receive-only"))
     }
 }
 
-impl ::sittir_core::view::KindOf for AugmentedAssignmentOperatorArm {
+impl ::sittir_core::view::KindOf for AugmentedAssignmentOperatorEnum {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::PlusEq => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
@@ -35651,47 +34989,25 @@ impl ::sittir_core::view::KindOf for AugmentedAssignmentOperatorArm {
     }
 }
 
-impl ::sittir_core::render::Render for AugmentedAssignmentOperatorArm {
+impl ::sittir_core::render::Render for AugmentedAssignmentOperatorEnum {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        w.text(match self {
-            Self::PlusEq => "+=",
-            Self::MinusEq => "-=",
-            Self::StarEq => "*=",
-            Self::SlashEq => "/=",
-            Self::V40_3d => "@=",
-            Self::V2f_2f_3d => "//=",
-            Self::PercentEq => "%=",
-            Self::V2a_2a_3d => "**=",
-            Self::GtGtEq => ">>=",
-            Self::LtLtEq => "<<=",
-            Self::AmpEq => "&=",
-            Self::CaretEq => "^=",
-            Self::PipeEq => "|=",
-        })
-    }
-}
-
-impl ArmSeams for AugmentedAssignmentOperatorArm {
-    fn arm_seam_sites(&self) -> Option<(usize, usize)> {
         match self {
-            Self::PlusEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PLUS_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PLUS_EQ_AFTER)),
-            Self::MinusEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_DASH_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_DASH_EQ_AFTER)),
-            Self::StarEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_STAR_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_STAR_EQ_AFTER)),
-            Self::SlashEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_SLASH_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_SLASH_EQ_AFTER)),
-            Self::V40_3d => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_AT_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_AT_EQ_AFTER)),
-            Self::V2f_2f_3d => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_SLASH_SLASH_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_SLASH_SLASH_EQ_AFTER)),
-            Self::PercentEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PERCENT_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PERCENT_EQ_AFTER)),
-            Self::V2a_2a_3d => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_STAR_STAR_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_STAR_STAR_EQ_AFTER)),
-            Self::GtGtEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_GT_GT_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_GT_GT_EQ_AFTER)),
-            Self::LtLtEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_LT_LT_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_LT_LT_EQ_AFTER)),
-            Self::AmpEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_AMP_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_AMP_EQ_AFTER)),
-            Self::CaretEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_CARET_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_CARET_EQ_AFTER)),
-            Self::PipeEq => Some((options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PIPE_EQ_BEFORE, options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PIPE_EQ_AFTER)),
+            Self::PlusEq => { w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PLUS_EQ_BEFORE); w.text("+=")?; w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PLUS_EQ_AFTER); Ok(()) }
+            Self::MinusEq => { w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_DASH_EQ_BEFORE); w.text("-=")?; w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_DASH_EQ_AFTER); Ok(()) }
+            Self::StarEq => { w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_STAR_EQ_BEFORE); w.text("*=")?; w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_STAR_EQ_AFTER); Ok(()) }
+            Self::SlashEq => { w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_SLASH_EQ_BEFORE); w.text("/=")?; w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_SLASH_EQ_AFTER); Ok(()) }
+            Self::V40_3d => { w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_AT_EQ_BEFORE); w.text("@=")?; w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_AT_EQ_AFTER); Ok(()) }
+            Self::V2f_2f_3d => { w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_SLASH_SLASH_EQ_BEFORE); w.text("//=")?; w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_SLASH_SLASH_EQ_AFTER); Ok(()) }
+            Self::PercentEq => { w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PERCENT_EQ_BEFORE); w.text("%=")?; w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PERCENT_EQ_AFTER); Ok(()) }
+            Self::V2a_2a_3d => { w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_STAR_STAR_EQ_BEFORE); w.text("**=")?; w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_STAR_STAR_EQ_AFTER); Ok(()) }
+            Self::GtGtEq => { w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_GT_GT_EQ_BEFORE); w.text(">>=")?; w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_GT_GT_EQ_AFTER); Ok(()) }
+            Self::LtLtEq => { w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_LT_LT_EQ_BEFORE); w.text("<<=")?; w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_LT_LT_EQ_AFTER); Ok(()) }
+            Self::AmpEq => { w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_AMP_EQ_BEFORE); w.text("&=")?; w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_AMP_EQ_AFTER); Ok(()) }
+            Self::CaretEq => { w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_CARET_EQ_BEFORE); w.text("^=")?; w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_CARET_EQ_AFTER); Ok(()) }
+            Self::PipeEq => { w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PIPE_EQ_BEFORE); w.text("|=")?; w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_OPERATOR_PIPE_EQ_AFTER); Ok(()) }
         }
     }
 }
-
-pub type AugmentedAssignmentOperatorEnum = Seamed<AugmentedAssignmentOperatorArm>;
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
@@ -35704,10 +35020,6 @@ pub struct ExceptClauseExceptionAsTransport {
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
     pub alias: Option<::sittir_core::SlotValue<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_before"))]
-    pub as_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_after"))]
-    pub as_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ExceptClauseExceptionAsTransport {
@@ -35731,8 +35043,6 @@ impl ::sittir_core::render::Render for ExceptClauseExceptionAsTransport {
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionAsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.as_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_BEFORE]);
-        self.as_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_AFTER]);
         self.value.prepare(ctx)?;
         self.alias.prepare(ctx)?;
         Ok(())
@@ -35768,10 +35078,6 @@ pub struct CaseTuplePatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_list_pattern_case_patterns"))]
     pub list_pattern_case_patterns: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
-    pub rparen_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for CaseTuplePatternTransport {
@@ -35795,8 +35101,6 @@ impl ::sittir_core::render::Render for CaseTuplePatternTransport {
 impl ::sittir_core::prepare::Prepare for CaseTuplePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_CASE_TUPLE_PATTERN_LPAREN_AFTER]);
-        self.rparen_before.get_or_insert(ctx.options.spacing[options::SITE_CASE_TUPLE_PATTERN_RPAREN_BEFORE]);
         self.list_pattern_case_patterns.prepare(ctx)?;
         Ok(())
     }
@@ -35831,10 +35135,6 @@ pub struct CaseListPatternTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_list_pattern_case_patterns"))]
     pub list_pattern_case_patterns: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
-    pub lbrack_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rbrack_before"))]
-    pub rbrack_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for CaseListPatternTransport {
@@ -35858,8 +35158,6 @@ impl ::sittir_core::render::Render for CaseListPatternTransport {
 impl ::sittir_core::prepare::Prepare for CaseListPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lbrack_after.get_or_insert(ctx.options.spacing[options::SITE_CASE_LIST_PATTERN_LBRACK_AFTER]);
-        self.rbrack_before.get_or_insert(ctx.options.spacing[options::SITE_CASE_LIST_PATTERN_RBRACK_BEFORE]);
         self.list_pattern_case_patterns.prepare(ctx)?;
         Ok(())
     }
@@ -35896,10 +35194,6 @@ pub struct CaseAsPatternTransport {
     pub case_pattern: ::sittir_core::SlotValue<Box<CasePatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
     pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_before"))]
-    pub as_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_after"))]
-    pub as_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for CaseAsPatternTransport {
@@ -35923,8 +35217,6 @@ impl ::sittir_core::render::Render for CaseAsPatternTransport {
 impl ::sittir_core::prepare::Prepare for CaseAsPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.as_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_CASE_AS_PATTERN_AS_KEYWORD_BEFORE]);
-        self.as_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_CASE_AS_PATTERN_AS_KEYWORD_AFTER]);
         self.case_pattern.prepare(ctx)?;
         self.identifier.prepare(ctx)?;
         Ok(())
@@ -36378,10 +35670,6 @@ pub struct PrintStatementChevronTransport {
     pub chevron: ::sittir_core::SlotValue<ChevronTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_chevron_arguments"))]
     pub print_chevron_arguments: Option<::sittir_core::SlotValue<PrintStatementChevronPrintChevronArgumentsTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comma_before"))]
-    pub comma_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_keyword_after"))]
-    pub print_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for PrintStatementChevronTransport {
@@ -36405,8 +35693,6 @@ impl ::sittir_core::render::Render for PrintStatementChevronTransport {
 impl ::sittir_core::prepare::Prepare for PrintStatementChevronTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.comma_before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_COMMA_BEFORE]);
-        self.print_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_KEYWORD_AFTER]);
         self.chevron.prepare(ctx)?;
         self.print_chevron_arguments.prepare(ctx)?;
         Ok(())
@@ -36442,8 +35728,6 @@ pub struct PrintStatementPlainTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_arguments"))]
     pub print_arguments: ::sittir_core::SlotValue<PrintArgumentsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_print_keyword_after"))]
-    pub print_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for PrintStatementPlainTransport {
@@ -36467,7 +35751,6 @@ impl ::sittir_core::render::Render for PrintStatementPlainTransport {
 impl ::sittir_core::prepare::Prepare for PrintStatementPlainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.print_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_PRINT_STATEMENT_PLAIN_PRINT_KEYWORD_AFTER]);
         self.print_arguments.prepare(ctx)?;
         Ok(())
     }
@@ -36606,10 +35889,6 @@ pub struct ParenthesizedImportListTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_list"))]
     pub import_list: ::sittir_core::SlotValue<ImportListTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
-    pub rparen_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ParenthesizedImportListTransport {
@@ -36633,8 +35912,6 @@ impl ::sittir_core::render::Render for ParenthesizedImportListTransport {
 impl ::sittir_core::prepare::Prepare for ParenthesizedImportListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_PARENTHESIZED_IMPORT_LIST_LPAREN_AFTER]);
-        self.rparen_before.get_or_insert(ctx.options.spacing[options::SITE_PARENTHESIZED_IMPORT_LIST_RPAREN_BEFORE]);
         self.import_list.prepare(ctx)?;
         Ok(())
     }
@@ -37749,8 +37026,6 @@ pub struct SimplePatternNegativeTransport {
     pub sign: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<SimplePatternNegativeContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign_after"))]
-    pub sign_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for SimplePatternNegativeTransport {
@@ -37774,7 +37049,6 @@ impl ::sittir_core::render::Render for SimplePatternNegativeTransport {
 impl ::sittir_core::prepare::Prepare for SimplePatternNegativeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.sign_after.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_PATTERN_NEGATIVE_SIGN_AFTER]);
         self.sign.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
@@ -38031,10 +37305,6 @@ pub struct AssignmentEqTransport {
     pub left: ::sittir_core::SlotValue<AssignmentEqLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<Box<AssignmentEqRightTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
-    pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for AssignmentEqTransport {
@@ -38058,8 +37328,6 @@ impl ::sittir_core::render::Render for AssignmentEqTransport {
 impl ::sittir_core::prepare::Prepare for AssignmentEqTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.eq_before.get_or_insert(ctx.options.spacing[options::SITE_ASSIGNMENT_EQ_EQ_BEFORE]);
-        self.eq_after.get_or_insert(ctx.options.spacing[options::SITE_ASSIGNMENT_EQ_EQ_AFTER]);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
@@ -38097,10 +37365,6 @@ pub struct AssignmentTypeTransport {
     pub left: ::sittir_core::SlotValue<AssignmentTypeLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for AssignmentTypeTransport {
@@ -38124,8 +37388,6 @@ impl ::sittir_core::render::Render for AssignmentTypeTransport {
 impl ::sittir_core::prepare::Prepare for AssignmentTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_ASSIGNMENT_TYPE_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_ASSIGNMENT_TYPE_COLON_AFTER]);
         self.left.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         Ok(())
@@ -38165,14 +37427,6 @@ pub struct AssignmentTypedTransport {
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<Box<AssignmentTypedRightTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
-    pub colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
-    pub colon_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_before"))]
-    pub eq_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_after"))]
-    pub eq_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for AssignmentTypedTransport {
@@ -38196,10 +37450,6 @@ impl ::sittir_core::render::Render for AssignmentTypedTransport {
 impl ::sittir_core::prepare::Prepare for AssignmentTypedTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.colon_before.get_or_insert(ctx.options.spacing[options::SITE_ASSIGNMENT_TYPED_COLON_BEFORE]);
-        self.colon_after.get_or_insert(ctx.options.spacing[options::SITE_ASSIGNMENT_TYPED_COLON_AFTER]);
-        self.eq_before.get_or_insert(ctx.options.spacing[options::SITE_ASSIGNMENT_TYPED_EQ_BEFORE]);
-        self.eq_after.get_or_insert(ctx.options.spacing[options::SITE_ASSIGNMENT_TYPED_EQ_AFTER]);
         self.left.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.right.prepare(ctx)?;
@@ -38473,10 +37723,6 @@ pub struct WithClauseParenTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_clause_with_items"))]
     pub with_clause_with_items: ::sittir_core::SlotValue<WithClauseWithItemsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
-    pub lparen_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
-    pub rparen_before: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for WithClauseParenTransport {
@@ -38500,8 +37746,6 @@ impl ::sittir_core::render::Render for WithClauseParenTransport {
 impl ::sittir_core::prepare::Prepare for WithClauseParenTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER]);
-        self.rparen_before.get_or_insert(ctx.options.spacing[options::SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE]);
         self.with_clause_with_items.prepare(ctx)?;
         Ok(())
     }
@@ -38784,8 +38028,6 @@ pub struct ComparisonOperatorComparatorTransport {
     pub operators: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_primary_expression"))]
     pub primary_expression: ::sittir_core::SlotValue<PrimaryExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operators_after"))]
-    pub operators_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ComparisonOperatorComparatorTransport {
@@ -38809,7 +38051,6 @@ impl ::sittir_core::render::Render for ComparisonOperatorComparatorTransport {
 impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.operators_after.get_or_insert(ctx.options.spacing[options::SITE_COMPARISON_OPERATOR_COMPARATOR_OPERATORS_AFTER]);
         self.operators.prepare(ctx)?;
         self.primary_expression.prepare(ctx)?;
         Ok(())
@@ -38845,8 +38086,6 @@ pub struct YieldFromClauseTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_after"))]
-    pub from_keyword_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for YieldFromClauseTransport {
@@ -38870,7 +38109,6 @@ impl ::sittir_core::render::Render for YieldFromClauseTransport {
 impl ::sittir_core::prepare::Prepare for YieldFromClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.from_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER]);
         self.expression.prepare(ctx)?;
         Ok(())
     }
@@ -49087,8 +48325,8 @@ fn render_module(node: &ModuleTransport, w: &mut dyn ::sittir_core::render::Rend
         after: node.statements_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     statements.render(w)?;
     Ok(())
@@ -49108,7 +48346,7 @@ fn render_import_statement(node: &ImportStatementTransport, w: &mut dyn ::sittir
     let import_list = &node.import_list;
     w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("import")?;
-    w.site_with(node.import_keyword_after.unwrap_or(0), options::site_strength(options::SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER, node.import_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER);
     import_list.render(w)?;
     w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49132,13 +48370,13 @@ fn render_future_import_statement(node: &FutureImportStatementTransport, w: &mut
     let content = &node.content;
     w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("from")?;
-    w.site_with(node.from_keyword_after.unwrap_or(0), options::site_strength(options::SITE_FUTURE_IMPORT_STATEMENT_FROM_KEYWORD_AFTER, node.from_keyword_after.unwrap_or(0)));
-    w.site_with(node.future___keyword_before.unwrap_or(0), options::site_strength(options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___KEYWORD_BEFORE, node.future___keyword_before.unwrap_or(0)));
+    w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_FROM_KEYWORD_AFTER);
+    w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___KEYWORD_BEFORE);
     w.text("__future__")?;
-    w.site_with(node.future___keyword_after.unwrap_or(0), options::site_strength(options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___KEYWORD_AFTER, node.future___keyword_after.unwrap_or(0)));
-    w.site_with(node.import_keyword_before.unwrap_or(0), options::site_strength(options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_KEYWORD_BEFORE, node.import_keyword_before.unwrap_or(0)));
+    w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_FUTURE___KEYWORD_AFTER);
+    w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_KEYWORD_BEFORE);
     w.text("import")?;
-    w.site_with(node.import_keyword_after.unwrap_or(0), options::site_strength(options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER, node.import_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_FUTURE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER);
     content.render(w)?;
     w.edge(::sittir_core::types::KindId(130), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49149,11 +48387,11 @@ fn render_import_from_statement(node: &ImportFromStatementTransport, w: &mut dyn
     let module_name = &node.module_name;
     w.edge(::sittir_core::types::KindId(131), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("from")?;
-    w.site_with(node.from_keyword_after.unwrap_or(0), options::site_strength(options::SITE_IMPORT_FROM_STATEMENT_FROM_KEYWORD_AFTER, node.from_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_IMPORT_FROM_STATEMENT_FROM_KEYWORD_AFTER);
     module_name.render(w)?;
-    w.site_with(node.import_keyword_before.unwrap_or(0), options::site_strength(options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_BEFORE, node.import_keyword_before.unwrap_or(0)));
+    w.site_at(options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_BEFORE);
     w.text("import")?;
-    w.site_with(node.import_keyword_after.unwrap_or(0), options::site_strength(options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_AFTER, node.import_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_AFTER);
     content.render(w)?;
     w.edge(::sittir_core::types::KindId(131), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49168,8 +48406,8 @@ fn render_import_list(node: &ImportListTransport, w: &mut dyn ::sittir_core::ren
         after: node.name_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     name.render(w)?;
     Ok(())
@@ -49180,9 +48418,9 @@ fn render_aliased_import(node: &AliasedImportTransport, w: &mut dyn ::sittir_cor
     let name = &node.name;
     w.edge(::sittir_core::types::KindId(133), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
-    w.site_with(node.as_keyword_before.unwrap_or(0), options::site_strength(options::SITE_ALIASED_IMPORT_AS_KEYWORD_BEFORE, node.as_keyword_before.unwrap_or(0)));
+    w.site_at(options::SITE_ALIASED_IMPORT_AS_KEYWORD_BEFORE);
     w.text("as")?;
-    w.site_with(node.as_keyword_after.unwrap_or(0), options::site_strength(options::SITE_ALIASED_IMPORT_AS_KEYWORD_AFTER, node.as_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_ALIASED_IMPORT_AS_KEYWORD_AFTER);
     alias.render(w)?;
     w.edge(::sittir_core::types::KindId(133), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49202,7 +48440,7 @@ fn render_chevron(node: &ChevronTransport, w: &mut dyn ::sittir_core::render::Re
     let expression = &node.expression;
     w.edge(::sittir_core::types::KindId(136), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text(">>")?;
-    w.site_with(node.gt_gt_after.unwrap_or(0), options::site_strength(options::SITE_CHEVRON_GT_GT_AFTER, node.gt_gt_after.unwrap_or(0)));
+    w.site_at(options::SITE_CHEVRON_GT_GT_AFTER);
     expression.render(w)?;
     w.edge(::sittir_core::types::KindId(136), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49217,12 +48455,12 @@ fn render_assert_statement(node: &AssertStatementTransport, w: &mut dyn ::sittir
         after: node.expression_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     w.edge(::sittir_core::types::KindId(137), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("assert")?;
-    w.site_with(node.assert_keyword_after.unwrap_or(0), options::site_strength(options::SITE_ASSERT_STATEMENT_ASSERT_KEYWORD_AFTER, node.assert_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_ASSERT_STATEMENT_ASSERT_KEYWORD_AFTER);
     expression.render(w)?;
     w.edge(::sittir_core::types::KindId(137), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49239,9 +48477,9 @@ fn render_named_expression(node: &NamedExpressionTransport, w: &mut dyn ::sittir
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(139), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
-    w.site_with(node.colon_eq_before.unwrap_or(0), options::site_strength(options::SITE_NAMED_EXPRESSION_COLON_EQ_BEFORE, node.colon_eq_before.unwrap_or(0)));
+    w.site_at(options::SITE_NAMED_EXPRESSION_COLON_EQ_BEFORE);
     w.text(":=")?;
-    w.site_with(node.colon_eq_after.unwrap_or(0), options::site_strength(options::SITE_NAMED_EXPRESSION_COLON_EQ_AFTER, node.colon_eq_after.unwrap_or(0)));
+    w.site_at(options::SITE_NAMED_EXPRESSION_COLON_EQ_AFTER);
     value.render(w)?;
     w.edge(::sittir_core::types::KindId(139), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49251,7 +48489,7 @@ fn render_return_statement(node: &ReturnStatementTransport, w: &mut dyn ::sittir
     let expressions = View::new(&node.expressions, "{}");
     w.edge(::sittir_core::types::KindId(141), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("return")?;
-    w.site_with(node.return_keyword_after.unwrap_or(0), options::site_strength(options::SITE_RETURN_STATEMENT_RETURN_KEYWORD_AFTER, node.return_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_RETURN_STATEMENT_RETURN_KEYWORD_AFTER);
     expressions.render(w)?;
     w.edge(::sittir_core::types::KindId(141), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49261,7 +48499,7 @@ fn render_delete_statement(node: &DeleteStatementTransport, w: &mut dyn ::sittir
     let expressions = &node.expressions;
     w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("del")?;
-    w.site_with(node.del_keyword_after.unwrap_or(0), options::site_strength(options::SITE_DELETE_STATEMENT_DEL_KEYWORD_AFTER, node.del_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_DELETE_STATEMENT_DEL_KEYWORD_AFTER);
     expressions.render(w)?;
     w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49272,12 +48510,12 @@ fn render_raise_statement(node: &RaiseStatementTransport, w: &mut dyn ::sittir_c
     let expressions = View::new(&node.expressions, "{}");
     w.edge(::sittir_core::types::KindId(143), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("raise")?;
-    w.site_with(node.raise_keyword_after.unwrap_or(0), options::site_strength(options::SITE_RAISE_STATEMENT_RAISE_KEYWORD_AFTER, node.raise_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_RAISE_STATEMENT_RAISE_KEYWORD_AFTER);
     expressions.render(w)?;
     if cause.is_present() {
-        w.site_with(node.from_keyword_before.unwrap_or(0), options::site_strength(options::SITE_RAISE_STATEMENT_FROM_KEYWORD_BEFORE, node.from_keyword_before.unwrap_or(0)));
+        w.site_at(options::SITE_RAISE_STATEMENT_FROM_KEYWORD_BEFORE);
         w.text("from")?;
-        w.site_with(node.from_keyword_after.unwrap_or(0), options::site_strength(options::SITE_RAISE_STATEMENT_FROM_KEYWORD_AFTER, node.from_keyword_after.unwrap_or(0)));
+        w.site_at(options::SITE_RAISE_STATEMENT_FROM_KEYWORD_AFTER);
         cause.render(w)?;
     }
     w.edge(::sittir_core::types::KindId(143), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -49305,18 +48543,18 @@ fn render_if_statement(node: &IfStatementTransport, w: &mut dyn ::sittir_core::r
         after: node.alternative_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     let condition = &node.condition;
     let consequence = &node.consequence;
     w.edge(::sittir_core::types::KindId(147), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("if")?;
-    w.site_with(node.if_keyword_after.unwrap_or(0), options::site_strength(options::SITE_IF_STATEMENT_IF_KEYWORD_AFTER, node.if_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_IF_STATEMENT_IF_KEYWORD_AFTER);
     condition.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_IF_STATEMENT_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_IF_STATEMENT_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_IF_STATEMENT_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_IF_STATEMENT_COLON_AFTER);
     consequence.render(w)?;
     alternative.render(w)?;
     w.edge(::sittir_core::types::KindId(147), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -49328,11 +48566,11 @@ fn render_elif_clause(node: &ElifClauseTransport, w: &mut dyn ::sittir_core::ren
     let consequence = &node.consequence;
     w.edge(::sittir_core::types::KindId(148), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("elif")?;
-    w.site_with(node.elif_keyword_after.unwrap_or(0), options::site_strength(options::SITE_ELIF_CLAUSE_ELIF_KEYWORD_AFTER, node.elif_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_ELIF_CLAUSE_ELIF_KEYWORD_AFTER);
     condition.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_ELIF_CLAUSE_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_ELIF_CLAUSE_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_ELIF_CLAUSE_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_ELIF_CLAUSE_COLON_AFTER);
     consequence.render(w)?;
     w.edge(::sittir_core::types::KindId(148), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49342,10 +48580,10 @@ fn render_else_clause(node: &ElseClauseTransport, w: &mut dyn ::sittir_core::ren
     let body = &node.body;
     w.edge(::sittir_core::types::KindId(149), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("else")?;
-    w.site_with(node.else_keyword_after.unwrap_or(0), options::site_strength(options::SITE_ELSE_CLAUSE_ELSE_KEYWORD_AFTER, node.else_keyword_after.unwrap_or(0)));
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_ELSE_CLAUSE_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_ELSE_CLAUSE_ELSE_KEYWORD_AFTER);
+    w.site_at(options::SITE_ELSE_CLAUSE_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_ELSE_CLAUSE_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_ELSE_CLAUSE_COLON_AFTER);
     body.render(w)?;
     w.edge(::sittir_core::types::KindId(149), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49356,12 +48594,12 @@ fn render_match_statement(node: &MatchStatementTransport, w: &mut dyn ::sittir_c
     let subjects = &node.subjects;
     w.edge(::sittir_core::types::KindId(150), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("match")?;
-    w.site_with(node.match_keyword_after.unwrap_or(0), options::site_strength(options::SITE_MATCH_STATEMENT_MATCH_KEYWORD_AFTER, node.match_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_MATCH_STATEMENT_MATCH_KEYWORD_AFTER);
     subjects.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_MATCH_STATEMENT_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_MATCH_STATEMENT_COLON_BEFORE);
     w.text(":")?;
     w.adjacent();
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_MATCH_STATEMENT_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_MATCH_STATEMENT_COLON_AFTER);
     body.render(w)?;
     w.edge(::sittir_core::types::KindId(150), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49379,12 +48617,12 @@ fn render_case_clause(node: &CaseClauseTransport, w: &mut dyn ::sittir_core::ren
     let guard = View::new(&node.guard, "{}");
     w.edge(::sittir_core::types::KindId(152), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("case")?;
-    w.site_with(node.case_keyword_after.unwrap_or(0), options::site_strength(options::SITE_CASE_CLAUSE_CASE_KEYWORD_AFTER, node.case_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_CASE_CLAUSE_CASE_KEYWORD_AFTER);
     case_patterns.render(w)?;
     guard.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_CASE_CLAUSE_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_CASE_CLAUSE_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_CASE_CLAUSE_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_CASE_CLAUSE_COLON_AFTER);
     consequence.render(w)?;
     w.edge(::sittir_core::types::KindId(152), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49399,19 +48637,19 @@ fn render_for_statement(node: &ForStatementTransport, w: &mut dyn ::sittir_core:
     w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if async_marker.is_present() {
         async_marker.render(w)?;
-        w.site_with(node.async_marker_after.unwrap_or(0), options::site_strength(options::SITE_FOR_STATEMENT_ASYNC_MARKER_AFTER, node.async_marker_after.unwrap_or(0)));
+        w.site_at(options::SITE_FOR_STATEMENT_ASYNC_MARKER_AFTER);
     }
-    w.site_with(node.for_keyword_before.unwrap_or(0), options::site_strength(options::SITE_FOR_STATEMENT_FOR_KEYWORD_BEFORE, node.for_keyword_before.unwrap_or(0)));
+    w.site_at(options::SITE_FOR_STATEMENT_FOR_KEYWORD_BEFORE);
     w.text("for")?;
-    w.site_with(node.for_keyword_after.unwrap_or(0), options::site_strength(options::SITE_FOR_STATEMENT_FOR_KEYWORD_AFTER, node.for_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_FOR_STATEMENT_FOR_KEYWORD_AFTER);
     left.render(w)?;
-    w.site_with(node.in_keyword_before.unwrap_or(0), options::site_strength(options::SITE_FOR_STATEMENT_IN_KEYWORD_BEFORE, node.in_keyword_before.unwrap_or(0)));
+    w.site_at(options::SITE_FOR_STATEMENT_IN_KEYWORD_BEFORE);
     w.text("in")?;
-    w.site_with(node.in_keyword_after.unwrap_or(0), options::site_strength(options::SITE_FOR_STATEMENT_IN_KEYWORD_AFTER, node.in_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_FOR_STATEMENT_IN_KEYWORD_AFTER);
     right.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_FOR_STATEMENT_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_FOR_STATEMENT_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_FOR_STATEMENT_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_FOR_STATEMENT_COLON_AFTER);
     body.render(w)?;
     alternative.render(w)?;
     w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -49424,11 +48662,11 @@ fn render_while_statement(node: &WhileStatementTransport, w: &mut dyn ::sittir_c
     let condition = &node.condition;
     w.edge(::sittir_core::types::KindId(154), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("while")?;
-    w.site_with(node.while_keyword_after.unwrap_or(0), options::site_strength(options::SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER, node.while_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER);
     condition.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_WHILE_STATEMENT_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_WHILE_STATEMENT_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_WHILE_STATEMENT_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_WHILE_STATEMENT_COLON_AFTER);
     body.render(w)?;
     alternative.render(w)?;
     w.edge(::sittir_core::types::KindId(154), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -49446,16 +48684,16 @@ fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core:
         after: node.except_clauses_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     let finally_clause = View::new(&node.finally_clause, "{}");
     w.edge(::sittir_core::types::KindId(155), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("try")?;
-    w.site_with(node.try_keyword_after.unwrap_or(0), options::site_strength(options::SITE_TRY_STATEMENT_TRY_KEYWORD_AFTER, node.try_keyword_after.unwrap_or(0)));
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_TRY_STATEMENT_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_TRY_STATEMENT_TRY_KEYWORD_AFTER);
+    w.site_at(options::SITE_TRY_STATEMENT_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_TRY_STATEMENT_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_TRY_STATEMENT_COLON_AFTER);
     body.render(w)?;
     except_clauses.render(w)?;
     else_clause.render(w)?;
@@ -49470,16 +48708,16 @@ fn render_except_clause(node: &ExceptClauseTransport, w: &mut dyn ::sittir_core:
     let suite = &node.suite;
     w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("except")?;
-    w.site_with(node.except_keyword_after.unwrap_or(0), options::site_strength(options::SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_AFTER, node.except_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_AFTER);
     if star_marker.is_present() {
-        w.site_with(node.star_marker_before.unwrap_or(0), options::site_strength(options::SITE_EXCEPT_CLAUSE_STAR_MARKER_BEFORE, node.star_marker_before.unwrap_or(0)));
+        w.site_at(options::SITE_EXCEPT_CLAUSE_STAR_MARKER_BEFORE);
         star_marker.render(w)?;
-        w.site_with(node.star_marker_after.unwrap_or(0), options::site_strength(options::SITE_EXCEPT_CLAUSE_STAR_MARKER_AFTER, node.star_marker_after.unwrap_or(0)));
+        w.site_at(options::SITE_EXCEPT_CLAUSE_STAR_MARKER_AFTER);
     }
     exception.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_EXCEPT_CLAUSE_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_EXCEPT_CLAUSE_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_EXCEPT_CLAUSE_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_EXCEPT_CLAUSE_COLON_AFTER);
     suite.render(w)?;
     w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49489,10 +48727,10 @@ fn render_finally_clause(node: &FinallyClauseTransport, w: &mut dyn ::sittir_cor
     let block = &node.block;
     w.edge(::sittir_core::types::KindId(157), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("finally")?;
-    w.site_with(node.finally_keyword_after.unwrap_or(0), options::site_strength(options::SITE_FINALLY_CLAUSE_FINALLY_KEYWORD_AFTER, node.finally_keyword_after.unwrap_or(0)));
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_FINALLY_CLAUSE_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_FINALLY_CLAUSE_FINALLY_KEYWORD_AFTER);
+    w.site_at(options::SITE_FINALLY_CLAUSE_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_FINALLY_CLAUSE_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_FINALLY_CLAUSE_COLON_AFTER);
     block.render(w)?;
     w.edge(::sittir_core::types::KindId(157), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49505,15 +48743,15 @@ fn render_with_statement(node: &WithStatementTransport, w: &mut dyn ::sittir_cor
     w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if async_marker.is_present() {
         async_marker.render(w)?;
-        w.site_with(node.async_marker_after.unwrap_or(0), options::site_strength(options::SITE_WITH_STATEMENT_ASYNC_MARKER_AFTER, node.async_marker_after.unwrap_or(0)));
+        w.site_at(options::SITE_WITH_STATEMENT_ASYNC_MARKER_AFTER);
     }
-    w.site_with(node.with_keyword_before.unwrap_or(0), options::site_strength(options::SITE_WITH_STATEMENT_WITH_KEYWORD_BEFORE, node.with_keyword_before.unwrap_or(0)));
+    w.site_at(options::SITE_WITH_STATEMENT_WITH_KEYWORD_BEFORE);
     w.text("with")?;
-    w.site_with(node.with_keyword_after.unwrap_or(0), options::site_strength(options::SITE_WITH_STATEMENT_WITH_KEYWORD_AFTER, node.with_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_WITH_STATEMENT_WITH_KEYWORD_AFTER);
     with_clause.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_WITH_STATEMENT_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_WITH_STATEMENT_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_WITH_STATEMENT_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_WITH_STATEMENT_COLON_AFTER);
     body.render(w)?;
     w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49535,23 +48773,23 @@ fn render_function_definition(node: &FunctionDefinitionTransport, w: &mut dyn ::
     w.edge(::sittir_core::types::KindId(161), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if async_marker.is_present() {
         async_marker.render(w)?;
-        w.site_with(node.async_marker_after.unwrap_or(0), options::site_strength(options::SITE_FUNCTION_DEFINITION_ASYNC_MARKER_AFTER, node.async_marker_after.unwrap_or(0)));
+        w.site_at(options::SITE_FUNCTION_DEFINITION_ASYNC_MARKER_AFTER);
     }
-    w.site_with(node.def_keyword_before.unwrap_or(0), options::site_strength(options::SITE_FUNCTION_DEFINITION_DEF_KEYWORD_BEFORE, node.def_keyword_before.unwrap_or(0)));
+    w.site_at(options::SITE_FUNCTION_DEFINITION_DEF_KEYWORD_BEFORE);
     w.text("def")?;
-    w.site_with(node.def_keyword_after.unwrap_or(0), options::site_strength(options::SITE_FUNCTION_DEFINITION_DEF_KEYWORD_AFTER, node.def_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_FUNCTION_DEFINITION_DEF_KEYWORD_AFTER);
     name.render(w)?;
     type_parameters.render(w)?;
     parameters.render(w)?;
     if return_type.is_present() {
-        w.site_with(node.dash_gt_before.unwrap_or(0), options::site_strength(options::SITE_FUNCTION_DEFINITION_DASH_GT_BEFORE, node.dash_gt_before.unwrap_or(0)));
+        w.site_at(options::SITE_FUNCTION_DEFINITION_DASH_GT_BEFORE);
         w.text("->")?;
-        w.site_with(node.dash_gt_after.unwrap_or(0), options::site_strength(options::SITE_FUNCTION_DEFINITION_DASH_GT_AFTER, node.dash_gt_after.unwrap_or(0)));
+        w.site_at(options::SITE_FUNCTION_DEFINITION_DASH_GT_AFTER);
         return_type.render(w)?;
     }
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_FUNCTION_DEFINITION_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_FUNCTION_DEFINITION_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_FUNCTION_DEFINITION_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_FUNCTION_DEFINITION_COLON_AFTER);
     body.render(w)?;
     w.edge(::sittir_core::types::KindId(161), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49561,9 +48799,9 @@ fn render_parameters(node: &ParametersTransport, w: &mut dyn ::sittir_core::rend
     let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(162), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
-    w.site_with(node.lparen_after.unwrap_or(0), options::site_strength(options::SITE_PARAMETERS_LPAREN_AFTER, node.lparen_after.unwrap_or(0)));
+    w.site_at(options::SITE_PARAMETERS_LPAREN_AFTER);
     elements.render(w)?;
-    w.site_with(node.rparen_before.unwrap_or(0), options::site_strength(options::SITE_PARAMETERS_RPAREN_BEFORE, node.rparen_before.unwrap_or(0)));
+    w.site_at(options::SITE_PARAMETERS_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(162), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49579,7 +48817,7 @@ fn render_list_splat(node: &ListSplatTransport, w: &mut dyn ::sittir_core::rende
     let expression = &node.expression;
     w.edge(::sittir_core::types::KindId(164), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("*")?;
-    w.site_with(node.star_after.unwrap_or(0), options::site_strength(options::SITE_LIST_SPLAT_STAR_AFTER, node.star_after.unwrap_or(0)));
+    w.site_at(options::SITE_LIST_SPLAT_STAR_AFTER);
     expression.render(w)?;
     w.edge(::sittir_core::types::KindId(164), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49589,7 +48827,7 @@ fn render_dictionary_splat(node: &DictionarySplatTransport, w: &mut dyn ::sittir
     let expression = &node.expression;
     w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("**")?;
-    w.site_with(node.star_star_after.unwrap_or(0), options::site_strength(options::SITE_DICTIONARY_SPLAT_STAR_STAR_AFTER, node.star_star_after.unwrap_or(0)));
+    w.site_at(options::SITE_DICTIONARY_SPLAT_STAR_STAR_AFTER);
     expression.render(w)?;
     w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49604,12 +48842,12 @@ fn render_global_statement(node: &GlobalStatementTransport, w: &mut dyn ::sittir
         after: node.names_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     w.edge(::sittir_core::types::KindId(166), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("global")?;
-    w.site_with(node.global_keyword_after.unwrap_or(0), options::site_strength(options::SITE_GLOBAL_STATEMENT_GLOBAL_KEYWORD_AFTER, node.global_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_GLOBAL_STATEMENT_GLOBAL_KEYWORD_AFTER);
     names.render(w)?;
     w.edge(::sittir_core::types::KindId(166), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49624,12 +48862,12 @@ fn render_nonlocal_statement(node: &NonlocalStatementTransport, w: &mut dyn ::si
         after: node.names_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("nonlocal")?;
-    w.site_with(node.nonlocal_keyword_after.unwrap_or(0), options::site_strength(options::SITE_NONLOCAL_STATEMENT_NONLOCAL_KEYWORD_AFTER, node.nonlocal_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_NONLOCAL_STATEMENT_NONLOCAL_KEYWORD_AFTER);
     names.render(w)?;
     w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49645,17 +48883,17 @@ fn render_exec_statement(node: &ExecStatementTransport, w: &mut dyn ::sittir_cor
         after: node.in_clause_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     w.edge(::sittir_core::types::KindId(168), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("exec")?;
-    w.site_with(node.exec_keyword_after.unwrap_or(0), options::site_strength(options::SITE_EXEC_STATEMENT_EXEC_KEYWORD_AFTER, node.exec_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_EXEC_STATEMENT_EXEC_KEYWORD_AFTER);
     code.render(w)?;
     if in_clause.is_present() {
-        w.site_with(node.in_keyword_before.unwrap_or(0), options::site_strength(options::SITE_EXEC_STATEMENT_IN_KEYWORD_BEFORE, node.in_keyword_before.unwrap_or(0)));
+        w.site_at(options::SITE_EXEC_STATEMENT_IN_KEYWORD_BEFORE);
         w.text("in")?;
-        w.site_with(node.in_keyword_after.unwrap_or(0), options::site_strength(options::SITE_EXEC_STATEMENT_IN_KEYWORD_AFTER, node.in_keyword_after.unwrap_or(0)));
+        w.site_at(options::SITE_EXEC_STATEMENT_IN_KEYWORD_AFTER);
         in_clause.render(w)?;
     }
     w.edge(::sittir_core::types::KindId(168), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -49667,11 +48905,11 @@ fn render_type_alias_statement(node: &TypeAliasStatementTransport, w: &mut dyn :
     let right = &node.right;
     w.edge(::sittir_core::types::KindId(169), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("type")?;
-    w.site_with(node.type_keyword_after.unwrap_or(0), options::site_strength(options::SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_AFTER, node.type_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_AFTER);
     left.render(w)?;
-    w.site_with(node.eq_before.unwrap_or(0), options::site_strength(options::SITE_TYPE_ALIAS_STATEMENT_EQ_BEFORE, node.eq_before.unwrap_or(0)));
+    w.site_at(options::SITE_TYPE_ALIAS_STATEMENT_EQ_BEFORE);
     w.text("=")?;
-    w.site_with(node.eq_after.unwrap_or(0), options::site_strength(options::SITE_TYPE_ALIAS_STATEMENT_EQ_AFTER, node.eq_after.unwrap_or(0)));
+    w.site_at(options::SITE_TYPE_ALIAS_STATEMENT_EQ_AFTER);
     right.render(w)?;
     w.edge(::sittir_core::types::KindId(169), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49684,13 +48922,13 @@ fn render_class_definition(node: &ClassDefinitionTransport, w: &mut dyn ::sittir
     let type_parameters = View::new(&node.type_parameters, "{}");
     w.edge(::sittir_core::types::KindId(170), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("class")?;
-    w.site_with(node.class_keyword_after.unwrap_or(0), options::site_strength(options::SITE_CLASS_DEFINITION_CLASS_KEYWORD_AFTER, node.class_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_CLASS_DEFINITION_CLASS_KEYWORD_AFTER);
     name.render(w)?;
     type_parameters.render(w)?;
     superclasses.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_CLASS_DEFINITION_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_CLASS_DEFINITION_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_CLASS_DEFINITION_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_CLASS_DEFINITION_COLON_AFTER);
     body.render(w)?;
     w.edge(::sittir_core::types::KindId(170), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49700,9 +48938,9 @@ fn render_type_parameter(node: &TypeParameterTransport, w: &mut dyn ::sittir_cor
     let types = &node.types;
     w.edge(::sittir_core::types::KindId(171), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
-    w.site_with(node.lbrack_after.unwrap_or(0), options::site_strength(options::SITE_TYPE_PARAMETER_LBRACK_AFTER, node.lbrack_after.unwrap_or(0)));
+    w.site_at(options::SITE_TYPE_PARAMETER_LBRACK_AFTER);
     types.render(w)?;
-    w.site_with(node.rbrack_before.unwrap_or(0), options::site_strength(options::SITE_TYPE_PARAMETER_RBRACK_BEFORE, node.rbrack_before.unwrap_or(0)));
+    w.site_at(options::SITE_TYPE_PARAMETER_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(171), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49713,9 +48951,9 @@ fn render_parenthesized_list_splat(node: &ParenthesizedListSplatTransport, w: &m
     w.edge(::sittir_core::types::KindId(172), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.adjacent();
-    w.site_with(node.lparen_after.unwrap_or(0), options::site_strength(options::SITE_PARENTHESIZED_LIST_SPLAT_LPAREN_AFTER, node.lparen_after.unwrap_or(0)));
+    w.site_at(options::SITE_PARENTHESIZED_LIST_SPLAT_LPAREN_AFTER);
     content.render(w)?;
-    w.site_with(node.rparen_before.unwrap_or(0), options::site_strength(options::SITE_PARENTHESIZED_LIST_SPLAT_RPAREN_BEFORE, node.rparen_before.unwrap_or(0)));
+    w.site_at(options::SITE_PARENTHESIZED_LIST_SPLAT_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(172), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49725,9 +48963,9 @@ fn render_argument_list(node: &ArgumentListTransport, w: &mut dyn ::sittir_core:
     let arguments = View::new(&node.arguments, "{}");
     w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
-    w.site_with(node.lparen_after.unwrap_or(0), options::site_strength(options::SITE_ARGUMENT_LIST_LPAREN_AFTER, node.lparen_after.unwrap_or(0)));
+    w.site_at(options::SITE_ARGUMENT_LIST_LPAREN_AFTER);
     arguments.render(w)?;
-    w.site_with(node.rparen_before.unwrap_or(0), options::site_strength(options::SITE_ARGUMENT_LIST_RPAREN_BEFORE, node.rparen_before.unwrap_or(0)));
+    w.site_at(options::SITE_ARGUMENT_LIST_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49742,8 +48980,8 @@ fn render_decorated_definition(node: &DecoratedDefinitionTransport, w: &mut dyn 
         after: node.decorator_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     let definition = &node.definition;
     w.edge(::sittir_core::types::KindId(174), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
@@ -49757,7 +48995,7 @@ fn render_decorator(node: &DecoratorTransport, w: &mut dyn ::sittir_core::render
     let expression = &node.expression;
     w.edge(::sittir_core::types::KindId(175), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("@")?;
-    w.site_with(node.at_after.unwrap_or(0), options::site_strength(options::SITE_DECORATOR_AT_AFTER, node.at_after.unwrap_or(0)));
+    w.site_at(options::SITE_DECORATOR_AT_AFTER);
     expression.render(w)?;
     w.adjacent();
     w.token_seam("\n");
@@ -49774,8 +49012,8 @@ fn render_block(node: &BlockTransport, w: &mut dyn ::sittir_core::render::Render
         after: node.statements_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     statements.render(w)?;
@@ -49804,8 +49042,8 @@ fn render_dotted_name(node: &DottedNameTransport, w: &mut dyn ::sittir_core::ren
         after: node.names_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     names.render(w)?;
     Ok(())
@@ -49826,8 +49064,8 @@ fn render_union_pattern(node: &UnionPatternTransport, w: &mut dyn ::sittir_core:
         after: node.patterns_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     patterns.render(w)?;
     Ok(())
@@ -49837,9 +49075,9 @@ fn render_dict_pattern(node: &DictPatternTransport, w: &mut dyn ::sittir_core::r
     let dict_pattern_elements = View::new(&node.dict_pattern_elements, "{}");
     w.edge(::sittir_core::types::KindId(182), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
-    w.site_with(node.lbrace_after.unwrap_or(0), options::site_strength(options::SITE_DICT_PATTERN_LBRACE_AFTER, node.lbrace_after.unwrap_or(0)));
+    w.site_at(options::SITE_DICT_PATTERN_LBRACE_AFTER);
     dict_pattern_elements.render(w)?;
-    w.site_with(node.rbrace_before.unwrap_or(0), options::site_strength(options::SITE_DICT_PATTERN_RBRACE_BEFORE, node.rbrace_before.unwrap_or(0)));
+    w.site_at(options::SITE_DICT_PATTERN_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(182), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49850,9 +49088,9 @@ fn render_key_value_pattern(node: &KeyValuePatternTransport, w: &mut dyn ::sitti
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(183), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     key.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_KEY_VALUE_PATTERN_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_KEY_VALUE_PATTERN_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_KEY_VALUE_PATTERN_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_KEY_VALUE_PATTERN_COLON_AFTER);
     value.render(w)?;
     w.edge(::sittir_core::types::KindId(183), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49863,9 +49101,9 @@ fn render_keyword_pattern(node: &KeywordPatternTransport, w: &mut dyn ::sittir_c
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
-    w.site_with(node.eq_before.unwrap_or(0), options::site_strength(options::SITE_KEYWORD_PATTERN_EQ_BEFORE, node.eq_before.unwrap_or(0)));
+    w.site_at(options::SITE_KEYWORD_PATTERN_EQ_BEFORE);
     w.text("=")?;
-    w.site_with(node.eq_after.unwrap_or(0), options::site_strength(options::SITE_KEYWORD_PATTERN_EQ_AFTER, node.eq_after.unwrap_or(0)));
+    w.site_at(options::SITE_KEYWORD_PATTERN_EQ_AFTER);
     value.render(w)?;
     w.edge(::sittir_core::types::KindId(184), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49876,7 +49114,7 @@ fn render_splat_pattern(node: &SplatPatternTransport, w: &mut dyn ::sittir_core:
     let operator = &node.operator;
     w.edge(::sittir_core::types::KindId(185), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     operator.render(w)?;
-    w.site_with(node.operator_after.unwrap_or(0), options::site_strength(options::SITE_SPLAT_PATTERN_OPERATOR_AFTER, node.operator_after.unwrap_or(0)));
+    w.site_at(options::SITE_SPLAT_PATTERN_OPERATOR_AFTER);
     name.render(w)?;
     w.edge(::sittir_core::types::KindId(185), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49887,11 +49125,11 @@ fn render_class_pattern(node: &ClassPatternTransport, w: &mut dyn ::sittir_core:
     let name = &node.name;
     w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
-    w.site_with(node.lparen_before.unwrap_or(0), options::site_strength(options::SITE_CLASS_PATTERN_LPAREN_BEFORE, node.lparen_before.unwrap_or(0)));
+    w.site_at(options::SITE_CLASS_PATTERN_LPAREN_BEFORE);
     w.text("(")?;
-    w.site_with(node.lparen_after.unwrap_or(0), options::site_strength(options::SITE_CLASS_PATTERN_LPAREN_AFTER, node.lparen_after.unwrap_or(0)));
+    w.site_at(options::SITE_CLASS_PATTERN_LPAREN_AFTER);
     arguments.render(w)?;
-    w.site_with(node.rparen_before.unwrap_or(0), options::site_strength(options::SITE_CLASS_PATTERN_RPAREN_BEFORE, node.rparen_before.unwrap_or(0)));
+    w.site_at(options::SITE_CLASS_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49905,12 +49143,12 @@ fn render_complex_pattern(node: &ComplexPatternTransport, w: &mut dyn ::sittir_c
     w.edge(::sittir_core::types::KindId(187), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if real.is_present() {
         real.render(w)?;
-        w.site_with(node.real_after.unwrap_or(0), options::site_strength(options::SITE_COMPLEX_PATTERN_REAL_AFTER, node.real_after.unwrap_or(0)));
+        w.site_at(options::SITE_COMPLEX_PATTERN_REAL_AFTER);
     }
     imaginary.render(w)?;
-    w.site_with(node.operator_before.unwrap_or(0), options::site_strength(options::SITE_COMPLEX_PATTERN_OPERATOR_BEFORE, node.operator_before.unwrap_or(0)));
+    w.site_at(options::SITE_COMPLEX_PATTERN_OPERATOR_BEFORE);
     operator.render(w)?;
-    w.site_with(node.operator_after.unwrap_or(0), options::site_strength(options::SITE_COMPLEX_PATTERN_OPERATOR_AFTER, node.operator_after.unwrap_or(0)));
+    w.site_at(options::SITE_COMPLEX_PATTERN_OPERATOR_AFTER);
     content.render(w)?;
     w.edge(::sittir_core::types::KindId(187), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49925,8 +49163,8 @@ fn render__parameters(node: &_ParametersTransport, w: &mut dyn ::sittir_core::re
         after: node.parameter_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     parameter.render(w)?;
     Ok(())
@@ -49941,8 +49179,8 @@ fn render_patterns(node: &PatternsTransport, w: &mut dyn ::sittir_core::render::
         after: node.pattern_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     pattern.render(w)?;
     Ok(())
@@ -49952,9 +49190,9 @@ fn render_tuple_pattern(node: &TuplePatternTransport, w: &mut dyn ::sittir_core:
     let patterns = View::new(&node.patterns, "{}");
     w.edge(::sittir_core::types::KindId(192), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
-    w.site_with(node.lparen_after.unwrap_or(0), options::site_strength(options::SITE_TUPLE_PATTERN_LPAREN_AFTER, node.lparen_after.unwrap_or(0)));
+    w.site_at(options::SITE_TUPLE_PATTERN_LPAREN_AFTER);
     patterns.render(w)?;
-    w.site_with(node.rparen_before.unwrap_or(0), options::site_strength(options::SITE_TUPLE_PATTERN_RPAREN_BEFORE, node.rparen_before.unwrap_or(0)));
+    w.site_at(options::SITE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(192), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49964,9 +49202,9 @@ fn render_list_pattern(node: &ListPatternTransport, w: &mut dyn ::sittir_core::r
     let patterns = View::new(&node.patterns, "{}");
     w.edge(::sittir_core::types::KindId(193), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
-    w.site_with(node.lbrack_after.unwrap_or(0), options::site_strength(options::SITE_LIST_PATTERN_LBRACK_AFTER, node.lbrack_after.unwrap_or(0)));
+    w.site_at(options::SITE_LIST_PATTERN_LBRACK_AFTER);
     patterns.render(w)?;
-    w.site_with(node.rbrack_before.unwrap_or(0), options::site_strength(options::SITE_LIST_PATTERN_RBRACK_BEFORE, node.rbrack_before.unwrap_or(0)));
+    w.site_at(options::SITE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(193), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49977,9 +49215,9 @@ fn render_default_parameter(node: &DefaultParameterTransport, w: &mut dyn ::sitt
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(194), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
-    w.site_with(node.eq_before.unwrap_or(0), options::site_strength(options::SITE_DEFAULT_PARAMETER_EQ_BEFORE, node.eq_before.unwrap_or(0)));
+    w.site_at(options::SITE_DEFAULT_PARAMETER_EQ_BEFORE);
     w.text("=")?;
-    w.site_with(node.eq_after.unwrap_or(0), options::site_strength(options::SITE_DEFAULT_PARAMETER_EQ_AFTER, node.eq_after.unwrap_or(0)));
+    w.site_at(options::SITE_DEFAULT_PARAMETER_EQ_AFTER);
     value.render(w)?;
     w.edge(::sittir_core::types::KindId(194), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -49991,13 +49229,13 @@ fn render_typed_default_parameter(node: &TypedDefaultParameterTransport, w: &mut
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(195), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_TYPED_DEFAULT_PARAMETER_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_TYPED_DEFAULT_PARAMETER_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_COLON_AFTER);
     type_.render(w)?;
-    w.site_with(node.eq_before.unwrap_or(0), options::site_strength(options::SITE_TYPED_DEFAULT_PARAMETER_EQ_BEFORE, node.eq_before.unwrap_or(0)));
+    w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_EQ_BEFORE);
     w.text("=")?;
-    w.site_with(node.eq_after.unwrap_or(0), options::site_strength(options::SITE_TYPED_DEFAULT_PARAMETER_EQ_AFTER, node.eq_after.unwrap_or(0)));
+    w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_EQ_AFTER);
     value.render(w)?;
     w.edge(::sittir_core::types::KindId(195), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50007,7 +49245,7 @@ fn render_list_splat_pattern(node: &ListSplatPatternTransport, w: &mut dyn ::sit
     let content = &node.content;
     w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("*")?;
-    w.site_with(node.star_after.unwrap_or(0), options::site_strength(options::SITE_LIST_SPLAT_PATTERN_STAR_AFTER, node.star_after.unwrap_or(0)));
+    w.site_at(options::SITE_LIST_SPLAT_PATTERN_STAR_AFTER);
     content.render(w)?;
     w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50017,7 +49255,7 @@ fn render_dictionary_splat_pattern(node: &DictionarySplatPatternTransport, w: &m
     let content = &node.content;
     w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("**")?;
-    w.site_with(node.star_star_after.unwrap_or(0), options::site_strength(options::SITE_DICTIONARY_SPLAT_PATTERN_STAR_STAR_AFTER, node.star_star_after.unwrap_or(0)));
+    w.site_at(options::SITE_DICTIONARY_SPLAT_PATTERN_STAR_STAR_AFTER);
     content.render(w)?;
     w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50028,9 +49266,9 @@ fn render_as_pattern(node: &AsPatternTransport, w: &mut dyn ::sittir_core::rende
     let expression = &node.expression;
     w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     expression.render(w)?;
-    w.site_with(node.as_keyword_before.unwrap_or(0), options::site_strength(options::SITE_AS_PATTERN_AS_KEYWORD_BEFORE, node.as_keyword_before.unwrap_or(0)));
+    w.site_at(options::SITE_AS_PATTERN_AS_KEYWORD_BEFORE);
     w.text("as")?;
-    w.site_with(node.as_keyword_after.unwrap_or(0), options::site_strength(options::SITE_AS_PATTERN_AS_KEYWORD_AFTER, node.as_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_AS_PATTERN_AS_KEYWORD_AFTER);
     alias.render(w)?;
     w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50040,7 +49278,7 @@ fn render_not_operator(node: &NotOperatorTransport, w: &mut dyn ::sittir_core::r
     let argument = &node.argument;
     w.edge(::sittir_core::types::KindId(202), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("not")?;
-    w.site_with(node.not_keyword_after.unwrap_or(0), options::site_strength(options::SITE_NOT_OPERATOR_NOT_KEYWORD_AFTER, node.not_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_NOT_OPERATOR_NOT_KEYWORD_AFTER);
     argument.render(w)?;
     w.edge(::sittir_core::types::KindId(202), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50052,9 +49290,9 @@ fn render_boolean_operator(node: &BooleanOperatorTransport, w: &mut dyn ::sittir
     let right = &node.right;
     w.edge(::sittir_core::types::KindId(203), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
-    w.site_with(node.operator_before.unwrap_or(0), options::site_strength(options::SITE_BOOLEAN_OPERATOR_OPERATOR_BEFORE, node.operator_before.unwrap_or(0)));
+    w.site_at(options::SITE_BOOLEAN_OPERATOR_OPERATOR_BEFORE);
     operator.render(w)?;
-    w.site_with(node.operator_after.unwrap_or(0), options::site_strength(options::SITE_BOOLEAN_OPERATOR_OPERATOR_AFTER, node.operator_after.unwrap_or(0)));
+    w.site_at(options::SITE_BOOLEAN_OPERATOR_OPERATOR_AFTER);
     right.render(w)?;
     w.edge(::sittir_core::types::KindId(203), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50066,9 +49304,9 @@ fn render_binary_operator(node: &BinaryOperatorTransport, w: &mut dyn ::sittir_c
     let right = &node.right;
     w.edge(::sittir_core::types::KindId(204), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
-    w.site_with(node.operator_before.unwrap_or(0), options::site_strength(options::SITE_BINARY_OPERATOR_OPERATOR_BEFORE, node.operator_before.unwrap_or(0)));
+    w.site_at(options::SITE_BINARY_OPERATOR_OPERATOR_BEFORE);
     operator.render(w)?;
-    w.site_with(node.operator_after.unwrap_or(0), options::site_strength(options::SITE_BINARY_OPERATOR_OPERATOR_AFTER, node.operator_after.unwrap_or(0)));
+    w.site_at(options::SITE_BINARY_OPERATOR_OPERATOR_AFTER);
     right.render(w)?;
     w.edge(::sittir_core::types::KindId(204), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50093,8 +49331,8 @@ fn render_comparison_operator(node: &ComparisonOperatorTransport, w: &mut dyn ::
         after: node.comparators_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     let left = &node.left;
     w.edge(::sittir_core::types::KindId(208), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
@@ -50109,11 +49347,11 @@ fn render_lambda(node: &LambdaTransport, w: &mut dyn ::sittir_core::render::Rend
     let parameters = View::new(&node.parameters, "{}");
     w.edge(::sittir_core::types::KindId(209), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("lambda")?;
-    w.site_with(node.lambda_keyword_after.unwrap_or(0), options::site_strength(options::SITE_LAMBDA_LAMBDA_KEYWORD_AFTER, node.lambda_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_LAMBDA_LAMBDA_KEYWORD_AFTER);
     parameters.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_LAMBDA_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_LAMBDA_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_LAMBDA_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_LAMBDA_COLON_AFTER);
     body.render(w)?;
     w.edge(::sittir_core::types::KindId(209), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50124,11 +49362,11 @@ fn render_lambda_within_for_in_clause(node: &LambdaWithinForInClauseTransport, w
     let parameters = View::new(&node.parameters, "{}");
     w.edge(::sittir_core::types::KindId(210), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("lambda")?;
-    w.site_with(node.lambda_keyword_after.unwrap_or(0), options::site_strength(options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER, node.lambda_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER);
     parameters.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_AFTER);
     body.render(w)?;
     w.edge(::sittir_core::types::KindId(210), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50160,7 +49398,7 @@ fn render_yield(node: &YieldTransport, w: &mut dyn ::sittir_core::render::Render
     let content = View::new(&node.content, "{}");
     w.edge(::sittir_core::types::KindId(215), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("yield")?;
-    w.site_with(node.yield_keyword_after.unwrap_or(0), options::site_strength(options::SITE_YIELD_YIELD_KEYWORD_AFTER, node.yield_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_YIELD_YIELD_KEYWORD_AFTER);
     content.render(w)?;
     w.edge(::sittir_core::types::KindId(215), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50171,9 +49409,9 @@ fn render_attribute(node: &AttributeTransport, w: &mut dyn ::sittir_core::render
     let object = &node.object;
     w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     object.render(w)?;
-    w.site_with(node.dot_before.unwrap_or(0), options::site_strength(options::SITE_ATTRIBUTE_DOT_BEFORE, node.dot_before.unwrap_or(0)));
+    w.site_at(options::SITE_ATTRIBUTE_DOT_BEFORE);
     w.text(".")?;
-    w.site_with(node.dot_after.unwrap_or(0), options::site_strength(options::SITE_ATTRIBUTE_DOT_AFTER, node.dot_after.unwrap_or(0)));
+    w.site_at(options::SITE_ATTRIBUTE_DOT_AFTER);
     attribute.render(w)?;
     w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50184,11 +49422,11 @@ fn render_subscript(node: &SubscriptTransport, w: &mut dyn ::sittir_core::render
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(217), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     value.render(w)?;
-    w.site_with(node.lbrack_before.unwrap_or(0), options::site_strength(options::SITE_SUBSCRIPT_LBRACK_BEFORE, node.lbrack_before.unwrap_or(0)));
+    w.site_at(options::SITE_SUBSCRIPT_LBRACK_BEFORE);
     w.text("[")?;
-    w.site_with(node.lbrack_after.unwrap_or(0), options::site_strength(options::SITE_SUBSCRIPT_LBRACK_AFTER, node.lbrack_after.unwrap_or(0)));
+    w.site_at(options::SITE_SUBSCRIPT_LBRACK_AFTER);
     subscripts.render(w)?;
-    w.site_with(node.rbrack_before.unwrap_or(0), options::site_strength(options::SITE_SUBSCRIPT_RBRACK_BEFORE, node.rbrack_before.unwrap_or(0)));
+    w.site_at(options::SITE_SUBSCRIPT_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(217), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50200,9 +49438,9 @@ fn render_slice(node: &SliceTransport, w: &mut dyn ::sittir_core::render::Render
     let stop = View::new(&node.stop, "{}");
     w.edge(::sittir_core::types::KindId(218), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     start.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_SLICE_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_SLICE_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_SLICE_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_SLICE_COLON_AFTER);
     stop.render(w)?;
     step.render(w)?;
     w.edge(::sittir_core::types::KindId(218), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -50228,9 +49466,9 @@ fn render_typed_parameter(node: &TypedParameterTransport, w: &mut dyn ::sittir_c
     let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     content.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_TYPED_PARAMETER_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_TYPED_PARAMETER_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_TYPED_PARAMETER_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_TYPED_PARAMETER_COLON_AFTER);
     type_.render(w)?;
     w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50247,7 +49485,7 @@ fn render_splat_type(node: &SplatTypeTransport, w: &mut dyn ::sittir_core::rende
     let operator = &node.operator;
     w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     operator.render(w)?;
-    w.site_with(node.operator_after.unwrap_or(0), options::site_strength(options::SITE_SPLAT_TYPE_OPERATOR_AFTER, node.operator_after.unwrap_or(0)));
+    w.site_at(options::SITE_SPLAT_TYPE_OPERATOR_AFTER);
     name.render(w)?;
     w.edge(::sittir_core::types::KindId(222), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50268,9 +49506,9 @@ fn render_union_type(node: &UnionTypeTransport, w: &mut dyn ::sittir_core::rende
     let right = &node.right;
     w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
-    w.site_with(node.pipe_before.unwrap_or(0), options::site_strength(options::SITE_UNION_TYPE_PIPE_BEFORE, node.pipe_before.unwrap_or(0)));
+    w.site_at(options::SITE_UNION_TYPE_PIPE_BEFORE);
     w.text("|")?;
-    w.site_with(node.pipe_after.unwrap_or(0), options::site_strength(options::SITE_UNION_TYPE_PIPE_AFTER, node.pipe_after.unwrap_or(0)));
+    w.site_at(options::SITE_UNION_TYPE_PIPE_AFTER);
     right.render(w)?;
     w.edge(::sittir_core::types::KindId(224), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50281,9 +49519,9 @@ fn render_constrained_type(node: &ConstrainedTypeTransport, w: &mut dyn ::sittir
     let constraint = &node.constraint;
     w.edge(::sittir_core::types::KindId(225), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     base_type.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_CONSTRAINED_TYPE_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_CONSTRAINED_TYPE_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_CONSTRAINED_TYPE_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_CONSTRAINED_TYPE_COLON_AFTER);
     constraint.render(w)?;
     w.edge(::sittir_core::types::KindId(225), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50294,9 +49532,9 @@ fn render_member_type(node: &MemberTypeTransport, w: &mut dyn ::sittir_core::ren
     let name = &node.name;
     w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     base_type.render(w)?;
-    w.site_with(node.dot_before.unwrap_or(0), options::site_strength(options::SITE_MEMBER_TYPE_DOT_BEFORE, node.dot_before.unwrap_or(0)));
+    w.site_at(options::SITE_MEMBER_TYPE_DOT_BEFORE);
     w.text(".")?;
-    w.site_with(node.dot_after.unwrap_or(0), options::site_strength(options::SITE_MEMBER_TYPE_DOT_AFTER, node.dot_after.unwrap_or(0)));
+    w.site_at(options::SITE_MEMBER_TYPE_DOT_AFTER);
     name.render(w)?;
     w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50307,9 +49545,9 @@ fn render_keyword_argument(node: &KeywordArgumentTransport, w: &mut dyn ::sittir
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     name.render(w)?;
-    w.site_with(node.eq_before.unwrap_or(0), options::site_strength(options::SITE_KEYWORD_ARGUMENT_EQ_BEFORE, node.eq_before.unwrap_or(0)));
+    w.site_at(options::SITE_KEYWORD_ARGUMENT_EQ_BEFORE);
     w.text("=")?;
-    w.site_with(node.eq_after.unwrap_or(0), options::site_strength(options::SITE_KEYWORD_ARGUMENT_EQ_AFTER, node.eq_after.unwrap_or(0)));
+    w.site_at(options::SITE_KEYWORD_ARGUMENT_EQ_AFTER);
     value.render(w)?;
     w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50319,9 +49557,9 @@ fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSi
     let collection_elements = View::new(&node.collection_elements, "{}");
     w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
-    w.site_with(node.lbrack_after.unwrap_or(0), options::site_strength(options::SITE_LIST_LBRACK_AFTER, node.lbrack_after.unwrap_or(0)));
+    w.site_at(options::SITE_LIST_LBRACK_AFTER);
     collection_elements.render(w)?;
-    w.site_with(node.rbrack_before.unwrap_or(0), options::site_strength(options::SITE_LIST_RBRACK_BEFORE, node.rbrack_before.unwrap_or(0)));
+    w.site_at(options::SITE_LIST_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(228), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50331,9 +49569,9 @@ fn render_set(node: &SetTransport, w: &mut dyn ::sittir_core::render::RenderSink
     let collection_elements = &node.collection_elements;
     w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
-    w.site_with(node.lbrace_after.unwrap_or(0), options::site_strength(options::SITE_SET_LBRACE_AFTER, node.lbrace_after.unwrap_or(0)));
+    w.site_at(options::SITE_SET_LBRACE_AFTER);
     collection_elements.render(w)?;
-    w.site_with(node.rbrace_before.unwrap_or(0), options::site_strength(options::SITE_SET_RBRACE_BEFORE, node.rbrace_before.unwrap_or(0)));
+    w.site_at(options::SITE_SET_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(229), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50343,9 +49581,9 @@ fn render_tuple(node: &TupleTransport, w: &mut dyn ::sittir_core::render::Render
     let collection_elements = View::new(&node.collection_elements, "{}");
     w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
-    w.site_with(node.lparen_after.unwrap_or(0), options::site_strength(options::SITE_TUPLE_LPAREN_AFTER, node.lparen_after.unwrap_or(0)));
+    w.site_at(options::SITE_TUPLE_LPAREN_AFTER);
     collection_elements.render(w)?;
-    w.site_with(node.rparen_before.unwrap_or(0), options::site_strength(options::SITE_TUPLE_RPAREN_BEFORE, node.rparen_before.unwrap_or(0)));
+    w.site_at(options::SITE_TUPLE_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50355,9 +49593,9 @@ fn render_dictionary(node: &DictionaryTransport, w: &mut dyn ::sittir_core::rend
     let entries = View::new(&node.entries, "{}");
     w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
-    w.site_with(node.lbrace_after.unwrap_or(0), options::site_strength(options::SITE_DICTIONARY_LBRACE_AFTER, node.lbrace_after.unwrap_or(0)));
+    w.site_at(options::SITE_DICTIONARY_LBRACE_AFTER);
     entries.render(w)?;
-    w.site_with(node.rbrace_before.unwrap_or(0), options::site_strength(options::SITE_DICTIONARY_RBRACE_BEFORE, node.rbrace_before.unwrap_or(0)));
+    w.site_at(options::SITE_DICTIONARY_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50368,9 +49606,9 @@ fn render_pair(node: &PairTransport, w: &mut dyn ::sittir_core::render::RenderSi
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     key.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_PAIR_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_PAIR_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_PAIR_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_PAIR_COLON_AFTER);
     value.render(w)?;
     w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50381,10 +49619,10 @@ fn render_list_comprehension(node: &ListComprehensionTransport, w: &mut dyn ::si
     let comprehension_clauses = &node.comprehension_clauses;
     w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
-    w.site_with(node.lbrack_after.unwrap_or(0), options::site_strength(options::SITE_LIST_COMPREHENSION_LBRACK_AFTER, node.lbrack_after.unwrap_or(0)));
+    w.site_at(options::SITE_LIST_COMPREHENSION_LBRACK_AFTER);
     body.render(w)?;
     comprehension_clauses.render(w)?;
-    w.site_with(node.rbrack_before.unwrap_or(0), options::site_strength(options::SITE_LIST_COMPREHENSION_RBRACK_BEFORE, node.rbrack_before.unwrap_or(0)));
+    w.site_at(options::SITE_LIST_COMPREHENSION_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50395,10 +49633,10 @@ fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, w: &
     let comprehension_clauses = &node.comprehension_clauses;
     w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
-    w.site_with(node.lbrace_after.unwrap_or(0), options::site_strength(options::SITE_DICTIONARY_COMPREHENSION_LBRACE_AFTER, node.lbrace_after.unwrap_or(0)));
+    w.site_at(options::SITE_DICTIONARY_COMPREHENSION_LBRACE_AFTER);
     body.render(w)?;
     comprehension_clauses.render(w)?;
-    w.site_with(node.rbrace_before.unwrap_or(0), options::site_strength(options::SITE_DICTIONARY_COMPREHENSION_RBRACE_BEFORE, node.rbrace_before.unwrap_or(0)));
+    w.site_at(options::SITE_DICTIONARY_COMPREHENSION_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50409,10 +49647,10 @@ fn render_set_comprehension(node: &SetComprehensionTransport, w: &mut dyn ::sitt
     let comprehension_clauses = &node.comprehension_clauses;
     w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
-    w.site_with(node.lbrace_after.unwrap_or(0), options::site_strength(options::SITE_SET_COMPREHENSION_LBRACE_AFTER, node.lbrace_after.unwrap_or(0)));
+    w.site_at(options::SITE_SET_COMPREHENSION_LBRACE_AFTER);
     body.render(w)?;
     comprehension_clauses.render(w)?;
-    w.site_with(node.rbrace_before.unwrap_or(0), options::site_strength(options::SITE_SET_COMPREHENSION_RBRACE_BEFORE, node.rbrace_before.unwrap_or(0)));
+    w.site_at(options::SITE_SET_COMPREHENSION_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50423,10 +49661,10 @@ fn render_generator_expression(node: &GeneratorExpressionTransport, w: &mut dyn 
     let comprehension_clauses = &node.comprehension_clauses;
     w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
-    w.site_with(node.lparen_after.unwrap_or(0), options::site_strength(options::SITE_GENERATOR_EXPRESSION_LPAREN_AFTER, node.lparen_after.unwrap_or(0)));
+    w.site_at(options::SITE_GENERATOR_EXPRESSION_LPAREN_AFTER);
     body.render(w)?;
     comprehension_clauses.render(w)?;
-    w.site_with(node.rparen_before.unwrap_or(0), options::site_strength(options::SITE_GENERATOR_EXPRESSION_RPAREN_BEFORE, node.rparen_before.unwrap_or(0)));
+    w.site_at(options::SITE_GENERATOR_EXPRESSION_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(236), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50436,9 +49674,9 @@ fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, w: &
     let content = &node.content;
     w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
-    w.site_with(node.lparen_after.unwrap_or(0), options::site_strength(options::SITE_PARENTHESIZED_EXPRESSION_LPAREN_AFTER, node.lparen_after.unwrap_or(0)));
+    w.site_at(options::SITE_PARENTHESIZED_EXPRESSION_LPAREN_AFTER);
     content.render(w)?;
-    w.site_with(node.rparen_before.unwrap_or(0), options::site_strength(options::SITE_PARENTHESIZED_EXPRESSION_RPAREN_BEFORE, node.rparen_before.unwrap_or(0)));
+    w.site_at(options::SITE_PARENTHESIZED_EXPRESSION_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50453,8 +49691,8 @@ fn render_collection_elements(node: &CollectionElementsTransport, w: &mut dyn ::
         after: node.element_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     element.render(w)?;
     Ok(())
@@ -50472,24 +49710,24 @@ fn render_for_in_clause(node: &ForInClauseTransport, w: &mut dyn ::sittir_core::
         after: node.right_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if async_marker.is_present() {
         async_marker.render(w)?;
-        w.site_with(node.async_marker_after.unwrap_or(0), options::site_strength(options::SITE_FOR_IN_CLAUSE_ASYNC_MARKER_AFTER, node.async_marker_after.unwrap_or(0)));
+        w.site_at(options::SITE_FOR_IN_CLAUSE_ASYNC_MARKER_AFTER);
     }
-    w.site_with(node.for_keyword_before.unwrap_or(0), options::site_strength(options::SITE_FOR_IN_CLAUSE_FOR_KEYWORD_BEFORE, node.for_keyword_before.unwrap_or(0)));
+    w.site_at(options::SITE_FOR_IN_CLAUSE_FOR_KEYWORD_BEFORE);
     w.text("for")?;
-    w.site_with(node.for_keyword_after.unwrap_or(0), options::site_strength(options::SITE_FOR_IN_CLAUSE_FOR_KEYWORD_AFTER, node.for_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_FOR_IN_CLAUSE_FOR_KEYWORD_AFTER);
     left.render(w)?;
-    w.site_with(node.in_keyword_before.unwrap_or(0), options::site_strength(options::SITE_FOR_IN_CLAUSE_IN_KEYWORD_BEFORE, node.in_keyword_before.unwrap_or(0)));
+    w.site_at(options::SITE_FOR_IN_CLAUSE_IN_KEYWORD_BEFORE);
     w.text("in")?;
-    w.site_with(node.in_keyword_after.unwrap_or(0), options::site_strength(options::SITE_FOR_IN_CLAUSE_IN_KEYWORD_AFTER, node.in_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_FOR_IN_CLAUSE_IN_KEYWORD_AFTER);
     right.render(w)?;
     if comma.is_present() {
-        w.site_with(node.comma_before.unwrap_or(0), options::site_strength(options::SITE_FOR_IN_CLAUSE_COMMA_BEFORE, node.comma_before.unwrap_or(0)));
+        w.site_at(options::SITE_FOR_IN_CLAUSE_COMMA_BEFORE);
         comma.render(w)?;
     }
     w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -50500,7 +49738,7 @@ fn render_if_clause(node: &IfClauseTransport, w: &mut dyn ::sittir_core::render:
     let condition = &node.condition;
     w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("if")?;
-    w.site_with(node.if_keyword_after.unwrap_or(0), options::site_strength(options::SITE_IF_CLAUSE_IF_KEYWORD_AFTER, node.if_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_IF_CLAUSE_IF_KEYWORD_AFTER);
     condition.render(w)?;
     w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50512,13 +49750,13 @@ fn render_conditional_expression(node: &ConditionalExpressionTransport, w: &mut 
     let condition = &node.condition;
     w.edge(::sittir_core::types::KindId(241), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     body.render(w)?;
-    w.site_with(node.if_keyword_before.unwrap_or(0), options::site_strength(options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_BEFORE, node.if_keyword_before.unwrap_or(0)));
+    w.site_at(options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_BEFORE);
     w.text("if")?;
-    w.site_with(node.if_keyword_after.unwrap_or(0), options::site_strength(options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_AFTER, node.if_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_AFTER);
     condition.render(w)?;
-    w.site_with(node.else_keyword_before.unwrap_or(0), options::site_strength(options::SITE_CONDITIONAL_EXPRESSION_ELSE_KEYWORD_BEFORE, node.else_keyword_before.unwrap_or(0)));
+    w.site_at(options::SITE_CONDITIONAL_EXPRESSION_ELSE_KEYWORD_BEFORE);
     w.text("else")?;
-    w.site_with(node.else_keyword_after.unwrap_or(0), options::site_strength(options::SITE_CONDITIONAL_EXPRESSION_ELSE_KEYWORD_AFTER, node.else_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_CONDITIONAL_EXPRESSION_ELSE_KEYWORD_AFTER);
     alternative.render(w)?;
     w.edge(::sittir_core::types::KindId(241), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50533,8 +49771,8 @@ fn render_concatenated_string(node: &ConcatenatedStringTransport, w: &mut dyn ::
         after: node.string_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     w.edge(::sittir_core::types::KindId(242), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     string.render(w)?;
@@ -50551,8 +49789,8 @@ fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::Rend
         after: 0,
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     let string_end = &node.string_end;
     let string_start = &node.string_start;
@@ -50573,8 +49811,8 @@ fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_cor
         after: 0,
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     content.render(w)?;
     Ok(())
@@ -50587,16 +49825,16 @@ fn render_interpolation(node: &InterpolationTransport, w: &mut dyn ::sittir_core
     let type_conversion = View::new(&node.type_conversion, "{}");
     w.edge(::sittir_core::types::KindId(245), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
-    w.site_with(node.lbrace_after.unwrap_or(0), options::site_strength(options::SITE_INTERPOLATION_LBRACE_AFTER, node.lbrace_after.unwrap_or(0)));
+    w.site_at(options::SITE_INTERPOLATION_LBRACE_AFTER);
     expression.render(w)?;
     if eq_marker.is_present() {
-        w.site_with(node.eq_marker_before.unwrap_or(0), options::site_strength(options::SITE_INTERPOLATION_EQ_MARKER_BEFORE, node.eq_marker_before.unwrap_or(0)));
+        w.site_at(options::SITE_INTERPOLATION_EQ_MARKER_BEFORE);
         eq_marker.render(w)?;
-        w.site_with(node.eq_marker_after.unwrap_or(0), options::site_strength(options::SITE_INTERPOLATION_EQ_MARKER_AFTER, node.eq_marker_after.unwrap_or(0)));
+        w.site_at(options::SITE_INTERPOLATION_EQ_MARKER_AFTER);
     }
     type_conversion.render(w)?;
     format_specifier.render(w)?;
-    w.site_with(node.rbrace_before.unwrap_or(0), options::site_strength(options::SITE_INTERPOLATION_RBRACE_BEFORE, node.rbrace_before.unwrap_or(0)));
+    w.site_at(options::SITE_INTERPOLATION_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(245), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50616,12 +49854,12 @@ fn render_format_specifier(node: &FormatSpecifierTransport, w: &mut dyn ::sittir
         after: 0,
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     w.edge(::sittir_core::types::KindId(249), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_FORMAT_SPECIFIER_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_FORMAT_SPECIFIER_COLON_AFTER);
     content.render(w)?;
     w.edge(::sittir_core::types::KindId(249), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50656,7 +49894,7 @@ fn render_await(node: &AwaitTransport, w: &mut dyn ::sittir_core::render::Render
     let expression = &node.expression;
     w.edge(::sittir_core::types::KindId(252), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("await")?;
-    w.site_with(node.await_keyword_after.unwrap_or(0), options::site_strength(options::SITE_AWAIT_AWAIT_KEYWORD_AFTER, node.await_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_AWAIT_AWAIT_KEYWORD_AFTER);
     expression.render(w)?;
     w.edge(::sittir_core::types::KindId(252), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50691,8 +49929,8 @@ fn render_simple_statements_elements(node: &SimpleStatementsElementsTransport, w
         after: node.simple_statement_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     simple_statement.render(w)?;
     Ok(())
@@ -50707,8 +49945,8 @@ fn render_subjects(node: &SubjectsTransport, w: &mut dyn ::sittir_core::render::
         after: node.subject_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     subject.render(w)?;
     Ok(())
@@ -50723,8 +49961,8 @@ fn render_case_patterns(node: &CasePatternsTransport, w: &mut dyn ::sittir_core:
         after: node.case_pattern_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     case_pattern.render(w)?;
     Ok(())
@@ -50739,8 +49977,8 @@ fn render_with_clause_with_items(node: &WithClauseWithItemsTransport, w: &mut dy
         after: node.with_item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     with_item.render(w)?;
     Ok(())
@@ -50755,8 +49993,8 @@ fn render_types(node: &TypesTransport, w: &mut dyn ::sittir_core::render::Render
         after: node.type_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     type_.render(w)?;
     Ok(())
@@ -50771,8 +50009,8 @@ fn render_argument_list_elements(node: &ArgumentListElementsTransport, w: &mut d
         after: node.element_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     element.render(w)?;
     Ok(())
@@ -50787,8 +50025,8 @@ fn render_expression_list_expressions(node: &ExpressionListExpressionsTransport,
         after: node.expression_separator_space_after.unwrap_or(0),
         leading: true,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     expression.render(w)?;
     Ok(())
@@ -50803,8 +50041,8 @@ fn render_list_pattern_case_patterns(node: &ListPatternCasePatternsTransport, w:
         after: node.case_pattern_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     case_pattern.render(w)?;
     Ok(())
@@ -50819,8 +50057,8 @@ fn render_dict_pattern_elements(node: &DictPatternElementsTransport, w: &mut dyn
         after: node.element_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     element.render(w)?;
     Ok(())
@@ -50835,8 +50073,8 @@ fn render_pattern_list_patterns(node: &PatternListPatternsTransport, w: &mut dyn
         after: node.pattern_separator_space_after.unwrap_or(0),
         leading: true,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     pattern.render(w)?;
     Ok(())
@@ -50851,8 +50089,8 @@ fn render_subscripts(node: &SubscriptsTransport, w: &mut dyn ::sittir_core::rend
         after: node.subscript_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     subscript.render(w)?;
     Ok(())
@@ -50867,8 +50105,8 @@ fn render_dictionary_elements(node: &DictionaryElementsTransport, w: &mut dyn ::
         after: node.element_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     element.render(w)?;
     Ok(())
@@ -50878,7 +50116,7 @@ fn render_slice_group(node: &SliceGroupTransport, w: &mut dyn ::sittir_core::ren
     let expression = View::new(&node.expression, "{}");
     w.edge(::sittir_core::types::KindId(268), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_SLICE_GROUP_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_SLICE_GROUP_COLON_AFTER);
     expression.render(w)?;
     w.edge(::sittir_core::types::KindId(268), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50898,9 +50136,9 @@ fn render_except_clause_exception_as(node: &ExceptClauseExceptionAsTransport, w:
     w.edge(::sittir_core::types::KindId(270), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     value.render(w)?;
     if alias.is_present() {
-        w.site_with(node.as_keyword_before.unwrap_or(0), options::site_strength(options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_BEFORE, node.as_keyword_before.unwrap_or(0)));
+        w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_BEFORE);
         w.text("as")?;
-        w.site_with(node.as_keyword_after.unwrap_or(0), options::site_strength(options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_AFTER, node.as_keyword_after.unwrap_or(0)));
+        w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPTION_AS_AS_KEYWORD_AFTER);
         alias.render(w)?;
     }
     w.edge(::sittir_core::types::KindId(270), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -50911,9 +50149,9 @@ fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, w: &mut dyn ::sit
     let list_pattern_case_patterns = View::new(&node.list_pattern_case_patterns, "{}");
     w.edge(::sittir_core::types::KindId(271), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
-    w.site_with(node.lparen_after.unwrap_or(0), options::site_strength(options::SITE_CASE_TUPLE_PATTERN_LPAREN_AFTER, node.lparen_after.unwrap_or(0)));
+    w.site_at(options::SITE_CASE_TUPLE_PATTERN_LPAREN_AFTER);
     list_pattern_case_patterns.render(w)?;
-    w.site_with(node.rparen_before.unwrap_or(0), options::site_strength(options::SITE_CASE_TUPLE_PATTERN_RPAREN_BEFORE, node.rparen_before.unwrap_or(0)));
+    w.site_at(options::SITE_CASE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(271), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50923,9 +50161,9 @@ fn render_case_list_pattern(node: &CaseListPatternTransport, w: &mut dyn ::sitti
     let list_pattern_case_patterns = View::new(&node.list_pattern_case_patterns, "{}");
     w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
-    w.site_with(node.lbrack_after.unwrap_or(0), options::site_strength(options::SITE_CASE_LIST_PATTERN_LBRACK_AFTER, node.lbrack_after.unwrap_or(0)));
+    w.site_at(options::SITE_CASE_LIST_PATTERN_LBRACK_AFTER);
     list_pattern_case_patterns.render(w)?;
-    w.site_with(node.rbrack_before.unwrap_or(0), options::site_strength(options::SITE_CASE_LIST_PATTERN_RBRACK_BEFORE, node.rbrack_before.unwrap_or(0)));
+    w.site_at(options::SITE_CASE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(272), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50936,9 +50174,9 @@ fn render_case_as_pattern(node: &CaseAsPatternTransport, w: &mut dyn ::sittir_co
     let identifier = &node.identifier;
     w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     case_pattern.render(w)?;
-    w.site_with(node.as_keyword_before.unwrap_or(0), options::site_strength(options::SITE_CASE_AS_PATTERN_AS_KEYWORD_BEFORE, node.as_keyword_before.unwrap_or(0)));
+    w.site_at(options::SITE_CASE_AS_PATTERN_AS_KEYWORD_BEFORE);
     w.text("as")?;
-    w.site_with(node.as_keyword_after.unwrap_or(0), options::site_strength(options::SITE_CASE_AS_PATTERN_AS_KEYWORD_AFTER, node.as_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_CASE_AS_PATTERN_AS_KEYWORD_AFTER);
     identifier.render(w)?;
     w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -50953,8 +50191,8 @@ fn render_comprehension_clauses(node: &ComprehensionClausesTransport, w: &mut dy
         after: node.content_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     content.render(w)?;
     Ok(())
@@ -50969,8 +50207,8 @@ fn render_print_arguments(node: &PrintArgumentsTransport, w: &mut dyn ::sittir_c
         after: node.argument_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     argument.render(w)?;
     Ok(())
@@ -50985,8 +50223,8 @@ fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, w: &mut
         after: node.argument_separator_space_after.unwrap_or(0),
         leading: true,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     argument.render(w)?;
     Ok(())
@@ -50998,7 +50236,7 @@ fn render_print_statement_chevron(node: &PrintStatementChevronTransport, w: &mut
     w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("print")?;
     w.adjacent();
-    w.site_with(node.print_keyword_after.unwrap_or(0), options::site_strength(options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_KEYWORD_AFTER, node.print_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_PRINT_STATEMENT_CHEVRON_PRINT_KEYWORD_AFTER);
     chevron.render(w)?;
     print_chevron_arguments.render(w)?;
     w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -51009,7 +50247,7 @@ fn render_print_statement_plain(node: &PrintStatementPlainTransport, w: &mut dyn
     let print_arguments = &node.print_arguments;
     w.edge(::sittir_core::types::KindId(278), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("print")?;
-    w.site_with(node.print_keyword_after.unwrap_or(0), options::site_strength(options::SITE_PRINT_STATEMENT_PLAIN_PRINT_KEYWORD_AFTER, node.print_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_PRINT_STATEMENT_PLAIN_PRINT_KEYWORD_AFTER);
     print_arguments.render(w)?;
     w.edge(::sittir_core::types::KindId(278), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -51023,9 +50261,9 @@ fn render_parenthesized_import_list(node: &ParenthesizedImportListTransport, w: 
     let import_list = &node.import_list;
     w.edge(::sittir_core::types::KindId(280), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
-    w.site_with(node.lparen_after.unwrap_or(0), options::site_strength(options::SITE_PARENTHESIZED_IMPORT_LIST_LPAREN_AFTER, node.lparen_after.unwrap_or(0)));
+    w.site_at(options::SITE_PARENTHESIZED_IMPORT_LIST_LPAREN_AFTER);
     import_list.render(w)?;
-    w.site_with(node.rparen_before.unwrap_or(0), options::site_strength(options::SITE_PARENTHESIZED_IMPORT_LIST_RPAREN_BEFORE, node.rparen_before.unwrap_or(0)));
+    w.site_at(options::SITE_PARENTHESIZED_IMPORT_LIST_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(280), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -51205,7 +50443,7 @@ fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, w: &mut
     w.edge(::sittir_core::types::KindId(281), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if sign.is_present() {
         sign.render(w)?;
-        w.site_with(node.sign_after.unwrap_or(0), options::site_strength(options::SITE_SIMPLE_PATTERN_NEGATIVE_SIGN_AFTER, node.sign_after.unwrap_or(0)));
+        w.site_at(options::SITE_SIMPLE_PATTERN_NEGATIVE_SIGN_AFTER);
     }
     content.render(w)?;
     w.edge(::sittir_core::types::KindId(281), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -51221,8 +50459,8 @@ fn render_except_clause_exception_list(node: &ExceptClauseExceptionListTransport
         after: node.value_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     value.render(w)?;
     Ok(())
@@ -51239,9 +50477,9 @@ fn render_assignment_eq(node: &AssignmentEqTransport, w: &mut dyn ::sittir_core:
     let right = &node.right;
     w.edge(::sittir_core::types::KindId(284), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
-    w.site_with(node.eq_before.unwrap_or(0), options::site_strength(options::SITE_ASSIGNMENT_EQ_EQ_BEFORE, node.eq_before.unwrap_or(0)));
+    w.site_at(options::SITE_ASSIGNMENT_EQ_EQ_BEFORE);
     w.text("=")?;
-    w.site_with(node.eq_after.unwrap_or(0), options::site_strength(options::SITE_ASSIGNMENT_EQ_EQ_AFTER, node.eq_after.unwrap_or(0)));
+    w.site_at(options::SITE_ASSIGNMENT_EQ_EQ_AFTER);
     right.render(w)?;
     w.edge(::sittir_core::types::KindId(284), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -51252,9 +50490,9 @@ fn render_assignment_type(node: &AssignmentTypeTransport, w: &mut dyn ::sittir_c
     let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(285), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_ASSIGNMENT_TYPE_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_ASSIGNMENT_TYPE_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_ASSIGNMENT_TYPE_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_ASSIGNMENT_TYPE_COLON_AFTER);
     type_.render(w)?;
     w.edge(::sittir_core::types::KindId(285), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -51266,13 +50504,13 @@ fn render_assignment_typed(node: &AssignmentTypedTransport, w: &mut dyn ::sittir
     let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     left.render(w)?;
-    w.site_with(node.colon_before.unwrap_or(0), options::site_strength(options::SITE_ASSIGNMENT_TYPED_COLON_BEFORE, node.colon_before.unwrap_or(0)));
+    w.site_at(options::SITE_ASSIGNMENT_TYPED_COLON_BEFORE);
     w.text(":")?;
-    w.site_with(node.colon_after.unwrap_or(0), options::site_strength(options::SITE_ASSIGNMENT_TYPED_COLON_AFTER, node.colon_after.unwrap_or(0)));
+    w.site_at(options::SITE_ASSIGNMENT_TYPED_COLON_AFTER);
     type_.render(w)?;
-    w.site_with(node.eq_before.unwrap_or(0), options::site_strength(options::SITE_ASSIGNMENT_TYPED_EQ_BEFORE, node.eq_before.unwrap_or(0)));
+    w.site_at(options::SITE_ASSIGNMENT_TYPED_EQ_BEFORE);
     w.text("=")?;
-    w.site_with(node.eq_after.unwrap_or(0), options::site_strength(options::SITE_ASSIGNMENT_TYPED_EQ_AFTER, node.eq_after.unwrap_or(0)));
+    w.site_at(options::SITE_ASSIGNMENT_TYPED_EQ_AFTER);
     right.render(w)?;
     w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -51287,8 +50525,8 @@ fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, w
         after: node.expression_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     expression.render(w)?;
     Ok(())
@@ -51303,8 +50541,8 @@ fn render_with_clause_bare(node: &WithClauseBareTransport, w: &mut dyn ::sittir_
         after: node.with_item_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     with_item.render(w)?;
     Ok(())
@@ -51314,9 +50552,9 @@ fn render_with_clause_paren(node: &WithClauseParenTransport, w: &mut dyn ::sitti
     let with_clause_with_items = &node.with_clause_with_items;
     w.edge(::sittir_core::types::KindId(289), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
-    w.site_with(node.lparen_after.unwrap_or(0), options::site_strength(options::SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER, node.lparen_after.unwrap_or(0)));
+    w.site_at(options::SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER);
     with_clause_with_items.render(w)?;
-    w.site_with(node.rparen_before.unwrap_or(0), options::site_strength(options::SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE, node.rparen_before.unwrap_or(0)));
+    w.site_at(options::SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(289), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -51331,8 +50569,8 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, w: &mut dyn ::sitti
         after: node.alternative_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: 0,
-        tail: 0,
+        head: None,
+        tail: None,
     };
     w.edge(::sittir_core::types::KindId(290), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.indent();
@@ -51376,7 +50614,7 @@ fn render_comparison_operator_comparator(node: &ComparisonOperatorComparatorTran
     let primary_expression = &node.primary_expression;
     w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     operators.render(w)?;
-    w.site_with(node.operators_after.unwrap_or(0), options::site_strength(options::SITE_COMPARISON_OPERATOR_COMPARATOR_OPERATORS_AFTER, node.operators_after.unwrap_or(0)));
+    w.site_at(options::SITE_COMPARISON_OPERATOR_COMPARATOR_OPERATORS_AFTER);
     primary_expression.render(w)?;
     w.edge(::sittir_core::types::KindId(294), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
@@ -51386,7 +50624,7 @@ fn render_yield_from_clause(node: &YieldFromClauseTransport, w: &mut dyn ::sitti
     let expression = &node.expression;
     w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("from")?;
-    w.site_with(node.from_keyword_after.unwrap_or(0), options::site_strength(options::SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER, node.from_keyword_after.unwrap_or(0)));
+    w.site_at(options::SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER);
     expression.render(w)?;
     w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())

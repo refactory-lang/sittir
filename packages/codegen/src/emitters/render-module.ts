@@ -72,6 +72,7 @@ import {
 } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import {
+	carriesPerNodeValue,
 	edgeKindId,
 	edgeSitesOf,
 	isKindEdge,
@@ -890,8 +891,8 @@ function buildTypedTemplateBody(
 			lines.push(`        after: ${spaced(spacing.after)},`);
 			lines.push(`        leading: ${leadingExpr},`);
 			lines.push(`        trailing: ${trailingExpr},`);
-			lines.push(`        head: ${spaced(spacing.head)},`);
-			lines.push(`        tail: ${spaced(spacing.tail)},`);
+			lines.push(`        head: ${spacing.head ?? 'None'},`);
+			lines.push(`        tail: ${spacing.tail ?? 'None'},`);
 			lines.push(`    };`);
 			continue;
 		}
@@ -1054,7 +1055,6 @@ export function emitRenderModule(
 			'use ::sittir_core::options::Edged as _;',
 			'use super::options;',
 			'',
-			armSeamSupport(),
 			renderTransportSupport(nodeMap, structs, meta, generatedIdTables, plan)
 		].join('\n') + '\n';
 	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries);
@@ -1218,70 +1218,6 @@ function pruneUnreferencedBridges(rendered: string): string {
 		i++;
 	}
 	return out.join('\n');
-}
-
-function armSeamSupport(): string {
-	return [
-		'#[derive(Debug, Clone, Copy, Default)]',
-		'pub struct LiteralSeams {',
-		'    pub before: Option<u16>,',
-		'    pub after: Option<u16>,',
-		'}',
-		'',
-		'pub trait ArmSeams {',
-		'    fn arm_seam_sites(&self) -> Option<(usize, usize)>;',
-		'}',
-		'',
-		'#[derive(Debug, Clone)]',
-		'pub struct Seamed<T> {',
-		'    pub value: T,',
-		'    pub seam_before: Option<u16>,',
-		'    pub seam_after: Option<u16>,',
-		'}',
-		'',
-		'impl<T> Seamed<T> {',
-		'    pub fn new(value: T) -> Self {',
-		'        Self { value, seam_before: None, seam_after: None }',
-		'    }',
-		'}',
-		'',
-		'impl<T: ::sittir_core::view::KindOf> ::sittir_core::view::KindOf for Seamed<T> {',
-		'    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {',
-		'        self.value.kind_in(kinds)',
-		'    }',
-		'}',
-		'',
-		`impl<T: ArmSeams> ${PREPARE_MOD}::Prepare for Seamed<T> {`,
-		`    ${PREPARE_SIG}`,
-		'        if let Some((before, after)) = self.value.arm_seam_sites() {',
-		'            self.seam_before.get_or_insert(ctx.options.spacing[before]);',
-		'            self.seam_after.get_or_insert(ctx.options.spacing[after]);',
-		'        }',
-		'        Ok(())',
-		'    }',
-		'}',
-		'',
-		'impl<T: ::sittir_core::render::Render + ArmSeams> ::sittir_core::render::Render for Seamed<T> {',
-		'    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {',
-		'        let (before, after) = self.value.arm_seam_sites().map_or((0u8, 0u8), |(b, a)| (options::site_strength(b, self.seam_before.unwrap_or(0)), options::site_strength(a, self.seam_after.unwrap_or(0))));',
-		'        w.site_with(self.seam_before.unwrap_or(0), before);',
-		'        self.value.render(w)?;',
-		'        w.site_with(self.seam_after.unwrap_or(0), after);',
-		'        Ok(())',
-		'    }',
-		'}',
-		'',
-		'#[cfg(feature = "napi-bindings")]',
-		'impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue for Seamed<T> {',
-		'    unsafe fn from_napi_value(',
-		'        env: ::napi::sys::napi_env,',
-		'        napi_val: ::napi::sys::napi_value,',
-		'    ) -> ::napi::Result<Self> {',
-		'        Ok(Self::new(unsafe { T::from_napi_value(env, napi_val)? }))',
-		'    }',
-		'}',
-		''
-	].join('\n');
 }
 
 function commonRustUseImports(hasNumericDispatch: boolean): string {
@@ -2101,19 +2037,11 @@ function literalArmSeamSites(
 	return out;
 }
 
-function literalSeamFill(seams: LiteralArmSeams): string[] {
-	return (['before', 'after'] as const).flatMap((side) =>
-		seams[side] === undefined ? [] : [`t.${side}.get_or_insert(ctx.options.spacing[options::${seams[side]}]);`]
-	);
-}
-
 function literalSeamedArm(enumName: string, variant: string, write: string, seams: LiteralArmSeams): string[] {
 	const site = (side: 'before' | 'after'): string[] =>
-		seams[side] === undefined
-			? []
-			: [`                w.site_with(seams.${side}.unwrap_or(0), options::site_strength(options::${seams[side]}, seams.${side}.unwrap_or(0)));`];
+		seams[side] === undefined ? [] : [`                w.site_at(options::${seams[side]});`];
 	return [
-		`            ${enumName}::${variant}(seams) => {`,
+		`            ${enumName}::${variant} => {`,
 		...site('before'),
 		`                let written = ${write};`,
 		'                written?;',
@@ -2153,7 +2081,7 @@ function emitPerSlotChildEnum(
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
-			lines.push(`    ${variant}${literalSeams.has(variant) ? '(LiteralSeams)' : ''},`);
+			lines.push(`    ${variant},`);
 			literalVariants.push(variant);
 		}
 	}
@@ -2163,11 +2091,7 @@ function emitPerSlotChildEnum(
 	lines.push(
 		...prepareEnumImpl(enumName, [
 			...validKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
-			...literalVariants.map((variant) => ({
-				variant,
-				payload: literalSeams.has(variant),
-				...(literalSeams.has(variant) ? { fill: literalSeamFill(literalSeams.get(variant)!) } : {})
-			})),
+			...literalVariants.map((variant) => ({ variant, payload: false })),
 			...(admitsVerbatim ? [{ variant: 'Verbatim', payload: true }] : [])
 		])
 	);
@@ -2180,7 +2104,7 @@ function emitPerSlotChildEnum(
 					const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 					if (variant === undefined) return [];
 					const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
-					return [{ variant, payload: literalSeams.has(variant), ids: id === undefined ? [] : [id] }];
+					return [{ variant, payload: false, ids: id === undefined ? [] : [id] }];
 				})
 			],
 			admitsVerbatim
@@ -2200,7 +2124,7 @@ function emitPerSlotChildEnum(
 			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
 			emittedIds.add(id);
-			kindIdArms.push(`                ${id} => Ok(Self::${variant}${literalSeams.has(variant) ? '(LiteralSeams::default())' : ''}),`);
+			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
 		}
 		for (const { kind, node, concreteName } of kindIdStoredFirst(validKinds, (v) => v.node)) {
 			const variant = rustTypeIdent(node.typeName);
@@ -2317,7 +2241,7 @@ function emitPerSlotChildEnum(
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
-			lines.push(`        ${enumName}::${variant}${literalSeams.has(variant) ? '(_)' : ''} => AnyTransport::${variant},`);
+			lines.push(`        ${enumName}::${variant} => AnyTransport::${variant},`);
 		}
 	}
 	if (admitsVerbatim) lines.push(`        ${enumName}::Verbatim(inner) => AnyTransport::Verbatim(inner),`);
@@ -2639,17 +2563,15 @@ const PREPARE_SIG = `fn prepare(&mut self, ctx: &${PREPARE_MOD}::RenderContext<'
 
 function prepareEnumImpl(
 	enumName: string,
-	arms: readonly { readonly variant: string; readonly payload: boolean; readonly fill?: readonly string[] }[]
+	arms: readonly { readonly variant: string; readonly payload: boolean }[]
 ): string[] {
 	const anyPayload = arms.some((a) => a.payload);
 	return [
 		`impl ${PREPARE_MOD}::Prepare for ${enumName} {`,
 		`    ${anyPayload ? PREPARE_SIG : PREPARE_SIG.replace('ctx:', '_ctx:')}`,
 		`        match self {`,
-		...arms.flatMap((a) =>
-			a.fill !== undefined
-				? [`            ${enumName}::${a.variant}(t) => {`, ...a.fill.map((line) => `                ${line}`), `                Ok(())`, `            }`]
-				: [a.payload ? `            ${enumName}::${a.variant}(t) => t.prepare(ctx),` : `            ${enumName}::${a.variant} => Ok(()),`]
+		...arms.map((a) =>
+			a.payload ? `            ${enumName}::${a.variant}(t) => t.prepare(ctx),` : `            ${enumName}::${a.variant} => Ok(()),`
 		),
 		`        }`,
 		`    }`,
@@ -2774,11 +2696,13 @@ function spacingFieldExprs(
 	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName && site.side !== 'seam');
 	const expr = (site: SpacingSite | undefined): string | undefined =>
 		site === undefined ? undefined : `node.${rustFieldIdent(site.fieldIdent)}`;
+	const flank = (site: SpacingSite | undefined): string | undefined =>
+		site === undefined ? undefined : `Some(options::${site.constName})`;
 	return {
 		before: expr(sites.find((site) => site.side === 'before')),
 		after: expr(sites.find((site) => site.side === 'after' || site.side === 'gap')),
-		head: expr(sites.find((site) => site.side === 'start')),
-		tail: expr(sites.find((site) => site.side === 'end'))
+		head: flank(sites.find((site) => site.side === 'start')),
+		tail: flank(sites.find((site) => site.side === 'end'))
 	};
 }
 
@@ -2907,7 +2831,7 @@ function prepareStructImpl(
 		if (kindEdgeSidesOf(plan, node).size > 0) body.push('        ::sittir_core::prepare::prepare_edges(self, ctx);');
 		body.push(...listGapClassification(plan, node));
 		for (const site of synthesizedSpacingSites(plan, node)) {
-			if (isKindEdge(site)) continue;
+			if (!carriesPerNodeValue(site)) continue;
 			body.push(`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.spacing[options::${site.constName}]);`);
 		}
 		body.push(...seatLoops(plan, node, nodeMap));
@@ -3056,7 +2980,7 @@ function renderTransportDataStruct(
 				}
 			}
 			for (const site of synthesizedSpacingSites(plan, node)) {
-				if (isKindEdge(site)) continue;
+				if (!carriesPerNodeValue(site)) continue;
 				lines.push(
 					`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(site.wireKey)}))]`,
 					`    pub ${rustFieldIdent(site.fieldIdent)}: Option<u16>,`
@@ -3645,22 +3569,6 @@ function armSeamPairsOf(plan: RenderPlan, node: AssembledEnum): Map<string, { be
 	return out;
 }
 
-function armSeamsImpl(valueName: string, values: readonly string[], pairs: ReadonlyMap<string, { before: string; after: string }>): string[] {
-	const lines = [
-		`impl ArmSeams for ${valueName} {`,
-		`    fn arm_seam_sites(&self) -> Option<(usize, usize)> {`,
-		`        match self {`
-	];
-	for (const v of values) {
-		const pair = pairs.get(v);
-		if (pair === undefined) continue;
-		lines.push(`            Self::${literalToVariantName(v)} => Some((options::${pair.before}, options::${pair.after})),`);
-	}
-	if (pairs.size < values.length) lines.push(`            _ => None,`);
-	lines.push(`        }`, `    }`, `}`, '');
-	return lines;
-}
-
 function renderEnumType(
 	node: AssembledEnum,
 	hasNapi: boolean,
@@ -3669,7 +3577,7 @@ function renderEnumType(
 ): string[] {
 	const publicName = enumTypeName(node);
 	const seamPairs = armSeamPairsOf(plan, node);
-	const enumName = seamPairs.size === 0 ? publicName : `${publicName.replace(/Enum$/, '')}Arm`;
+	const enumName = publicName;
 	const values = node.values;
 	const lines: string[] = [];
 
@@ -3792,21 +3700,26 @@ function renderEnumType(
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
 	);
-	lines.push(`        w.text(match self {`);
-	for (const v of values) {
-		const variant = literalToVariantName(v);
-		lines.push(`            Self::${variant} => ${JSON.stringify(v)},`);
+	if (seamPairs.size === 0) {
+		lines.push(`        w.text(match self {`);
+		for (const v of values) lines.push(`            Self::${literalToVariantName(v)} => ${JSON.stringify(v)},`);
+		lines.push(`        })`);
+	} else {
+		lines.push(`        match self {`);
+		for (const v of values) {
+			const pair = seamPairs.get(v);
+			const text = `w.text(${JSON.stringify(v)})`;
+			lines.push(
+				pair === undefined
+					? `            Self::${literalToVariantName(v)} => ${text},`
+					: `            Self::${literalToVariantName(v)} => { w.site_at(options::${pair.before}); ${text}?; w.site_at(options::${pair.after}); Ok(()) }`
+			);
+		}
+		lines.push(`        }`);
 	}
-	lines.push(`        })`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-
-	if (seamPairs.size > 0) {
-		lines.push(...armSeamsImpl(enumName, values, seamPairs));
-		lines.push(`pub type ${publicName} = Seamed<${enumName}>;`);
-		lines.push('');
-	}
 
 	return lines;
 }

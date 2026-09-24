@@ -179,6 +179,13 @@ describe('renderOptionsRs', () => {
 		expect(src).toContain('        sites: SITE_SPECS,');
 	});
 
+	it('gives a list flank declared strength, the strength the list view writes it at', () => {
+		const flank: SitePreference = { kind: 'arguments', slot: 'elements', address: 'elements_start', label: 'start', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'start' };
+		const plan = planRenderOptions([...sites, flank], kindEntries, whitespaceText);
+		const row = plan.spacingSites.find((s) => s.kind === 'arguments' && s.side === 'start');
+		expect(row?.strength).toBe(2);
+	});
+
 	it("exposes each site's admitted arms to the prepare walk", () => {
 		const plan = planRenderOptions(sites, kindEntries, whitespaceText);
 		const addresses = deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries as never), (() => []) as never);

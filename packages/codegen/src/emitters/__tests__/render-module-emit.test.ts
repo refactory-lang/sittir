@@ -383,7 +383,7 @@ describe('render options on transports', () => {
 		const ownerFill = ownerImpl.slice(0, ownerImpl.indexOf('\n}\n'));
 		expect(ownerFill).toContain('self.formal_parameters_elements.prepare(ctx)?;');
 		expect(ownerFill).not.toContain('SEPARATOR_SPACE');
-		expect(ownerFill).toContain('self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_LPAREN_AFTER]);');
+		expect(ownerFill).not.toContain('lparen_after');
 	});
 
 	it('the list view is built from the transport fields and never from a separator literal', async () => {
@@ -396,21 +396,43 @@ describe('render options on transports', () => {
 		expect(src).not.toMatch(/ListView \{[^}]*\bseparator: /);
 	});
 
-	it('a token seam is a transport field, filled from its site, and resolved through a direct site call', async () => {
+	it('a token seam has no transport field and is written from the resolved options at its site', async () => {
 		const src = await getTypescriptTransportRs();
 		const body = extractStructBody(src, 'ArgumentsTransport');
-		expect(body).toContain('napi(js_name = "_lparen_after")');
-		expect(body).toContain('pub lparen_after: Option<u16>,');
+		expect(body).not.toContain('napi(js_name = "_lparen_after")');
+		expect(body).not.toContain('pub lparen_after: Option<u16>,');
+		expect(body).not.toMatch(/pub \w+_(start|end): Option<u16>,/);
 		const fillImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsTransport {'));
-		expect(fillImpl.slice(0, fillImpl.indexOf('\n}\n'))).toContain('self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_LPAREN_AFTER]);');
+		expect(fillImpl.slice(0, fillImpl.indexOf('\n}\n'))).not.toContain('lparen_after');
 		const fn = src.slice(src.indexOf('fn render_arguments('));
 		const render = fn.slice(0, fn.indexOf('\n}\n'));
-		expect(render).not.toContain('let lparen_after');
-		expect(render).toMatch(/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, node\.edges\.and_then\(\|e\| e\.before\)\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site_with\(node\.lparen_after\.unwrap_or\(0\), options::site_strength\(options::SITE_ARGUMENTS_LPAREN_AFTER, node\.lparen_after\.unwrap_or\(0\)\)\);/);
+		expect(render).toMatch(/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, node\.edges\.and_then\(\|e\| e\.before\)\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site_at\(options::SITE_ARGUMENTS_LPAREN_AFTER\);/);
 		expect(src).toContain('    w.finish()?;');
 		const binary = extractStructBody(src, 'BinaryExpressionTransport');
-		expect(binary).toContain('pub operator_before: Option<u16>,');
-		expect(binary).toContain('pub operator_after: Option<u16>,');
+		expect(binary).not.toContain('pub operator_before: Option<u16>,');
+		expect(binary).not.toContain('pub operator_after: Option<u16>,');
+		expect(src).not.toContain('pub struct Seamed<T>');
+		expect(src).not.toContain('LiteralSeams');
+		expect(src).not.toContain('ArmSeams');
+		expect(src).not.toContain('options::site_strength(');
+		expect(src).toMatch(/head: (Some\(options::SITE_\w+\)|None),/);
+	});
+
+	it('a literal arm of a per-slot child enum writes its owner-kind seam sites around the literal from the resolved options', async () => {
+		const src = await getTypescriptTransportRs();
+		const enumSrc = src.slice(src.indexOf('pub enum LexicalDeclarationTerminatorTransportSlot {'));
+		expect(enumSrc.slice(0, enumSrc.indexOf('\n}\n'))).toMatch(/Literal3_73_65_6d_69,/);
+		const render = src.slice(src.indexOf('impl ::sittir_core::render::Render for LexicalDeclarationTerminatorTransportSlot {'));
+		expect(render.slice(0, render.indexOf('\n}\n'))).toMatch(
+			/Literal3_73_65_6d_69 => \{\s*w\.site_at\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE\);\s*let written = w\.text\(";"\);/
+		);
+	});
+
+	it('the render entry prepares the tree through the context before dispatch', async () => {
+		const src = await getTypescriptTransportRs();
+		expect(src).toContain('pub fn render_transport_parts(');
+		expect(src).toContain("    ctx: &::sittir_core::prepare::RenderContext<'_>,");
+		expect(src).toContain('    ::sittir_core::prepare::Prepare::prepare(&mut transport, ctx)?;');
 	});
 
 	it('every transport carries base edges; a kind edge is prepared from its edge row and written through the sink', async () => {
@@ -434,24 +456,6 @@ describe('render options on transports', () => {
 		expect(src).not.toMatch(/t\.\w+_after\.get_or_insert/);
 	});
 
-	it('a literal arm of a per-slot child enum carries its owner-kind seam sites, fills them, and writes them around the literal', async () => {
-		const src = await getTypescriptTransportRs();
-		const enumSrc = src.slice(src.indexOf('pub enum LexicalDeclarationTerminatorTransportSlot {'));
-		expect(enumSrc.slice(0, enumSrc.indexOf('\n}\n'))).toMatch(/Literal3_73_65_6d_69\(LiteralSeams\),/);
-		const prepare = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for LexicalDeclarationTerminatorTransportSlot {'));
-		expect(prepare.slice(0, prepare.indexOf('\n}\n'))).toContain('t.before.get_or_insert(ctx.options.spacing[options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE]);');
-		const render = src.slice(src.indexOf('impl ::sittir_core::render::Render for LexicalDeclarationTerminatorTransportSlot {'));
-		expect(render.slice(0, render.indexOf('\n}\n'))).toMatch(
-			/Literal3_73_65_6d_69\(seams\) => \{\s*w\.site_with\(seams\.before\.unwrap_or\(0\), options::site_strength\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE, seams\.before\.unwrap_or\(0\)\)\);\s*let written = w\.text\(";"\);/
-		);
-	});
-
-	it('the render entry prepares the tree through the context before dispatch', async () => {
-		const src = await getTypescriptTransportRs();
-		expect(src).toContain('pub fn render_transport_parts(');
-		expect(src).toContain("    ctx: &::sittir_core::prepare::RenderContext<'_>,");
-		expect(src).toContain('    ::sittir_core::prepare::Prepare::prepare(&mut transport, ctx)?;');
-	});
 });
 
 
@@ -557,7 +561,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		const transportRs = await getRustTemplatesRs();
 		const block = transportRs.slice(transportRs.indexOf('fn render_block('), transportRs.indexOf('fn render_block(') + 2000);
 		expect(block).toMatch(/after: node\.statements_separator_space\.unwrap_or\(0\),/);
-		expect(block).toMatch(/w\.site_with\(node\.lbrace_after\.unwrap_or\(0\), options::site_strength\(options::SITE_\w+_LBRACE_AFTER, node\.lbrace_after\.unwrap_or\(0\)\)\);/);
+		expect(block).toMatch(/w\.site_at\(options::SITE_\w+_LBRACE_AFTER\);/);
 		expect(block).toContain('w.text("{")?;');
 		expect(block).toContain('statements.render(w)?;');
 	});
