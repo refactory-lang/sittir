@@ -4,7 +4,7 @@
 //! from the resolved options. The context is an argument at every level;
 //! nothing ambient carries the trees or the table.
 
-use crate::options::ResolvedOptions;
+use crate::options::{Edged, ResolvedOptions, Side};
 use crate::render::{CoordinateError, SourceTable};
 use crate::slot::SlotValue;
 
@@ -12,6 +12,18 @@ use crate::slot::SlotValue;
 pub struct RenderContext<'a> {
     pub options: &'a ResolvedOptions,
     pub sources: &'a dyn SourceTable,
+}
+
+/// Fill a transport's unset base edges from its kind's edge row; an edge the wire already set keeps its arm.
+pub fn prepare_edges<T: Edged + ?Sized>(t: &mut T, ctx: &RenderContext<'_>) {
+    let kind = t.kind_id();
+    let edges = t.edges_mut();
+    if edges.before.is_none() {
+        edges.before = ctx.options.edge_arm(kind, Side::Before, None).map(|a| a.arm);
+    }
+    if edges.after.is_none() {
+        edges.after = ctx.options.edge_arm(kind, Side::After, None).map(|a| a.arm);
+    }
 }
 
 pub trait Prepare {
