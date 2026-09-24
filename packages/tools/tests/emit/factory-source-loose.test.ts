@@ -193,6 +193,11 @@ describe('loose surface printing', () => {
 			}).source
 		).toBe('ir.holder2({\n\targs: ["x", "y"],\n})');
 	});
+	it("loosens the slots of a seat config that sets more than its required slot", () => {
+		expect(
+			map.holder2!({ args: map.args!({ attrs: map.identifier!('a'), expression: map.identifier!('x') }) }).source
+		).toBe('ir.holder2({\n\targs: [{\n\t\tattrs: "a",\n\t\texpression: "x",\n\t}],\n})');
+	});
 	it("tests a text under a transparent wrapper against the wrapper's content slot before the transitive set", () => {
 		// `field_identifier` collides with `identifier` transitively, but the
 		// content slot admits `identifier` alone, which is where the runtime resolves.

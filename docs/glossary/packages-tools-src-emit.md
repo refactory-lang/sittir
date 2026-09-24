@@ -38,6 +38,10 @@ stamps when none is given), `listElementKinds` (each list's element kinds,
 for the elements the runtime resolves one by one) and `hoistedKinds`. `nested` is the caller's
 choice for a nested compound: its builder call, or a config object.
 
+The per-slot tables (`slotKinds`, `slotRequired`, `slotMultiple`, `slotDefaults`, `slotStorage`) are keyed by a slot's
+config key, `snakeToCamel` of its name: the key a printed config names it with. A pluralized repeated slot's accessor
+(`attributeItems`) is not that key (`attributeItem` is), so keying by the accessor left every such slot unloosened.
+
 ### `packages/tools/src/emit/factory-source.ts::PrintedFacts`
 
 What a printed node was made from, kept beside its source so the slot it
@@ -216,6 +220,13 @@ the strict factory builds the same node without it.
  * it itself, on the strict surface as on the loose one.
  */
 ```
+
+### `packages/tools/src/emit/factory-source.ts::wrapSeatElement`
+
+A seated element that stayed a plain config after `hoistSeatElement`: its keys are the seat's slots, so the seat's rules
+(`wrapTextLeaves`, and through it `loosenAt`) decide their spelling, the way a seated config inside a parent's config is
+already treated. The seat is the one element seat whose slots hold every key the config sets; with none or several
+matching the config is left as it is.
 
 ### `packages/tools/src/emit/factory-source.ts::PrintContext.source`
 

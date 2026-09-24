@@ -354,6 +354,20 @@ function hoistSeatElement(listKind: string, item: unknown, ctx: PrintContext): u
 	return item;
 }
 
+/**
+ * A seated element that stayed a plain config after hoisting: its keys are
+ * the seat's slots, so the seat's rules decide their spelling. The seat is
+ * the one element seat whose slots hold every key the config sets.
+ */
+function wrapSeatElement(listKind: string, item: unknown, ctx: PrintContext): unknown {
+	if (!isPlainObject(item) || '$type' in item) return item;
+	const keys = Object.keys(item).filter((k) => item[k] !== undefined);
+	const seats = Object.values(ctx.seats?.[listKind]?.['*'] ?? {}).filter(
+		(seat) => seat.shape === 'elements' && keys.every((k) => k in (ctx.slotKinds?.[seat.kind] ?? {}))
+	);
+	return seats.length === 1 ? wrapTextLeaves(seats[0]!.kind, item, ctx) : item;
+}
+
 function soleSlotKind(kind: string, ctx: PrintContext): string | undefined {
 	const forwarded = ctx.loose!.forwardsTo[kind];
 	if (forwarded !== undefined) return forwarded;
@@ -590,7 +604,9 @@ export function printingFactoryMap(
 				case 'elements': {
 					const [first, ...rest] = args;
 					const hasOptions = isListOptions(first);
-					const items = (hasOptions ? rest : args).map((a) => hoistSeatElement(kind, wrapDirectArg(kind, a, ctx), ctx));
+					const items = (hasOptions ? rest : args).map((a) =>
+						wrapSeatElement(kind, hoistSeatElement(kind, wrapDirectArg(kind, a, ctx), ctx), ctx)
+					);
 					const elements = items.map((a) => printValue(looseListElement(kind, a, ctx), ctx, 0));
 					const options = hasOptions ? first : undefined;
 					const head =
