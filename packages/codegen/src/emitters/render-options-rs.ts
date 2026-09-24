@@ -420,6 +420,44 @@ interface EdgeSiteRow {
 	readonly after?: EdgeSlotRow;
 }
 
+export interface SeatTable {
+	readonly name: string;
+	readonly rows: readonly { readonly kindId: number; readonly site: string }[];
+}
+
+export function seatTableName(kind: string, slot: string): string {
+	return `SEATS_${screaming(kind)}_${screaming(slot)}`;
+}
+
+export function seatEdgeSide(seat: SpacingSite): 'before' | 'after' {
+	const edge = seat.seat === undefined ? undefined : parseSeamLabel(seat.seat.field);
+	if (edge === undefined || edge.token !== seat.seat!.kind) {
+		throw new Error(`seated site '${seat.address}' writes '${seat.seat?.field}', which is not the seated kind's edge`);
+	}
+	return edge.side;
+}
+
+export function seatTablesOf(plan: RenderOptionsPlan, kindEntries: readonly IdEntry[]): SeatTable[] {
+	const bySlot = new Map<string, { name: string; rows: Map<number, string> }>();
+	for (const site of plan.spacingSites) {
+		if (site.seat === undefined) continue;
+		if (seatEdgeSide(site) !== 'after') {
+			throw new Error(`seated site '${site.address}' fills the element's before edge; a sibling gap is the element's after edge`);
+		}
+		const id = edgeKindId(kindEntries, site.seat.kind);
+		if (id === undefined) throw new Error(`seated site '${site.address}' seats '${site.seat.kind}', which has no kind id`);
+		const name = seatTableName(site.kind, site.slot);
+		const table = bySlot.get(name) ?? { name, rows: new Map<number, string>() };
+		if (table.rows.has(id)) throw new Error(`${name} seats kind id ${id} twice (at '${site.address}')`);
+		table.rows.set(id, site.constName);
+		bySlot.set(name, table);
+	}
+	return [...bySlot.values()].map(({ name, rows }) => ({
+		name,
+		rows: [...rows.entries()].sort(([a], [b]) => a - b).map(([kindId, site]) => ({ kindId, site }))
+	}));
+}
+
 export function carriesPerNodeValue(site: SpacingSite): boolean {
 	return site.role === 'separator' || site.side === 'before' || site.side === 'after' || site.side === 'gap';
 }
@@ -505,6 +543,11 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[');
 	for (const s of plan.spacingSites) L.push(`    ::sittir_core::options::SiteSpec { default_arm: ${s.defaultId}, strength: ${s.strength} },`);
 	L.push('];', '');
+	for (const table of seatTablesOf(plan, kindEntries)) {
+		L.push(`pub static ${table.name}: &[(u16, usize)] = &[`);
+		for (const row of table.rows) L.push(`    (${row.kindId}, ${row.site}),`);
+		L.push('];', '');
+	}
 	L.push('pub fn defaults() -> ResolvedOptions {');
 	L.push('    ResolvedOptions {');
 	L.push('        spacing: SPACING_SITES.iter().map(|s| s.3).collect(),');

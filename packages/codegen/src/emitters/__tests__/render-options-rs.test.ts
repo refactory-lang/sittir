@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SEAM_DECLARED, planRenderOptions, renderOptionsRs } from '../render-options-rs.ts';
+import { SEAM_DECLARED, planRenderOptions, renderOptionsRs, seatTableName, seatTablesOf } from '../render-options-rs.ts';
 import { deriveAddressTables, kindIdArmType } from '../options.ts';
 import type { SitePreference } from '../../compiler/model/site-preferences.ts';
 
@@ -184,6 +184,27 @@ describe('renderOptionsRs', () => {
 		const plan = planRenderOptions([...sites, flank], kindEntries, whitespaceText);
 		const row = plan.spacingSites.find((s) => s.kind === 'arguments' && s.side === 'start');
 		expect(row?.strength).toBe(SEAM_DECLARED);
+	});
+
+	it('builds a seat table per (kind, slot) sorted by the seated kind id, and fails on a seat whose kind has no id', () => {
+		const seat = (child: string): SitePreference => ({
+			kind: 'arguments',
+			slot: 'elements',
+			address: `elements_${child}_after`,
+			label: `${child}_after`,
+			arms: SPACING,
+			defaultArm: 'space',
+			source: 'spacing',
+			seat: { kind: child, field: `${child}_after` }
+		});
+		const entries = [...kindEntries, { kind: 'zeta', member: 'Zeta', id: 300 }, { kind: 'alpha', member: 'Alpha', id: 200 }];
+		const plan = planRenderOptions([...sites, seat('zeta'), seat('alpha')], entries, whitespaceText);
+		const tables = seatTablesOf(plan, entries);
+		expect(tables).toHaveLength(1);
+		expect(tables[0]!.name).toBe(seatTableName('arguments', 'elements'));
+		expect(tables[0]!.rows.map((r) => r.kindId)).toEqual([200, 300]);
+		const missing = planRenderOptions([...sites, seat('nokind')], entries, whitespaceText);
+		expect(() => seatTablesOf(missing, entries)).toThrow(/nokind/);
 	});
 
 	it("exposes each site's admitted arms to the prepare walk", () => {

@@ -74,6 +74,7 @@ import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import {
 	carriesPerNodeValue,
 	edgeKindId,
+	seatTableName,
 	edgeSitesOf,
 	isKindEdge,
 	planRenderOptions,
@@ -1131,6 +1132,7 @@ function renderTransportSupport(
 	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) =>
 		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey, kindEntries, plan)
 	);
+	const seatTargetLines = renderSeatTargets(nodes, nodeMap, plan, kindEntries, usedSupertypeNames, perSlotEnums);
 
 	return pruneUnreferencedBridges(
 		[
@@ -1143,6 +1145,7 @@ function renderTransportSupport(
 			...(supertypeEnumLines.length > 0 ? [...supertypeEnumLines, ''] : []),
 			...(perSlotEnumLines.length > 0 ? [...perSlotEnumLines, ''] : []),
 			...nodes.flatMap((node) => renderTransportStruct(node, nodeMap, generatedIdTables !== undefined, kindEntries, plan)),
+			...seatTargetLines,
 			'',
 			'',
 			...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames, kidByKind, plan, kindEntries),
@@ -2715,119 +2718,156 @@ function spacingFieldExprs(
 	};
 }
 
-function seatEdgeSide(seat: SpacingSite): 'before' | 'after' {
-	const edge = seat.seat === undefined ? undefined : parseSeamLabel(seat.seat.field);
-	if (edge === undefined || edge.token !== seat.seat!.kind) {
-		throw new Error(`seated site '${seat.address}' writes '${seat.seat?.field}', which is not the seated kind's edge`);
-	}
-	return edge.side;
+type SeatReach = (kind: string) => boolean;
+
+const seatReachCache = new WeakMap<RenderPlan, SeatReach>();
+
+function wrapperSlotOf(node: AssembledNode): AssembledNonterminal | undefined {
+	if (!(node instanceof AssembledPolymorph) || node instanceof AssembledSupertype) return undefined;
+	const model = renderSlotModelOf(node);
+	const slot = model.named[0] ?? model.unnamed[0];
+	return slot?.name === undefined ? undefined : slot;
 }
 
-function seatVariantArms(
-	field: AssembledNonterminal,
-	seats: ReadonlyMap<string, SpacingSite>,
+function slotElementsReach(slot: AssembledNonterminal, nodeMap: NodeMap, reaches: SeatReach): boolean {
+	const kinds = kindsOf(slot);
+	const cls = classifySlotForEmit(kinds, nodeMap);
+	if (cls.tag === 'concrete') return reaches(cls.kind);
+	if (cls.tag === 'supertype') {
+		const kind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
+		return kind !== undefined && reaches(kind);
+	}
+	return expandConcreteTransportKinds(kinds, nodeMap).some(({ kind }) => reaches(kind));
+}
+
+function seatedKindsOf(plan: RenderPlan): ReadonlySet<string> {
+	return new Set(plan.spacingSites.flatMap((site) => (site.seat === undefined ? [] : [site.seat.kind])));
+}
+
+function seatReachOf(plan: RenderPlan, nodeMap: NodeMap): SeatReach {
+	const cached = seatReachCache.get(plan);
+	if (cached !== undefined) return cached;
+	const seated = seatedKindsOf(plan);
+	const reach = new Set<string>();
+	const has: SeatReach = (kind) => reach.has(kind);
+	let changed = true;
+	while (changed) {
+		changed = false;
+		for (const [kind, node] of nodeMap.nodes) {
+			if (reach.has(kind)) continue;
+			const wrapper = wrapperSlotOf(node);
+			const reaches =
+				seated.has(publicKindName(kind)) ||
+				(node instanceof AssembledSupertype &&
+					collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes.some(({ subKind }) => reach.has(subKind))) ||
+				(wrapper !== undefined && slotElementsReach(wrapper, nodeMap, has));
+			if (reaches) {
+				reach.add(kind);
+				changed = true;
+			}
+		}
+	}
+	seatReachCache.set(plan, has);
+	return has;
+}
+
+const SEAT_TARGET_SIG =
+	'    fn seat_target(&mut self, table: &[(u16, usize)]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {';
+
+function seatTargetMatchImpl(typeName: string, variants: readonly string[], exhaustive: boolean): string[] {
+	if (variants.length === 0) return [];
+	return [
+		`impl ::sittir_core::prepare::SeatTarget for ${typeName} {`,
+		SEAT_TARGET_SIG,
+		'        match self {',
+		...variants.map((variant) => `            Self::${variant}(t) => t.seat_target(table),`),
+		...(exhaustive ? [] : ['            #[allow(unreachable_patterns)]', '            _ => None,']),
+		'        }',
+		'    }',
+		'}',
+		''
+	];
+}
+
+function seatTargetStructImpl(
+	node: AssembledNode,
 	nodeMap: NodeMap,
-	ownerTypeName: string
-): readonly string[] {
-	type Arm = { readonly pattern: string; readonly body: readonly string[] };
-	const indent = (lines: readonly string[]): string[] => lines.map((line) => `    ${line}`);
-	const matchOver = (arms: readonly Arm[]): string[] =>
-		arms.length === 0
-			? []
-			: [
-					`match t {`,
-					...arms.flatMap((arm) => [`    ${arm.pattern} => {`, ...indent(indent(arm.body)), `    }`]),
-					`    #[allow(unreachable_patterns)]`,
-					`    _ => {}`,
-					`}`
-				];
-	const bodyFor = (kind: string, node: AssembledNode, seen: Set<string>): string[] => {
-		const seat = seats.get(publicKindName(kind));
-		if (seat !== undefined) {
-			const side = seatEdgeSide(seat);
-			return [`t.edges_mut().${side}.get_or_insert(ctx.options.spacing[options::${seat.constName}]);`];
-		}
-		if (seen.has(kind)) return [];
-		seen.add(kind);
-		if (node instanceof AssembledSupertype) return matchOver(supertypeArms(node, seen));
-		if (!(node instanceof AssembledPolymorph)) return [];
-		const model = renderSlotModelOf(node);
-		const slot = model.named[0] ?? model.unnamed[0];
-		if (slot?.name === undefined) return [];
-		const inner = slotBody(slot, node.typeName, seen);
-		if (inner.length === 0) return [];
-		const held = isRequired(slot) ? '::sittir_core::SlotValue::Transport(seated)' : 'Some(::sittir_core::SlotValue::Transport(seated))';
-		return [`if let ${held} = &mut t.${rustFieldIdent(slot.name)} {`, ...indent(inner), `}`];
-	};
-	const variantArms = (
-		enumName: string,
-		members: readonly { readonly kind: string; readonly node: AssembledNode }[],
-		seen: Set<string>
-	): Arm[] =>
-		members.flatMap(({ kind, node }) => {
-			const body = bodyFor(kind, node, seen);
-			return body.length === 0 ? [] : [{ pattern: `${enumName}::${rustTypeIdent(node.typeName)}(t)`, body }];
-		});
-	const supertypeArms = (node: AssembledSupertype, seen: Set<string>): Arm[] =>
-		variantArms(
-			`${rustTypeIdent(node.typeName)}Transport`,
-			collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes.map(({ subKind, subNode }) => ({ kind: subKind, node: subNode })),
-			seen
+	plan: RenderPlan,
+	kindEntries: readonly KindEntryLike[] | undefined
+): string[] {
+	const reaches = seatReachOf(plan, nodeMap);
+	if (!reaches(node.kind)) return [];
+	const body: string[] = [];
+	const kind = publicKindName(node.kind);
+	if (seatedKindsOf(plan).has(kind)) {
+		const id = kindEntries === undefined ? undefined : edgeKindId(kindEntries, kind);
+		if (id === undefined) throw new Error(`kind '${kind}' is seated in a list but has no kind id to find its seat by`);
+		body.push(
+			`        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(${id})) {`,
+			'            return Some((self.edges.get_or_insert_with(Default::default), site));',
+			'        }'
 		);
-	const slotBody = (slot: AssembledNonterminal, slotOwnerTypeName: string, seen: Set<string>): string[] => {
-		const kinds = kindsOf(slot);
-		const cls = classifySlotForEmit(kinds, nodeMap);
-		const borrowed = (typeName: string, lines: readonly string[]): string[] =>
-			lines.length === 0 ? [] : [`let t: &mut ${typeName} = ::std::borrow::BorrowMut::borrow_mut(seated);`, ...lines];
-		if (cls.tag === 'concrete') {
-			const node = nodeMap.nodes.get(cls.kind);
-			const typeName = concreteTransportTypeName(cls.kind, nodeMap);
-			return node === undefined || typeName === null ? [] : borrowed(typeName, bodyFor(cls.kind, node, seen));
-		}
-		if (cls.tag === 'supertype') {
-			const kind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
-			const node = kind === undefined ? undefined : nodeMap.nodes.get(kind);
-			if (!(node instanceof AssembledSupertype)) return [];
-			return borrowed(`${rustTypeIdent(cls.supertypeName)}Transport`, matchOver(supertypeArms(node, seen)));
-		}
-		const enumName = hasAnyConcreteChildKind(kinds, nodeMap) ? perSlotEnumName(slotOwnerTypeName, slot.name!) : 'AnyTransport';
-		return borrowed(enumName, matchOver(variantArms(enumName, expandConcreteTransportKinds(kinds, nodeMap), seen)));
-	};
-	return slotBody(field, ownerTypeName, new Set());
+	}
+	const wrapper = wrapperSlotOf(node);
+	if (wrapper !== undefined && slotElementsReach(wrapper, nodeMap, reaches)) {
+		const held = isRequired(wrapper) ? '::sittir_core::SlotValue::Transport(inner)' : 'Some(::sittir_core::SlotValue::Transport(inner))';
+		body.push(`        if let ${held} = &mut self.${rustFieldIdent(wrapper.name!)} {`, '            return inner.seat_target(table);', '        }');
+	}
+	return [`impl ::sittir_core::prepare::SeatTarget for ${rustTransportStructName(node)} {`, SEAT_TARGET_SIG, ...body, '        None', '    }', '}', ''];
+}
+
+function renderSeatTargets(
+	nodes: readonly AssembledNode[],
+	nodeMap: NodeMap,
+	plan: RenderPlan,
+	kindEntries: readonly KindEntryLike[] | undefined,
+	usedSupertypeNames: ReadonlySet<string>,
+	perSlotEnums: readonly PerSlotChildEnum[]
+): string[] {
+	const reaches = seatReachOf(plan, nodeMap);
+	const lines: string[] = [];
+	for (const node of nodes) {
+		if (node instanceof AssembledEnum || node instanceof AssembledSupertype) continue;
+		lines.push(...seatTargetStructImpl(node, nodeMap, plan, kindEntries));
+	}
+	for (const [, node] of nodeMap.nodes) {
+		if (!(node instanceof AssembledSupertype) || !usedSupertypeNames.has(node.typeName)) continue;
+		const enumName = `${rustTypeIdent(node.typeName)}Transport`;
+		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
+		const subtypes = collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes;
+		const reaching = subtypes.filter(({ subKind }) => reaches(subKind)).map(({ subNode }) => rustTypeIdent(subNode.typeName));
+		lines.push(...seatTargetMatchImpl(enumName, reaching, false));
+	}
+	for (const entry of perSlotEnums) {
+		const reaching = expandConcreteTransportKinds(entry.kinds, nodeMap)
+			.filter(({ kind }) => reaches(kind))
+			.map(({ node }) => rustTypeIdent(node.typeName));
+		lines.push(...seatTargetMatchImpl(perSlotEnumName(entry.typeName, entry.fieldName), reaching, false));
+	}
+	const anyReaching = nodes.filter((node) => reaches(node.kind)).map((node) => rustTransportVariantName(node));
+	lines.push(...seatTargetMatchImpl('AnyTransport', anyReaching, false));
+	return lines;
 }
 
 function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): string[] {
 	const lines: string[] = [];
+	const reaches = seatReachOf(plan, nodeMap);
 	const slotModel = renderSlotModelOf(node);
 	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 		if (field.name === undefined || !isMultiple(field)) continue;
-		const seats = seatedSitesOf(plan, node.kind, field.name);
-		if (seats.size === 0) continue;
-		const seated = seatVariantArms(field, seats, nodeMap, node.typeName);
-		if (seated.length === 0) continue;
+		if (seatedSitesOf(plan, node.kind, field.name).size === 0) continue;
+		if (!slotElementsReach(field, nodeMap, reaches)) continue;
 		const ident = rustFieldIdent(field.name);
-		const open = isRequired(field)
-			? [`        {`, `            let seated_items = &mut self.${ident};`]
-			: [`        if let Some(seated_items) = self.${ident}.as_mut() {`];
-		const element = hasOptionalElements(field)
-			? [`                let Some(item) = item.as_mut() else { continue };`]
-			: [];
+		const table = `options::${seatTableName(publicKindName(node.kind), field.name)}`;
+		const items = hasOptionalElements(field) ? 'iter_mut().map(Option::as_mut)' : 'iter_mut().map(Some)';
 		lines.push(
-			...open,
-			`            let seated_last = seated_items.len().saturating_sub(1);`,
-			`            for (seated_at, item) in seated_items.iter_mut().enumerate() {`,
-			`                if seated_at == seated_last { continue; }`,
-			...element,
-			`                if let ::sittir_core::SlotValue::Transport(seated) = item {`,
-			...seated.map((line) => `                    ${line}`),
-			`                }`,
-			`            }`,
-			`        }`
+			isRequired(field)
+				? `        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ctx);`
+				: `        if let Some(seated_items) = self.${ident}.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.${items}, ${table}, ctx); }`
 		);
 	}
 	return lines;
 }
-
 function prepareStructImpl(
 	structName: string,
 	node: AssembledNode,

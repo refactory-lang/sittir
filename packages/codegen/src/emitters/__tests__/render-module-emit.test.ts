@@ -126,6 +126,8 @@ let _rustTemplatesRs: string | undefined;
 let _typescriptTransportRs: string | undefined;
 /** The rust kind entries the cached emit was produced from. */
 let _rustKindEntries: ReturnType<typeof collectKindEntries> | undefined;
+/** The rust `options.rs` the cached emit produced beside its transports. */
+let _rustOptionsRs: string | undefined;
 
 async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise<string> {
 	const grammarJsPath = resolveGrammarJsPath(grammar);
@@ -154,7 +156,13 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 		visibleExternals: raw.visibleExternals,
 		options: raw.options
 	});
+	if (grammar === 'rust') _rustOptionsRs = emit.optionsRs.contents;
 	return emit.transportRs.contents;
+}
+
+async function getRustOptionsRs(): Promise<string> {
+	await getRustTemplatesRs();
+	return _rustOptionsRs!;
 }
 
 async function getRustTemplatesRs(): Promise<string> {
@@ -452,7 +460,6 @@ describe('render options on transports', () => {
 			/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, node\.edges\.and_then\(\|e\| e\.before\)\);/
 		);
 		expect(src).toContain('.with_sources(ctx.sources).with_options(ctx.options)');
-		expect(src).toMatch(/t\.edges_mut\(\)\.after\.get_or_insert\(ctx\.options\.spacing\[options::SITE_\w+\]\);/);
 		expect(src).not.toMatch(/t\.\w+_after\.get_or_insert/);
 	});
 
@@ -555,6 +562,22 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(transportRs).toMatch(/pub enum FunctionItemNameTransportSlot \{[^}]*Verbatim\(VerbatimTransport\),/s);
 		// EnumVariant.body admits two field lists and no pattern kind.
 		expect(transportRs).toMatch(/pub enum EnumVariantBodyTransportSlot \{(?:(?!Verbatim)[^}])*\}/s);
+	});
+
+	it('fills seated sibling gaps through one per-slot kind table and a core call; no per-list match block', async () => {
+		const transportRs = await getRustTemplatesRs();
+		const optionsRs = await getRustOptionsRs();
+		const table = optionsRs.slice(optionsRs.indexOf('pub static SEATS_SOURCE_FILE_STATEMENTS: &[(u16, usize)] = &['));
+		const rows = [...table.slice(0, table.indexOf('];')).matchAll(/\((\d+), SITE_\w+\)/g)].map((m) => Number(m[1]));
+		expect(rows.length).toBeGreaterThan(0);
+		expect(rows).toEqual([...rows].sort((a, b) => a - b));
+		expect(transportRs).toContain(
+			'if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx); }'
+		);
+		expect(transportRs).not.toContain('let seated_last');
+		expect(transportRs).not.toContain('edges_mut().after.get_or_insert');
+		expect(transportRs).toContain('impl ::sittir_core::prepare::SeatTarget for AttributeItemTransport {');
+		expect(transportRs).toContain('::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(');
 	});
 
 	it('binds a list view over site ids and writes a seam site as a call', async () => {

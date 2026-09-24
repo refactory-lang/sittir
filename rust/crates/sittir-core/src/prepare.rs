@@ -4,7 +4,8 @@
 //! from the resolved options. The context is an argument at every level;
 //! nothing ambient carries the trees or the table.
 
-use crate::options::{Edged, ResolvedOptions, Side};
+use crate::options::{Edged, Edges, ResolvedOptions, Side};
+use crate::types::KindId;
 use crate::render::{CoordinateError, SourceTable};
 use crate::slot::SlotValue;
 
@@ -23,6 +24,47 @@ pub fn prepare_edges<T: Edged + ?Sized>(t: &mut T, ctx: &RenderContext<'_>) {
     }
     if edges.after.is_none() {
         edges.after = ctx.options.edge_arm(kind, Side::After, None).map(|a| a.arm);
+    }
+}
+
+/// The element a seated sibling gap belongs to: the node itself when its kind
+/// has a seat in `table`, or, for a wrapper that is not itself seated, the
+/// seated node it holds. Answers the base edges to fill and the site to read.
+pub trait SeatTarget {
+    fn seat_target(&mut self, table: &[(u16, usize)]) -> Option<(&mut Edges, usize)>;
+}
+
+impl<T: SeatTarget + ?Sized> SeatTarget for Box<T> {
+    fn seat_target(&mut self, table: &[(u16, usize)]) -> Option<(&mut Edges, usize)> {
+        (**self).seat_target(table)
+    }
+}
+
+/// The seated site of `kind` in a per-slot table sorted by kind id.
+pub fn seat_site(table: &[(u16, usize)], kind: KindId) -> Option<usize> {
+    table
+        .binary_search_by_key(&kind.0, |(k, _)| *k)
+        .ok()
+        .map(|i| table[i].1)
+}
+
+/// Fill the gap after every element but the last from the slot's seat table:
+/// a seated element's base `after` edge takes its site's arm unless the wire
+/// already set it. A coordinate or an absent element is skipped.
+pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
+    items: impl ExactSizeIterator<Item = Option<&'i mut SlotValue<T, ADJACENT>>>,
+    table: &[(u16, usize)],
+    ctx: &RenderContext<'_>,
+) {
+    let last = items.len().saturating_sub(1);
+    for (at, item) in items.enumerate() {
+        if at == last {
+            break;
+        }
+        let Some(SlotValue::Transport(t)) = item else { continue };
+        if let Some((edges, site)) = t.seat_target(table) {
+            edges.after.get_or_insert(ctx.options.spacing[site]);
+        }
     }
 }
 

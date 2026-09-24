@@ -217,3 +217,85 @@ fn a_stamped_edge_keeps_its_arm_and_carries_declared_strength() {
     prepare_edges(&mut leaf, &ctx(&opts, &sources));
     assert_eq!(leaf.edges, Edges { before: Some(5), after: Some(8) });
 }
+
+use sittir_core::prepare::{fill_seated_gaps, seat_site, SeatTarget};
+
+struct Seatable {
+    kind: u16,
+    edges: Edges,
+}
+impl SeatTarget for Seatable {
+    fn seat_target(&mut self, table: &[(u16, usize)]) -> Option<(&mut Edges, usize)> {
+        seat_site(table, KindId(self.kind)).map(|site| (&mut self.edges, site))
+    }
+}
+
+struct Wrapper {
+    edges: Edges,
+    content: Seatable,
+}
+impl SeatTarget for Wrapper {
+    fn seat_target(&mut self, table: &[(u16, usize)]) -> Option<(&mut Edges, usize)> {
+        if let Some(site) = seat_site(table, KindId(9)) {
+            return Some((&mut self.edges, site));
+        }
+        self.content.seat_target(table)
+    }
+}
+
+fn seatable(kind: u16) -> Option<SlotValue<Seatable>> {
+    Some(SlotValue::Transport(Seatable { kind, edges: Edges::default() }))
+}
+
+fn after_of(item: &Option<SlotValue<Seatable>>) -> Option<u16> {
+    match item {
+        Some(SlotValue::Transport(t)) => t.edges.after,
+        _ => None,
+    }
+}
+
+#[test]
+fn seat_site_finds_a_kind_in_a_sorted_table() {
+    let table: &[(u16, usize)] = &[(3, 0), (4, 1)];
+    assert_eq!(seat_site(table, KindId(4)), Some(1));
+    assert_eq!(seat_site(table, KindId(5)), None);
+}
+
+#[test]
+fn seated_gaps_fill_the_preceding_elements_after_edge_and_never_the_last() {
+    let table: &[(u16, usize)] = &[(3, 0), (4, 1)];
+    let opts = ResolvedOptions { spacing: vec![70, 80], ..ResolvedOptions::default() };
+    let sources = Sources(HashMap::new());
+    let mut items = vec![seatable(3), None, seatable(4), seatable(5), seatable(3)];
+    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
+    assert_eq!(after_of(&items[0]), Some(70));
+    assert_eq!(after_of(&items[2]), Some(80));
+    assert_eq!(after_of(&items[3]), None);
+    assert_eq!(after_of(&items[4]), None);
+}
+
+#[test]
+fn a_seated_gap_keeps_an_after_edge_the_element_already_carries() {
+    let table: &[(u16, usize)] = &[(3, 0)];
+    let opts = ResolvedOptions { spacing: vec![70], ..ResolvedOptions::default() };
+    let sources = Sources(HashMap::new());
+    let mut items = vec![
+        Some(SlotValue::Transport(Seatable { kind: 3, edges: Edges { before: None, after: Some(1) } })),
+        seatable(3),
+    ];
+    fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
+    assert_eq!(after_of(&items[0]), Some(1));
+}
+
+#[test]
+fn a_wrapper_not_itself_seated_seats_the_node_it_wraps_and_keeps_its_own_edges() {
+    let table: &[(u16, usize)] = &[(3, 0)];
+    let opts = ResolvedOptions { spacing: vec![70], ..ResolvedOptions::default() };
+    let sources = Sources(HashMap::new());
+    let wrapped = || SlotValue::<Wrapper>::Transport(Wrapper { edges: Edges::default(), content: Seatable { kind: 3, edges: Edges::default() } });
+    let mut items = vec![wrapped(), wrapped()];
+    fill_seated_gaps(items.iter_mut().map(Some), table, &ctx(&opts, &sources));
+    let SlotValue::Transport(first) = &items[0] else { panic!() };
+    assert_eq!(first.content.edges.after, Some(70));
+    assert_eq!(first.edges, Edges::default());
+}
