@@ -2051,11 +2051,7 @@ function extractExternalNames(base2, hasWrapper) {
       }
     }
   );
-  try {
-    return harvestSupertypeNames(externals(dollar));
-  } catch {
-    return /* @__PURE__ */ new Set();
-  }
+  return harvestSupertypeNames(externals(dollar));
 }
 function isAnonymousLiteralShapedRule(name, rulesBag, seen) {
   if (seen.has(name)) return false;
@@ -5741,9 +5737,7 @@ var grammar_sittir_default = grammar(
           1: variant("nul")
         },
         // See docs/python-grammar-sittir-glossary.md::parameters
-        parameters: {
-          "1/0": alias("parameters_elements")
-        },
+        parameters: [{ "1/0": alias("parameters_elements") }, { "1/0": field("elements") }],
         lambda_parameters: {
           ".": alias("parameters_elements")
         },

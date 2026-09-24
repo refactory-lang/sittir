@@ -25638,8 +25638,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionDefinitionTransport> {
 pub struct ParametersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
-    pub parameters: Option<::sittir_core::SlotValue<_ParametersTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<::sittir_core::SlotValue<_ParametersTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter_separator_space_before"))]
     pub parameter_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter_separator_space_after"))]
@@ -25674,7 +25674,7 @@ impl ::sittir_core::prepare::Prepare for ParametersTransport {
         self.rparen_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_RPAREN_BEFORE]);
         self.parameters_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_PARAMETERS_BEFORE]);
         self.parameters_after.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_PARAMETERS_AFTER]);
-        self.parameters.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
 }
@@ -46322,11 +46322,11 @@ fn render_function_definition(node: &FunctionDefinitionTransport, w: &mut dyn ::
 }
 
 fn render_parameters(node: &ParametersTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let parameters = View::new(&node.parameters, "{}");
+    let elements = View::new(&node.elements, "{}");
     w.site_with(node.parameters_before.unwrap_or(0), options::site_strength(options::SITE_PARAMETERS_PARAMETERS_BEFORE, node.parameters_before.unwrap_or(0)));
     w.text("(")?;
     w.site_with(node.lparen_after.unwrap_or(0), options::site_strength(options::SITE_PARAMETERS_LPAREN_AFTER, node.lparen_after.unwrap_or(0)));
-    parameters.render(w)?;
+    elements.render(w)?;
     w.site_with(node.rparen_before.unwrap_or(0), options::site_strength(options::SITE_PARAMETERS_RPAREN_BEFORE, node.rparen_before.unwrap_or(0)));
     w.text(")")?;
     w.site_with(node.parameters_after.unwrap_or(0), options::site_strength(options::SITE_PARAMETERS_PARAMETERS_AFTER, node.parameters_after.unwrap_or(0)));

@@ -1,4 +1,3 @@
-// packages/codegen/src/dsl/__tests__/token-forms.test.ts
 import { describe, it, expect } from 'vitest';
 import { classifyTokenChoice, distributeTokenForms } from '../transform/token-forms.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';

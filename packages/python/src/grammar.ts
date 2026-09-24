@@ -1177,8 +1177,7 @@ export type PythonGrammar = {
 	readonly parameters: {
 		type: 'parameters';
 		named: true;
-		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'parameters_elements'; named: true }] };
+		fields: { elements: { multiple: false; required: false; types: [{ type: 'parameters_elements'; named: true }] } };
 	};
 	readonly parameters_elements: {
 		type: 'parameters_elements';

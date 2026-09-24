@@ -4583,7 +4583,7 @@ export function coerceToArguments(
 ): ReturnType<typeof F.buildArguments> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Arguments) {
 		const data = input[0];
-		const stored = (data as unknown as { _arguments?: unknown })._arguments;
+		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildArguments(
 			...(coerceMixedEnumStorage(
@@ -4595,8 +4595,8 @@ export function coerceToArguments(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('arguments' in head)) return input;
-		const v = (head as Record<string, unknown>)['arguments'];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('elements' in head)) return input;
+		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildArguments(

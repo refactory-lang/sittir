@@ -780,15 +780,12 @@
       }
     },
     "parameters": {
-      "parameters": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_parameters_elements"
-        ]
+        "nonEmpty": false
       }
     },
     "lambda_parameters": {
@@ -12188,9 +12185,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "parameters",
-          "propertyName": "parameters",
-          "paramName": "parameters",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -12211,7 +12208,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "_parameters",
       "factoryFields": [
-        "parameters"
+        "elements"
       ],
       "bareAccepts": [
         "_parameters",

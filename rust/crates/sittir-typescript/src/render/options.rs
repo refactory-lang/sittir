@@ -44,45 +44,45 @@ pub const SITE_AMBIENT_DECLARATION_MODULE_SEMI_BEFORE: usize = 35;
 pub const SITE_AMBIENT_DECLARATION_MODULE_MODULE_KEYWORD_AFTER: usize = 36;
 pub const SITE_AMBIENT_DECLARATION_MODULE_AMBIENT_DECLARATION_MODULE_BEFORE: usize = 37;
 pub const SITE_AMBIENT_DECLARATION_MODULE_AMBIENT_DECLARATION_MODULE_AFTER: usize = 38;
-pub const SITE_ARGUMENTS_ARGUMENTS_ARRAY_AFTER: usize = 39;
-pub const SITE_ARGUMENTS_ARGUMENTS_ARROW_FUNCTION_AFTER: usize = 40;
-pub const SITE_ARGUMENTS_ARGUMENTS_AS_EXPRESSION_AFTER: usize = 41;
-pub const SITE_ARGUMENTS_ARGUMENTS_ASSIGNMENT_EXPRESSION_AFTER: usize = 42;
-pub const SITE_ARGUMENTS_ARGUMENTS_AUGMENTED_ASSIGNMENT_EXPRESSION_AFTER: usize = 43;
-pub const SITE_ARGUMENTS_ARGUMENTS_AWAIT_EXPRESSION_AFTER: usize = 44;
-pub const SITE_ARGUMENTS_ARGUMENTS_CALL_EXPRESSION_CALL_AFTER: usize = 45;
-pub const SITE_ARGUMENTS_ARGUMENTS_CALL_EXPRESSION_MEMBER_AFTER: usize = 46;
-pub const SITE_ARGUMENTS_ARGUMENTS_CALL_EXPRESSION_TEMPLATE_CALL_AFTER: usize = 47;
-pub const SITE_ARGUMENTS_ARGUMENTS_CLASS_AFTER: usize = 48;
-pub const SITE_ARGUMENTS_ARGUMENTS_DECORATOR_CALL_EXPRESSION_AFTER: usize = 49;
-pub const SITE_ARGUMENTS_ARGUMENTS_DECORATOR_MEMBER_EXPRESSION_AFTER: usize = 50;
-pub const SITE_ARGUMENTS_ARGUMENTS_FUNCTION_EXPRESSION_AFTER: usize = 51;
-pub const SITE_ARGUMENTS_ARGUMENTS_GENERATOR_FUNCTION_AFTER: usize = 52;
-pub const SITE_ARGUMENTS_ARGUMENTS_INSTANTIATION_EXPRESSION_AFTER: usize = 53;
-pub const SITE_ARGUMENTS_ARGUMENTS_INTERNAL_MODULE_AFTER: usize = 54;
-pub const SITE_ARGUMENTS_ARGUMENTS_MEMBER_EXPRESSION_AFTER: usize = 55;
-pub const SITE_ARGUMENTS_ARGUMENTS_NEW_EXPRESSION_AFTER: usize = 56;
-pub const SITE_ARGUMENTS_ARGUMENTS_NON_NULL_EXPRESSION_AFTER: usize = 57;
-pub const SITE_ARGUMENTS_ARGUMENTS_OBJECT_AFTER: usize = 58;
-pub const SITE_ARGUMENTS_ARGUMENTS_PARENTHESIZED_EXPRESSION_SEQUENCE_AFTER: usize = 59;
-pub const SITE_ARGUMENTS_ARGUMENTS_PARENTHESIZED_EXPRESSION_TYPED_AFTER: usize = 60;
-pub const SITE_ARGUMENTS_ARGUMENTS_REGEX_AFTER: usize = 61;
-pub const SITE_ARGUMENTS_ARGUMENTS_SATISFIES_EXPRESSION_AFTER: usize = 62;
-pub const SITE_ARGUMENTS_ARGUMENTS_SPREAD_ELEMENT_AFTER: usize = 63;
-pub const SITE_ARGUMENTS_ARGUMENTS_STRING_DOUBLE_AFTER: usize = 64;
-pub const SITE_ARGUMENTS_ARGUMENTS_STRING_SINGLE_AFTER: usize = 65;
-pub const SITE_ARGUMENTS_ARGUMENTS_SUBSCRIPT_EXPRESSION_AFTER: usize = 66;
-pub const SITE_ARGUMENTS_ARGUMENTS_TEMPLATE_STRING_AFTER: usize = 67;
-pub const SITE_ARGUMENTS_ARGUMENTS_TERNARY_EXPRESSION_AFTER: usize = 68;
-pub const SITE_ARGUMENTS_ARGUMENTS_TYPE_ASSERTION_AFTER: usize = 69;
-pub const SITE_ARGUMENTS_ARGUMENTS_UNARY_EXPRESSION_AFTER: usize = 70;
-pub const SITE_ARGUMENTS_ARGUMENTS_UPDATE_EXPRESSION_POSTFIX_AFTER: usize = 71;
-pub const SITE_ARGUMENTS_ARGUMENTS_UPDATE_EXPRESSION_PREFIX_AFTER: usize = 72;
-pub const SITE_ARGUMENTS_ARGUMENTS_YIELD_EXPRESSION_AFTER: usize = 73;
-pub const SITE_ARGUMENTS_ARGUMENTS_END: usize = 74;
-pub const SITE_ARGUMENTS_ARGUMENTS_START: usize = 75;
-pub const SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_BEFORE: usize = 76;
-pub const SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_AFTER: usize = 77;
+pub const SITE_ARGUMENTS_ELEMENTS_ARRAY_AFTER: usize = 39;
+pub const SITE_ARGUMENTS_ELEMENTS_ARROW_FUNCTION_AFTER: usize = 40;
+pub const SITE_ARGUMENTS_ELEMENTS_AS_EXPRESSION_AFTER: usize = 41;
+pub const SITE_ARGUMENTS_ELEMENTS_ASSIGNMENT_EXPRESSION_AFTER: usize = 42;
+pub const SITE_ARGUMENTS_ELEMENTS_AUGMENTED_ASSIGNMENT_EXPRESSION_AFTER: usize = 43;
+pub const SITE_ARGUMENTS_ELEMENTS_AWAIT_EXPRESSION_AFTER: usize = 44;
+pub const SITE_ARGUMENTS_ELEMENTS_CALL_EXPRESSION_CALL_AFTER: usize = 45;
+pub const SITE_ARGUMENTS_ELEMENTS_CALL_EXPRESSION_MEMBER_AFTER: usize = 46;
+pub const SITE_ARGUMENTS_ELEMENTS_CALL_EXPRESSION_TEMPLATE_CALL_AFTER: usize = 47;
+pub const SITE_ARGUMENTS_ELEMENTS_CLASS_AFTER: usize = 48;
+pub const SITE_ARGUMENTS_ELEMENTS_DECORATOR_CALL_EXPRESSION_AFTER: usize = 49;
+pub const SITE_ARGUMENTS_ELEMENTS_DECORATOR_MEMBER_EXPRESSION_AFTER: usize = 50;
+pub const SITE_ARGUMENTS_ELEMENTS_FUNCTION_EXPRESSION_AFTER: usize = 51;
+pub const SITE_ARGUMENTS_ELEMENTS_GENERATOR_FUNCTION_AFTER: usize = 52;
+pub const SITE_ARGUMENTS_ELEMENTS_INSTANTIATION_EXPRESSION_AFTER: usize = 53;
+pub const SITE_ARGUMENTS_ELEMENTS_INTERNAL_MODULE_AFTER: usize = 54;
+pub const SITE_ARGUMENTS_ELEMENTS_MEMBER_EXPRESSION_AFTER: usize = 55;
+pub const SITE_ARGUMENTS_ELEMENTS_NEW_EXPRESSION_AFTER: usize = 56;
+pub const SITE_ARGUMENTS_ELEMENTS_NON_NULL_EXPRESSION_AFTER: usize = 57;
+pub const SITE_ARGUMENTS_ELEMENTS_OBJECT_AFTER: usize = 58;
+pub const SITE_ARGUMENTS_ELEMENTS_PARENTHESIZED_EXPRESSION_SEQUENCE_AFTER: usize = 59;
+pub const SITE_ARGUMENTS_ELEMENTS_PARENTHESIZED_EXPRESSION_TYPED_AFTER: usize = 60;
+pub const SITE_ARGUMENTS_ELEMENTS_REGEX_AFTER: usize = 61;
+pub const SITE_ARGUMENTS_ELEMENTS_SATISFIES_EXPRESSION_AFTER: usize = 62;
+pub const SITE_ARGUMENTS_ELEMENTS_SPREAD_ELEMENT_AFTER: usize = 63;
+pub const SITE_ARGUMENTS_ELEMENTS_STRING_DOUBLE_AFTER: usize = 64;
+pub const SITE_ARGUMENTS_ELEMENTS_STRING_SINGLE_AFTER: usize = 65;
+pub const SITE_ARGUMENTS_ELEMENTS_SUBSCRIPT_EXPRESSION_AFTER: usize = 66;
+pub const SITE_ARGUMENTS_ELEMENTS_TEMPLATE_STRING_AFTER: usize = 67;
+pub const SITE_ARGUMENTS_ELEMENTS_TERNARY_EXPRESSION_AFTER: usize = 68;
+pub const SITE_ARGUMENTS_ELEMENTS_TYPE_ASSERTION_AFTER: usize = 69;
+pub const SITE_ARGUMENTS_ELEMENTS_UNARY_EXPRESSION_AFTER: usize = 70;
+pub const SITE_ARGUMENTS_ELEMENTS_UPDATE_EXPRESSION_POSTFIX_AFTER: usize = 71;
+pub const SITE_ARGUMENTS_ELEMENTS_UPDATE_EXPRESSION_PREFIX_AFTER: usize = 72;
+pub const SITE_ARGUMENTS_ELEMENTS_YIELD_EXPRESSION_AFTER: usize = 73;
+pub const SITE_ARGUMENTS_ELEMENTS_END: usize = 74;
+pub const SITE_ARGUMENTS_ELEMENTS_START: usize = 75;
+pub const SITE_ARGUMENTS_ELEMENTS_SEPARATOR_SPACE_BEFORE: usize = 76;
+pub const SITE_ARGUMENTS_ELEMENTS_SEPARATOR_SPACE_AFTER: usize = 77;
 pub const SITE_ARGUMENTS_LPAREN_AFTER: usize = 78;
 pub const SITE_ARGUMENTS_RPAREN_BEFORE: usize = 79;
 pub const SITE_ARGUMENTS_ARGUMENTS_BEFORE: usize = 80;
@@ -1467,45 +1467,45 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16], u8)] = &[
     ("ambient_declaration_module", "module_keyword_after", "module_keyword_after", 178, &[177, 178, 179, 180, 181, 182], 2),
     ("ambient_declaration_module", "ambient_declaration_module_before", "ambient_declaration_module_before", 178, &[177, 178, 179, 180, 181, 182], 0),
     ("ambient_declaration_module", "ambient_declaration_module_after", "ambient_declaration_module_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_array_after", "array_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_arrow_function_after", "arrow_function_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_as_expression_after", "as_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_assignment_expression_after", "assignment_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_augmented_assignment_expression_after", "augmented_assignment_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_await_expression_after", "await_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_call_expression_call_after", "call_expression_call_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_call_expression_member_after", "call_expression_member_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_call_expression_template_call_after", "call_expression_template_call_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_class_after", "class_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_decorator_call_expression_after", "decorator_call_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_decorator_member_expression_after", "decorator_member_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_function_expression_after", "function_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_generator_function_after", "generator_function_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_instantiation_expression_after", "instantiation_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_internal_module_after", "internal_module_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_member_expression_after", "member_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_new_expression_after", "new_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_non_null_expression_after", "non_null_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_object_after", "object_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_parenthesized_expression_sequence_after", "parenthesized_expression_sequence_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_parenthesized_expression_typed_after", "parenthesized_expression_typed_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_regex_after", "regex_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_satisfies_expression_after", "satisfies_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_spread_element_after", "spread_element_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_string_double_after", "string_double_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_string_single_after", "string_single_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_subscript_expression_after", "subscript_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_template_string_after", "template_string_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_ternary_expression_after", "ternary_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_type_assertion_after", "type_assertion_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_unary_expression_after", "unary_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_update_expression_postfix_after", "update_expression_postfix_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_update_expression_prefix_after", "update_expression_prefix_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_yield_expression_after", "yield_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_array_after", "array_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_arrow_function_after", "arrow_function_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_as_expression_after", "as_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_assignment_expression_after", "assignment_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_augmented_assignment_expression_after", "augmented_assignment_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_await_expression_after", "await_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_call_expression_call_after", "call_expression_call_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_call_expression_member_after", "call_expression_member_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_call_expression_template_call_after", "call_expression_template_call_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_class_after", "class_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_decorator_call_expression_after", "decorator_call_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_decorator_member_expression_after", "decorator_member_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_function_expression_after", "function_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_generator_function_after", "generator_function_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_instantiation_expression_after", "instantiation_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_internal_module_after", "internal_module_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_member_expression_after", "member_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_new_expression_after", "new_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_non_null_expression_after", "non_null_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_object_after", "object_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_parenthesized_expression_sequence_after", "parenthesized_expression_sequence_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_parenthesized_expression_typed_after", "parenthesized_expression_typed_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_regex_after", "regex_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_satisfies_expression_after", "satisfies_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_spread_element_after", "spread_element_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_string_double_after", "string_double_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_string_single_after", "string_single_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_subscript_expression_after", "subscript_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_template_string_after", "template_string_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_ternary_expression_after", "ternary_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_type_assertion_after", "type_assertion_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_unary_expression_after", "unary_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_update_expression_postfix_after", "update_expression_postfix_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_update_expression_prefix_after", "update_expression_prefix_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("arguments", "elements_yield_expression_after", "yield_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
     ("arguments", "arguments_end", "arguments_end", 178, &[177, 178, 179, 180, 181, 182], 0),
     ("arguments", "arguments_start", "arguments_start", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("arguments", "arguments_separator_space_before", "comma_separator_space_before", 177, &[177, 178, 179, 180], 2),
-    ("arguments", "arguments_separator_space_after", "comma_separator_space_after", 178, &[177, 178, 179, 180], 0),
+    ("arguments", "elements_separator_space_before", "comma_separator_space_before", 177, &[177, 178, 179, 180], 2),
+    ("arguments", "elements_separator_space_after", "comma_separator_space_after", 178, &[177, 178, 179, 180], 0),
     ("arguments", "lparen_after", "lparen_after", 177, &[177, 178, 179, 180, 181, 182], 2),
     ("arguments", "rparen_before", "rparen_before", 177, &[177, 178, 179, 180, 181, 182], 2),
     ("arguments", "arguments_before", "arguments_before", 177, &[177, 178, 179, 180, 181, 182], 1),
@@ -4589,8 +4589,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for AmbientDeclarationModuleSemiOption
 #[derive(Debug, Clone, Default)]
 pub struct ArgumentsOptions {
     pub after: Option<u16>,
-    pub arguments: Option<ArgumentsArgumentsOptions>,
     pub before: Option<u16>,
+    pub elements: Option<ArgumentsElementsOptions>,
     pub lparen: Option<ArgumentsLparenOptions>,
     pub rparen: Option<ArgumentsRparenOptions>,
 }
@@ -4599,11 +4599,11 @@ pub struct ArgumentsOptions {
 impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "arguments", "before", "lparen", "rparen"], "(arguments)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before", "elements", "lparen", "rparen"], "(arguments)")?;
         Ok(Self {
             after: obj.get("after")?,
-            arguments: obj.get("arguments")?,
             before: obj.get("before")?,
+            elements: obj.get("elements")?,
             lparen: obj.get("lparen")?,
             rparen: obj.get("rparen")?,
         })
@@ -4615,8 +4615,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
-        obj.set("arguments", val.arguments)?;
         obj.set("before", val.before)?;
+        obj.set("elements", val.elements)?;
         obj.set("lparen", val.lparen)?;
         obj.set("rparen", val.rparen)?;
         Ok(::napi::bindgen_prelude::JsValue::raw(&obj))
@@ -4624,52 +4624,52 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsOptions {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsOptions {
-    pub array: Option<ArgumentsArgumentsArrayOptions>,
-    pub arrow_function: Option<ArgumentsArgumentsArrowFunctionOptions>,
-    pub as_expression: Option<ArgumentsArgumentsAsExpressionOptions>,
-    pub assignment_expression: Option<ArgumentsArgumentsAssignmentExpressionOptions>,
-    pub augmented_assignment_expression: Option<ArgumentsArgumentsAugmentedAssignmentExpressionOptions>,
-    pub await_expression: Option<ArgumentsArgumentsAwaitExpressionOptions>,
-    pub call_expression_call: Option<ArgumentsArgumentsCallExpressionCallOptions>,
-    pub call_expression_member: Option<ArgumentsArgumentsCallExpressionMemberOptions>,
-    pub call_expression_template_call: Option<ArgumentsArgumentsCallExpressionTemplateCallOptions>,
-    pub class: Option<ArgumentsArgumentsClassOptions>,
-    pub decorator_call_expression: Option<ArgumentsArgumentsDecoratorCallExpressionOptions>,
-    pub decorator_member_expression: Option<ArgumentsArgumentsDecoratorMemberExpressionOptions>,
+pub struct ArgumentsElementsOptions {
+    pub array: Option<ArgumentsElementsArrayOptions>,
+    pub arrow_function: Option<ArgumentsElementsArrowFunctionOptions>,
+    pub as_expression: Option<ArgumentsElementsAsExpressionOptions>,
+    pub assignment_expression: Option<ArgumentsElementsAssignmentExpressionOptions>,
+    pub augmented_assignment_expression: Option<ArgumentsElementsAugmentedAssignmentExpressionOptions>,
+    pub await_expression: Option<ArgumentsElementsAwaitExpressionOptions>,
+    pub call_expression_call: Option<ArgumentsElementsCallExpressionCallOptions>,
+    pub call_expression_member: Option<ArgumentsElementsCallExpressionMemberOptions>,
+    pub call_expression_template_call: Option<ArgumentsElementsCallExpressionTemplateCallOptions>,
+    pub class: Option<ArgumentsElementsClassOptions>,
+    pub decorator_call_expression: Option<ArgumentsElementsDecoratorCallExpressionOptions>,
+    pub decorator_member_expression: Option<ArgumentsElementsDecoratorMemberExpressionOptions>,
     pub end: Option<u16>,
-    pub function_expression: Option<ArgumentsArgumentsFunctionExpressionOptions>,
-    pub generator_function: Option<ArgumentsArgumentsGeneratorFunctionOptions>,
-    pub instantiation_expression: Option<ArgumentsArgumentsInstantiationExpressionOptions>,
-    pub internal_module: Option<ArgumentsArgumentsInternalModuleOptions>,
-    pub member_expression: Option<ArgumentsArgumentsMemberExpressionOptions>,
-    pub new_expression: Option<ArgumentsArgumentsNewExpressionOptions>,
-    pub non_null_expression: Option<ArgumentsArgumentsNonNullExpressionOptions>,
-    pub object: Option<ArgumentsArgumentsObjectOptions>,
-    pub parenthesized_expression_sequence: Option<ArgumentsArgumentsParenthesizedExpressionSequenceOptions>,
-    pub parenthesized_expression_typed: Option<ArgumentsArgumentsParenthesizedExpressionTypedOptions>,
-    pub regex: Option<ArgumentsArgumentsRegexOptions>,
-    pub satisfies_expression: Option<ArgumentsArgumentsSatisfiesExpressionOptions>,
-    pub separator: Option<ArgumentsArgumentsSeparatorOptions>,
-    pub spread_element: Option<ArgumentsArgumentsSpreadElementOptions>,
+    pub function_expression: Option<ArgumentsElementsFunctionExpressionOptions>,
+    pub generator_function: Option<ArgumentsElementsGeneratorFunctionOptions>,
+    pub instantiation_expression: Option<ArgumentsElementsInstantiationExpressionOptions>,
+    pub internal_module: Option<ArgumentsElementsInternalModuleOptions>,
+    pub member_expression: Option<ArgumentsElementsMemberExpressionOptions>,
+    pub new_expression: Option<ArgumentsElementsNewExpressionOptions>,
+    pub non_null_expression: Option<ArgumentsElementsNonNullExpressionOptions>,
+    pub object: Option<ArgumentsElementsObjectOptions>,
+    pub parenthesized_expression_sequence: Option<ArgumentsElementsParenthesizedExpressionSequenceOptions>,
+    pub parenthesized_expression_typed: Option<ArgumentsElementsParenthesizedExpressionTypedOptions>,
+    pub regex: Option<ArgumentsElementsRegexOptions>,
+    pub satisfies_expression: Option<ArgumentsElementsSatisfiesExpressionOptions>,
+    pub separator: Option<ArgumentsElementsSeparatorOptions>,
+    pub spread_element: Option<ArgumentsElementsSpreadElementOptions>,
     pub start: Option<u16>,
-    pub string_double: Option<ArgumentsArgumentsStringDoubleOptions>,
-    pub string_single: Option<ArgumentsArgumentsStringSingleOptions>,
-    pub subscript_expression: Option<ArgumentsArgumentsSubscriptExpressionOptions>,
-    pub template_string: Option<ArgumentsArgumentsTemplateStringOptions>,
-    pub ternary_expression: Option<ArgumentsArgumentsTernaryExpressionOptions>,
-    pub type_assertion: Option<ArgumentsArgumentsTypeAssertionOptions>,
-    pub unary_expression: Option<ArgumentsArgumentsUnaryExpressionOptions>,
-    pub update_expression_postfix: Option<ArgumentsArgumentsUpdateExpressionPostfixOptions>,
-    pub update_expression_prefix: Option<ArgumentsArgumentsUpdateExpressionPrefixOptions>,
-    pub yield_expression: Option<ArgumentsArgumentsYieldExpressionOptions>,
+    pub string_double: Option<ArgumentsElementsStringDoubleOptions>,
+    pub string_single: Option<ArgumentsElementsStringSingleOptions>,
+    pub subscript_expression: Option<ArgumentsElementsSubscriptExpressionOptions>,
+    pub template_string: Option<ArgumentsElementsTemplateStringOptions>,
+    pub ternary_expression: Option<ArgumentsElementsTernaryExpressionOptions>,
+    pub type_assertion: Option<ArgumentsElementsTypeAssertionOptions>,
+    pub unary_expression: Option<ArgumentsElementsUnaryExpressionOptions>,
+    pub update_expression_postfix: Option<ArgumentsElementsUpdateExpressionPostfixOptions>,
+    pub update_expression_prefix: Option<ArgumentsElementsUpdateExpressionPrefixOptions>,
+    pub yield_expression: Option<ArgumentsElementsYieldExpressionOptions>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["array", "arrow_function", "as_expression", "assignment_expression", "augmented_assignment_expression", "await_expression", "call_expression_call", "call_expression_member", "call_expression_template_call", "class", "decorator_call_expression", "decorator_member_expression", "end", "function_expression", "generator_function", "instantiation_expression", "internal_module", "member_expression", "new_expression", "non_null_expression", "object", "parenthesized_expression_sequence", "parenthesized_expression_typed", "regex", "satisfies_expression", "separator", "spread_element", "start", "string_double", "string_single", "subscript_expression", "template_string", "ternary_expression", "type_assertion", "unary_expression", "update_expression_postfix", "update_expression_prefix", "yield_expression"], "(arguments)/arguments:")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["array", "arrow_function", "as_expression", "assignment_expression", "augmented_assignment_expression", "await_expression", "call_expression_call", "call_expression_member", "call_expression_template_call", "class", "decorator_call_expression", "decorator_member_expression", "end", "function_expression", "generator_function", "instantiation_expression", "internal_module", "member_expression", "new_expression", "non_null_expression", "object", "parenthesized_expression_sequence", "parenthesized_expression_typed", "regex", "satisfies_expression", "separator", "spread_element", "start", "string_double", "string_single", "subscript_expression", "template_string", "ternary_expression", "type_assertion", "unary_expression", "update_expression_postfix", "update_expression_prefix", "yield_expression"], "(arguments)/elements:")?;
         Ok(Self {
             array: obj.get("array")?,
             arrow_function: obj.get("arrow_function")?,
@@ -4714,7 +4714,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsOptions {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("array", val.array)?;
@@ -4760,15 +4760,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsOptions {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsArrayOptions {
+pub struct ArgumentsElementsArrayOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsArrayOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsArrayOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(array)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(array)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -4776,7 +4776,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsArrayOptions {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsArrayOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsArrayOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -4785,15 +4785,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsArrayOptions {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsArrowFunctionOptions {
+pub struct ArgumentsElementsArrowFunctionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsArrowFunctionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsArrowFunctionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(arrow_function)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(arrow_function)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -4801,7 +4801,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsArrowFunctionO
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsArrowFunctionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsArrowFunctionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -4810,15 +4810,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsArrowFunctionOpt
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsAsExpressionOptions {
+pub struct ArgumentsElementsAsExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsAsExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsAsExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(as_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(as_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -4826,7 +4826,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsAsExpressionOp
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsAsExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsAsExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -4835,15 +4835,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsAsExpressionOpti
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsAssignmentExpressionOptions {
+pub struct ArgumentsElementsAssignmentExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsAssignmentExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsAssignmentExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(assignment_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(assignment_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -4851,7 +4851,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsAssignmentExpr
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsAssignmentExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsAssignmentExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -4860,15 +4860,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsAssignmentExpres
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsAugmentedAssignmentExpressionOptions {
+pub struct ArgumentsElementsAugmentedAssignmentExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsAugmentedAssignmentExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsAugmentedAssignmentExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(augmented_assignment_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(augmented_assignment_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -4876,7 +4876,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsAugmentedAssig
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsAugmentedAssignmentExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsAugmentedAssignmentExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -4885,15 +4885,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsAugmentedAssignm
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsAwaitExpressionOptions {
+pub struct ArgumentsElementsAwaitExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsAwaitExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsAwaitExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(await_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(await_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -4901,7 +4901,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsAwaitExpressio
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsAwaitExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsAwaitExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -4910,15 +4910,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsAwaitExpressionO
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsCallExpressionCallOptions {
+pub struct ArgumentsElementsCallExpressionCallOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsCallExpressionCallOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsCallExpressionCallOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(call_expression_call)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(call_expression_call)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -4926,7 +4926,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsCallExpression
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsCallExpressionCallOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsCallExpressionCallOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -4935,15 +4935,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsCallExpressionCa
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsCallExpressionMemberOptions {
+pub struct ArgumentsElementsCallExpressionMemberOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsCallExpressionMemberOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsCallExpressionMemberOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(call_expression_member)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(call_expression_member)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -4951,7 +4951,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsCallExpression
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsCallExpressionMemberOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsCallExpressionMemberOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -4960,15 +4960,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsCallExpressionMe
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsCallExpressionTemplateCallOptions {
+pub struct ArgumentsElementsCallExpressionTemplateCallOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsCallExpressionTemplateCallOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsCallExpressionTemplateCallOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(call_expression_template_call)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(call_expression_template_call)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -4976,7 +4976,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsCallExpression
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsCallExpressionTemplateCallOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsCallExpressionTemplateCallOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -4985,15 +4985,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsCallExpressionTe
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsClassOptions {
+pub struct ArgumentsElementsClassOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsClassOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsClassOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(class)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(class)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5001,7 +5001,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsClassOptions {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsClassOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsClassOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5010,15 +5010,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsClassOptions {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsDecoratorCallExpressionOptions {
+pub struct ArgumentsElementsDecoratorCallExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsDecoratorCallExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsDecoratorCallExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(decorator_call_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(decorator_call_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5026,7 +5026,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsDecoratorCallE
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsDecoratorCallExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsDecoratorCallExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5035,15 +5035,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsDecoratorCallExp
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsDecoratorMemberExpressionOptions {
+pub struct ArgumentsElementsDecoratorMemberExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsDecoratorMemberExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsDecoratorMemberExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(decorator_member_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(decorator_member_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5051,7 +5051,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsDecoratorMembe
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsDecoratorMemberExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsDecoratorMemberExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5060,15 +5060,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsDecoratorMemberE
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsFunctionExpressionOptions {
+pub struct ArgumentsElementsFunctionExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsFunctionExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsFunctionExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(function_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(function_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5076,7 +5076,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsFunctionExpres
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsFunctionExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsFunctionExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5085,15 +5085,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsFunctionExpressi
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsGeneratorFunctionOptions {
+pub struct ArgumentsElementsGeneratorFunctionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsGeneratorFunctionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsGeneratorFunctionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(generator_function)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(generator_function)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5101,7 +5101,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsGeneratorFunct
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsGeneratorFunctionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsGeneratorFunctionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5110,15 +5110,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsGeneratorFunctio
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsInstantiationExpressionOptions {
+pub struct ArgumentsElementsInstantiationExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsInstantiationExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsInstantiationExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(instantiation_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(instantiation_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5126,7 +5126,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsInstantiationE
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsInstantiationExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsInstantiationExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5135,15 +5135,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsInstantiationExp
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsInternalModuleOptions {
+pub struct ArgumentsElementsInternalModuleOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsInternalModuleOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsInternalModuleOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(internal_module)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(internal_module)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5151,7 +5151,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsInternalModule
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsInternalModuleOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsInternalModuleOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5160,15 +5160,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsInternalModuleOp
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsMemberExpressionOptions {
+pub struct ArgumentsElementsMemberExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsMemberExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsMemberExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(member_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(member_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5176,7 +5176,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsMemberExpressi
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsMemberExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsMemberExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5185,15 +5185,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsMemberExpression
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsNewExpressionOptions {
+pub struct ArgumentsElementsNewExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsNewExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsNewExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(new_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(new_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5201,7 +5201,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsNewExpressionO
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsNewExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsNewExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5210,15 +5210,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsNewExpressionOpt
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsNonNullExpressionOptions {
+pub struct ArgumentsElementsNonNullExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsNonNullExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsNonNullExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(non_null_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(non_null_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5226,7 +5226,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsNonNullExpress
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsNonNullExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsNonNullExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5235,15 +5235,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsNonNullExpressio
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsObjectOptions {
+pub struct ArgumentsElementsObjectOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsObjectOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsObjectOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(object)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(object)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5251,7 +5251,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsObjectOptions 
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsObjectOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsObjectOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5260,15 +5260,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsObjectOptions {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsParenthesizedExpressionSequenceOptions {
+pub struct ArgumentsElementsParenthesizedExpressionSequenceOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsParenthesizedExpressionSequenceOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsParenthesizedExpressionSequenceOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(parenthesized_expression_sequence)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(parenthesized_expression_sequence)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5276,7 +5276,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsParenthesizedE
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsParenthesizedExpressionSequenceOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsParenthesizedExpressionSequenceOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5285,15 +5285,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsParenthesizedExp
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsParenthesizedExpressionTypedOptions {
+pub struct ArgumentsElementsParenthesizedExpressionTypedOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsParenthesizedExpressionTypedOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsParenthesizedExpressionTypedOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(parenthesized_expression_typed)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(parenthesized_expression_typed)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5301,7 +5301,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsParenthesizedE
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsParenthesizedExpressionTypedOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsParenthesizedExpressionTypedOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5310,15 +5310,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsParenthesizedExp
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsRegexOptions {
+pub struct ArgumentsElementsRegexOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsRegexOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsRegexOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(regex)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(regex)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5326,7 +5326,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsRegexOptions {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsRegexOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsRegexOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5335,15 +5335,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsRegexOptions {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsSatisfiesExpressionOptions {
+pub struct ArgumentsElementsSatisfiesExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsSatisfiesExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsSatisfiesExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(satisfies_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(satisfies_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5351,7 +5351,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsSatisfiesExpre
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsSatisfiesExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsSatisfiesExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5360,15 +5360,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsSatisfiesExpress
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsSeparatorOptions {
-    pub comma: Option<ArgumentsArgumentsSeparatorCommaOptions>,
+pub struct ArgumentsElementsSeparatorOptions {
+    pub comma: Option<ArgumentsElementsSeparatorCommaOptions>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsSeparatorOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsSeparatorOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["comma"], "(arguments)/arguments:/separator")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["comma"], "(arguments)/elements:/separator")?;
         Ok(Self {
             comma: obj.get("comma")?,
         })
@@ -5376,7 +5376,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsSeparatorOptio
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsSeparatorOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsSeparatorOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("comma", val.comma)?;
@@ -5385,16 +5385,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsSeparatorOptions
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsSeparatorCommaOptions {
+pub struct ArgumentsElementsSeparatorCommaOptions {
     pub after: Option<u16>,
     pub before: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsSeparatorCommaOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsSeparatorCommaOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(arguments)/arguments:/separator/\",\"")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(arguments)/elements:/separator/\",\"")?;
         Ok(Self {
             after: obj.get("after")?,
             before: obj.get("before")?,
@@ -5403,7 +5403,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsSeparatorComma
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsSeparatorCommaOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsSeparatorCommaOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5413,15 +5413,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsSeparatorCommaOp
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsSpreadElementOptions {
+pub struct ArgumentsElementsSpreadElementOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsSpreadElementOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsSpreadElementOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(spread_element)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(spread_element)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5429,7 +5429,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsSpreadElementO
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsSpreadElementOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsSpreadElementOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5438,15 +5438,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsSpreadElementOpt
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsStringDoubleOptions {
+pub struct ArgumentsElementsStringDoubleOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsStringDoubleOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsStringDoubleOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(string_double)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(string_double)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5454,7 +5454,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsStringDoubleOp
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsStringDoubleOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsStringDoubleOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5463,15 +5463,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsStringDoubleOpti
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsStringSingleOptions {
+pub struct ArgumentsElementsStringSingleOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsStringSingleOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsStringSingleOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(string_single)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(string_single)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5479,7 +5479,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsStringSingleOp
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsStringSingleOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsStringSingleOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5488,15 +5488,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsStringSingleOpti
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsSubscriptExpressionOptions {
+pub struct ArgumentsElementsSubscriptExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsSubscriptExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsSubscriptExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(subscript_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(subscript_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5504,7 +5504,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsSubscriptExpre
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsSubscriptExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsSubscriptExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5513,15 +5513,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsSubscriptExpress
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsTemplateStringOptions {
+pub struct ArgumentsElementsTemplateStringOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTemplateStringOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsTemplateStringOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(template_string)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(template_string)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5529,7 +5529,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTemplateString
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsTemplateStringOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsTemplateStringOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5538,15 +5538,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsTemplateStringOp
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsTernaryExpressionOptions {
+pub struct ArgumentsElementsTernaryExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTernaryExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsTernaryExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(ternary_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(ternary_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5554,7 +5554,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTernaryExpress
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsTernaryExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsTernaryExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5563,15 +5563,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsTernaryExpressio
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsTypeAssertionOptions {
+pub struct ArgumentsElementsTypeAssertionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTypeAssertionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsTypeAssertionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(type_assertion)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(type_assertion)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5579,7 +5579,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTypeAssertionO
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsTypeAssertionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsTypeAssertionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5588,15 +5588,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsTypeAssertionOpt
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsUnaryExpressionOptions {
+pub struct ArgumentsElementsUnaryExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsUnaryExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsUnaryExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(unary_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(unary_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5604,7 +5604,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsUnaryExpressio
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsUnaryExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsUnaryExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5613,15 +5613,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsUnaryExpressionO
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsUpdateExpressionPostfixOptions {
+pub struct ArgumentsElementsUpdateExpressionPostfixOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsUpdateExpressionPostfixOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsUpdateExpressionPostfixOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(update_expression_postfix)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(update_expression_postfix)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5629,7 +5629,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsUpdateExpressi
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsUpdateExpressionPostfixOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsUpdateExpressionPostfixOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5638,15 +5638,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsUpdateExpression
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsUpdateExpressionPrefixOptions {
+pub struct ArgumentsElementsUpdateExpressionPrefixOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsUpdateExpressionPrefixOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsUpdateExpressionPrefixOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(update_expression_prefix)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(update_expression_prefix)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5654,7 +5654,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsUpdateExpressi
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsUpdateExpressionPrefixOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsUpdateExpressionPrefixOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -5663,15 +5663,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsUpdateExpression
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ArgumentsArgumentsYieldExpressionOptions {
+pub struct ArgumentsElementsYieldExpressionOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsYieldExpressionOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsYieldExpressionOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/arguments:/(yield_expression)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(arguments)/elements:/(yield_expression)")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -5679,7 +5679,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsYieldExpressio
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsYieldExpressionOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsYieldExpressionOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -32644,125 +32644,125 @@ pub fn resolve(options: &Options, base: &ResolvedOptions) -> Result<ResolvedOpti
     if let Some(v) = options.arguments.as_ref().and_then(|o| o.after) {
         set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_AFTER].4, v, "(arguments)/after")?;
     }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.array.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_ARRAY_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_ARRAY_AFTER].4, v, "(arguments)/arguments:/(array)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.arrow_function.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_ARROW_FUNCTION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_ARROW_FUNCTION_AFTER].4, v, "(arguments)/arguments:/(arrow_function)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.as_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_AS_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_AS_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(as_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.assignment_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_ASSIGNMENT_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_ASSIGNMENT_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(assignment_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.augmented_assignment_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_AUGMENTED_ASSIGNMENT_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_AUGMENTED_ASSIGNMENT_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(augmented_assignment_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.await_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_AWAIT_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_AWAIT_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(await_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.call_expression_call.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_CALL_EXPRESSION_CALL_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_CALL_EXPRESSION_CALL_AFTER].4, v, "(arguments)/arguments:/(call_expression_call)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.call_expression_member.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_CALL_EXPRESSION_MEMBER_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_CALL_EXPRESSION_MEMBER_AFTER].4, v, "(arguments)/arguments:/(call_expression_member)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.call_expression_template_call.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_CALL_EXPRESSION_TEMPLATE_CALL_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_CALL_EXPRESSION_TEMPLATE_CALL_AFTER].4, v, "(arguments)/arguments:/(call_expression_template_call)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.class.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_CLASS_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_CLASS_AFTER].4, v, "(arguments)/arguments:/(class)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.decorator_call_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_DECORATOR_CALL_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_DECORATOR_CALL_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(decorator_call_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.decorator_member_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_DECORATOR_MEMBER_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_DECORATOR_MEMBER_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(decorator_member_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.end) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_END, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_END].4, v, "(arguments)/arguments:/end")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.function_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_FUNCTION_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_FUNCTION_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(function_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.generator_function.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_GENERATOR_FUNCTION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_GENERATOR_FUNCTION_AFTER].4, v, "(arguments)/arguments:/(generator_function)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.instantiation_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_INSTANTIATION_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_INSTANTIATION_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(instantiation_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.internal_module.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_INTERNAL_MODULE_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_INTERNAL_MODULE_AFTER].4, v, "(arguments)/arguments:/(internal_module)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.member_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_MEMBER_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_MEMBER_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(member_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.new_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_NEW_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_NEW_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(new_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.non_null_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_NON_NULL_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_NON_NULL_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(non_null_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.object.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_OBJECT_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_OBJECT_AFTER].4, v, "(arguments)/arguments:/(object)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.parenthesized_expression_sequence.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_PARENTHESIZED_EXPRESSION_SEQUENCE_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_PARENTHESIZED_EXPRESSION_SEQUENCE_AFTER].4, v, "(arguments)/arguments:/(parenthesized_expression_sequence)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.parenthesized_expression_typed.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_PARENTHESIZED_EXPRESSION_TYPED_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_PARENTHESIZED_EXPRESSION_TYPED_AFTER].4, v, "(arguments)/arguments:/(parenthesized_expression_typed)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.regex.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_REGEX_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_REGEX_AFTER].4, v, "(arguments)/arguments:/(regex)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.satisfies_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_SATISFIES_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_SATISFIES_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(satisfies_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.separator.as_ref()).and_then(|o| o.comma.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_AFTER].4, v, "(arguments)/arguments:/separator/\",\"/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.separator.as_ref()).and_then(|o| o.comma.as_ref()).and_then(|o| o.before) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_BEFORE, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_BEFORE].4, v, "(arguments)/arguments:/separator/\",\"/before")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.spread_element.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_SPREAD_ELEMENT_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_SPREAD_ELEMENT_AFTER].4, v, "(arguments)/arguments:/(spread_element)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.start) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_START, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_START].4, v, "(arguments)/arguments:/start")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.string_double.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_STRING_DOUBLE_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_STRING_DOUBLE_AFTER].4, v, "(arguments)/arguments:/(string_double)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.string_single.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_STRING_SINGLE_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_STRING_SINGLE_AFTER].4, v, "(arguments)/arguments:/(string_single)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.subscript_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_SUBSCRIPT_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_SUBSCRIPT_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(subscript_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.template_string.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_TEMPLATE_STRING_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_TEMPLATE_STRING_AFTER].4, v, "(arguments)/arguments:/(template_string)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.ternary_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_TERNARY_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_TERNARY_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(ternary_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.type_assertion.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_TYPE_ASSERTION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_TYPE_ASSERTION_AFTER].4, v, "(arguments)/arguments:/(type_assertion)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.unary_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_UNARY_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_UNARY_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(unary_expression)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.update_expression_postfix.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_UPDATE_EXPRESSION_POSTFIX_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_UPDATE_EXPRESSION_POSTFIX_AFTER].4, v, "(arguments)/arguments:/(update_expression_postfix)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.update_expression_prefix.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_UPDATE_EXPRESSION_PREFIX_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_UPDATE_EXPRESSION_PREFIX_AFTER].4, v, "(arguments)/arguments:/(update_expression_prefix)/after")?;
-    }
-    if let Some(v) = options.arguments.as_ref().and_then(|o| o.arguments.as_ref()).and_then(|o| o.yield_expression.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_YIELD_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_YIELD_EXPRESSION_AFTER].4, v, "(arguments)/arguments:/(yield_expression)/after")?;
-    }
     if let Some(v) = options.arguments.as_ref().and_then(|o| o.before) {
         set_spacing(&mut table, SITE_ARGUMENTS_ARGUMENTS_BEFORE, SPACING_SITES[SITE_ARGUMENTS_ARGUMENTS_BEFORE].4, v, "(arguments)/before")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.array.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_ARRAY_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_ARRAY_AFTER].4, v, "(arguments)/elements:/(array)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.arrow_function.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_ARROW_FUNCTION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_ARROW_FUNCTION_AFTER].4, v, "(arguments)/elements:/(arrow_function)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.as_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_AS_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_AS_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(as_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.assignment_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_ASSIGNMENT_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_ASSIGNMENT_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(assignment_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.augmented_assignment_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_AUGMENTED_ASSIGNMENT_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_AUGMENTED_ASSIGNMENT_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(augmented_assignment_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.await_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_AWAIT_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_AWAIT_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(await_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.call_expression_call.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_CALL_EXPRESSION_CALL_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_CALL_EXPRESSION_CALL_AFTER].4, v, "(arguments)/elements:/(call_expression_call)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.call_expression_member.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_CALL_EXPRESSION_MEMBER_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_CALL_EXPRESSION_MEMBER_AFTER].4, v, "(arguments)/elements:/(call_expression_member)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.call_expression_template_call.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_CALL_EXPRESSION_TEMPLATE_CALL_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_CALL_EXPRESSION_TEMPLATE_CALL_AFTER].4, v, "(arguments)/elements:/(call_expression_template_call)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.class.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_CLASS_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_CLASS_AFTER].4, v, "(arguments)/elements:/(class)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.decorator_call_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_DECORATOR_CALL_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_DECORATOR_CALL_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(decorator_call_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.decorator_member_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_DECORATOR_MEMBER_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_DECORATOR_MEMBER_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(decorator_member_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.end) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_END, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_END].4, v, "(arguments)/elements:/end")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.function_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_FUNCTION_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_FUNCTION_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(function_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.generator_function.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_GENERATOR_FUNCTION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_GENERATOR_FUNCTION_AFTER].4, v, "(arguments)/elements:/(generator_function)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.instantiation_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_INSTANTIATION_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_INSTANTIATION_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(instantiation_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.internal_module.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_INTERNAL_MODULE_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_INTERNAL_MODULE_AFTER].4, v, "(arguments)/elements:/(internal_module)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.member_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_MEMBER_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_MEMBER_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(member_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.new_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_NEW_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_NEW_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(new_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.non_null_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_NON_NULL_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_NON_NULL_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(non_null_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.object.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_OBJECT_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_OBJECT_AFTER].4, v, "(arguments)/elements:/(object)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.parenthesized_expression_sequence.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_PARENTHESIZED_EXPRESSION_SEQUENCE_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_PARENTHESIZED_EXPRESSION_SEQUENCE_AFTER].4, v, "(arguments)/elements:/(parenthesized_expression_sequence)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.parenthesized_expression_typed.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_PARENTHESIZED_EXPRESSION_TYPED_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_PARENTHESIZED_EXPRESSION_TYPED_AFTER].4, v, "(arguments)/elements:/(parenthesized_expression_typed)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.regex.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_REGEX_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_REGEX_AFTER].4, v, "(arguments)/elements:/(regex)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.satisfies_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_SATISFIES_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_SATISFIES_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(satisfies_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.separator.as_ref()).and_then(|o| o.comma.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_SEPARATOR_SPACE_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_SEPARATOR_SPACE_AFTER].4, v, "(arguments)/elements:/separator/\",\"/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.separator.as_ref()).and_then(|o| o.comma.as_ref()).and_then(|o| o.before) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_SEPARATOR_SPACE_BEFORE, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_SEPARATOR_SPACE_BEFORE].4, v, "(arguments)/elements:/separator/\",\"/before")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.spread_element.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_SPREAD_ELEMENT_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_SPREAD_ELEMENT_AFTER].4, v, "(arguments)/elements:/(spread_element)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.start) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_START, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_START].4, v, "(arguments)/elements:/start")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.string_double.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_STRING_DOUBLE_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_STRING_DOUBLE_AFTER].4, v, "(arguments)/elements:/(string_double)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.string_single.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_STRING_SINGLE_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_STRING_SINGLE_AFTER].4, v, "(arguments)/elements:/(string_single)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.subscript_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_SUBSCRIPT_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_SUBSCRIPT_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(subscript_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.template_string.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_TEMPLATE_STRING_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_TEMPLATE_STRING_AFTER].4, v, "(arguments)/elements:/(template_string)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.ternary_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_TERNARY_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_TERNARY_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(ternary_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.type_assertion.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_TYPE_ASSERTION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_TYPE_ASSERTION_AFTER].4, v, "(arguments)/elements:/(type_assertion)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.unary_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_UNARY_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_UNARY_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(unary_expression)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.update_expression_postfix.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_UPDATE_EXPRESSION_POSTFIX_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_UPDATE_EXPRESSION_POSTFIX_AFTER].4, v, "(arguments)/elements:/(update_expression_postfix)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.update_expression_prefix.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_UPDATE_EXPRESSION_PREFIX_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_UPDATE_EXPRESSION_PREFIX_AFTER].4, v, "(arguments)/elements:/(update_expression_prefix)/after")?;
+    }
+    if let Some(v) = options.arguments.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.yield_expression.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_ARGUMENTS_ELEMENTS_YIELD_EXPRESSION_AFTER, SPACING_SITES[SITE_ARGUMENTS_ELEMENTS_YIELD_EXPRESSION_AFTER].4, v, "(arguments)/elements:/(yield_expression)/after")?;
     }
     if let Some(v) = options.arguments.as_ref().and_then(|o| o.lparen.as_ref()).and_then(|o| o.after) {
         set_spacing(&mut table, SITE_ARGUMENTS_LPAREN_AFTER, SPACING_SITES[SITE_ARGUMENTS_LPAREN_AFTER].4, v, "(arguments)/\"(\"/after")?;

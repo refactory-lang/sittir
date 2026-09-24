@@ -308,7 +308,7 @@ export type TypescriptGrammar = {
 		type: 'arguments';
 		named: true;
 		fields: {
-			arguments: {
+			elements: {
 				multiple: true;
 				required: false;
 				types: [

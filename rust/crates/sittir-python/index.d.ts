@@ -1053,7 +1053,7 @@ export interface PairTransport {
 
 export interface ParametersTransport {
   '$_trivia'?: TransportTrivia
-  _parameters?: SlotValue<_ParametersTransport>
+  _elements?: SlotValue<_ParametersTransport>
   _parameter_separator_space_before?: number
   _parameter_separator_space_after?: number
   _lparen_after?: number

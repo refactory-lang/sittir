@@ -425,7 +425,7 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "resolveNotOperator_argument": "function",
   "resolvePair_key": "function",
   "resolvePair_value": "function",
-  "resolveParameters_parameters": "function",
+  "resolveParameters_elements": "function",
   "resolveParenthesizedExpression_content": "function",
   "resolveParenthesizedImportList_importList": "function",
   "resolveParenthesizedListSplat_content": "function",

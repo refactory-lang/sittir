@@ -38,8 +38,8 @@ describe('gaps between coordinates', () => {
 				expression(): {
 					content(): {
 						arguments(): {
-							$with: { arguments(...v: readonly unknown[]): unknown };
-							arguments(): readonly unknown[];
+							$with: { elements(...v: readonly unknown[]): unknown };
+							elements(): readonly unknown[];
 						};
 					};
 				};
@@ -48,8 +48,8 @@ describe('gaps between coordinates', () => {
 			.expression()
 			.content()
 			.arguments();
-		const [a, , c] = call.arguments();
-		const rebuilt = call.$with.arguments(a, ir.identifier('x'), c);
+		const [a, , c] = call.elements();
+		const rebuilt = call.$with.elements(a, ir.identifier('x'), c);
 		expect(engine.render(rebuilt as never).toString()).toBe('(a,x,c)');
 	});
 });

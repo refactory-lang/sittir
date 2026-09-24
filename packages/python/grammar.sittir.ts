@@ -169,9 +169,7 @@ export default grammar(
 					1: variant('nul')
 				},
 				// See docs/python-grammar-sittir-glossary.md::parameters
-				parameters: {
-					'1/0': alias('parameters_elements')
-				},
+				parameters: [{ '1/0': alias('parameters_elements') }, { '1/0': field('elements') }],
 				lambda_parameters: {
 					'.': alias('parameters_elements')
 				},
