@@ -170,7 +170,13 @@ function emitBranchTest(
 	lines.push('');
 }
 
-function pushRenderTest(lines: string[], key: string, renderArg: string, registeredOptionsArg?: string): void {
+function pushRenderTest(
+	lines: string[],
+	key: string,
+	renderArg: string,
+	registeredOptionsArg?: string,
+	texts: readonly string[] = []
+): void {
 	const callArgs =
 		registeredOptionsArg === undefined
 			? renderArg
@@ -179,7 +185,9 @@ function pushRenderTest(lines: string[], key: string, renderArg: string, registe
 	if (hasRenderContent) {
 		lines.push(`  it('render produces non-empty string', () => {`);
 		lines.push(`    const node = ir.${key}(${callArgs});`);
-		lines.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
+		lines.push(`    const rendered = node.$render!();`);
+		lines.push(`    expect(rendered.length).toBeGreaterThan(0);`);
+		for (const text of new Set(texts)) lines.push(`    expect(rendered).toContain(${JSON.stringify(text)});`);
 		lines.push('  });');
 	} else {
 		lines.push(`  it('render does not throw on minimal config', () => {`);
@@ -255,9 +263,10 @@ function patternSlotDummy(slot: AssembledNonterminal): string | undefined {
 function childrenCallArgs(
 	node: AuthoredCompound,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	texts: string[]
 ): string {
-	const value = childrenCallValueArg(node, nodeMap, kindEntries);
+	const value = childrenCallValueArg(node, nodeMap, kindEntries, texts);
 	const registeredRequired = registeredSlots(node).filter(isRequired);
 	if (registeredRequired.length === 0) return value;
 	const optionsParts = registeredRequired.map((f) => `${f.configKey}: ${strictOptionDummy(f, nodeMap, kindEntries)}`);
@@ -267,7 +276,8 @@ function childrenCallArgs(
 function childrenCallValueArg(
 	node: AuthoredCompound,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	texts: string[]
 ): string {
 	const patternDummy = node.soleSlot === undefined ? undefined : patternSlotDummy(node.soleSlot);
 	if (patternDummy !== undefined) return patternDummy;
@@ -275,7 +285,9 @@ function childrenCallValueArg(
 	if (resolved === null || resolved.firstKindName === undefined) return '';
 	const { facts, firstKindName } = resolved;
 	const requiredSingular = !facts.multiple && facts.required;
-	return requiredSingular || facts.nonEmpty ? buildDummyStub(firstKindName, nodeMap, kindEntries, 0, new Set()) : '';
+	return requiredSingular || facts.nonEmpty
+		? buildDummyStub(firstKindName, nodeMap, kindEntries, 0, new Set(), { texts, populateOptional: true })
+		: '';
 }
 
 function subFactoryChildrenArgs(
@@ -510,14 +522,15 @@ function emitChildrenTest(
 	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList) return;
 	if (!testConstructsWithChildren(node, nodeMap)) return;
 
-	const placeholder = childrenCallArgs(node, nodeMap, kindEntries);
+	const texts: string[] = [];
+	const placeholder = childrenCallArgs(node, nodeMap, kindEntries, texts);
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
 	lines.push(`    const node = ir.${key}(${placeholder});`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
-	pushRenderTest(lines, key, placeholder);
+	pushRenderTest(lines, key, placeholder, undefined, texts);
 	lines.push('});');
 	lines.push('');
 }
@@ -669,6 +682,13 @@ function resolveConcreteKind(
 
 const MAX_DUMMY_DEPTH = 6;
 
+interface DummyOptions {
+	/** Receives the text of every leaf the stub seats, so a test can assert the render carries it. */
+	readonly texts?: string[];
+	/** Also seats the optional single-valued slots of the top-level stub. */
+	readonly populateOptional?: boolean;
+}
+
 function strictOptionDummy(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap,
@@ -689,7 +709,8 @@ function dummyValueForField(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	depth: number,
-	visiting: ReadonlySet<string>
+	visiting: ReadonlySet<string>,
+	options?: DummyOptions
 ): string {
 	const patternDummy = patternSlotDummy(field);
 	if (patternDummy !== undefined) return patternDummy;
@@ -702,6 +723,7 @@ function dummyValueForField(
 		if (storageInfo.kind === 'bitflag') return '0 as never';
 		if (storageInfo.kind === 'kindEnum') {
 			const text = storageInfo.texts[0];
+			if (text !== undefined) options?.texts?.push(text);
 			return text !== undefined ? JSON.stringify(text) : "'test' as any";
 		}
 	} else {
@@ -713,6 +735,7 @@ function dummyValueForField(
 				return `${kindDiscriminantExpr(enumKind, nodeMap, kindEntries)} as never`;
 			}
 			const text = storageInfo.texts[0];
+			if (text !== undefined) options?.texts?.push(text);
 			return text !== undefined ? JSON.stringify(text) : "'test' as any";
 		}
 	}
@@ -720,7 +743,7 @@ function dummyValueForField(
 	const kinds = slotKindNames(field);
 	if (kinds.length === 0) return "'test' as any";
 	const concrete = resolveConcreteKind(kinds, nodeMap, kindEntries, visiting);
-	return buildDummyStub(concrete, nodeMap, kindEntries, depth, visiting);
+	return buildDummyStub(concrete, nodeMap, kindEntries, depth, visiting, options);
 }
 
 function buildDummyStub(
@@ -728,22 +751,27 @@ function buildDummyStub(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	depth: number,
-	visiting: ReadonlySet<string>
+	visiting: ReadonlySet<string>,
+	options?: DummyOptions
 ): string {
 	const node = nodeMap.nodes.get(kind) ?? nodeMap.nodes.get(`_${kind}`);
 	const dummyText = node ? dummyTextForKind(kind, nodeMap) : 'test';
 	const base = dummyNodeLiteral(kind, dummyText, nodeMap, kindEntries);
-	if (!node || (!(node instanceof AbstractAssembledCompound) && !(node instanceof AssembledList))) return base;
+	if (!node || (!(node instanceof AbstractAssembledCompound) && !(node instanceof AssembledList))) {
+		if (node !== undefined && (isFixedTextLeaf(node) || node.modelType === 'enum' || node.modelType === 'pattern')) options?.texts?.push(dummyText);
+		return base;
+	}
 	if (depth >= MAX_DUMMY_DEPTH || visiting.has(kind)) return base;
 
 	const nextVisiting = new Set(visiting);
 	nextVisiting.add(kind);
 	const fieldParts: string[] = [];
+	const populateOptional = depth === 0 && options?.populateOptional === true;
 	for (const f of node.slots) {
-		if (!isRequired(f)) continue;
+		if (!isRequired(f) && !(populateOptional && !isMultiple(f))) continue;
 		const value = isMultiple(f)
-			? `[${dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting)}]`
-			: dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting);
+			? `[${dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting, options)}]`
+			: dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting, options);
 		fieldParts.push(`${f.storageKey}: ${value}`);
 	}
 	if (fieldParts.length === 0) return base;

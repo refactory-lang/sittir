@@ -12572,6 +12572,8 @@ The render test shared by the config-shaped and children-constructed blocks. An 
 
 The block carries the shared render test (`pushRenderTest`) after the type test, so a children-constructed kind asserts a non-empty render the way a config-shaped one does.
 
+The placeholder seats the optional single-valued slots of the top-level stub as well as the required ones, and collects the text of every leaf it seats (`DummyOptions.texts`). `pushRenderTest` then asserts the render contains each of them, so a slot that stops reaching the output (extends_clause_single's `type_arguments` is the case that motivated it) fails the generated test rather than only the aggregate validate counts. A stub with no optional slot is unchanged.
+
 #### body
 
 ```text
