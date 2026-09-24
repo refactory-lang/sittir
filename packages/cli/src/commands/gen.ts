@@ -2,14 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { Option } from 'commander';
 import { type CommandModule, defineCommand } from '../framework/command-module.ts';
 import { withGrammar, withOutput } from '../framework/options.ts';
-import {
-	runCodegen,
-	runFullRegen,
-	runStandaloneSteps,
-	RUST_RENDER_GRAMMARS,
-	type CodegenOptions
-} from '@sittir/codegen/run-codegen';
-import { emitParityFixtures, runRoundtripProbes } from '@sittir/tools/post-generate';
+import type { CodegenOptions } from '@sittir/codegen/run-codegen';
 
 interface GenCliOptions {
 	grammar?: string;
@@ -34,6 +27,10 @@ function collectRepeatable(value: string, previous: string[]): string[] {
 }
 
 async function runPostGenerate(opts: GenCliOptions & { grammar: string }): Promise<void> {
+	const [{ RUST_RENDER_GRAMMARS }, { emitParityFixtures, runRoundtripProbes }] = await Promise.all([
+		import('@sittir/codegen/run-codegen'),
+		import('@sittir/tools/post-generate')
+	]);
 	const isRustRender = opts.all === true && (RUST_RENDER_GRAMMARS as readonly string[]).includes(opts.grammar);
 	if (isRustRender) {
 		if (opts.buildNative !== false) {
@@ -106,6 +103,7 @@ export const gen: CommandModule = {
 					await runPostGenerate(grammarOpts);
 					return;
 				}
+				const { runCodegen, runFullRegen, runStandaloneSteps } = await import('@sittir/codegen/run-codegen');
 				const codegenOpts: CodegenOptions = {
 					grammar: opts.grammar,
 					outputDir: opts.output ?? '',
