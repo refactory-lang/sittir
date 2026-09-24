@@ -510,26 +510,25 @@ they need no entry in `transforms`.
 				// the base grammar's arms verbatim (including precedence).
 ```
 
-### `case_as_pattern` (`packages/python/grammar.sittir.ts:400`)
+### `case_pattern` (`packages/python/grammar.sittir.ts`, `patches`)
 
 ```text
 				// Case-context as-pattern split — same two-rules-one-parse-kind class
-				// as `case_tuple_pattern`/`case_list_pattern` just above. Base
-				// `case_pattern` arm 0 is `alias($._as_pattern, $.as_pattern)`:
-				// match-statement `X as name` patterns parse to the SAME `as_pattern`
-				// kind as the expression-context rule (`seq($.expression, 'as',
+				// as `case_tuple_pattern`/`case_list_pattern`. Base `case_pattern`
+				// arm 0 is `alias($._as_pattern, $.as_pattern)`: match-statement
+				// `X as name` patterns would parse to the SAME `as_pattern` kind as
+				// the expression-context rule (`seq($.expression, 'as',
 				// field('alias', alias($.expression, $.as_pattern_target)))`), whose
 				// wrap requires an `expression` child the case shape
-				// (`seq($.case_pattern, 'as', $.identifier)`) never produces — every
-				// case-context as-pattern threw at wrap time ("singular slot
-				// 'expression' on 'as_pattern' requires one value"). Declare the case
-				// shape as its own REAL visible rule (per the precedent above, a
-				// choice-arm position can't mint a content alias, so `alias($._x, …)`
-				// would never enter the NodeMap). Non-natural name: the natural
+				// (`seq($.case_pattern, 'as', $.identifier)`) never produces.
+				// alias('case_as_pattern') renames arm 0's face, so the parser issues
+				// its own `case_as_pattern` kind for the case shape, stored as the
+				// hidden `_as_pattern` rule (typeName `_AsPattern`, beside the
+				// expression-context `AsPattern`). Non-natural name: the natural
 				// stripped name `as_pattern` is taken by the expression-context kind.
 ```
 
-### `comprehension_clauses` (`packages/python/grammar.sittir.ts:434`)
+### `comprehension_clauses` (`packages/python/grammar.sittir.ts`, `patches`)
 
 ```text
 				// Comprehension-clause visibility (hidden-repeat-helper class): the
@@ -545,7 +544,8 @@ they need no entry in `transforms`.
 				// A Track-B reference-site alias can't help here — every reference
 				// is mandatory (no `optional(...)` site to satisfy
 				// `parentIsOptionalSeq`, see the `set`/`collection_elements` note above) —
-				// so declare it as a REAL visible rule and reference it directly.
+				// so rule() declares it as a REAL visible rule at the clause position
+				// (index 2) of all four comprehension kinds.
 				// Body is `repeat1(choice(...))`, NOT the base's
 				// `seq($.for_in_clause, repeat(choice(...)))`: the seq shape derives
 				// TWO slots (position-0 `for_in_clause` + the repeat as `content`),

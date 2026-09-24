@@ -7338,7 +7338,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_string_literal_open"
+              "name": "_string_open"
             },
             "named": true,
             "value": "string_open"
@@ -11272,17 +11272,9 @@
         }
       ]
     },
-    "_wildcard_pattern": {
-      "type": "STRING",
-      "value": "_"
-    },
     "_range_expression_bare": {
       "type": "STRING",
       "value": ".."
-    },
-    "_string_literal_open": {
-      "type": "PATTERN",
-      "value": "[bc]?\""
     },
     "_impl_item_unsafe_marker": {
       "type": "STRING",
@@ -12968,6 +12960,10 @@
         "hoisted": true
       }
     },
+    "_string_open": {
+      "type": "PATTERN",
+      "value": "[bc]?\""
+    },
     "range_expression_binary": {
       "type": "PREC_LEFT",
       "value": 1,
@@ -14549,6 +14545,10 @@
       "annotations": {
         "hoisted": true
       }
+    },
+    "_wildcard_pattern": {
+      "type": "STRING",
+      "value": "_"
     },
     "_attributed_field_declaration": {
       "type": "SEQ",

@@ -370,6 +370,7 @@ export const ir: {
 	readonly expressionList: typeof F.expressionList;
 	readonly dottedName: typeof F.dottedName;
 	readonly casePattern: typeof F.casePattern;
+	readonly _asPattern: typeof F._asPattern;
 	readonly unionPattern: typeof F.unionPattern;
 	readonly dictPattern: typeof F.dictPattern;
 	readonly keyValuePattern: typeof F.keyValuePattern;
@@ -444,13 +445,12 @@ export const ir: {
 	readonly exceptClauseExceptionAs: typeof F.exceptClauseExceptionAs;
 	readonly caseTuplePattern: typeof F.caseTuplePattern;
 	readonly caseListPattern: typeof F.caseListPattern;
-	readonly caseAsPattern: typeof F.caseAsPattern;
-	readonly comprehensionClauses: typeof F.comprehensionClauses;
 	readonly printArguments: typeof F.printArguments;
 	readonly printChevronArguments: typeof F.printChevronArguments;
 	readonly printStatementChevron: typeof F.printStatementChevron;
 	readonly printStatementPlain: typeof F.printStatementPlain;
 	readonly parenthesizedImportList: typeof F.parenthesizedImportList;
+	readonly comprehensionClauses: typeof F.comprehensionClauses;
 	readonly expressionStatementTuple: typeof F.expressionStatementTuple;
 	readonly withClauseBare: typeof F.withClauseBare;
 	readonly withClause: typeof F.withClause;
@@ -585,6 +585,7 @@ export const ir: {
 	expressionList: F.expressionList,
 	dottedName: F.dottedName,
 	casePattern: F.casePattern,
+	_asPattern: F._asPattern,
 	unionPattern: F.unionPattern,
 	dictPattern: F.dictPattern,
 	keyValuePattern: F.keyValuePattern,
@@ -659,13 +660,12 @@ export const ir: {
 	exceptClauseExceptionAs: F.exceptClauseExceptionAs,
 	caseTuplePattern: F.caseTuplePattern,
 	caseListPattern: F.caseListPattern,
-	caseAsPattern: F.caseAsPattern,
-	comprehensionClauses: F.comprehensionClauses,
 	printArguments: F.printArguments,
 	printChevronArguments: F.printChevronArguments,
 	printStatementChevron: F.printStatementChevron,
 	printStatementPlain: F.printStatementPlain,
 	parenthesizedImportList: F.parenthesizedImportList,
+	comprehensionClauses: F.comprehensionClauses,
 	expressionStatementTuple: F.expressionStatementTuple,
 	withClauseBare: F.withClauseBare,
 	withClause: F.withClause,

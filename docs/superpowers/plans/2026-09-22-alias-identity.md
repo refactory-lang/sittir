@@ -764,31 +764,35 @@ Task 1 already retired two other rust overrides by other means (`_let_chain` →
 **Interfaces:**
 - Consumes: `rule()` (Task 3), promoting `alias()` and unhoisted leaf mints (Task 4), display names from the mapping (Task 2).
 
-- [ ] **Step 1: rust `_wildcard_pattern`**
+- [x] **Step 1: rust `_wildcard_pattern`**
 
 Delete the `_wildcard_pattern: ($) => '_'` entry under `rules:`; keep `patches: { _pattern: { '-1': alias('wildcard_pattern') } }`. Regenerate rust, run `pnpm run validate:native` and `pnpm exec vitest run packages/tools/tests/census/hoisted.test.ts`.
 Expected: rust rows equal; the hoisted census reports no new unseated kind (the mint carries no `hoisted`).
+Landed: the injected rule is appended to the grammar, so rust kind ids from `wildcard_pattern` onward renumber (ids only).
 
-- [ ] **Step 2: rust `string_literal`**
+- [x] **Step 2: rust `string_literal`**
 
-Delete the `string_literal` entry under `rules:`; add `patches: { string_literal: { 0: alias('string_open') } }` (promotes the base's unnamed `alias(/[bc]?"/, '"')`). Regenerate rust; `pnpm run validate:native`.
+Delete the `string_literal` entry under `rules:`; add `alias('string_open')` at `string_literal/0` beside the existing `field('string_open')` patch, as the array form `[{ 0: alias('string_open') }, { 0: field('string_open') }]` (a duplicate key replaces). It promotes the base's unnamed `alias(/[bc]?"/, '"')`.
+Prerequisite (landed): an alias over inline content mints the content as the leaf rule `_<name>`; promoted in place it left `string_open` with no model kind and a kindless `string` slot. Landed: storage `_string_open`, typeName `StringOpen` (was `StringLiteralOpen`, the user's ruling). Regenerate rust; `pnpm run validate:native`.
 Expected: rust rows equal; `b"…"` and `c"…"` round-trip in the corpus rows that carry them.
 
-- [ ] **Step 3: python `case_as_pattern`**
+- [x] **Step 3: python `case_as_pattern`**
 
-Delete the `case_as_pattern` entry under `rules:`; add `patches: { case_pattern: { 0: alias('case_as_pattern') } }`. Regenerate python; `cargo check --workspace`; `pnpm run validate:native`.
+Delete the `case_as_pattern` and `case_pattern` entries under `rules:` (the override references `$.case_as_pattern`); add `patches: { case_pattern: { 0: alias('case_as_pattern') } }`.
+Landed (the user's ruling): storage `_as_pattern`, typeName `_AsPattern` (was `CaseAsPattern`, with a typename-collision info diagnostic beside `as_pattern`); without the override, enrich's `simple_pattern` alias of case_pattern's third arm reaches the parser, so node-types gains `simple_pattern`. python from/cov totals 164→163 and 144→143, all passing. Regenerate python; `cargo check --workspace`; `pnpm run validate:native`.
 Expected: cargo green (the `_AsPattern…` struct keeps its own spacing sites keyed `_as_pattern`; `as_pattern`'s are keyed `as_pattern`); python rows equal.
 
-- [ ] **Step 4: python `comprehension_clauses`**
+- [x] **Step 4: python `comprehension_clauses`**
 
 Delete the `comprehension_clauses` rule and the four comprehension-kind rewrites under `rules:`; add:
 
 ```ts
+const comprehensionClauses = rule('comprehension_clauses', ($) => field('content', repeat1(choice($.for_in_clause, $.if_clause))));
 patches: {
-	list_comprehension: { 2: rule('comprehension_clauses', ($) => field('content', repeat1(choice($.for_in_clause, $.if_clause)))) },
-	dictionary_comprehension: { 2: rule('comprehension_clauses', ($) => field('content', repeat1(choice($.for_in_clause, $.if_clause)))) },
-	set_comprehension: { 2: rule('comprehension_clauses', ($) => field('content', repeat1(choice($.for_in_clause, $.if_clause)))) },
-	generator_expression: { 2: rule('comprehension_clauses', ($) => field('content', repeat1(choice($.for_in_clause, $.if_clause)))) }
+	list_comprehension: { 2: comprehensionClauses },
+	dictionary_comprehension: { 2: comprehensionClauses },
+	set_comprehension: { 2: comprehensionClauses },
+	generator_expression: { 2: comprehensionClauses }
 }
 ```
 
@@ -797,7 +801,7 @@ patches: {
 Prerequisite (landed): a `rule()` body used at several sites is built by the installed rule from that rule's own `$` (`declaredRuleFn`), not at the patch site. Built at the site, each body's symbols carried the patching parent as their owner, so the four equal bodies compared unequal and the refs belonged to `list_comprehension`. Regenerate python; `pnpm run validate:native`.
 Expected: python rows equal; `(x for x in y for z in w)` renders once per clause in the corpus rows.
 
-- [ ] **Step 5: Full gate and commit**
+- [x] **Step 5: Full gate and commit**
 
 Run the regen loop for all three, `pnpm run validate:native`, `pnpm run type-check`, `pnpm run lint`, vitest.
 

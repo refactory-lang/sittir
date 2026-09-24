@@ -24,8 +24,8 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 }
 
 const _leafRe_buildIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
-const _leafRe_buildStringLiteralOpen = /^(?:(?:[bc]?"))$/u;
 const _leafRe_buildCharLiteralEmpty = /^(?:(?:b)?'')$/u;
+const _leafRe_buildStringOpen = /^(?:(?:[bc]?"))$/u;
 const _leafRe_buildLineCommentRegularDslash = /^(?:(?:\/\/)(?:.*))$/u;
 const _leafRe_buildLineCommentContent = /^(?:(?:.*))$/u;
 const _leafRe_buildFloatLiteral =
@@ -4337,7 +4337,7 @@ export function buildNegativeLiteral(value: T.IntegerLiteral | T.FloatLiteral): 
 export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLiteral.Built {
 	const _string_open = admitHiddenText<NonNullable<T.StringLiteral['_string_open']>>(
 		config.stringOpen,
-		[['_string_literal_open', _leafRe_buildStringLiteralOpen, buildStringLiteralOpen]],
+		[['_string_open', _leafRe_buildStringOpen, buildStringOpen]],
 		'StringLiteral.stringOpen'
 	);
 	const _elements = config.elements ?? [];
@@ -4350,7 +4350,7 @@ export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLite
 				_string_open,
 				_elements,
 				$with: {
-					stringOpen: (value: T.StringLiteralOpen | string) => buildStringLiteral({ ...config, stringOpen: value }),
+					stringOpen: (value: T.StringOpen | string) => buildStringLiteral({ ...config, stringOpen: value }),
 					elements: (...values: (T.EscapeSequence | T.StringContent)[]) =>
 						buildStringLiteral({ ...config, elements: values })
 				}
@@ -5891,21 +5891,6 @@ function _buildTupleExpressionElements(
 	);
 }
 
-export function buildStringLiteralOpen(text: string): T.StringLiteralOpen.Built {
-	if (text.length === 0) throw new Error(`_string_literal_open: text must be non-empty`);
-	if (!_leafRe_buildStringLiteralOpen.test(text))
-		throw new Error(`_string_literal_open: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.StringLiteralOpen as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export function buildIntegerLiteralDecimal(
 	config: WidenNumeric<T.IntegerLiteralDecimal.Config, 'content'>
 ): T.IntegerLiteralDecimal.Built {
@@ -7020,6 +7005,20 @@ export function buildPointerTypeMut(value: T.Type | T.TypeIdentifier.Types): T.P
 				type: () => _type
 			}
 		),
+		methodsEngine
+	);
+}
+
+export function buildStringOpen(text: string): T.StringOpen.Built {
+	if (text.length === 0) throw new Error(`_string_open: text must be non-empty`);
+	if (!_leafRe_buildStringOpen.test(text)) throw new Error(`_string_open: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.StringOpen as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
 		methodsEngine
 	);
 }
@@ -8717,7 +8716,6 @@ export type FluentKindMap = {
 	visibility_modifier_group: T.VisibilityModifierGroup.Built;
 	_tuple_type_elements: T.TupleTypeElements.Built;
 	_tuple_expression_elements: T.TupleExpressionElements.Built;
-	_string_literal_open: T.StringLiteralOpen;
 	integer_literal_decimal: T.IntegerLiteralDecimal.Built;
 	integer_literal_hex: T.IntegerLiteralHex.Built;
 	integer_literal_binary: T.IntegerLiteralBinary.Built;
@@ -8752,6 +8750,7 @@ export type FluentKindMap = {
 	or_pattern_prefix: T.OrPatternPrefix.Built;
 	pointer_type_const: T.PointerTypeConst.Built;
 	pointer_type_mut: T.PointerTypeMut.Built;
+	_string_open: T.StringOpen;
 	range_expression_binary: T.RangeExpressionBinary.Built;
 	range_expression_postfix: T.RangeExpressionPostfix.Built;
 	range_expression_prefix: T.RangeExpressionPrefix.Built;
@@ -8965,7 +8964,6 @@ export const _factoryMap = {
 	visibility_modifier_group: buildVisibilityModifierGroup,
 	_tuple_type_elements: buildTupleTypeElements,
 	_tuple_expression_elements: buildTupleExpressionElements,
-	_string_literal_open: buildStringLiteralOpen,
 	integer_literal_decimal: buildIntegerLiteralDecimal,
 	integer_literal_hex: buildIntegerLiteralHex,
 	integer_literal_binary: buildIntegerLiteralBinary,
@@ -9000,6 +8998,7 @@ export const _factoryMap = {
 	or_pattern_prefix: buildOrPatternPrefix,
 	pointer_type_const: buildPointerTypeConst,
 	pointer_type_mut: buildPointerTypeMut,
+	_string_open: buildStringOpen,
 	range_expression_binary: buildRangeExpressionBinary,
 	range_expression_postfix: buildRangeExpressionPostfix,
 	range_expression_prefix: buildRangeExpressionPrefix,

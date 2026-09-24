@@ -9,9 +9,10 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js';
-import { role, enrich, field, alias, variant, wire, preference } from '../codegen/src/dsl/index.ts';
+import { role, enrich, field, alias, variant, wire, preference, rule } from '../codegen/src/dsl/index.ts';
 
 const enrichedBase = enrich(base);
+const comprehensionClauses = rule('comprehension_clauses', ($) => field('content', repeat1(choice($.for_in_clause, $.if_clause))));
 export default grammar(
 	enrichedBase,
 	wire(
@@ -130,6 +131,13 @@ export default grammar(
 			},
 
 			patches: {
+				// See docs/python-grammar-sittir-glossary.md::case_pattern
+				case_pattern: { 0: alias('case_as_pattern') },
+				// See docs/python-grammar-sittir-glossary.md::comprehension_clauses
+				list_comprehension: { 2: comprehensionClauses },
+				dictionary_comprehension: { 2: comprehensionClauses },
+				set_comprehension: { 2: comprehensionClauses },
+				generator_expression: { 2: comprehensionClauses },
 				integer: {
 					0: variant('hex'),
 					1: variant('octal'),
@@ -370,17 +378,6 @@ export default grammar(
 				// See docs/python-grammar-sittir-glossary.md::case_tuple_pattern
 				case_tuple_pattern: ($) => seq('(', optional($.list_pattern_case_patterns), ')'),
 				case_list_pattern: ($) => seq('[', optional($.list_pattern_case_patterns), ']'),
-
-				// See docs/python-grammar-sittir-glossary.md::case_as_pattern
-				case_as_pattern: ($) => seq($.case_pattern, 'as', $.identifier),
-				case_pattern: ($) => prec(1, choice($.case_as_pattern, $.keyword_pattern, $._simple_pattern)),
-
-				// See docs/python-grammar-sittir-glossary.md::comprehension_clauses
-				comprehension_clauses: ($) => field('content', repeat1(choice($.for_in_clause, $.if_clause))),
-				list_comprehension: ($) => seq('[', field('body', $.expression), $.comprehension_clauses, ']'),
-				dictionary_comprehension: ($) => seq('{', field('body', $.pair), $.comprehension_clauses, '}'),
-				set_comprehension: ($) => seq('{', field('body', $.expression), $.comprehension_clauses, '}'),
-				generator_expression: ($) => seq('(', field('body', $.expression), $.comprehension_clauses, ')'),
 
 				_print_arguments: ($) =>
 					seq(field('argument', $.expression), repeat(seq(',', field('argument', $.expression))), optional(',')),

@@ -228,7 +228,7 @@ describe('ir entry ratchet', () => {
 		// ratchet tracks builder exposure, so only callable entries count.
 		// (274 callable builders today — the ceiling is the exact current
 		// count, so any new top-level builder trips it. The user-facing
-		// aliased pattern leaves — stringLiteralOpen, rawStringLiteralStart /
+		// aliased pattern leaves — stringOpen, rawStringLiteralStart /
 		// End, the comment-content patterns — are on the surface; the
 		// enum-of-literals leaves are not, their values being kind ids.)
 		const builders = Object.keys(ir).filter((k) => typeof (ir as Record<string, unknown>)[k] === 'function');

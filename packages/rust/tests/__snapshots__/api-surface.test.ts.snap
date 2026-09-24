@@ -256,7 +256,7 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "coerceToStaticItem": "function",
   "coerceToStringContent": "function",
   "coerceToStringLiteral": "function",
-  "coerceToStringLiteralOpen": "function",
+  "coerceToStringOpen": "function",
   "coerceToStructExpression": "function",
   "coerceToStructItemBrace": "function",
   "coerceToStructItemTuple": "function",

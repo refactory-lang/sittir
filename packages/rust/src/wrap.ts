@@ -8067,8 +8067,8 @@ export function wrapRangeExpression(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '..': 369 },
-				{ 101: 369 }
+				{ '..': 368 },
+				{ 101: 368 }
 			),
 
 			content() {
@@ -11468,7 +11468,7 @@ export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle) {
 			}),
 
 			stringOpen() {
-				return drillIn<T.StringLiteralOpen>(this._string_open, tree);
+				return drillIn<T.StringOpen>(this._string_open, tree);
 			},
 			elements() {
 				return drillInAll<T.EscapeSequence | T.StringContent>(
@@ -17139,8 +17139,8 @@ export function wrapRangePatternWithLeft(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '..': 423 },
-				{ 101: 423 }
+				{ '..': 422 },
+				{ 101: 422 }
 			),
 
 			left() {
@@ -18639,8 +18639,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 		wrapTupleExpressionElements(d as unknown as T.TupleExpressionElements, t),
 	[TSKindId.TokenTreePunctuation]: (d) => ({ ...d, $type: TSKindId.TokenTreePunctuation as const }),
 	[TSKindId.TokenKeywords]: (d) => ({ ...d, $type: TSKindId.TokenKeywords as const }),
-	[TSKindId.WildcardPattern]: (d) => ({ ...d, $type: TSKindId.WildcardPattern as const }),
-	[TSKindId.StringLiteralOpen]: (d) => ({ ...d, $type: TSKindId.StringLiteralOpen as const }),
 	[TSKindId.ImplItemUnsafeMarker]: (d) => ({ ...d, $type: TSKindId.ImplItemUnsafeMarker as const }),
 	[TSKindId.IntegerLiteralDecimal]: (d, t) => wrapIntegerLiteralDecimal(d as unknown as T.IntegerLiteralDecimal, t),
 	[TSKindId.IntegerLiteralHex]: (d, t) => wrapIntegerLiteralHex(d as unknown as T.IntegerLiteralHex, t),
@@ -18682,6 +18680,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.OrPatternPrefix]: (d, t) => wrapOrPatternPrefix(d as unknown as T.OrPatternPrefix, t),
 	[TSKindId.PointerTypeConst]: (d, t) => wrapPointerTypeConst(d as unknown as T.PointerTypeConst, t),
 	[TSKindId.PointerTypeMut]: (d, t) => wrapPointerTypeMut(d as unknown as T.PointerTypeMut, t),
+	[TSKindId.StringOpen]: (d) => ({ ...d, $type: TSKindId.StringOpen as const }),
 	[TSKindId.RangeExpressionBinary]: (d, t) => wrapRangeExpressionBinary(d as unknown as T.RangeExpressionBinary, t),
 	[TSKindId.RangeExpressionPostfix]: (d, t) => wrapRangeExpressionPostfix(d as unknown as T.RangeExpressionPostfix, t),
 	[TSKindId.RangeExpressionPrefix]: (d, t) => wrapRangeExpressionPrefix(d as unknown as T.RangeExpressionPrefix, t),
@@ -18720,6 +18719,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.StructItemBrace]: (d, t) => wrapStructItemBrace(d as unknown as T.StructItemBrace, t),
 	[TSKindId.StructItemTuple]: (d, t) => wrapStructItemTuple(d as unknown as T.StructItemTuple, t),
 	[TSKindId.StructItemUnit]: (d, t) => wrapStructItemUnit(d as unknown as T.StructItemUnit, t),
+	[TSKindId.WildcardPattern]: (d) => ({ ...d, $type: TSKindId.WildcardPattern as const }),
 	[TSKindId.AttributedFieldDeclaration]: (d, t) =>
 		wrapAttributedFieldDeclaration(d as unknown as T.AttributedFieldDeclaration, t),
 	[TSKindId.AttributedEnumVariant]: (d, t) => wrapAttributedEnumVariant(d as unknown as T.AttributedEnumVariant, t),
@@ -18980,8 +18980,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.TupleExpressionElements]: ReturnType<typeof wrapTupleExpressionElements>;
 	[TSKindId.TokenTreePunctuation]: _NodeData & { readonly $type: TSKindId.TokenTreePunctuation };
 	[TSKindId.TokenKeywords]: _NodeData & { readonly $type: TSKindId.TokenKeywords };
-	[TSKindId.WildcardPattern]: _NodeData & { readonly $type: TSKindId.WildcardPattern };
-	[TSKindId.StringLiteralOpen]: _NodeData & { readonly $type: TSKindId.StringLiteralOpen };
 	[TSKindId.ImplItemUnsafeMarker]: _NodeData & { readonly $type: TSKindId.ImplItemUnsafeMarker };
 	[TSKindId.IntegerLiteralDecimal]: ReturnType<typeof wrapIntegerLiteralDecimal>;
 	[TSKindId.IntegerLiteralHex]: ReturnType<typeof wrapIntegerLiteralHex>;
@@ -19017,6 +19015,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.OrPatternPrefix]: ReturnType<typeof wrapOrPatternPrefix>;
 	[TSKindId.PointerTypeConst]: ReturnType<typeof wrapPointerTypeConst>;
 	[TSKindId.PointerTypeMut]: ReturnType<typeof wrapPointerTypeMut>;
+	[TSKindId.StringOpen]: _NodeData & { readonly $type: TSKindId.StringOpen };
 	[TSKindId.RangeExpressionBinary]: ReturnType<typeof wrapRangeExpressionBinary>;
 	[TSKindId.RangeExpressionPostfix]: ReturnType<typeof wrapRangeExpressionPostfix>;
 	[TSKindId.RangeExpressionPrefix]: ReturnType<typeof wrapRangeExpressionPrefix>;
@@ -19052,6 +19051,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.StructItemBrace]: ReturnType<typeof wrapStructItemBrace>;
 	[TSKindId.StructItemTuple]: ReturnType<typeof wrapStructItemTuple>;
 	[TSKindId.StructItemUnit]: ReturnType<typeof wrapStructItemUnit>;
+	[TSKindId.WildcardPattern]: _NodeData & { readonly $type: TSKindId.WildcardPattern };
 	[TSKindId.AttributedFieldDeclaration]: ReturnType<typeof wrapAttributedFieldDeclaration>;
 	[TSKindId.AttributedEnumVariant]: ReturnType<typeof wrapAttributedEnumVariant>;
 	[TSKindId.AttributedParameter]: ReturnType<typeof wrapAttributedParameter>;

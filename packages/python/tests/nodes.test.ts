@@ -2872,8 +2872,8 @@ describe('case_pattern', () => {
 });
 
 describe('case_pattern sub-factories', () => {
-	it('caseAsPattern builds the parent', () => {
-		const node = ir.casePattern.caseAsPattern({
+	it('asPattern builds the parent', () => {
+		const node = ir.casePattern.asPattern({
 			casePattern: {
 				$type: TSKindId.CasePattern,
 				$text: 'test',
@@ -2896,98 +2896,114 @@ describe('case_pattern sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('classPattern builds the parent', () => {
-		const node = ir.casePattern.classPattern({
-			name: {
-				$type: TSKindId.DottedName,
+	it('keywordPattern.classPattern builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.classPattern({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: {
+				name: {
+					$type: TSKindId.DottedName,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_names: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+				} as any
+			}
+		});
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('keywordPattern.splatPattern builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.splatPattern({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: { operator: '*', name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }
+		});
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('keywordPattern.unionPattern builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.unionPattern({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('keywordPattern.caseListPattern builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.caseListPattern({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: {
+				$type: TSKindId.ListPatternCasePatterns,
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_names: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+				_case_pattern: [
+					{
+						$type: TSKindId.CasePattern,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+					} as any
+				]
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('splatPattern builds the parent', () => {
-		const node = ir.casePattern.splatPattern({
-			operator: '*',
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+	it('keywordPattern.caseTuplePattern builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.caseTuplePattern({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: {
+				$type: TSKindId.ListPatternCasePatterns,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_case_pattern: [
+					{
+						$type: TSKindId.CasePattern,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+					} as any
+				]
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('unionPattern builds the parent', () => {
-		const node = ir.casePattern.unionPattern({ $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any);
+	it('keywordPattern.dictPattern builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.dictPattern({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: {
+				$type: TSKindId.DictPatternElements,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_element: [
+					{
+						$type: TSKindId.SplatPattern,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_operator: TSKindId.Star as never,
+						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+					} as any
+				]
+			} as any
+		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('caseListPattern builds the parent', () => {
-		const node = ir.casePattern.caseListPattern({
-			$type: TSKindId.ListPatternCasePatterns,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_case_pattern: [
-				{
-					$type: TSKindId.CasePattern,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
-				} as any
-			]
-		} as any);
-		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('caseTuplePattern builds the parent', () => {
-		const node = ir.casePattern.caseTuplePattern({
-			$type: TSKindId.ListPatternCasePatterns,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_case_pattern: [
-				{
-					$type: TSKindId.CasePattern,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
-				} as any
-			]
-		} as any);
-		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('dictPattern builds the parent', () => {
-		const node = ir.casePattern.dictPattern({
-			$type: TSKindId.DictPatternElements,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_element: [
-				{
-					$type: TSKindId.SplatPattern,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_operator: TSKindId.Star as never,
-					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
-		} as any);
-		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('string builds the parent', () => {
-		const node = ir.casePattern.string({
+	it('keywordPattern.string builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.string({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			stringStart: { $type: TSKindId.StringStart, $text: 'test', $source: 2, $named: true } as any,
 			stringEnd: { $type: TSKindId.StringEnd, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -2995,35 +3011,46 @@ describe('case_pattern sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('concatenatedString builds the parent', () => {
-		const node = ir.casePattern.concatenatedString({
-			$type: TSKindId.String,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_string_start: { $type: TSKindId.StringStart, $text: 'test', $source: 2, $named: true } as any,
-			_string_end: { $type: TSKindId.StringEnd, $text: 'test', $source: 2, $named: true } as any
-		} as any);
+	it('keywordPattern.concatenatedString builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.concatenatedString({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [
+				{
+					$type: TSKindId.String,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_string_start: { $type: TSKindId.StringStart, $text: 'test', $source: 2, $named: true } as any,
+					_string_end: { $type: TSKindId.StringEnd, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('true builds the parent', () => {
-		const node = ir.casePattern.true({ $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any);
+	it('keywordPattern.true builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.true({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBe(TSKindId.True);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('false builds the parent', () => {
-		const node = ir.casePattern.false({ $type: TSKindId.False, $text: 'False', $source: 2, $named: true } as any);
+	it('keywordPattern.false builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.false({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBe(TSKindId.False);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('none builds the parent', () => {
-		const node = ir.casePattern.none({ $type: TSKindId.None, $text: 'None', $source: 2, $named: true } as any);
+	it('keywordPattern.none builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.none({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBe(TSKindId.None);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('keywordPattern.negative builds the parent', () => {
@@ -3035,50 +3062,72 @@ describe('case_pattern sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('negative.hex builds the parent', () => {
-		const node = ir.casePattern.negative.hex({ content: 'a' });
+	it('keywordPattern.integerHex builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.integerHex({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ content: 'a' }]
+		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('negative.octal builds the parent', () => {
-		const node = ir.casePattern.negative.octal({ content: '1' });
+	it('keywordPattern.integerOctal builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.integerOctal({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ content: '1' }]
+		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('negative.binary builds the parent', () => {
-		const node = ir.casePattern.negative.binary({ content: '1' });
+	it('keywordPattern.integerBinary builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.integerBinary({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ content: '1' }]
+		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('negative.decimal builds the parent', () => {
-		const node = ir.casePattern.negative.decimal({ content: ['1'] });
+	it('keywordPattern.integerDecimal builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.integerDecimal({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ content: ['1'] }]
+		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('negative.point builds the parent', () => {
-		const node = ir.casePattern.negative.point({ integer: '1' });
+	it('keywordPattern.floatPoint builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.floatPoint({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ integer: '1' }]
+		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('negative.leadingPoint builds the parent', () => {
-		const node = ir.casePattern.negative.leadingPoint({ fraction: '1' });
+	it('keywordPattern.floatLeadingPoint builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.floatLeadingPoint({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ fraction: '1' }]
+		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('negative.scientific builds the parent', () => {
-		const node = ir.casePattern.negative.scientific({ integer: '1', marker: 'e', exponent: '1' });
+	it('keywordPattern.floatScientific builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.floatScientific({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ integer: '1', marker: 'e', exponent: '1' }]
+		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('complexPattern builds the parent', () => {
-		const node = ir.casePattern.complexPattern({
+	it('keywordPattern.complexPattern builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.complexPattern({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			imaginary: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any,
 			operator: '+',
 			content: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any
@@ -3087,61 +3136,18 @@ describe('case_pattern sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('dottedName builds the parent', () => {
-		const node = ir.casePattern.dottedName({
-			$type: TSKindId.Identifier,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
+	it('keywordPattern.dottedName builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.dottedName({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('wildcardPattern builds the parent', () => {
-		const node = ir.casePattern.wildcardPattern();
-		expect(node.$type).toBe(TSKindId.CasePattern);
-		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.WildcardPattern);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('splatPattern.star builds the parent', () => {
-		const node = ir.casePattern.splatPattern.star({
+	it('keywordPattern.wildcardPattern builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.wildcardPattern({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('splatPattern.starStar builds the parent', () => {
-		const node = ir.casePattern.splatPattern.starStar({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('negative builds the parent', () => {
-		const node = ir.casePattern.negative({
-			content: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('complexPattern.plus builds the parent', () => {
-		const node = ir.casePattern.complexPattern.plus({
-			imaginary: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any,
-			content: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('complexPattern.dash builds the parent', () => {
-		const node = ir.casePattern.complexPattern.dash({
-			imaginary: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any,
-			content: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
@@ -6581,49 +6587,6 @@ describe('case_list_pattern', () => {
 	});
 });
 
-describe('case_as_pattern', () => {
-	it('factory produces correct type', () => {
-		const node = ir.caseAsPattern({
-			casePattern: {
-				$type: TSKindId.CasePattern,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
-			} as any,
-			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.CaseAsPattern);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.caseAsPattern({
-			casePattern: {
-				$type: TSKindId.CasePattern,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
-			} as any,
-			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('comprehension_clauses', () => {
-	it('factory produces correct type', () => {
-		const node = ir.comprehensionClauses();
-		expect(node.$type).toBe(TSKindId.ComprehensionClauses);
-		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.comprehensionClauses();
-		expect(() => node.$render!()).not.toThrow();
-	});
-});
-
 describe('print_statement_chevron', () => {
 	it('factory produces correct type', () => {
 		const node = ir.printStatementChevron({
@@ -6709,6 +6672,18 @@ describe('print_statement_plain', () => {
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 		expect(rendered).toContain('test');
+	});
+});
+
+describe('comprehension_clauses', () => {
+	it('factory produces correct type', () => {
+		const node = ir.comprehensionClauses();
+		expect(node.$type).toBe(TSKindId.ComprehensionClauses);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.comprehensionClauses();
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

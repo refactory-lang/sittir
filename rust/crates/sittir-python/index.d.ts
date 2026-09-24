@@ -138,6 +138,13 @@ export interface AsPatternTargetTransport {
 export interface AsPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  _case_pattern: SlotValue<Box<CasePatternTransport>>
+  _identifier: SlotValue<IdentifierTransport>
+}
+
+export interface AsPatternTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
   _expression: SlotValue<Box<ExpressionTransport>>
   _alias: SlotValue<Box<AsPatternTargetTransport>>
 }
@@ -221,13 +228,6 @@ export interface CallTransport {
   '$_edges'?: Edges
   _function: SlotValue<Box<PrimaryExpressionTransport>>
   _arguments: SlotValue<Box<CallArgumentsTransportSlot>>
-}
-
-export interface CaseAsPatternTransport {
-  '$_trivia'?: TransportTrivia
-  '$_edges'?: Edges
-  _case_pattern: SlotValue<Box<CasePatternTransport>>
-  _identifier: SlotValue<IdentifierTransport>
 }
 
 export interface CaseClauseTransport {

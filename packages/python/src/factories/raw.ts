@@ -1412,32 +1412,8 @@ export function buildDottedName(...children: T.Identifier[]): T.DottedName.Built
 	);
 }
 
-export function buildCasePattern(
-	value:
-		| T.CaseAsPattern
-		| T.KeywordPattern
-		| T.ClassPattern
-		| T.SplatPattern
-		| T.UnionPattern
-		| T.CaseListPattern
-		| T.CaseTuplePattern
-		| T.DictPattern
-		| T.String
-		| T.ConcatenatedString
-		| TSKindId.True
-		| TSKindId.False
-		| TSKindId.None
-		| T.SimplePatternNegative
-		| T.ComplexPattern
-		| T.DottedName
-		| TSKindId.WildcardPattern
-): T.CasePattern.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.CasePattern['_content']>>(value, [
-		['True', TSKindId.True] as const,
-		['False', TSKindId.False] as const,
-		['None', TSKindId.None] as const,
-		['_', TSKindId.WildcardPattern] as const
-	]);
+export function buildCasePattern(value: T._AsPattern | T.KeywordPattern | T.SimplePattern): T.CasePattern.Built {
+	const _content = coerceMixedEnumStorage<NonNullable<T.CasePattern['_content']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -1446,31 +1422,36 @@ export function buildCasePattern(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (
-						value: NonNullable<
-							| T.CaseAsPattern
-							| T.KeywordPattern
-							| T.ClassPattern
-							| T.SplatPattern
-							| T.UnionPattern
-							| T.CaseListPattern
-							| T.CaseTuplePattern
-							| T.DictPattern
-							| T.String
-							| T.ConcatenatedString
-							| TSKindId.True
-							| TSKindId.False
-							| TSKindId.None
-							| T.SimplePatternNegative
-							| T.ComplexPattern
-							| T.DottedName
-							| TSKindId.WildcardPattern
-						>
-					) => buildCasePattern(value)
+					content: (value: NonNullable<T._AsPattern | T.KeywordPattern | T.SimplePattern>) => buildCasePattern(value)
 				}
 			},
 			{
 				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function build_AsPattern(config: T._AsPattern.Config): T._AsPattern.Built {
+	const _case_pattern = config.casePattern;
+	const _identifier = config.identifier;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId._AsPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_case_pattern,
+				_identifier,
+				$with: {
+					casePattern: (value: T.CasePattern) => build_AsPattern({ ...config, casePattern: value }),
+					identifier: (value: T.Identifier) => build_AsPattern({ ...config, identifier: value })
+				}
+			},
+			{
+				casePattern: () => _case_pattern,
+				identifier: () => _identifier
 			}
 		),
 		methodsEngine
@@ -2065,8 +2046,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				208, 202, 203, 209, 252, 204, 1, 68, 38, 69, 70, 39, 22, 243, 242, 90, 91, 92, 93, 94, 95, 96, 71, 72, 73, 205,
-				216, 217, 219, 228, 233, 231, 234, 229, 235, 230, 237, 236, 64, 196, 241, 139, 198
+				209, 203, 204, 210, 253, 205, 1, 68, 38, 69, 70, 39, 22, 244, 243, 90, 91, 92, 93, 94, 95, 96, 71, 72, 73, 206,
+				217, 218, 220, 229, 234, 232, 235, 230, 236, 231, 238, 237, 64, 197, 242, 139, 199
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -3314,7 +3295,7 @@ export function buildFormatSpecifier(
 	...children: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]
 ): T.FormatSpecifier.Built {
 	const _content = admitAliasContent<NonNullable<T.FormatSpecifier['_content']>>(children, [
-		[[245], (v: unknown) => buildFormatExpression(v as never)]
+		[[246], (v: unknown) => buildFormatExpression(v as never)]
 	]);
 	return withMethods(
 		withAccessors(
@@ -4155,50 +4136,6 @@ function _buildCaseListPattern(value?: T.ListPatternCasePatterns): T.CaseListPat
 	);
 }
 
-export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPattern.Built {
-	const _case_pattern = config.casePattern;
-	const _identifier = config.identifier;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CaseAsPattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_case_pattern,
-				_identifier,
-				$with: {
-					casePattern: (value: T.CasePattern) => buildCaseAsPattern({ ...config, casePattern: value }),
-					identifier: (value: T.Identifier) => buildCaseAsPattern({ ...config, identifier: value })
-				}
-			},
-			{
-				casePattern: () => _case_pattern,
-				identifier: () => _identifier
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClause)[]): T.ComprehensionClauses.Built {
-	const _content = children;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ComprehensionClauses as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: { contents: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...vs) }
-			},
-			{
-				contents: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildPrintArguments(...elements: NonEmptyArray<T.Expression>): ReturnType<typeof _buildPrintArguments>;
 export function buildPrintArguments(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -4399,6 +4336,25 @@ function _buildParenthesizedImportList(value: T.ImportList): T.ParenthesizedImpo
 			},
 			{
 				importList: () => _import_list
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClause)[]): T.ComprehensionClauses.Built {
+	const _content = children;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ComprehensionClauses as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { contents: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...vs) }
+			},
+			{
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -5484,6 +5440,7 @@ export type FluentKindMap = {
 	expression_list: T.ExpressionList.Built;
 	dotted_name: T.DottedName.Built;
 	case_pattern: T.CasePattern.Built;
+	_as_pattern: T._AsPattern.Built;
 	union_pattern: T.UnionPattern.Built;
 	dict_pattern: T.DictPattern.Built;
 	_key_value_pattern: T.KeyValuePattern.Built;
@@ -5567,13 +5524,12 @@ export type FluentKindMap = {
 	except_clause_exception_as: T.ExceptClauseExceptionAs.Built;
 	case_tuple_pattern: T.CaseTuplePattern.Built;
 	case_list_pattern: T.CaseListPattern.Built;
-	case_as_pattern: T.CaseAsPattern.Built;
-	comprehension_clauses: T.ComprehensionClauses.Built;
 	_print_arguments: T.PrintArguments.Built;
 	_print_chevron_arguments: T.PrintChevronArguments.Built;
 	print_statement_chevron: T.PrintStatementChevron.Built;
 	print_statement_plain: T.PrintStatementPlain.Built;
 	_parenthesized_import_list: T.ParenthesizedImportList.Built;
+	comprehension_clauses: T.ComprehensionClauses.Built;
 	integer_hex: T.IntegerHex.Built;
 	integer_octal: T.IntegerOctal.Built;
 	integer_binary: T.IntegerBinary.Built;
@@ -5669,6 +5625,7 @@ export const _factoryMap = {
 	expression_list: buildExpressionList,
 	dotted_name: buildDottedName,
 	case_pattern: buildCasePattern,
+	_as_pattern: build_AsPattern,
 	union_pattern: buildUnionPattern,
 	dict_pattern: buildDictPattern,
 	_key_value_pattern: buildKeyValuePattern,
@@ -5752,13 +5709,12 @@ export const _factoryMap = {
 	except_clause_exception_as: buildExceptClauseExceptionAs,
 	case_tuple_pattern: buildCaseTuplePattern,
 	case_list_pattern: buildCaseListPattern,
-	case_as_pattern: buildCaseAsPattern,
-	comprehension_clauses: buildComprehensionClauses,
 	_print_arguments: buildPrintArguments,
 	_print_chevron_arguments: buildPrintChevronArguments,
 	print_statement_chevron: buildPrintStatementChevron,
 	print_statement_plain: buildPrintStatementPlain,
 	_parenthesized_import_list: buildParenthesizedImportList,
+	comprehension_clauses: buildComprehensionClauses,
 	integer_hex: buildIntegerHex,
 	integer_octal: buildIntegerOctal,
 	integer_binary: buildIntegerBinary,

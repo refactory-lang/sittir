@@ -59,6 +59,22 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "python",
+    "ownerKind": "_as_pattern",
+    "message": "[assemble] typeName collision: kind '_as_pattern' renamed 'AsPattern' → '_AsPattern' (visible sibling(s): 'as_pattern')",
+    "canProceed": true,
+    "details": {
+      "typeName": "AsPattern",
+      "newType": "_AsPattern",
+      "visibleKinds": [
+        "as_pattern"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
     "ownerKind": "_string_content",
     "message": "[assemble] typeName collision: kind '_string_content' renamed 'StringContent' → '_StringContent' (visible sibling(s): 'string_content')",
     "canProceed": true,

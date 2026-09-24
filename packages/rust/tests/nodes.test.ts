@@ -1443,7 +1443,7 @@ describe('function_modifiers', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_string_open: { $type: TSKindId.StringLiteralOpen, $text: 'test', $source: 2, $named: true } as any
+				_string_open: { $type: TSKindId.StringOpen, $text: 'test', $source: 2, $named: true } as any
 			} as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.FunctionModifiers);
@@ -1460,7 +1460,7 @@ describe('function_modifiers', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_string_open: { $type: TSKindId.StringLiteralOpen, $text: 'test', $source: 2, $named: true } as any
+				_string_open: { $type: TSKindId.StringOpen, $text: 'test', $source: 2, $named: true } as any
 			} as any
 		} as any);
 		const rendered = node.$render!();
@@ -13647,14 +13647,14 @@ describe('negative_literal sub-factories', () => {
 describe('string_literal', () => {
 	it('factory produces correct type', () => {
 		const node = ir.stringLiteral({
-			stringOpen: { $type: TSKindId.StringLiteralOpen, $text: 'test', $source: 2, $named: true } as any
+			stringOpen: { $type: TSKindId.StringOpen, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.StringLiteral);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.stringLiteral({
-			stringOpen: { $type: TSKindId.StringLiteralOpen, $text: 'test', $source: 2, $named: true } as any
+			stringOpen: { $type: TSKindId.StringOpen, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);

@@ -542,6 +542,25 @@
     "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
+    "ownerKind": "_as_pattern",
+    "message": "[assemble] typeName collision: kind '_as_pattern' renamed 'AsPattern' → '_AsPattern' (visible sibling(s): 'as_pattern')",
+    "canProceed": true,
+    "details": {
+      "typeName": "AsPattern",
+      "newType": "_AsPattern",
+      "visibleKinds": [
+        "as_pattern"
+      ]
+    },
+    "location": "_as_pattern"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
     "ownerKind": "_string_content",
     "message": "[assemble] typeName collision: kind '_string_content' renamed 'StringContent' → '_StringContent' (visible sibling(s): 'string_content')",
     "canProceed": true,
@@ -8423,6 +8442,21 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
+    "kind": "simple_pattern",
+    "count": 1,
+    "entries": [
+      "Matching specific values"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
+    "severity": "info",
+    "message": "no-from-function",
+    "label": "simple_pattern"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
     "kind": "wildcard_pattern",
     "count": 1,
     "entries": [
@@ -8433,6 +8467,21 @@
     "severity": "info",
     "message": "no-from-function",
     "label": "wildcard_pattern"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "case_as_pattern",
+    "count": 1,
+    "entries": [
+      "As patterns"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
+    "severity": "info",
+    "message": "no-from-function",
+    "label": "case_as_pattern"
   },
   {
     "source": "validator",
@@ -10224,7 +10273,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "case_as_pattern",
+    "kind": "_as_pattern",
     "count": 4,
     "entries": [
       "As patterns",
@@ -10234,7 +10283,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "case_as_pattern"
+    "label": "_as_pattern"
   },
   {
     "source": "validator",
@@ -12649,7 +12698,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "case_as_pattern",
+    "kind": "_as_pattern",
     "count": 4,
     "entries": [
       "As patterns",
@@ -12659,7 +12708,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "case_as_pattern"
+    "label": "_as_pattern"
   },
   {
     "source": "validator",
@@ -13391,6 +13440,21 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
+    "kind": "_case_as_pattern",
+    "count": 1,
+    "entries": [
+      "case_as_pattern"
+    ],
+    "stage": "coverage-excluded",
+    "code": "coverage-excluded",
+    "severity": "info",
+    "message": "no-rule",
+    "label": "_case_as_pattern"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
     "kind": "_names",
     "count": 1,
     "entries": [
@@ -13416,5 +13480,20 @@
     "severity": "info",
     "message": "no-rule",
     "label": "_parameters_elements"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "_simple_pattern",
+    "count": 1,
+    "entries": [
+      "simple_pattern"
+    ],
+    "stage": "coverage-excluded",
+    "code": "coverage-excluded",
+    "severity": "info",
+    "message": "no-rule",
+    "label": "_simple_pattern"
   }
 ]

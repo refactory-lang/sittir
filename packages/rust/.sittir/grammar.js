@@ -5923,13 +5923,11 @@ var grammar_sittir_default = grammar(
           "1/1": variant("mut")
         },
         // string_literal's opening token carries the b"/c" byte-/C-string
-        // prefix (`alias(/[bc]?"/, $.string_open)` in `rules:` below) — a
-        // NAMED alias, so its real per-occurrence text (`c"`/`b"`/`"`)
-        // survives instead of collapsing to the base grammar's anonymous
-        // `alias(/[bc]?"/, '"')` display string.
-        string_literal: {
-          0: field2("string_open")
-        },
+        // prefix. The base grammar's `alias(/[bc]?"/, '"')` is unnamed, so
+        // the prefix would collapse to the display string '"'; alias() names
+        // it `string_open`, so its real per-occurrence text (`c"`/`b"`/`"`)
+        // survives as a captured slot.
+        string_literal: [{ 0: alias2("string_open") }, { 0: field2("string_open") }],
         // raw_string_literal's delimiters are HIDDEN external-scanner
         // tokens (`$._raw_string_literal_start`/`_end`) — invisible in
         // the CST, so their per-occurrence text (the hash-run width:
@@ -6050,7 +6048,7 @@ var grammar_sittir_default = grammar(
         // $._pattern)` in tuple_struct_pattern, tuple_pattern, slice_pattern,
         // closure parameters) tree-sitter surfaces `_` as an anonymous child
         // that the read's named-only capture drops. Aliasing it to the named
-        // `wildcard_pattern` kind (the `_wildcard_pattern` rule in `rules:`)
+        // `wildcard_pattern` kind (alias() mints the `_wildcard_pattern` leaf)
         // gives it a real node, so every `_pattern` list position round-trips
         // without render-side heuristics.
         _pattern: { "-1": alias2("wildcard_pattern") }
@@ -6175,16 +6173,7 @@ var grammar_sittir_default = grammar(
           "while"
         ),
         where_predicates: ($, previous) => prec.right(0, previous),
-        _wildcard_pattern: ($) => "_",
         _range_expression_bare: ($) => "..",
-        // string_literal's opening token is `alias(/[bc]?"/, '"')` in the
-        // base grammar — an UNNAMED alias, so the b"/c" prefix distinction
-        // collapses to the fixed display string '"' before the compiler
-        // ever sees it. Same fix as `_wildcard_pattern`/`_range_expression_bare`
-        // above: alias the pattern into its own real, named node so its
-        // per-occurrence text survives.
-        string_literal: ($, original) => seq(alias2($._string_literal_open, $.string_open), ...original.members.slice(1)),
-        _string_literal_open: ($) => /[bc]?"/,
         reference_expression: ($) => prec(
           12,
           seq(

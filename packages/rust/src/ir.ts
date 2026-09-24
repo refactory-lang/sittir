@@ -912,7 +912,7 @@ export const ir: {
 	readonly crate: typeof F.buildCrate;
 	readonly rangePatternWithLeftBare: typeof F.buildRangePatternWithLeftBare;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly stringLiteralOpen: typeof F.buildStringLiteralOpen;
+	readonly stringOpen: typeof F.buildStringOpen;
 	readonly lineCommentRegularDslash: typeof F.buildLineCommentRegularDslash;
 	readonly lineCommentContent: typeof F.buildLineCommentContent;
 	readonly floatLiteral: typeof F.buildFloatLiteral;
@@ -1185,7 +1185,7 @@ export const ir: {
 
 	// Leaf node factories
 	identifier: F.buildIdentifier,
-	stringLiteralOpen: F.buildStringLiteralOpen,
+	stringOpen: F.buildStringOpen,
 	lineCommentRegularDslash: F.buildLineCommentRegularDslash,
 	lineCommentContent: F.buildLineCommentContent,
 	floatLiteral: F.buildFloatLiteral,

@@ -4378,7 +4378,7 @@ export const keywordPattern: typeof B.keywordPattern & {
 	}
 };
 
-const casePattern$caseAsPattern =
+const casePattern$asPattern =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -4471,270 +4471,214 @@ const casePattern$dottedName =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const casePattern$wildcardPattern =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const casePattern$star =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const casePattern$starStar =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const casePattern$negative =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const casePattern$plus =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const casePattern$dash =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const casePattern: typeof B.casePattern & {
-	caseAsPattern: {
-		strict: (...args: ArgsOf<typeof F.buildCaseAsPattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCaseAsPattern>) => ReturnType<typeof F.buildCasePattern>;
+	asPattern: {
+		strict: (...args: ArgsOf<typeof F.build_AsPattern>) => ReturnType<typeof F.buildCasePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceTo_AsPattern>) => ReturnType<typeof F.buildCasePattern>;
 	};
 	keywordPattern: {
 		strict: (...args: ArgsOf<typeof F.buildKeywordPattern>) => ReturnType<typeof F.buildCasePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToKeywordPattern>) => ReturnType<typeof F.buildCasePattern>;
+		classPattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.classPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.classPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		splatPattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.splatPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.splatPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		unionPattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.unionPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.unionPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		caseListPattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.caseListPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.caseListPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		caseTuplePattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.caseTuplePattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.caseTuplePattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		dictPattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.dictPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.dictPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		string: {
+			strict: (...args: ArgsOf<typeof keywordPattern.string.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.string.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		concatenatedString: {
+			strict: (
+				...args: ArgsOf<typeof keywordPattern.concatenatedString.strict>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (
+				...args: ArgsOf<typeof keywordPattern.concatenatedString.coerce>
+			) => ReturnType<typeof F.buildCasePattern>;
+		};
+		true: {
+			strict: (...args: ArgsOf<typeof keywordPattern.true.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.true.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		false: {
+			strict: (...args: ArgsOf<typeof keywordPattern.false.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.false.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		none: {
+			strict: (...args: ArgsOf<typeof keywordPattern.none.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.none.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
 		negative: {
 			strict: (...args: ArgsOf<typeof keywordPattern.negative.strict>) => ReturnType<typeof F.buildCasePattern>;
 			coerce: (...args: ArgsOf<typeof keywordPattern.negative.coerce>) => ReturnType<typeof F.buildCasePattern>;
 		};
-	};
-	classPattern: {
-		strict: (...args: ArgsOf<typeof classPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof classPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
-	};
-	splatPattern: {
-		strict: (...args: ArgsOf<typeof F.buildSplatPattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSplatPattern>) => ReturnType<typeof F.buildCasePattern>;
-		star: {
-			strict: (...args: ArgsOf<typeof splatPattern.star.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof splatPattern.star.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		integerHex: {
+			strict: (...args: ArgsOf<typeof keywordPattern.negative.hex.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.negative.hex.coerce>) => ReturnType<typeof F.buildCasePattern>;
 		};
-		starStar: {
-			strict: (...args: ArgsOf<typeof splatPattern.starStar.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof splatPattern.starStar.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		integerOctal: {
+			strict: (...args: ArgsOf<typeof keywordPattern.negative.octal.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.negative.octal.coerce>) => ReturnType<typeof F.buildCasePattern>;
 		};
-	};
-	unionPattern: {
-		strict: (...args: ArgsOf<typeof unionPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof unionPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
-	};
-	caseListPattern: {
-		strict: (...args: ArgsOf<typeof F.buildCaseListPattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCaseListPattern>) => ReturnType<typeof F.buildCasePattern>;
-	};
-	caseTuplePattern: {
-		strict: (...args: ArgsOf<typeof F.buildCaseTuplePattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCaseTuplePattern>) => ReturnType<typeof F.buildCasePattern>;
-	};
-	dictPattern: {
-		strict: (...args: ArgsOf<typeof F.buildDictPattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToDictPattern>) => ReturnType<typeof F.buildCasePattern>;
-	};
-	string: {
-		strict: (...args: ArgsOf<typeof F.buildString>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToString>) => ReturnType<typeof F.buildCasePattern>;
-	};
-	concatenatedString: {
-		strict: (...args: ArgsOf<typeof F.buildConcatenatedString>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToConcatenatedString>) => ReturnType<typeof F.buildCasePattern>;
-	};
-	true: {
-		strict: (...args: ArgsOf<typeof F.buildTrue>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTrue>) => ReturnType<typeof F.buildCasePattern>;
-	};
-	false: {
-		strict: (...args: ArgsOf<typeof F.buildFalse>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToFalse>) => ReturnType<typeof F.buildCasePattern>;
-	};
-	none: {
-		strict: (...args: ArgsOf<typeof F.buildNone>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNone>) => ReturnType<typeof F.buildCasePattern>;
-	};
-	complexPattern: {
-		strict: (...args: ArgsOf<typeof F.buildComplexPattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToComplexPattern>) => ReturnType<typeof F.buildCasePattern>;
-		plus: {
-			strict: (...args: ArgsOf<typeof complexPattern.plus.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof complexPattern.plus.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		integerBinary: {
+			strict: (...args: ArgsOf<typeof keywordPattern.negative.binary.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.negative.binary.coerce>) => ReturnType<typeof F.buildCasePattern>;
 		};
-		dash: {
-			strict: (...args: ArgsOf<typeof complexPattern.dash.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof complexPattern.dash.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		integerDecimal: {
+			strict: (...args: ArgsOf<typeof keywordPattern.negative.decimal.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.negative.decimal.coerce>) => ReturnType<typeof F.buildCasePattern>;
 		};
-	};
-	dottedName: {
-		strict: (...args: ArgsOf<typeof F.buildDottedName>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToDottedName>) => ReturnType<typeof F.buildCasePattern>;
-	};
-	wildcardPattern: {
-		strict: (options?: OptionsArg<typeof F.buildCasePattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (options?: OptionsArg<typeof C.coerceToCasePattern>) => ReturnType<typeof C.coerceToCasePattern>;
-	};
-	negative: {
-		strict: (...args: ArgsOf<typeof F.buildSimplePatternNegative>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSimplePatternNegative>) => ReturnType<typeof F.buildCasePattern>;
-		hex: {
-			strict: (...args: ArgsOf<typeof simplePatternNegative.hex.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePatternNegative.hex.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		floatPoint: {
+			strict: (...args: ArgsOf<typeof keywordPattern.negative.point.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.negative.point.coerce>) => ReturnType<typeof F.buildCasePattern>;
 		};
-		octal: {
-			strict: (...args: ArgsOf<typeof simplePatternNegative.octal.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePatternNegative.octal.coerce>) => ReturnType<typeof F.buildCasePattern>;
-		};
-		binary: {
-			strict: (...args: ArgsOf<typeof simplePatternNegative.binary.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePatternNegative.binary.coerce>) => ReturnType<typeof F.buildCasePattern>;
-		};
-		decimal: {
-			strict: (...args: ArgsOf<typeof simplePatternNegative.decimal.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePatternNegative.decimal.coerce>) => ReturnType<typeof F.buildCasePattern>;
-		};
-		point: {
-			strict: (...args: ArgsOf<typeof simplePatternNegative.point.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePatternNegative.point.coerce>) => ReturnType<typeof F.buildCasePattern>;
-		};
-		leadingPoint: {
+		floatLeadingPoint: {
 			strict: (
-				...args: ArgsOf<typeof simplePatternNegative.leadingPoint.strict>
+				...args: ArgsOf<typeof keywordPattern.negative.leadingPoint.strict>
 			) => ReturnType<typeof F.buildCasePattern>;
 			coerce: (
-				...args: ArgsOf<typeof simplePatternNegative.leadingPoint.coerce>
+				...args: ArgsOf<typeof keywordPattern.negative.leadingPoint.coerce>
 			) => ReturnType<typeof F.buildCasePattern>;
 		};
-		scientific: {
+		floatScientific: {
 			strict: (
-				...args: ArgsOf<typeof simplePatternNegative.scientific.strict>
+				...args: ArgsOf<typeof keywordPattern.negative.scientific.strict>
 			) => ReturnType<typeof F.buildCasePattern>;
 			coerce: (
-				...args: ArgsOf<typeof simplePatternNegative.scientific.coerce>
+				...args: ArgsOf<typeof keywordPattern.negative.scientific.coerce>
 			) => ReturnType<typeof F.buildCasePattern>;
+		};
+		complexPattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.complexPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.complexPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		dottedName: {
+			strict: (...args: ArgsOf<typeof keywordPattern.dottedName.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.dottedName.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		wildcardPattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.wildcardPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.wildcardPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
 		};
 	};
 } = {
 	...B.casePattern,
-	caseAsPattern: {
-		strict: casePattern$caseAsPattern(F.buildCasePattern, F.buildCaseAsPattern),
-		coerce: casePattern$caseAsPattern(F.buildCasePattern, C.coerceToCaseAsPattern)
+	asPattern: {
+		strict: casePattern$asPattern(F.buildCasePattern, F.build_AsPattern),
+		coerce: casePattern$asPattern(F.buildCasePattern, C.coerceTo_AsPattern)
 	},
 	keywordPattern: {
 		strict: casePattern$keywordPattern(F.buildCasePattern, F.buildKeywordPattern),
 		coerce: casePattern$keywordPattern(F.buildCasePattern, C.coerceToKeywordPattern),
+		classPattern: {
+			strict: casePattern$classPattern(F.buildCasePattern, keywordPattern.classPattern.strict),
+			coerce: casePattern$classPattern(F.buildCasePattern, keywordPattern.classPattern.coerce)
+		},
+		splatPattern: {
+			strict: casePattern$splatPattern(F.buildCasePattern, keywordPattern.splatPattern.strict),
+			coerce: casePattern$splatPattern(F.buildCasePattern, keywordPattern.splatPattern.coerce)
+		},
+		unionPattern: {
+			strict: casePattern$unionPattern(F.buildCasePattern, keywordPattern.unionPattern.strict),
+			coerce: casePattern$unionPattern(F.buildCasePattern, keywordPattern.unionPattern.coerce)
+		},
+		caseListPattern: {
+			strict: casePattern$caseListPattern(F.buildCasePattern, keywordPattern.caseListPattern.strict),
+			coerce: casePattern$caseListPattern(F.buildCasePattern, keywordPattern.caseListPattern.coerce)
+		},
+		caseTuplePattern: {
+			strict: casePattern$caseTuplePattern(F.buildCasePattern, keywordPattern.caseTuplePattern.strict),
+			coerce: casePattern$caseTuplePattern(F.buildCasePattern, keywordPattern.caseTuplePattern.coerce)
+		},
+		dictPattern: {
+			strict: casePattern$dictPattern(F.buildCasePattern, keywordPattern.dictPattern.strict),
+			coerce: casePattern$dictPattern(F.buildCasePattern, keywordPattern.dictPattern.coerce)
+		},
+		string: {
+			strict: casePattern$string(F.buildCasePattern, keywordPattern.string.strict),
+			coerce: casePattern$string(F.buildCasePattern, keywordPattern.string.coerce)
+		},
+		concatenatedString: {
+			strict: casePattern$concatenatedString(F.buildCasePattern, keywordPattern.concatenatedString.strict),
+			coerce: casePattern$concatenatedString(F.buildCasePattern, keywordPattern.concatenatedString.coerce)
+		},
+		true: {
+			strict: casePattern$true(F.buildCasePattern, keywordPattern.true.strict),
+			coerce: casePattern$true(F.buildCasePattern, keywordPattern.true.coerce)
+		},
+		false: {
+			strict: casePattern$false(F.buildCasePattern, keywordPattern.false.strict),
+			coerce: casePattern$false(F.buildCasePattern, keywordPattern.false.coerce)
+		},
+		none: {
+			strict: casePattern$none(F.buildCasePattern, keywordPattern.none.strict),
+			coerce: casePattern$none(F.buildCasePattern, keywordPattern.none.coerce)
+		},
 		negative: {
 			strict: casePattern$simplePatternNegative(F.buildCasePattern, keywordPattern.negative.strict),
 			coerce: casePattern$simplePatternNegative(F.buildCasePattern, keywordPattern.negative.coerce)
-		}
-	},
-	classPattern: {
-		strict: casePattern$classPattern(F.buildCasePattern, classPattern.strict),
-		coerce: casePattern$classPattern(F.buildCasePattern, classPattern.coerce)
-	},
-	splatPattern: {
-		strict: casePattern$splatPattern(F.buildCasePattern, F.buildSplatPattern),
-		coerce: casePattern$splatPattern(F.buildCasePattern, C.coerceToSplatPattern),
-		star: {
-			strict: casePattern$star(F.buildCasePattern, splatPattern.star.strict),
-			coerce: casePattern$star(F.buildCasePattern, splatPattern.star.coerce)
 		},
-		starStar: {
-			strict: casePattern$starStar(F.buildCasePattern, splatPattern.starStar.strict),
-			coerce: casePattern$starStar(F.buildCasePattern, splatPattern.starStar.coerce)
-		}
-	},
-	unionPattern: {
-		strict: casePattern$unionPattern(F.buildCasePattern, unionPattern.strict),
-		coerce: casePattern$unionPattern(F.buildCasePattern, unionPattern.coerce)
-	},
-	caseListPattern: {
-		strict: casePattern$caseListPattern(F.buildCasePattern, F.buildCaseListPattern),
-		coerce: casePattern$caseListPattern(F.buildCasePattern, C.coerceToCaseListPattern)
-	},
-	caseTuplePattern: {
-		strict: casePattern$caseTuplePattern(F.buildCasePattern, F.buildCaseTuplePattern),
-		coerce: casePattern$caseTuplePattern(F.buildCasePattern, C.coerceToCaseTuplePattern)
-	},
-	dictPattern: {
-		strict: casePattern$dictPattern(F.buildCasePattern, F.buildDictPattern),
-		coerce: casePattern$dictPattern(F.buildCasePattern, C.coerceToDictPattern)
-	},
-	string: {
-		strict: casePattern$string(F.buildCasePattern, F.buildString),
-		coerce: casePattern$string(F.buildCasePattern, C.coerceToString)
-	},
-	concatenatedString: {
-		strict: casePattern$concatenatedString(F.buildCasePattern, F.buildConcatenatedString),
-		coerce: casePattern$concatenatedString(F.buildCasePattern, C.coerceToConcatenatedString)
-	},
-	true: {
-		strict: casePattern$true(F.buildCasePattern, F.buildTrue),
-		coerce: casePattern$true(F.buildCasePattern, C.coerceToTrue)
-	},
-	false: {
-		strict: casePattern$false(F.buildCasePattern, F.buildFalse),
-		coerce: casePattern$false(F.buildCasePattern, C.coerceToFalse)
-	},
-	none: {
-		strict: casePattern$none(F.buildCasePattern, F.buildNone),
-		coerce: casePattern$none(F.buildCasePattern, C.coerceToNone)
-	},
-	complexPattern: {
-		strict: casePattern$complexPattern(F.buildCasePattern, F.buildComplexPattern),
-		coerce: casePattern$complexPattern(F.buildCasePattern, C.coerceToComplexPattern),
-		plus: {
-			strict: casePattern$plus(F.buildCasePattern, complexPattern.plus.strict),
-			coerce: casePattern$plus(F.buildCasePattern, complexPattern.plus.coerce)
+		integerHex: {
+			strict: casePattern$integerHex(F.buildCasePattern, keywordPattern.negative.hex.strict),
+			coerce: casePattern$integerHex(F.buildCasePattern, keywordPattern.negative.hex.coerce)
 		},
-		dash: {
-			strict: casePattern$dash(F.buildCasePattern, complexPattern.dash.strict),
-			coerce: casePattern$dash(F.buildCasePattern, complexPattern.dash.coerce)
-		}
-	},
-	dottedName: {
-		strict: casePattern$dottedName(F.buildCasePattern, F.buildDottedName),
-		coerce: casePattern$dottedName(F.buildCasePattern, C.coerceToDottedName)
-	},
-	wildcardPattern: {
-		strict: casePattern$wildcardPattern(F.buildCasePattern, TSKindId.WildcardPattern),
-		coerce: casePattern$wildcardPattern(C.coerceToCasePattern, TSKindId.WildcardPattern)
-	},
-	negative: {
-		strict: casePattern$negative(F.buildCasePattern, F.buildSimplePatternNegative),
-		coerce: casePattern$negative(F.buildCasePattern, C.coerceToSimplePatternNegative),
-		hex: {
-			strict: casePattern$integerHex(F.buildCasePattern, simplePatternNegative.hex.strict),
-			coerce: casePattern$integerHex(F.buildCasePattern, simplePatternNegative.hex.coerce)
+		integerOctal: {
+			strict: casePattern$integerOctal(F.buildCasePattern, keywordPattern.negative.octal.strict),
+			coerce: casePattern$integerOctal(F.buildCasePattern, keywordPattern.negative.octal.coerce)
 		},
-		octal: {
-			strict: casePattern$integerOctal(F.buildCasePattern, simplePatternNegative.octal.strict),
-			coerce: casePattern$integerOctal(F.buildCasePattern, simplePatternNegative.octal.coerce)
+		integerBinary: {
+			strict: casePattern$integerBinary(F.buildCasePattern, keywordPattern.negative.binary.strict),
+			coerce: casePattern$integerBinary(F.buildCasePattern, keywordPattern.negative.binary.coerce)
 		},
-		binary: {
-			strict: casePattern$integerBinary(F.buildCasePattern, simplePatternNegative.binary.strict),
-			coerce: casePattern$integerBinary(F.buildCasePattern, simplePatternNegative.binary.coerce)
+		integerDecimal: {
+			strict: casePattern$integerDecimal(F.buildCasePattern, keywordPattern.negative.decimal.strict),
+			coerce: casePattern$integerDecimal(F.buildCasePattern, keywordPattern.negative.decimal.coerce)
 		},
-		decimal: {
-			strict: casePattern$integerDecimal(F.buildCasePattern, simplePatternNegative.decimal.strict),
-			coerce: casePattern$integerDecimal(F.buildCasePattern, simplePatternNegative.decimal.coerce)
+		floatPoint: {
+			strict: casePattern$floatPoint(F.buildCasePattern, keywordPattern.negative.point.strict),
+			coerce: casePattern$floatPoint(F.buildCasePattern, keywordPattern.negative.point.coerce)
 		},
-		point: {
-			strict: casePattern$floatPoint(F.buildCasePattern, simplePatternNegative.point.strict),
-			coerce: casePattern$floatPoint(F.buildCasePattern, simplePatternNegative.point.coerce)
+		floatLeadingPoint: {
+			strict: casePattern$floatLeadingPoint(F.buildCasePattern, keywordPattern.negative.leadingPoint.strict),
+			coerce: casePattern$floatLeadingPoint(F.buildCasePattern, keywordPattern.negative.leadingPoint.coerce)
 		},
-		leadingPoint: {
-			strict: casePattern$floatLeadingPoint(F.buildCasePattern, simplePatternNegative.leadingPoint.strict),
-			coerce: casePattern$floatLeadingPoint(F.buildCasePattern, simplePatternNegative.leadingPoint.coerce)
+		floatScientific: {
+			strict: casePattern$floatScientific(F.buildCasePattern, keywordPattern.negative.scientific.strict),
+			coerce: casePattern$floatScientific(F.buildCasePattern, keywordPattern.negative.scientific.coerce)
 		},
-		scientific: {
-			strict: casePattern$floatScientific(F.buildCasePattern, simplePatternNegative.scientific.strict),
-			coerce: casePattern$floatScientific(F.buildCasePattern, simplePatternNegative.scientific.coerce)
+		complexPattern: {
+			strict: casePattern$complexPattern(F.buildCasePattern, keywordPattern.complexPattern.strict),
+			coerce: casePattern$complexPattern(F.buildCasePattern, keywordPattern.complexPattern.coerce)
+		},
+		dottedName: {
+			strict: casePattern$dottedName(F.buildCasePattern, keywordPattern.dottedName.strict),
+			coerce: casePattern$dottedName(F.buildCasePattern, keywordPattern.dottedName.coerce)
+		},
+		wildcardPattern: {
+			strict: casePattern$wildcardPattern(F.buildCasePattern, keywordPattern.wildcardPattern.strict),
+			coerce: casePattern$wildcardPattern(F.buildCasePattern, keywordPattern.wildcardPattern.coerce)
 		}
 	}
 };

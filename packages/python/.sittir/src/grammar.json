@@ -2003,16 +2003,29 @@
         "type": "CHOICE",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "case_as_pattern"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_as_pattern"
+            },
+            "named": true,
+            "value": "case_as_pattern"
           },
           {
             "type": "SYMBOL",
             "name": "keyword_pattern"
           },
           {
-            "type": "SYMBOL",
-            "name": "_simple_pattern"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_simple_pattern"
+            },
+            "named": true,
+            "value": "simple_pattern",
+            "metadata": {
+              "author": "enrich"
+            }
           }
         ]
       }
@@ -2094,6 +2107,23 @@
           }
         ]
       }
+    },
+    "_as_pattern": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "case_pattern"
+        },
+        {
+          "type": "STRING",
+          "value": "as"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        }
+      ]
     },
     "union_pattern": {
       "type": "PREC_RIGHT",
@@ -4483,9 +4513,6 @@
           "content": {
             "type": "SYMBOL",
             "name": "expression"
-          },
-          "metadata": {
-            "fieldSource": "override"
           }
         },
         {
@@ -4511,9 +4538,6 @@
           "content": {
             "type": "SYMBOL",
             "name": "pair"
-          },
-          "metadata": {
-            "fieldSource": "override"
           }
         },
         {
@@ -4539,9 +4563,6 @@
           "content": {
             "type": "SYMBOL",
             "name": "expression"
-          },
-          "metadata": {
-            "fieldSource": "override"
           }
         },
         {
@@ -4567,9 +4588,6 @@
           "content": {
             "type": "SYMBOL",
             "name": "expression"
-          },
-          "metadata": {
-            "fieldSource": "override"
           }
         },
         {
@@ -7514,46 +7532,6 @@
         }
       ]
     },
-    "case_as_pattern": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "case_pattern"
-        },
-        {
-          "type": "STRING",
-          "value": "as"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "identifier"
-        }
-      ]
-    },
-    "comprehension_clauses": {
-      "type": "FIELD",
-      "name": "content",
-      "content": {
-        "type": "REPEAT1",
-        "content": {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "for_in_clause"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "if_clause"
-            }
-          ]
-        }
-      },
-      "metadata": {
-        "fieldSource": "override"
-      }
-    },
     "_print_arguments": {
       "type": "SEQ",
       "members": [
@@ -7730,6 +7708,29 @@
           "value": ")"
         }
       ]
+    },
+    "comprehension_clauses": {
+      "type": "FIELD",
+      "name": "content",
+      "content": {
+        "type": "REPEAT1",
+        "content": {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "for_in_clause"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "if_clause"
+            }
+          ]
+        }
+      },
+      "metadata": {
+        "fieldSource": "override"
+      }
     },
     "integer_hex": {
       "type": "TOKEN",

@@ -762,6 +762,9 @@ function alias(rule2, value) {
 function isRulePlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "rule";
 }
+function rule(name, body) {
+  return { __sittirPlaceholder: "rule", name, body };
+}
 
 // packages/codegen/src/dsl/primitives/variant.ts
 var ABSENT_VARIANT_NAME = "bare";
@@ -5625,6 +5628,7 @@ function role(symbol, roleName) {
 
 // packages/python/grammar.sittir.ts
 var enrichedBase = enrich(import_grammar.default);
+var comprehensionClauses = rule("comprehension_clauses", ($) => field("content", repeat1(choice($.for_in_clause, $.if_clause))));
 var grammar_sittir_default = grammar(
   enrichedBase,
   wire(
@@ -5738,6 +5742,13 @@ var grammar_sittir_default = grammar(
         }
       },
       patches: {
+        // See docs/python-grammar-sittir-glossary.md::case_pattern
+        case_pattern: { 0: alias("case_as_pattern") },
+        // See docs/python-grammar-sittir-glossary.md::comprehension_clauses
+        list_comprehension: { 2: comprehensionClauses },
+        dictionary_comprehension: { 2: comprehensionClauses },
+        set_comprehension: { 2: comprehensionClauses },
+        generator_expression: { 2: comprehensionClauses },
         integer: {
           0: variant("hex"),
           1: variant("octal"),
@@ -5942,15 +5953,6 @@ var grammar_sittir_default = grammar(
         // See docs/python-grammar-sittir-glossary.md::case_tuple_pattern
         case_tuple_pattern: ($) => seq("(", optional($.list_pattern_case_patterns), ")"),
         case_list_pattern: ($) => seq("[", optional($.list_pattern_case_patterns), "]"),
-        // See docs/python-grammar-sittir-glossary.md::case_as_pattern
-        case_as_pattern: ($) => seq($.case_pattern, "as", $.identifier),
-        case_pattern: ($) => prec(1, choice($.case_as_pattern, $.keyword_pattern, $._simple_pattern)),
-        // See docs/python-grammar-sittir-glossary.md::comprehension_clauses
-        comprehension_clauses: ($) => field("content", repeat1(choice($.for_in_clause, $.if_clause))),
-        list_comprehension: ($) => seq("[", field("body", $.expression), $.comprehension_clauses, "]"),
-        dictionary_comprehension: ($) => seq("{", field("body", $.pair), $.comprehension_clauses, "}"),
-        set_comprehension: ($) => seq("{", field("body", $.expression), $.comprehension_clauses, "}"),
-        generator_expression: ($) => seq("(", field("body", $.expression), $.comprehension_clauses, ")"),
         _print_arguments: ($) => seq(field("argument", $.expression), repeat(seq(",", field("argument", $.expression))), optional(",")),
         _print_chevron_arguments: ($) => seq(repeat1(seq(",", field("argument", $.expression))), optional(",")),
         print_statement_chevron: ($) => seq("print", $.chevron, optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ","))),

@@ -423,22 +423,8 @@ export type PythonGrammar = {
 			required: true;
 			types: [
 				{ type: 'case_as_pattern'; named: true },
-				{ type: 'case_list_pattern'; named: true },
-				{ type: 'case_tuple_pattern'; named: true },
-				{ type: 'class_pattern'; named: true },
-				{ type: 'complex_pattern'; named: true },
-				{ type: 'concatenated_string'; named: true },
-				{ type: 'dict_pattern'; named: true },
-				{ type: 'dotted_name'; named: true },
-				{ type: 'false'; named: true },
 				{ type: 'keyword_pattern'; named: true },
-				{ type: 'none'; named: true },
-				{ type: 'simple_pattern_negative'; named: true },
-				{ type: 'splat_pattern'; named: true },
-				{ type: 'string'; named: true },
-				{ type: 'true'; named: true },
-				{ type: 'union_pattern'; named: true },
-				{ type: 'wildcard_pattern'; named: true }
+				{ type: 'simple_pattern'; named: true }
 			];
 		};
 	};
@@ -1315,6 +1301,32 @@ export type PythonGrammar = {
 		named: true;
 		fields: { body: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] } };
 		children: { multiple: false; required: true; types: [{ type: 'comprehension_clauses'; named: true }] };
+	};
+	readonly simple_pattern: {
+		type: 'simple_pattern';
+		named: true;
+		fields: {};
+		children: {
+			multiple: false;
+			required: true;
+			types: [
+				{ type: 'case_list_pattern'; named: true },
+				{ type: 'case_tuple_pattern'; named: true },
+				{ type: 'class_pattern'; named: true },
+				{ type: 'complex_pattern'; named: true },
+				{ type: 'concatenated_string'; named: true },
+				{ type: 'dict_pattern'; named: true },
+				{ type: 'dotted_name'; named: true },
+				{ type: 'false'; named: true },
+				{ type: 'none'; named: true },
+				{ type: 'simple_pattern_negative'; named: true },
+				{ type: 'splat_pattern'; named: true },
+				{ type: 'string'; named: true },
+				{ type: 'true'; named: true },
+				{ type: 'union_pattern'; named: true },
+				{ type: 'wildcard_pattern'; named: true }
+			];
+		};
 	};
 	readonly simple_pattern_negative: {
 		type: 'simple_pattern_negative';

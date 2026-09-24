@@ -1,4 +1,34 @@
 {
+	"_as_pattern": [
+		{
+			"kind": "seam",
+			"field": "case_as_pattern_before"
+		},
+		{
+			"kind": "slot",
+			"name": "case_pattern"
+		},
+		{
+			"kind": "seam",
+			"field": "as_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "as"
+		},
+		{
+			"kind": "seam",
+			"field": "as_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "identifier"
+		},
+		{
+			"kind": "seam",
+			"field": "case_as_pattern_after"
+		}
+	],
 	"_collection_elements": [
 		{
 			"kind": "slot",
@@ -576,36 +606,6 @@
 		{
 			"kind": "seam",
 			"field": "call_after"
-		}
-	],
-	"case_as_pattern": [
-		{
-			"kind": "seam",
-			"field": "case_as_pattern_before"
-		},
-		{
-			"kind": "slot",
-			"name": "case_pattern"
-		},
-		{
-			"kind": "seam",
-			"field": "as_keyword_before"
-		},
-		{
-			"kind": "text",
-			"text": "as"
-		},
-		{
-			"kind": "seam",
-			"field": "as_keyword_after"
-		},
-		{
-			"kind": "slot",
-			"name": "identifier"
-		},
-		{
-			"kind": "seam",
-			"field": "case_as_pattern_after"
 		}
 	],
 	"case_clause": [

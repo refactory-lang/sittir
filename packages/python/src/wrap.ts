@@ -4006,407 +4006,30 @@ export function wrapDottedName(data: T.DottedName, tree: TreeHandle) {
 
 export function wrapCasePattern(
 	data: T.CasePattern & {
-		readonly _case_as_pattern?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _keyword_pattern?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _class_pattern?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _splat_pattern?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _union_pattern?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _case_list_pattern?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _case_tuple_pattern?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _dict_pattern?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _string?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _concatenated_string?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _true?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _false?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _none?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _simple_pattern_negative?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _complex_pattern?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _dotted_name?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
-		readonly _wildcard_pattern?:
-			| T.CaseAsPattern
-			| T.KeywordPattern
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern;
+		readonly _case_as_pattern?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
+		readonly _keyword_pattern?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
+		readonly _simple_pattern?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
 	},
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, [
-		'_content',
-		'_case_as_pattern',
-		'_keyword_pattern',
-		'_class_pattern',
-		'_splat_pattern',
-		'_union_pattern',
-		'_case_list_pattern',
-		'_case_tuple_pattern',
-		'_dict_pattern',
-		'_string',
-		'_concatenated_string',
-		'_true',
-		'_false',
-		'_none',
-		'_simple_pattern_negative',
-		'_complex_pattern',
-		'_dotted_name',
-		'_wildcard_pattern'
-	]);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.CasePattern as const }, _treeEngine(tree));
+	data = _keepModelledSlots(data, ['_content', '_case_as_pattern', '_keyword_pattern', '_simple_pattern']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_case_as_pattern',
-				'_case_list_pattern',
-				'_case_tuple_pattern',
-				'_class_pattern',
-				'_complex_pattern',
-				'_concatenated_string',
-				'_dict_pattern',
-				'_dotted_name',
-				'_false',
-				'_keyword_pattern',
-				'_none',
-				'_simple_pattern_negative',
-				'_splat_pattern',
-				'_string',
-				'_true',
-				'_union_pattern',
-				'_wildcard_pattern'
-			]),
+			..._omitWrapKeys(data, ['_case_as_pattern', '_keyword_pattern', '_simple_pattern']),
 			$type: TSKindId.CasePattern as const,
 			_content: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
-					data._content ??
-						data._case_as_pattern ??
-						data._keyword_pattern ??
-						data._class_pattern ??
-						data._splat_pattern ??
-						data._union_pattern ??
-						data._case_list_pattern ??
-						data._case_tuple_pattern ??
-						data._dict_pattern ??
-						data._string ??
-						data._concatenated_string ??
-						data._true ??
-						data._false ??
-						data._none ??
-						data._simple_pattern_negative ??
-						data._complex_pattern ??
-						data._dotted_name ??
-						data._wildcard_pattern,
+					data._content ?? data._case_as_pattern ?? data._keyword_pattern ?? data._simple_pattern,
 					'content',
 					true,
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ True: 71, False: 72, None: 73, _: 279 },
-				{ 48: 279 }
+				{ True: 71, False: 72, None: 73, _: 48 }
 			),
 
 			content() {
-				return drillIn<
-					| T.CaseAsPattern
-					| T.KeywordPattern
-					| T.ClassPattern
-					| T.SplatPattern
-					| T.UnionPattern
-					| T.CaseListPattern
-					| T.CaseTuplePattern
-					| T.DictPattern
-					| T.String
-					| T.ConcatenatedString
-					| TSKindId.True
-					| TSKindId.False
-					| TSKindId.None
-					| T.SimplePatternNegative
-					| T.ComplexPattern
-					| T.DottedName
-					| TSKindId.WildcardPattern
-				>(this._content, tree);
+				return drillIn<T._AsPattern | T.KeywordPattern | T.SimplePattern>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.CasePattern['_content']>) => wrapCasePattern({ ...$edited(data), _content: v }, tree)
@@ -4495,6 +4118,43 @@ export function wrapSimplePattern(
 	);
 }
 
+export function wrap_AsPattern(data: T._AsPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_case_pattern', '_identifier']);
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId._AsPattern as const,
+			_case_pattern: normalizeSingularWrapSlot(data._case_pattern, 'case_pattern', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'case_pattern',
+				span: (data as _NodeData).$span
+			}),
+			_identifier: normalizeSingularWrapSlot(data._identifier, 'identifier', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'identifier',
+				span: (data as _NodeData).$span
+			}),
+
+			casePattern() {
+				return drillIn<T.CasePattern>(this._case_pattern, tree);
+			},
+			identifier() {
+				return drillIn<T.Identifier>(this._identifier, tree);
+			},
+			$with: {
+				casePattern: (v: NonNullable<T._AsPattern['_case_pattern']>) =>
+					wrap_AsPattern({ ...$edited(data), _case_pattern: v }, tree),
+				identifier: (v: NonNullable<T._AsPattern['_identifier']>) =>
+					wrap_AsPattern({ ...$edited(data), _identifier: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
 export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_patterns']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.UnionPattern as const }, _treeEngine(tree));
@@ -4509,8 +4169,8 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
 					slotName: 'patterns',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 71, False: 72, None: 73, _: 279 },
-				{ 48: 279 }
+				{ True: 71, False: 72, None: 73, _: 278 },
+				{ 48: 278 }
 			),
 
 			patterns() {
@@ -4605,8 +4265,8 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle) {
 					slotName: 'key',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 71, False: 72, None: 73, _: 279 },
-				{ 48: 279 }
+				{ True: 71, False: 72, None: 73, _: 278 },
+				{ 48: 278 }
 			),
 			_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 				tree,
@@ -4669,8 +4329,8 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 71, False: 72, None: 73, _: 279 },
-				{ 48: 279 }
+				{ True: 71, False: 72, None: 73, _: 278 },
+				{ 48: 278 }
 			),
 
 			name() {
@@ -8755,8 +8415,8 @@ export function wrapStringContent(
 					'content',
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '\\': 248 },
-				{ 65: 248 }
+				{ '\\': 249 },
+				{ 65: 249 }
 			),
 
 			contents() {
@@ -10137,72 +9797,6 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapCaseAsPattern(data: T.CaseAsPattern, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_case_pattern', '_identifier']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.CaseAsPattern as const,
-			_case_pattern: normalizeSingularWrapSlot(data._case_pattern, 'case_pattern', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'case_pattern',
-				span: (data as _NodeData).$span
-			}),
-			_identifier: normalizeSingularWrapSlot(data._identifier, 'identifier', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'identifier',
-				span: (data as _NodeData).$span
-			}),
-
-			casePattern() {
-				return drillIn<T.CasePattern>(this._case_pattern, tree);
-			},
-			identifier() {
-				return drillIn<T.Identifier>(this._identifier, tree);
-			},
-			$with: {
-				casePattern: (v: NonNullable<T.CaseAsPattern['_case_pattern']>) =>
-					wrapCaseAsPattern({ ...$edited(data), _case_pattern: v }, tree),
-				identifier: (v: NonNullable<T.CaseAsPattern['_identifier']>) =>
-					wrapCaseAsPattern({ ...$edited(data), _identifier: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
-export function wrapComprehensionClauses(data: T.ComprehensionClauses, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_content']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.ComprehensionClauses as const,
-			_content: normalizeRepeatedWrapSlot(data._content, false, 'content', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'content',
-				span: (data as _NodeData).$span
-			}),
-
-			contents() {
-				return drillInAll<T.ForInClause | T.IfClause>(
-					this._content as readonly (T.ForInClause | T.IfClause)[] | undefined,
-					tree
-				);
-			},
-			$with: {
-				contents: (...v: NonNullable<T.ComprehensionClauses['_content']>[number][]) =>
-					wrapComprehensionClauses({ ...$edited(data), _content: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
 export function wrapPrintArguments(
 	data: T.PrintArguments & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
@@ -10355,6 +9949,35 @@ export function wrapParenthesizedImportList(data: T.ParenthesizedImportList, tre
 			$with: {
 				importList: (v: NonNullable<T.ParenthesizedImportList['_import_list']>) =>
 					wrapParenthesizedImportList({ ...$edited(data), _import_list: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapComprehensionClauses(data: T.ComprehensionClauses, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.ComprehensionClauses as const,
+			_content: normalizeRepeatedWrapSlot(data._content, false, 'content', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
+
+			contents() {
+				return drillInAll<T.ForInClause | T.IfClause>(
+					this._content as readonly (T.ForInClause | T.IfClause)[] | undefined,
+					tree
+				);
+			},
+			$with: {
+				contents: (...v: NonNullable<T.ComprehensionClauses['_content']>[number][]) =>
+					wrapComprehensionClauses({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -11481,9 +11104,9 @@ export function wrapComparisonOperatorComparator(
 					'>': 111,
 					'<>': 112,
 					in: 25,
-					'not in': 206,
+					'not in': 207,
 					is: 61,
-					'is not': 207
+					'is not': 208
 				}
 			),
 			_primary_expression: projectMixedEnumStorage(
@@ -11873,6 +11496,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.DottedName]: (d, t) => wrapDottedName(d as unknown as T.DottedName, t),
 	[TSKindId.CasePattern]: (d, t) => wrapCasePattern(d as unknown as T.CasePattern, t),
 	[TSKindId.SimplePattern]: (d, t) => wrapSimplePattern(d as unknown as T.SimplePattern, t),
+	[TSKindId._AsPattern]: (d, t) => wrap_AsPattern(d as unknown as T._AsPattern, t),
 	[TSKindId.UnionPattern]: (d, t) => wrapUnionPattern(d as unknown as T.UnionPattern, t),
 	[TSKindId.DictPattern]: (d, t) => wrapDictPattern(d as unknown as T.DictPattern, t),
 	[TSKindId.KeyValuePattern]: (d, t) => wrapKeyValuePattern(d as unknown as T.KeyValuePattern, t),
@@ -11977,8 +11601,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 		wrapExceptClauseExceptionAs(d as unknown as T.ExceptClauseExceptionAs, t),
 	[TSKindId.CaseTuplePattern]: (d, t) => wrapCaseTuplePattern(d as unknown as T.CaseTuplePattern, t),
 	[TSKindId.CaseListPattern]: (d, t) => wrapCaseListPattern(d as unknown as T.CaseListPattern, t),
-	[TSKindId.CaseAsPattern]: (d, t) => wrapCaseAsPattern(d as unknown as T.CaseAsPattern, t),
-	[TSKindId.ComprehensionClauses]: (d, t) => wrapComprehensionClauses(d as unknown as T.ComprehensionClauses, t),
 	[TSKindId.PrintArguments]: (d, t) => wrapPrintArguments(d as unknown as T.PrintArguments, t),
 	[TSKindId.PrintChevronArguments]: (d, t) => wrapPrintChevronArguments(d as unknown as T.PrintChevronArguments, t),
 	[TSKindId.PrintStatementChevron]: (d, t) => wrapPrintStatementChevron(d as unknown as T.PrintStatementChevron, t),
@@ -11986,6 +11608,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.WildcardPattern]: (d) => ({ ...d, $type: TSKindId.WildcardPattern as const }),
 	[TSKindId.ParenthesizedImportList]: (d, t) =>
 		wrapParenthesizedImportList(d as unknown as T.ParenthesizedImportList, t),
+	[TSKindId.ComprehensionClauses]: (d, t) => wrapComprehensionClauses(d as unknown as T.ComprehensionClauses, t),
 	[TSKindId.IntegerHex]: (d, t) => wrapIntegerHex(d as unknown as T.IntegerHex, t),
 	[TSKindId.IntegerOctal]: (d, t) => wrapIntegerOctal(d as unknown as T.IntegerOctal, t),
 	[TSKindId.IntegerBinary]: (d, t) => wrapIntegerBinary(d as unknown as T.IntegerBinary, t),
@@ -12124,6 +11747,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.DottedName]: ReturnType<typeof wrapDottedName>;
 	[TSKindId.CasePattern]: ReturnType<typeof wrapCasePattern>;
 	[TSKindId.SimplePattern]: ReturnType<typeof wrapSimplePattern>;
+	[TSKindId._AsPattern]: ReturnType<typeof wrap_AsPattern>;
 	[TSKindId.UnionPattern]: ReturnType<typeof wrapUnionPattern>;
 	[TSKindId.DictPattern]: ReturnType<typeof wrapDictPattern>;
 	[TSKindId.KeyValuePattern]: ReturnType<typeof wrapKeyValuePattern>;
@@ -12220,14 +11844,13 @@ interface _WrapReturnByKindId {
 	[TSKindId.ExceptClauseExceptionAs]: ReturnType<typeof wrapExceptClauseExceptionAs>;
 	[TSKindId.CaseTuplePattern]: ReturnType<typeof wrapCaseTuplePattern>;
 	[TSKindId.CaseListPattern]: ReturnType<typeof wrapCaseListPattern>;
-	[TSKindId.CaseAsPattern]: ReturnType<typeof wrapCaseAsPattern>;
-	[TSKindId.ComprehensionClauses]: ReturnType<typeof wrapComprehensionClauses>;
 	[TSKindId.PrintArguments]: ReturnType<typeof wrapPrintArguments>;
 	[TSKindId.PrintChevronArguments]: ReturnType<typeof wrapPrintChevronArguments>;
 	[TSKindId.PrintStatementChevron]: ReturnType<typeof wrapPrintStatementChevron>;
 	[TSKindId.PrintStatementPlain]: ReturnType<typeof wrapPrintStatementPlain>;
 	[TSKindId.WildcardPattern]: _NodeData & { readonly $type: TSKindId.WildcardPattern };
 	[TSKindId.ParenthesizedImportList]: ReturnType<typeof wrapParenthesizedImportList>;
+	[TSKindId.ComprehensionClauses]: ReturnType<typeof wrapComprehensionClauses>;
 	[TSKindId.IntegerHex]: ReturnType<typeof wrapIntegerHex>;
 	[TSKindId.IntegerOctal]: ReturnType<typeof wrapIntegerOctal>;
 	[TSKindId.IntegerBinary]: ReturnType<typeof wrapIntegerBinary>;

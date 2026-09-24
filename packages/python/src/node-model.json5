@@ -100,6 +100,9 @@
     },
     "block.statements": {
       "simple_statements": "_simple_statements"
+    },
+    "case_pattern.content": {
+      "simple_pattern": "_simple_pattern"
     }
   },
   "factorySlots": {
@@ -1054,22 +1057,24 @@
         "wireKeys": [
           "_case_as_pattern",
           "_keyword_pattern",
-          "_class_pattern",
-          "_splat_pattern",
-          "_union_pattern",
-          "_case_list_pattern",
-          "_case_tuple_pattern",
-          "_dict_pattern",
-          "_string",
-          "_concatenated_string",
-          "_true",
-          "_false",
-          "_none",
-          "_simple_pattern_negative",
-          "_complex_pattern",
-          "_dotted_name",
-          "_wildcard_pattern"
+          "_simple_pattern"
         ]
+      }
+    },
+    "_as_pattern": {
+      "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "identifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "union_pattern": {
@@ -2418,31 +2423,6 @@
         "nonEmpty": false
       }
     },
-    "case_as_pattern": {
-      "case_pattern": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "identifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "comprehension_clauses": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
     "_print_arguments": {
       "argument": {
         "unnamed": false,
@@ -2496,6 +2476,15 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "comprehension_clauses": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -3019,6 +3008,61 @@
       "isParameterless": true,
       "stampExpression": "\"__future__\" as const",
       "text": "__future__"
+    },
+    {
+      "kind": "_as_pattern",
+      "modelType": "branch",
+      "typeName": "_AsPattern",
+      "factoryName": "_asPattern",
+      "irKey": "_asPattern",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "case_pattern",
+          "propertyName": "casePattern",
+          "paramName": "casePattern",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "case_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "case_pattern",
+              "parseKind": "case_pattern"
+            }
+          ]
+        },
+        {
+          "name": "identifier",
+          "propertyName": "identifier",
+          "paramName": "identifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "config",
+      "factoryFields": [
+        "case_pattern",
+        "identifier"
+      ]
     },
     {
       "kind": "_augmented_assignment_operator",
@@ -5728,61 +5772,6 @@
       "text": "^="
     },
     {
-      "kind": "case_as_pattern",
-      "modelType": "branch",
-      "typeName": "CaseAsPattern",
-      "factoryName": "caseAsPattern",
-      "irKey": "caseAsPattern",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "case_pattern",
-          "propertyName": "casePattern",
-          "paramName": "casePattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "case_pattern"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "case_pattern",
-              "parseKind": "case_pattern"
-            }
-          ]
-        },
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "identifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "case_pattern",
-        "identifier"
-      ]
-    },
-    {
       "kind": "case_clause",
       "modelType": "branch",
       "typeName": "CaseClause",
@@ -5908,9 +5897,9 @@
         "list_pattern_case_patterns"
       ],
       "bareAccepts": [
+        "_as_pattern",
         "_key_value_pattern",
         "_wildcard_pattern",
-        "case_as_pattern",
         "case_list_pattern",
         "case_pattern",
         "case_tuple_pattern",
@@ -5948,29 +5937,15 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "case_as_pattern",
+            "_as_pattern",
             "keyword_pattern",
-            "class_pattern",
-            "splat_pattern",
-            "union_pattern",
-            "case_list_pattern",
-            "case_tuple_pattern",
-            "dict_pattern",
-            "string",
-            "concatenated_string",
-            "true",
-            "false",
-            "none",
-            "simple_pattern_negative",
-            "complex_pattern",
-            "dotted_name",
-            "_wildcard_pattern"
+            "_simple_pattern"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "case_as_pattern",
+              "name": "_as_pattern",
               "parseKind": "case_as_pattern"
             },
             {
@@ -5982,97 +5957,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "class_pattern",
-              "parseKind": "class_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "splat_pattern",
-              "parseKind": "splat_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "union_pattern",
-              "parseKind": "union_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "case_list_pattern",
-              "parseKind": "case_list_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "case_tuple_pattern",
-              "parseKind": "case_tuple_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "dict_pattern",
-              "parseKind": "dict_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "string",
-              "parseKind": "string"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "concatenated_string",
-              "parseKind": "concatenated_string"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "true",
-              "parseKind": "true"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "false",
-              "parseKind": "false"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "none",
-              "parseKind": "none"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "simple_pattern_negative",
-              "parseKind": "simple_pattern_negative",
-              "seat": {
-                "kind": "simple_pattern_negative",
-                "shape": "arm",
-                "mount": "negative"
-              }
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "complex_pattern",
-              "parseKind": "complex_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "dotted_name",
-              "parseKind": "dotted_name"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_wildcard_pattern",
-              "parseKind": "wildcard_pattern"
+              "name": "_simple_pattern",
+              "parseKind": "simple_pattern"
             }
           ]
         }
@@ -6082,9 +5968,9 @@
         "content"
       ],
       "bareAccepts": [
+        "_as_pattern",
         "_key_value_pattern",
         "_wildcard_pattern",
-        "case_as_pattern",
         "case_list_pattern",
         "case_pattern",
         "case_tuple_pattern",
@@ -6128,9 +6014,9 @@
         "case_pattern"
       ],
       "bareAccepts": [
+        "_as_pattern",
         "_key_value_pattern",
         "_wildcard_pattern",
-        "case_as_pattern",
         "case_list_pattern",
         "case_pattern",
         "case_tuple_pattern",
@@ -6186,9 +6072,9 @@
         "list_pattern_case_patterns"
       ],
       "bareAccepts": [
+        "_as_pattern",
         "_key_value_pattern",
         "_wildcard_pattern",
-        "case_as_pattern",
         "case_list_pattern",
         "case_pattern",
         "case_tuple_pattern",
@@ -11947,9 +11833,9 @@
         "case_pattern"
       ],
       "bareAccepts": [
+        "_as_pattern",
         "_key_value_pattern",
         "_wildcard_pattern",
-        "case_as_pattern",
         "case_list_pattern",
         "case_pattern",
         "case_tuple_pattern",

@@ -1317,7 +1317,7 @@ export interface StaticItemTransport {
 export interface StringLiteralTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _string_open: SlotValue<StringLiteralOpenTransport>
+  _string_open: SlotValue<StringOpenTransport>
   _elements?: Array<SlotValue<StringLiteralElementsTransportSlot>>
 }
 

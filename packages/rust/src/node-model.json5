@@ -5476,11 +5476,11 @@
       ]
     },
     {
-      "kind": "_string_literal_open",
+      "kind": "_string_open",
       "modelType": "pattern",
-      "typeName": "StringLiteralOpen",
-      "factoryName": "stringLiteralOpen",
-      "irKey": "stringLiteralOpen",
+      "typeName": "StringOpen",
+      "factoryName": "stringOpen",
+      "irKey": "stringOpen",
       "hidden": false,
       "pattern": "[bc]?\"",
       "leafPattern": "/^(?:(?:[bc]?\"))$/u",
@@ -21698,13 +21698,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_string_literal_open"
+            "_string_open"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_string_literal_open",
+              "name": "_string_open",
               "parseKind": "string_open"
             }
           ]

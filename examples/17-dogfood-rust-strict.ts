@@ -30,7 +30,7 @@ const ns = (path: string, name: string) => ir.scopedIdentifier.strict({ path: id
 const scopedTy = (path: Parameters<typeof ir.scopedTypeIdentifier.strict>[0]['path'], name: string) =>
 	ir.scopedTypeIdentifier.strict({ path, name: id(name) });
 const str = (text: string) =>
-	ir.stringLiteral.strict({ stringOpen: ir.stringLiteralOpen('"'), elements: [ir.stringContent(text)] });
+	ir.stringLiteral.strict({ stringOpen: ir.stringOpen('"'), elements: [ir.stringContent(text)] });
 
 /** `use crate::types::Edit;` */
 export function useEditStrict() {
