@@ -4,7 +4,9 @@
 
 **Goal:** Close #314, #289, #290, #291 and #214 on the identity model the repo already has: storage kind is the grammar symbol, the alias target is a display name, and no layer invents a node the parser never issues.
 
-**Architecture:** Evaluate stops synthesizing a hidden `_<target>` rule for inline alias content and distributes the alias over the arms instead; link builds one `displayUnions` map from the aliased refs and every consumer of a display name reads it. `publicKindName` is split into a display-name accessor and a storage-identifier accessor. Two `patches:` additions (`rule()`, a promoting `alias()`) close the authoring gaps. One preflight diagnostic guards aliases over sequences and repeats. The validator compares grammar types.
+**Architecture:** Enrich owns the alias shape for both pipelines: it distributes an alias over its arms (looking through `inline` rules), lifts aliased hidden-rule bodies, mints storage for inline literal aliases, and unaliases overloaded displays so every display has one parser identity (`dsl/rule-transforms.ts`, classified by `dsl/rule-patterns.ts::parserSymbolClassOf`). Link builds one `displayUnions` map from the aliased refs and mints an `AssembledAlias` envelope per catalog alias symbol; the native reader stamps `$type` and `$storageType`. `publicKindName` is split into a display-name accessor and a storage-identifier accessor. Two `patches:` additions (`rule()`, a promoting `alias()`) close the authoring gaps. One preflight diagnostic guards aliases over sequences and repeats. The validator compares grammar types.
+
+**Status (2026-09-24):** Task 1 is done and merged (PR #330 into feat/seat-overlay-options: a4aa98dcc, 3d4e22a6f, 52b19c8c5, daacf6258; lint follow-up #332). Its step list below is kept as history; what landed differs from it and is summarized in the Task 1 note. Tasks 2–8 remain and were re-based on the merged code on 2026-09-24; every `file:line` in them was re-checked against feat/seat-overlay-options at ad445142f. Per the work order this plan resumes after #315, the stack merge into #283 and the options-carriage plan.
 
 **Tech Stack:** TypeScript codegen (`packages/codegen/src`), vitest, tree-sitter CLI regen of three grammars, `pnpm run validate:native`, web-tree-sitter (`grammarType`/`grammarId`) in `packages/tools`.
 
@@ -20,7 +22,8 @@
 - Comments live in `docs/glossary/<dir>.md`, never in `packages/codegen/src/`. Glossary entries never cite issue, PR, spec or task numbers.
 - Commit with explicit pathspecs (`git commit -- <paths>`); never `git add -A`; never `--no-verify`; never `--delete-branch`.
 - Ratchets only tighten: the phantom-kind count and the `desugarDivergences` baseline may only shrink; a count above its ceiling is a stop.
-- The older `aliasedTo`/`aliasedToId` ref form is out of scope; read whichever form a ref carries through one accessor (Task 1 defines it).
+- The older `aliasedTo`/`aliasedToId` ref form is out of scope; read whichever form a ref carries through `types/rule.ts::aliasTargetOf` / `storageNameOf` (landed with Task 1).
+- Terminality is `dsl/rule-patterns.ts::parserSymbolClassOf` (mirrors tree-sitter's extract_tokens; anchored against every alias-site storage in the three parser.c by `dsl/__tests__/parser-symbol-class.test.ts`). No task re-derives whether a storage is a terminal.
 
 ---
 
@@ -28,57 +31,68 @@
 
 | file | responsibility after this plan |
 | --- | --- |
-| `packages/codegen/src/compiler/evaluate.ts` | `rewriteInlineAliases` distributes an alias over a choice; synthesizes `_<target>` only for a single non-symbol, non-literal, non-choice content that is not a sequence or repeat |
-| `packages/codegen/src/compiler/link.ts` | builds `displayUnions`; `foldAliasLiteralsIntoEnumRules` reads the distributed literal arms; `collectAliasedHiddenKinds` retired once no consumer reads it |
-| `packages/codegen/src/compiler/types.ts` | `LinkedGrammar.displayUnions: ReadonlyMap<string, ReadonlySet<string>>` carried to `NodeMap.displayUnions` |
+| `packages/codegen/src/dsl/rule-transforms.ts` (landed) | `distributeInlineAliasChoices`, `liftAliasedHiddenRuleBodies`, `mintInlineLiteralAliasStorage`, `unaliasOverloadedDisplays`; evaluate synthesizes nothing for alias content |
+| `packages/codegen/src/dsl/rule-patterns.ts` (landed) | `parserSymbolClassOf`, `tokenUseCounts`: the one terminality predicate |
+| `packages/codegen/src/compiler/link.ts` (landed) | `collectDisplayUnions` builds `displayUnions`; `mintDisplayUnionRules` mints one `AssembledAlias` body per catalog alias symbol; `foldAliasLiteralsIntoEnumRules` reads the distributed literal arms; `collectAliasedHiddenKinds` retires once no consumer reads it (open, Task 2 audits its readers) |
+| `packages/codegen/src/compiler/types.ts` (landed) | `LinkedGrammar.displayUnions: ReadonlyMap<string, ReadonlySet<string>>` carried to `NodeMap.displayUnions` |
 | `packages/codegen/src/compiler/model/display-name.ts` (new) | `displayNameOf(ref)`, `storageIdentifier(kind)`; replaces `render-rules.ts::publicKindName` |
 | `packages/codegen/src/emitters/types.ts`, `is.ts` emitter, `wrap.ts` | emit one union type per display union; no `_<target>` twin |
 | `packages/codegen/src/dsl/primitives/rule.ts` (new) | `rule(name, body)` placeholder |
 | `packages/codegen/src/dsl/transform/transform.ts` | `resolvePatch` handles `rule()`; `resolveAliasPlaceholder` sets `named: true`; `registerAliasedVariant` stamps `hoisted` only on compound bodies |
 | `packages/codegen/src/compiler/diagnostics/alias-distributed.ts` (new) | the `alias-distributed` preflight diagnostic |
-| `packages/tools/src/validate/read-render-parse.ts` | `astStructuralDiff` compares `grammarType`; tolerances deleted |
+| `packages/tools/src/validate/read-render-parse.ts` | `astStructuralDiff` compares `grammarType`; the (already empty) tolerance table and its plumbing deleted |
 | `packages/{rust,python}/grammar.sittir.ts` | overrides retired through the new primitives |
 
 ---
 
 ### Task 1: Distribute an inline alias over its arms; build `displayUnions`
 
-> **Amended 2026-09-22** (spec §A). Task 1 landed at a4aa98dcc with a
-> follow-up (fe8366532) that flips `rule.hidden` for aliased targets; the
-> follow-up is reverted by this amendment. The remaining Task 1 work is:
+> **DONE 2026-09-24** (PR #330, merged 9e942eb; spec §A.1–A.3, A.5 as
+> re-amended in 52b19c8c5). What landed, against the steps below:
 >
-> 1. `link.ts::unhideAliasedTargets` is deleted (spec §A.1). `hidden` is
->    `isParserHiddenName(name)` and no phase changes it. Keep the
->    `SYMBOL + aliasedTo` shape matching it introduced, but in
->    `collectDisplayUnions`, where both ref forms must be read.
-> 2. `evaluate.ts::choiceArmsThrough` no longer looks through a hidden
->    single-use rule; evaluate distributes over inline content only
->    (spec §A.3). Move the look-through to `collectDisplayUnions`: an
->    aliased `SYMBOL` whose rule is hidden and has no entry in
->    `kindEntries` (the same miss `kindid-unstamped-symbols` reports) is
->    expanded, recursively, to the arms the parser issues; one with a
->    kind entry (`_lhs_expression`) is a member as itself.
-> 3. `assemble.ts` turns every `displayUnions` entry into an
->    AssembledEnvelope whose `content` slot is the storage node: the
->    storage struct for a nonterminal, the AssembledEnum of the storage
->    kinds (or the leaf, or their union) for terminals (spec §A.2). The
->    envelope gets the ordinary struct, wrap, transport, factory and
->    render template; the template writes the content.
->    `read_node.rs::stamped_kind` stamps `kind_id()` for an aliased node
->    and places the `grammar_id()` node in `content`.
-> 3b. `dsl/enrich.ts::applyUnaliasDistinct` is generalized: a bucket with
->    a nonterminal or own-rule member is split into unique
->    (storage, display) pairs (visible storage drops the alias; hidden
->    storage mints the underscore-less name); a terminals-only bucket is
->    left as the envelope's enum. The all-alias-site skip added in Task 1
->    is narrowed to that terminals-only case.
-> 4. Gate for the task is now: rust 135/137, python 115/116 unchanged and
->    typescript read-render-parse back to 112/114 with the three
->    `pair.key` fixtures passing; `_reserved_identifier` absent from the
->    node map; no `Rule.hidden` differing from its name; no display name is also a
->    storage kind after enrich.
-> 5. The explanatory comment added to `dsl/enrich.ts::applyUnaliasDistinct`
->    moves to `docs/glossary/dsl.md`.
+> - Distribution moved out of evaluate entirely: `dsl/rule-transforms.ts::
+>   distributeInlineAliasChoices` runs in enrich for both pipelines,
+>   splits over choice arms whether or not the display is a rule, and
+>   looks through `inline` rules (tree-sitter substitutes their bodies).
+>   `liftAliasedHiddenRuleBodies` lifts a hidden rule whose whole body is
+>   an alias; `mintInlineLiteralAliasStorage` mints `_<display>` for an
+>   inline literal choice whose display is not a rule (rust
+>   `_primitive_type`). `evaluate.ts::rewriteInlineAliases` and the
+>   `inline-alias-source` divergence are deleted.
+> - `link.ts::unhideAliasedTargets` deleted; `hidden` is the name fact.
+>   `collectDisplayUnions` reads both ref forms; `mintDisplayUnionRules`
+>   mints a body per catalog alias symbol.
+> - Node model: one class, `compiler/model/node-map.ts::AssembledAlias`
+>   (`modelType: 'alias'`, `aliasTypeId` required), for a display over
+>   visible or uncatalogued storage; a display over a hidden catalogued
+>   storage (`lhs_expression`, `primitive_type`) is a plain envelope keyed
+>   by the container's grammar symbol. The reader stamps `$type` (type id)
+>   and `$storageType` (`read_node.rs::identity`, generated
+>   `is_alias_envelope`). Aliases have a raw factory and no `ir` key
+>   (user ruling); parents admit content through `admitAliasContent` and
+>   the `__aliasContent__` brand.
+> - Step 3b landed as `dsl/rule-transforms.ts::unaliasOverloadedDisplays`
+>   (replacing `applyUnaliasDistinct` and its diagnostics plumbing): a
+>   display that is a rule keeps itself and, when it is a terminal rule,
+>   its terminal storages (the parser reuses `sym_identifier`, so
+>   contextual keywords stay `identifier`); every other storage splits
+>   (visible or literal drops the alias; hidden takes its stripped name,
+>   `<display>_<stripped>` on a clash, minted in sorted display order).
+>   Terminals-only unions stay (`property_identifier` family,
+>   `string_fragment`, rust `doc_comment`). No `reserved_identifier` kind
+>   exists in any grammar.
+> - Parser divergences introduced, all disclosed in the PR body: rust
+>   `inner/outer_line_doc_comment_marker`,
+>   `scoped_type_identifier_in_expression_position`, bare `$` in token
+>   trees, 17 anonymous primitive tokens; typescript `decorator_*`,
+>   `type_query_*`, `tuple_parameter`, `optional_tuple_parameter`,
+>   `unary_expression_number`, `string_fragment` over the four unescaped
+>   fragments; python `match_block`. ts `string`, `call_expression`,
+>   `parenthesized_expression` and rust `token_tree` are supertypes now;
+>   the quotes preference binds at `string/variant` (a supertype variant
+>   site, `VARIANT_LABEL`, `AssembledSupertype.optionDefaultArm`).
+> - Gate met: rust 135/137, ts 112/114, py 115/116; validate totals at
+>   100% except the known ts `debugger_statement` case.
 
 **Files:**
 - Modify: `packages/codegen/src/compiler/evaluate.ts:458-507` (`rewriteInlineAliases`)
@@ -314,11 +328,15 @@ git commit -m "feat(compiler): an inline alias distributes over its arms; link b
 
 **Files:**
 - Create: `packages/codegen/src/compiler/model/display-name.ts`
-- Modify: `packages/codegen/src/compiler/model/render-rules.ts:116-118` (delete `publicKindName`) and every reference: `render-rules.ts`, `site-preferences.ts`, `site-addresses.ts`, `supertype-members.ts`, `whitespace-arms.ts`, `emitters/render-module.ts`, `emitters/render-options-rs.ts`, `emitters/options.ts`, `emitters/shared.ts` (85 references; `find_all_references` on `render-rules.ts::publicKindName` lists them)
+- Modify: `packages/codegen/src/compiler/model/render-rules.ts:132` (delete `publicKindName`) and every reference (61 at ad445142f): `render-rules.ts` (26), `site-preferences.ts` (10), `site-addresses.ts` (3), `supertype-members.ts` (2), `whitespace-arms.ts` (2), `emitters/render-module.ts` (11), `emitters/render-options-rs.ts` (2), `emitters/options.ts` (3), `emitters/shared.ts` (2); `find_all_references` on `render-rules.ts::publicKindName` lists them
+- Modify: `packages/codegen/src/compiler/model/render-rules.ts:452-467` (`isDisplayedLiteral`, landed with Task 1: an options address reaches a displayed literal through its display) — it reads the same accessor, not its own strip
+- Audit: `packages/codegen/src/compiler/link.ts:838` (`collectAliasedHiddenKinds`) — list its readers; retire it here if `displayUnions` answers every one
 - Test: `packages/codegen/src/compiler/model/__tests__/display-name.test.ts` (new)
 
+**Why this task is now urgent:** the merged code still strips underscores to address a renamed container: `_number` displays as `unary_expression_number` but is addressed as `number` (the `publicKindName` addressing gap the Task 1 PR lists as a follow-up). Every rename `unaliasOverloadedDisplays` mints is a site where the strip and the display disagree.
+
 **Interfaces:**
-- Consumes: `aliasTargetOf(ref)` and `storageNameOf(ref)` from Task 1; `NodeMap.displayUnions`.
+- Consumes: `aliasTargetOf(ref)` and `storageNameOf(ref)` (`types/rule.ts`, landed); `NodeMap.displayUnions` (landed); `AssembledAlias.kind` as the display of a minted envelope.
 - Produces:
   - `displayNameOf(kind: string, nodeMap: NodeMap): string` — the kind's display name: `kind` when the grammar has a rule of that name that is visible, else the unique display union that contains `kind` when there is exactly one, else `kind`. A kind that displays under two names at different sites has no single display name; the function throws naming the kind and the names, so a caller that needs a per-site name passes the ref instead.
   - `displayNameOfRef(ref: SymbolRule<'link'>): string` — `aliasTargetOf(ref) ?? storageNameOf(ref)`.
@@ -604,18 +622,32 @@ git commit -m "feat(dsl): alias() promotes an unnamed alias; a literal mint is a
 
 ### Task 5: `alias-distributed` preflight diagnostic
 
-> **Amended 2026-09-22** (spec §A.4). The same module also emits
-> `display-union-mixed`: a `displayUnions` entry whose members include
-> both a terminal storage kind (a literal, pattern or external token) and a
-> nonterminal one. `severity: 'error'`, `canProceed: false`, `details:
-> { display, terminals, nonterminals }`. It reads the link-phase
-> `displayUnions`, so the diagnostics collector gains that input beside
-> the evaluate-phase rules. Silent on all three grammars today; the unit
-> fixture aliases a token and a seq-bodied rule to one name.
+> **Amended 2026-09-24** (spec §A.3, §A.4 as re-amended). Two changes
+> from the merged Task 1:
+>
+> - Look-through follows the parser, not use count: an alias over a
+>   SYMBOL whose rule is in the grammar's `inline` list (or whose body an
+>   inline chain reaches) is inspected through that body, because
+>   tree-sitter substitutes it. A hidden rule that is not inlined is a
+>   node of its own and is not looked through, however many uses it has.
+>   `distributedShape` below reads `RawGrammar.inline`, not a reference
+>   count.
+> - `display-union-mixed` is an invariant guard, not a user-facing
+>   shape check: `dsl/rule-transforms.ts::unaliasOverloadedDisplays`
+>   resolves every mixed bucket in enrich (a single nonterminal beside
+>   terminals is split or its terminals drop their alias), so after
+>   enrich no `displayUnions` entry can hold both classes. The diagnostic
+>   classifies members with `dsl/rule-patterns.ts::parserSymbolClassOf`
+>   over a `ParserSymbolCtx` built from the raw grammar (`rules`,
+>   `externals`, `inline`, `tokenUseCounts(rules)`), never its own
+>   terminal test. `severity: 'error'`, `canProceed: false`, `details:
+>   { display, terminals, nonterminals }`. Silent on all three grammars;
+>   the unit fixture bypasses enrich and hands link a token and a
+>   seq-bodied rule under one name.
 
 **Files:**
 - Create: `packages/codegen/src/compiler/diagnostics/alias-distributed.ts`
-- Modify: `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:~200-240` (`collectGrammarDiagnosticsForGrammar`: add the new diagnostics to `allDiagnostics`)
+- Modify: `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts:171-249` (`collectGrammarDiagnosticsForGrammar`: add the new diagnostics to `allDiagnostics` at `:224`)
 - Test: `packages/codegen/src/compiler/diagnostics/__tests__/alias-distributed.test.ts` (new)
 
 **Interfaces:**
@@ -644,9 +676,13 @@ describe('alias-distributed', () => {
 		const out = diagnoseDistributedAliases({ grammar: 'demo', rules: { p: alias({ type: 'REPEAT', content: sym('x') }, 't'), x: S('x') } as never });
 		expect(out.map((d) => d.code)).toEqual(['alias-distributed']);
 	});
-	it('looks through a hidden rule used only by the alias', () => {
-		const out = diagnoseDistributedAliases({ grammar: 'demo', rules: { p: alias(sym('_body'), 't'), _body: { type: 'SEQ', members: [S('a'), S('b')] } } as never });
+	it('looks through an inlined rule, because the parser substitutes its body', () => {
+		const out = diagnoseDistributedAliases({ grammar: 'demo', inline: ['_body'], rules: { p: alias(sym('_body'), 't'), _body: { type: 'SEQ', members: [S('a'), S('b')] } } as never });
 		expect(out).toHaveLength(1);
+	});
+	it('does not look through a hidden rule that is not inlined, whatever its use count', () => {
+		const out = diagnoseDistributedAliases({ grammar: 'demo', inline: [], rules: { p: alias(sym('_body'), 't'), _body: { type: 'SEQ', members: [S('a'), S('b')] } } as never });
+		expect(out).toEqual([]);
 	});
 	it('is silent on a symbol, a literal, a pattern, a choice and a one-member sequence', () => {
 		const rules = {
@@ -673,33 +709,22 @@ import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 
 type R = Rule<'evaluate'>;
 
-function referenceCounts(rules: Record<string, R>): Map<string, number> {
-	const counts = new Map<string, number>();
-	const visit = (rule: R): void => {
-		if (rule.type === SYMBOL) counts.set(rule.name, (counts.get(rule.name) ?? 0) + 1);
-		else if ('members' in rule) rule.members.forEach(visit);
-		else if ('content' in rule && rule.content !== undefined) visit(rule.content as R);
-	};
-	Object.values(rules).forEach(visit);
-	return counts;
-}
-
-function distributedShape(content: R, rules: Record<string, R>, counts: Map<string, number>): string | undefined {
+function distributedShape(content: R, rules: Record<string, R>, inline: ReadonlySet<string>): string | undefined {
 	if (content.type === SEQ) return content.members.length >= 2 ? `a sequence of ${content.members.length} members` : undefined;
 	if (content.type === REPEAT || content.type === REPEAT1) return 'a repeat';
-	if (content.type === SYMBOL && content.name.startsWith('_') && counts.get(content.name) === 1) {
+	if (content.type === SYMBOL && inline.has(content.name)) {
 		const body = rules[content.name];
-		return body === undefined ? undefined : distributedShape(body, rules, counts);
+		return body === undefined ? undefined : distributedShape(body, rules, inline);
 	}
 	return undefined;
 }
 
-export function diagnoseDistributedAliases(input: { grammar: string; rules: Record<string, R> }): GrammarDiagnostic[] {
-	const counts = referenceCounts(input.rules);
+export function diagnoseDistributedAliases(input: { grammar: string; rules: Record<string, R>; inline: readonly string[] }): GrammarDiagnostic[] {
+	const inline = new Set(input.inline);
 	const out: GrammarDiagnostic[] = [];
 	const visit = (rule: R, owner: string): void => {
 		if (rule.type === ALIAS) {
-			const shape = rule.named ? distributedShape(rule.content as R, input.rules, counts) : undefined;
+			const shape = rule.named ? distributedShape(rule.content as R, input.rules, inline) : undefined;
 			if (shape !== undefined) {
 				out.push({
 					scope: 'grammar', code: 'alias-distributed', severity: 'error', grammar: input.grammar, ownerKind: owner,
@@ -718,7 +743,9 @@ export function diagnoseDistributedAliases(input: { grammar: string; rules: Reco
 }
 ```
 
-In `collectGrammarDiagnosticsForGrammar`, add `...diagnoseDistributedAliases({ grammar: input.rawGrammar.name, rules: input.rawGrammar.rules })` to `allDiagnostics`.
+In `collectGrammarDiagnosticsForGrammar`, add `...diagnoseDistributedAliases({ grammar: input.rawGrammar.name, rules: input.rawGrammar.rules, inline: input.rawGrammar.inline })` to `allDiagnostics`.
+
+The same module exports `diagnoseMixedDisplayUnions(input: { grammar: string; displayUnions: ReadonlyMap<string, ReadonlySet<string>>; symbols: ParserSymbolCtx }): GrammarDiagnostic[]`: for each union, `parserSymbolClassOf(member, input.symbols)` files a member as `'terminal'` or `'nonterminal'` (an `'inlined'` member is filed by its body through the same call the enrich pass uses, `dsl/rule-transforms.ts`'s `terminalSymbol` closure hoisted to an export so the two do not diverge); a union with both classes emits `display-union-mixed`. `ParserSymbolCtx` is built once in the collector from the raw grammar: `{ rules, externals: new Set(externals), inline: new Set(inline), tokenUses: tokenUseCounts(rules) }`. The collector gains the link-phase `displayUnions` as an input beside the evaluate-phase rules.
 
 - [ ] **Step 4: Run the test, then the preflight on all three grammars**
 
@@ -737,7 +764,8 @@ git commit -m "feat(diagnostics): an alias over a sequence or a repeat is a bloc
 ### Task 6: The validator compares grammar types; tolerances deleted
 
 **Files:**
-- Modify: `packages/tools/src/validate/read-render-parse.ts:220-330` (`astStructuralDiff`), `:898-925` (call site), the `LEAF_ALIAS_TOLERANCE_BY_GRAMMAR` declaration and `leafAliasKey`
+- Modify: `packages/tools/src/validate/read-render-parse.ts:220-330` (`astStructuralDiff`), `:913-925` (call site), the `LEAF_ALIAS_TOLERANCE_BY_GRAMMAR` declaration at `:214` (already `{}` at ad445142f: no grammar carries a tolerance any more, only the plumbing is left), its comment at `:243` and `leafAliasKey`
+- Already done by Task 1: `packages/tools/src/validate/common.ts:562` (`wrapForReparse`) selects the reparse wrapper by the parse kind (`opts.targetKind`), not by stripping underscores. Do not redo it.
 - Test: `packages/tools/src/validate/__tests__/ast-structural-diff.test.ts`
 
 **Interfaces:**
@@ -789,9 +817,11 @@ git commit -m "fix(validator): the structural diff compares grammar types; the a
 ### Task 7: Retire the four overrides through the new primitives
 
 **Files:**
-- Modify: `packages/rust/grammar.sittir.ts` (`_wildcard_pattern` rule and `string_literal` rule → patches)
-- Modify: `packages/python/grammar.sittir.ts` (`case_as_pattern` and `comprehension_clauses` rules → patches)
+- Modify: `packages/rust/grammar.sittir.ts:657` (`_wildcard_pattern` rule) and `:667-670` (`string_literal` rule with `_string_literal_open`) → patches
+- Modify: `packages/python/grammar.sittir.ts:377` (`case_as_pattern`) and `:381` (`comprehension_clauses`, referenced at `:119`) → patches
 - Test: the existing `packages/{rust,python}/tests/nodes.test.ts` (generated) and `packages/tools/tests/census/hoisted.test.ts`
+
+Task 1 already retired two other rust overrides by other means (`_let_chain` → ten `field()` patches; the `_non_delim_token` `$` alias deleted, the bare `$` now drops its alias in enrich) and added one (`_primitive_type: ($, original) => prec(-1, original)` over the enrich mint). Those are settled; this task is the four named here only. The hand-written rule ceilings in the unsupported-shape diagnostics plan (ts 17 / rust 25 / py 22) drop by this task's count when it lands.
 
 **Interfaces:**
 - Consumes: `rule()` (Task 3), promoting `alias()` and unhoisted leaf mints (Task 4), display names from the mapping (Task 2).
@@ -841,9 +871,9 @@ git commit -m "refactor(rust,python): four hand-written rules retire into alias(
 ### Task 8: Glossary, spec status, PR
 
 **Files:**
-- Modify: `docs/glossary/compiler.md` (entries for `rewriteInlineAliases`, `choiceArmsThrough`, `collectDisplayUnions`, `aliasTargetOf`, `storageNameOf`; delete the `publicKindName` body note), `docs/glossary/compiler-model.md` (`display-name.ts` entries), `docs/glossary/compiler-diagnostics.md` (`alias-distributed`), `docs/glossary/dsl-primitives.md` (`rule`), `docs/glossary/dsl-transform.md` (`resolveAliasPlaceholder` promotion, `hoistedUnlessLeaf`), `docs/glossary/tools.md` (`astStructuralDiff` grammar-type comparison)
-- Modify: `docs/superpowers/specs/2026-09-21-alias-identity-design.md` (status: implemented, with the date)
-- Modify: `docs/KNOWN_ISSUES.md` (remove the `generic_type` tolerance note if present)
+- Modify: `docs/glossary/compiler.md` (delete the `publicKindName` body note; the Task 1 entries for `collectDisplayUnions`, `mintDisplayUnionRules`, `aliasTargetOf`, `storageNameOf` already exist), `docs/glossary/compiler-model.md` (`display-name.ts` entries), `docs/glossary/compiler-diagnostics.md` (`alias-distributed`, `display-union-mixed`), `docs/glossary/dsl-primitives.md` (`rule`), `docs/glossary/dsl-transform.md` (`resolveAliasPlaceholder` promotion, `hoistedUnlessLeaf`), `docs/glossary/tools.md` (`astStructuralDiff` grammar-type comparison)
+- Modify: `docs/superpowers/specs/2026-09-21-alias-identity-design.md` (status: implemented, with the date; §A already describes the merged Task 1)
+- `docs/KNOWN_ISSUES.md` carries no `generic_type` tolerance note at ad445142f; nothing to remove there.
 
 - [ ] **Step 1: Write the glossary entries**
 
@@ -851,7 +881,7 @@ One `###` section per new or changed declaration, by qualified name, stating the
 
 - [ ] **Step 2: Open the PR**
 
-Base `feat/bindings-vocabulary`. Body: the before/after validation table for the three grammars, the list of deleted names (`publicKindName`, `LEAF_ALIAS_TOLERANCE_BY_GRAMMAR`, `leafAliasKey`, the seven typescript `_` twins), and the four retired overrides. Closes #314, #289, #290, #291, #214.
+Base `feat/bindings-vocabulary`, or `master` if #283 has merged by then. Body: the before/after validation table for the three grammars, the list of deleted names (`publicKindName`, `LEAF_ALIAS_TOLERANCE_BY_GRAMMAR`, `leafAliasKey`, `collectAliasedHiddenKinds` if Task 2 retired it), and the four retired overrides; the parser divergences from Task 1 are already on record in PR #330. Closes #314, #289, #290, #291, #214.
 
 ```bash
 git add -- docs/glossary/compiler.md docs/glossary/compiler-model.md docs/glossary/compiler-diagnostics.md docs/glossary/dsl-primitives.md docs/glossary/dsl-transform.md docs/glossary/tools.md docs/superpowers/specs/2026-09-21-alias-identity-design.md docs/KNOWN_ISSUES.md
