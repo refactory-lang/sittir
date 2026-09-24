@@ -81,6 +81,13 @@ export interface GeneratedMetadataCatalog {
 	readonly fieldByName: ReadonlyMap<string, GeneratedMetadata>;
 }
 
+export interface DisplayUnionMember {
+	readonly storage: string;
+	readonly literal: boolean;
+}
+
+export type DisplayUnions = ReadonlyMap<string, readonly DisplayUnionMember[]>;
+
 export interface RawGrammar {
 	readonly name: string;
 	readonly rules: Record<string, Rule<'evaluate'>>;
@@ -172,7 +179,7 @@ export interface LinkedGrammar {
 	readonly word: string | null;
 	readonly references: SymbolRef[];
 	readonly derivations: DerivationLog;
-	readonly displayUnions?: ReadonlyMap<string, ReadonlySet<string>>;
+	readonly displayUnions?: DisplayUnions;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
@@ -201,7 +208,7 @@ export interface NormalizedGrammar {
 	readonly externals?: readonly string[];
 	readonly extras?: readonly string[];
 	readonly derivations: DerivationLog;
-	readonly displayUnions?: ReadonlyMap<string, ReadonlySet<string>>;
+	readonly displayUnions?: DisplayUnions;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
@@ -213,7 +220,7 @@ export interface NormalizedGrammar {
 
 export interface SimplifiedGrammar {
 	readonly name: string;
-	readonly displayUnions?: ReadonlyMap<string, ReadonlySet<string>>;
+	readonly displayUnions?: DisplayUnions;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
@@ -256,7 +263,7 @@ export interface NodeMap {
 	readonly nodeByRuleId: ReadonlyMap<RuleId, AssembledNode>;
 	readonly nodeByKindId: ReadonlyMap<number, AssembledNode>;
 	readonly slotByRuleId: ReadonlyMap<RuleId, AssembledNonterminal>;
-	readonly displayUnions?: ReadonlyMap<string, ReadonlySet<string>>;
+	readonly displayUnions?: DisplayUnions;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly signatures: SignaturePool;
 	readonly derivations: DerivationLog;

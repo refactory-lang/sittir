@@ -11028,6 +11028,12 @@ Builds the display → storage-kinds map from every aliased ref, reading both
 ref forms (`aliasedTo`, and `aliasedFrom` with the target as `name`).
 ```
 
+Each member is stamped where it is collected (`DisplayUnionMember`): a
+literal member (a STRING arm, or a SYMBOL's `.literal`) carries its text and
+`literal: true`, a rule member its storage name and `literal: false`. The two
+never share a key, so a keyword arm `'type'` and a rule `type` stay distinct
+members, and no reader has to guess which a string was.
+
 #### body
 
 ```text
@@ -11046,6 +11052,17 @@ A SUPERTYPE's subtypes are not walked: subtypeParseNames /
 resolveHiddenSubtypes already resolve them, and a second envelope minted for
 the same display name would fight that member resolution.
 ```
+
+### `packages/codegen/src/compiler/types.ts::DisplayUnionMember`
+
+One storage under a display: the storage's name or literal text, and whether
+it is a literal. Stamped by `collectDisplayUnions`, read by the minter and the
+`display-union-mixed` guard.
+
+### `packages/codegen/src/compiler/types.ts::DisplayUnions`
+
+Display name → the storages tree-sitter shows under it (`DisplayUnionMember`),
+carried from link through normalize to the node map.
 
 ### `packages/codegen/src/compiler/link.ts::mintDisplayUnionRules`
 
@@ -11067,10 +11084,10 @@ minted display would be a second kind claiming the same id.
 #### body
 
 ```text
-memberRef: a member recorded by collectDisplayUnions is either literal text
-(a STRING arm, or a SYMBOL's `.literal`) or a rule name. Literal-text
-resolution is tried first; findEntryForKindName is the fallback for a rule
-name. A literal member keeps `.literal`, which isEnumChoiceRule /
+memberRef: a member's own `literal` stamp decides how it resolves: a literal
+member through its anonymous token row (`findEntryForLiteralText`), a rule
+member through its kind row (`findEntryForKindName`). Nothing is tried in
+order. A literal member keeps `.literal`, which isEnumChoiceRule /
 literalTextOf read to recognize a literal-carrying SYMBOL — dropping it
 re-derives a fact the pipeline already stamps.
 ```

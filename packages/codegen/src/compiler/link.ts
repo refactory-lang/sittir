@@ -64,7 +64,9 @@ import type {
 	RepeatedShapeEntry,
 	RefineForm,
 	LinkedRefineForm,
-	NarrowedField
+	NarrowedField,
+	DisplayUnionMember,
+	DisplayUnions
 } from './types.ts';
 import { structureTokenInterior } from './token-interior.ts';
 import { loadGrammarJsonInlineList } from './inline-sets.ts';
@@ -835,13 +837,15 @@ function cyclicInlineTargets(rules: Record<string, Rule<'link'>>): ReadonlySet<s
 function collectDisplayUnions(
 	rules: Record<string, Rule<'link'>>,
 	ctx: StampKindIdsCtx
-): ReadonlyMap<string, ReadonlySet<string>> {
+): DisplayUnions {
 	const { kindEntries } = ctx;
-	const unions = new Map<string, Set<string>>();
-	const add = (entry: { display: string; storage: string }): void => {
-		const set = unions.get(entry.display) ?? new Set<string>();
-		set.add(entry.storage);
-		unions.set(entry.display, set);
+	const unions = new Map<string, DisplayUnionMember[]>();
+	const add = (entry: { display: string } & DisplayUnionMember): void => {
+		const members = unions.get(entry.display) ?? [];
+		if (!members.some((m) => m.storage === entry.storage && m.literal === entry.literal)) {
+			members.push({ storage: entry.storage, literal: entry.literal });
+		}
+		unions.set(entry.display, members);
 	};
 	const isDissolvedHiddenRef = (content: SymbolRule<'link'>): boolean =>
 		rules[content.name]?.hidden === true && findEntryForKindName(kindEntries, content.name)?.parseId === undefined;
@@ -856,8 +860,9 @@ function collectDisplayUnions(
 			for (const arm of content.members) addStorage({ display, content: arm });
 			return;
 		}
-		if (content.type === SYMBOL) add({ display, storage: content.literal ?? storageNameOf(content) });
-		else if (content.type === STRING) add({ display, storage: content.value });
+		if (content.type === SYMBOL) {
+			add(content.literal === undefined ? { display, storage: storageNameOf(content), literal: false } : { display, storage: content.literal, literal: true });
+		} else if (content.type === STRING) add({ display, storage: content.value, literal: true });
 	};
 	const visit = (rule: Rule<'link'>): void => {
 		if (rule.type === ALIAS && rule.named && rule.value) {
@@ -874,28 +879,29 @@ function collectDisplayUnions(
 		else if ('content' in rule && rule.content !== undefined) visit((rule as { content: Rule<'link'> }).content);
 	};
 	for (const rule of Object.values(rules)) visit(rule);
-	for (const display of unions.keys()) if (rules[display] !== undefined) add({ display, storage: display });
+	for (const display of unions.keys()) if (rules[display] !== undefined) add({ display, storage: display, literal: false });
 	return unions;
 }
 
 function mintDisplayUnionRules(
 	rules: Record<string, Rule<'link'>>,
-	ctx: StampKindIdsCtx & { displayUnions: ReadonlyMap<string, ReadonlySet<string>> }
+	ctx: StampKindIdsCtx & { displayUnions: DisplayUnions }
 ): void {
 	const { kindEntries, displayUnions } = ctx;
-	const memberRef = (member: string): Rule<'link'> | undefined => {
-		const literalEntry = findEntryForLiteralText(kindEntries, member);
-		if (literalEntry !== undefined) {
+	const memberRef = (member: DisplayUnionMember): Rule<'link'> | undefined => {
+		if (member.literal) {
+			const literalEntry = findEntryForLiteralText(kindEntries, member.storage);
+			if (literalEntry === undefined) return undefined;
 			return {
 				type: SYMBOL,
 				name: literalEntry.kind,
-				literal: member,
+				literal: member.storage,
 				inline: isHiddenKind(literalEntry.kind),
 				kindId: literalEntry.parseId ?? literalEntry.id,
 				metadata: makeRuleMetadata({ symbolSource: 'link' })
 			} as Rule<'link'>;
 		}
-		const nameEntry = findEntryForKindName(kindEntries, member);
+		const nameEntry = findEntryForKindName(kindEntries, member.storage);
 		if (nameEntry !== undefined) {
 			return { type: SYMBOL, name: nameEntry.kind, kindId: nameEntry.parseId ?? nameEntry.id } as Rule<'link'>;
 		}
