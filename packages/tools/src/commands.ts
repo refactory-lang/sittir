@@ -13,7 +13,7 @@ import { runFrom, runRt, runCoverage, runFactory, type Grammar, type Backend, ty
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { readTestHistory } from './test-history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
-import { cachedNativeEngineProfile } from './validate/common.ts';
+import { cachedNativeEngineProfile, type ValidatorSkip } from './validate/common.ts';
 import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
 import {
 	buildValidationReportEntries,
@@ -392,7 +392,7 @@ export function readGrammarDiagnosticsEntries(grammar: Grammar): GrammarDiagnost
  * collector entirely.
  */
 export function collectValidatorFailuresForGrammar(counts: GrammarCounts): ValidatorDiagnostic[] {
-	const { from, coverage, readRenderParse, readRenderParseShallow, factoryRenderParse } = counts;
+	const { from, coverage, readRenderParse, readRenderParseShallow, factoryRenderParse, irRenderParse } = counts;
 	// Every push spreads the original validator-result object first — each
 	// source (read-render-parse errors/mismatches/accessor-throws, factory
 	// errors, coverage issues, …) carries its own extra fields (`input`,
@@ -400,74 +400,83 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 	// rather than narrowed away to just `message`. `stage`/`code`/`severity`/
 	// `label` are added/overridden on top as the common tagging fields.
 	const failures: ValidatorDiagnostic[] = [];
+	const entryKindLabel = (r: { readonly kind?: string; readonly entry?: string }): string =>
+		r.entry && r.kind ? `${r.entry} (${r.kind})` : (r.kind ?? r.entry ?? '');
+	const pushSkips = (
+		stage: string,
+		result: { readonly skips?: readonly ValidatorSkip[]; readonly excluded: readonly ValidatorSkip[] }
+	): void => {
+		for (const s of result.skips ?? [])
+			failures.push({ ...s, stage: `${stage}-skip`, code: `${stage}-skip`, severity: 'info', message: s.reason, label: entryKindLabel(s) });
+		const excludedByKind = new Map<string, { kind?: string; reason: string; entries: Set<string>; count: number }>();
+		for (const s of result.excluded) {
+			const key = `${s.reason}\0${s.kind ?? ''}`;
+			const group = excludedByKind.get(key) ?? { kind: s.kind, reason: s.reason, entries: new Set<string>(), count: 0 };
+			group.entries.add(s.entry);
+			group.count++;
+			excludedByKind.set(key, group);
+		}
+		for (const { kind, reason, entries, count } of excludedByKind.values())
+			failures.push({
+				...(kind === undefined ? {} : { kind }),
+				count,
+				entries: [...entries].sort(),
+				stage: `${stage}-excluded`,
+				code: `${stage}-excluded`,
+				severity: 'info',
+				message: reason,
+				label: kind ?? reason
+			});
+	};
+
 	for (const e of from.errors)
 		failures.push({ ...e, stage: 'from', code: 'from-error', severity: 'error', label: e.kind });
-	for (const e of readRenderParse.errors)
-		failures.push({
-			...e,
-			stage: 'read-render-parse',
-			code: 'read-render-parse-error',
-			severity: 'error',
-			label: e.name
-		});
-	for (const m of readRenderParse.astMismatches)
-		failures.push({
-			...m,
-			stage: 'read-render-parse-ast-mismatch',
-			code: 'read-render-parse-ast-mismatch',
-			severity: 'error',
-			label: m.entry ? `${m.entry} (${m.kind})` : m.kind
-		});
-	// Slot-masking, not necessarily a hard round-trip failure on its own —
-	// 'warning' like the literal-leak coverage issues below, not 'error'.
-	for (const t of readRenderParse.accessorThrows)
-		failures.push({
-			...t,
-			stage: 'read-render-parse-accessor-throw',
-			code: 'accessor-throw',
-			severity: 'warning',
-			label: `${t.key} (${t.accessor}, type=${t.type})`
-		});
-	for (const e of readRenderParseShallow.errors)
-		failures.push({
-			...e,
-			stage: 'read-render-parse-shallow',
-			code: 'read-render-parse-shallow-error',
-			severity: 'error',
-			label: e.name
-		});
-	for (const m of readRenderParseShallow.astMismatches)
-		failures.push({
-			...m,
-			stage: 'read-render-parse-shallow-ast-mismatch',
-			code: 'read-render-parse-shallow-ast-mismatch',
-			severity: 'error',
-			label: m.entry ? `${m.entry} (${m.kind})` : m.kind
-		});
-	for (const t of readRenderParseShallow.accessorThrows)
-		failures.push({
-			...t,
-			stage: 'read-render-parse-shallow-accessor-throw',
-			code: 'accessor-throw',
-			severity: 'warning',
-			label: `${t.key} (${t.accessor}, type=${t.type})`
-		});
-	for (const e of factoryRenderParse.errors)
-		failures.push({
-			...e,
-			stage: 'factory-render-parse',
-			code: 'factory-render-parse-error',
-			severity: 'error',
-			label: e.entry ? `${e.entry} (${e.kind})` : e.kind
-		});
-	for (const m of factoryRenderParse.astMismatches)
-		failures.push({
-			...m,
-			stage: 'factory-render-parse-ast-mismatch',
-			code: 'factory-render-parse-ast-mismatch',
-			severity: 'error',
-			label: m.entry ? `${m.entry} (${m.kind})` : m.kind
-		});
+	pushSkips('from', from);
+
+	for (const [stage, result] of [
+		['read-render-parse', readRenderParse],
+		['read-render-parse-shallow', readRenderParseShallow]
+	] as const) {
+		for (const e of result.errors)
+			failures.push({ ...e, stage, code: `${stage}-error`, severity: 'error', label: e.name });
+		for (const m of result.astMismatches)
+			failures.push({
+				...m,
+				stage: `${stage}-ast-mismatch`,
+				code: `${stage}-ast-mismatch`,
+				severity: 'error',
+				label: entryKindLabel(m)
+			});
+		// Slot-masking, not necessarily a hard round-trip failure on its own —
+		// 'warning' like the literal-leak coverage issues below, not 'error'.
+		for (const t of result.accessorThrows)
+			failures.push({
+				...t,
+				stage: `${stage}-accessor-throw`,
+				code: 'accessor-throw',
+				severity: 'warning',
+				label: `${t.key} (${t.accessor}, type=${t.type})`
+			});
+		pushSkips(stage, result);
+	}
+
+	for (const [stage, result] of [
+		['factory-render-parse', factoryRenderParse],
+		['ir-render-parse', irRenderParse]
+	] as const) {
+		for (const e of result.errors)
+			failures.push({ ...e, stage, code: `${stage}-error`, severity: 'error', label: entryKindLabel(e) });
+		for (const m of result.astMismatches)
+			failures.push({
+				...m,
+				stage: `${stage}-ast-mismatch`,
+				code: `${stage}-ast-mismatch`,
+				severity: 'error',
+				label: entryKindLabel(m)
+			});
+		pushSkips(stage, result);
+	}
+
 	// `literal-leak` issues are a heuristic near-miss surfaced for visibility
 	// (a suspicious doubled-punctuation run), not a hard structural failure
 	// like `missing-field` — tag them 'warning' rather than folding every
@@ -481,6 +490,7 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 			severity: issue.type === 'literal-leak' ? 'warning' : 'error',
 			label: issue.kind
 		});
+	pushSkips('coverage', coverage);
 	return failures;
 }
 

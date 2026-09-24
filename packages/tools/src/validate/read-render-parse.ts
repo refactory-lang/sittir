@@ -35,7 +35,8 @@ import {
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData,
-	type AccessorThrowRecord
+	type AccessorThrowRecord,
+	type ValidatorSkip
 } from './common.ts';
 
 /**
@@ -373,6 +374,8 @@ export interface ReadRenderParseResult {
 	 * beyond the transient stderr line.
 	 */
 	accessorThrows: AccessorThrowRecord[];
+	skips: ValidatorSkip[];
+	excluded: ValidatorSkip[];
 }
 
 /**
@@ -637,12 +640,13 @@ export async function validateReadRenderParse(
 		end: number;
 	}[] = [];
 	const accessorThrows: AccessorThrowRecord[] = [];
+	const skips: ValidatorSkip[] = [];
+	const excluded: ValidatorSkip[] = [];
 	const onAccessorThrow = (rec: AccessorThrowRecord): void => {
 		accessorThrows.push(rec);
 	};
 	let pass = 0;
 	let astMatchPass = 0;
-	let skip = 0;
 	let total = 0;
 	let shouldStop = false;
 
@@ -653,7 +657,7 @@ export async function validateReadRenderParse(
 			// Parse original
 			const tree1 = parser.parse(entry.source) as TSTree;
 			if (tree1.rootNode.hasError) {
-				skip++;
+				skips.push({ entry: entry.name, reason: 'parse-error', input: entry.source });
 				if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
 					console.log(`ENTRY\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\tskip-parse-error\tast-fail`);
 				}
@@ -702,7 +706,7 @@ export async function validateReadRenderParse(
 			const testableKinds = [...candidatesByKind.keys()];
 
 			if (testableKinds.length === 0) {
-				skip++;
+				skips.push({ entry: entry.name, reason: 'no-testable-kind', input: entry.source });
 				if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
 					console.log(`ENTRY\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\tskip-no-testable\tast-fail`);
 				}
@@ -813,11 +817,17 @@ export async function validateReadRenderParse(
 							adoptedVariantKinds: adoptedVariantKindNames,
 							targetKind
 						});
-						if (wrapped === null) continue; // no supertype - skip this candidate
+						if (wrapped === null) {
+							excluded.push({ entry: entry.name, kind, reason: 'no-reparse-wrapper', input: inputSource });
+							continue;
+						}
 						// Skip candidates whose render produces only whitespace: an
 						// empty render is indistinguishable from a missing node and
 						// cannot be reparsed meaningfully.
-						if (rendered.trim() === '') continue;
+						if (rendered.trim() === '') {
+							excluded.push({ entry: entry.name, kind, reason: 'empty-render', input: inputSource });
+							continue;
+						}
 
 						// Re-parse
 						const tree2 = parser.parse(wrapped.text) as TSTree;
@@ -1003,26 +1013,22 @@ export async function validateReadRenderParse(
 					// error line, no fail count), which masked a whole regression
 					// class from the standard tooling.
 					if (kindErrors.length > 0) {
-						errors.push(kindErrors[0]!);
+						errors.push(...kindErrors);
 						entryHadAnyCandidate = true;
 						entryOk = false;
 						entryAstMatch = false;
-						// KIND_LOG mode: keep walking remaining kinds for full
-						// per-kind coverage — entry scoring is already latched.
-						if (!process.env.SITTIR_VALIDATOR_KIND_LOG) break;
 						continue;
 					}
 					continue; // every candidate neutrally skipped — neutral on this kind
 				}
 				entryHadAnyCandidate = true;
 				if (!kindOk) {
-					if (kindErrors.length > 0) errors.push(kindErrors[0]!);
+					errors.push(...kindErrors);
 					entryOk = false;
 					entryAstMatch = false;
-					if (!process.env.SITTIR_VALIDATOR_KIND_LOG) break;
 				}
 				if (!kindAstMatch) {
-					if (kindAstMismatches.length > 0) astMismatches.push(kindAstMismatches[0]!);
+					astMismatches.push(...kindAstMismatches);
 					entryAstMatch = false;
 				}
 			}
@@ -1032,7 +1038,7 @@ export async function validateReadRenderParse(
 			// nothing — score it like the testableKinds.length===0 case above
 			// (skip), not a silent pass. See entryHadAnyCandidate's doc comment.
 			if (!entryHadAnyCandidate) {
-				skip++;
+				skips.push({ entry: entry.name, reason: 'all-candidates-neutral', input: entry.source });
 			} else {
 				if (entryOk) pass++;
 				if (entryAstMatch) astMatchPass++;
@@ -1064,12 +1070,14 @@ export async function validateReadRenderParse(
 		grammar,
 		total,
 		pass,
-		fail: total - pass - skip,
-		skip,
+		fail: total - pass - skips.length,
+		skip: skips.length,
 		astMatchPass,
 		errors,
 		astMismatches: dedupeMismatchesByContainment(astMismatches),
-		accessorThrows
+		accessorThrows,
+		skips,
+		excluded
 	};
 }
 

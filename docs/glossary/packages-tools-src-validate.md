@@ -876,6 +876,30 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `packages/tools/src/validate/common.ts::ValidatorSkip`
+
+```text
+/**
+ * One untested item, named, with the reason it went untested. Every
+ * validator result carries two lists of these, so that no item leaves a
+ * validator without a record:
+ *
+ * - `skips`: items counted in `total` but neither passed nor failed. The
+ *   result's `skip` count is `skips.length`, derived from the list rather
+ *   than kept as a separate counter, and `fail` is `total - pass - skip`.
+ * - `excluded`: in-domain items dropped before counting (a corpus entry
+ *   that does not parse, a candidate with no reparse wrapper or an empty
+ *   render, a kind with no from/factory function or no render rule).
+ *
+ * Items outside a validator's domain (anonymous nodes, supertypes, pure
+ * leaves, kinds outside the grammar's rule set) are not in either list.
+ * `collectValidatorFailuresForGrammar` writes both lists into
+ * `validation-report.json` at severity `info`: one `<stage>-skip` entry per
+ * skip, and one `<stage>-excluded` entry per (reason, kind) carrying the
+ * candidate `count` and the sorted corpus `entries` it came from.
+ */
+```
+
 ### `packages/tools/src/validate/common.ts::resolveWrappedStorageValue`
 
 #### body

@@ -863,6 +863,13 @@ export interface AccessorThrowRecord {
 	readonly message: string;
 }
 
+export interface ValidatorSkip {
+	readonly entry: string;
+	readonly reason: string;
+	readonly kind?: string;
+	readonly input?: string;
+}
+
 function materializeWrappedValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): unknown {
 	if (Array.isArray(value)) {
 		return value.map((entry) => materializeWrappedValue(entry, onAccessorThrow));
