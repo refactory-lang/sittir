@@ -1231,30 +1231,6 @@ const namedExpression$identifier =
 		const { name: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
 	};
-const namedExpression$print =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
-const namedExpression$exec =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
-const namedExpression$async =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
-const namedExpression$await =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
-const namedExpression$type =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
-const namedExpression$match =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
 export const namedExpression: typeof B.namedExpression & {
 	identifier: {
 		strict: (
@@ -1268,95 +1244,11 @@ export const namedExpression: typeof B.namedExpression & {
 			options?: OptionsArg<typeof C.coerceToNamedExpression>
 		) => ReturnType<typeof C.coerceToNamedExpression>;
 	};
-	print: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedExpression>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildNamedExpression>
-		) => ReturnType<typeof F.buildNamedExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedExpression>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToNamedExpression>
-		) => ReturnType<typeof C.coerceToNamedExpression>;
-	};
-	exec: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedExpression>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildNamedExpression>
-		) => ReturnType<typeof F.buildNamedExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedExpression>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToNamedExpression>
-		) => ReturnType<typeof C.coerceToNamedExpression>;
-	};
-	async: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedExpression>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildNamedExpression>
-		) => ReturnType<typeof F.buildNamedExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedExpression>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToNamedExpression>
-		) => ReturnType<typeof C.coerceToNamedExpression>;
-	};
-	await: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedExpression>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildNamedExpression>
-		) => ReturnType<typeof F.buildNamedExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedExpression>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToNamedExpression>
-		) => ReturnType<typeof C.coerceToNamedExpression>;
-	};
-	type: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedExpression>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildNamedExpression>
-		) => ReturnType<typeof F.buildNamedExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedExpression>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToNamedExpression>
-		) => ReturnType<typeof C.coerceToNamedExpression>;
-	};
-	match: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedExpression>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildNamedExpression>
-		) => ReturnType<typeof F.buildNamedExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedExpression>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToNamedExpression>
-		) => ReturnType<typeof C.coerceToNamedExpression>;
-	};
 } = {
 	...B.namedExpression,
 	identifier: {
 		strict: namedExpression$identifier(F.buildNamedExpression, F.buildIdentifier),
 		coerce: namedExpression$identifier(C.coerceToNamedExpression, C.coerceToIdentifier)
-	},
-	print: {
-		strict: namedExpression$print(F.buildNamedExpression, TSKindId.PrintKeyword),
-		coerce: namedExpression$print(C.coerceToNamedExpression, TSKindId.PrintKeyword)
-	},
-	exec: {
-		strict: namedExpression$exec(F.buildNamedExpression, TSKindId.ExecKeyword),
-		coerce: namedExpression$exec(C.coerceToNamedExpression, TSKindId.ExecKeyword)
-	},
-	async: {
-		strict: namedExpression$async(F.buildNamedExpression, TSKindId.AsyncKeyword),
-		coerce: namedExpression$async(C.coerceToNamedExpression, TSKindId.AsyncKeyword)
-	},
-	await: {
-		strict: namedExpression$await(F.buildNamedExpression, TSKindId.AwaitKeyword),
-		coerce: namedExpression$await(C.coerceToNamedExpression, TSKindId.AwaitKeyword)
-	},
-	type: {
-		strict: namedExpression$type(F.buildNamedExpression, TSKindId.TypeKeyword),
-		coerce: namedExpression$type(C.coerceToNamedExpression, TSKindId.TypeKeyword)
-	},
-	match: {
-		strict: namedExpression$match(F.buildNamedExpression, TSKindId.MatchKeyword),
-		coerce: namedExpression$match(C.coerceToNamedExpression, TSKindId.MatchKeyword)
 	}
 };
 
@@ -6911,10 +6803,6 @@ const genericType$identifier =
 		const { name: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
 	};
-const genericType$type =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
 export const genericType: typeof B.genericType & {
 	identifier: {
 		strict: (
@@ -6926,25 +6814,11 @@ export const genericType: typeof B.genericType & {
 			options?: OptionsArg<typeof C.coerceToGenericType>
 		) => ReturnType<typeof C.coerceToGenericType>;
 	};
-	type: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildGenericType>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildGenericType>
-		) => ReturnType<typeof F.buildGenericType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToGenericType>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToGenericType>
-		) => ReturnType<typeof C.coerceToGenericType>;
-	};
 } = {
 	...B.genericType,
 	identifier: {
 		strict: genericType$identifier(F.buildGenericType, F.buildIdentifier),
 		coerce: genericType$identifier(C.coerceToGenericType, C.coerceToIdentifier)
-	},
-	type: {
-		strict: genericType$type(F.buildGenericType, TSKindId.TypeKeyword),
-		coerce: genericType$type(C.coerceToGenericType, TSKindId.TypeKeyword)
 	}
 };
 
@@ -6965,10 +6839,6 @@ const type$genericType =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const type$identifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const type$type =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -7004,10 +6874,6 @@ export const type: typeof B.type & {
 			strict: (...args: ArgsOf<typeof genericType.identifier.strict>) => ReturnType<typeof F.buildType>;
 			coerce: (...args: ArgsOf<typeof genericType.identifier.coerce>) => ReturnType<typeof F.buildType>;
 		};
-		type: {
-			strict: (...args: ArgsOf<typeof genericType.type.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof genericType.type.coerce>) => ReturnType<typeof F.buildType>;
-		};
 	};
 	unionType: {
 		strict: (...args: ArgsOf<typeof F.buildUnionType>) => ReturnType<typeof F.buildType>;
@@ -7041,10 +6907,6 @@ export const type: typeof B.type & {
 		identifier: {
 			strict: type$identifier(F.buildType, genericType.identifier.strict),
 			coerce: type$identifier(F.buildType, genericType.identifier.coerce)
-		},
-		type: {
-			strict: type$type(F.buildType, genericType.type.strict),
-			coerce: type$type(F.buildType, genericType.type.coerce)
 		}
 	},
 	unionType: {
@@ -7067,30 +6929,6 @@ const keywordArgument$identifier =
 		const { name: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
 	};
-const keywordArgument$print =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
-const keywordArgument$exec =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
-const keywordArgument$async =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
-const keywordArgument$await =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
-const keywordArgument$type =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
-const keywordArgument$match =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, name: value } as never, options as never);
 export const keywordArgument: typeof B.keywordArgument & {
 	identifier: {
 		strict: (
@@ -7104,95 +6942,11 @@ export const keywordArgument: typeof B.keywordArgument & {
 			options?: OptionsArg<typeof C.coerceToKeywordArgument>
 		) => ReturnType<typeof C.coerceToKeywordArgument>;
 	};
-	print: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordArgument>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildKeywordArgument>
-		) => ReturnType<typeof F.buildKeywordArgument>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordArgument>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToKeywordArgument>
-		) => ReturnType<typeof C.coerceToKeywordArgument>;
-	};
-	exec: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordArgument>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildKeywordArgument>
-		) => ReturnType<typeof F.buildKeywordArgument>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordArgument>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToKeywordArgument>
-		) => ReturnType<typeof C.coerceToKeywordArgument>;
-	};
-	async: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordArgument>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildKeywordArgument>
-		) => ReturnType<typeof F.buildKeywordArgument>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordArgument>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToKeywordArgument>
-		) => ReturnType<typeof C.coerceToKeywordArgument>;
-	};
-	await: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordArgument>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildKeywordArgument>
-		) => ReturnType<typeof F.buildKeywordArgument>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordArgument>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToKeywordArgument>
-		) => ReturnType<typeof C.coerceToKeywordArgument>;
-	};
-	type: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordArgument>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildKeywordArgument>
-		) => ReturnType<typeof F.buildKeywordArgument>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordArgument>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToKeywordArgument>
-		) => ReturnType<typeof C.coerceToKeywordArgument>;
-	};
-	match: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordArgument>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildKeywordArgument>
-		) => ReturnType<typeof F.buildKeywordArgument>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordArgument>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToKeywordArgument>
-		) => ReturnType<typeof C.coerceToKeywordArgument>;
-	};
 } = {
 	...B.keywordArgument,
 	identifier: {
 		strict: keywordArgument$identifier(F.buildKeywordArgument, F.buildIdentifier),
 		coerce: keywordArgument$identifier(C.coerceToKeywordArgument, C.coerceToIdentifier)
-	},
-	print: {
-		strict: keywordArgument$print(F.buildKeywordArgument, TSKindId.PrintKeyword),
-		coerce: keywordArgument$print(C.coerceToKeywordArgument, TSKindId.PrintKeyword)
-	},
-	exec: {
-		strict: keywordArgument$exec(F.buildKeywordArgument, TSKindId.ExecKeyword),
-		coerce: keywordArgument$exec(C.coerceToKeywordArgument, TSKindId.ExecKeyword)
-	},
-	async: {
-		strict: keywordArgument$async(F.buildKeywordArgument, TSKindId.AsyncKeyword),
-		coerce: keywordArgument$async(C.coerceToKeywordArgument, TSKindId.AsyncKeyword)
-	},
-	await: {
-		strict: keywordArgument$await(F.buildKeywordArgument, TSKindId.AwaitKeyword),
-		coerce: keywordArgument$await(C.coerceToKeywordArgument, TSKindId.AwaitKeyword)
-	},
-	type: {
-		strict: keywordArgument$type(F.buildKeywordArgument, TSKindId.TypeKeyword),
-		coerce: keywordArgument$type(C.coerceToKeywordArgument, TSKindId.TypeKeyword)
-	},
-	match: {
-		strict: keywordArgument$match(F.buildKeywordArgument, TSKindId.MatchKeyword),
-		coerce: keywordArgument$match(C.coerceToKeywordArgument, TSKindId.MatchKeyword)
 	}
 };
 

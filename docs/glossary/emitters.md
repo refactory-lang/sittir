@@ -15268,7 +15268,18 @@ A slot's values as sub-factory derivation sees them: a value whose kind is a
 supertype with arm subtypes (`AssembledSupertype.armSubtypes`) expands into
 those subtypes, each carrying its stamped arm facts and the slot value's
 multiplicity. That covers a flattened parent's variant subtypes and an
-undeclared supertype reached through an alias site. A parent whose slot holds a flattened parent
+undeclared supertype reached through an alias site. Displayed literals then
+fold into their display (`foldDisplayedLiterals`).
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::foldDisplayedLiterals`
+
+A contextual keyword shown as another kind is that kind (a literal token
+under a terminal display: the parser reuses the display's symbol), so it has
+no sub-factory of its own. Each such value becomes a reference to its display
+node (`displayedLiteralTarget`), and values are deduplicated by storage, so
+the display arm exists once whether or not the slot also names the display
+kind directly: `assignmentExpression.identifier('async')` covers every
+keyword the slot admits. A parent whose slot holds a flattened parent
 therefore mounts the variants as ordinary arms (`functionDefinition.block`
 for `_suite`'s `block` variant), exactly as it mounted the polymorph's forms
 before the polymorph was flattened.

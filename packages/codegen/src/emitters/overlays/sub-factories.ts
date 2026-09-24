@@ -25,7 +25,7 @@ import {
 } from '../shared.ts';
 import { camelCase } from '../refine-emit.ts';
 import { prefixNamedSuffix } from '../../compiler/variant-structural.ts';
-import { displayNameOfValue } from '../../compiler/model/display-name.ts';
+import { displayNameOfValue, displayedLiteralTarget } from '../../compiler/model/display-name.ts';
 
 export interface ValueArm {
 	readonly via: 'value';
@@ -94,11 +94,28 @@ function textStorageOf(value: NodeOrTerminal, nodeMap: NodeMap): TextValueStorag
 }
 
 function slotValuesOf(slot: AssembledNonterminal, nodeMap: NodeMap): readonly NodeOrTerminal[] {
-	return slot.values.flatMap((value) => {
+	const expanded = slot.values.flatMap((value) => {
 		if (!isNodeRef(value)) return [value];
 		const child = nodeMap.nodes.get(storageKindOfRef(value.node));
 		const variants = child instanceof AssembledSupertype ? child.armSubtypes : undefined;
 		return variants === undefined ? [value] : variants.map((ref) => ({ ...ref, multiplicity: value.multiplicity }));
+	});
+	return foldDisplayedLiterals(expanded, nodeMap);
+}
+
+function foldDisplayedLiterals(values: readonly NodeOrTerminal[], nodeMap: NodeMap): readonly NodeOrTerminal[] {
+	const seen = new Set<string>();
+	return values.flatMap((value) => {
+		const display = displayedLiteralTarget(value, nodeMap);
+		const folded: NodeOrTerminal =
+			display === undefined
+				? value
+				: { node: display, storageKindId: display.kindId, parseKind: value.parseKind, parseKindId: value.parseKindId, multiplicity: value.multiplicity };
+		const key = isNodeRef(folded) ? storageKindOfRef(folded.node) : undefined;
+		if (key === undefined) return [folded];
+		if (seen.has(key)) return [];
+		seen.add(key);
+		return [folded];
 	});
 }
 

@@ -4083,6 +4083,16 @@ that is not a node is a codegen error; a site that holds a second display for
 a kind (a `parseKind`, an alias target) carries it itself
 (`displayNameOfRef`).
 
+### `packages/codegen/src/compiler/model/display-name.ts::displayedLiteralTarget`
+
+The display node a slot value stands for when the value is a displayed
+literal: its storage (a node reference's storage kind, or a terminal value's
+resolved kind) is an anonymous literal token in the catalog, and the site
+issues it under a different kind (`parseKindId` ≠ storage id). Otherwise
+`undefined`. After enrich's unaliasing only a terminal display keeps a
+literal under it, so the target is always a terminal kind (typescript
+`async` shown as `identifier`, rust `u8` shown as `identifier`).
+
 ### `packages/codegen/src/compiler/model/display-name.ts::displayNameOfValue`
 
 The display at one slot value: the name the parser issues at that site
