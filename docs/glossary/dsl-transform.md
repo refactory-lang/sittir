@@ -1008,6 +1008,17 @@ on the way in; an authored body of that name is left as authored.
 // uppercase spellings ever appear here.
 ```
 
+### `packages/codegen/src/dsl/transform/transform.ts::resolveRulePlaceholder`
+
+Declares the rule `rule(name, body)` names and leaves a reference to it at the
+path. The body is built from the pipeline's `$` (`wireDollar`) and deposited
+as written: unlike `variant()`, it is not wrapped in the precedence of the
+path it replaces. The author writes the whole rule, and the reference left
+at the path sits under the parent's precedence like any other reference. A
+second `rule()` of the same name, at another path or in another kind, must
+carry an equal body (`canonicalRuleText`); a different body fails naming
+both sites (`<kind>/<key>`).
+
 ### `packages/codegen/src/dsl/transform/transform.ts::resolveAliasPlaceholder`
 
 ```text
@@ -1779,6 +1790,13 @@ Only a HIDDEN group lift (`isHiddenKind`) is looked through. A visible lift is a
  * the leading underscore), a symbol's name, looking through prec wrappers.
  */
 ```
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::canonicalRuleText`
+
+A runtime rule's identity as text, with the per-evaluation `id` and
+`metadata` dropped: two rules built by the same authoring are equal under
+it. Used to dedupe token-form arms and to check that `rule()` bodies of one
+name agree.
 
 ### `packages/codegen/src/dsl/transform/token-forms.ts::classifyTokenChoice`
 

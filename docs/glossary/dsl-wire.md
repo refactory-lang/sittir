@@ -37,6 +37,23 @@ exist.
  */
 ```
 
+The optional `site` records where a `rule()` body was declared
+(`<parent kind>/<patch key>`), kept beside the deposit so a second `rule()`
+of the same name with a different body can name both places.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireGetSyntheticRule`
+
+The deposited body under `name` and the site it was declared at, if a patch
+has deposited one in the active wire context.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireDollar`
+
+The grammar's `$` while a patched parent's patches resolve: the `$` of
+whichever pipeline is executing (tree-sitter's CLI, then sittir's evaluate),
+so a `rule()` body's references are checked by that pipeline's own
+undefined-rule check and never cross runs. Outside a patched parent there is
+no `$`, and asking for one fails.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSyntheticInline`
 
 ```text
@@ -180,6 +197,10 @@ array form `transform()` consumes as its rest parameter.
  */
 ```
 
+While the patch sets apply, the pipeline's `$` is set on the context
+(`currentDollar`, scoped exactly like `currentRuleKind`), so a `rule()` body
+is built from it (`wireDollar`).
+
 ### `packages/codegen/src/dsl/wire/wire.ts::placeholderHiddenName`
 
 ```text
@@ -195,6 +216,9 @@ array form `transform()` consumes as its rest parameter.
  * - `alias('z')` (one-arg) → the hidden `_z`.
  */
 ```
+
+A `rule('w', body)` mints `w` itself, visible or hidden as the author named
+it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireHasDeposit`
 
@@ -256,6 +280,12 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
 (python registers roles inside it), so wire never evaluates it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::injectPlaceholderHiddenRules`
+
+A `rule()` name that is already a rule of the grammar (authored, base, or
+patched), or an external, is refused: installing nothing would silently drop
+the body. The first `rule()` of a name claims it, and later ones with the
+same name are the same rule; `resolveRulePlaceholder` checks their bodies
+agree.
 
 ```text
 /**
@@ -823,6 +853,10 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext`
+
+`depositSites` holds the site each `rule()` body was declared at;
+`currentDollar` is the pipeline's `$` while a patched parent's patches
+resolve (`wireDollar`).
 
 ```text
 /**

@@ -18,6 +18,9 @@
  */
 
 import type { Rule } from '../../types/rule.ts';
+import type { RuntimeRule } from '../../types/runtime-shapes.ts';
+import { transform } from '../transform/transform.ts';
+import { withWireContext } from '../wire/wire.ts';
 
 type Globals = Record<string, unknown>;
 
@@ -98,4 +101,24 @@ export function restoreFakeDsl(): void {
 		else g[k] = v;
 	}
 	savedGlobals = null;
+}
+
+/**
+ * Run `transform(original, patches)` as the patched parent `kind` inside a
+ * fresh wire context, with a `$` that names symbols, and return the result
+ * with the rules the patches deposited.
+ */
+export function applyTransformForTest(
+	kind: string,
+	original: unknown,
+	patches: Record<number | string, unknown>
+): { result: unknown; deposits: ReadonlyMap<string, unknown> } {
+	const $ = new Proxy({} as Record<string, RuntimeRule>, {
+		get: (_target, name: string) => ({ type: 'SYMBOL', name }) as unknown as RuntimeRule
+	});
+	const { result, ctx } = withWireContext(kind, (context) => {
+		context.currentDollar = $;
+		return transform(original as RuntimeRule, patches as Parameters<typeof transform>[1]);
+	});
+	return { result, deposits: ctx.deposits };
 }

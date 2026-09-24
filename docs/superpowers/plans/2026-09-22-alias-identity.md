@@ -343,7 +343,15 @@ git commit -m "feat(compiler): an inline alias distributes over its arms; link b
 
 ---
 
-### Task 3: `rule(name, body)` placeholder
+### Task 3: `rule(name, body)` placeholder (landed)
+
+**What landed, where it differs from the steps below:**
+- The name is installed as a rule by `injectPlaceholderHiddenRules` (`placeholderHiddenName` returns it), the same path variant and alias mints take. A name the grammar already has (authored, base, patched or external) is refused at wire time.
+- The body is built from the executing pipeline's real `$`, which `buildPatchedParentFn` scopes on the wire context (`currentDollar`, read through `wireDollar()`), not from a simple proxy.
+- The patch key is passed into `resolvePatch` as a parameter; there is no current-patch-path global. The deposit keeps its declaring site (`wireRegisterSyntheticRule(name, body, site)`, `wireGetSyntheticRule`).
+- The body is not wrapped in the path's precedence (`variant()` is).
+- Bodies are compared with `canonicalRuleText`, exported from `token-forms.ts` (it was a private `canonical`). `applyTransformForTest` is added to `_test-helpers.ts`.
+
 
 **Files:**
 - Create: `packages/codegen/src/dsl/primitives/rule.ts`

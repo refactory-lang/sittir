@@ -14,6 +14,7 @@ import {
 } from '../primitives/spacing.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
+import { isRulePlaceholder } from '../primitives/rule.ts';
 import {
 	ABSENT_VARIANT_NAME,
 	isVariantPlaceholder,
@@ -33,6 +34,7 @@ export type VisibleExternalsConfig = ($: Record<string, unknown>) => Record<stri
 
 export interface WireContext {
 	readonly deposits: Map<string, RuntimeRule>;
+	readonly depositSites: Map<string, string>;
 	readonly syntheticInline: Set<string>;
 	readonly inlineRemovals: Set<string>;
 	readonly orphanedSyntheticGroups: Set<string>;
@@ -46,6 +48,7 @@ export interface WireContext {
 	readonly expectTestFailures?: Partial<Record<string, string>>;
 	readonly options?: OptionsConfig;
 	currentRuleKind: string | null;
+	currentDollar: Record<string, RuntimeRule> | null;
 	readonly authoredRuleNames: ReadonlySet<string>;
 	readonly extraRuleNames: ReadonlySet<string>;
 	readonly precedenceRankedNames: ReadonlySet<string>;
@@ -64,10 +67,22 @@ export function getCurrentWireContext(): WireContext | null {
 	return currentContext;
 }
 
-export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): boolean {
+export function wireRegisterSyntheticRule(name: string, content: RuntimeRule, site?: string): boolean {
 	if (!currentContext) return false;
 	currentContext.deposits.set(name, content);
+	if (site !== undefined) currentContext.depositSites.set(name, site);
 	return true;
+}
+
+export function wireGetSyntheticRule(name: string): { readonly body: RuntimeRule; readonly site: string | undefined } | undefined {
+	const body = currentContext?.deposits.get(name);
+	return body === undefined ? undefined : { body, site: currentContext?.depositSites.get(name) };
+}
+
+export function wireDollar(): Record<string, RuntimeRule> {
+	const dollar = currentContext?.currentDollar;
+	if (!dollar) throw new Error('wire: no grammar $ in scope; a rule() body is built only while a patched parent is evaluated');
+	return dollar;
 }
 
 export function wireHasDeposit(name: string): boolean {
@@ -132,6 +147,7 @@ export function withWireContext<T>(
 ): { result: T; ctx: WireContext } {
 	const ctx: WireContext = {
 		deposits: new Map(),
+		depositSites: new Map(),
 		syntheticInline: new Set(),
 		inlineRemovals: new Set(),
 		orphanedSyntheticGroups: new Set(),
@@ -142,6 +158,7 @@ export function withWireContext<T>(
 		renderAs: undefined,
 		options: undefined,
 		currentRuleKind: ruleKind,
+		currentDollar: null,
 		authoredRuleNames: new Set(),
 		extraRuleNames: new Set(),
 		precedenceRankedNames: new Set(),
@@ -302,6 +319,7 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 	assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
 	const context: WireContext = {
 		deposits: new Map(),
+		depositSites: new Map(),
 		syntheticInline: new Set(),
 		inlineRemovals: new Set(),
 		orphanedSyntheticGroups: new Set(),
@@ -315,6 +333,7 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		expectTestFailures: cfg.expectTestFailures,
 		options: cfg.options,
 		currentRuleKind: null,
+		currentDollar: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
 		extraRuleNames: extraRuleNames(cfg, baseArg),
 		precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
@@ -326,7 +345,7 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 	const outRules: Record<string, RuleFn> = { ...cfg.rules } as Record<string, RuleFn>;
 
 	composeOrSynthesizePatchedParents(outRules, patches, context);
-	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
+	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), knownRuleNames(cfg, baseArg));
 	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.injects || cfg.visibleExternals)) {
 		const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, RuleFn>;
 		for (const baseName of Object.keys(baseRules)) {
@@ -514,9 +533,14 @@ function buildPatchedParentFn(
 ): SittirRuleFn {
 	return function wiredPatchedParent($, original) {
 		const base = userFn ? userFn($, original) : (context.deposits.get(kind) ?? original);
-		return patchSets.length === 0
-			? base
-			: (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
+		if (patchSets.length === 0) return base;
+		const prevDollar = context.currentDollar;
+		context.currentDollar = $ as Record<string, RuntimeRule>;
+		try {
+			return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
+		} finally {
+			context.currentDollar = prevDollar;
+		}
 	};
 }
 
@@ -524,6 +548,7 @@ function placeholderHiddenName(value: unknown, parentKind: string): string | und
 	if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
 	if (isVariantPlaceholder(value)) return polymorphVisibleName(parentKind, variantMintName(value));
 	if (isAliasPlaceholder(value)) return `_${value.name}`;
+	if (isRulePlaceholder(value)) return value.name;
 	return undefined;
 }
 
@@ -604,11 +629,20 @@ function injectPlaceholderHiddenRules(
 	rules: Record<string, RuleFn>,
 	patches: PatchesConfig,
 	context: WireContext,
-	externals: ReadonlySet<string>
+	externals: ReadonlySet<string>,
+	known: ReadonlySet<string>
 ): void {
+	const declared = new Set<string>();
 	for (const [kind, entry] of Object.entries(patches)) {
 		if (!entry) continue;
 		for (const patchMap of patchSetsOf(entry)) {
+			for (const value of Object.values(patchMap)) {
+				if (!isRulePlaceholder(value) || declared.has(value.name)) continue;
+				if (known.has(value.name) || value.name in rules || externals.has(value.name)) {
+					throw new Error(`rule('${value.name}'): '${value.name}' is already a rule of this grammar`);
+				}
+				declared.add(value.name);
+			}
 			const names = Object.values(patchMap).map((value) => placeholderHiddenName(value, kind));
 			const defaultAbsent = defaultAbsentVariantName(kind, patchMap);
 			if (defaultAbsent !== undefined) names.push(defaultAbsent);

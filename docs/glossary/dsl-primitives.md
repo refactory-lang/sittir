@@ -235,6 +235,26 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `packages/codegen/src/dsl/primitives/rule.ts::rule`
+
+`rule(name, body)` in a `patches:` entry declares a real grammar rule `name`
+whose body is `body($)`, and replaces the patched path with a reference to
+it. It is how a patch introduces a rule the base grammar lacks (python's
+`comprehension_clauses`) without a hand-written `rules:` entry. The rule is
+visible or hidden as named, carries no `hoisted` annotation, and is not
+wrapped in the path's precedence (`resolveRulePlaceholder`). The same name
+may be declared at several paths with an equal body; a name the grammar
+already has is refused at wire time (`injectPlaceholderHiddenRules`).
+
+### `packages/codegen/src/dsl/primitives/rule.ts::RulePlaceholder`
+
+The inert value `rule()` returns: a name and a body callback taking the
+grammar's `$`. It resolves inside `transform()` once the patched parent runs.
+
+### `packages/codegen/src/dsl/primitives/rule.ts::isRulePlaceholder`
+
+Whether a patch value is a `rule()` placeholder.
+
 ### `packages/codegen/src/dsl/primitives/alias.ts::module`
 
 ```text

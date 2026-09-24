@@ -725,6 +725,113 @@ function alias(rule, value) {
   return native(rule, rule);
 }
 
+// packages/codegen/src/dsl/primitives/rule.ts
+function isRulePlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "rule";
+}
+
+// packages/codegen/src/dsl/transform/token-forms.ts
+var typeOf = (rule) => rule.type ?? "";
+var membersOf2 = (rule) => rule.members ?? [];
+var contentOf2 = (rule) => rule.content;
+var rebuilt = (rule, patch) => ({ ...rule, ...patch });
+var isBlank = (rule) => typeOf(rule) === "BLANK";
+var isString = (rule) => typeOf(rule) === "STRING";
+function isTokenWrapper(rule) {
+  return isTokenWrapperType(typeOf(rule));
+}
+function classifyTokenChoice(choice2) {
+  const arms = membersOf2(choice2);
+  if (arms.some(isBlank)) return "presence";
+  if (arms.every(isString)) return "spelling";
+  return "forms";
+}
+function flattenFormArms(arms) {
+  return arms.flatMap(
+    (arm2) => isChoiceType(typeOf(arm2)) && classifyTokenChoice(arm2) === "forms" ? flattenFormArms(membersOf2(arm2)) : [arm2]
+  );
+}
+function findOutermostForms(rule, path) {
+  const t = typeOf(rule);
+  if (isChoiceType(t)) {
+    const cls = classifyTokenChoice(rule);
+    if (cls === "forms") return { path, arms: flattenFormArms(membersOf2(rule)) };
+    if (cls === "spelling") return void 0;
+    const live = membersOf2(rule).filter((m) => !isBlank(m));
+    const only = live.length === 1 ? live[0] : void 0;
+    if (only !== void 0 && isChoiceType(typeOf(only)) && classifyTokenChoice(only) === "forms") {
+      return { path, arms: [...flattenFormArms(membersOf2(only)), membersOf2(rule).find(isBlank)] };
+    }
+    return void 0;
+  }
+  if (t === "OPTIONAL") {
+    const inner = contentOf2(rule);
+    if (isChoiceType(typeOf(inner)) && classifyTokenChoice(inner) === "forms") {
+      return { path, arms: [...flattenFormArms(membersOf2(inner)), BLANK] };
+    }
+    return void 0;
+  }
+  if (isSeqType(t)) {
+    const members = membersOf2(rule);
+    for (let i = 0; i < members.length; i++) {
+      const found = findOutermostForms(members[i], [...path, i]);
+      if (found) return found;
+    }
+    return void 0;
+  }
+  if (contentOf2(rule) !== void 0) return findOutermostForms(contentOf2(rule), [...path, 0]);
+  return void 0;
+}
+function replaceAt(rule, path, arm2) {
+  if (path.length === 0) return arm2;
+  const [head, ...rest] = path;
+  if (Array.isArray(rule.members)) {
+    const members = membersOf2(rule).map((m, i) => i === head ? replaceAt(m, rest, arm2) : m);
+    return rebuilt(rule, { members });
+  }
+  return rebuilt(rule, { content: replaceAt(contentOf2(rule), rest, arm2) });
+}
+var BLANK = { type: "BLANK" };
+var EMPTY_SEQ = { type: "SEQ", members: [] };
+function dropAt(rule, path) {
+  if (path.length === 0) return EMPTY_SEQ;
+  const [head, ...rest] = path;
+  if (Array.isArray(rule.members)) {
+    if (rest.length === 0) return rebuilt(rule, { members: membersOf2(rule).filter((_, i) => i !== head) });
+    return rebuilt(rule, { members: membersOf2(rule).map((m, i) => i === head ? dropAt(m, rest) : m) });
+  }
+  return rebuilt(rule, { content: dropAt(contentOf2(rule), rest) });
+}
+var canonicalRuleText = (rule) => JSON.stringify(rule, (key, value) => key === "id" || key === "metadata" ? void 0 : value);
+function distributeTokenForms(rule, kind) {
+  const precStack = [];
+  let core = rule;
+  while (isPrecWrapper(core)) {
+    precStack.push(core);
+    core = contentOf2(core);
+  }
+  if (!isTokenWrapper(core)) return rule;
+  const body = contentOf2(core);
+  const site = findOutermostForms(body, []);
+  if (site === void 0) return rule;
+  const arms = site.arms.map((arm2) => isBlank(arm2) ? dropAt(body, site.path) : replaceAt(body, site.path, arm2));
+  const empty = arms.findIndex(matchesEmpty);
+  if (empty >= 0) throw new Error(`token forms: arm ${empty} of '${kind}' matches the empty string`);
+  const seen = /* @__PURE__ */ new Map();
+  arms.forEach((arm2, i) => {
+    const key = canonicalRuleText(arm2);
+    const prior = seen.get(key);
+    if (prior !== void 0) throw new Error(`token forms: arms ${prior} and ${i} of '${kind}' are identical`);
+    seen.set(key, i);
+  });
+  let out = {
+    type: "CHOICE",
+    members: arms.map((arm2) => ({ ...core, content: arm2 }))
+  };
+  for (let i = precStack.length - 1; i >= 0; i--) out = { ...precStack[i], content: out };
+  return out;
+}
+
 // packages/codegen/src/dsl/primitives/variant.ts
 var ABSENT_VARIANT_NAME = "bare";
 function isVariantPlaceholder(v) {
@@ -1752,108 +1859,6 @@ function unaliasOverloadedDisplays(rules, ctx) {
 }
 var flagWalker = new RuleWalker();
 var fuseHeadRepeatListsWalker = new RuleWalker();
-
-// packages/codegen/src/dsl/transform/token-forms.ts
-var typeOf = (rule) => rule.type ?? "";
-var membersOf2 = (rule) => rule.members ?? [];
-var contentOf2 = (rule) => rule.content;
-var rebuilt = (rule, patch) => ({ ...rule, ...patch });
-var isBlank = (rule) => typeOf(rule) === "BLANK";
-var isString = (rule) => typeOf(rule) === "STRING";
-function isTokenWrapper(rule) {
-  return isTokenWrapperType(typeOf(rule));
-}
-function classifyTokenChoice(choice2) {
-  const arms = membersOf2(choice2);
-  if (arms.some(isBlank)) return "presence";
-  if (arms.every(isString)) return "spelling";
-  return "forms";
-}
-function flattenFormArms(arms) {
-  return arms.flatMap(
-    (arm2) => isChoiceType(typeOf(arm2)) && classifyTokenChoice(arm2) === "forms" ? flattenFormArms(membersOf2(arm2)) : [arm2]
-  );
-}
-function findOutermostForms(rule, path) {
-  const t = typeOf(rule);
-  if (isChoiceType(t)) {
-    const cls = classifyTokenChoice(rule);
-    if (cls === "forms") return { path, arms: flattenFormArms(membersOf2(rule)) };
-    if (cls === "spelling") return void 0;
-    const live = membersOf2(rule).filter((m) => !isBlank(m));
-    const only = live.length === 1 ? live[0] : void 0;
-    if (only !== void 0 && isChoiceType(typeOf(only)) && classifyTokenChoice(only) === "forms") {
-      return { path, arms: [...flattenFormArms(membersOf2(only)), membersOf2(rule).find(isBlank)] };
-    }
-    return void 0;
-  }
-  if (t === "OPTIONAL") {
-    const inner = contentOf2(rule);
-    if (isChoiceType(typeOf(inner)) && classifyTokenChoice(inner) === "forms") {
-      return { path, arms: [...flattenFormArms(membersOf2(inner)), BLANK] };
-    }
-    return void 0;
-  }
-  if (isSeqType(t)) {
-    const members = membersOf2(rule);
-    for (let i = 0; i < members.length; i++) {
-      const found = findOutermostForms(members[i], [...path, i]);
-      if (found) return found;
-    }
-    return void 0;
-  }
-  if (contentOf2(rule) !== void 0) return findOutermostForms(contentOf2(rule), [...path, 0]);
-  return void 0;
-}
-function replaceAt(rule, path, arm2) {
-  if (path.length === 0) return arm2;
-  const [head, ...rest] = path;
-  if (Array.isArray(rule.members)) {
-    const members = membersOf2(rule).map((m, i) => i === head ? replaceAt(m, rest, arm2) : m);
-    return rebuilt(rule, { members });
-  }
-  return rebuilt(rule, { content: replaceAt(contentOf2(rule), rest, arm2) });
-}
-var BLANK = { type: "BLANK" };
-var EMPTY_SEQ = { type: "SEQ", members: [] };
-function dropAt(rule, path) {
-  if (path.length === 0) return EMPTY_SEQ;
-  const [head, ...rest] = path;
-  if (Array.isArray(rule.members)) {
-    if (rest.length === 0) return rebuilt(rule, { members: membersOf2(rule).filter((_, i) => i !== head) });
-    return rebuilt(rule, { members: membersOf2(rule).map((m, i) => i === head ? dropAt(m, rest) : m) });
-  }
-  return rebuilt(rule, { content: dropAt(contentOf2(rule), rest) });
-}
-var canonical = (rule) => JSON.stringify(rule, (key, value) => key === "id" || key === "metadata" ? void 0 : value);
-function distributeTokenForms(rule, kind) {
-  const precStack = [];
-  let core = rule;
-  while (isPrecWrapper(core)) {
-    precStack.push(core);
-    core = contentOf2(core);
-  }
-  if (!isTokenWrapper(core)) return rule;
-  const body = contentOf2(core);
-  const site = findOutermostForms(body, []);
-  if (site === void 0) return rule;
-  const arms = site.arms.map((arm2) => isBlank(arm2) ? dropAt(body, site.path) : replaceAt(body, site.path, arm2));
-  const empty = arms.findIndex(matchesEmpty);
-  if (empty >= 0) throw new Error(`token forms: arm ${empty} of '${kind}' matches the empty string`);
-  const seen = /* @__PURE__ */ new Map();
-  arms.forEach((arm2, i) => {
-    const key = canonical(arm2);
-    const prior = seen.get(key);
-    if (prior !== void 0) throw new Error(`token forms: arms ${prior} and ${i} of '${kind}' are identical`);
-    seen.set(key, i);
-  });
-  let out = {
-    type: "CHOICE",
-    members: arms.map((arm2) => ({ ...core, content: arm2 }))
-  };
-  for (let i = precStack.length - 1; i >= 0; i--) out = { ...precStack[i], content: out };
-  return out;
-}
 
 // packages/codegen/src/dsl/enrich.ts
 function withContent(node, content) {
@@ -4009,7 +4014,7 @@ function transform(original, ...patchSets) {
   for (const patches of patchSets) {
     const hasPathKeys = requiresPathMode(patches);
     const hasPlaceholderAlias = Object.values(patches).some(
-      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v) || isRegexPlaceholder(v)
+      (v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v) || isRegexPlaceholder(v)
     );
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
@@ -4028,7 +4033,7 @@ function applyPathPatches(original, patches) {
   for (const [key, value] of otherEntries) {
     const segments = parsePath(String(key));
     if (isArmDefault(value)) assertChoiceArmPath(rule, String(key), segments);
-    rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
+    rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, String(key), precStack));
     if (isArmDefault(value)) rule = clearSiblingDefaults(rule, segments);
   }
   if (variantEntries.length > 0) rule = applyVariantPatches(rule, variantEntries);
@@ -4091,7 +4096,7 @@ function applyVariantPatches(rule, variantEntries) {
     if (hoisted?.consumed.has(key)) continue;
     const segments = parsePath(key);
     try {
-      result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack));
+      result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, key, precStack));
     } catch (error) {
       if (error instanceof Error) error.message = `${wireGetCurrentRuleKind()} patch ${key}: ${error.message}`;
       throw error;
@@ -4399,15 +4404,33 @@ function applyFlatPatchesToSeq(original, patches) {
         `transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
       );
     }
-    members[index] = resolvePatch(patch, members[index]);
+    members[index] = resolvePatch(patch, members[index], key);
   }
   return reconstructContainer(original, members);
+}
+function resolveRulePlaceholder(patch, key) {
+  const parentKind = wireGetCurrentRuleKind();
+  if (!parentKind) throw new Error(`rule('${patch.name}'): no current rule kind \u2014 rule() must be used inside a rule callback`);
+  const site = `${parentKind}/${key}`;
+  const body = patch.body(wireDollar());
+  const prior = wireGetSyntheticRule(patch.name);
+  if (prior !== void 0) {
+    if (canonicalRuleText(prior.body) !== canonicalRuleText(body)) {
+      throw new Error(`rule('${patch.name}'): bodies differ at ${prior.site} and ${site}`);
+    }
+  } else if (!wireRegisterSyntheticRule(patch.name, body, site)) {
+    throw new Error(`registerSyntheticRule('${patch.name}'): no active wire() context`);
+  }
+  return symbolRef(patch.name);
 }
 var wrapInPrec = (content, precStack) => wrapInPrecStack(content, precStack, reconstructPrec);
 function wrapVariantBodyInParentPrec(hoistedSeq, precStack) {
   return wrapInPrec(hoistedSeq, precStack);
 }
-function resolvePatch(patch, originalMember, precStack) {
+function resolvePatch(patch, originalMember, key, precStack) {
+  if (isRulePlaceholder(patch)) {
+    return resolveRulePlaceholder(patch, key);
+  }
   if (isFieldPlaceholder(patch)) {
     return resolveFieldPlaceholder(patch, originalMember, precStack);
   }
@@ -4812,10 +4835,20 @@ function renameNameList(value, renames) {
 
 // packages/codegen/src/dsl/wire/wire.ts
 var currentContext = null;
-function wireRegisterSyntheticRule(name, content) {
+function wireRegisterSyntheticRule(name, content, site) {
   if (!currentContext) return false;
   currentContext.deposits.set(name, content);
+  if (site !== void 0) currentContext.depositSites.set(name, site);
   return true;
+}
+function wireGetSyntheticRule(name) {
+  const body = currentContext?.deposits.get(name);
+  return body === void 0 ? void 0 : { body, site: currentContext?.depositSites.get(name) };
+}
+function wireDollar() {
+  const dollar = currentContext?.currentDollar;
+  if (!dollar) throw new Error("wire: no grammar $ in scope; a rule() body is built only while a patched parent is evaluated");
+  return dollar;
 }
 function wireHasDeposit(name) {
   return currentContext?.deposits.has(name) ?? false;
@@ -4864,6 +4897,7 @@ function wire(config, base2) {
   assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
   const context = {
     deposits: /* @__PURE__ */ new Map(),
+    depositSites: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
     inlineRemovals: /* @__PURE__ */ new Set(),
     orphanedSyntheticGroups: /* @__PURE__ */ new Set(),
@@ -4877,6 +4911,7 @@ function wire(config, base2) {
     expectTestFailures: cfg.expectTestFailures,
     options: cfg.options,
     currentRuleKind: null,
+    currentDollar: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
     extraRuleNames: extraRuleNames(cfg, baseArg),
     precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
@@ -4886,7 +4921,7 @@ function wire(config, base2) {
   const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
-  injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
+  injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), knownRuleNames(cfg, baseArg));
   if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.injects || cfg.visibleExternals)) {
     const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
     for (const baseName of Object.keys(baseRules)) {
@@ -5030,13 +5065,21 @@ function composeOrSynthesizePatchedParents(rules, patches, context) {
 function buildPatchedParentFn(kind, patchSets, userFn, context) {
   return function wiredPatchedParent($, original) {
     const base2 = userFn ? userFn($, original) : context.deposits.get(kind) ?? original;
-    return patchSets.length === 0 ? base2 : transform(base2, ...patchSets);
+    if (patchSets.length === 0) return base2;
+    const prevDollar = context.currentDollar;
+    context.currentDollar = $;
+    try {
+      return transform(base2, ...patchSets);
+    } finally {
+      context.currentDollar = prevDollar;
+    }
   };
 }
 function placeholderHiddenName(value, parentKind) {
   if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
   if (isVariantPlaceholder(value)) return polymorphVisibleName(parentKind, variantMintName(value));
   if (isAliasPlaceholder(value)) return `_${value.name}`;
+  if (isRulePlaceholder(value)) return value.name;
   return void 0;
 }
 function symbolNamesOf(entries) {
@@ -5089,10 +5132,18 @@ function baseExternalNames(base2) {
   }
   return names;
 }
-function injectPlaceholderHiddenRules(rules, patches, context, externals) {
+function injectPlaceholderHiddenRules(rules, patches, context, externals, known) {
+  const declared = /* @__PURE__ */ new Set();
   for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
     for (const patchMap of patchSetsOf(entry)) {
+      for (const value of Object.values(patchMap)) {
+        if (!isRulePlaceholder(value) || declared.has(value.name)) continue;
+        if (known.has(value.name) || value.name in rules || externals.has(value.name)) {
+          throw new Error(`rule('${value.name}'): '${value.name}' is already a rule of this grammar`);
+        }
+        declared.add(value.name);
+      }
       const names = Object.values(patchMap).map((value) => placeholderHiddenName(value, kind));
       const defaultAbsent = defaultAbsentVariantName(kind, patchMap);
       if (defaultAbsent !== void 0) names.push(defaultAbsent);

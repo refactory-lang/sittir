@@ -2,6 +2,7 @@ export { transform } from './transform/transform.ts';
 export { role } from './primitives/role.ts';
 export { enrich } from './enrich.ts';
 export { alias } from './primitives/alias.ts';
+export { rule } from './primitives/rule.ts';
 export { variant } from './primitives/variant.ts';
 export { group } from './primitives/group.ts';
 export { splice } from './primitives/splice.ts';

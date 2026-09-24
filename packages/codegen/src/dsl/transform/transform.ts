@@ -15,6 +15,8 @@ import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
 import type { FieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import type { AliasPlaceholder } from '../primitives/alias.ts';
+import { isRulePlaceholder, type RulePlaceholder } from '../primitives/rule.ts';
+import { canonicalRuleText } from './token-forms.ts';
 import { ABSENT_VARIANT_NAME, isVariantPlaceholder, variant, variantMintName } from '../primitives/variant.ts';
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import { isArmDefault } from '../primitives/arm.ts';
@@ -36,6 +38,8 @@ import {
 	wireIsPrecedenceRankedRule,
 	wireRegisterFlattenedParent,
 	wireHasDeposit,
+	wireGetSyntheticRule,
+	wireDollar,
 	polymorphVisibleName
 } from '../wire/wire.ts';
 import {
@@ -78,6 +82,7 @@ export type PatchValue =
 	| RuntimeRule
 	| FieldPlaceholder
 	| AliasPlaceholder
+	| RulePlaceholder
 	| VariantPlaceholder
 	| ArmDefaultPlaceholder
 	| PreferencePlaceholder
@@ -92,7 +97,7 @@ export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: 
 	for (const patches of patchSets) {
 		const hasPathKeys = requiresPathMode(patches);
 		const hasPlaceholderAlias = Object.values(patches).some(
-			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v) || isRegexPlaceholder(v)
+			(v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v) || isRegexPlaceholder(v)
 		);
 		if (hasPathKeys || hasPlaceholderAlias) {
 			rule = applyPathPatches(rule, patches);
@@ -113,7 +118,7 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 	for (const [key, value] of otherEntries) {
 		const segments = parsePath(String(key));
 		if (isArmDefault(value)) assertChoiceArmPath(rule, String(key), segments);
-		rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
+		rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, String(key), precStack));
 		if (isArmDefault(value)) rule = clearSiblingDefaults(rule, segments);
 	}
 	if (variantEntries.length > 0) rule = applyVariantPatches(rule, variantEntries);
@@ -187,7 +192,7 @@ function applyVariantPatches(
 		if (hoisted?.consumed.has(key)) continue;
 		const segments = parsePath(key);
 		try {
-			result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack));
+			result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, key, precStack));
 		} catch (error) {
 			if (error instanceof Error) error.message = `${wireGetCurrentRuleKind()} patch ${key}: ${error.message}`;
 			throw error;
@@ -579,9 +584,25 @@ function applyFlatPatchesToSeq(original: RuntimeRule, patches: Record<number | s
 				`transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
 			);
 		}
-		members[index] = resolvePatch(patch, members[index]!);
+		members[index] = resolvePatch(patch, members[index]!, key);
 	}
 	return reconstructContainer(original, members);
+}
+
+function resolveRulePlaceholder(patch: RulePlaceholder, key: string): RuntimeRule {
+	const parentKind = wireGetCurrentRuleKind();
+	if (!parentKind) throw new Error(`rule('${patch.name}'): no current rule kind — rule() must be used inside a rule callback`);
+	const site = `${parentKind}/${key}`;
+	const body = patch.body(wireDollar());
+	const prior = wireGetSyntheticRule(patch.name);
+	if (prior !== undefined) {
+		if (canonicalRuleText(prior.body) !== canonicalRuleText(body)) {
+			throw new Error(`rule('${patch.name}'): bodies differ at ${prior.site} and ${site}`);
+		}
+	} else if (!wireRegisterSyntheticRule(patch.name, body, site)) {
+		throw new Error(`registerSyntheticRule('${patch.name}'): no active wire() context`);
+	}
+	return symbolRef(patch.name);
 }
 
 const wrapInPrec = (content: RuntimeRule, precStack?: readonly RuntimeRule[]): RuntimeRule =>
@@ -591,7 +612,10 @@ function wrapVariantBodyInParentPrec(hoistedSeq: RuntimeRule, precStack: Readonl
 	return wrapInPrec(hoistedSeq, precStack);
 }
 
-function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?: readonly RuntimeRule[]): RuntimeRule {
+function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: string, precStack?: readonly RuntimeRule[]): RuntimeRule {
+	if (isRulePlaceholder(patch)) {
+		return resolveRulePlaceholder(patch, key);
+	}
 	if (isFieldPlaceholder(patch)) {
 		return resolveFieldPlaceholder(patch, originalMember, precStack);
 	}
