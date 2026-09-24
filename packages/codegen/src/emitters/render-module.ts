@@ -71,7 +71,16 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
-import { planRenderOptions, renderOptionsRs, type RenderOptionsPlan, type SpacingSite, type DelimiterSite } from './render-options-rs.ts';
+import {
+	edgeKindId,
+	edgeSitesOf,
+	isKindEdge,
+	planRenderOptions,
+	renderOptionsRs,
+	type RenderOptionsPlan,
+	type SpacingSite,
+	type DelimiterSite
+} from './render-options-rs.ts';
 import {
 	collectSitePreferences,
 	publicKindName,
@@ -568,7 +577,7 @@ function renderTypedDispatch(
 	const lines: string[] = [];
 
 	for (const node of nodes) {
-		lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind, plan));
+		lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind, plan, kindEntries));
 	}
 
 	for (const [, node] of nodeMap.nodes) {
@@ -605,7 +614,7 @@ function renderTypedDispatch(
 	);
 	lines.push(`    let mut s = String::new();`);
 	lines.push(
-		`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources);`
+		`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);`
 	);
 	lines.push(`    transport.render(&mut w)?;`);
 	lines.push(`    w.finish()?;`);
@@ -653,7 +662,8 @@ function renderTypedKindFn(
 	meta: MetaData,
 	nodeMap: NodeMap,
 	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
-	plan: RenderPlan = EMPTY_PLAN
+	plan: RenderPlan = EMPTY_PLAN,
+	kindEntries: readonly KindEntryLike[] | undefined = undefined
 ): string[] {
 	switch (node.modelType) {
 		case 'branch':
@@ -663,7 +673,7 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node, nodeMap);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, kindEntries);
 		}
 		case 'polymorph':
 		case 'alias': {
@@ -672,7 +682,7 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node, nodeMap);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, kindEntries);
 		}
 		case 'pattern':
 		case 'keyword':
@@ -767,11 +777,12 @@ function renderTypedBranchFn(
 	meta: MetaData,
 	nodeMap: NodeMap,
 	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
-	plan: RenderPlan = EMPTY_PLAN
+	plan: RenderPlan = EMPTY_PLAN,
+	kindEntries: readonly KindEntryLike[] | undefined = undefined
 ): string[] {
 	return [
 		`fn ${rustTypedRenderFnName(node.typeName)}(node: &${rustTransportStructName(node)}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
-		...buildTypedTemplateBody(struct, meta.separators.get(node.kind) ?? '', nodeMap, renderSlotModelOf(node), node, kindIdByKind, plan),
+		...buildTypedTemplateBody(struct, meta.separators.get(node.kind) ?? '', nodeMap, renderSlotModelOf(node), node, kindIdByKind, plan, kindEntries),
 		`}`,
 		''
 	];
@@ -805,7 +816,8 @@ function buildTypedTemplateBody(
 	slotModel: RenderSlotModel | undefined = undefined,
 	node: AssembledNode | undefined = undefined,
 	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined,
-	plan: RenderPlan = EMPTY_PLAN
+	plan: RenderPlan = EMPTY_PLAN,
+	kindEntries: readonly KindEntryLike[] | undefined = undefined
 ): string[] {
 	const lines: string[] = [];
 	const sepLiteral = JSON.stringify(separator);
@@ -918,9 +930,15 @@ function buildTypedTemplateBody(
 			`render body for '${struct.kind}' names seam '${name}', which its transport has no spacing site for`
 		);
 	}
+	const kindEdges = node === undefined ? new Map<string, 'before' | 'after'>() : kindEdgeSidesOf(plan, node);
+	const edgeId = kindEdges.size === 0 ? undefined : edgeIdOf(plan, node!, kindEntries);
 	lines.push(
 		...printRustBody(struct.body, {
 			field: rustFieldIdent,
+			edge: (name) => {
+				const side = kindEdges.get(rustFieldIdent(name));
+				return side === undefined ? undefined : { kindId: edgeId!, side };
+			},
 			site: (name) => `options::SITE_${toScreamingSnakeCase(publicKindName(struct.kind), publicKindName(struct.kind))}_${toScreamingSnakeCase(name, name)}`,
 			kinds: (names) => rustKindIdSlice(names, nodeMap, kindIdByKind, struct.kind)
 		})
@@ -1033,6 +1051,7 @@ export function emitRenderModule(
 			'',
 			commonRustUseImports(hasNumericDispatch),
 			'use ::sittir_core::render_with_trivia;',
+			'use ::sittir_core::options::Edged as _;',
 			'use super::options;',
 			'',
 			armSeamSupport(),
@@ -2655,6 +2674,24 @@ function synthesizedSpacingSites(plan: RenderPlan, node: AssembledNode): readonl
 	return plan.spacingSites.filter((site) => site.kind === kind && site.side !== undefined && site.seat === undefined);
 }
 
+function kindEdgeSidesOf(plan: RenderPlan, node: AssembledNode): ReadonlyMap<string, 'before' | 'after'> {
+	const out = new Map<string, 'before' | 'after'>();
+	for (const site of synthesizedSpacingSites(plan, node)) {
+		if (site.side !== 'seam' || !isKindEdge(site)) continue;
+		out.set(rustFieldIdent(site.fieldIdent), parseSeamLabel(site.address)!.side);
+	}
+	return out;
+}
+
+function edgeIdOf(plan: RenderPlan, node: AssembledNode, kindEntries: readonly KindEntryLike[] | undefined): number {
+	const kind = publicKindName(node.kind);
+	const id = kindEntries === undefined ? undefined : edgeKindId(kindEntries, kind);
+	if (id === undefined || !edgeSitesOf(plan, kindEntries!).some((row) => row.kind === id)) {
+		throw new Error(`kind '${kind}' has kind-edge sites but no edge row to prepare and write them from`);
+	}
+	return id;
+}
+
 function seatedSitesOf(plan: RenderPlan, parentKind: string, slot: string): ReadonlyMap<string, SpacingSite> {
 	const kind = publicKindName(parentKind);
 	const out = new Map<string, SpacingSite>();
@@ -2745,6 +2782,13 @@ function spacingFieldExprs(
 	};
 }
 
+function seatEdgeSide(seat: SpacingSite): 'before' | 'after' {
+	const field = seat.seat!.field;
+	if (field.endsWith('_after')) return 'after';
+	if (field.endsWith('_before')) return 'before';
+	throw new Error(`seated site '${seat.address}' writes '${field}', which is not a kind edge`);
+}
+
 function seatVariantArms(
 	field: AssembledNonterminal,
 	seats: ReadonlyMap<string, SpacingSite>,
@@ -2765,7 +2809,10 @@ function seatVariantArms(
 				];
 	const bodyFor = (kind: string, node: AssembledNode, seen: Set<string>): string[] => {
 		const seat = seats.get(publicKindName(kind));
-		if (seat !== undefined) return [`t.${rustFieldIdent(seat.seat!.field)}.get_or_insert(ctx.options.spacing[options::${seat.constName}]);`];
+		if (seat !== undefined) {
+			const side = seatEdgeSide(seat);
+			return [`t.edges_mut().${side}.get_or_insert(ctx.options.spacing[options::${seat.constName}]);`];
+		}
 		if (seen.has(kind)) return [];
 		seen.add(kind);
 		if (node instanceof AssembledSupertype) return matchOver(supertypeArms(node, seen));
@@ -2857,8 +2904,10 @@ function prepareStructImpl(
 ): string[] {
 	const body: string[] = [];
 	if (isCompound) {
+		if (kindEdgeSidesOf(plan, node).size > 0) body.push('        ::sittir_core::prepare::prepare_edges(self, ctx);');
 		body.push(...listGapClassification(plan, node));
 		for (const site of synthesizedSpacingSites(plan, node)) {
+			if (isKindEdge(site)) continue;
 			body.push(`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.spacing[options::${site.constName}]);`);
 		}
 		body.push(...seatLoops(plan, node, nodeMap));
@@ -2876,6 +2925,17 @@ function prepareStructImpl(
 		...body,
 		`        Ok(())`,
 		`    }`,
+		`}`,
+		''
+	];
+}
+
+function edgedImplLines(typeName: string, kindId: number): string[] {
+	return [
+		`impl ::sittir_core::options::Edged for ${typeName} {`,
+		`    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(${kindId}) }`,
+		`    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }`,
+		`    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }`,
 		`}`,
 		''
 	];
@@ -2996,6 +3056,7 @@ function renderTransportDataStruct(
 				}
 			}
 			for (const site of synthesizedSpacingSites(plan, node)) {
+				if (isKindEdge(site)) continue;
 				lines.push(
 					`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(site.wireKey)}))]`,
 					`    pub ${rustFieldIdent(site.fieldIdent)}: Option<u16>,`
@@ -3009,6 +3070,8 @@ function renderTransportDataStruct(
 	lines.push('');
 	const ownId = kindEntries === undefined ? undefined : findKindEntry(kindEntries, node.kind)?.id;
 	lines.push(...kindOfImplLines(structName, [], undefined, ownId === undefined ? [] : [ownId]));
+	const edgedId = kindEntries === undefined ? undefined : edgeKindId(kindEntries, publicKindName(node.kind));
+	if (edgedId !== undefined) lines.push(...edgedImplLines(structName, edgedId));
 	lines.push(`impl ::sittir_core::render::Render for ${structName} {`);
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
@@ -3073,7 +3136,9 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 	lines.push(`            }`);
 	lines.push(`        };`);
 	lines.push(`        Ok(Self {`);
-	lines.push(`            transport_trivia_data: __trivia,`);
+	for (const f of TRANSPORT_METADATA_FIELDS) {
+		lines.push(`            ${f.rustName}: ${f.rustName === 'transport_trivia_data' ? '__trivia' : 'None'},`);
+	}
 	lines.push(`            text,`);
 	lines.push(`        })`);
 	lines.push(`    }`);
@@ -3158,7 +3223,8 @@ interface TransportMetadataField {
 }
 
 const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
-	{ jsName: '$_trivia', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' }
+	{ jsName: '$_trivia', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' },
+	{ jsName: '$_edges', rustName: 'edges', rustType: 'Option<::sittir_core::options::Edges>' }
 ];
 
 function renderTransportMetadataFields(): string[] {

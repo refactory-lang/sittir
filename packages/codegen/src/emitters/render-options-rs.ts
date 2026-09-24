@@ -418,13 +418,21 @@ interface EdgeSiteRow {
 	readonly after?: EdgeSlotRow;
 }
 
-function edgeSitesOf(plan: RenderOptionsPlan, kindEntries: readonly IdEntry[]): EdgeSiteRow[] {
+export function isKindEdge(site: SpacingSite): boolean {
+	return parseSeamLabel(site.address)?.token === site.kind;
+}
+
+export function edgeKindId(kindEntries: readonly IdEntry[], kind: string): number | undefined {
+	return findEntryForKindName(kindEntries, kind)?.id;
+}
+
+export function edgeSitesOf(plan: RenderOptionsPlan, kindEntries: readonly IdEntry[]): EdgeSiteRow[] {
 	const byKind = new Map<number, { before?: EdgeSlotRow; after?: EdgeSlotRow }>();
 	const ambiguous = new Set<number>();
 	plan.spacingSites.forEach((row, site) => {
-		const seam = parseSeamLabel(row.address);
-		if (seam === undefined || seam.token !== row.kind) return;
-		const id = findEntryForKindName(kindEntries, row.kind)?.id;
+		if (!isKindEdge(row)) return;
+		const seam = parseSeamLabel(row.address)!;
+		const id = edgeKindId(kindEntries, row.kind);
 		if (id === undefined) return;
 		const edges = byKind.get(id) ?? {};
 		if (edges[seam.side] !== undefined) ambiguous.add(id);
@@ -495,11 +503,16 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 		'pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND };',
 		''
 	);
+	L.push('/// Per spacing site, in vector order: the arm its table holds by default and the strength that default carries.');
+	L.push('pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[');
+	for (const s of plan.spacingSites) L.push(`    ::sittir_core::options::SiteSpec { default_arm: ${s.defaultId}, strength: ${s.strength} },`);
+	L.push('];', '');
 	L.push('pub fn defaults() -> ResolvedOptions {');
 	L.push('    ResolvedOptions {');
 	L.push('        spacing: SPACING_SITES.iter().map(|s| s.3).collect(),');
 	L.push('        delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
 	L.push('        edges: EDGE_SITES,');
+	L.push('        sites: SITE_SPECS,');
 	L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
 	L.push('}', '');

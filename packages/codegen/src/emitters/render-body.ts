@@ -487,6 +487,8 @@ export function liftGates(body: Body, viewOf: (name: string) => ViewKind): Lifte
 
 export interface RustBodyPrinter {
 	readonly field: (name: string) => string;
+	/** The kind id and side of a seam that is the kind's own edge, written from the transport's base edges. */
+	readonly edge?: (name: string) => { readonly kindId: number; readonly side: 'before' | 'after' } | undefined;
 	/** The `options::SITE_*` constant of the seam site a body names. */
 	readonly site: (name: string) => string;
 	/** The Rust slice literal naming these kinds' ids, for a kind-gated arm. */
@@ -553,10 +555,17 @@ function printStatements(body: Body, printer: RustBodyPrinter, depth: number): s
 				flush();
 				lines.push(`${pad}${printer.field(node.name)}.render(w)?;`);
 				break;
-			case 'seam':
+			case 'seam': {
 				flush();
-				lines.push(`${pad}w.site_with(node.${printer.field(node.field)}.unwrap_or(0), options::site_strength(${printer.site(node.field)}, node.${printer.field(node.field)}.unwrap_or(0)));`);
+				const edge = printer.edge?.(node.field);
+				if (edge !== undefined) {
+					const side = edge.side === 'before' ? 'Before' : 'After';
+					lines.push(`${pad}w.edge(::sittir_core::types::KindId(${edge.kindId}), ::sittir_core::options::Side::${side}, node.edges.and_then(|e| e.${edge.side}));`);
+				} else {
+					lines.push(`${pad}w.site_with(node.${printer.field(node.field)}.unwrap_or(0), options::site_strength(${printer.site(node.field)}, node.${printer.field(node.field)}.unwrap_or(0)));`);
+				}
 				break;
+			}
 			case 'indent':
 				flush();
 				lines.push(`${pad}w.indent();`);

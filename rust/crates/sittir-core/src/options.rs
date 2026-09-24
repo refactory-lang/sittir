@@ -1,6 +1,9 @@
 //! Resolved render options: one whitespace kind id per spacing site, one
 //! bitflag per flank site, and the indentation unit.
 
+#[cfg(feature = "napi-bindings")]
+use napi_derive::napi;
+
 /// One side of a kind's edge seam: the spacing site it occupies, the arm the
 /// site's table holds by default, and the strength that default carries.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -50,10 +53,16 @@ pub struct SiteSpec {
 
 /// The two edges every transport carries in its base: arms only, since the
 /// strength comes from the kind's edge row when the edge is written.
+#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct Edges {
     pub before: Option<u16>,
     pub after: Option<u16>,
+}
+
+impl Edges {
+    /// No edge set on either side: what a transport whose base carries no edges answers.
+    pub const NONE: Edges = Edges { before: None, after: None };
 }
 
 /// A transport that carries its kind's edges in its base.

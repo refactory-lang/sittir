@@ -406,16 +406,32 @@ describe('render options on transports', () => {
 		const fn = src.slice(src.indexOf('fn render_arguments('));
 		const render = fn.slice(0, fn.indexOf('\n}\n'));
 		expect(render).not.toContain('let lparen_after');
-		expect(render).toMatch(/w\.site_with\(node\.arguments_before\.unwrap_or\(0\), options::site_strength\(options::SITE_ARGUMENTS_ARGUMENTS_BEFORE, node\.arguments_before\.unwrap_or\(0\)\)\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site_with\(node\.lparen_after\.unwrap_or\(0\), options::site_strength\(options::SITE_ARGUMENTS_LPAREN_AFTER, node\.lparen_after\.unwrap_or\(0\)\)\);/);
+		expect(render).toMatch(/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, node\.edges\.and_then\(\|e\| e\.before\)\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site_with\(node\.lparen_after\.unwrap_or\(0\), options::site_strength\(options::SITE_ARGUMENTS_LPAREN_AFTER, node\.lparen_after\.unwrap_or\(0\)\)\);/);
 		expect(src).toContain('    w.finish()?;');
 		const binary = extractStructBody(src, 'BinaryExpressionTransport');
 		expect(binary).toContain('pub operator_before: Option<u16>,');
 		expect(binary).toContain('pub operator_after: Option<u16>,');
-		const block = extractStructBody(src, 'StatementBlockTransport');
-		expect(block).toContain('pub statement_block_before: Option<u16>,');
-		expect(block).toContain('pub statement_block_after: Option<u16>,');
+	});
+
+	it('every transport carries base edges; a kind edge is prepared from its edge row and written through the sink', async () => {
+		const src = await getTypescriptTransportRs();
+		for (const name of ['ArgumentsTransport', 'StatementBlockTransport']) {
+			const body = extractStructBody(src, name);
+			expect(body).toContain('napi(js_name = "$_edges")');
+			expect(body).toContain('pub edges: Option<::sittir_core::options::Edges>,');
+			expect(src).toContain(`impl ::sittir_core::options::Edged for ${name} {`);
+			const prepare = src.slice(src.indexOf(`impl ::sittir_core::prepare::Prepare for ${name} {`));
+			expect(prepare.slice(0, prepare.indexOf('\n}\n'))).toContain('::sittir_core::prepare::prepare_edges(self, ctx);');
+		}
+		expect(src).not.toMatch(/pub (arguments|statement_block)_(before|after): Option<u16>,/);
+		expect(src).not.toContain('self.statement_block_before.get_or_insert');
 		const blockFn = src.slice(src.indexOf('fn render_statement_block('));
-		expect(blockFn.slice(0, blockFn.indexOf('\n}\n'))).toMatch(/w\.site_with\(node\.statement_block_before\.unwrap_or\(0\), options::site_strength\(options::SITE_\w+_STATEMENT_BLOCK_BEFORE, node\.statement_block_before\.unwrap_or\(0\)\)\);/);
+		expect(blockFn.slice(0, blockFn.indexOf('\n}\n'))).toMatch(
+			/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, node\.edges\.and_then\(\|e\| e\.before\)\);/
+		);
+		expect(src).toContain('.with_sources(ctx.sources).with_options(ctx.options)');
+		expect(src).toMatch(/t\.edges_mut\(\)\.after\.get_or_insert\(ctx\.options\.spacing\[options::SITE_\w+\]\);/);
+		expect(src).not.toMatch(/t\.\w+_after\.get_or_insert/);
 	});
 
 	it('a literal arm of a per-slot child enum carries its owner-kind seam sites, fills them, and writes them around the literal', async () => {
@@ -524,7 +540,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 			"pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
 		expect(transportRs).toContain(
-			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources)'
+			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options)'
 		);
 	});
 

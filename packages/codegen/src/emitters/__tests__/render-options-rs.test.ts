@@ -168,6 +168,17 @@ describe('renderOptionsRs', () => {
 		expect(src).toContain('pub fn resolve(options: &Options, base: &ResolvedOptions) -> Result<ResolvedOptions, String>');
 	});
 
+	it('emits a SiteSpec per spacing site in vector order and wires it into the resolved options', () => {
+		const plan = planRenderOptions(sites, kindEntries, whitespaceText);
+		const addresses = deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries as never), (() => []) as never);
+		const src = renderOptionsRs(plan, addresses, kindEntries);
+		expect(src).toContain('pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[');
+		const specs = src.slice(src.indexOf('pub static SITE_SPECS'), src.indexOf('];', src.indexOf('pub static SITE_SPECS')));
+		expect(specs.split('::sittir_core::options::SiteSpec {').length - 1).toBe(plan.spacingSites.length);
+		expect(specs).toContain(`::sittir_core::options::SiteSpec { default_arm: ${plan.spacingSites[0]!.defaultId}, strength: ${plan.spacingSites[0]!.strength} },`);
+		expect(src).toContain('        sites: SITE_SPECS,');
+	});
+
 	it("exposes each site's admitted arms to the prepare walk", () => {
 		const plan = planRenderOptions(sites, kindEntries, whitespaceText);
 		const addresses = deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries as never), (() => []) as never);
