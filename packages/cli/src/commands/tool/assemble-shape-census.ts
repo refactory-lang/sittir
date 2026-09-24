@@ -1,6 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
-import { assembleShapeCensus as runAssembleShapeCensus } from '@sittir/tools';
 
 export const assembleShapeCensus: CommandModule = {
 	name: 'assemble-shape-census',
@@ -11,6 +10,7 @@ export const assembleShapeCensus: CommandModule = {
 			.option('--format <fmt>', 'Output format: table | json', 'table')
 			.option('--view <view>', 'Which rule view to census: constructor | simplified | both', 'both')
 			.action(async (opts: { grammar?: string; allGrammars?: boolean; format?: string; view?: string }) => {
+				const { assembleShapeCensus: runAssembleShapeCensus } = await import('@sittir/tools');
 				const code = await runAssembleShapeCensus({
 					grammar: opts.grammar ?? 'rust',
 					allGrammars: opts.allGrammars ?? false,

@@ -556,6 +556,12 @@ address is `<slot>_separator` and its arm is a token kind name, checked
 against the list's literal separator kinds where separator sites are
 collected, not by the wire.
 
+### `packages/codegen/src/dsl/primitives/spacing.ts::VARIANT_LABEL`
+
+```text
+The address segment and label of a supertype's variant-choice options site.
+```
+
 ### `packages/codegen/src/dsl/primitives/spacing.ts::isSeparatorAddress`
 
 Whether a site address is a list's separator default (`<slot>_separator`).

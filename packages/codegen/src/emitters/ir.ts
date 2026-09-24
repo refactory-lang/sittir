@@ -105,12 +105,8 @@ export function emitIr(config: EmitIrConfig): string {
 			}
 			if (sub.factoryInline) continue;
 			if (!sub.rawFactoryName) continue;
-			if (
-				sub instanceof AssembledSupertype ||
-				(sub instanceof AbstractAssembledCompound && sub.annotations?.hoisted === true) ||
-				isHiddenPunctuationLeaf(sub)
-			)
-				continue;
+			if (sub instanceof AssembledSupertype || isHiddenPunctuationLeaf(sub)) continue;
+			if ((sub instanceof AbstractAssembledCompound || sub instanceof AssembledList) && !bundleKeyByKind.has(subKind)) continue;
 			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
 			const memberKey = memberKeyFor(subKind, kind);
 			if (!isValidIdent(memberKey) || usedMemberKeys.has(memberKey)) continue;

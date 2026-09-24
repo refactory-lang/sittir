@@ -32,11 +32,13 @@ describe('for_statement.condition', () => {
 		const built = ir.program.strict({
 			statements: [
 				ir.forStatement.strict({
-					initializer: ir.lexicalDeclaration.strict({
-						kind: TSKindId.LetKeyword,
-						declarators: [ir.variableDeclarator.plain.strict({ name: ir.identifier('i'), value: ir.number('0') })],
-						terminator: TSKindId.Semi
-					}),
+					initializer: ir.lexicalDeclaration.strict(
+						{
+							kind: TSKindId.LetKeyword,
+							declarators: [ir.variableDeclarator.plain.strict({ name: ir.identifier('i'), value: ir.number('0') })]
+						},
+						{ terminator: TSKindId.Semi }
+					),
 					condition: ir.binaryExpression.strict({ left: ir.identifier('i'), operator: TSKindId.Lt, right: ir.number('3') }),
 					increment: ir.updateExpression.postfix.strict({ argument: ir.identifier('i'), operator: TSKindId.PlusPlus }),
 					body: ir.statementBlock.strict({ automaticSemicolon: true })

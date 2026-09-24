@@ -35,6 +35,20 @@ __export(grammar_sittir_exports, {
 module.exports = __toCommonJS(grammar_sittir_exports);
 var import_grammar = __toESM(require("tree-sitter-typescript/typescript/grammar.js"), 1);
 
+// packages/codegen/src/types/rule-types.ts
+var SEQ = "SEQ";
+var OPTIONAL = "OPTIONAL";
+var CHOICE = "CHOICE";
+var REPEAT = "REPEAT";
+var REPEAT1 = "REPEAT1";
+var FIELD = "FIELD";
+var STRING = "STRING";
+var PATTERN = "PATTERN";
+var SYMBOL = "SYMBOL";
+var ALIAS = "ALIAS";
+var TOKEN = "TOKEN";
+var IMMEDIATE_TOKEN = "IMMEDIATE_TOKEN";
+
 // packages/codegen/src/types/runtime-shapes.ts
 function extractSymbolName(v) {
   if (!v || typeof v !== "object") return void 0;
@@ -64,8 +78,11 @@ function isEnrichShapedFieldWrapper(v) {
 function isContainerType(t) {
   return t === "SEQ" || t === "CHOICE";
 }
+function isTokenWrapperType(t) {
+  return t === TOKEN || t === IMMEDIATE_TOKEN;
+}
 function isWrapperType(t) {
-  return t === "OPTIONAL" || t === "REPEAT" || t === "REPEAT1" || t === "FIELD" || t === "TOKEN" || t === "IMMEDIATE_TOKEN" || t === "BLANK";
+  return t === "OPTIONAL" || t === "REPEAT" || t === "REPEAT1" || t === "FIELD" || isTokenWrapperType(t) || t === "BLANK";
 }
 function isPrecWrapper(rule) {
   const t = rule.type;
@@ -455,7 +472,7 @@ function reconstructWrapper(rule, newContent) {
     return carryOverProperties(rule, nativeRequired(t === "REPEAT" ? "repeat" : "repeat1")(newContent));
   }
   if (t === "TOKEN") return carryOverProperties(rule, nativeRequired("token")(newContent));
-  if (t === "IMMEDIATE_TOKEN") {
+  if (t === IMMEDIATE_TOKEN) {
     const immediate = nativeRequired("token").immediate;
     if (typeof immediate !== "function") throw new Error("transform: native token.immediate not available");
     return carryOverProperties(rule, immediate(newContent));
@@ -580,17 +597,6 @@ function withAnnotations(rule, extra) {
 function withHoistedAnnotation(rule) {
   return withAnnotations(rule, { hoisted: true });
 }
-
-// packages/codegen/src/types/rule-types.ts
-var SEQ = "SEQ";
-var OPTIONAL = "OPTIONAL";
-var CHOICE = "CHOICE";
-var REPEAT = "REPEAT";
-var REPEAT1 = "REPEAT1";
-var STRING = "STRING";
-var PATTERN = "PATTERN";
-var SYMBOL = "SYMBOL";
-var TOKEN = "TOKEN";
 
 // packages/codegen/src/dsl/rule-walker.ts
 var RuleWalker = class {
@@ -798,19 +804,6 @@ function renameNameList(value, renames) {
   if (Array.isArray(value)) return value.map((entry) => renameNameList(entry, renames));
   if (typeof value === "string") return resolveName(value, renames);
   return renameRule(value, renames);
-}
-
-// packages/codegen/src/dsl/rule-metadata.ts
-function makeRuleMetadata(shape) {
-  return shape;
-}
-function normalizeEnumMembers(members, provenance) {
-  if (members.length === 1) return members[0];
-  return {
-    type: CHOICE,
-    members,
-    ...provenance !== void 0 ? { metadata: makeRuleMetadata(provenance) } : {}
-  };
 }
 
 // packages/codegen/src/util/word-matcher.ts
@@ -1216,6 +1209,86 @@ function resolveRuleLiteral(body) {
   if (isStringType(t)) return typeof r.value === "string" ? r.value : null;
   return null;
 }
+function isParserHiddenName(name) {
+  return name.startsWith("_");
+}
+function extractedToken(rule) {
+  const params = [];
+  let tokenized = false;
+  let current = rule;
+  for (; ; ) {
+    if (isTokenWrapperType(current.type)) {
+      tokenized = true;
+      if (current.type === IMMEDIATE_TOKEN) params.push("immediate");
+    } else if (isPrecWrapper(current)) {
+      params.push(`${current.type}:${String(current.value)}`);
+    } else break;
+    current = current.content;
+  }
+  if (!tokenized && params.length > 0) return void 0;
+  if (!tokenized && current.type !== STRING && current.type !== PATTERN) return void 0;
+  const inner = current.type === STRING || current.type === PATTERN ? `${current.type}:${String(current.value)}` : JSON.stringify(stripRuleAnnotations(current));
+  return { key: [...params.sort(), inner].join("|"), anonymous: current.type === STRING };
+}
+function stripRuleAnnotations(rule) {
+  if (Array.isArray(rule)) return rule.map(stripRuleAnnotations);
+  if (rule === null || typeof rule !== "object") return rule;
+  const out = {};
+  for (const [key, value] of Object.entries(rule)) {
+    if (key === "annotations" || key === "metadata" || key === "id") continue;
+    out[key] = stripRuleAnnotations(value);
+  }
+  return out;
+}
+function tokenUseCounts(rules) {
+  const counts = /* @__PURE__ */ new Map();
+  const visit = (rule) => {
+    if (rule === void 0 || rule === null || typeof rule !== "object") return;
+    if (isTokenWrapperType(rule.type) || rule.type === STRING || rule.type === PATTERN) {
+      const token2 = extractedToken(rule);
+      if (token2 !== void 0) counts.set(token2.key, (counts.get(token2.key) ?? 0) + 1);
+      return;
+    }
+    if (rule.content !== void 0) visit(rule.content);
+    for (const member of rule.members ?? []) visit(member);
+  };
+  for (const rule of Object.values(rules)) visit(rule);
+  return counts;
+}
+function parserSymbolClassOf(name, ctx) {
+  if (ctx.externals.has(name)) return "terminal";
+  if (ctx.inline.has(name)) return "inlined";
+  const rule = ctx.rules[name];
+  if (rule === void 0) return "nonterminal";
+  const token2 = extractedToken(rule);
+  if (token2 === void 0 || ctx.tokenUses.get(token2.key) !== 1) return "nonterminal";
+  return token2.anonymous && isParserHiddenName(name) ? "nonterminal" : "terminal";
+}
+function selfReferentialFoldOf(name, rule) {
+  if (rule.type !== CHOICE) return void 0;
+  const fieldOf = (member) => member.type === FIELD ? member.name : void 0;
+  const operandOf = (member) => member.type === FIELD ? member.content : member;
+  const isSelfRef = (member) => {
+    const content = operandOf(member);
+    return content.type === SYMBOL && content.name === name && isParserHiddenName(content.name) && content.aliasedTo === void 0;
+  };
+  let fields;
+  let separator;
+  let sawSelfRef = false;
+  for (const arm2 of rule.members) {
+    if (arm2.type !== SEQ || arm2.members.length !== 3) return void 0;
+    const [m0, sep, m2] = arm2.members;
+    if (m0 === void 0 || sep === void 0 || m2 === void 0 || sep.type !== STRING) return void 0;
+    if (fields === void 0) fields = [fieldOf(m0), fieldOf(m2)];
+    else if (fieldOf(m0) !== fields[0] || fieldOf(m2) !== fields[1]) return void 0;
+    if (separator === void 0) separator = sep;
+    else if (separator.type !== STRING || separator.value !== sep.value) return void 0;
+    if (isSelfRef(m0)) sawSelfRef = true;
+    else if (isSelfRef(m2)) return void 0;
+  }
+  if (!sawSelfRef || separator === void 0) return void 0;
+  return { separator };
+}
 function exclusiveFieldChoiceBranches(member, rulesBag) {
   let target = member;
   if (isSymbolType(member.type)) {
@@ -1500,84 +1573,221 @@ function armsDifferOnlyByLiteralChoice(a, b) {
   return same(a, b) && literalDeltas === 1;
 }
 
-// packages/codegen/src/types/parsekind-collisions.ts
-function kindKey(id, name) {
-  return id !== void 0 ? `#${id}` : `n:${name}`;
-}
-function diagnoseParseKindCollisions(input) {
-  const byParseKind = /* @__PURE__ */ new Map();
-  for (const value of input.values) {
-    if (value.parseKind === void 0 || value.storageKind === void 0) continue;
-    const key = kindKey(value.parseKindId, value.parseKind);
-    const bucket = byParseKind.get(key) ?? [];
-    bucket.push(value);
-    byParseKind.set(key, bucket);
+// packages/codegen/src/dsl/rule-transforms.ts
+function innermostNamedAliasContent(rule) {
+  let current = rule;
+  for (let alias2 = current; alias2.type === ALIAS && alias2.named === true && alias2.value; alias2 = current) {
+    current = alias2.content;
   }
-  const mergedByParseKind = /* @__PURE__ */ new Map();
-  const diagnostics = [];
-  for (const [parseKey, bucket] of byParseKind) {
-    const parseKind = bucket[0].parseKind;
-    const storageIdentities = distinct(bucket.map((value) => kindKey(value.storageKindId, value.storageKind)));
-    if (storageIdentities.length <= 1) continue;
-    const signatures = distinct(bucket.map((value) => value.structuralSignature));
-    if (signatures.length === 1) {
-      mergedByParseKind.set(parseKey, pickRepresentative(bucket, parseKind));
+  return current;
+}
+function choiceArmsOf(content) {
+  if (content.type !== CHOICE) return void 0;
+  return content.members.flatMap((m) => choiceArmsOf(m) ?? [m]);
+}
+function distributeInlineAliasChoices(rule, ctx) {
+  const walker = new RuleWalker();
+  const distributed = /* @__PURE__ */ new WeakSet();
+  const inlineChoiceOf = (content) => {
+    if (content.type !== SYMBOL) return void 0;
+    const body = ctx.inlineBodyOf(content.name);
+    return body !== void 0 && choiceArmsOf(body) !== void 0 ? body : void 0;
+  };
+  const armsOf = (content) => choiceArmsOf(inlineChoiceOf(content) ?? content)?.flatMap((arm2) => armsOf(arm2) ?? [arm2]);
+  const visit = (r) => {
+    const choice2 = r;
+    if (choice2.type === CHOICE && choice2.members?.some((m) => distributed.has(m))) {
+      const members = choice2.members.flatMap(
+        (m) => distributed.has(m) ? m.members : [m]
+      );
+      return { ...choice2, members };
+    }
+    const alias2 = r;
+    if (alias2.type !== ALIAS || alias2.named !== true || !alias2.value) return r;
+    const arms = armsOf(innermostNamedAliasContent(alias2.content));
+    if (arms === void 0) return r;
+    const split = {
+      type: CHOICE,
+      members: arms.map((arm2) => ({ ...alias2, content: innermostNamedAliasContent(arm2) }))
+    };
+    distributed.add(split);
+    return split;
+  };
+  return visit(walker.map(rule, visit));
+}
+function mintInlineLiteralAliasStorage(rules) {
+  const walker = new RuleWalker();
+  const literalAliasOf = (r) => {
+    const alias2 = r;
+    if (alias2.type !== ALIAS || alias2.named !== true || !alias2.value || Object.hasOwn(rules, alias2.value)) return void 0;
+    const arms = choiceArmsOf(innermostNamedAliasContent(alias2.content));
+    if (arms === void 0 || !arms.every((arm2) => arm2.type === STRING)) return void 0;
+    const body = { type: CHOICE, members: arms };
+    const literals = JSON.stringify(arms.map((arm2) => arm2.value));
+    return { display: alias2.value, body, literals };
+  };
+  const byDisplay = /* @__PURE__ */ new Map();
+  for (const rule of Object.values(rules)) {
+    walker.fold(rule, byDisplay, (acc, r) => {
+      const site = literalAliasOf(r);
+      if (site === void 0) return acc;
+      const entry = acc.get(site.display);
+      if (entry === void 0) {
+        acc.set(site.display, { literals: /* @__PURE__ */ new Set([site.literals]), body: site.body });
+      } else entry.literals.add(site.literals);
+      return acc;
+    });
+  }
+  const storage = /* @__PURE__ */ new Map();
+  for (const [display, { literals, body }] of byDisplay) {
+    const name = `_${display}`;
+    if (literals.size === 1 && !Object.hasOwn(rules, name)) storage.set(display, { name, body });
+  }
+  if (storage.size === 0) return rules;
+  const visit = (r) => {
+    const site = literalAliasOf(r);
+    const minted = site === void 0 ? void 0 : storage.get(site.display);
+    if (site === void 0 || minted === void 0) return r;
+    return { type: ALIAS, named: true, value: site.display, content: { type: SYMBOL, name: minted.name } };
+  };
+  const out = {};
+  for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker.map(rule, visit));
+  for (const { name, body } of storage.values()) out[name] = body;
+  return out;
+}
+function liftAliasedHiddenRuleBodies(rules) {
+  const displayByRule = /* @__PURE__ */ new Map();
+  for (const [name, rule] of Object.entries(rules)) {
+    const alias2 = rule;
+    if (!name.startsWith("_") || alias2.type !== ALIAS || alias2.named !== true || !alias2.value) continue;
+    if (alias2.content.type === SYMBOL) continue;
+    displayByRule.set(name, alias2);
+  }
+  if (displayByRule.size === 0) return rules;
+  const lifted = (r) => {
+    const name = r.type === SYMBOL ? r.name : void 0;
+    return name !== void 0 && displayByRule.has(name) ? name : void 0;
+  };
+  const walker = new RuleWalker();
+  const visit = (r) => {
+    const name = lifted(r);
+    if (name !== void 0) return { ...displayByRule.get(name), content: r };
+    const alias2 = r;
+    if (alias2.type !== ALIAS) return r;
+    const inner = alias2.content;
+    if (inner.type === ALIAS && lifted(inner.content) !== void 0) return { ...alias2, content: inner.content };
+    return r;
+  };
+  const out = {};
+  for (const [name, rule] of Object.entries(rules)) {
+    const body = displayByRule.get(name)?.content ?? rule;
+    out[name] = visit(walker.map(body, visit));
+  }
+  return out;
+}
+function unaliasOverloadedDisplays(rules, ctx) {
+  const walker = new RuleWalker();
+  const siteOf = (r) => {
+    const alias2 = r;
+    return alias2.type === ALIAS && alias2.named === true && alias2.value ? alias2 : void 0;
+  };
+  const terminalContent = (content) => {
+    if (content.type === SYMBOL) return terminalSymbol(content.name);
+    if (content.type === STRING || content.type === PATTERN || content.type === TOKEN) return true;
+    const arms = choiceArmsOf(content);
+    return arms !== void 0 && arms.every(terminalContent);
+  };
+  const terminalSymbol = (name) => {
+    const cls = parserSymbolClassOf(name, ctx.symbols);
+    if (cls !== "inlined") return cls === "terminal";
+    const body = rules[name];
+    return body !== void 0 && terminalContent(body);
+  };
+  const storageOf = (content) => {
+    const symbol = content.type === SYMBOL ? content.name : void 0;
+    return { key: symbol ?? JSON.stringify(content), symbol, terminal: terminalContent(content) };
+  };
+  const storagesByDisplay = /* @__PURE__ */ new Map();
+  for (const rule of Object.values(rules)) {
+    walker.fold(rule, storagesByDisplay, (acc, r) => {
+      const site = siteOf(r);
+      if (site === void 0) return acc;
+      const storage = storageOf(site.content);
+      const storages = acc.get(site.value) ?? /* @__PURE__ */ new Map();
+      storages.set(storage.key, storage);
+      acc.set(site.value, storages);
+      return acc;
+    });
+  }
+  const taken = /* @__PURE__ */ new Set([...Object.keys(rules), ...storagesByDisplay.keys()]);
+  const minted = /* @__PURE__ */ new Map();
+  const mintFor = ({ storage, display }) => {
+    const known = minted.get(`${storage} ${display}`);
+    if (known !== void 0) return known;
+    const stripped = storage.replace(/^_+/, "");
+    const sameStorage = storagesByDisplay.get(stripped);
+    const reusable = sameStorage !== void 0 && sameStorage.size === 1 && sameStorage.has(storage) && !Object.hasOwn(rules, stripped);
+    if (reusable) return stripped;
+    const name = !taken.has(stripped) ? stripped : `${display}_${stripped}`;
+    if (taken.has(name)) throw new Error(`enrich: no free display name for ${storage} under ${display} (${stripped} and ${name} are taken)`);
+    taken.add(name);
+    minted.set(`${storage} ${display}`, name);
+    return name;
+  };
+  const actions = /* @__PURE__ */ new Map();
+  const split = ({ display, storage }) => {
+    if (storage.symbol === void 0) {
+      if (!storage.terminal) throw new Error(`enrich: ${display} displays an inline nonterminal; give it a rule of its own`);
+      actions.set(`${display} ${storage.key}`, { kind: "drop" });
+    } else if (!isParserHiddenName(storage.symbol)) actions.set(`${display} ${storage.key}`, { kind: "drop" });
+    else actions.set(`${display} ${storage.key}`, { kind: "rename", display: mintFor({ storage: storage.symbol, display }) });
+  };
+  for (const display of [...storagesByDisplay.keys()].sort()) {
+    const members = [...storagesByDisplay.get(display).values()];
+    if (Object.hasOwn(rules, display)) {
+      const terminalDisplay = terminalSymbol(display);
+      for (const storage of members) {
+        if (storage.symbol === display || terminalDisplay && storage.terminal) continue;
+        split({ display, storage });
+      }
       continue;
     }
-    const byWireIdentity = /* @__PURE__ */ new Map();
-    for (const value of bucket) {
-      const wireKey = value.storageKindId !== void 0 ? `#${value.storageKindId}` : `?${parseKey}`;
-      const group2 = byWireIdentity.get(wireKey) ?? [];
-      group2.push(value);
-      byWireIdentity.set(wireKey, group2);
-    }
-    for (const group2 of byWireIdentity.values()) {
-      const groupStorageIdentities = distinct(group2.map((value) => kindKey(value.storageKindId, value.storageKind)));
-      if (groupStorageIdentities.length <= 1) continue;
-      if (distinct(group2.map((value) => value.structuralSignature)).length === 1) continue;
-      const storageKinds = distinct(group2.map((value) => value.storageKind));
-      diagnostics.push({
-        code: "parsekind-noninjective",
-        severity: "error",
-        message: `Slot '${input.slotName}' of kind '${input.ownerKind}' collapses [${storageKinds.join(", ")}] onto parse kind '${parseKind}'.`,
-        canProceed: true,
-        ownerKind: input.ownerKind,
-        slotName: input.slotName,
-        shape: "propose-distinct-alias",
-        parseKind,
-        storageKinds,
-        proposal: `Slot '${input.slotName}' of kind '${input.ownerKind}' collapses distinct storage kinds [${storageKinds.join(", ")}] onto parse kind '${parseKind}'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.`
-      });
+    const nonterminals = members.filter((storage) => !storage.terminal);
+    if (nonterminals.length >= 2) {
+      for (const storage of nonterminals) split({ display, storage });
+    } else if (nonterminals.length === 1 && nonterminals.length < members.length) {
+      const [only] = nonterminals;
+      if (only.symbol !== void 0 && only.symbol.replace(/^_+/, "") === display) {
+        for (const storage of members) if (storage.terminal) actions.set(`${display} ${storage.key}`, { kind: "drop" });
+      } else split({ display, storage: only });
     }
   }
-  if (mergedByParseKind.size === 0) {
-    return { values: input.values.map((value) => value.original), diagnostics };
-  }
-  const emittedParseKeys = /* @__PURE__ */ new Set();
-  const values = [];
-  for (const value of input.values) {
-    if (value.parseKind === void 0) {
-      values.push(value.original);
-      continue;
-    }
-    const parseKey = kindKey(value.parseKindId, value.parseKind);
-    const merged = mergedByParseKind.get(parseKey);
-    if (!merged) {
-      values.push(value.original);
-      continue;
-    }
-    if (emittedParseKeys.has(parseKey)) continue;
-    values.push(merged.original);
-    emittedParseKeys.add(parseKey);
-  }
-  return { values, diagnostics };
+  if (actions.size === 0) return rules;
+  const visit = (r) => {
+    const site = siteOf(r);
+    if (site === void 0) return r;
+    const action = actions.get(`${site.value} ${storageOf(site.content).key}`);
+    if (action === void 0) return r;
+    return action.kind === "drop" ? site.content : { ...site, value: action.display };
+  };
+  const out = {};
+  for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker.map(rule, visit));
+  return out;
 }
-function pickRepresentative(bucket, parseKind) {
-  const preferred = bucket.find((value) => value.preferRepresentative) ?? bucket.find((value) => value.storageKind === parseKind);
-  return preferred ?? bucket[0];
+var flagWalker = new RuleWalker();
+var fuseHeadRepeatListsWalker = new RuleWalker();
+
+// packages/codegen/src/dsl/rule-metadata.ts
+function makeRuleMetadata(shape) {
+  return shape;
 }
-function distinct(values) {
-  return [...new Set(values)];
+function normalizeEnumMembers(members, provenance) {
+  if (members.length === 1) return members[0];
+  return {
+    type: CHOICE,
+    members,
+    ...provenance !== void 0 ? { metadata: makeRuleMetadata(provenance) } : {}
+  };
 }
 
 // packages/codegen/src/dsl/transform/token-forms.ts
@@ -1588,8 +1798,7 @@ var rebuilt = (rule, patch) => ({ ...rule, ...patch });
 var isBlank = (rule) => typeOf(rule) === "BLANK";
 var isString = (rule) => typeOf(rule) === "STRING";
 function isTokenWrapper(rule) {
-  const t = typeOf(rule);
-  return t === "TOKEN" || t === "IMMEDIATE_TOKEN";
+  return isTokenWrapperType(typeOf(rule));
 }
 function classifyTokenChoice(choice2) {
   const arms = membersOf2(choice2);
@@ -1697,14 +1906,13 @@ function enrich(baseInput) {
   if (!rulesBag) return base2;
   const grammarMeta = hasWrapper ? base2.grammar : base2;
   const wordMatcher = compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag);
-  const supertypeNames = extractSupertypeNames(base2, hasWrapper);
+  const supertypeNames = extractGrammarSymbolNames(base2, hasWrapper, "supertypes");
   const kwRules = {};
   const clauseGroupRules = {};
   const clauseDedupeMap = {};
   const groupDedupeMap = {};
   const visibleGroupSources = /* @__PURE__ */ new Set();
   const clauseGroupOwners = /* @__PURE__ */ new Map();
-  const unaliasSink = { diagnostics: [], seen: /* @__PURE__ */ new Set() };
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
@@ -1720,13 +1928,34 @@ function enrich(baseInput) {
     if (info.flatMembers === members) continue;
     enrichedRules[name] = { ...rule, members: info.flatMembers };
   }
+  Object.assign(enrichedRules, mintInlineLiteralAliasStorage(enrichedRules));
+  const inlineNames = extractGrammarSymbolNames(base2, hasWrapper, "inline");
+  Object.assign(enrichedRules, liftAliasedHiddenRuleBodies(enrichedRules));
+  for (const name of Object.keys(enrichedRules)) {
+    const rule = enrichedRules[name];
+    if (!rule) continue;
+    enrichedRules[name] = distributeInlineAliasChoices(rule, {
+      inlineBodyOf: (target) => inlineNames.has(target) ? enrichedRules[target] ?? rulesBag[target] : void 0
+    });
+  }
+  Object.assign(
+    enrichedRules,
+    unaliasOverloadedDisplays(enrichedRules, {
+      symbols: {
+        rules: enrichedRules,
+        externals: extractGrammarSymbolNames(base2, hasWrapper, "externals"),
+        inline: inlineNames,
+        tokenUses: tokenUseCounts(enrichedRules)
+      }
+    })
+  );
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
     if (!rule) continue;
     enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
   }
   const wordName = extractWordName(grammarMeta?.word);
-  const unhoistableNames = /* @__PURE__ */ new Set([...extractExternalNames(base2, hasWrapper), ...wordName === null ? [] : [wordName]]);
+  const unhoistableNames = /* @__PURE__ */ new Set([...extractGrammarSymbolNames(base2, hasWrapper, "externals"), ...wordName === null ? [] : [wordName]]);
   const tokenFormParents = [];
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
@@ -1745,18 +1974,16 @@ function enrich(baseInput) {
     for (const name of Object.keys(enrichedRules)) {
       const rule = enrichedRules[name];
       if (!rule) continue;
-      enrichedRules[name] = applyHoistAndUnalias(
+      enrichedRules[name] = applyClauseHoist(
         name,
         rule,
-        kwRules,
-        supertypeNames,
         rulesBag,
         clauseGroupRules,
         clauseDedupeMap,
+        { opt: 0, grp: 0, arm: 0, supertypeNames },
         groupDedupeMap,
         visibleGroupSources,
-        clauseGroupOwners,
-        unaliasSink
+        clauseGroupOwners
       );
     }
   } finally {
@@ -1767,19 +1994,7 @@ function enrich(baseInput) {
   }
   for (const groupName of Object.keys(clauseGroupRules)) {
     const groupBody = clauseGroupRules[groupName];
-    if (!groupBody) continue;
-    const groupUnaliasResult = applyUnaliasDistinct(
-      groupName,
-      groupBody,
-      rulesBag,
-      kwRules,
-      clauseGroupRules,
-      supertypeNames
-    );
-    clauseGroupRules[groupName] = withHoistedAnnotation(groupUnaliasResult.rule);
-    for (const diagnostic of groupUnaliasResult.diagnostics) {
-      recordUnaliasDiagnostic(unaliasSink, diagnostic);
-    }
+    if (groupBody) clauseGroupRules[groupName] = withHoistedAnnotation(groupBody);
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
   collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners);
@@ -1810,14 +2025,6 @@ function enrich(baseInput) {
   if (clauseGroupOwners.size > 0) {
     Object.defineProperty(result, ENRICH_CLAUSE_GROUP_OWNERS_KEY, {
       value: clauseGroupOwners,
-      enumerable: false,
-      writable: false,
-      configurable: true
-    });
-  }
-  if (unaliasSink.diagnostics.length > 0) {
-    Object.defineProperty(result, ENRICH_UNALIAS_DIAGNOSTICS_KEY, {
-      value: unaliasSink.diagnostics,
       enumerable: false,
       writable: false,
       configurable: true
@@ -1988,55 +2195,11 @@ function addSupertypes(result, names) {
   const listed = harvestSupertypeNames(base2);
   result.supertypes = [...base2, ...names.filter((n) => !listed.has(n))];
 }
-function applyHoistAndUnalias(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupSources, clauseGroupOwners, unaliasSink) {
-  let r = rule;
-  const clauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
-  r = applyClauseHoist(
-    ruleName,
-    r,
-    rulesBag,
-    clauseGroupRules,
-    clauseDedupeMap,
-    clauseHoistCounter,
-    groupDedupeMap,
-    visibleGroupSources,
-    clauseGroupOwners
-  );
-  const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules, supertypeNames);
-  r = unaliasResult.rule;
-  for (const diagnostic of unaliasResult.diagnostics) {
-    recordUnaliasDiagnostic(unaliasSink, diagnostic);
-  }
-  return r;
-}
-function extractSupertypeNames(base2, hasWrapper) {
+function extractGrammarSymbolNames(base2, hasWrapper, key) {
   const root = hasWrapper ? base2.grammar : base2;
-  const supertypes = root?.supertypes;
-  if (typeof supertypes === "function") {
-    const dollar = new Proxy(
-      {},
-      {
-        get(_t, prop) {
-          if (typeof prop === "string") return { type: "SYMBOL", name: prop };
-          return void 0;
-        }
-      }
-    );
-    let result;
-    try {
-      result = supertypes(dollar);
-    } catch {
-      return /* @__PURE__ */ new Set();
-    }
-    return harvestSupertypeNames(result);
-  }
-  if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
-  return /* @__PURE__ */ new Set();
-}
-function extractExternalNames(base2, hasWrapper) {
-  const root = hasWrapper ? base2.grammar : base2;
-  const externals = root?.externals;
-  if (typeof externals !== "function") return Array.isArray(externals) ? harvestSupertypeNames(externals) : /* @__PURE__ */ new Set();
+  const list = root?.[key];
+  if (Array.isArray(list)) return harvestSupertypeNames(list);
+  if (typeof list !== "function") return /* @__PURE__ */ new Set();
   const dollar = new Proxy(
     {},
     {
@@ -2045,7 +2208,7 @@ function extractExternalNames(base2, hasWrapper) {
       }
     }
   );
-  return harvestSupertypeNames(externals(dollar));
+  return harvestSupertypeNames(list(dollar));
 }
 function isAnonymousLiteralShapedRule(name, rulesBag, seen) {
   if (seen.has(name)) return false;
@@ -3269,6 +3432,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
   if (isChoiceType(rule.type)) {
     let choiceRule = rule;
     const permutationChoice = isPermutationChoice(rule, rulesBag, hoistKwRules ?? void 0, hoistWordMatcher);
+    const selfFold = selfReferentialFoldOf(parentKind, rule) !== void 0;
     if (permutationChoice && hoistKwRules !== null) {
       choiceRule = promotePermutationArmKeywords(rule, hoistKwRules, rulesBag, hoistWordMatcher);
     }
@@ -3298,7 +3462,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         ambientPrec
       );
       const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
-      const promoted = permutationChoice || literalOnlySplit ? null : mintStructuredChoiceArm(
+      const promoted = permutationChoice || literalOnlySplit || selfFold ? null : mintStructuredChoiceArm(
         out,
         parentKind,
         rulesBag,
@@ -3356,184 +3520,6 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     return withContent(rule, newContent);
   }
   return rule;
-}
-function clusterSignatures(values) {
-  const indexByKey = /* @__PURE__ */ new Map();
-  const clusterOf = [];
-  for (const value of values) {
-    const key = ruleKey(value);
-    let idx = indexByKey.get(key);
-    if (idx === void 0) {
-      idx = indexByKey.size;
-      indexByKey.set(key, idx);
-    }
-    clusterOf.push(String(idx));
-  }
-  return clusterOf;
-}
-var ENRICH_UNALIAS_DIAGNOSTICS_KEY = "__enrichUnaliasDiagnostics__";
-function unaliasDiagnosticKey(diagnostic) {
-  return [
-    diagnostic.code,
-    diagnostic.ownerKind,
-    diagnostic.slotName,
-    diagnostic.parseKind,
-    diagnostic.storageKinds.join(",")
-  ].join(" ");
-}
-function recordUnaliasDiagnostic(sink, diagnostic) {
-  const key = unaliasDiagnosticKey(diagnostic);
-  if (sink.seen.has(key)) return;
-  sink.seen.add(key);
-  sink.diagnostics.push(diagnostic);
-}
-function collectUnaliasCandidates(node, path, slotKey, rulesBag, out, walker, visited = /* @__PURE__ */ new Set(), supertypeNames = /* @__PURE__ */ new Set(), rewritable = true) {
-  const t = node.type;
-  if (!t) return;
-  if (t === "ALIAS") {
-    const aliasRule = node;
-    const storageKind = isSymbolType(aliasRule.content.type) ? aliasRule.content.name : void 0;
-    const resolvedBody = normalizeMember(
-      (storageKind !== void 0 ? rulesBag[storageKind] : void 0) ?? aliasRule.content
-    );
-    out.push({
-      targetName: aliasRule.value,
-      slotKey,
-      storageKind,
-      resolvedBody,
-      aliasSite: rewritable ? { path, content: aliasRule.content, named: aliasRule.named } : void 0
-    });
-    return;
-  }
-  if (isSymbolType(t)) {
-    const name = node.name;
-    if (typeof name === "string") {
-      const target = rulesBag[name];
-      const resolvedBody = normalizeMember(target ?? node);
-      const erasesToArms = name.startsWith("_") || supertypeNames.has(name);
-      if (target !== void 0 && erasesToArms && isChoiceType(resolvedBody.type) && !visited.has(name)) {
-        visited.add(name);
-        collectUnaliasCandidates(target, path, slotKey, rulesBag, out, walker, visited, supertypeNames, false);
-        return;
-      }
-      out.push({ targetName: name, slotKey, storageKind: name, resolvedBody });
-    }
-    return;
-  }
-  const nextSlotKey = isFieldType(t) ? node.name ?? slotKey : slotKey;
-  for (const { segment, child } of walker.childEdgesOf(node)) {
-    collectUnaliasCandidates(
-      child,
-      [...path, ...segment],
-      nextSlotKey,
-      rulesBag,
-      out,
-      walker,
-      visited,
-      supertypeNames,
-      rewritable
-    );
-  }
-}
-function rewriteUnaliasAt(node, path, replacement) {
-  if (path.length === 0) return replacement;
-  const [key, ...rest] = path;
-  if (key === "members") {
-    const idx = rest[0];
-    const members = node.members.slice();
-    members[idx] = rest.length > 1 ? rewriteUnaliasAt(members[idx], rest.slice(1), replacement) : replacement;
-    return { ...node, members };
-  }
-  const k = key;
-  const child = node[k];
-  return { ...node, [k]: rest.length > 0 ? rewriteUnaliasAt(child, rest, replacement) : replacement };
-}
-function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRules, supertypeNames) {
-  const candidates = [];
-  collectUnaliasCandidates(rule, [], void 0, rulesBag, candidates, new RuleWalker(), /* @__PURE__ */ new Set(), supertypeNames);
-  if (candidates.length === 0) return { rule, diagnostics: [] };
-  const byBucket = /* @__PURE__ */ new Map();
-  for (const candidate of candidates) {
-    const slotName = candidate.slotKey ?? candidate.targetName;
-    const key = `${slotName}\0${candidate.targetName}`;
-    const entry = byBucket.get(key) ?? { slotName, targetName: candidate.targetName, bucket: [] };
-    entry.bucket.push(candidate);
-    byBucket.set(key, entry);
-  }
-  const toDrop = /* @__PURE__ */ new Set();
-  const toRetarget = /* @__PURE__ */ new Map();
-  const diagnostics = [];
-  const claimedRetargetNames = /* @__PURE__ */ new Set();
-  for (const { slotName, targetName, bucket } of byBucket.values()) {
-    if (bucket.length < 2 || !bucket.some((c) => c.aliasSite)) continue;
-    const signatures = clusterSignatures(bucket.map((c) => c.resolvedBody));
-    const values = bucket.map((candidate, i) => ({
-      original: candidate,
-      parseKind: targetName,
-      storageKind: candidate.storageKind,
-      structuralSignature: signatures[i]
-    }));
-    let representativeSignature;
-    const nativeIndex = bucket.findIndex((c) => c.storageKind !== void 0 && c.storageKind === targetName);
-    if (nativeIndex !== -1) {
-      representativeSignature = signatures[nativeIndex];
-    } else {
-      const signatureCounts = /* @__PURE__ */ new Map();
-      for (const signature of signatures) signatureCounts.set(signature, (signatureCounts.get(signature) ?? 0) + 1);
-      let representativeCount = 1;
-      for (const [signature, count] of signatureCounts) {
-        if (count > representativeCount) {
-          representativeSignature = signature;
-          representativeCount = count;
-        }
-      }
-    }
-    const resolution = diagnoseParseKindCollisions({ ownerKind: ruleName, slotName, values });
-    for (const diagnostic of resolution.diagnostics) {
-      let anyActed = false;
-      for (const [index, candidate] of bucket.entries()) {
-        if (!candidate.aliasSite || candidate.storageKind === void 0) continue;
-        if (representativeSignature !== void 0 && signatures[index] === representativeSignature) continue;
-        const isHidden = candidate.storageKind.startsWith("_");
-        if (!isHidden) {
-          toDrop.add(candidate);
-          anyActed = true;
-          continue;
-        }
-        const strippedName = candidate.storageKind.replace(/^_+/, "");
-        const collides = strippedName === "" || claimedRetargetNames.has(strippedName) || Object.hasOwn(rulesBag, strippedName) || Object.hasOwn(kwRules, strippedName) || Object.hasOwn(clauseGroupRules, strippedName);
-        if (collides) {
-          continue;
-        }
-        claimedRetargetNames.add(strippedName);
-        toRetarget.set(candidate, strippedName);
-        anyActed = true;
-      }
-      if (anyActed) {
-        diagnostics.push({
-          ...diagnostic,
-          severity: "info",
-          message: `${diagnostic.message} Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.`,
-          proposal: "Already resolved by enrich() \u2014 no action needed."
-        });
-      }
-    }
-  }
-  if (toDrop.size === 0 && toRetarget.size === 0) return { rule, diagnostics: [] };
-  let result = rule;
-  for (const candidate of toDrop) {
-    result = rewriteUnaliasAt(result, candidate.aliasSite.path, candidate.aliasSite.content);
-  }
-  for (const [candidate, strippedName] of toRetarget) {
-    const retargeted = {
-      type: "ALIAS",
-      content: candidate.aliasSite.content,
-      named: candidate.aliasSite.named,
-      value: strippedName
-    };
-    result = rewriteUnaliasAt(result, candidate.aliasSite.path, retargeted);
-  }
-  return { rule: result, diagnostics };
 }
 function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules) {
   const key = ruleKey(seqBody);
@@ -5757,6 +5743,12 @@ var grammar_sittir_default = grammar(
         body: { before: preference("indent"), after: preference("dedent") },
         case_body: { start: preference("indent"), end: preference("dedent") },
         gap: { separator: preference("newline") },
+        number_hex: { "prefix:": preference("0x") },
+        number_octal: { "prefix:": preference("0o") },
+        number_binary: { "prefix:": preference("0b") },
+        number_float_point: { "marker:": preference("e") },
+        number_float_leading_point: { "marker:": preference("e") },
+        number_float_scientific: { "marker:": preference("e") },
         statements: { terminator: preference(";") },
         quotes: { style: preference("double") },
         enum_body_elements: { 'content:/separator/","/after': preference("newline"), "content:/delimiter": preference("Delimiter.Trailing") },
@@ -5813,6 +5805,7 @@ var grammar_sittir_default = grammar(
         // this because unedited content slices verbatim source bytes
         // rather than consulting this site at all).
         unary_expression_operator: { '"!"/after': preference("tight") },
+        number_operator: { '"-"/after': preference("tight"), '"+"/after': preference("tight") },
         object_type_content: {
           "content:/separator/before": preference("tight"),
           "content:/separator/after": preference("newline"),
@@ -5845,7 +5838,7 @@ var grammar_sittir_default = grammar(
         _bindings: {
           "_/terminator:": "statements/terminator",
           "_/automatic_semicolon:": "statements/terminator",
-          "string/content:": "quotes/style",
+          "string/variant": "quotes/style",
           'class_body/"{"/after': "body/before",
           'class_body/"}"/before': "body/after",
           'statement_block/"{"/after': "body/before",
@@ -6213,7 +6206,8 @@ var grammar_sittir_default = grammar(
         debugger_statement: "#170 \u2014 _resolveOneLeaf cannot resolve the _semicolon stub",
         import_require_clause: "#170 \u2014 Missing field _content on ImportRequireClauseTransport._source",
         object_type_content: "#170 (#172-adjacent) \u2014 Missing field _content through export-arm transport",
-        string: "#170 \u2014 StringContentTransportSlot rejects stub ($type property missing)"
+        string: "#170 \u2014 StringContentTransportSlot rejects stub ($type property missing)",
+        "export_statement_default_declaration.defaultKwValue": "a required registered slot on an intermediate child (defaultKw) reached through a nested (multi-level) sub-factory chain has no home in the generated test: .$with only reaches the outer node's own slots, and the recursive subFactoryCallArgs builder produces a nested config expression, not a statement a .$with chain could attach to"
       },
       rules: {
         _whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),

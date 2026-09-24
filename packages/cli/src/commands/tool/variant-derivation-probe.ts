@@ -1,6 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
-import { variantDerivationProbe as runVariantDerivationProbe } from '@sittir/tools';
 
 export const variantDerivationProbe: CommandModule = {
 	name: 'variant-derivation-probe',
@@ -10,6 +9,7 @@ export const variantDerivationProbe: CommandModule = {
 		withGrammar(defineCommand(program, variantDerivationProbe))
 			.option('--all-grammars', 'Run every grammar (rust, typescript, python)')
 			.action(async (opts: { grammar?: string; allGrammars?: boolean }) => {
+				const { variantDerivationProbe: runVariantDerivationProbe } = await import('@sittir/tools');
 				const code = await runVariantDerivationProbe({
 					grammar: opts.grammar,
 					allGrammars: opts.allGrammars ?? false

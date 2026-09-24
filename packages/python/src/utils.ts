@@ -10,7 +10,8 @@ import type {
 	ElementsOf,
 	FlavorPair,
 	Hoisted,
-	OmitEach
+	OmitEach,
+	OptionsArg
 } from '@sittir/types';
 import type { Comment, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
@@ -107,6 +108,17 @@ export function admitHiddenText<T = unknown>(value: unknown, leaves: readonly Hi
 	return hit[2](value) as T;
 }
 
+export type AliasBuilder = readonly [storage: readonly number[], build: (content: unknown) => unknown];
+
+export function admitAliasContent<T = unknown>(value: unknown, aliases: readonly AliasBuilder[]): T {
+	if (Array.isArray(value)) return value.map((item) => admitAliasContent(item, aliases)) as T;
+	const id =
+		isRecord(value) && typeof value.$type === 'number' ? value.$type : typeof value === 'number' ? value : undefined;
+	if (id === undefined) return value as T;
+	const hit = aliases.find(([storage]) => storage.includes(id));
+	return (hit === undefined ? value : hit[1](value)) as T;
+}
+
 export function coerceMixedEnumStorage<T = unknown>(
 	value: unknown,
 	byText: readonly (readonly [string, number])[] = []
@@ -182,7 +194,7 @@ export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {
 	return { strict, coerce };
 }
 
-export type { ArgsOf, ElementsOf, FlavorPair, Hoisted, OmitEach };
+export type { ArgsOf, ElementsOf, FlavorPair, Hoisted, OmitEach, OptionsArg };
 
 type AnyFlavorFn = (...args: never[]) => unknown;
 

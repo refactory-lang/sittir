@@ -72,6 +72,9 @@ export default grammar(
 			},
 			options: {
 				gap: { separator: preference('tight') },
+				integer_hex: { 'prefix:': preference('0x') },
+				integer_octal: { 'prefix:': preference('0o') },
+				integer_binary: { 'prefix:': preference('0b') },
 				module: {
 					'statements:/separator': preference('tight'),
 					'statements:/(function_definition)/after': preference('double_newline'),

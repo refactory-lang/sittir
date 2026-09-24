@@ -8,13 +8,9 @@ import { TSKindId } from '../src/types.ts';
 describe('statement terminator', () => {
 	it('takes either layout keyword as a kind id', () => {
 		expect(
-			ir.expressionStatement
-				.strict({ expression: ir.identifier('x'), terminator: TSKindId.AutomaticSemicolon })
-				.$render()
+			ir.expressionStatement.strict(ir.identifier('x'), { terminator: TSKindId.AutomaticSemicolon }).$render()
 		).toBe('x\n');
-		expect(ir.expressionStatement.strict({ expression: ir.identifier('x'), terminator: TSKindId.Semi }).$render()).toBe(
-			'x;'
-		);
+		expect(ir.expressionStatement.strict(ir.identifier('x'), { terminator: TSKindId.Semi }).$render()).toBe('x;');
 	});
 });
 

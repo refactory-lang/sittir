@@ -126,18 +126,39 @@ export type HiddenLeaf<T> = T & { readonly __hiddenLeaf__?: true };
 /** @internal — true when T carries the HiddenLeaf brand key. */
 type IsHiddenLeaf<T> = '__hiddenLeaf__' extends keyof T ? true : false;
 
-/** @internal — a hidden leaf element also admits its text. */
-type AdmitHiddenText<E> = E extends unknown ? (IsHiddenLeaf<E> extends true ? E | string : E) : never;
+/**
+ * AliasOf<T, C> — brands an alias node (a display the parser issues over a
+ * storage kind) with its content type C, so a strict factory input admits the
+ * content: the parent's factory builds the alias around it.
+ */
+export type AliasOf<T, C> = T & { readonly __aliasContent__?: C };
 
-/** @internal — {@link AdmitHiddenText} through a slot's array wrapper. */
-type AdmitHiddenSlot<S> = S extends readonly unknown[]
-	? true extends AnyHiddenLeaf<S[number]>
-		? readonly AdmitHiddenText<S[number]>[]
+/** @internal — the content an alias element stands in for, or never. */
+type AliasContent<T> = '__aliasContent__' extends keyof T
+	? T extends { readonly __aliasContent__?: infer C }
+		? Exclude<C, undefined>
+		: never
+	: never;
+
+/** @internal — an element also admits what builds it: a hidden leaf its
+ *  text, an alias its content. */
+type AdmitElementInput<E> = E extends unknown
+	? IsHiddenLeaf<E> extends true
+		? E | string
+		: [AliasContent<E>] extends [never]
+			? E
+			: E | AliasContent<E>
+	: never;
+
+/** @internal — true when an element admits more than itself. */
+type AdmitsMore<E> = E extends unknown ? (IsHiddenLeaf<E> extends true ? true : [AliasContent<E>] extends [never] ? false : true) : never;
+
+/** @internal — {@link AdmitElementInput} through a slot's array wrapper. */
+type AdmitSlotInput<S> = S extends readonly unknown[]
+	? true extends AdmitsMore<S[number]>
+		? readonly AdmitElementInput<S[number]>[]
 		: S
-	: AdmitHiddenText<S>;
-
-/** @internal — distributes {@link IsHiddenLeaf} over a union. */
-type AnyHiddenLeaf<E> = E extends unknown ? IsHiddenLeaf<E> : never;
+	: AdmitElementInput<S>;
 
 /**
  * Terminal node shape — shared by every leaf, keyword, and enum.
@@ -172,6 +193,18 @@ export type ArgsOf<F> = F extends {
 	: F extends (...args: readonly (infer E)[]) => unknown
 		? E[]
 		: never;
+
+/**
+ * OptionsArg<F> — F's own trailing options parameter, read off {@link ArgsOf}
+ * rather than a fixed tuple index: `ArgsOf<F>[1]` is a compile error for any
+ * F with only one declared parameter (TS statically rejects an out-of-range
+ * tuple index), which every value-arm and config-arm composer over a
+ * registered-slot-free factory is. The optional-element pattern match below
+ * is arity-safe in both directions — it resolves to `undefined` when F has
+ * no second parameter and to that parameter's own type (options or
+ * options-and-beyond) when F does.
+ */
+export type OptionsArg<F> = ArgsOf<F> extends readonly [unknown, (infer Opt)?, ...unknown[]] ? Opt : undefined;
 
 /**
  * ElementsOf<F> — the union of every positional argument type a factory
@@ -702,7 +735,7 @@ type WidenLooseFieldValue<
  * consumer code writes `config.children`, not `config.$other`. The
  * `$`-prefixed metadata shape is internal NodeData.
  */
-type ChildSlotsOf<T> = T extends { readonly $other?: infer C } ? { readonly children: AdmitHiddenSlot<C> } : {};
+type ChildSlotsOf<T> = T extends { readonly $other?: infer C } ? { readonly children: AdmitSlotInput<C> } : {};
 
 /**
  * RuntimeChildSlots<T> — runtime (factory output) child-slot shape.
@@ -793,7 +826,7 @@ export type ConfigOf<T> = T extends unknown
 						? BitflagSlotEnum<FieldInputType<T, K>> | undefined
 						: IsKindEnumSlot<FieldInputType<T, K>> extends true
 							? KindEnumSlotInput<FieldInputType<T, K>> | undefined
-							: AdmitHiddenSlot<FieldInputType<T, K>>;
+							: AdmitSlotInput<FieldInputType<T, K>>;
 			} &
 				// Child surface: polymorph variants with a single-child slot hoist
 				// the inner child's Config up when the inner has meaningful Config

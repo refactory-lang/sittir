@@ -1,6 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
-import { walk as runWalk } from '@sittir/tools';
 
 export const walk: CommandModule = {
 	name: 'walk',
@@ -10,6 +9,7 @@ export const walk: CommandModule = {
 			.option('-s, --source <text>', 'Source text to parse')
 			.option('--render', 'Render each visited node')
 			.action(async (opts: { grammar?: string; source?: string; render?: boolean }) => {
+				const { walk: runWalk } = await import('@sittir/tools');
 				const code = await runWalk({
 					grammar: opts.grammar ?? 'rust',
 					source: opts.source,

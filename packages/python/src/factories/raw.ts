@@ -8,6 +8,7 @@ import {
 	withMethods,
 	withAccessors,
 	methodsEngine,
+	admitAliasContent,
 	admitHiddenText,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
@@ -423,7 +424,14 @@ export function buildExpressionStatement(
 }
 
 export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedExpression.Built {
-	const _name = config.name;
+	const _name = coerceMixedEnumStorage<NonNullable<T.NamedExpression['_name']>>(config.name, [
+		['print', TSKindId.PrintKeyword] as const,
+		['exec', TSKindId.ExecKeyword] as const,
+		['async', TSKindId.AsyncKeyword] as const,
+		['await', TSKindId.AwaitKeyword] as const,
+		['type', TSKindId.TypeKeyword] as const,
+		['match', TSKindId.MatchKeyword] as const
+	]);
 	const _value = coerceMixedEnumStorage<NonNullable<T.NamedExpression['_value']>>(config.value, []);
 	return withMethods(
 		withAccessors(
@@ -434,7 +442,8 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 				_name,
 				_value,
 				$with: {
-					name: (value: T.Identifier) => buildNamedExpression({ ...config, name: value }),
+					name: (value: NonNullable<T.NamedExpression.Config>['name']) =>
+						buildNamedExpression({ ...config, name: value }),
 					value: (value: NonNullable<T.NamedExpression.Config>['value']) =>
 						buildNamedExpression({ ...config, value: value })
 				}
@@ -1949,8 +1958,26 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 	);
 }
 
-export function buildListSplatPattern(value: T.Identifier | T.Subscript | T.Attribute): T.ListSplatPattern.Built {
-	const _content = value;
+export function buildListSplatPattern(
+	value:
+		| T.Identifier
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword
+		| T.Subscript
+		| T.Attribute
+): T.ListSplatPattern.Built {
+	const _content = coerceMixedEnumStorage<NonNullable<T.ListSplatPattern['_content']>>(value, [
+		['print', TSKindId.PrintKeyword] as const,
+		['exec', TSKindId.ExecKeyword] as const,
+		['async', TSKindId.AsyncKeyword] as const,
+		['await', TSKindId.AwaitKeyword] as const,
+		['type', TSKindId.TypeKeyword] as const,
+		['match', TSKindId.MatchKeyword] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -1959,7 +1986,19 @@ export function buildListSplatPattern(value: T.Identifier | T.Subscript | T.Attr
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.Identifier | T.Subscript | T.Attribute) => buildListSplatPattern(value)
+					content: (
+						value: NonNullable<
+							| T.Identifier
+							| TSKindId.PrintKeyword
+							| TSKindId.ExecKeyword
+							| TSKindId.AsyncKeyword
+							| TSKindId.AwaitKeyword
+							| TSKindId.TypeKeyword
+							| TSKindId.MatchKeyword
+							| T.Subscript
+							| T.Attribute
+						>
+					) => buildListSplatPattern(value)
 				}
 			},
 			{
@@ -1971,9 +2010,25 @@ export function buildListSplatPattern(value: T.Identifier | T.Subscript | T.Attr
 }
 
 export function buildDictionarySplatPattern(
-	value: T.Identifier | T.Subscript | T.Attribute
+	value:
+		| T.Identifier
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword
+		| T.Subscript
+		| T.Attribute
 ): T.DictionarySplatPattern.Built {
-	const _content = value;
+	const _content = coerceMixedEnumStorage<NonNullable<T.DictionarySplatPattern['_content']>>(value, [
+		['print', TSKindId.PrintKeyword] as const,
+		['exec', TSKindId.ExecKeyword] as const,
+		['async', TSKindId.AsyncKeyword] as const,
+		['await', TSKindId.AwaitKeyword] as const,
+		['type', TSKindId.TypeKeyword] as const,
+		['match', TSKindId.MatchKeyword] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -1982,7 +2037,19 @@ export function buildDictionarySplatPattern(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: T.Identifier | T.Subscript | T.Attribute) => buildDictionarySplatPattern(value)
+					content: (
+						value: NonNullable<
+							| T.Identifier
+							| TSKindId.PrintKeyword
+							| TSKindId.ExecKeyword
+							| TSKindId.AsyncKeyword
+							| TSKindId.AwaitKeyword
+							| TSKindId.TypeKeyword
+							| TSKindId.MatchKeyword
+							| T.Subscript
+							| T.Attribute
+						>
+					) => buildDictionarySplatPattern(value)
 				}
 			},
 			{
@@ -1995,7 +2062,15 @@ export function buildDictionarySplatPattern(
 
 export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
 	const _expression = coerceMixedEnumStorage<NonNullable<T.AsPattern['_expression']>>(config.expression, []);
-	const _alias = coerceMixedEnumStorage<NonNullable<T.AsPattern['_alias']>>(config.alias, []);
+	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
+		[
+			[
+				208, 202, 203, 209, 252, 204, 1, 68, 38, 69, 70, 39, 22, 243, 242, 90, 91, 92, 93, 94, 95, 96, 71, 72, 73, 205,
+				216, 217, 219, 228, 233, 231, 234, 229, 235, 230, 237, 236, 64, 196, 241, 139, 198
+			],
+			(v: unknown) => buildAsPatternTarget(v as never)
+		]
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -2007,7 +2082,7 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
 				$with: {
 					expression: (value: NonNullable<T.AsPattern.Config>['expression']) =>
 						buildAsPattern({ ...config, expression: value }),
-					alias: (value: NonNullable<T.AsPattern.Config>['alias']) => buildAsPattern({ ...config, alias: value })
+					alias: (value: T.AsPatternTarget | T.AsPatternTarget.Types) => buildAsPattern({ ...config, alias: value })
 				}
 			},
 			{
@@ -2618,7 +2693,14 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Built
 }
 
 export function buildKeywordArgument(config: T.KeywordArgument.Config): T.KeywordArgument.Built {
-	const _name = config.name;
+	const _name = coerceMixedEnumStorage<NonNullable<T.KeywordArgument['_name']>>(config.name, [
+		['print', TSKindId.PrintKeyword] as const,
+		['exec', TSKindId.ExecKeyword] as const,
+		['async', TSKindId.AsyncKeyword] as const,
+		['await', TSKindId.AwaitKeyword] as const,
+		['type', TSKindId.TypeKeyword] as const,
+		['match', TSKindId.MatchKeyword] as const
+	]);
 	const _value = coerceMixedEnumStorage<NonNullable<T.KeywordArgument['_value']>>(config.value, []);
 	return withMethods(
 		withAccessors(
@@ -2629,7 +2711,8 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 				_name,
 				_value,
 				$with: {
-					name: (value: T.Identifier) => buildKeywordArgument({ ...config, name: value }),
+					name: (value: NonNullable<T.KeywordArgument.Config>['name']) =>
+						buildKeywordArgument({ ...config, name: value }),
 					value: (value: NonNullable<T.KeywordArgument.Config>['value']) =>
 						buildKeywordArgument({ ...config, value: value })
 				}
@@ -2945,9 +3028,7 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 	);
 }
 
-export function buildParenthesizedExpression(
-	value: T.Expression | T.Yield | T.ListSplat
-): T.ParenthesizedExpression.Built {
+export function buildParenthesizedExpression(value: T.Expression | T.Yield): T.ParenthesizedExpression.Built {
 	const _content = coerceMixedEnumStorage<NonNullable<T.ParenthesizedExpression['_content']>>(value, []);
 	return withMethods(
 		withAccessors(
@@ -2957,7 +3038,7 @@ export function buildParenthesizedExpression(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: NonNullable<T.Expression | T.Yield | T.ListSplat>) => buildParenthesizedExpression(value)
+					content: (value: NonNullable<T.Expression | T.Yield>) => buildParenthesizedExpression(value)
 				}
 			},
 			{
@@ -3229,8 +3310,12 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 	);
 }
 
-export function buildFormatSpecifier(...children: ('[^{}\\n]+' | T.Interpolation)[]): T.FormatSpecifier.Built {
-	const _content = children;
+export function buildFormatSpecifier(
+	...children: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]
+): T.FormatSpecifier.Built {
+	const _content = admitAliasContent<NonNullable<T.FormatSpecifier['_content']>>(children, [
+		[[245], (v: unknown) => buildFormatExpression(v as never)]
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -3238,7 +3323,10 @@ export function buildFormatSpecifier(...children: ('[^{}\\n]+' | T.Interpolation
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { contents: (...vs: ('[^{}\\n]+' | T.Interpolation)[]) => buildFormatSpecifier(...vs) }
+				$with: {
+					contents: (...vs: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]) =>
+						buildFormatSpecifier(...vs)
+				}
 			},
 			{
 				contents: () => _content
@@ -4317,11 +4405,11 @@ function _buildParenthesizedImportList(value: T.ImportList): T.ParenthesizedImpo
 	);
 }
 
-export function buildIntegerHex(config: WidenNumeric<T.IntegerHex.Config, 'content'>): T.IntegerHex.Built {
-	const _prefix = config.prefix;
+export function buildIntegerHex(value: string | number, options?: T.IntegerHex.Options): T.IntegerHex.Built {
+	const _prefix = options?.prefix ?? '0x';
 	if (_prefix !== undefined && !_slotRe_buildIntegerHex_prefix.test(_prefix))
 		throw new Error(`integer_hex.prefix: text does not match pattern: ${_prefix}`);
-	const _content = numberText(16, '', config.content);
+	const _content = numberText(16, '', value);
 	if (_content !== undefined && !_slotRe_buildIntegerHex_content.test(_content))
 		throw new Error(`integer_hex.content: text does not match pattern: ${_content}`);
 	return withMethods(
@@ -4333,8 +4421,8 @@ export function buildIntegerHex(config: WidenNumeric<T.IntegerHex.Config, 'conte
 				_prefix,
 				_content,
 				$with: {
-					prefix: (value: '0x' | '0X') => buildIntegerHex({ ...config, prefix: value }),
-					content: (value: string | number) => buildIntegerHex({ ...config, content: value })
+					content: (value: string | number) => buildIntegerHex(value, options),
+					prefix: (spelling: '0x' | '0X') => buildIntegerHex(value, { ...options, prefix: spelling })
 				}
 			},
 			{
@@ -4346,11 +4434,11 @@ export function buildIntegerHex(config: WidenNumeric<T.IntegerHex.Config, 'conte
 	);
 }
 
-export function buildIntegerOctal(config: WidenNumeric<T.IntegerOctal.Config, 'content'>): T.IntegerOctal.Built {
-	const _prefix = config.prefix;
+export function buildIntegerOctal(value: string | number, options?: T.IntegerOctal.Options): T.IntegerOctal.Built {
+	const _prefix = options?.prefix ?? '0o';
 	if (_prefix !== undefined && !_slotRe_buildIntegerOctal_prefix.test(_prefix))
 		throw new Error(`integer_octal.prefix: text does not match pattern: ${_prefix}`);
-	const _content = numberText(8, '', config.content);
+	const _content = numberText(8, '', value);
 	if (_content !== undefined && !_slotRe_buildIntegerOctal_content.test(_content))
 		throw new Error(`integer_octal.content: text does not match pattern: ${_content}`);
 	return withMethods(
@@ -4362,8 +4450,8 @@ export function buildIntegerOctal(config: WidenNumeric<T.IntegerOctal.Config, 'c
 				_prefix,
 				_content,
 				$with: {
-					prefix: (value: '0o' | '0O') => buildIntegerOctal({ ...config, prefix: value }),
-					content: (value: string | number) => buildIntegerOctal({ ...config, content: value })
+					content: (value: string | number) => buildIntegerOctal(value, options),
+					prefix: (spelling: '0o' | '0O') => buildIntegerOctal(value, { ...options, prefix: spelling })
 				}
 			},
 			{
@@ -4375,11 +4463,11 @@ export function buildIntegerOctal(config: WidenNumeric<T.IntegerOctal.Config, 'c
 	);
 }
 
-export function buildIntegerBinary(config: WidenNumeric<T.IntegerBinary.Config, 'content'>): T.IntegerBinary.Built {
-	const _prefix = config.prefix;
+export function buildIntegerBinary(value: string | number, options?: T.IntegerBinary.Options): T.IntegerBinary.Built {
+	const _prefix = options?.prefix ?? '0b';
 	if (_prefix !== undefined && !_slotRe_buildIntegerBinary_prefix.test(_prefix))
 		throw new Error(`integer_binary.prefix: text does not match pattern: ${_prefix}`);
-	const _content = numberText(2, '', config.content);
+	const _content = numberText(2, '', value);
 	if (_content !== undefined && !_slotRe_buildIntegerBinary_content.test(_content))
 		throw new Error(`integer_binary.content: text does not match pattern: ${_content}`);
 	return withMethods(
@@ -4391,8 +4479,8 @@ export function buildIntegerBinary(config: WidenNumeric<T.IntegerBinary.Config, 
 				_prefix,
 				_content,
 				$with: {
-					prefix: (value: '0b' | '0B') => buildIntegerBinary({ ...config, prefix: value }),
-					content: (value: string | number) => buildIntegerBinary({ ...config, content: value })
+					content: (value: string | number) => buildIntegerBinary(value, options),
+					prefix: (spelling: '0b' | '0B') => buildIntegerBinary(value, { ...options, prefix: spelling })
 				}
 			},
 			{
@@ -4629,7 +4717,7 @@ export function buildEscapeSequenceHex(value: string): T.EscapeSequenceHex.Built
 	);
 }
 
-export function buildEscapeSequenceOctal(value: string): T.EscapeSequenceOctal.Built {
+export function buildEscapeSequenceOctal(value: string | number): T.EscapeSequenceOctal.Built {
 	const _content = numberText(10, '', value);
 	if (_content !== undefined && !_slotRe_buildEscapeSequenceOctal_content.test(_content))
 		throw new Error(`escape_sequence_octal.content: text does not match pattern: ${_content}`);
@@ -4641,7 +4729,7 @@ export function buildEscapeSequenceOctal(value: string): T.EscapeSequenceOctal.B
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: string) => buildEscapeSequenceOctal(value)
+					content: (value: string | number) => buildEscapeSequenceOctal(value)
 				}
 			},
 			{
@@ -5300,6 +5388,48 @@ export function buildDedent(text: string): T.Dedent.Built {
 	);
 }
 
+export function buildAsPatternTarget(value: T.Expression): T.AsPatternTarget.Built {
+	const _content = coerceMixedEnumStorage<NonNullable<T.AsPatternTarget['_content']>>(value, []);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId._AsPatternTarget as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: NonNullable<T.Expression>) => buildAsPatternTarget(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildFormatExpression(value: T.Interpolation): T.FormatExpression.Built {
+	const _content = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId._FormatExpression as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: T.Interpolation) => buildFormatExpression(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
 export type FluentKindMap = {
 	module: T.Module.Built;
 	_simple_statements: T.SimpleStatements.Built;
@@ -5481,6 +5611,8 @@ export type FluentKindMap = {
 	string_end: T.StringEnd;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
+	as_pattern_target: T.AsPatternTarget.Built;
+	format_expression: T.FormatExpression.Built;
 };
 
 export const _factoryMap = {
@@ -5663,6 +5795,8 @@ export const _factoryMap = {
 	escape_interpolation: buildEscapeInterpolation,
 	string_end: buildStringEnd,
 	_indent: buildIndent,
-	_dedent: buildDedent
+	_dedent: buildDedent,
+	as_pattern_target: buildAsPatternTarget,
+	format_expression: buildFormatExpression
 } as const;
 export type _FactoryMap = typeof _factoryMap;

@@ -496,7 +496,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         148 => "elif_clause", // "elif_clause"
         149 => "else_clause", // "else_clause"
         150 => "match_statement", // "match_statement"
-        151 => "block", // "_match_block"
+        151 => "match_block", // "_match_block"
         152 => "case_clause", // "case_clause"
         153 => "for_statement", // "for_statement"
         154 => "while_statement", // "while_statement"
@@ -688,6 +688,13 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
 /// free text for a pattern kind, the literal it holds for an enum kind.
 pub fn is_text_kind(kind: KindId) -> bool {
     matches!(kind.0, 1 | 67 | 74 | 90 | 91 | 92 | 93 | 94 | 95 | 96 | 97 | 98 | 99 | 100 | 101 | 102 | 103 | 104 | 114 | 115 | 116 | 117 | 118 | 119 | 128 | 269)
+}
+
+/// Whether this parse kind id is an alias envelope: the reader stamps the
+/// grammar symbol beside it when the node is the storage node shown under
+/// the alias, so the wrap layer can seat it as the envelope's content.
+pub fn is_alias_envelope(kind: KindId) -> bool {
+    matches!(kind.0, 331 | 332)
 }
 
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every

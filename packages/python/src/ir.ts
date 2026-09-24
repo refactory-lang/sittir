@@ -321,12 +321,6 @@ export const fExpression: {
 	yield: F.yield_
 };
 
-export const keywordIdentifier: {
-	readonly identifier: typeof F.buildIdentifier;
-} = {
-	identifier: F.buildIdentifier
-};
-
 export const ir: {
 	readonly module: typeof F.module;
 	readonly simpleStatements: typeof F.simpleStatements;
@@ -540,7 +534,6 @@ export const ir: {
 	readonly leftHandSide: typeof leftHandSide;
 	readonly rightHandSide: typeof rightHandSide;
 	readonly fExpression: typeof fExpression;
-	readonly keywordIdentifier: typeof keywordIdentifier;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
@@ -764,6 +757,5 @@ export const ir: {
 	leftHandSide,
 	rightHandSide,
 	fExpression,
-	keywordIdentifier,
 	synonym
 };

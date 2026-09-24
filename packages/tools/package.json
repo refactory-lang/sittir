@@ -10,6 +10,12 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js",
 			"default": "./dist/index.js"
+		},
+		"./post-generate": {
+			"types": "./src/post-generate.ts",
+			"source": "./src/post-generate.ts",
+			"import": "./dist/post-generate.js",
+			"default": "./dist/post-generate.js"
 		}
 	},
 	"scripts": {

@@ -189,7 +189,9 @@ export const _fromMap = {
 	string_start: coerceToStringStart,
 	_string_content: coerceTo_StringContent,
 	escape_interpolation: coerceToEscapeInterpolation,
-	string_end: coerceToStringEnd
+	string_end: coerceToStringEnd,
+	as_pattern_target: coerceToAsPatternTarget,
+	format_expression: coerceToFormatExpression
 } as const;
 export type _FromMap = typeof _fromMap;
 
@@ -216,18 +218,24 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	keyword_separator: { values: ['*'], factory: () => F.buildKeywordSeparator() },
 	integer_hex: {
 		pattern: new RegExp(TOKEN_INTERIORS['integer_hex'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildIntegerHex(lexedConfig(text, TOKEN_INTERIORS['integer_hex'], 'integer_hex') as never)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_hex'], 'integer_hex');
+			return F.buildIntegerHex(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+		}
 	},
 	integer_octal: {
 		pattern: new RegExp(TOKEN_INTERIORS['integer_octal'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildIntegerOctal(lexedConfig(text, TOKEN_INTERIORS['integer_octal'], 'integer_octal') as never)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_octal'], 'integer_octal');
+			return F.buildIntegerOctal(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+		}
 	},
 	integer_binary: {
 		pattern: new RegExp(TOKEN_INTERIORS['integer_binary'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildIntegerBinary(lexedConfig(text, TOKEN_INTERIORS['integer_binary'], 'integer_binary') as never)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_binary'], 'integer_binary');
+			return F.buildIntegerBinary(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+		}
 	},
 	integer_decimal: {
 		pattern: /^(?:(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?))$/u,
@@ -235,20 +243,24 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	},
 	float_point: {
 		pattern: new RegExp(TOKEN_INTERIORS['float_point'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildFloatPoint(lexedConfig(text, TOKEN_INTERIORS['float_point'], 'float_point') as never)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['float_point'], 'float_point');
+			return F.buildFloatPoint(cfg as never);
+		}
 	},
 	float_leading_point: {
 		pattern: new RegExp(TOKEN_INTERIORS['float_leading_point'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildFloatLeadingPoint(
-				lexedConfig(text, TOKEN_INTERIORS['float_leading_point'], 'float_leading_point') as never
-			)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['float_leading_point'], 'float_leading_point');
+			return F.buildFloatLeadingPoint(cfg as never);
+		}
 	},
 	float_scientific: {
 		pattern: new RegExp(TOKEN_INTERIORS['float_scientific'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildFloatScientific(lexedConfig(text, TOKEN_INTERIORS['float_scientific'], 'float_scientific') as never)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['float_scientific'], 'float_scientific');
+			return F.buildFloatScientific(cfg as never);
+		}
 	},
 	escape_sequence_unicode_fixed: {
 		factory: (content: string) => _resolveByKind('escape_sequence_unicode_fixed', content)
@@ -339,61 +351,7 @@ const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undef
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'expression_statement',
 	'case_pattern',
-	'parenthesized_expression',
-	'_simple_statements',
-	'print_statement',
-	'chevron',
-	'return_statement',
-	'delete_statement',
-	'else_clause',
-	'finally_clause',
-	'with_item',
-	'parameters',
-	'lambda_parameters',
-	'list_splat',
-	'dictionary_splat',
-	'type_parameter',
-	'parenthesized_list_splat',
-	'argument_list',
-	'decorator',
-	'_parameters',
-	'_patterns',
-	'tuple_pattern',
-	'list_pattern',
-	'list_splat_pattern',
-	'dictionary_splat_pattern',
-	'not_operator',
-	'yield',
-	'type',
-	'list',
-	'set',
-	'tuple',
-	'dictionary',
-	'_collection_elements',
-	'if_clause',
-	'await',
-	'simple_statements_elements',
-	'subjects',
-	'case_patterns',
-	'with_clause_with_items',
-	'types',
-	'argument_list_elements',
-	'expression_list_expressions',
-	'list_pattern_case_patterns',
-	'pattern_list_patterns',
-	'subscripts',
-	'dictionary_elements',
-	'slice_group',
-	'case_tuple_pattern',
-	'case_list_pattern',
-	'_print_arguments',
-	'_print_chevron_arguments',
-	'print_statement_plain',
-	'expression_statement_tuple',
-	'with_clause_bare',
-	'with_clause_paren',
-	'suite_inline',
-	'_yield_from_clause'
+	'parenthesized_expression'
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33,
@@ -403,180 +361,209 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	_simple_statements: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 127, 130, 131, 132, 133, 135, 137, 138, 139, 141, 142, 143, 144, 145,
-		146, 164, 165, 166, 167, 168, 169, 172, 177, 178, 196, 198, 202, 203, 204, 205, 208, 209, 212, 215, 216, 217, 219,
-		228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 256, 267, 275, 277, 278, 280, 284, 285,
-		286, 287, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 127, 130, 131, 132, 133, 135, 137, 138, 139,
+		141, 142, 143, 144, 145, 146, 164, 165, 166, 167, 168, 169, 172, 177, 178, 196, 198, 202, 203, 204, 205, 208, 209,
+		212, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 256, 267, 275,
+		277, 278, 280, 284, 285, 286, 287, 295
 	]),
 	import_statement: new Set([132, 133, 178]),
 	future_import_statement: new Set([132, 133, 178, 280]),
 	_import_list: new Set([133, 178]),
 	print_statement: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 275, 277, 278, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 275, 277, 278, 295
 	]),
 	chevron: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	expression_statement: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 212,
-		215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 284, 285, 286,
-		287, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 212, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243,
+		252, 267, 284, 285, 286, 287, 295
 	]),
 	return_statement: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	delete_statement: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	else_clause: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 113, 127, 130, 131, 132, 133, 135, 137, 138, 139, 141, 142, 143, 144,
-		145, 146, 164, 165, 166, 167, 168, 169, 172, 176, 177, 178, 196, 198, 202, 203, 204, 205, 208, 209, 212, 215, 216,
-		217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 256, 267, 275, 277, 278, 280,
-		284, 285, 286, 287, 291, 292, 293, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 113, 127, 130, 131, 132, 133, 135, 137, 138,
+		139, 141, 142, 143, 144, 145, 146, 164, 165, 166, 167, 168, 169, 172, 176, 177, 178, 196, 198, 202, 203, 204, 205,
+		208, 209, 212, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 256,
+		267, 275, 277, 278, 280, 284, 285, 286, 287, 291, 292, 293, 295
 	]),
 	_match_block: new Set([113, 290]),
 	finally_clause: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 113, 127, 130, 131, 132, 133, 135, 137, 138, 139, 141, 142, 143, 144,
-		145, 146, 164, 165, 166, 167, 168, 169, 172, 176, 177, 178, 196, 198, 202, 203, 204, 205, 208, 209, 212, 215, 216,
-		217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 256, 267, 275, 277, 278, 280,
-		284, 285, 286, 287, 291, 292, 293, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 113, 127, 130, 131, 132, 133, 135, 137, 138,
+		139, 141, 142, 143, 144, 145, 146, 164, 165, 166, 167, 168, 169, 172, 176, 177, 178, 196, 198, 202, 203, 204, 205,
+		208, 209, 212, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 256,
+		267, 275, 277, 278, 280, 284, 285, 286, 287, 291, 292, 293, 295
 	]),
 	with_item: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
-	parameters: new Set([1, 188, 189, 192, 193, 194, 195, 196, 197, 216, 217, 220, 253, 254]),
-	lambda_parameters: new Set([1, 188, 189, 192, 193, 194, 195, 196, 197, 216, 217, 220, 253, 254]),
+	parameters: new Set([1, 22, 38, 39, 68, 69, 70, 188, 189, 192, 193, 194, 195, 196, 197, 216, 217, 220, 253, 254]),
+	lambda_parameters: new Set([
+		1, 22, 38, 39, 68, 69, 70, 188, 189, 192, 193, 194, 195, 196, 197, 216, 217, 220, 253, 254
+	]),
 	list_splat: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	dictionary_splat: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	type_parameter: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 221, 222, 223, 224, 225, 226, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243,
-		252, 260, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 221, 222, 223, 224, 225, 226, 228, 229, 230, 231, 232, 233, 234, 235, 236,
+		237, 238, 241, 242, 243, 252, 260, 267, 295
 	]),
 	parenthesized_list_splat: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	argument_list: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 261, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243,
+		252, 261, 267, 295
 	]),
 	decorator: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	case_pattern: new Set([
 		71, 72, 73, 178, 179, 181, 182, 183, 184, 185, 186, 187, 242, 243, 263, 264, 271, 272, 273, 279, 281
 	]),
 	dict_pattern: new Set([183, 185, 264]),
-	_parameters: new Set([1, 189, 192, 193, 194, 195, 196, 197, 216, 217, 220, 253, 254]),
-	_patterns: new Set([1, 189, 192, 193, 196, 216, 217]),
-	tuple_pattern: new Set([1, 189, 192, 193, 196, 216, 217]),
-	list_pattern: new Set([1, 189, 192, 193, 196, 216, 217]),
+	_parameters: new Set([1, 22, 38, 39, 68, 69, 70, 189, 192, 193, 194, 195, 196, 197, 216, 217, 220, 253, 254]),
+	_patterns: new Set([1, 22, 38, 39, 68, 69, 70, 189, 192, 193, 196, 216, 217]),
+	tuple_pattern: new Set([1, 22, 38, 39, 68, 69, 70, 189, 192, 193, 196, 216, 217]),
+	list_pattern: new Set([1, 22, 38, 39, 68, 69, 70, 189, 192, 193, 196, 216, 217]),
 	list_splat_pattern: new Set([1, 216, 217]),
 	dictionary_splat_pattern: new Set([1, 216, 217]),
 	not_operator: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
-	]),
-	yield: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
-	]),
-	type: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 222, 223, 224, 225, 226, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
 		267, 295
 	]),
+	yield: new Set([
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
+	]),
+	type: new Set([
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 222, 223, 224, 225, 226, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237,
+		238, 241, 242, 243, 252, 267, 295
+	]),
 	list: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	set: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	tuple: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	dictionary: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	parenthesized_expression: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	_collection_elements: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	if_clause: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	await: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	simple_statements_elements: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 127, 130, 131, 132, 133, 135, 137, 138, 139, 141, 142, 143, 144, 145,
-		146, 164, 165, 166, 167, 168, 169, 172, 177, 178, 196, 198, 202, 203, 204, 205, 208, 209, 212, 215, 216, 217, 219,
-		228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 275, 277, 278, 280, 284, 285, 286,
-		287, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 127, 130, 131, 132, 133, 135, 137, 138, 139,
+		141, 142, 143, 144, 145, 146, 164, 165, 166, 167, 168, 169, 172, 177, 178, 196, 198, 202, 203, 204, 205, 208, 209,
+		212, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 275, 277,
+		278, 280, 284, 285, 286, 287, 295
 	]),
 	subjects: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	case_patterns: new Set([
 		71, 72, 73, 178, 179, 181, 182, 183, 184, 185, 186, 187, 242, 243, 263, 264, 271, 272, 273, 279, 281
 	]),
 	with_clause_with_items: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 160, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209,
-		215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
-	]),
-	types: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 221, 222, 223, 224, 225, 226, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243,
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 160, 164, 165, 172, 177, 196, 198, 202,
+		203, 204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243,
 		252, 267, 295
 	]),
+	types: new Set([
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 221, 222, 223, 224, 225, 226, 228, 229, 230, 231, 232, 233, 234, 235, 236,
+		237, 238, 241, 242, 243, 252, 267, 295
+	]),
 	argument_list_elements: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243,
+		252, 267, 295
 	]),
 	expression_list_expressions: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	list_pattern_case_patterns: new Set([
 		71, 72, 73, 178, 179, 181, 182, 183, 184, 185, 186, 187, 242, 243, 263, 264, 271, 272, 273, 279, 281
 	]),
 	dict_pattern_elements: new Set([183, 185]),
-	pattern_list_patterns: new Set([1, 189, 192, 193, 196, 216, 217]),
+	pattern_list_patterns: new Set([1, 22, 38, 39, 68, 69, 70, 189, 192, 193, 196, 216, 217]),
 	subscripts: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 218, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 218, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243,
+		252, 267, 295
 	]),
 	dictionary_elements: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	slice_group: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	case_tuple_pattern: new Set([
 		71, 72, 73, 178, 179, 181, 182, 183, 184, 185, 186, 187, 242, 243, 263, 264, 271, 272, 273, 279, 281
@@ -585,43 +572,56 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		71, 72, 73, 178, 179, 181, 182, 183, 184, 185, 186, 187, 242, 243, 263, 264, 271, 272, 273, 279, 281
 	]),
 	_print_arguments: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	_print_chevron_arguments: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	print_statement_plain: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 275, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 275, 295
 	]),
 	_parenthesized_import_list: new Set([132, 133, 178]),
 	except_clause_exception: new Set([270, 282]),
 	expression_statement_tuple: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
 	]),
 	with_clause_bare: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 160, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209,
-		215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 160, 164, 165, 172, 177, 196, 198, 202,
+		203, 204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243,
+		252, 267, 295
 	]),
 	with_clause_paren: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 160, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209,
-		215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 259, 267, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 160, 164, 165, 172, 177, 196, 198, 202,
+		203, 204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243,
+		252, 259, 267, 295
 	]),
 	suite_inline: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 127, 130, 131, 132, 133, 135, 137, 138, 139, 141, 142, 143, 144, 145,
-		146, 164, 165, 166, 167, 168, 169, 172, 177, 178, 196, 198, 202, 203, 204, 205, 208, 209, 212, 215, 216, 217, 219,
-		228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 256, 267, 275, 277, 278, 280, 284, 285,
-		286, 287, 295
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 127, 130, 131, 132, 133, 135, 137, 138, 139,
+		141, 142, 143, 144, 145, 146, 164, 165, 166, 167, 168, 169, 172, 177, 178, 196, 198, 202, 203, 204, 205, 208, 209,
+		212, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 256, 267, 275,
+		277, 278, 280, 284, 285, 286, 287, 295
 	]),
 	suite_block: new Set([176]),
 	suite_empty: new Set([113]),
 	_yield_from_clause: new Set([
-		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
-		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
-	])
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
+	]),
+	as_pattern_target: new Set([
+		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203,
+		204, 205, 208, 209, 215, 216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252,
+		267, 295
+	]),
+	format_expression: new Set([245])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	49: ['_unary_operator_operator'],
@@ -706,7 +706,7 @@ function _resolveOne<T>(
 	if (!(typeof v === 'object' && !Array.isArray(v))) {
 		const candidates = typeof v === 'string' ? branchKinds.filter((b) => _STRING_CAPABLE_BRANCHES.has(b)) : branchKinds;
 		const target =
-			candidates.length === 1
+			candidates.length === 1 && branchKinds.length === 1
 				? candidates[0]
 				: defaultArm !== undefined && candidates.includes(defaultArm)
 					? defaultArm
@@ -715,9 +715,9 @@ function _resolveOne<T>(
 			return _wrapArray(target, v) as T;
 		}
 		if (target !== undefined && _isFromKind(target)) return _resolveByKind(target, v) as T;
-		if (typeof v === 'string' && candidates.length > 1) {
+		if (typeof v === 'string' && candidates.length > 0) {
 			throw new Error(
-				`_resolveOne: a bare string fits more than one arm: [${candidates.join(', ')}]; declare the arm (defaultArm()) or name it explicitly`
+				`_resolveOne: a bare string picks no arm among [${branchKinds.join(', ')}]; declare the arm (defaultArm()) or name it explicitly`
 			);
 		}
 	}
@@ -765,7 +765,12 @@ function _listElements(
 			? _resolveByKind(wrapperKind, e)
 			: e
 	);
-	return optionsFirst ? [head, ...resolve(elements)] : [...resolve(elements)];
+	const resolved = elements.map((e) =>
+		wrapperKind !== undefined && isNodeData(e) && typeof e.$type === 'number' && KIND_NAMES.get(e.$type) === wrapperKind
+			? e
+			: resolve([e])[0]
+	);
+	return optionsFirst ? [head, ...resolved] : resolved;
 }
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
@@ -841,7 +846,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	string_content: TSKindId.StringContent,
 	format_specifier: TSKindId.FormatSpecifier,
 	await: TSKindId.Await,
-	comment: TSKindId.Comment,
 	simple_statements_elements: TSKindId.SimpleStatementsElements,
 	subjects: TSKindId.Subjects,
 	case_patterns: TSKindId.CasePatterns,
@@ -862,13 +866,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_print_chevron_arguments: TSKindId.PrintChevronArguments,
 	print_statement_plain: TSKindId.PrintStatementPlain,
 	_parenthesized_import_list: TSKindId.ParenthesizedImportList,
-	escape_sequence_unicode_fixed: TSKindId.EscapeSequenceUnicodeFixed,
-	escape_sequence_unicode_wide: TSKindId.EscapeSequenceUnicodeWide,
-	escape_sequence_hex: TSKindId.EscapeSequenceHex,
-	escape_sequence_octal: TSKindId.EscapeSequenceOctal,
-	escape_sequence_line_break: TSKindId.EscapeSequenceLineBreak,
-	escape_sequence_simple: TSKindId.EscapeSequenceSimple,
-	escape_sequence_named: TSKindId.EscapeSequenceNamed,
 	except_clause_exception_list: TSKindId.ExceptClauseExceptionList,
 	except_clause_exception: TSKindId.ExceptClauseException,
 	expression_statement_tuple: TSKindId.ExpressionStatementTuple,
@@ -878,7 +875,9 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	suite_inline: TSKindId.SuiteInline,
 	suite_block: TSKindId.SuiteBlock,
 	suite_empty: TSKindId.SuiteEmpty,
-	_yield_from_clause: TSKindId.YieldFromClause
+	_yield_from_clause: TSKindId.YieldFromClause,
+	as_pattern_target: TSKindId._AsPatternTarget,
+	format_expression: TSKindId._FormatExpression
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
@@ -912,7 +911,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	dictionary: 'dictionary_elements',
 	if_clause: 'expression',
 	concatenated_string: 'string',
-	format_specifier: 'interpolation',
+	format_specifier: 'format_expression',
 	await: 'primary_expression',
 	simple_statements_elements: '_simple_statement',
 	subjects: 'expression',
@@ -936,7 +935,9 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	match_block_block: 'case_clause',
 	suite_inline: 'simple_statements_elements',
 	suite_block: 'block',
-	_yield_from_clause: 'expression'
+	_yield_from_clause: 'expression',
+	as_pattern_target: 'expression',
+	format_expression: 'interpolation'
 };
 
 const _wrapDirectKinds: ReadonlySet<string> = new Set([
@@ -976,25 +977,19 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'parenthesized_expression',
 	'if_clause',
 	'await',
-	'comment',
 	'slice_group',
 	'case_tuple_pattern',
 	'case_list_pattern',
 	'print_statement_plain',
 	'_parenthesized_import_list',
-	'escape_sequence_unicode_fixed',
-	'escape_sequence_unicode_wide',
-	'escape_sequence_hex',
-	'escape_sequence_octal',
-	'escape_sequence_line_break',
-	'escape_sequence_simple',
-	'escape_sequence_named',
 	'except_clause_exception',
 	'with_clause_paren',
 	'suite_inline',
 	'suite_block',
 	'suite_empty',
-	'_yield_from_clause'
+	'_yield_from_clause',
+	'as_pattern_target',
+	'format_expression'
 ]);
 
 const _wrapOptionalSoleKinds: ReadonlySet<string> = new Set([
@@ -1115,8 +1110,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToFormatSpecifier as (...args: unknown[]) => unknown)(...children);
 		case 'await':
 			return F.buildAwait(children[0] as Parameters<typeof F.buildAwait>[0]);
-		case 'comment':
-			return F.buildComment(children[0] as Parameters<typeof F.buildComment>[0]);
 		case 'simple_statements_elements':
 			return (coerceToSimpleStatementsElements as (...args: unknown[]) => unknown)(...children);
 		case 'subjects':
@@ -1157,20 +1150,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildPrintStatementPlain(children[0] as Parameters<typeof F.buildPrintStatementPlain>[0]);
 		case '_parenthesized_import_list':
 			return F.buildParenthesizedImportList(children[0] as Parameters<typeof F.buildParenthesizedImportList>[0]);
-		case 'escape_sequence_unicode_fixed':
-			return F.buildEscapeSequenceUnicodeFixed(children[0] as Parameters<typeof F.buildEscapeSequenceUnicodeFixed>[0]);
-		case 'escape_sequence_unicode_wide':
-			return F.buildEscapeSequenceUnicodeWide(children[0] as Parameters<typeof F.buildEscapeSequenceUnicodeWide>[0]);
-		case 'escape_sequence_hex':
-			return F.buildEscapeSequenceHex(children[0] as Parameters<typeof F.buildEscapeSequenceHex>[0]);
-		case 'escape_sequence_octal':
-			return F.buildEscapeSequenceOctal(children[0] as Parameters<typeof F.buildEscapeSequenceOctal>[0]);
-		case 'escape_sequence_line_break':
-			return F.buildEscapeSequenceLineBreak(children[0] as Parameters<typeof F.buildEscapeSequenceLineBreak>[0]);
-		case 'escape_sequence_simple':
-			return F.buildEscapeSequenceSimple(children[0] as Parameters<typeof F.buildEscapeSequenceSimple>[0]);
-		case 'escape_sequence_named':
-			return F.buildEscapeSequenceNamed(children[0] as Parameters<typeof F.buildEscapeSequenceNamed>[0]);
 		case 'except_clause_exception_list':
 			return (coerceToExceptClauseExceptionList as (...args: unknown[]) => unknown)(...children);
 		case 'except_clause_exception':
@@ -1191,6 +1170,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildSuiteEmpty(children[0] as Parameters<typeof F.buildSuiteEmpty>[0]);
 		case '_yield_from_clause':
 			return F.buildYieldFromClause(children[0] as Parameters<typeof F.buildYieldFromClause>[0]);
+		case 'as_pattern_target':
+			return F.buildAsPatternTarget(children[0] as Parameters<typeof F.buildAsPatternTarget>[0]);
+		case 'format_expression':
+			return F.buildFormatExpression(children[0] as Parameters<typeof F.buildFormatExpression>[0]);
 		default:
 			return undefined;
 	}
@@ -1302,7 +1285,6 @@ function _requireField<T>(kind: string, slot: string, v: T | undefined | null): 
 
 // Interned resolver kind lists (dedup)
 const _super_suite: readonly string[] = ['suite_inline', 'suite_block', 'suite_empty'];
-const _super_named_expression_lhs: readonly string[] = ['identifier'];
 const _super_with_clause: readonly string[] = ['with_clause_bare', 'with_clause_paren'];
 const _super_escape_sequence: readonly string[] = [
 	'escape_sequence_unicode_fixed',
@@ -1339,6 +1321,12 @@ const _K8: readonly string[] = [
 	'lambda',
 	'await',
 	'binary_operator',
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
 	'string',
 	'concatenated_string',
 	'integer_hex',
@@ -1372,6 +1360,12 @@ const _K9: readonly string[] = [
 	'lambda',
 	'await',
 	'binary_operator',
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
 	'string',
 	'concatenated_string',
 	'integer_hex',
@@ -1411,6 +1405,12 @@ const _K10: readonly string[] = [
 	'lambda',
 	'await',
 	'binary_operator',
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
 	'string',
 	'concatenated_string',
 	'integer_hex',
@@ -1439,7 +1439,14 @@ const _K10: readonly string[] = [
 	'expression_list'
 ];
 const _K11: readonly string[] = ['elif_clause', 'else_clause'];
-const _K12: readonly string[] = [
+const _K12: readonly string[] = ['identifier'];
+const _K13: readonly string[] = [
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
 	'subscript',
 	'attribute',
 	'list_splat_pattern',
@@ -1447,11 +1454,11 @@ const _K12: readonly string[] = [
 	'list_pattern',
 	'pattern_list'
 ];
-const _K13: readonly string[] = ['string'];
-const _K14: readonly string[] = ['parenthesized_list_splat', 'list_splat'];
-const _K15: readonly string[] = ['class_definition', 'function_definition'];
-const _K16: readonly string[] = ['true', 'false', 'none', '_wildcard_pattern'];
-const _K17: readonly string[] = [
+const _K14: readonly string[] = ['string'];
+const _K15: readonly string[] = ['parenthesized_list_splat', 'list_splat'];
+const _K16: readonly string[] = ['class_definition', 'function_definition'];
+const _K17: readonly string[] = ['true', 'false', 'none', '_wildcard_pattern'];
+const _K18: readonly string[] = [
 	'case_as_pattern',
 	'keyword_pattern',
 	'class_pattern',
@@ -1466,7 +1473,7 @@ const _K17: readonly string[] = [
 	'complex_pattern',
 	'dotted_name'
 ];
-const _K18: readonly string[] = [
+const _K19: readonly string[] = [
 	'class_pattern',
 	'splat_pattern',
 	'union_pattern',
@@ -1479,8 +1486,8 @@ const _K18: readonly string[] = [
 	'complex_pattern',
 	'dotted_name'
 ];
-const _K19: readonly string[] = ['integer_decimal'];
-const _K20: readonly string[] = [
+const _K20: readonly string[] = ['integer_decimal'];
+const _K21: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
@@ -1488,8 +1495,8 @@ const _K20: readonly string[] = [
 	'float_leading_point',
 	'float_scientific'
 ];
-const _K21: readonly string[] = ['identifier', 'keyword_separator', 'positional_separator'];
-const _K22: readonly string[] = [
+const _K22: readonly string[] = ['identifier', 'keyword_separator', 'positional_separator'];
+const _K23: readonly string[] = [
 	'typed_parameter',
 	'default_parameter',
 	'typed_default_parameter',
@@ -1497,12 +1504,30 @@ const _K22: readonly string[] = [
 	'tuple_pattern',
 	'dictionary_splat_pattern'
 ];
-const _K23: readonly string[] = ['subscript', 'attribute', 'list_splat_pattern', 'tuple_pattern', 'list_pattern'];
-const _K24: readonly string[] = ['tuple_pattern'];
-const _K25: readonly string[] = ['subscript', 'attribute'];
-const _K26: readonly string[] = [
+const _K24: readonly string[] = [
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
+	'subscript',
+	'attribute',
+	'list_splat_pattern',
+	'tuple_pattern',
+	'list_pattern'
+];
+const _K25: readonly string[] = ['tuple_pattern'];
+const _K26: readonly string[] = ['subscript', 'attribute'];
+const _K27: readonly string[] = [
 	'await',
 	'binary_operator',
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
 	'string',
 	'concatenated_string',
 	'integer_hex',
@@ -1526,13 +1551,19 @@ const _K26: readonly string[] = [
 	'generator_expression',
 	'list_splat_pattern'
 ];
-const _K27: readonly string[] = [
+const _K28: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
 	'lambda',
 	'await',
 	'binary_operator',
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
 	'string',
 	'concatenated_string',
 	'integer_hex',
@@ -1560,13 +1591,19 @@ const _K27: readonly string[] = [
 	'as_pattern',
 	'lambda_within_for_in_clause'
 ];
-const _K28: readonly string[] = [
+const _K29: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
 	'lambda',
 	'await',
 	'binary_operator',
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
 	'string',
 	'concatenated_string',
 	'integer_hex',
@@ -1600,7 +1637,7 @@ const _K28: readonly string[] = [
 	'pattern_list',
 	'yield'
 ];
-const _K29: readonly string[] = [
+const _K30: readonly string[] = [
 	'_yield_from_clause',
 	'comparison_operator',
 	'not_operator',
@@ -1608,6 +1645,12 @@ const _K29: readonly string[] = [
 	'lambda',
 	'await',
 	'binary_operator',
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
 	'string',
 	'concatenated_string',
 	'integer_hex',
@@ -1635,15 +1678,21 @@ const _K29: readonly string[] = [
 	'as_pattern',
 	'expression_list'
 ];
-const _K30: readonly string[] = ['generator_expression', 'argument_list'];
-const _K31: readonly string[] = ['list_splat_pattern', 'dictionary_splat_pattern'];
-const _K32: readonly string[] = [
+const _K31: readonly string[] = ['generator_expression', 'argument_list'];
+const _K32: readonly string[] = ['list_splat_pattern', 'dictionary_splat_pattern'];
+const _K33: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
 	'lambda',
 	'await',
 	'binary_operator',
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
 	'string',
 	'concatenated_string',
 	'integer_hex',
@@ -1675,13 +1724,19 @@ const _K32: readonly string[] = [
 	'constrained_type',
 	'member_type'
 ];
-const _K33: readonly string[] = [
+const _K34: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
 	'lambda',
 	'await',
 	'binary_operator',
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
 	'string',
 	'concatenated_string',
 	'integer_hex',
@@ -1707,16 +1762,21 @@ const _K33: readonly string[] = [
 	'conditional_expression',
 	'named_expression',
 	'as_pattern',
-	'yield',
-	'list_splat'
+	'yield'
 ];
-const _K34: readonly string[] = [
+const _K35: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
 	'lambda',
 	'await',
 	'binary_operator',
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
 	'string',
 	'concatenated_string',
 	'integer_hex',
@@ -1746,15 +1806,21 @@ const _K34: readonly string[] = [
 	'list_splat',
 	'parenthesized_list_splat'
 ];
-const _K35: readonly string[] = ['interpolation', 'string_content'];
-const _K36: readonly string[] = ['escape_interpolation', '_string_content'];
-const _K37: readonly string[] = [
+const _K36: readonly string[] = ['interpolation', 'string_content'];
+const _K37: readonly string[] = ['escape_interpolation', '_string_content'];
+const _K38: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
 	'lambda',
 	'await',
 	'binary_operator',
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
 	'string',
 	'concatenated_string',
 	'integer_hex',
@@ -1784,8 +1850,8 @@ const _K37: readonly string[] = [
 	'pattern_list',
 	'yield'
 ];
-const _K38: readonly string[] = ['pass_statement', 'break_statement', 'continue_statement'];
-const _K39: readonly string[] = [
+const _K39: readonly string[] = ['pass_statement', 'break_statement', 'continue_statement'];
+const _K40: readonly string[] = [
 	'future_import_statement',
 	'import_statement',
 	'import_from_statement',
@@ -1800,13 +1866,19 @@ const _K39: readonly string[] = [
 	'exec_statement',
 	'type_alias_statement'
 ];
-const _K40: readonly string[] = [
+const _K41: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
 	'lambda',
 	'await',
 	'binary_operator',
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
 	'string',
 	'concatenated_string',
 	'integer_hex',
@@ -1837,14 +1909,20 @@ const _K40: readonly string[] = [
 	'parenthesized_list_splat',
 	'keyword_argument'
 ];
-const _K41: readonly string[] = ['_key_value_pattern', 'splat_pattern'];
-const _K42: readonly string[] = [
+const _K42: readonly string[] = ['_key_value_pattern', 'splat_pattern'];
+const _K43: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
 	'lambda',
 	'await',
 	'binary_operator',
+	'print_keyword',
+	'exec_keyword',
+	'async_keyword',
+	'await_keyword',
+	'type_keyword',
+	'match_keyword',
 	'string',
 	'concatenated_string',
 	'integer_hex',
@@ -1872,9 +1950,9 @@ const _K42: readonly string[] = [
 	'as_pattern',
 	'slice'
 ];
-const _K43: readonly string[] = ['pair', 'dictionary_splat'];
-const _K44: readonly string[] = ['for_in_clause', 'if_clause'];
-const _K45: readonly string[] = ['except_clause_exception_as', 'except_clause_exception_list'];
+const _K44: readonly string[] = ['pair', 'dictionary_splat'];
+const _K45: readonly string[] = ['for_in_clause', 'if_clause'];
+const _K46: readonly string[] = ['except_clause_exception_as', 'except_clause_exception_list'];
 
 export function coerceToModule(
 	...input: readonly (
@@ -2227,7 +2305,19 @@ export function coerceToExpressionStatement(
 }
 
 export function resolveNamedExpression_name(value: T.NamedExpression.LooseConfig['name']): T.NamedExpression['_name'] {
-	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOneLeaf<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match'>(value, 'identifier')
+		),
+		[
+			['print', TSKindId.PrintKeyword] as const,
+			['exec', TSKindId.ExecKeyword] as const,
+			['async', TSKindId.AsyncKeyword] as const,
+			['await', TSKindId.AwaitKeyword] as const,
+			['type', TSKindId.TypeKeyword] as const,
+			['match', TSKindId.MatchKeyword] as const
+		]
+	);
 }
 
 export function resolveNamedExpression_value(
@@ -2514,7 +2604,7 @@ export function resolveForStatement_asyncMarker(
 }
 
 export function resolveForStatement_left(value: T.ForStatement.LooseConfig['left']): T.ForStatement['_left'] {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _super_named_expression_lhs, _K12);
+	return _resolveOne<T.Pattern | T.PatternList>(value, _K12, _K13);
 }
 
 export function resolveForStatement_right(value: T.ForStatement.LooseConfig['right']): T.ForStatement['_right'] {
@@ -2930,7 +3020,7 @@ export function coerceToNonlocalStatement(
 }
 
 export function resolveExecStatement_code(value: T.ExecStatement.LooseConfig['code']): T.ExecStatement['_code'] {
-	return _resolveOne<T.String | T.Identifier>(value, _super_named_expression_lhs, _K13);
+	return _resolveOne<T.String | T.Identifier>(value, _K12, _K14);
 }
 
 export function resolveExecStatement_inClauses(
@@ -3027,7 +3117,7 @@ export function coerceToTypeParameter(input: T.TypeParameter.Loose): ReturnType<
 export function resolveParenthesizedListSplat_content(
 	value: T.ParenthesizedListSplat.LooseConfig['content']
 ): T.ParenthesizedListSplat['_content'] {
-	return _resolveOne<T.ParenthesizedListSplat | T.ListSplat>(value, _K0, _K14);
+	return _resolveOne<T.ParenthesizedListSplat | T.ListSplat>(value, _K0, _K15);
 }
 
 export function coerceToParenthesizedListSplat(
@@ -3042,7 +3132,7 @@ export function coerceToParenthesizedListSplat(
 			_resolveOne<T.ParenthesizedListSplat | T.ListSplat>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K0,
-				_K14
+				_K15
 			)
 		)
 	);
@@ -3083,7 +3173,7 @@ export function resolveDecoratedDefinition_decorators(
 export function resolveDecoratedDefinition_definition(
 	value: T.DecoratedDefinition.LooseConfig['definition']
 ): T.DecoratedDefinition['_definition'] {
-	return _resolveOne<T.ClassDefinition | T.FunctionDefinition>(value, _K0, _K15);
+	return _resolveOne<T.ClassDefinition | T.FunctionDefinition>(value, _K0, _K16);
 }
 
 export function coerceToDecoratedDefinition(
@@ -3243,7 +3333,7 @@ export function resolveCasePattern_content(value: T.CasePattern.LooseConfig['con
 				| T.ComplexPattern
 				| T.DottedName
 				| '_'
-			>(value, _K16, _K17)
+			>(value, _K17, _K18)
 		),
 		[
 			['True', TSKindId.True] as const,
@@ -3289,8 +3379,8 @@ export function coerceToCasePattern(input: T.CasePattern.Loose): ReturnType<type
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 								? input.content
 								: input,
-							_K16,
-							_K17
+							_K17,
+							_K18
 						)
 				),
 				[
@@ -3352,7 +3442,7 @@ export function coerceToUnionPattern(
 						| T.ComplexPattern
 						| T.DottedName
 						| '_'
-					>(children, _K16, _K18)
+					>(children, _K17, _K19)
 				),
 				[
 					['True', TSKindId.True] as const,
@@ -3389,7 +3479,7 @@ export function coerceToUnionPattern(
 					| T.ComplexPattern
 					| T.DottedName
 					| '_'
-				>(_elems, _K16, _K18)
+				>(_elems, _K17, _K19)
 			),
 			[
 				['True', TSKindId.True] as const,
@@ -3441,7 +3531,7 @@ export function resolveKeyValuePattern_key(value: T.KeyValuePattern.LooseConfig[
 				| T.ComplexPattern
 				| T.DottedName
 				| '_'
-			>(value, _K16, _K18)
+			>(value, _K17, _K19)
 		),
 		[
 			['True', TSKindId.True] as const,
@@ -3490,7 +3580,7 @@ export function resolveKeywordPattern_value(value: T.KeywordPattern.LooseConfig[
 				| T.ComplexPattern
 				| T.DottedName
 				| '_'
-			>(value, _K16, _K18)
+			>(value, _K17, _K19)
 		),
 		[
 			['True', TSKindId.True] as const,
@@ -3561,7 +3651,7 @@ export function resolveComplexPattern_real(value: T.ComplexPattern.LooseConfig['
 export function resolveComplexPattern_imaginary(
 	value: T.ComplexPattern.LooseConfig['imaginary']
 ): T.ComplexPattern['_imaginary'] {
-	return _resolveOne<T.Integer | T.Float>(value, _K19, _K20);
+	return _resolveOne<T.Integer | T.Float>(value, _K20, _K21);
 }
 
 export function resolveComplexPattern_operator(
@@ -3576,7 +3666,7 @@ export function resolveComplexPattern_operator(
 export function resolveComplexPattern_content(
 	value: T.ComplexPattern.LooseConfig['content']
 ): T.ComplexPattern['_content'] {
-	return _resolveOne<T.Integer | T.Float>(value, _K19, _K20);
+	return _resolveOne<T.Integer | T.Float>(value, _K20, _K21);
 }
 
 export function coerceToComplexPattern(input: T.ComplexPattern.Loose): ReturnType<typeof F.buildComplexPattern> {
@@ -3619,7 +3709,7 @@ export function coerceTo_Parameters(
 	return F.build_Parameters(
 		...(_listElements(input, ['delimiter'], undefined, (els) =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () => _resolveMany<T.Parameter>(els, _K21, _K22)),
+				_resolveKindEnum(els, () => _resolveMany<T.Parameter>(els, _K22, _K23)),
 				[]
 			)
 		) as unknown as NonEmptyArray<T.Parameter>)
@@ -3654,7 +3744,7 @@ export function coerceToPatterns(
 	}
 	return F.buildPatterns(
 		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveMany<T.Pattern>(els, _super_named_expression_lhs, _K23)
+			_resolveMany<T.Pattern>(els, _K12, _K24)
 		) as unknown as NonEmptyArray<T.Pattern>)
 	);
 }
@@ -3698,7 +3788,7 @@ export function coerceToListPattern(input?: T.ListPattern.Loose): ReturnType<typ
 export function resolveDefaultParameter_name(
 	value: T.DefaultParameter.LooseConfig['name']
 ): T.DefaultParameter['_name'] {
-	return _resolveOne<T.Identifier | T.TuplePattern>(value, _super_named_expression_lhs, _K24);
+	return _resolveOne<T.Identifier | T.TuplePattern>(value, _K12, _K25);
 }
 
 export function resolveDefaultParameter_value(
@@ -3755,7 +3845,23 @@ export function coerceToTypedDefaultParameter(
 export function resolveListSplatPattern_content(
 	value: T.ListSplatPattern.LooseConfig['content']
 ): T.ListSplatPattern['_content'] {
-	return _resolveOne<T.Identifier | T.Subscript | T.Attribute>(value, _super_named_expression_lhs, _K25);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOne<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute>(
+				value,
+				_K12,
+				_K26
+			)
+		),
+		[
+			['print', TSKindId.PrintKeyword] as const,
+			['exec', TSKindId.ExecKeyword] as const,
+			['async', TSKindId.AsyncKeyword] as const,
+			['await', TSKindId.AwaitKeyword] as const,
+			['type', TSKindId.TypeKeyword] as const,
+			['match', TSKindId.MatchKeyword] as const
+		]
+	);
 }
 
 export function coerceToListSplatPattern(input: T.ListSplatPattern.Loose): ReturnType<typeof F.buildListSplatPattern> {
@@ -3765,10 +3871,30 @@ export function coerceToListSplatPattern(input: T.ListSplatPattern.Loose): Retur
 		_requireField(
 			'list_splat_pattern',
 			'content',
-			_resolveOne<T.Identifier | T.Subscript | T.Attribute>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_super_named_expression_lhs,
-				_K25
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+						? input.content
+						: input,
+					() =>
+						_resolveOne<
+							T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute
+						>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+								? input.content
+								: input,
+							_K12,
+							_K26
+						)
+				),
+				[
+					['print', TSKindId.PrintKeyword] as const,
+					['exec', TSKindId.ExecKeyword] as const,
+					['async', TSKindId.AsyncKeyword] as const,
+					['await', TSKindId.AwaitKeyword] as const,
+					['type', TSKindId.TypeKeyword] as const,
+					['match', TSKindId.MatchKeyword] as const
+				]
 			)
 		)
 	);
@@ -3777,7 +3903,23 @@ export function coerceToListSplatPattern(input: T.ListSplatPattern.Loose): Retur
 export function resolveDictionarySplatPattern_content(
 	value: T.DictionarySplatPattern.LooseConfig['content']
 ): T.DictionarySplatPattern['_content'] {
-	return _resolveOne<T.Identifier | T.Subscript | T.Attribute>(value, _super_named_expression_lhs, _K25);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOne<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute>(
+				value,
+				_K12,
+				_K26
+			)
+		),
+		[
+			['print', TSKindId.PrintKeyword] as const,
+			['exec', TSKindId.ExecKeyword] as const,
+			['async', TSKindId.AsyncKeyword] as const,
+			['await', TSKindId.AwaitKeyword] as const,
+			['type', TSKindId.TypeKeyword] as const,
+			['match', TSKindId.MatchKeyword] as const
+		]
+	);
 }
 
 export function coerceToDictionarySplatPattern(
@@ -3789,10 +3931,30 @@ export function coerceToDictionarySplatPattern(
 		_requireField(
 			'dictionary_splat_pattern',
 			'content',
-			_resolveOne<T.Identifier | T.Subscript | T.Attribute>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_super_named_expression_lhs,
-				_K25
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+						? input.content
+						: input,
+					() =>
+						_resolveOne<
+							T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute
+						>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+								? input.content
+								: input,
+							_K12,
+							_K26
+						)
+				),
+				[
+					['print', TSKindId.PrintKeyword] as const,
+					['exec', TSKindId.ExecKeyword] as const,
+					['async', TSKindId.AsyncKeyword] as const,
+					['await', TSKindId.AwaitKeyword] as const,
+					['type', TSKindId.TypeKeyword] as const,
+					['match', TSKindId.MatchKeyword] as const
+				]
 			)
 		)
 	);
@@ -3806,10 +3968,7 @@ export function resolveAsPattern_expression(value: T.AsPattern.LooseConfig['expr
 }
 
 export function resolveAsPattern_alias(value: T.AsPattern.LooseConfig['alias']): T.AsPattern['_alias'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
-		[]
-	);
+	return _resolveOneBranch<T.AsPatternTarget>(value, 'as_pattern_target');
 }
 
 export function coerceToAsPattern(input: T.AsPattern.Loose): ReturnType<typeof F.buildAsPattern> {
@@ -3891,7 +4050,7 @@ export function coerceToBooleanOperator(input: T.BooleanOperator.Loose): ReturnT
 
 export function resolveBinaryOperator_left(value: T.BinaryOperator.LooseConfig['left']): T.BinaryOperator['_left'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K26)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
 	);
 }
@@ -3923,7 +4082,7 @@ export function resolveBinaryOperator_operator(
 
 export function resolveBinaryOperator_right(value: T.BinaryOperator.LooseConfig['right']): T.BinaryOperator['_right'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K26)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
 	);
 }
@@ -3951,7 +4110,7 @@ export function resolveUnaryOperator_argument(
 	value: T.UnaryOperator.LooseConfig['argument']
 ): T.UnaryOperator['_argument'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K26)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
 	);
 }
@@ -3969,7 +4128,7 @@ export function resolveComparisonOperator_left(
 	value: T.ComparisonOperator.LooseConfig['left']
 ): T.ComparisonOperator['_left'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K26)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
 	);
 }
@@ -4027,7 +4186,7 @@ export function resolveLambdaWithinForInClause_body(
 	value: T.LambdaWithinForInClause.LooseConfig['body']
 ): T.LambdaWithinForInClause['_body'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.LambdaWithinForInClause>(value, _K7, _K27)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.LambdaWithinForInClause>(value, _K7, _K28)),
 		[]
 	);
 }
@@ -4046,7 +4205,7 @@ export function coerceToLambdaWithinForInClause(
 export function resolveAugmentedAssignment_left(
 	value: T.AugmentedAssignment.LooseConfig['left']
 ): T.AugmentedAssignment['_left'] {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _super_named_expression_lhs, _K12);
+	return _resolveOne<T.Pattern | T.PatternList>(value, _K12, _K13);
 }
 
 export function resolveAugmentedAssignment_operator(
@@ -4085,7 +4244,7 @@ export function resolveAugmentedAssignment_right(
 			_resolveOne<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
 				value,
 				_K7,
-				_K28
+				_K29
 			)
 		),
 		[]
@@ -4105,7 +4264,7 @@ export function coerceToAugmentedAssignment(
 }
 
 export function resolvePatternList_pattern(value: T.PatternList.LooseConfig['pattern']): T.PatternList['_pattern'] {
-	return _resolveOne<T.Pattern>(value, _super_named_expression_lhs, _K23);
+	return _resolveOne<T.Pattern>(value, _K12, _K24);
 }
 
 export function resolvePatternList_tail(value: T.PatternList.LooseConfig['tail']): T.PatternList['_tail'] {
@@ -4126,7 +4285,7 @@ export function coerceToPatternList(input: T.PatternList.Loose): ReturnType<type
 
 export function resolveYield_content(value: T.Yield.LooseConfig['content']): T.Yield['_content'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.YieldFromClause | T.Expression | T.ExpressionList>(value, _K7, _K29)),
+		_resolveKindEnum(value, () => _resolveOne<T.YieldFromClause | T.Expression | T.ExpressionList>(value, _K7, _K30)),
 		[]
 	);
 }
@@ -4144,7 +4303,7 @@ export function coerceToYield(input?: T.Yield.Loose): ReturnType<typeof F.buildY
 							? input.content
 							: input,
 						_K7,
-						_K29
+						_K30
 					)
 			),
 			[]
@@ -4154,7 +4313,7 @@ export function coerceToYield(input?: T.Yield.Loose): ReturnType<typeof F.buildY
 
 export function resolveAttribute_object(value: T.Attribute.LooseConfig['object']): T.Attribute['_object'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K26)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
 	);
 }
@@ -4173,7 +4332,7 @@ export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F
 
 export function resolveSubscript_value(value: T.Subscript.LooseConfig['value']): T.Subscript['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K26)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
 	);
 }
@@ -4224,13 +4383,13 @@ export function coerceToEllipsis(_input?: T.Ellipsis.Loose): ReturnType<typeof F
 
 export function resolveCall_function(value: T.Call.LooseConfig['function']): T.Call['_function'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K26)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
 	);
 }
 
 export function resolveCall_arguments(value: T.Call.LooseConfig['arguments']): T.Call['_arguments'] {
-	return _resolveOne<T.GeneratorExpression | T.ArgumentList>(value, _K0, _K30);
+	return _resolveOne<T.GeneratorExpression | T.ArgumentList>(value, _K0, _K31);
 }
 
 export function coerceToCall(input: T.Call.Loose): ReturnType<typeof F.buildCall> {
@@ -4244,11 +4403,7 @@ export function coerceToCall(input: T.Call.Loose): ReturnType<typeof F.buildCall
 export function resolveTypedParameter_content(
 	value: T.TypedParameter.LooseConfig['content']
 ): T.TypedParameter['_content'] {
-	return _resolveOne<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>(
-		value,
-		_super_named_expression_lhs,
-		_K31
-	);
+	return _resolveOne<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>(value, _K12, _K32);
 }
 
 export function resolveTypedParameter_type(value: T.TypedParameter.LooseConfig['type']): T.TypedParameter['_type'] {
@@ -4270,7 +4425,7 @@ export function resolveType_content(value: T.Type.LooseConfig['content']): T.Typ
 			_resolveOne<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
 				value,
 				_K7,
-				_K32
+				_K33
 			)
 		),
 		[]
@@ -4295,7 +4450,7 @@ export function coerceToType(input: T.Type.Loose): ReturnType<typeof F.buildType
 								? input.content
 								: input,
 							_K7,
-							_K32
+							_K33
 						)
 				),
 				[]
@@ -4399,7 +4554,19 @@ export function coerceToMemberType(input: T.MemberType.Loose): ReturnType<typeof
 }
 
 export function resolveKeywordArgument_name(value: T.KeywordArgument.LooseConfig['name']): T.KeywordArgument['_name'] {
-	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOneLeaf<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match'>(value, 'identifier')
+		),
+		[
+			['print', TSKindId.PrintKeyword] as const,
+			['exec', TSKindId.ExecKeyword] as const,
+			['async', TSKindId.AsyncKeyword] as const,
+			['await', TSKindId.AwaitKeyword] as const,
+			['type', TSKindId.TypeKeyword] as const,
+			['match', TSKindId.MatchKeyword] as const
+		]
+	);
 }
 
 export function resolveKeywordArgument_value(
@@ -4631,7 +4798,7 @@ export function resolveParenthesizedExpression_content(
 	value: T.ParenthesizedExpression.LooseConfig['content']
 ): T.ParenthesizedExpression['_content'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.Yield | T.ListSplat>(value, _K7, _K33)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.Yield>(value, _K7, _K34)),
 		[]
 	);
 }
@@ -4651,12 +4818,12 @@ export function coerceToParenthesizedExpression(
 						? input.content
 						: input,
 					() =>
-						_resolveOne<T.Expression | T.Yield | T.ListSplat>(
+						_resolveOne<T.Expression | T.Yield>(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 								? input.content
 								: input,
 							_K7,
-							_K33
+							_K34
 						)
 				),
 				[]
@@ -4725,7 +4892,7 @@ export function coerceToCollectionElements(
 		...(_listElements(input, ['delimiter'], undefined, (els) =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(els, () =>
-					_resolveMany<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(els, _K7, _K34)
+					_resolveMany<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(els, _K7, _K35)
 				),
 				[]
 			)
@@ -4740,12 +4907,12 @@ export function resolveForInClause_asyncMarker(
 }
 
 export function resolveForInClause_left(value: T.ForInClause.LooseConfig['left']): T.ForInClause['_left'] {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _super_named_expression_lhs, _K12);
+	return _resolveOne<T.Pattern | T.PatternList>(value, _K12, _K13);
 }
 
 export function resolveForInClause_rights(value: T.ForInClause.LooseConfig['right']): T.ForInClause['_right'] {
 	const resolved: readonly T.ForInClause['_right'][number][] = coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveMany<T.Expression | T.LambdaWithinForInClause>(value, _K7, _K27)),
+		_resolveKindEnum(value, () => _resolveMany<T.Expression | T.LambdaWithinForInClause>(value, _K7, _K28)),
 		[]
 	);
 	_assertNonEmpty(resolved, 'for_in_clause.rights');
@@ -4879,7 +5046,7 @@ export function resolveString_stringStart(value: T.String.LooseConfig['stringSta
 }
 
 export function resolveString_contents(value: T.String.LooseConfig['content']): T.String['_content'] {
-	return _resolveMany<T.Interpolation | T.StringContent>(value, _K0, _K35);
+	return _resolveMany<T.Interpolation | T.StringContent>(value, _K0, _K36);
 }
 
 export function resolveString_stringEnd(value: T.String.LooseConfig['stringEnd']): T.String['_string_end'] {
@@ -4915,7 +5082,7 @@ export function coerceToStringContent(
 				_resolveKindEnum(children, () =>
 					_resolveMany<T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent>(
 						children,
-						_K36,
+						_K37,
 						_super_escape_sequence
 					)
 				),
@@ -4935,7 +5102,7 @@ export function coerceToStringContent(
 			_resolveKindEnum(_elems, () =>
 				_resolveMany<T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent>(
 					_elems,
-					_K36,
+					_K37,
 					_super_escape_sequence
 				)
 			),
@@ -4949,7 +5116,7 @@ export function resolveInterpolation_expression(
 ): T.Interpolation['_expression'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K37)
+			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K38)
 		),
 		[]
 	);
@@ -4987,14 +5154,18 @@ export function coerceToInterpolation(input: T.Interpolation.Loose): ReturnType<
 export function coerceToFormatSpecifier(
 	...input: readonly (
 		| T.FormatSpecifier.Loose
-		| LooseValue<'[^{}\\n]+' | T.Interpolation, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		| LooseValue<'[^{}\\n]+' | T.FormatExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildFormatSpecifier> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FormatSpecifier) {
 		const data = input[0];
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildFormatSpecifier(...(children as unknown as Parameters<typeof F.buildFormatSpecifier>));
+		return F.buildFormatSpecifier(
+			...(_resolveManyBranch<'[^{}\\n]+' | T.FormatExpression>(children, 'format_expression') as unknown as Parameters<
+				typeof F.buildFormatSpecifier
+			>)
+		);
 	}
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
@@ -5003,7 +5174,11 @@ export function coerceToFormatSpecifier(
 		const v = (head as Record<string, unknown>)['content'];
 		return Array.isArray(v) ? v : [v];
 	})();
-	return F.buildFormatSpecifier(...(_elems as unknown as Parameters<typeof F.buildFormatSpecifier>));
+	return F.buildFormatSpecifier(
+		...(_resolveManyBranch<'[^{}\\n]+' | T.FormatExpression>(_elems, 'format_expression') as unknown as Parameters<
+			typeof F.buildFormatSpecifier
+		>)
+	);
 }
 
 export function coerceToTypeConversion(input: T.TypeConversion.Loose): ReturnType<typeof F.buildTypeConversion> {
@@ -5030,7 +5205,7 @@ export function coerceToNone(_input?: T.None.Loose): ReturnType<typeof F.buildNo
 
 export function resolveAwait_expression(value: T.Await.LooseConfig['expression']): T.Await['_expression'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K26)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
 	);
 }
@@ -5053,7 +5228,7 @@ export function coerceToAwait(input: T.Await.Loose): ReturnType<typeof F.buildAw
 								? input.expression
 								: input,
 							_K7,
-							_K26
+							_K27
 						)
 				),
 				[]
@@ -5133,7 +5308,7 @@ export function coerceToSimpleStatementsElements(
 	return F.buildSimpleStatementsElements(
 		...(_listElements(input, ['delimiter'], undefined, (els) =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () => _resolveMany<T.SimpleStatement>(els, _K38, _K39)),
+				_resolveKindEnum(els, () => _resolveMany<T.SimpleStatement>(els, _K39, _K40)),
 				[]
 			)
 		) as unknown as NonEmptyArray<T.SimpleStatement>)
@@ -5346,7 +5521,7 @@ export function coerceToArgumentListElements(
 					_resolveMany<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>(
 						els,
 						_K7,
-						_K40
+						_K41
 					)
 				),
 				[]
@@ -5484,7 +5659,7 @@ export function coerceToDictPatternElements(
 	}
 	return F.buildDictPatternElements(
 		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveMany<T.KeyValuePattern | T.SplatPattern>(els, _K0, _K41)
+			_resolveMany<T.KeyValuePattern | T.SplatPattern>(els, _K0, _K42)
 		) as unknown as NonEmptyArray<T.KeyValuePattern | T.SplatPattern>)
 	);
 }
@@ -5523,7 +5698,7 @@ export function coerceToPatternListPatterns(
 	}
 	return F.buildPatternListPatterns(
 		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveMany<T.Pattern>(els, _super_named_expression_lhs, _K23)
+			_resolveMany<T.Pattern>(els, _K12, _K24)
 		) as unknown as NonEmptyArray<T.Pattern>)
 	);
 }
@@ -5567,7 +5742,7 @@ export function coerceToSubscripts(
 	return F.buildSubscripts(
 		...(_listElements(input, ['delimiter'], undefined, (els) =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () => _resolveMany<T.Expression | T.Slice>(els, _K7, _K42)),
+				_resolveKindEnum(els, () => _resolveMany<T.Expression | T.Slice>(els, _K7, _K43)),
 				[]
 			)
 		) as unknown as NonEmptyArray<T.Expression | T.Slice>)
@@ -5612,7 +5787,7 @@ export function coerceToDictionaryElements(
 	}
 	return F.buildDictionaryElements(
 		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveMany<T.Pair | T.DictionarySplat>(els, _K0, _K43)
+			_resolveMany<T.Pair | T.DictionarySplat>(els, _K0, _K44)
 		) as unknown as NonEmptyArray<T.Pair | T.DictionarySplat>)
 	);
 }
@@ -5752,7 +5927,7 @@ export function coerceToComprehensionClauses(
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildComprehensionClauses(
-			...(_resolveMany<T.ForInClause | T.IfClause>(children, _K0, _K44) as unknown as Parameters<
+			...(_resolveMany<T.ForInClause | T.IfClause>(children, _K0, _K45) as unknown as Parameters<
 				typeof F.buildComprehensionClauses
 			>)
 		);
@@ -5765,7 +5940,7 @@ export function coerceToComprehensionClauses(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildComprehensionClauses(
-		...(_resolveMany<T.ForInClause | T.IfClause>(_elems, _K0, _K44) as unknown as Parameters<
+		...(_resolveMany<T.ForInClause | T.IfClause>(_elems, _K0, _K45) as unknown as Parameters<
 			typeof F.buildComprehensionClauses
 		>)
 	);
@@ -5931,48 +6106,48 @@ export function coerceToParenthesizedImportList(
 	);
 }
 
-export function resolveIntegerHex_prefix(value: T.IntegerHex.LooseConfig['prefix']): T.IntegerHex['_prefix'] {
-	return _resolveOne<'0x' | '0X'>(value, _K0, _K0);
-}
-
 export function resolveIntegerHex_content(value: T.IntegerHex.LooseConfig['content']): T.IntegerHex['_content'] {
 	return typeof value === 'number' ? numberText(16, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToIntegerHex(input: T.IntegerHex.Loose): ReturnType<typeof F.buildIntegerHex> {
-	if (!_isLooseConfig<T.IntegerHex.LooseConfig | string | number>(input))
+export function coerceToIntegerHex(
+	input: T.IntegerHex.Loose,
+	options?: T.IntegerHex.Options
+): ReturnType<typeof F.buildIntegerHex> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerHex)
 		return input as unknown as ReturnType<typeof F.buildIntegerHex>;
-	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
-	) as T.IntegerHex.LooseConfig;
-	return F.buildIntegerHex({
-		prefix: _requireField('integer_hex', 'prefix', resolveIntegerHex_prefix(_cfg.prefix)),
-		content: _requireField('integer_hex', 'content', resolveIntegerHex_content(_cfg.content))
-	});
-}
-
-export function resolveIntegerOctal_prefix(value: T.IntegerOctal.LooseConfig['prefix']): T.IntegerOctal['_prefix'] {
-	return _resolveOne<'0o' | '0O'>(value, _K0, _K0);
+	const _value =
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+	return F.buildIntegerHex(
+		_requireField(
+			'integer_hex',
+			'content',
+			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
+		),
+		options
+	);
 }
 
 export function resolveIntegerOctal_content(value: T.IntegerOctal.LooseConfig['content']): T.IntegerOctal['_content'] {
 	return typeof value === 'number' ? numberText(8, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToIntegerOctal(input: T.IntegerOctal.Loose): ReturnType<typeof F.buildIntegerOctal> {
-	if (!_isLooseConfig<T.IntegerOctal.LooseConfig | string | number>(input))
+export function coerceToIntegerOctal(
+	input: T.IntegerOctal.Loose,
+	options?: T.IntegerOctal.Options
+): ReturnType<typeof F.buildIntegerOctal> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerOctal)
 		return input as unknown as ReturnType<typeof F.buildIntegerOctal>;
-	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
-	) as T.IntegerOctal.LooseConfig;
-	return F.buildIntegerOctal({
-		prefix: _requireField('integer_octal', 'prefix', resolveIntegerOctal_prefix(_cfg.prefix)),
-		content: _requireField('integer_octal', 'content', resolveIntegerOctal_content(_cfg.content))
-	});
-}
-
-export function resolveIntegerBinary_prefix(value: T.IntegerBinary.LooseConfig['prefix']): T.IntegerBinary['_prefix'] {
-	return _resolveOne<'0b' | '0B'>(value, _K0, _K0);
+	const _value =
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+	return F.buildIntegerOctal(
+		_requireField(
+			'integer_octal',
+			'content',
+			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
+		),
+		options
+	);
 }
 
 export function resolveIntegerBinary_content(
@@ -5981,16 +6156,22 @@ export function resolveIntegerBinary_content(
 	return typeof value === 'number' ? numberText(2, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToIntegerBinary(input: T.IntegerBinary.Loose): ReturnType<typeof F.buildIntegerBinary> {
-	if (!_isLooseConfig<T.IntegerBinary.LooseConfig | string | number>(input))
+export function coerceToIntegerBinary(
+	input: T.IntegerBinary.Loose,
+	options?: T.IntegerBinary.Options
+): ReturnType<typeof F.buildIntegerBinary> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerBinary)
 		return input as unknown as ReturnType<typeof F.buildIntegerBinary>;
-	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
-	) as T.IntegerBinary.LooseConfig;
-	return F.buildIntegerBinary({
-		prefix: _requireField('integer_binary', 'prefix', resolveIntegerBinary_prefix(_cfg.prefix)),
-		content: _requireField('integer_binary', 'content', resolveIntegerBinary_content(_cfg.content))
-	});
+	const _value =
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+	return F.buildIntegerBinary(
+		_requireField(
+			'integer_binary',
+			'content',
+			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
+		),
+		options
+	);
 }
 
 export function coerceToIntegerDecimal(input: T.IntegerDecimal.Loose): ReturnType<typeof F.buildIntegerDecimal> {
@@ -6208,15 +6389,13 @@ export function coerceToEscapeSequenceOctal(
 ): ReturnType<typeof F.buildEscapeSequenceOctal> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.EscapeSequenceOctal)
 		return input as unknown as ReturnType<typeof F.buildEscapeSequenceOctal>;
+	const _value =
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
 	return F.buildEscapeSequenceOctal(
 		_requireField(
 			'escape_sequence_octal',
 			'content',
-			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K0,
-				_K0
-			)
+			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		)
 	);
 }
@@ -6315,7 +6494,7 @@ export function resolveSimplePatternNegative_sign(
 export function resolveSimplePatternNegative_content(
 	value: T.SimplePatternNegative.LooseConfig['content']
 ): T.SimplePatternNegative['_content'] {
-	return _resolveOne<T.Integer | T.Float>(value, _K19, _K20);
+	return _resolveOne<T.Integer | T.Float>(value, _K20, _K21);
 }
 
 export function coerceToSimplePatternNegative(
@@ -6364,7 +6543,7 @@ export function coerceToExceptClauseExceptionList(
 export function resolveExceptClauseException_content(
 	value: T.ExceptClauseException.LooseConfig['content']
 ): T.ExceptClauseException['_content'] {
-	return _resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(value, _K0, _K45);
+	return _resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(value, _K0, _K46);
 }
 
 export function coerceToExceptClauseException(
@@ -6379,14 +6558,14 @@ export function coerceToExceptClauseException(
 			_resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K0,
-				_K45
+				_K46
 			)
 		)
 	);
 }
 
 export function resolveAssignmentEq_left(value: T.AssignmentEq.LooseConfig['left']): T.AssignmentEq['_left'] {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _super_named_expression_lhs, _K12);
+	return _resolveOne<T.Pattern | T.PatternList>(value, _K12, _K13);
 }
 
 export function resolveAssignmentEq_right(value: T.AssignmentEq.LooseConfig['right']): T.AssignmentEq['_right'] {
@@ -6395,7 +6574,7 @@ export function resolveAssignmentEq_right(value: T.AssignmentEq.LooseConfig['rig
 			_resolveOne<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
 				value,
 				_K7,
-				_K28
+				_K29
 			)
 		),
 		[]
@@ -6412,7 +6591,7 @@ export function coerceToAssignmentEq(input: T.AssignmentEq.Loose): ReturnType<ty
 }
 
 export function resolveAssignmentType_left(value: T.AssignmentType.LooseConfig['left']): T.AssignmentType['_left'] {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _super_named_expression_lhs, _K12);
+	return _resolveOne<T.Pattern | T.PatternList>(value, _K12, _K13);
 }
 
 export function resolveAssignmentType_type(value: T.AssignmentType.LooseConfig['type']): T.AssignmentType['_type'] {
@@ -6429,7 +6608,7 @@ export function coerceToAssignmentType(input: T.AssignmentType.Loose): ReturnTyp
 }
 
 export function resolveAssignmentTyped_left(value: T.AssignmentTyped.LooseConfig['left']): T.AssignmentTyped['_left'] {
-	return _resolveOne<T.Pattern | T.PatternList>(value, _super_named_expression_lhs, _K12);
+	return _resolveOne<T.Pattern | T.PatternList>(value, _K12, _K13);
 }
 
 export function resolveAssignmentTyped_type(value: T.AssignmentTyped.LooseConfig['type']): T.AssignmentTyped['_type'] {
@@ -6444,7 +6623,7 @@ export function resolveAssignmentTyped_right(
 			_resolveOne<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
 				value,
 				_K7,
-				_K28
+				_K29
 			)
 		),
 		[]
@@ -6692,7 +6871,7 @@ export function resolveComparisonOperatorComparator_primaryExpression(
 	value: T.ComparisonOperatorComparator.LooseConfig['primaryExpression']
 ): T.ComparisonOperatorComparator['_primary_expression'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K26)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression>(value, _K7, _K27)),
 		[]
 	);
 }
@@ -6772,4 +6951,61 @@ export function coerceToEscapeInterpolation(
 export function coerceToStringEnd(input: T.StringEnd.Loose): ReturnType<typeof F.buildStringEnd> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringEnd>;
 	return F.buildStringEnd(input as Parameters<typeof F.buildStringEnd>[0]);
+}
+
+export function resolveAsPatternTarget_content(
+	value: T.AsPatternTarget.LooseConfig['content']
+): T.AsPatternTarget['_content'] {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
+		[]
+	);
+}
+
+export function coerceToAsPatternTarget(input: T.AsPatternTarget.Loose): ReturnType<typeof F.buildAsPatternTarget> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId._AsPatternTarget)
+		return input as unknown as ReturnType<typeof F.buildAsPatternTarget>;
+	return F.buildAsPatternTarget(
+		_requireField(
+			'as_pattern_target',
+			'content',
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+						? input.content
+						: input,
+					() =>
+						_resolveOne<T.Expression>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+								? input.content
+								: input,
+							_K7,
+							_K8
+						)
+				),
+				[]
+			)
+		)
+	);
+}
+
+export function resolveFormatExpression_content(
+	value: T.FormatExpression.LooseConfig['content']
+): T.FormatExpression['_content'] {
+	return _resolveOneBranch<T.Interpolation>(value, 'interpolation');
+}
+
+export function coerceToFormatExpression(input: T.FormatExpression.Loose): ReturnType<typeof F.buildFormatExpression> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId._FormatExpression)
+		return input as unknown as ReturnType<typeof F.buildFormatExpression>;
+	return F.buildFormatExpression(
+		_requireField(
+			'format_expression',
+			'content',
+			_resolveOneBranch<T.Interpolation>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				'interpolation'
+			)
+		)
+	);
 }

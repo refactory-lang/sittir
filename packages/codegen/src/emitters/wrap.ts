@@ -1,8 +1,8 @@
+import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { isVisibleTextLeaf, storageKindOfRef } from '../compiler/model/node-map.ts';
+import { AssembledAlias, isVisibleTextLeaf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
-import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
 import {
 	AssembledSupertype,
 	AssembledList,
@@ -14,7 +14,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
 
-type BranchLikeForWrap = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
+type BranchLikeForWrap = AuthoredCompound;
 import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
 import { buildSupertypeMembersMap } from '../compiler/model/supertype-members.ts';
 import { interiorOf } from './interior.ts';
@@ -929,6 +929,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				this.emitBranch(node);
 				break;
 			case 'polymorph':
+			case 'alias':
 				this.emitBranch(node);
 				break;
 			case 'supertype':
@@ -1641,6 +1642,19 @@ export class WrapEmitter implements CodegenEmitter<string> {
 					continue;
 				}
 				const memberName = entry?.member ?? node.typeName;
+				if (node instanceof AssembledAlias) {
+					if (entry === undefined || (entry.parseId ?? entry.id) !== node.aliasTypeId) {
+						throw new Error(
+							`emitWrap: alias envelope '${kind}' has no catalog entry for its type id ${node.aliasTypeId} — the reader stamps that id and nothing could dispatch it`
+						);
+					}
+					rows.set(memberName, {
+						row: `  ${wrapTableKey(kind, memberName)}: (d, t) => wrap${node.typeName}(_aliasEnvelope(d, t) as unknown as T.${node.typeName}, t),`,
+						exact: true,
+						typeExpr: `ReturnType<typeof wrap${node.typeName}>`
+					});
+					continue;
+				}
 				claimRow(
 					this.#kindEntries ? memberName : kind,
 					`  ${wrapTableKey(kind, memberName)}: (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`,
@@ -1666,6 +1680,41 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		for (const { row } of rows.values()) lines.push(row);
 		lines.push('};');
 		lines.push('');
+		if ([...this.#nodeMap.nodes.values()].some((node) => node instanceof AssembledAlias)) {
+			lines.push(
+				'function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {',
+				'  type Wire = _NodeData & {',
+				'    readonly $storageType?: number;',
+				'    readonly $_trivia?: unknown;',
+				'    readonly $nodeHandle?: number;',
+				'    readonly $childIndex?: number;',
+				'    readonly $span?: unknown;',
+				'  };',
+				'  const shown = data as Wire;',
+				'  if (shown.$storageType === undefined) {',
+				"    const slots = Object.keys(shown).filter((key) => key.charCodeAt(0) === 95);",
+				"    if (slots.length !== 1 || slots[0] === '_content') return data;",
+				'    const { [slots[0]!]: child, ...container } = shown as unknown as Record<string, unknown>;',
+				'    return { ...container, _content: child } as unknown as _NodeData;',
+				'  }',
+				'  const full = (',
+				'    shown.$nodeHandle != null && shown.$childIndex != null ? readNode(tree, shown.$nodeHandle, shown.$childIndex) : shown',
+				'  ) as Wire;',
+				'  const { $storageType, $_trivia, $childIndex: _childIndex, ...storage } = full;',
+				'  return {',
+				'    $type: shown.$type,',
+				'    $source: shown.$source,',
+				'    $named: shown.$named,',
+				'    $span: shown.$span,',
+				'    $nodeHandle: shown.$nodeHandle,',
+				'    $childIndex: shown.$childIndex,',
+				'    $_trivia,',
+				'    _content: { ...storage, $type: $storageType }',
+				'  } as unknown as _NodeData;',
+				'}',
+				''
+			);
+		}
 		if (this.#kindEntries) {
 			lines.push('interface _WrapReturnByKindId {');
 			for (const [tableKey, { typeExpr }] of rows) {

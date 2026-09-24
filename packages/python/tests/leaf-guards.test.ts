@@ -5,7 +5,7 @@ describe('python text-leaf factories always run their guard', () => {
 	it('builds text that matches the whole token', () => {
 		expect(() => ir.identifier('abc')).not.toThrow();
 		expect(ir.comment(' hello').$render!()).toBe('# hello');
-		expect(() => ir.integer.hex({ prefix: '0x', content: '1F' })).not.toThrow();
+		expect(() => ir.integer.hex({ content: '1F' }, { prefix: '0x' })).not.toThrow();
 	});
 
 	it('rejects empty text', () => {

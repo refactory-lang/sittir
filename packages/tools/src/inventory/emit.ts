@@ -1,6 +1,7 @@
 import { ir, TSKindId, Delimiter, createEngine } from '@sittir/typescript';
 import type {
 	PrimaryType,
+	TypeIdentifier,
 	Statement as TsStatement,
 	TemplateChars,
 	TemplateType,
@@ -480,7 +481,7 @@ const KEYWORDS = {
 	never: TSKindId.NeverKeyword
 } as const;
 
-function toPrimary(t: TypeExpr, base: boolean): PrimaryType {
+function toPrimary(t: TypeExpr, base: boolean): PrimaryType | TypeIdentifier.Types {
 	switch (t.k) {
 		case 'ident':
 			return ir.identifier(t.name);
@@ -523,11 +524,11 @@ function toPrimary(t: TypeExpr, base: boolean): PrimaryType {
 	}
 }
 
-function toIr(t: TypeExpr, base: boolean): Type {
+function toIr(t: TypeExpr, base: boolean): Type | TypeIdentifier.Types {
 	if (t.k === 'kw') return KEYWORDS[t.name];
 	if (t.k !== 'union') return toPrimary(t, base);
 	const parts = t.of.map((p) => toIr(p, base));
-	let acc: Type = parts[0] ?? KEYWORDS.never;
+	let acc: Type | TypeIdentifier.Types = parts[0] ?? KEYWORDS.never;
 	for (const p of parts.slice(1)) acc = ir.unionType.strict({ left: acc, right: p });
 	return acc;
 }
@@ -593,12 +594,14 @@ function statementIr(s: Statement, base: boolean): TsStatement {
 			return interfaceIr(s, base);
 		case 'alias':
 			return ir.exportStatement.default.declaration.strict({
-				content: ir.typeAliasDeclaration.strict({
-					name: ir.identifier(s.name),
-					typeParameters: typeParams(),
-					value: toIr(s.value, base),
-					terminator: TSKindId.Semi
-				})
+				content: ir.typeAliasDeclaration.strict(
+					{
+						name: ir.identifier(s.name),
+						typeParameters: typeParams(),
+						value: toIr(s.value, base)
+					},
+					{ terminator: TSKindId.Semi }
+				)
 			});
 		case 'namespace':
 			return ir.exportStatement.default.declaration.strict({
@@ -618,11 +621,12 @@ function importIr(imp: VocabularyFile['imports'][number], leading: readonly stri
 			: ir.importClause.strict(
 					first ? ir.namedImports.strict({ delimiter: Delimiter.None }, first, ...rest) : ir.namedImports.strict()
 				);
-	const built = ir.importStatement.clauseFrom.strict({
-		importClause: TSKindId.TypeKeyword,
-		fromClause: { importClause: clause, source: str(imp.from) },
-		terminator: TSKindId.Semi
-	});
+	const built = ir.importStatement.clauseFrom
+		.strict({
+			importClause: TSKindId.TypeKeyword,
+			fromClause: { importClause: clause, source: str(imp.from) }
+		})
+		.$with.terminator(TSKindId.Semi);
 	return withTrivia(built, leading, []);
 }
 

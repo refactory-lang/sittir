@@ -948,7 +948,12 @@ STRING — see `function_modifiers` / `visibility_modifier`.
 				// fielded marker rule (see `impl_item` above for the variant split).
 ```
 
-### `_let_chain` (`packages/rust/grammar.sittir.ts:1157`)
+### `_let_chain` (`packages/rust/grammar.sittir.ts`, `patches`)
+
+The base rule is unchanged; `patches:` fields both operands of every arm
+(`'<arm>/0': field('left')`, `'<arm>/2': field('right')`). Enrich leaves the
+arms in place because the choice is a self-referential fold (see
+`selfReferentialFoldOf`), so the patch paths address upstream's five arms.
 
 ```text
 				// _let_chain — left-recursive `left && right` chain where each
@@ -962,8 +967,7 @@ STRING — see `function_modifiers` / `visibility_modifier`.
 				// combined slot" case: each field stays eligible for the
 				// named-slot merge path, collapsing to a single `left` slot and
 				// a single `right` slot (each a union of the 3 operand kinds)
-				// instead of 3 colliding positional slots. `3` mirrors base
-				// tree-sitter-rust's `PREC.and`.
+				// instead of 3 colliding positional slots.
 ```
 
 ### `expectTestFailures` (`packages/rust/grammar.sittir.ts:1183`)

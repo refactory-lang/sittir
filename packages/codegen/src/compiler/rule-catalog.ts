@@ -3,6 +3,7 @@ import {
 	CHOICE,
 	DEDENT,
 	FIELD,
+	IMMEDIATE_TOKEN,
 	INDENT,
 	NEWLINE,
 	OPTIONAL,
@@ -153,7 +154,7 @@ function identifyChildren(args: IdentifyParams & { readonly selfId: RuleId }): B
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
 		case 'PREC_DYNAMIC':
-		case 'IMMEDIATE_TOKEN':
+		case IMMEDIATE_TOKEN:
 			return [childParams({ rule: params.rule.content, segment: { edge: 'content' } })];
 		case FIELD:
 			return [
@@ -210,7 +211,7 @@ function withIdentifiedChildren(args: {
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
 		case 'PREC_DYNAMIC':
-		case 'IMMEDIATE_TOKEN':
+		case IMMEDIATE_TOKEN:
 			return { ...rule, id, content: children[0]!.rule };
 		case SUPERTYPE:
 		case STRING:
@@ -250,7 +251,7 @@ function classifyIntrinsic(
 	return classifyByType(rule.type, anyChildNonterminal);
 }
 
-function createRuleId(ownerKind: string, ctx: { readonly path: readonly RulePathSegment[] }): RuleId {
+export function createRuleId(ownerKind: string, ctx: { readonly path: readonly RulePathSegment[] }): RuleId {
 	if (ctx.path.length === 0) return `rule:${encodeURIComponent(ownerKind)}:root`;
 	return `rule:${encodeURIComponent(ownerKind)}:${ctx.path.map(formatPathSegment).join('/')}`;
 }

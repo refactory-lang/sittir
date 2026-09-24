@@ -13,7 +13,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('// Typed facade over @sittir/common/utils with grammar-local narrowing helpers');
 	lines.push('');
 	lines.push(
-		"import type { AnyNodeData, AnyTreeNodeOf, ArgsOf, ByteRange, Edit, ElementsOf, FlavorPair, Hoisted, OmitEach } from '@sittir/types';"
+		"import type { AnyNodeData, AnyTreeNodeOf, ArgsOf, ByteRange, Edit, ElementsOf, FlavorPair, Hoisted, OmitEach, OptionsArg } from '@sittir/types';"
 	);
 	if (triviaTypeNames.length > 0) {
 		lines.push(`import type { ${triviaTypeNames.join(', ')}, NamespaceMap } from './types.js';`);
@@ -57,7 +57,7 @@ function emitAttachProps(): string[] {
 		'  return { strict, coerce };',
 		'}',
 		'',
-		'export type { ArgsOf, ElementsOf, FlavorPair, Hoisted, OmitEach };',
+		'export type { ArgsOf, ElementsOf, FlavorPair, Hoisted, OmitEach, OptionsArg };',
 		'',
 		'type AnyFlavorFn = (...args: never[]) => unknown;',
 		'',
@@ -201,6 +201,16 @@ function emitTransportHelpers(): string[] {
 		'    );',
 		'  }',
 		'  return hit[2](value) as T;',
+		'}',
+		'',
+		'export type AliasBuilder = readonly [storage: readonly number[], build: (content: unknown) => unknown];',
+		'',
+		'export function admitAliasContent<T = unknown>(value: unknown, aliases: readonly AliasBuilder[]): T {',
+		'  if (Array.isArray(value)) return value.map((item) => admitAliasContent(item, aliases)) as T;',
+		"  const id = isRecord(value) && typeof value.$type === 'number' ? value.$type : typeof value === 'number' ? value : undefined;",
+		'  if (id === undefined) return value as T;',
+		'  const hit = aliases.find(([storage]) => storage.includes(id));',
+		'  return (hit === undefined ? value : hit[1](value)) as T;',
 		'}',
 		'',
 		'export function coerceMixedEnumStorage<T = unknown>(',

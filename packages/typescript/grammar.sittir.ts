@@ -185,6 +185,12 @@ export default grammar(
 				body: { before: preference('indent'), after: preference('dedent') },
 				case_body: { start: preference('indent'), end: preference('dedent') },
 				gap: { separator: preference('newline') },
+				number_hex: { 'prefix:': preference('0x') },
+				number_octal: { 'prefix:': preference('0o') },
+				number_binary: { 'prefix:': preference('0b') },
+				number_float_point: { 'marker:': preference('e') },
+				number_float_leading_point: { 'marker:': preference('e') },
+				number_float_scientific: { 'marker:': preference('e') },
 				statements: { terminator: preference(';') },
 				quotes: { style: preference('double') },
 				enum_body_elements: { 'content:/separator/","/after': preference('newline'), 'content:/delimiter': preference('Delimiter.Trailing') },
@@ -244,6 +250,7 @@ export default grammar(
 				// this because unedited content slices verbatim source bytes
 				// rather than consulting this site at all).
 				unary_expression_operator: { '"!"/after': preference('tight') },
+				number_operator: { '"-"/after': preference('tight'), '"+"/after': preference('tight') },
 
 				object_type_content: {
 					'content:/separator/before': preference('tight'),
@@ -279,7 +286,7 @@ export default grammar(
 				_bindings: {
 					'_/terminator:': 'statements/terminator',
 					'_/automatic_semicolon:': 'statements/terminator',
-					'string/content:': 'quotes/style',
+					'string/variant': 'quotes/style',
 					'class_body/"{"/after': 'body/before',
 					'class_body/"}"/before': 'body/after',
 					'statement_block/"{"/after': 'body/before',
@@ -709,7 +716,9 @@ export default grammar(
 				debugger_statement: '#170 — _resolveOneLeaf cannot resolve the _semicolon stub',
 				import_require_clause: '#170 — Missing field _content on ImportRequireClauseTransport._source',
 				object_type_content: '#170 (#172-adjacent) — Missing field _content through export-arm transport',
-				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)'
+				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)',
+				'export_statement_default_declaration.defaultKwValue':
+					'a required registered slot on an intermediate child (defaultKw) reached through a nested (multi-level) sub-factory chain has no home in the generated test: .$with only reaches the outer node\'s own slots, and the recursive subFactoryCallArgs builder produces a nested config expression, not a statement a .$with chain could attach to'
 			},
 			rules: {
 				_whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),

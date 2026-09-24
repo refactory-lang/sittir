@@ -21,10 +21,10 @@ describe('gaps between coordinates', () => {
 		const body = fn.body();
 		const rebuilt = body.$with.statements(
 			...body.statements(),
-			ir.expressionStatement.strict({
-				expression: ir.callExpression.call.strict({ function: ir.identifier('d'), arguments: ir.arguments.strict() }),
-				terminator: TSKindId.Semi
-			})
+			ir.expressionStatement.strict(
+				ir.callExpression.call.strict({ function: ir.identifier('d'), arguments: ir.arguments.strict() }),
+				{ terminator: TSKindId.Semi }
+			)
 		);
 		// The blank lines are the claim; the indent width is the format's.
 		const text = engine.render(rebuilt as never).toString().replace(/\n[ \t]+/g, '\n');
@@ -36,17 +36,14 @@ describe('gaps between coordinates', () => {
 		const call = (
 			engine.parse('f(a,b,c);\n').statements()[0] as unknown as {
 				expression(): {
-					content(): {
-						arguments(): {
-							$with: { elements(...v: readonly unknown[]): unknown };
-							elements(): readonly unknown[];
-						};
+					arguments(): {
+						$with: { elements(...v: readonly unknown[]): unknown };
+						elements(): readonly unknown[];
 					};
 				};
 			}
 		)
 			.expression()
-			.content()
 			.arguments();
 		const [a, , c] = call.elements();
 		const rebuilt = call.$with.elements(a, ir.identifier('x'), c);

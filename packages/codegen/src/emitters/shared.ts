@@ -1,7 +1,8 @@
+import type { AuthoredCompound, SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
 import { compileAnchoredPattern } from '../types/runtime-shapes.ts';
-import { isWordOrVisibleTextLeaf, isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { AssembledAlias, isWordOrVisibleTextLeaf, isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type {
 	AssembledNonterminal,
 	NodeOrTerminal,
@@ -13,7 +14,6 @@ import type {
 	TextValueStorage
 } from '../compiler/model/node-map.ts';
 import {
-	AssembledBranch,
 	AssembledKeyword,
 	AssembledPunctuation,
 	AssembledEnum,
@@ -30,8 +30,6 @@ import {
 	storageKindOfRef,
 	storageTargetOf,
 	AbstractAssembledCompound,
-	AssembledEnvelope,
-	AssembledPolymorph,
 	AssembledLeaf,
 	AssembledPattern,
 	AssembledList,
@@ -47,13 +45,13 @@ import { publicKindName } from '../compiler/model/render-rules.ts';
 
 export function isSlotBearingCompound(
 	node: AssembledNode
-): node is AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList {
+): node is SlotBearingCompound {
 	return node instanceof AbstractAssembledCompound;
 }
 
 export function isAuthoredCompound(
 	node: AssembledNode
-): node is AssembledBranch | AssembledEnvelope | AssembledPolymorph {
+): node is AuthoredCompound {
 	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList);
 }
 
@@ -67,7 +65,7 @@ export function canonicalSeparatedListField(node: AssembledList): AssembledNonte
 	return node.slots.find((f) => f.arity === 'many') ?? node.slots[0]!;
 }
 import type { KindEnumEntry } from './kind-discriminant.ts';
-import { findKindEntry, hasCatalogEntry } from './kind-discriminant.ts';
+import { findOwnKindEntry, findKindEntry, hasCatalogEntry } from './kind-discriminant.ts';
 
 export { isRequired, isMultiple, isNonEmpty, hasOptionalElements, deriveSlotCardinality, deriveChildrenCardinality };
 
@@ -531,7 +529,7 @@ export function kindEnumTextIdPairs(
 	const out: (readonly [string, number])[] = [];
 	const seen = new Set<string>();
 	for (const arm of enumArmsOf(field, nodeMap).arms) {
-		const id = arm.id ?? kindEntries?.find((e) => e.kind === arm.kind)?.id;
+		const id = arm.id ?? (kindEntries !== undefined ? findOwnKindEntry(kindEntries, arm.kind)?.id : undefined);
 		if (id === undefined || seen.has(arm.text)) continue;
 		seen.add(arm.text);
 		out.push([arm.text, id]);
@@ -647,6 +645,7 @@ export function resolveDirectFactorySlot(node: AssembledNode, nodeMap: NodeMap):
 
 export function forwardedTargetKind(node: AssembledNode, nodeMap: NodeMap): string | null {
 	if (!isSlotBearingCompound(node)) return null;
+	if (node instanceof AssembledAlias) return null;
 	if (nodeMap.refineForms?.has(node.kind)) return null;
 	const slot = node.soleSlot;
 	if (slot === undefined || isMultiple(slot)) return null;
@@ -656,13 +655,14 @@ export function forwardedTargetKind(node: AssembledNode, nodeMap: NodeMap): stri
 	if (node.slots.some((f) => f.trailingDelimiter === 'optional' || f.leadingDelimiter === 'optional')) return null;
 	const target = nodeMap.nodes.get(kinds[0]!);
 	if (!target?.rawFactoryName) return null;
+	if (target instanceof AssembledEnum) return null;
 	return kinds[0]!;
 }
 
 export function resolveFactoryFieldNames(node: AssembledNode): readonly string[] | undefined {
 	if (node instanceof AbstractAssembledCompound) {
 		if (node.slots.length === 0) return undefined;
-		return node.slots.map((field) => field.name);
+		return node.configSlots.map((field) => field.name);
 	}
 	if (node instanceof AssembledList) return [canonicalSeparatedListField(node).name];
 	return undefined;
@@ -672,7 +672,12 @@ function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMap): Chi
 	if (!(node instanceof AbstractAssembledCompound)) return null;
 	const shape = classifyFactoryShape(node, nodeMap);
 	if (shape === 'spread') return 'spread';
-	return shape === 'direct' || shape === 'forwarded' ? 'direct' : null;
+	if (shape !== 'direct' && shape !== 'forwarded') return null;
+	const directSlot = resolveDirectFactorySlot(node, nodeMap);
+	if (directSlot !== undefined && slotKindNames(directSlot).every((k) => nodeMap.nodes.get(k) instanceof AssembledEnum)) {
+		return null;
+	}
+	return 'direct';
 }
 
 export function factoryTakesSpreadChildren(node: AssembledNode, nodeMap: NodeMap): boolean {
@@ -812,9 +817,20 @@ export function classifyFactoryShape(
 	if (node instanceof AbstractAssembledCompound) {
 		const slot = node.soleSlot;
 		if (slot !== undefined) {
-			if (isMultiple(slot)) return 'spread';
-			if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
-			return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
+			if (isMultiple(slot)) {
+				// A rest parameter must be last in a JS/TS signature, so a node
+				// with a registered slot (which takes a trailing options
+				// argument) can never expose the bare spread-children surface —
+				// every consumer of this shape (factory surface, from()/coerce
+				// emission, wrap, test generation) needs to agree on that, so
+				// the fallback to 'config' lives here rather than being
+				// special-cased downstream.
+				const hasRegistered = node.slots.some((f) => f.registeredOption !== undefined);
+				if (!hasRegistered) return 'spread';
+			} else {
+				if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
+				return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
+			}
 		}
 		return 'config';
 	}
@@ -1148,4 +1164,27 @@ export function anchoredLeafRegex(kind: string, textPattern: string | undefined)
 export function anchoredLeafRegexLiteral(kind: string, textPattern: string | undefined): string | undefined {
 	const regex = anchoredLeafRegex(kind, textPattern);
 	return regex === undefined ? undefined : `/${regex.source}/${regex.flags}`;
+}
+
+export function expandAndDedupeContentTypes(
+	contentTypes: readonly string[],
+	nodeMap: NodeMap,
+	idByKind?: ReadonlyMap<string, number>
+): string[] {
+	const seen = new Set<string>();
+	const expanded: string[] = [];
+	const visit = (kind: string): void => {
+		const node = nodeMap.nodes.get(kind);
+		if (node instanceof AssembledSupertype) {
+			for (const subtype of node.subtypeNames) visit(subtype);
+			return;
+		}
+		const id = idByKind?.get(kind);
+		const key = id !== undefined ? `#${id}` : `n:${kind}`;
+		if (seen.has(key)) return;
+		seen.add(key);
+		expanded.push(kind);
+	};
+	for (const t of contentTypes) visit(t);
+	return expanded;
 }

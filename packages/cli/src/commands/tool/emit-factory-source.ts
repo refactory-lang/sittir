@@ -1,6 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
-import { emitFactorySource as runEmitFactorySource } from '@sittir/tools';
 
 export const emitFactorySource: CommandModule = {
 	name: 'emit-factory-source',
@@ -21,6 +20,7 @@ export const emitFactorySource: CommandModule = {
 					surface: 'strict' | 'loose';
 					nested: 'calls' | 'configs';
 				}) => {
+					const { emitFactorySource: runEmitFactorySource } = await import('@sittir/tools');
 					const code = await runEmitFactorySource({
 						grammar: opts.grammar ?? 'rust',
 						file: opts.file,
