@@ -300,10 +300,10 @@ impl OptionObject for ::serde_json::Map<String, ::serde_json::Value> {
         match self.get(key) {
             None | Some(::serde_json::Value::Null) => Ok(None),
             Some(value) => value
-                .as_u64()
-                .and_then(|v| u32::try_from(v).ok())
-                .map(Some)
-                .ok_or_else(|| format!("options: {key} must be a kind id, not {value}")),
+                .as_f64()
+                .ok_or_else(|| format!("options: {key} must be a kind id, not {value}"))
+                .and_then(|v| option_number(key, v))
+                .map(Some),
         }
     }
 
@@ -316,6 +316,15 @@ impl OptionObject for ::serde_json::Map<String, ::serde_json::Value> {
     }
 }
 
+/// Whether a JSON-shaped number is a kind id or bitflag: a whole number that fits a `u32`.
+pub fn option_number(key: &str, value: f64) -> Result<u32, String> {
+    if value.fract() == 0.0 && (0.0..=u32::MAX as f64).contains(&value) {
+        Ok(value as u32)
+    } else {
+        Err(format!("options: {key} must be a kind id, not {value}"))
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl OptionObject for ::napi::bindgen_prelude::Object<'_> {
     fn keys(&self) -> Result<Vec<String>, String> {
@@ -323,15 +332,16 @@ impl OptionObject for ::napi::bindgen_prelude::Object<'_> {
     }
 
     fn object(&self, key: &str) -> Result<Option<Self>, String> {
-        self.get::<Self>(key).map_err(|e| e.reason.clone())
+        self.get::<Option<Self>>(key).map(Option::flatten).map_err(|e| e.reason.clone())
     }
 
     fn number(&self, key: &str) -> Result<Option<u32>, String> {
-        self.get::<u32>(key).map_err(|e| e.reason.clone())
+        let value = self.get::<Option<f64>>(key).map(Option::flatten).map_err(|e| e.reason.clone())?;
+        value.map(|v| option_number(key, v)).transpose()
     }
 
     fn string(&self, key: &str) -> Result<Option<String>, String> {
-        self.get::<String>(key).map_err(|e| e.reason.clone())
+        self.get::<Option<String>>(key).map(Option::flatten).map_err(|e| e.reason.clone())
     }
 }
 

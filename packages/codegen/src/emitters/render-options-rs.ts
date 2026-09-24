@@ -211,9 +211,11 @@ function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
 
 function siteRefsOf(leaf: AddressLeafEntry, siteIndex: SiteIndex): SitePath[] {
 	const refs = leaf.canonical.map((segments) => {
-		const site = siteIndex.get(formatPreferencePath(segments))?.[0];
-		if (site === undefined) throw new Error(`options.rs: address '${leaf.path}' names '${formatPreferencePath(segments)}', which is no site`);
-		return site;
+		const bucket = siteIndex.get(formatPreferencePath(segments)) ?? [];
+		if (bucket.length !== 1) {
+			throw new Error(`options.rs: address '${leaf.path}' names '${formatPreferencePath(segments)}', which is ${bucket.length === 0 ? 'no site' : `${bucket.length} sites`}`);
+		}
+		return bucket[0]!;
 	});
 	if (new Set(refs.map((r) => r.site)).size > 1) throw new Error(`options.rs: address '${leaf.path}' mixes spacing and delimiter sites`);
 	return refs;
@@ -373,12 +375,17 @@ export function seatTableName(kind: string, slot: string): string {
 	return `SEATS_${screaming(kind)}_${screaming(slot)}`;
 }
 
-export function seatEdgeSide(seat: SpacingSite): 'before' | 'after' {
-	const edge = seat.seat === undefined ? undefined : parseSeamLabel(seat.seat.field);
-	if (edge === undefined || edge.token !== seat.seat!.kind) {
-		throw new Error(`seated site '${seat.address}' writes '${seat.seat?.field}', which is not the seated kind's edge`);
+export function seatEdgeSide(site: SpacingSite): 'before' | 'after' {
+	const seat = site.seat;
+	const edge = seat === undefined ? undefined : parseSeamLabel(seat.field);
+	if (seat === undefined || edge === undefined || edge.token !== seat.kind) {
+		throw new Error(`seated site '${site.address}' writes '${seat?.field}', which is not the seated kind's edge`);
 	}
 	return edge.side;
+}
+
+export function seatedTableNames(plan: RenderOptionsPlan): ReadonlySet<string> {
+	return new Set(plan.spacingSites.filter((site) => site.seat !== undefined).map((site) => seatTableName(site.kind, site.slot)));
 }
 
 export function seatTablesOf(plan: RenderOptionsPlan, kindEntries: readonly IdEntry[]): SeatTable[] {

@@ -90,7 +90,7 @@ import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
-import { armAliasesOf, hintEmitterOf, publicKindNames, rootKeyOf, type AddressTables, type HintEmitter } from './options.ts';
+import { armAliasesOf, hintEmitterOf, publicKindNames, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
 import { publicKindName, type SitePreference } from '../compiler/model/site-preferences.ts';
 
 type StructuralNode = SlotBearingCompound;
@@ -650,23 +650,25 @@ function emitOptionsHints(
 	generatedTypes: ReadonlySet<string>,
 	hints: HintEmitter | undefined
 ): void {
-	const homes = new Map<string, { kind: string; typeName: string; hint: string }>();
+	const kindRoots = new Map((hints?.roots ?? []).filter((root) => !root.label).map((root) => [root.name, root]));
+	const homes = new Map<string, { kind: string; typeName: string; root: HintRoot }>();
 	for (const { kind, typeName } of kinds) {
-		const hint = hints?.hintOf(publicKindName(kind));
-		if (typeName === undefined || hint === undefined || !generatedTypes.has(typeName)) continue;
-		const key = rootKeyOf(kind);
-		const prior = homes.get(key);
+		const root = kindRoots.get(publicKindName(kind));
+		if (root === undefined || typeName === undefined || !generatedTypes.has(typeName)) continue;
+		const prior = homes.get(root.name);
 		if (prior !== undefined && prior.kind !== publicKindName(prior.kind) && kind !== publicKindName(kind)) {
-			throw new Error(`types emitter: options hint key '${key}' names both '${prior.kind}' and '${kind}', neither the visible spelling`);
+			throw new Error(`types emitter: options root '${root.name}' names both '${prior.kind}' and '${kind}', neither the visible spelling`);
 		}
-		if (prior === undefined || prior.kind !== publicKindName(prior.kind)) homes.set(key, { kind, typeName, hint });
+		if (prior === undefined || prior.kind !== publicKindName(prior.kind)) homes.set(root.name, { kind, typeName, root });
 	}
+	const homeless = [...kindRoots.keys()].filter((name) => !homes.has(name));
+	if (homeless.length > 0) throw new Error(`types emitter: options roots with no declared type to carry their hint: ${homeless.join(', ')}`);
 	lines.push('export interface OptionsHintMap {');
-	for (const [key, { typeName }] of homes) lines.push(`  ${key}: ${typeName}.Hints;`);
+	for (const { typeName, root } of homes.values()) lines.push(`  ${root.key}: ${typeName}.Hints;`);
 	lines.push('}');
 	lines.push('');
-	for (const { typeName, hint } of homes.values()) {
-		lines.push(`export namespace ${typeName} {`, '  export interface Hints {', `    readonly __optionsHint__?: ${hint};`, '  }', '}', '');
+	for (const { typeName, root } of homes.values()) {
+		lines.push(`export namespace ${typeName} {`, '  export interface Hints {', `    readonly __optionsHint__?: ${root.hint};`, '  }', '}', '');
 	}
 }
 

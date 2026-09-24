@@ -75,6 +75,7 @@ import {
 	carriesPerNodeValue,
 	edgeKindId,
 	seatTableName,
+	seatedTableNames,
 	edgeSitesOf,
 	isKindEdge,
 	planRenderOptions,
@@ -2617,23 +2618,23 @@ function kindEdgeWriterOf(
 	};
 }
 
+const edgeRowKindsCache = new WeakMap<RenderPlan, ReadonlySet<number>>();
+
+function edgeRowKindsOf(plan: RenderPlan, kindEntries: readonly KindEntryLike[]): ReadonlySet<number> {
+	const cached = edgeRowKindsCache.get(plan);
+	if (cached !== undefined) return cached;
+	const kinds = new Set(edgeSitesOf(plan, kindEntries).map((row) => row.kind));
+	edgeRowKindsCache.set(plan, kinds);
+	return kinds;
+}
+
 function edgeIdOf(plan: RenderPlan, node: AssembledNode, kindEntries: readonly KindEntryLike[] | undefined): number {
 	const kind = publicKindName(node.kind);
 	if (kindEntries !== undefined) {
 		const id = edgeKindId(kindEntries, kind);
-		if (id !== undefined && edgeSitesOf(plan, kindEntries).some((row) => row.kind === id)) return id;
+		if (id !== undefined && edgeRowKindsOf(plan, kindEntries).has(id)) return id;
 	}
 	throw new Error(`kind '${kind}' has kind-edge sites but no edge row to prepare and write them from`);
-}
-
-function seatedSitesOf(plan: RenderPlan, parentKind: string, slot: string): ReadonlyMap<string, SpacingSite> {
-	const kind = publicKindName(parentKind);
-	const out = new Map<string, SpacingSite>();
-	for (const site of plan.spacingSites) {
-		if (site.seat === undefined || site.kind !== kind || site.slot !== slot) continue;
-		out.set(site.seat.kind, site);
-	}
-	return out;
 }
 
 function delimiterSiteOf(plan: RenderPlan, node: AssembledNode): DelimiterSite | undefined {
@@ -2853,9 +2854,10 @@ function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): str
 	const lines: string[] = [];
 	const reaches = seatReachOf(plan, nodeMap);
 	const slotModel = renderSlotModelOf(node);
+	const seated = seatedTableNames(plan);
 	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 		if (field.name === undefined || !isMultiple(field)) continue;
-		if (seatedSitesOf(plan, node.kind, field.name).size === 0) continue;
+		if (!seated.has(seatTableName(publicKindName(node.kind), field.name))) continue;
 		if (!slotElementsReach(field, nodeMap, reaches)) continue;
 		const ident = rustFieldIdent(field.name);
 		const table = `options::${seatTableName(publicKindName(node.kind), field.name)}`;

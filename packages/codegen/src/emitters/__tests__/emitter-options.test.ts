@@ -34,7 +34,7 @@ describe('renderOptionsModule', () => {
 		{ kind: 'newline', member: 'newline' }
 	];
 
-	it('derives Options from the node interfaces and the label roots; no address tables', () => {
+	it('derives Options from the kinds\' hint namespaces and the label roots; no address tables', () => {
 		const spacingType = 'TSKindId.tight | TSKindId.space | TSKindId.newline';
 		const delimiter: SitePreference = {
 			kind: 'formal_parameters',
@@ -49,8 +49,8 @@ describe('renderOptionsModule', () => {
 		const arms = { spacingType, whitespaceType: spacingType };
 		const addresses = deriveAddressTables(sites, kindEntries, armType, new Map());
 		const hints = hintEmitterOf(addresses, kindEntries, arms, new Set(['formal_parameters']));
-		expect(hints.hintOf('formal_parameters')).toBe('{ readonly elements?: { readonly delimiter?: Delimiter.Trailing; readonly separator?: { readonly comma?: { readonly after?: SpacingArm } } } }');
-		expect(hints.labelRoots).toEqual(['return_statement']);
+		expect(hints.roots.find((r) => r.name === 'formal_parameters')?.hint).toBe('{ readonly elements?: { readonly delimiter?: Delimiter.Trailing; readonly separator?: { readonly comma?: { readonly after?: SpacingArm } } } }');
+		expect(hints.roots.filter((r) => r.label).map((r) => [r.name, r.key])).toEqual([['return_statement', 'returnStatement']]);
 		const src = renderOptionsModule({ arms, hints });
 		expect(src).toContain("import type { DerivedOptions } from '@sittir/types';");
 		expect(src).toContain("import type { TSKindId, SpacingArm, WhitespaceArm } from './types.js';");
@@ -64,7 +64,7 @@ describe('renderOptionsModule', () => {
 		const entries = [...kindEntries, { kind: 'colon_colon', member: 'ColonColon', symbolName: '::', literalText: '::', anon: true }];
 		const site: SitePreference = { kind: 'token_tree_punctuation', slot: 'colon_colon', address: 'colon_colon_after', label: 'colon_colon_after', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'seam' };
 		const hints = hintEmitterOf(deriveAddressTables([site], entries, armType, new Map()), entries, undefined, new Set());
-		expect(hints.labelRoots).toEqual(['token_tree_punctuation']);
+		expect(hints.roots.map((r) => [r.key, r.label])).toEqual([['tokenTreePunctuation', true]]);
 		expect(renderOptionsModule({ hints })).toContain('readonly tokenTreePunctuation?: { readonly colonColon?: { readonly after?: TSKindId.tight | TSKindId.space | TSKindId.newline } };');
 	});
 
@@ -74,7 +74,7 @@ describe('renderOptionsModule', () => {
 		const WHITESPACE = ['tight', 'space', 'newline', 'indent', 'dedent'].map((k) => ({ value: k, kind: k }));
 		const edge: SitePreference = { kind: 'block', slot: 'block', address: 'block_before', label: 'block_before', arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', side: 'seam' };
 		const hints = hintEmitterOf(deriveAddressTables([edge], kindEntries, armType, new Map()), kindEntries, { spacingType, whitespaceType }, new Set(['block']));
-		expect(hints.hintOf('block')).toBe('{ readonly before?: WhitespaceArm }');
+		expect(hints.roots.map((r) => [r.key, r.hint])).toEqual([['block', '{ readonly before?: WhitespaceArm }']]);
 	});
 });
 

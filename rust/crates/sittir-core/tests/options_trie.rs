@@ -11,8 +11,8 @@ static ADDRESSES: &[AddressNode] = &[AddressNode::Branch {
     ],
 }];
 
-fn allowed(_site: usize) -> &'static [u16] {
-    &[1, 9, 20, 21]
+fn allowed(site: usize) -> &'static [u16] {
+    if site == 0 { &[1, 7, 9, 20, 21] } else { &[1, 7, 20, 21] }
 }
 
 fn delimiter_allowed(_site: usize) -> u8 {
@@ -46,8 +46,8 @@ fn resolve(json: &str) -> Result<ResolvedOptions, String> {
 
 #[test]
 fn a_leaf_sets_every_site_it_names() {
-    let table = resolve(r#"{ "a": { "x": 9 } }"#).unwrap();
-    assert_eq!(table.spacing, vec![SeamArm { arm: 9, strength: SEAM_DECLARED }; 2]);
+    let table = resolve(r#"{ "a": { "x": 7 } }"#).unwrap();
+    assert_eq!(table.spacing, vec![SeamArm { arm: 7, strength: SEAM_DECLARED }; 2]);
     assert_eq!(table.delimiter, vec![0]);
 }
 
@@ -66,8 +66,23 @@ fn an_unknown_key_is_refused_with_its_branch_path() {
 
 #[test]
 fn a_value_a_site_does_not_admit_is_refused_with_its_path() {
-    assert_eq!(resolve(r#"{ "a": { "x": 4 } }"#), Err("options: (a)/x does not admit kind id 4 (allowed: [1, 9, 20, 21])".to_string()));
+    assert_eq!(resolve(r#"{ "a": { "x": 4 } }"#), Err("options: (a)/x does not admit kind id 4 (allowed: [1, 7, 9, 20, 21])".to_string()));
     assert_eq!(resolve(r#"{ "a": { "d": 1 } }"#), Err("options: (a)/d does not admit delimiter 1 (allowed bits: 2)".to_string()));
+}
+
+#[test]
+fn each_site_a_leaf_names_checks_its_own_arms() {
+    assert_eq!(resolve(r#"{ "a": { "x": 9 } }"#), Err("options: (a)/y:/x does not admit kind id 9 (allowed: [1, 7, 20, 21])".to_string()));
+}
+
+#[test]
+fn a_value_that_is_not_a_whole_kind_id_is_refused() {
+    assert_eq!(resolve(r#"{ "a": { "x": 1.5 } }"#), Err("options: x must be a kind id, not 1.5".to_string()));
+}
+
+#[test]
+fn a_dedent_with_no_open_indent_is_refused() {
+    assert_eq!(resolve(r#"{ "a": { "x": 21 } }"#), Err("options: a dedents an indent it never opened".to_string()));
 }
 
 #[test]
