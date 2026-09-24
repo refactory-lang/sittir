@@ -1,4 +1,5 @@
 import type { NodeMap } from '../types.ts';
+import { storageKindOfRef, type AssembledNode, type NodeBackedRef } from './node-map.ts';
 import { findAnonEntryForLiteralText, findOwnKindEntry, type KindEntryLike } from '../generated-metadata.ts';
 import { aliasTargetOf, storageNameOf, type SymbolRule } from '../../types/rule.ts';
 import { isParserHiddenName } from '../../dsl/rule-patterns.ts';
@@ -49,4 +50,9 @@ export function displayedKinds(nodeMap: NodeMap): ReadonlySet<string> {
 
 export function displayNameOfRef(ref: SymbolRule<'link'>): string {
 	return aliasTargetOf(ref) ?? storageNameOf(ref);
+}
+
+export function displayNameOfValue(value: NodeBackedRef, node: AssembledNode): string {
+	const siteName = value.parseKind?.name;
+	return siteName === undefined || siteName === storageKindOfRef(value.node) ? node.display.name : displayOfParserName(siteName);
 }

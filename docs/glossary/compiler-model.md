@@ -4045,6 +4045,14 @@ that is not a node is a codegen error; a site that holds a second display for
 a kind (a `parseKind`, an alias target) carries it itself
 (`displayNameOfRef`).
 
+### `packages/codegen/src/compiler/model/display-name.ts::displayNameOfValue`
+
+The display at one slot value: the name the parser issues at that site
+(`parseKind`) when it differs from the value's storage kind, which is an
+alias at the site; otherwise the node's own stamp. The value-level twin of
+`displayNameOfRef`, for the assembled model where the reference is already
+resolved to a node.
+
 ### `packages/codegen/src/compiler/model/display-name.ts::ownsItsDisplay`
 
 Whether a kind's display is its own name. Where two kinds share one display,

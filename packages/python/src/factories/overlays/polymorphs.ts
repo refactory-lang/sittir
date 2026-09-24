@@ -4378,7 +4378,7 @@ export const keywordPattern: typeof B.keywordPattern & {
 	}
 };
 
-const casePattern$asPattern =
+const casePattern$caseAsPattern =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -4475,7 +4475,7 @@ const casePattern$wildcardPattern =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const casePattern: typeof B.casePattern & {
-	asPattern: {
+	caseAsPattern: {
 		strict: (...args: ArgsOf<typeof F.build_AsPattern>) => ReturnType<typeof F.buildCasePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceTo_AsPattern>) => ReturnType<typeof F.buildCasePattern>;
 	};
@@ -4585,9 +4585,9 @@ export const casePattern: typeof B.casePattern & {
 	};
 } = {
 	...B.casePattern,
-	asPattern: {
-		strict: casePattern$asPattern(F.buildCasePattern, F.build_AsPattern),
-		coerce: casePattern$asPattern(F.buildCasePattern, C.coerceTo_AsPattern)
+	caseAsPattern: {
+		strict: casePattern$caseAsPattern(F.buildCasePattern, F.build_AsPattern),
+		coerce: casePattern$caseAsPattern(F.buildCasePattern, C.coerceTo_AsPattern)
 	},
 	keywordPattern: {
 		strict: casePattern$keywordPattern(F.buildCasePattern, F.buildKeywordPattern),

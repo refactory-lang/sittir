@@ -15466,9 +15466,10 @@ with two pure literal enum slots (`import_statement`: the `type` modifier and
  *  successfully: a hoisted compound whose `parentKind` matches
  *  `parent.kind` contributes its own `name` (the variant name enrich
  *  minted it under); every other node-backed value contributes the suffix
- *  `prefixNamedSuffix(parent.kind, child.kind)` strips off the parent's
- *  kind prefix, or — when the child's kind doesn't carry that prefix — the
- *  child's own kind with any leading `_` stripped. That derivation is
+ *  `prefixNamedSuffix(parent.kind, display)` strips off the parent's
+ *  kind prefix, or — when the display doesn't carry that prefix — the
+ *  display itself, where the display is the one the parser shows at this
+ *  site (`displayNameOfValue`), never the storage kind. That derivation is
  *  parent-relative, so it yields distinct names for two arms that share a
  *  declared name; this is what makes it a sound deconfliction fallback. A
  *  literal value names itself when it's already a valid identifier;

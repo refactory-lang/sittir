@@ -25,6 +25,7 @@ import {
 } from '../shared.ts';
 import { camelCase } from '../refine-emit.ts';
 import { prefixNamedSuffix } from '../../compiler/variant-structural.ts';
+import { displayNameOfValue } from '../../compiler/model/display-name.ts';
 
 export interface ValueArm {
 	readonly via: 'value';
@@ -101,14 +102,14 @@ function slotValuesOf(slot: AssembledNonterminal, nodeMap: NodeMap): readonly No
 	});
 }
 
-function kindArmName(parentKind: string, child: AssembledNode): string {
-	return camelCase(prefixNamedSuffix(parentKind, child.kind) ?? child.kind.replace(/^_+/, ''));
+function kindArmName(parentKind: string, display: string): string {
+	return camelCase(prefixNamedSuffix(parentKind, display) ?? display);
 }
 
 export function armName(parent: AssembledNode, value: NodeOrTerminal, nodeMap: NodeMap): string | undefined {
 	if (isNodeRef(value)) {
 		const child = nodeMap.nodes.get(storageKindOfRef(value.node));
-		return child === undefined ? undefined : kindArmName(parent.kind, child);
+		return child === undefined ? undefined : kindArmName(parent.kind, displayNameOfValue(value, child));
 	}
 	if (isTerminalValue(value)) {
 		if (isValidIdent(value.value)) return value.value;
@@ -158,7 +159,7 @@ function grandArmCandidates(
 ): Candidate[] {
 	return subFactoriesInternal(child, nodeMap, isEmitted, visiting).entries.map((inner) => {
 		const leaf = inner.arm.via === 'node' ? (inner.arm.leaf ?? inner.arm.child) : undefined;
-		const name = leaf === undefined ? inner.name : kindArmName(node.kind, leaf);
+		const name = leaf === undefined ? inner.name : kindArmName(node.kind, leaf.display.name);
 		const arm: NodeArm = { via: 'node', child, path: [inner.name], leaf };
 		const entry: SubFactory = { name, slot, residual, arm, depth: flattened(inner), merges: false };
 		return { name, entry, claimant: claimantOf(entry) };

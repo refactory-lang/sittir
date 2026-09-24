@@ -8289,8 +8289,8 @@ describe('literal_type', () => {
 });
 
 describe('literal_type sub-factories', () => {
-	it('number builds the parent', () => {
-		const node = ir.literalType.number({
+	it('unaryExpressionNumber builds the parent', () => {
+		const node = ir.literalType.unaryExpressionNumber({
 			operator: '-',
 			argument: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -8298,50 +8298,50 @@ describe('literal_type sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('number.hex builds the parent', () => {
-		const node = ir.literalType.number.hex({ operator: '-', argument: 'a' });
+	it('unaryExpressionNumber.hex builds the parent', () => {
+		const node = ir.literalType.unaryExpressionNumber.hex({ operator: '-', argument: 'a' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('number.floatPoint builds the parent', () => {
-		const node = ir.literalType.number.floatPoint({ operator: '-', integer: '1' });
+	it('unaryExpressionNumber.floatPoint builds the parent', () => {
+		const node = ir.literalType.unaryExpressionNumber.floatPoint({ operator: '-', integer: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('number.floatLeadingPoint builds the parent', () => {
-		const node = ir.literalType.number.floatLeadingPoint({ operator: '-', fraction: '1' });
+	it('unaryExpressionNumber.floatLeadingPoint builds the parent', () => {
+		const node = ir.literalType.unaryExpressionNumber.floatLeadingPoint({ operator: '-', fraction: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('number.floatScientific builds the parent', () => {
-		const node = ir.literalType.number.floatScientific({ operator: '-', integer: '1', exponent: '1' });
+	it('unaryExpressionNumber.floatScientific builds the parent', () => {
+		const node = ir.literalType.unaryExpressionNumber.floatScientific({ operator: '-', integer: '1', exponent: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('number.decimal builds the parent', () => {
-		const node = ir.literalType.number.decimal({ operator: '-', argument: ['1'] });
+	it('unaryExpressionNumber.decimal builds the parent', () => {
+		const node = ir.literalType.unaryExpressionNumber.decimal({ operator: '-', argument: ['1'] });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('number.binary builds the parent', () => {
-		const node = ir.literalType.number.binary({ operator: '-', argument: '1' });
+	it('unaryExpressionNumber.binary builds the parent', () => {
+		const node = ir.literalType.unaryExpressionNumber.binary({ operator: '-', argument: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('number.octal builds the parent', () => {
-		const node = ir.literalType.number.octal({ operator: '-', argument: '1' });
+	it('unaryExpressionNumber.octal builds the parent', () => {
+		const node = ir.literalType.unaryExpressionNumber.octal({ operator: '-', argument: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('number.bigint builds the parent', () => {
-		const node = ir.literalType.number.bigint({ operator: '-', argument: '1' });
+	it('unaryExpressionNumber.bigint builds the parent', () => {
+		const node = ir.literalType.unaryExpressionNumber.bigint({ operator: '-', argument: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);

@@ -2872,8 +2872,8 @@ describe('case_pattern', () => {
 });
 
 describe('case_pattern sub-factories', () => {
-	it('asPattern builds the parent', () => {
-		const node = ir.casePattern.asPattern({
+	it('caseAsPattern builds the parent', () => {
+		const node = ir.casePattern.caseAsPattern({
 			casePattern: {
 				$type: TSKindId.CasePattern,
 				$text: 'test',

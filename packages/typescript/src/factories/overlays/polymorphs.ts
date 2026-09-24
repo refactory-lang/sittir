@@ -18675,7 +18675,7 @@ export const _number: typeof B._number & {
 	}
 };
 
-const literalType$number =
+const literalType$unaryExpressionNumber =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -18768,7 +18768,7 @@ const literalType$undefined =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const literalType: typeof B.literalType & {
-	number: {
+	unaryExpressionNumber: {
 		strict: (...args: ArgsOf<typeof F.build_Number>) => ReturnType<typeof F.buildLiteralType>;
 		coerce: (...args: ArgsOf<typeof C.coerceTo_Number>) => ReturnType<typeof F.buildLiteralType>;
 		hex: {
@@ -18862,9 +18862,9 @@ export const literalType: typeof B.literalType & {
 	};
 } = {
 	...B.literalType,
-	number: {
-		strict: literalType$number(F.buildLiteralType, F.build_Number),
-		coerce: literalType$number(F.buildLiteralType, C.coerceTo_Number),
+	unaryExpressionNumber: {
+		strict: literalType$unaryExpressionNumber(F.buildLiteralType, F.build_Number),
+		coerce: literalType$unaryExpressionNumber(F.buildLiteralType, C.coerceTo_Number),
 		hex: {
 			strict: literalType$numberHex(F.buildLiteralType, _number.hex.strict),
 			coerce: literalType$numberHex(F.buildLiteralType, _number.hex.coerce)
