@@ -1028,38 +1028,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'_dedent',
 		'dedent'
 	]),
-	export_statement_default: new Set(['export_statement_default_from', 'export_statement_default_declaration']),
-	lhs_expression: new Set([
-		'member_expression',
-		'subscript_expression',
-		'undefined',
-		'identifier',
-		'declare_keyword',
-		'namespace_keyword',
-		'type_keyword',
-		'public_keyword',
-		'private_keyword',
-		'protected_keyword',
-		'override_keyword',
-		'readonly_keyword',
-		'module_keyword',
-		'any_keyword',
-		'number_keyword',
-		'boolean_keyword',
-		'string_keyword',
-		'symbol_keyword',
-		'export_keyword',
-		'object_keyword',
-		'new_keyword',
-		'get_keyword',
-		'set_keyword',
-		'async_keyword',
-		'static_keyword',
-		'let_keyword',
-		'object_pattern',
-		'array_pattern',
-		'non_null_expression'
-	])
+	export_statement_default: new Set(['export_statement_default_from', 'export_statement_default_declaration'])
 };
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
@@ -4936,8 +4905,8 @@ export function wrapSubscriptExpression(data: T.SubscriptExpression, tree: TreeH
 	return _node;
 }
 
-export function wrap_LhsExpression(
-	data: T._LhsExpression & { readonly $other?: T._LhsExpression | readonly T._LhsExpression[] },
+export function wrapLhsExpression(
+	data: T.LhsExpression & { readonly $other?: T.LhsExpression | readonly T.LhsExpression[] },
 	tree: TreeHandle
 ) {
 	if (typeof data === 'number') return data;
@@ -5002,7 +4971,7 @@ export function wrap_LhsExpression(
 		'object_pattern',
 		'array_pattern',
 		'non_null_expression'
-	]) as T._LhsExpression | readonly T._LhsExpression[] | undefined;
+	]) as T.LhsExpression | readonly T.LhsExpression[] | undefined;
 	const filtered =
 		kindKeyed ??
 		_filterWrapChildrenByKind(node.$other, [
@@ -5040,9 +5009,9 @@ export function wrap_LhsExpression(
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
 	) {
-		return drillInSelf<T._LhsExpression>(node as T._LhsExpression, tree);
+		return drillInSelf<T.LhsExpression>(node as T.LhsExpression, tree);
 	}
-	return drillIn<T._LhsExpression>(
+	return drillIn<T.LhsExpression>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
 			tree,
 			nodeType: node.$type,
@@ -5092,7 +5061,7 @@ export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: Tre
 				return this._using_marker;
 			},
 			left() {
-				return drillIn<T.ParenthesizedExpression | T._LhsExpression>(this._left, tree);
+				return drillIn<T.ParenthesizedExpression | T.LhsExpression>(this._left, tree);
 			},
 			right() {
 				return drillIn<T.Expression>(this._right, tree);
@@ -16817,7 +16786,7 @@ export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle) {
 			),
 
 			left() {
-				return drillIn<T._LhsExpression | T.ParenthesizedExpression>(this._left, tree);
+				return drillIn<T.LhsExpression | T.ParenthesizedExpression>(this._left, tree);
 			},
 			operator() {
 				return this._operator;
@@ -17387,123 +17356,6 @@ export function wrapInterfaceBody(data: T.InterfaceBody, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapLhsExpression(
-	data: T.LhsExpression & { readonly $other?: T.LhsExpression | readonly T.LhsExpression[] },
-	tree: TreeHandle
-) {
-	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, [
-		'_member_expression',
-		'_subscript_expression',
-		'_undefined',
-		'_identifier',
-		'_declare_keyword',
-		'_namespace_keyword',
-		'_type_keyword',
-		'_public_keyword',
-		'_private_keyword',
-		'_protected_keyword',
-		'_override_keyword',
-		'_readonly_keyword',
-		'_module_keyword',
-		'_any_keyword',
-		'_number_keyword',
-		'_boolean_keyword',
-		'_string_keyword',
-		'_symbol_keyword',
-		'_export_keyword',
-		'_object_keyword',
-		'_new_keyword',
-		'_get_keyword',
-		'_set_keyword',
-		'_async_keyword',
-		'_static_keyword',
-		'_let_keyword',
-		'_object_pattern',
-		'_array_pattern',
-		'_non_null_expression'
-	]);
-	const kindKeyed = _firstKindKeyedWrapChild(node, [
-		'member_expression',
-		'subscript_expression',
-		'undefined',
-		'identifier',
-		'declare_keyword',
-		'namespace_keyword',
-		'type_keyword',
-		'public_keyword',
-		'private_keyword',
-		'protected_keyword',
-		'override_keyword',
-		'readonly_keyword',
-		'module_keyword',
-		'any_keyword',
-		'number_keyword',
-		'boolean_keyword',
-		'string_keyword',
-		'symbol_keyword',
-		'export_keyword',
-		'object_keyword',
-		'new_keyword',
-		'get_keyword',
-		'set_keyword',
-		'async_keyword',
-		'static_keyword',
-		'let_keyword',
-		'object_pattern',
-		'array_pattern',
-		'non_null_expression'
-	]) as T.LhsExpression | readonly T.LhsExpression[] | undefined;
-	const filtered =
-		kindKeyed ??
-		_filterWrapChildrenByKind(node.$other, [
-			'member_expression',
-			'subscript_expression',
-			'undefined',
-			'identifier',
-			'declare_keyword',
-			'namespace_keyword',
-			'type_keyword',
-			'public_keyword',
-			'private_keyword',
-			'protected_keyword',
-			'override_keyword',
-			'readonly_keyword',
-			'module_keyword',
-			'any_keyword',
-			'number_keyword',
-			'boolean_keyword',
-			'string_keyword',
-			'symbol_keyword',
-			'export_keyword',
-			'object_keyword',
-			'new_keyword',
-			'get_keyword',
-			'set_keyword',
-			'async_keyword',
-			'static_keyword',
-			'let_keyword',
-			'object_pattern',
-			'array_pattern',
-			'non_null_expression'
-		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
-		return drillInSelf<T.LhsExpression>(node as T.LhsExpression, tree);
-	}
-	return drillIn<T.LhsExpression>(
-		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
-			tree,
-			nodeType: node.$type,
-			slotName: 'children',
-			span: (node as _NodeData).$span
-		}),
-		tree
-	);
-}
-
 const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown> = {
 	[TSKindId.Program]: (d, t) => wrapProgram(d as unknown as T.Program, t),
 	[TSKindId.HashBangLine]: (d, t) => wrapHashBangLine(d as unknown as T.HashBangLine, t),
@@ -17577,7 +17429,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.AwaitExpression]: (d, t) => wrapAwaitExpression(d as unknown as T.AwaitExpression, t),
 	[TSKindId.MemberExpression]: (d, t) => wrapMemberExpression(d as unknown as T.MemberExpression, t),
 	[TSKindId.SubscriptExpression]: (d, t) => wrapSubscriptExpression(d as unknown as T.SubscriptExpression, t),
-	[TSKindId._LhsExpression]: (d, t) => wrap_LhsExpression(d as unknown as T._LhsExpression, t),
+	[TSKindId.LhsExpression]: (d, t) => wrapLhsExpression(d as unknown as T.LhsExpression, t),
 	[TSKindId.AssignmentExpression]: (d, t) => wrapAssignmentExpression(d as unknown as T.AssignmentExpression, t),
 	[TSKindId.AugmentedAssignmentLhs]: (d, t) => wrapAugmentedAssignmentLhs(d as unknown as T.AugmentedAssignmentLhs, t),
 	[TSKindId.AugmentedAssignmentExpression]: (d, t) =>
@@ -17939,7 +17791,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.AwaitExpression]: ReturnType<typeof wrapAwaitExpression>;
 	[TSKindId.MemberExpression]: ReturnType<typeof wrapMemberExpression>;
 	[TSKindId.SubscriptExpression]: ReturnType<typeof wrapSubscriptExpression>;
-	[TSKindId._LhsExpression]: ReturnType<typeof wrap_LhsExpression>;
+	[TSKindId.LhsExpression]: ReturnType<typeof wrapLhsExpression>;
 	[TSKindId.AssignmentExpression]: ReturnType<typeof wrapAssignmentExpression>;
 	[TSKindId.AugmentedAssignmentLhs]: ReturnType<typeof wrapAugmentedAssignmentLhs>;
 	[TSKindId.AugmentedAssignmentExpression]: ReturnType<typeof wrapAugmentedAssignmentExpression>;

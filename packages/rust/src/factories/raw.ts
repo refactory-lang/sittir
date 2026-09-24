@@ -7464,7 +7464,7 @@ export function buildTokenTreePatternParen(
 		| T.TokenRepetitionPattern
 		| T.TokenBindingPattern
 		| T.Metavariable
-		| T._NonSpecialToken
+		| T.NonSpecialToken
 	)[]
 ): T.TokenTreePatternParen.Built {
 	const _token_patterns = children;
@@ -7482,7 +7482,7 @@ export function buildTokenTreePatternParen(
 							| T.TokenRepetitionPattern
 							| T.TokenBindingPattern
 							| T.Metavariable
-							| T._NonSpecialToken
+							| T.NonSpecialToken
 						)[]
 					) => buildTokenTreePatternParen(...vs)
 				}
@@ -7501,7 +7501,7 @@ export function buildTokenTreePatternBracket(
 		| T.TokenRepetitionPattern
 		| T.TokenBindingPattern
 		| T.Metavariable
-		| T._NonSpecialToken
+		| T.NonSpecialToken
 	)[]
 ): T.TokenTreePatternBracket.Built {
 	const _token_patterns = children;
@@ -7519,7 +7519,7 @@ export function buildTokenTreePatternBracket(
 							| T.TokenRepetitionPattern
 							| T.TokenBindingPattern
 							| T.Metavariable
-							| T._NonSpecialToken
+							| T.NonSpecialToken
 						)[]
 					) => buildTokenTreePatternBracket(...vs)
 				}
@@ -7538,7 +7538,7 @@ export function buildTokenTreePatternBrace(
 		| T.TokenRepetitionPattern
 		| T.TokenBindingPattern
 		| T.Metavariable
-		| T._NonSpecialToken
+		| T.NonSpecialToken
 	)[]
 ): T.TokenTreePatternBrace.Built {
 	const _token_patterns = children;
@@ -7556,7 +7556,7 @@ export function buildTokenTreePatternBrace(
 							| T.TokenRepetitionPattern
 							| T.TokenBindingPattern
 							| T.Metavariable
-							| T._NonSpecialToken
+							| T.NonSpecialToken
 						)[]
 					) => buildTokenTreePatternBrace(...vs)
 				}
@@ -7570,7 +7570,7 @@ export function buildTokenTreePatternBrace(
 }
 
 export function buildTokenTreeParen(
-	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]
+	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
 ): T.TokenTreeParen.Built {
 	const _tokens = children;
 	return withMethods(
@@ -7581,7 +7581,7 @@ export function buildTokenTreeParen(
 				$named: true as const,
 				_tokens,
 				$with: {
-					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]) =>
+					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
 						buildTokenTreeParen(...vs)
 				}
 			},
@@ -7594,7 +7594,7 @@ export function buildTokenTreeParen(
 }
 
 export function buildTokenTreeBracket(
-	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]
+	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
 ): T.TokenTreeBracket.Built {
 	const _tokens = children;
 	return withMethods(
@@ -7605,7 +7605,7 @@ export function buildTokenTreeBracket(
 				$named: true as const,
 				_tokens,
 				$with: {
-					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]) =>
+					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
 						buildTokenTreeBracket(...vs)
 				}
 			},
@@ -7618,7 +7618,7 @@ export function buildTokenTreeBracket(
 }
 
 export function buildTokenTreeBrace(
-	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]
+	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
 ): T.TokenTreeBrace.Built {
 	const _tokens = children;
 	return withMethods(
@@ -7629,7 +7629,7 @@ export function buildTokenTreeBrace(
 				$named: true as const,
 				_tokens,
 				$with: {
-					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]) =>
+					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
 						buildTokenTreeBrace(...vs)
 				}
 			},
@@ -7642,7 +7642,7 @@ export function buildTokenTreeBrace(
 }
 
 export function buildDelimTokenTreeParen(
-	...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
+	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
 ): T.DelimTokenTreeParen.Built {
 	const _delim_tokens = children;
 	return withMethods(
@@ -7653,7 +7653,7 @@ export function buildDelimTokenTreeParen(
 				$named: true as const,
 				_delim_tokens,
 				$with: {
-					delimTokens: (...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
+					delimTokens: (...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
 						buildDelimTokenTreeParen(...vs)
 				}
 			},
@@ -7666,7 +7666,7 @@ export function buildDelimTokenTreeParen(
 }
 
 export function buildDelimTokenTreeBracket(
-	...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
+	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
 ): T.DelimTokenTreeBracket.Built {
 	const _delim_tokens = children;
 	return withMethods(
@@ -7677,7 +7677,7 @@ export function buildDelimTokenTreeBracket(
 				$named: true as const,
 				_delim_tokens,
 				$with: {
-					delimTokens: (...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
+					delimTokens: (...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
 						buildDelimTokenTreeBracket(...vs)
 				}
 			},
@@ -7690,7 +7690,7 @@ export function buildDelimTokenTreeBracket(
 }
 
 export function buildDelimTokenTreeBrace(
-	...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
+	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
 ): T.DelimTokenTreeBrace.Built {
 	const _delim_tokens = children;
 	return withMethods(
@@ -7701,7 +7701,7 @@ export function buildDelimTokenTreeBrace(
 				$named: true as const,
 				_delim_tokens,
 				$with: {
-					delimTokens: (...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
+					delimTokens: (...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
 						buildDelimTokenTreeBrace(...vs)
 				}
 			},

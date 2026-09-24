@@ -3060,8 +3060,7 @@ A subclass that knows why it may have no row says so (`rowless`).
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.constructor`
 
 Takes the catalog like every node, so a supertype carries its own row and
-display. A supertype with no row is stamped `supertype`, or `alias-name`
-when assemble mints it under an alias name (`mintedUnderAliasName`).
+display. A supertype with no row is stamped `supertype`.
 
 #### body
 
@@ -4000,9 +3999,7 @@ turns it into the middle strength tier the writer honours.
 ### `packages/codegen/src/compiler/model/display-name.ts::DisplaySource`
 
 Why a node has the display it has. `catalog`: its own catalog row names it
-(the parser's symbol for the kind). `alias-name`: assemble minted the node
-under an alias name (the supertype parse-name pass), so its kind already is
-a display. `supertype`: a supertype tree-sitter issues no symbol for,
+(the parser's symbol for the kind). `supertype`: a supertype tree-sitter issues no symbol for,
 legitimately rowless. `phantom`: any other rowless node, either a kind sittir
 mints that the parser never sees (the operator enums) or a grammar rule whose
 every use aliases it away (python `keyword_identifier`). The rowless sources
@@ -4014,7 +4011,7 @@ phantom-kind ratchet counts, a symbol-less supertype is not.
 The display a node is constructed with, decided once from its own catalog
 row (`findOwnKindEntry`): the row's display when there is one (`catalog`),
 else its own kind through `displayOfParserName`, labelled with why it has no
-row. A node minted under an alias name names itself. Nothing downstream
+row. Nothing downstream
 derives a display from a kind name.
 
 ### `packages/codegen/src/compiler/model/display-name.ts::displayNameOfEntry`
@@ -4050,12 +4047,13 @@ a kind (a `parseKind`, an alias target) carries it itself
 
 ### `packages/codegen/src/compiler/model/display-name.ts::ownsItsDisplay`
 
-Whether a kind's display is its own name. Where two kinds share one display
-(a hidden storage and the node assemble minted under its alias name,
-typescript `_lhs_expression` and `lhs_expression`; a symbol-less supertype
-and the visible kind of that name, `_identifier` and `identifier`), the one
-that owns it holds the options hint home (`emitOptionsHints`), and any other
-collision fails at codegen.
+Whether a kind's display is its own name. Where two kinds share one display,
+which happens when a symbol-less supertype shares the name of a visible kind
+(typescript `_identifier` and `identifier`), the one that owns the display
+holds the options hint home (`emitOptionsHints`), and any other collision
+fails at codegen. A hidden storage aliased to one name is a single node:
+assemble mints no second node under the alias name, so the storage itself
+carries the display (typescript `_lhs_expression`, typed `LhsExpression`).
 
 ### `packages/codegen/src/compiler/model/display-name.ts::displayedKinds`
 

@@ -422,7 +422,7 @@ export enum TSKindId {
 	AwaitExpression = 250,
 	MemberExpression = 251,
 	SubscriptExpression = 252,
-	_LhsExpression = 253,
+	LhsExpression = 253,
 	AssignmentExpression = 254,
 	AugmentedAssignmentLhs = 255,
 	AugmentedAssignmentExpression = 256,
@@ -2083,7 +2083,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'subscript_expression':
 			return TSKindId.SubscriptExpression;
 		case '_lhs_expression':
-			return TSKindId._LhsExpression;
+			return TSKindId.LhsExpression;
 		case 'assignment_expression':
 			return TSKindId.AssignmentExpression;
 		case '_augmented_assignment_lhs':
@@ -2777,7 +2777,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'function_signature_automatic_semicolon':
 			return TSKindId.FunctionSignatureAutomaticSemicolon;
 		case 'lhs_expression':
-			return TSKindId._LhsExpression;
+			return TSKindId.LhsExpression;
 		case 'extends_clause_single':
 			return TSKindId.ExtendsClauseSingle;
 		case 'type_query_member_expression_in_type_annotation':
@@ -2973,7 +2973,7 @@ export enum CallExpressionKind {
 	CallExpressionMember = 'call_expression_member'
 }
 
-export enum _LhsExpressionKind {
+export enum LhsExpressionKind {
 	MemberExpression = 'member_expression',
 	SubscriptExpression = 'subscript_expression',
 	Undefined = 'undefined',
@@ -3077,7 +3077,7 @@ export enum MetaPropertyKind {
 }
 
 export enum PatternKind {
-	_LhsExpression = '_lhs_expression',
+	LhsExpression = '_lhs_expression',
 	MemberExpression = 'member_expression',
 	SubscriptExpression = 'subscript_expression',
 	Undefined = 'undefined',
@@ -3180,38 +3180,6 @@ export enum WhitespaceKind {
 export enum ExportStatementDefaultKind {
 	ExportStatementDefaultFrom = 'export_statement_default_from',
 	ExportStatementDefaultDeclaration = 'export_statement_default_declaration'
-}
-
-export enum LhsExpressionKind {
-	MemberExpression = 'member_expression',
-	SubscriptExpression = 'subscript_expression',
-	Undefined = 'undefined',
-	Identifier = 'identifier',
-	DeclareKeyword = 'declare_keyword',
-	NamespaceKeyword = 'namespace_keyword',
-	TypeKeyword = 'type_keyword',
-	PublicKeyword = 'public_keyword',
-	PrivateKeyword = 'private_keyword',
-	ProtectedKeyword = 'protected_keyword',
-	OverrideKeyword = 'override_keyword',
-	ReadonlyKeyword = 'readonly_keyword',
-	ModuleKeyword = 'module_keyword',
-	AnyKeyword = 'any_keyword',
-	NumberKeyword = 'number_keyword',
-	BooleanKeyword = 'boolean_keyword',
-	StringKeyword = 'string_keyword',
-	SymbolKeyword = 'symbol_keyword',
-	ExportKeyword = 'export_keyword',
-	ObjectKeyword = 'object_keyword',
-	NewKeyword = 'new_keyword',
-	GetKeyword = 'get_keyword',
-	SetKeyword = 'set_keyword',
-	AsyncKeyword = 'async_keyword',
-	StaticKeyword = 'static_keyword',
-	LetKeyword = 'let_keyword',
-	ObjectPattern = 'object_pattern',
-	ArrayPattern = 'array_pattern',
-	NonNullExpression = 'non_null_expression'
 }
 
 // Node types — concrete interfaces
@@ -4660,11 +4628,11 @@ export interface SubscriptExpression {
 export interface AssignmentExpression {
 	readonly $type: TSKindId.AssignmentExpression;
 	readonly _using_marker?: boolean;
-	readonly _left: ParenthesizedExpression | _LhsExpression;
+	readonly _left: ParenthesizedExpression | LhsExpression;
 	readonly _right: Expression;
 	readonly __inputHints__?: {
 		readonly using_marker?: BaseBooleanKeyword<'using'>;
-		readonly left: KindEnum<'undefined', TSKindId.Undefined> | ParenthesizedExpression | _LhsExpression;
+		readonly left: KindEnum<'undefined', TSKindId.Undefined> | ParenthesizedExpression | LhsExpression;
 		readonly right:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -4676,7 +4644,7 @@ export interface AssignmentExpression {
 		readonly using_marker?: 'using' | 'using';
 	};
 	usingMarker(): boolean | undefined;
-	left(): ParenthesizedExpression | _LhsExpression;
+	left(): ParenthesizedExpression | LhsExpression;
 	right(): Expression;
 }
 
@@ -9501,11 +9469,11 @@ export interface VariableDeclaratorDefinite {
 
 export interface ForHeaderLhs {
 	readonly $type: TSKindId.ForHeaderLhs;
-	readonly _left: _LhsExpression | ParenthesizedExpression;
+	readonly _left: LhsExpression | ParenthesizedExpression;
 	readonly _operator: number;
 	readonly _right: Expression | SequenceExpression;
 	readonly __inputHints__?: {
-		readonly left: KindEnum<'undefined', TSKindId.Undefined> | _LhsExpression | ParenthesizedExpression;
+		readonly left: KindEnum<'undefined', TSKindId.Undefined> | LhsExpression | ParenthesizedExpression;
 		readonly operator: KindEnum<'in' | 'of', TSKindId.InKeyword | TSKindId.OfKeyword>;
 		readonly right:
 			| KindEnum<
@@ -9515,7 +9483,7 @@ export interface ForHeaderLhs {
 			| Expression
 			| SequenceExpression;
 	};
-	left(): _LhsExpression | ParenthesizedExpression;
+	left(): LhsExpression | ParenthesizedExpression;
 	operator(): number;
 	right(): Expression | SequenceExpression;
 }
@@ -10909,7 +10877,7 @@ export type CallExpression = CallExpressionCall | CallExpressionTemplateCall | C
 
 export type CallExpressionTree = CallExpressionCallTree | CallExpressionTemplateCallTree | CallExpressionMemberTree;
 
-export type _LhsExpression =
+export type LhsExpression =
 	| MemberExpression
 	| SubscriptExpression
 	| Undefined
@@ -10940,7 +10908,7 @@ export type _LhsExpression =
 	| ArrayPattern
 	| NonNullExpression;
 
-export type _LhsExpressionTree =
+export type LhsExpressionTree =
 	| MemberExpressionTree
 	| SubscriptExpressionTree
 	| UndefinedTree
@@ -11073,7 +11041,7 @@ export type MetaProperty = MetaPropertyNewTarget | MetaPropertyImportMeta;
 export type MetaPropertyTree = MetaPropertyNewTargetTree | MetaPropertyImportMetaTree;
 
 export type Pattern =
-	| _LhsExpression
+	| LhsExpression
 	| MemberExpression
 	| SubscriptExpression
 	| Undefined
@@ -11218,68 +11186,6 @@ export type ExportStatementDefault = ExportStatementDefaultFrom | ExportStatemen
 
 export type ExportStatementDefaultTree = ExportStatementDefaultFromTree | ExportStatementDefaultDeclarationTree;
 
-export type LhsExpression =
-	| MemberExpression
-	| SubscriptExpression
-	| Undefined
-	| Identifier
-	| DeclareKeyword
-	| NamespaceKeyword
-	| TypeKeyword
-	| PublicKeyword
-	| PrivateKeyword
-	| ProtectedKeyword
-	| OverrideKeyword
-	| ReadonlyKeyword
-	| ModuleKeyword
-	| AnyKeyword
-	| NumberKeyword
-	| BooleanKeyword
-	| StringKeyword
-	| SymbolKeyword
-	| ExportKeyword
-	| ObjectKeyword
-	| NewKeyword
-	| GetKeyword
-	| SetKeyword
-	| AsyncKeyword
-	| StaticKeyword
-	| LetKeyword
-	| ObjectPattern
-	| ArrayPattern
-	| NonNullExpression;
-
-export type LhsExpressionTree =
-	| MemberExpressionTree
-	| SubscriptExpressionTree
-	| UndefinedTree
-	| IdentifierTree
-	| DeclareKeywordTree
-	| NamespaceKeywordTree
-	| TypeKeywordTree
-	| PublicKeywordTree
-	| PrivateKeywordTree
-	| ProtectedKeywordTree
-	| OverrideKeywordTree
-	| ReadonlyKeywordTree
-	| ModuleKeywordTree
-	| AnyKeywordTree
-	| NumberKeywordTree
-	| BooleanKeywordTree
-	| StringKeywordTree
-	| SymbolKeywordTree
-	| ExportKeywordTree
-	| ObjectKeywordTree
-	| NewKeywordTree
-	| GetKeywordTree
-	| SetKeywordTree
-	| AsyncKeywordTree
-	| StaticKeywordTree
-	| LetKeywordTree
-	| ObjectPatternTree
-	| ArrayPatternTree
-	| NonNullExpressionTree;
-
 export namespace ExportStatement {
 	export type Kind = 'export_statement';
 	export type Tree = ExportStatementTree;
@@ -11345,9 +11251,9 @@ export namespace CallExpression {
 	export type Tree = CallExpressionTree;
 }
 
-export namespace _LhsExpression {
+export namespace LhsExpression {
 	export type Kind = '_lhs_expression';
-	export type Tree = _LhsExpressionTree;
+	export type Tree = LhsExpressionTree;
 }
 
 export namespace AugmentedAssignmentLhs {
@@ -11432,11 +11338,6 @@ export namespace Whitespace {
 export namespace ExportStatementDefault {
 	export type Kind = 'export_statement_default';
 	export type Tree = ExportStatementDefaultTree;
-}
-
-export namespace LhsExpression {
-	export type Kind = 'lhs_expression';
-	export type Tree = LhsExpressionTree;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)

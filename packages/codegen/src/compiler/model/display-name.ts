@@ -3,7 +3,7 @@ import { findAnonEntryForLiteralText, findOwnKindEntry, type KindEntryLike } fro
 import { aliasTargetOf, storageNameOf, type SymbolRule } from '../../types/rule.ts';
 import { isParserHiddenName } from '../../dsl/rule-patterns.ts';
 
-export type DisplaySource = 'catalog' | 'alias-name' | 'supertype' | 'phantom';
+export type DisplaySource = 'catalog' | 'supertype' | 'phantom';
 
 export type RowlessDisplaySource = Exclude<DisplaySource, 'catalog'>;
 
@@ -13,7 +13,6 @@ export interface DisplayStamp {
 }
 
 export function stampDisplay(kind: string, kindEntries: readonly KindEntryLike[], rowless: RowlessDisplaySource): DisplayStamp {
-	if (rowless === 'alias-name') return { name: kind, source: rowless };
 	const own = findOwnKindEntry(kindEntries, kind);
 	if (own !== undefined) return { name: displayNameOfEntry(own, kindEntries), source: 'catalog' };
 	return { name: displayOfParserName(kind), source: rowless };

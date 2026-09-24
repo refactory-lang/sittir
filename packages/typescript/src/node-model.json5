@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 438,
+  "nodeCount": 437,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -23,7 +23,6 @@
     "expression",
     "import_specifier",
     "index_signature",
-    "lhs_expression",
     "meta_property",
     "number",
     "parenthesized_expression",
@@ -4796,7 +4795,7 @@
     {
       "kind": "_lhs_expression",
       "modelType": "supertype",
-      "typeName": "_LhsExpression",
+      "typeName": "LhsExpression",
       "irKey": "lhsExpression",
       "hidden": true,
       "transparent": true,
@@ -16908,45 +16907,6 @@
       "factoryFields": [
         "kind",
         "declarators"
-      ]
-    },
-    {
-      "kind": "lhs_expression",
-      "modelType": "supertype",
-      "typeName": "LhsExpression",
-      "irKey": "lhsExpression",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "any_keyword",
-        "array_pattern",
-        "async_keyword",
-        "boolean_keyword",
-        "declare_keyword",
-        "export_keyword",
-        "get_keyword",
-        "identifier",
-        "let_keyword",
-        "member_expression",
-        "module_keyword",
-        "namespace_keyword",
-        "new_keyword",
-        "non_null_expression",
-        "number_keyword",
-        "object_keyword",
-        "object_pattern",
-        "override_keyword",
-        "private_keyword",
-        "protected_keyword",
-        "public_keyword",
-        "readonly_keyword",
-        "set_keyword",
-        "static_keyword",
-        "string_keyword",
-        "subscript_expression",
-        "symbol_keyword",
-        "type_keyword",
-        "undefined"
       ]
     },
     {

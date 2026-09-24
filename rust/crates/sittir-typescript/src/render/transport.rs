@@ -6148,7 +6148,7 @@ impl ::sittir_core::render::Render for CallExpressionTransport {
 }
 
 #[derive(Debug, Clone)]
-pub enum _LhsExpressionTransport {
+pub enum LhsExpressionTransport {
     MemberExpression(MemberExpressionTransport),
     SubscriptExpression(SubscriptExpressionTransport),
     Undefined(UndefinedTransport),
@@ -6181,45 +6181,45 @@ pub enum _LhsExpressionTransport {
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for _LhsExpressionTransport {
+impl ::sittir_core::prepare::Prepare for LhsExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            _LhsExpressionTransport::MemberExpression(t) => t.prepare(ctx),
-            _LhsExpressionTransport::SubscriptExpression(t) => t.prepare(ctx),
-            _LhsExpressionTransport::Undefined(t) => t.prepare(ctx),
-            _LhsExpressionTransport::Identifier(t) => t.prepare(ctx),
-            _LhsExpressionTransport::DeclareKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::NamespaceKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::TypeKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::PublicKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::PrivateKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::ProtectedKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::OverrideKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::ReadonlyKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::ModuleKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::AnyKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::NumberKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::BooleanKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::StringKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::SymbolKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::ExportKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::ObjectKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::NewKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::GetKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::SetKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::AsyncKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::StaticKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::LetKeyword(t) => t.prepare(ctx),
-            _LhsExpressionTransport::ObjectPattern(t) => t.prepare(ctx),
-            _LhsExpressionTransport::ArrayPattern(t) => t.prepare(ctx),
-            _LhsExpressionTransport::NonNullExpression(t) => t.prepare(ctx),
-            _LhsExpressionTransport::Verbatim(t) => t.prepare(ctx),
+            LhsExpressionTransport::MemberExpression(t) => t.prepare(ctx),
+            LhsExpressionTransport::SubscriptExpression(t) => t.prepare(ctx),
+            LhsExpressionTransport::Undefined(t) => t.prepare(ctx),
+            LhsExpressionTransport::Identifier(t) => t.prepare(ctx),
+            LhsExpressionTransport::DeclareKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::NamespaceKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::TypeKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::PublicKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::PrivateKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::ProtectedKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::OverrideKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::ReadonlyKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::ModuleKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::AnyKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::NumberKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::BooleanKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::StringKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::SymbolKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::ExportKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::ObjectKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::NewKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::GetKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::SetKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::AsyncKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::StaticKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::LetKeyword(t) => t.prepare(ctx),
+            LhsExpressionTransport::ObjectPattern(t) => t.prepare(ctx),
+            LhsExpressionTransport::ArrayPattern(t) => t.prepare(ctx),
+            LhsExpressionTransport::NonNullExpression(t) => t.prepare(ctx),
+            LhsExpressionTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -6315,7 +6315,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                         if let Ok(value) = ArrayPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayPattern(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 253 in _LhsExpressionTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 253 in LhsExpressionTransport decodes as none of its members"))
                     },
                     457 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
@@ -6332,7 +6332,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                         }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("self-alias kind id 457 in _LhsExpressionTransport: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("self-alias kind id 457 in LhsExpressionTransport: no kind-keyed child slot to unwrap"))
                     },
                     124 => Ok(Self::Undefined(
                         UndefinedTransport::from_napi_value(env, napi_val)?
@@ -6422,14 +6422,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in _LhsExpressionTransport",
+                        "unknown kind id {other} in LhsExpressionTransport",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in _LhsExpressionTransport")
+                    ::napi::Error::from_reason("$type property missing in LhsExpressionTransport")
                 )?;
                 match kind_id {
                     253 => {
@@ -6520,7 +6520,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                         if let Ok(value) = ArrayPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ArrayPattern(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 253 in _LhsExpressionTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 253 in LhsExpressionTransport decodes as none of its members"))
                     },
                     457 => {
                         if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
@@ -6537,7 +6537,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                         }
                         if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
                         if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("self-alias kind id 457 in _LhsExpressionTransport: no kind-keyed child slot to unwrap"))
+                        Err(::napi::Error::from_reason("self-alias kind id 457 in LhsExpressionTransport: no kind-keyed child slot to unwrap"))
                     },
                     124 => Ok(Self::Undefined(
                         UndefinedTransport::from_napi_value(env, napi_val)?
@@ -6627,47 +6627,47 @@ impl ::napi::bindgen_prelude::FromNapiValue for _LhsExpressionTransport {
                         NonNullExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in _LhsExpressionTransport",
+                        "unknown kind id {other} in LhsExpressionTransport",
                     ))),
                 }
             }
             ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("_LhsExpressionTransport: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("LhsExpressionTransport: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for _LhsExpressionTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for LhsExpressionTransport {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("_LhsExpressionTransport is receive-only"))
+        Err(::napi::Error::from_reason("LhsExpressionTransport is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<_LhsExpressionTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LhsExpressionTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        _LhsExpressionTransport::from_napi_value(env, napi_val).map(Box::new)
+        LhsExpressionTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<_LhsExpressionTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LhsExpressionTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        _LhsExpressionTransport::to_napi_value(env, *val)
+        LhsExpressionTransport::to_napi_value(env, *val)
     }
 }
 
-impl ::sittir_core::view::KindOf for _LhsExpressionTransport {
+impl ::sittir_core::view::KindOf for LhsExpressionTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -6704,44 +6704,44 @@ impl ::sittir_core::view::KindOf for _LhsExpressionTransport {
     }
 }
 
-fn _lhs_expression_transport_to_any(t: _LhsExpressionTransport) -> AnyTransport {
+fn lhs_expression_transport_to_any(t: LhsExpressionTransport) -> AnyTransport {
     match t {
-        _LhsExpressionTransport::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        _LhsExpressionTransport::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        _LhsExpressionTransport::Undefined(inner) => AnyTransport::Undefined(inner),
-        _LhsExpressionTransport::Identifier(inner) => AnyTransport::Identifier(inner),
-        _LhsExpressionTransport::DeclareKeyword(inner) => AnyTransport::DeclareKeyword(inner),
-        _LhsExpressionTransport::NamespaceKeyword(inner) => AnyTransport::NamespaceKeyword(inner),
-        _LhsExpressionTransport::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        _LhsExpressionTransport::PublicKeyword(inner) => AnyTransport::PublicKeyword(inner),
-        _LhsExpressionTransport::PrivateKeyword(inner) => AnyTransport::PrivateKeyword(inner),
-        _LhsExpressionTransport::ProtectedKeyword(inner) => AnyTransport::ProtectedKeyword(inner),
-        _LhsExpressionTransport::OverrideKeyword(inner) => AnyTransport::OverrideKeyword(inner),
-        _LhsExpressionTransport::ReadonlyKeyword(inner) => AnyTransport::ReadonlyKeyword(inner),
-        _LhsExpressionTransport::ModuleKeyword(inner) => AnyTransport::ModuleKeyword(inner),
-        _LhsExpressionTransport::AnyKeyword(inner) => AnyTransport::AnyKeyword(inner),
-        _LhsExpressionTransport::NumberKeyword(inner) => AnyTransport::NumberKeyword(inner),
-        _LhsExpressionTransport::BooleanKeyword(inner) => AnyTransport::BooleanKeyword(inner),
-        _LhsExpressionTransport::StringKeyword(inner) => AnyTransport::StringKeyword(inner),
-        _LhsExpressionTransport::SymbolKeyword(inner) => AnyTransport::SymbolKeyword(inner),
-        _LhsExpressionTransport::ExportKeyword(inner) => AnyTransport::ExportKeyword(inner),
-        _LhsExpressionTransport::ObjectKeyword(inner) => AnyTransport::ObjectKeyword(inner),
-        _LhsExpressionTransport::NewKeyword(inner) => AnyTransport::NewKeyword(inner),
-        _LhsExpressionTransport::GetKeyword(inner) => AnyTransport::GetKeyword(inner),
-        _LhsExpressionTransport::SetKeyword(inner) => AnyTransport::SetKeyword(inner),
-        _LhsExpressionTransport::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        _LhsExpressionTransport::StaticKeyword(inner) => AnyTransport::StaticKeyword(inner),
-        _LhsExpressionTransport::LetKeyword(inner) => AnyTransport::LetKeyword(inner),
-        _LhsExpressionTransport::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
-        _LhsExpressionTransport::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
-        _LhsExpressionTransport::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
-        _LhsExpressionTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        LhsExpressionTransport::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
+        LhsExpressionTransport::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
+        LhsExpressionTransport::Undefined(inner) => AnyTransport::Undefined(inner),
+        LhsExpressionTransport::Identifier(inner) => AnyTransport::Identifier(inner),
+        LhsExpressionTransport::DeclareKeyword(inner) => AnyTransport::DeclareKeyword(inner),
+        LhsExpressionTransport::NamespaceKeyword(inner) => AnyTransport::NamespaceKeyword(inner),
+        LhsExpressionTransport::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
+        LhsExpressionTransport::PublicKeyword(inner) => AnyTransport::PublicKeyword(inner),
+        LhsExpressionTransport::PrivateKeyword(inner) => AnyTransport::PrivateKeyword(inner),
+        LhsExpressionTransport::ProtectedKeyword(inner) => AnyTransport::ProtectedKeyword(inner),
+        LhsExpressionTransport::OverrideKeyword(inner) => AnyTransport::OverrideKeyword(inner),
+        LhsExpressionTransport::ReadonlyKeyword(inner) => AnyTransport::ReadonlyKeyword(inner),
+        LhsExpressionTransport::ModuleKeyword(inner) => AnyTransport::ModuleKeyword(inner),
+        LhsExpressionTransport::AnyKeyword(inner) => AnyTransport::AnyKeyword(inner),
+        LhsExpressionTransport::NumberKeyword(inner) => AnyTransport::NumberKeyword(inner),
+        LhsExpressionTransport::BooleanKeyword(inner) => AnyTransport::BooleanKeyword(inner),
+        LhsExpressionTransport::StringKeyword(inner) => AnyTransport::StringKeyword(inner),
+        LhsExpressionTransport::SymbolKeyword(inner) => AnyTransport::SymbolKeyword(inner),
+        LhsExpressionTransport::ExportKeyword(inner) => AnyTransport::ExportKeyword(inner),
+        LhsExpressionTransport::ObjectKeyword(inner) => AnyTransport::ObjectKeyword(inner),
+        LhsExpressionTransport::NewKeyword(inner) => AnyTransport::NewKeyword(inner),
+        LhsExpressionTransport::GetKeyword(inner) => AnyTransport::GetKeyword(inner),
+        LhsExpressionTransport::SetKeyword(inner) => AnyTransport::SetKeyword(inner),
+        LhsExpressionTransport::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
+        LhsExpressionTransport::StaticKeyword(inner) => AnyTransport::StaticKeyword(inner),
+        LhsExpressionTransport::LetKeyword(inner) => AnyTransport::LetKeyword(inner),
+        LhsExpressionTransport::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
+        LhsExpressionTransport::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
+        LhsExpressionTransport::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
+        LhsExpressionTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl ::sittir_core::render::Render for _LhsExpressionTransport {
+impl ::sittir_core::render::Render for LhsExpressionTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render__lhs_expression(self, w)
+        render_lhs_expression(self, w)
     }
 }
 
@@ -7356,7 +7356,7 @@ impl ::sittir_core::render::Render for MetaPropertyTransport {
 
 #[derive(Debug, Clone)]
 pub enum PatternTransport {
-    _LhsExpression(_LhsExpressionTransport),
+    LhsExpression(LhsExpressionTransport),
     MemberExpression(MemberExpressionTransport),
     SubscriptExpression(SubscriptExpressionTransport),
     Undefined(UndefinedTransport),
@@ -7393,7 +7393,7 @@ pub enum PatternTransport {
 impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            PatternTransport::_LhsExpression(t) => t.prepare(ctx),
+            PatternTransport::LhsExpression(t) => t.prepare(ctx),
             PatternTransport::MemberExpression(t) => t.prepare(ctx),
             PatternTransport::SubscriptExpression(t) => t.prepare(ctx),
             PatternTransport::Undefined(t) => t.prepare(ctx),
@@ -7523,8 +7523,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         if let Ok(value) = RestPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::RestPattern(value));
                         }
-                        if let Ok(value) = _LhsExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::_LhsExpression(value));
+                        if let Ok(value) = LhsExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LhsExpression(value));
                         }
                         if let Ok(value) = ObjectPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ObjectPattern(value));
@@ -7603,32 +7603,32 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     50 => Ok(Self::LetKeyword(
                         LetKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    251 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    251 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    252 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    1 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    1 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    231 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    235 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    287 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    287 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     279 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    457 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    457 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PatternTransport",
@@ -7726,8 +7726,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         if let Ok(value) = RestPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::RestPattern(value));
                         }
-                        if let Ok(value) = _LhsExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::_LhsExpression(value));
+                        if let Ok(value) = LhsExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LhsExpression(value));
                         }
                         if let Ok(value) = ObjectPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ObjectPattern(value));
@@ -7806,32 +7806,32 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     50 => Ok(Self::LetKeyword(
                         LetKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    251 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    251 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    252 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    1 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    1 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    231 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    231 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    235 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    235 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    287 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    287 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     279 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    457 => Ok(Self::_LhsExpression(
-                        _LhsExpressionTransport::from_napi_value(env, napi_val)?
+                    457 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PatternTransport",
@@ -7877,7 +7877,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternTransport> {
 impl ::sittir_core::view::KindOf for PatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::_LhsExpression(inner) => inner.kind_in(kinds),
+            Self::LhsExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::Undefined(inner) => inner.kind_in(kinds),
@@ -98136,7 +98136,7 @@ impl ::sittir_core::prepare::SeatTarget for CallExpressionTransport {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for _LhsExpressionTransport {
+impl ::sittir_core::prepare::SeatTarget for LhsExpressionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::MemberExpression(t) => t.seat_target(table),
@@ -98175,7 +98175,7 @@ impl ::sittir_core::prepare::SeatTarget for StringTransport {
 impl ::sittir_core::prepare::SeatTarget for PatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::_LhsExpression(t) => t.seat_target(table),
+            Self::LhsExpression(t) => t.seat_target(table),
             Self::MemberExpression(t) => t.seat_target(table),
             Self::SubscriptExpression(t) => t.seat_target(table),
             Self::ObjectPattern(t) => t.seat_target(table),
@@ -104263,38 +104263,38 @@ fn render_call_expression(t: &CallExpressionTransport, w: &mut dyn ::sittir_core
     }
 }
 
-fn render__lhs_expression(t: &_LhsExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_lhs_expression(t: &LhsExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        _LhsExpressionTransport::MemberExpression(inner) => inner.render(w),
-        _LhsExpressionTransport::SubscriptExpression(inner) => inner.render(w),
-        _LhsExpressionTransport::Undefined(inner) => inner.render(w),
-        _LhsExpressionTransport::Identifier(inner) => inner.render(w),
-        _LhsExpressionTransport::DeclareKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::NamespaceKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::TypeKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::PublicKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::PrivateKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::ProtectedKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::OverrideKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::ReadonlyKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::ModuleKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::AnyKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::NumberKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::BooleanKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::StringKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::SymbolKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::ExportKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::ObjectKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::NewKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::GetKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::SetKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::AsyncKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::StaticKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::LetKeyword(inner) => inner.render(w),
-        _LhsExpressionTransport::ObjectPattern(inner) => inner.render(w),
-        _LhsExpressionTransport::ArrayPattern(inner) => inner.render(w),
-        _LhsExpressionTransport::NonNullExpression(inner) => inner.render(w),
-        _LhsExpressionTransport::Verbatim(inner) => inner.render(w),
+        LhsExpressionTransport::MemberExpression(inner) => inner.render(w),
+        LhsExpressionTransport::SubscriptExpression(inner) => inner.render(w),
+        LhsExpressionTransport::Undefined(inner) => inner.render(w),
+        LhsExpressionTransport::Identifier(inner) => inner.render(w),
+        LhsExpressionTransport::DeclareKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::NamespaceKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::TypeKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::PublicKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::PrivateKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::ProtectedKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::OverrideKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::ReadonlyKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::ModuleKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::AnyKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::NumberKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::BooleanKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::StringKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::SymbolKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::ExportKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::ObjectKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::NewKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::GetKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::SetKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::AsyncKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::StaticKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::LetKeyword(inner) => inner.render(w),
+        LhsExpressionTransport::ObjectPattern(inner) => inner.render(w),
+        LhsExpressionTransport::ArrayPattern(inner) => inner.render(w),
+        LhsExpressionTransport::NonNullExpression(inner) => inner.render(w),
+        LhsExpressionTransport::Verbatim(inner) => inner.render(w),
     }
 }
 
@@ -104335,7 +104335,7 @@ fn render_meta_property(t: &MetaPropertyTransport, w: &mut dyn ::sittir_core::re
 
 fn render_pattern(t: &PatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        PatternTransport::_LhsExpression(inner) => inner.render(w),
+        PatternTransport::LhsExpression(inner) => inner.render(w),
         PatternTransport::MemberExpression(inner) => inner.render(w),
         PatternTransport::SubscriptExpression(inner) => inner.render(w),
         PatternTransport::Undefined(inner) => inner.render(w),

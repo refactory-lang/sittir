@@ -457,7 +457,14 @@ git commit -m "feat(dsl): rule(name, body) declares a real rule at a patch path"
 
 ---
 
-### Task 4: `alias(name)` promotes an unnamed alias; leaf mints are not hoisted
+### Task 4: `alias(name)` promotes an unnamed alias; leaf mints are not hoisted (landed)
+
+**What landed:**
+- The ALIAS branch of `resolveAliasPlaceholder` sets `named: true`.
+- "Leaf" is what tree-sitter lexes as one token: `lexesAsOneToken` in rule-patterns wraps `extractedToken`, and `hoistedUnlessToken` applies it to `alias()` and `variant()` mints alike (user ruling). Rust `range_pattern_with_left_bare` and `line_comment_content` lose `hoisted` and their seats.
+- A leaf variant arm keeps its overlay surface, the way enum arms do (user ruling). The multi-choice-slot arm walk, renamed `authoredArmCandidatesOf`, admits a hoisted group or a variant arm, so `rangePatternWithLeft.bare` is byte-identical.
+- Assemble no longer mints a supertype under an alias name. The storage carries the display and the unprefixed type name (user ruling): typescript `_LhsExpression` → `LhsExpression`, rust `_NonSpecialToken` → `NonSpecialToken`. The `alias-name` display source is gone; `ownsItsDisplay` covers only a symbol-less supertype sharing a visible kind's name.
+
 
 **Files:**
 - Modify: `packages/codegen/src/dsl/transform/transform.ts:859-871` (`resolveAliasPlaceholder`), `:873-913` (`registerAliasedVariant`)
@@ -535,7 +542,6 @@ git add -- packages/codegen/src/dsl/transform/transform.ts packages/codegen/src/
 git commit -m "feat(dsl): alias() promotes an unnamed alias; a literal mint is a subtype, not a hoist"
 ```
 
-**Also in this task:** stop minting a supertype under an alias name at `assemble.ts` (the supertype parse-name pass), so the envelope is the only node with that display. Today the minted twins share a display with their storage: typescript `lhs_expression` (`_lhs_expression`), rust `non_special_token` (`_non_special_token`). Python `keyword_identifier` is a rowless grammar rule of the same effect. Task 2's `ownsItsDisplay` rule covers them until then.
 
 ---
 

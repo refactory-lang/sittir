@@ -2654,7 +2654,7 @@ export function resolveTokenRepetitionPattern_tokenPatterns(
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveMany<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
+				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
 			>(value, _K4, _K5)
 		),
 		[]
@@ -2697,7 +2697,7 @@ export function resolveTokenRepetition_tokens(
 ): T.TokenRepetition['_tokens'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(value, _K4, _K6)
+			_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(value, _K4, _K6)
 		),
 		[]
 	);
@@ -9511,7 +9511,7 @@ export function coerceToTokenTreePatternParen(
 	...input: readonly (
 		| T.TokenTreePatternParen.Loose
 		| LooseValue<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
 				T.LeafScalarMap,
 				T.LeafStringMap,
 				T.NamespaceMap
@@ -9526,7 +9526,7 @@ export function coerceToTokenTreePatternParen(
 			...(coerceMixedEnumStorage(
 				_resolveKindEnum(children, () =>
 					_resolveMany<
-						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
+						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
 					>(children, _K4, _K5)
 				),
 				[]
@@ -9544,7 +9544,7 @@ export function coerceToTokenTreePatternParen(
 		...(coerceMixedEnumStorage(
 			_resolveKindEnum(_elems, () =>
 				_resolveMany<
-					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
 				>(_elems, _K4, _K5)
 			),
 			[]
@@ -9556,7 +9556,7 @@ export function coerceToTokenTreePatternBracket(
 	...input: readonly (
 		| T.TokenTreePatternBracket.Loose
 		| LooseValue<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
 				T.LeafScalarMap,
 				T.LeafStringMap,
 				T.NamespaceMap
@@ -9571,7 +9571,7 @@ export function coerceToTokenTreePatternBracket(
 			...(coerceMixedEnumStorage(
 				_resolveKindEnum(children, () =>
 					_resolveMany<
-						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
+						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
 					>(children, _K4, _K5)
 				),
 				[]
@@ -9589,7 +9589,7 @@ export function coerceToTokenTreePatternBracket(
 		...(coerceMixedEnumStorage(
 			_resolveKindEnum(_elems, () =>
 				_resolveMany<
-					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
 				>(_elems, _K4, _K5)
 			),
 			[]
@@ -9601,7 +9601,7 @@ export function coerceToTokenTreePatternBrace(
 	...input: readonly (
 		| T.TokenTreePatternBrace.Loose
 		| LooseValue<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
 				T.LeafScalarMap,
 				T.LeafStringMap,
 				T.NamespaceMap
@@ -9616,7 +9616,7 @@ export function coerceToTokenTreePatternBrace(
 			...(coerceMixedEnumStorage(
 				_resolveKindEnum(children, () =>
 					_resolveMany<
-						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
+						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
 					>(children, _K4, _K5)
 				),
 				[]
@@ -9634,7 +9634,7 @@ export function coerceToTokenTreePatternBrace(
 		...(coerceMixedEnumStorage(
 			_resolveKindEnum(_elems, () =>
 				_resolveMany<
-					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
 				>(_elems, _K4, _K5)
 			),
 			[]
@@ -9646,7 +9646,7 @@ export function coerceToTokenTreeParen(
 	...input: readonly (
 		| T.TokenTreeParen.Loose
 		| LooseValue<
-				T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+				T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
 				T.LeafScalarMap,
 				T.LeafStringMap,
 				T.NamespaceMap
@@ -9660,7 +9660,7 @@ export function coerceToTokenTreeParen(
 		return F.buildTokenTreeParen(
 			...(coerceMixedEnumStorage(
 				_resolveKindEnum(children, () =>
-					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(children, _K4, _K6)
+					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(children, _K4, _K6)
 				),
 				[]
 			) as unknown as Parameters<typeof F.buildTokenTreeParen>)
@@ -9676,7 +9676,7 @@ export function coerceToTokenTreeParen(
 	return F.buildTokenTreeParen(
 		...(coerceMixedEnumStorage(
 			_resolveKindEnum(_elems, () =>
-				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(_elems, _K4, _K6)
+				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(_elems, _K4, _K6)
 			),
 			[]
 		) as unknown as Parameters<typeof F.buildTokenTreeParen>)
@@ -9687,7 +9687,7 @@ export function coerceToTokenTreeBracket(
 	...input: readonly (
 		| T.TokenTreeBracket.Loose
 		| LooseValue<
-				T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+				T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
 				T.LeafScalarMap,
 				T.LeafStringMap,
 				T.NamespaceMap
@@ -9701,7 +9701,7 @@ export function coerceToTokenTreeBracket(
 		return F.buildTokenTreeBracket(
 			...(coerceMixedEnumStorage(
 				_resolveKindEnum(children, () =>
-					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(children, _K4, _K6)
+					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(children, _K4, _K6)
 				),
 				[]
 			) as unknown as Parameters<typeof F.buildTokenTreeBracket>)
@@ -9717,7 +9717,7 @@ export function coerceToTokenTreeBracket(
 	return F.buildTokenTreeBracket(
 		...(coerceMixedEnumStorage(
 			_resolveKindEnum(_elems, () =>
-				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(_elems, _K4, _K6)
+				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(_elems, _K4, _K6)
 			),
 			[]
 		) as unknown as Parameters<typeof F.buildTokenTreeBracket>)
@@ -9728,7 +9728,7 @@ export function coerceToTokenTreeBrace(
 	...input: readonly (
 		| T.TokenTreeBrace.Loose
 		| LooseValue<
-				T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+				T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
 				T.LeafScalarMap,
 				T.LeafStringMap,
 				T.NamespaceMap
@@ -9742,7 +9742,7 @@ export function coerceToTokenTreeBrace(
 		return F.buildTokenTreeBrace(
 			...(coerceMixedEnumStorage(
 				_resolveKindEnum(children, () =>
-					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(children, _K4, _K6)
+					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(children, _K4, _K6)
 				),
 				[]
 			) as unknown as Parameters<typeof F.buildTokenTreeBrace>)
@@ -9758,7 +9758,7 @@ export function coerceToTokenTreeBrace(
 	return F.buildTokenTreeBrace(
 		...(coerceMixedEnumStorage(
 			_resolveKindEnum(_elems, () =>
-				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(_elems, _K4, _K6)
+				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(_elems, _K4, _K6)
 			),
 			[]
 		) as unknown as Parameters<typeof F.buildTokenTreeBrace>)
@@ -9768,7 +9768,7 @@ export function coerceToTokenTreeBrace(
 export function coerceToDelimTokenTreeParen(
 	...input: readonly (
 		| T.DelimTokenTreeParen.Loose
-		| LooseValue<T._NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildDelimTokenTreeParen> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DelimTokenTreeParen) {
@@ -9777,9 +9777,7 @@ export function coerceToDelimTokenTreeParen(
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildDelimTokenTreeParen(
 			...(coerceMixedEnumStorage(
-				_resolveKindEnum(children, () =>
-					_resolveMany<T._NonSpecialToken | '$' | T.DelimTokenTree>(children, _K4, _K71)
-				),
+				_resolveKindEnum(children, () => _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(children, _K4, _K71)),
 				[['$', TSKindId.Dollar] as const]
 			) as unknown as Parameters<typeof F.buildDelimTokenTreeParen>)
 		);
@@ -9793,7 +9791,7 @@ export function coerceToDelimTokenTreeParen(
 	})();
 	return F.buildDelimTokenTreeParen(
 		...(coerceMixedEnumStorage(
-			_resolveKindEnum(_elems, () => _resolveMany<T._NonSpecialToken | '$' | T.DelimTokenTree>(_elems, _K4, _K71)),
+			_resolveKindEnum(_elems, () => _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(_elems, _K4, _K71)),
 			[['$', TSKindId.Dollar] as const]
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeParen>)
 	);
@@ -9802,7 +9800,7 @@ export function coerceToDelimTokenTreeParen(
 export function coerceToDelimTokenTreeBracket(
 	...input: readonly (
 		| T.DelimTokenTreeBracket.Loose
-		| LooseValue<T._NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildDelimTokenTreeBracket> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DelimTokenTreeBracket) {
@@ -9811,9 +9809,7 @@ export function coerceToDelimTokenTreeBracket(
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildDelimTokenTreeBracket(
 			...(coerceMixedEnumStorage(
-				_resolveKindEnum(children, () =>
-					_resolveMany<T._NonSpecialToken | '$' | T.DelimTokenTree>(children, _K4, _K71)
-				),
+				_resolveKindEnum(children, () => _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(children, _K4, _K71)),
 				[['$', TSKindId.Dollar] as const]
 			) as unknown as Parameters<typeof F.buildDelimTokenTreeBracket>)
 		);
@@ -9827,7 +9823,7 @@ export function coerceToDelimTokenTreeBracket(
 	})();
 	return F.buildDelimTokenTreeBracket(
 		...(coerceMixedEnumStorage(
-			_resolveKindEnum(_elems, () => _resolveMany<T._NonSpecialToken | '$' | T.DelimTokenTree>(_elems, _K4, _K71)),
+			_resolveKindEnum(_elems, () => _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(_elems, _K4, _K71)),
 			[['$', TSKindId.Dollar] as const]
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeBracket>)
 	);
@@ -9836,7 +9832,7 @@ export function coerceToDelimTokenTreeBracket(
 export function coerceToDelimTokenTreeBrace(
 	...input: readonly (
 		| T.DelimTokenTreeBrace.Loose
-		| LooseValue<T._NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildDelimTokenTreeBrace> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DelimTokenTreeBrace) {
@@ -9845,9 +9841,7 @@ export function coerceToDelimTokenTreeBrace(
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildDelimTokenTreeBrace(
 			...(coerceMixedEnumStorage(
-				_resolveKindEnum(children, () =>
-					_resolveMany<T._NonSpecialToken | '$' | T.DelimTokenTree>(children, _K4, _K71)
-				),
+				_resolveKindEnum(children, () => _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(children, _K4, _K71)),
 				[['$', TSKindId.Dollar] as const]
 			) as unknown as Parameters<typeof F.buildDelimTokenTreeBrace>)
 		);
@@ -9861,7 +9855,7 @@ export function coerceToDelimTokenTreeBrace(
 	})();
 	return F.buildDelimTokenTreeBrace(
 		...(coerceMixedEnumStorage(
-			_resolveKindEnum(_elems, () => _resolveMany<T._NonSpecialToken | '$' | T.DelimTokenTree>(_elems, _K4, _K71)),
+			_resolveKindEnum(_elems, () => _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(_elems, _K4, _K71)),
 			[['$', TSKindId.Dollar] as const]
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeBrace>)
 	);

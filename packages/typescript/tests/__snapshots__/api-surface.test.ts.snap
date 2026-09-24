@@ -54,7 +54,6 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATORS": "array",
   "_IdentifierKind": "object",
   "_KINDS": "array",
-  "_LhsExpressionKind": "object",
   "_OPERATORS": "array",
   "_UNARY_EXPRESSION_OPERATORS": "array",
   "__FOR_HEADER_OPERATORS": "array",

@@ -4503,7 +4503,7 @@ export function resolveAssignmentExpression_left(
 ): T.AssignmentExpression['_left'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<T.ParenthesizedExpression | T._LhsExpression>(value, _super_identifier, _K26)
+			_resolveOne<T.ParenthesizedExpression | T.LhsExpression>(value, _super_identifier, _K26)
 		),
 		[]
 	);
@@ -10993,7 +10993,7 @@ export function coerceToMetaPropertyImportMeta(
 export function resolveForHeaderLhs_left(value: T.ForHeaderLhs.LooseConfig['left']): T.ForHeaderLhs['_left'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<T._LhsExpression | T.ParenthesizedExpression>(value, _super_identifier, _K77)
+			_resolveOne<T.LhsExpression | T.ParenthesizedExpression>(value, _super_identifier, _K77)
 		),
 		[]
 	);

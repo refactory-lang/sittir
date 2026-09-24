@@ -20,6 +20,7 @@ import type {
 	ImportIdentifier,
 	ImportSpecifier,
 	IndexSignature,
+	LhsExpression,
 	MetaProperty,
 	ModuleExportName,
 	Number,
@@ -35,8 +36,7 @@ import type {
 	UpdateExpression,
 	VariableDeclarator,
 	Whitespace,
-	_Identifier,
-	_LhsExpression
+	_Identifier
 } from './types.js';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
@@ -555,7 +555,7 @@ export interface IsGuards {
 	primaryExpression(v: { readonly $type: string | number } | number): v is PrimaryExpression;
 	formalParameter(v: { readonly $type: string | number } | number): v is FormalParameter;
 	callExpression(v: { readonly $type: string | number } | number): v is CallExpression;
-	lhsExpression(v: { readonly $type: string | number } | number): v is _LhsExpression;
+	lhsExpression(v: { readonly $type: string | number } | number): v is LhsExpression;
 	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number } | number): v is DestructuringPattern;
 	updateExpression(v: { readonly $type: string | number } | number): v is UpdateExpression;
@@ -881,7 +881,7 @@ export interface AssertGuards {
 	primaryExpression(v: { readonly $type: string | number } | number): asserts v is PrimaryExpression;
 	formalParameter(v: { readonly $type: string | number } | number): asserts v is FormalParameter;
 	callExpression(v: { readonly $type: string | number } | number): asserts v is CallExpression;
-	lhsExpression(v: { readonly $type: string | number } | number): asserts v is _LhsExpression;
+	lhsExpression(v: { readonly $type: string | number } | number): asserts v is LhsExpression;
 	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): asserts v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number } | number): asserts v is DestructuringPattern;
 	updateExpression(v: { readonly $type: string | number } | number): asserts v is UpdateExpression;

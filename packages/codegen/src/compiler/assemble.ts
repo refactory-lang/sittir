@@ -258,17 +258,6 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		}
 	}
 
-	for (const rule of Object.values(normalized.normalizedRules)) {
-		if (rule.type !== SUPERTYPE) continue;
-		for (const [subName, aliasName] of Object.entries(subtypeParseNamesOf(rule))) {
-			if (nodes.has(aliasName)) continue;
-			const subRule = normalized.normalizedRules[subName];
-			if (!subRule || subRule.type !== SUPERTYPE) continue;
-			const subtypes = resolveSupertypeSubtypes(subRule, ctx, kindEntries);
-			nodes.set(aliasName, new AssembledSupertype(aliasName, subRule, subtypes, { kindEntries, mintedUnderAliasName: true }));
-		}
-	}
-
 	collectAnonymousNodes(normalized.normalizedRules, nodes, wordMatcherRegex, kindEntries, assembleDiagnostics);
 	resolveCollidingNames(nodes, ctx);
 	resolveIrKeys(nodes);

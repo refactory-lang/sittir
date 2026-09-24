@@ -2013,9 +2013,9 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 		kind: string,
 		rule: SupertypeRule | ChoiceRule,
 		subtypes: readonly SubtypeRef[],
-		opts?: { kindEntries?: readonly GeneratedKindEntry[]; mintedUnderAliasName?: true }
+		opts?: { kindEntries?: readonly GeneratedKindEntry[] }
 	) {
-		super(kind, rule, { hidden: true, kindEntries: opts?.kindEntries, rowless: opts?.mintedUnderAliasName === true ? 'alias-name' : 'supertype' });
+		super(kind, rule, { hidden: true, kindEntries: opts?.kindEntries, rowless: 'supertype' });
 		this.#subtypes = subtypes.map(
 			({ name, storageKindId, ...armFacts }): NodeOrTerminal => ({
 				node: { kind: 'unresolved-ref', name },

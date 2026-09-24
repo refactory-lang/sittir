@@ -27,6 +27,7 @@ import type {
 	MatchArm,
 	ModItem,
 	NonDelimToken,
+	NonSpecialToken,
 	OrPattern,
 	Path,
 	Pattern,
@@ -41,8 +42,7 @@ import type {
 	Tokens,
 	Type,
 	UseClause,
-	Whitespace,
-	_NonSpecialToken
+	Whitespace
 } from './types.js';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
@@ -495,7 +495,7 @@ export interface IsGuards {
 	tokenTreePattern(v: { readonly $type: string | number } | number): v is TokenTreePattern;
 	tokens(v: { readonly $type: string | number } | number): v is Tokens;
 	tokenTree(v: { readonly $type: string | number } | number): v is TokenTree;
-	nonSpecialToken(v: { readonly $type: string | number } | number): v is _NonSpecialToken;
+	nonSpecialToken(v: { readonly $type: string | number } | number): v is NonSpecialToken;
 	modItem(v: { readonly $type: string | number } | number): v is ModItem;
 	foreignModItem(v: { readonly $type: string | number } | number): v is ForeignModItem;
 	structItem(v: { readonly $type: string | number } | number): v is StructItem;
@@ -765,7 +765,7 @@ export interface AssertGuards {
 	tokenTreePattern(v: { readonly $type: string | number } | number): asserts v is TokenTreePattern;
 	tokens(v: { readonly $type: string | number } | number): asserts v is Tokens;
 	tokenTree(v: { readonly $type: string | number } | number): asserts v is TokenTree;
-	nonSpecialToken(v: { readonly $type: string | number } | number): asserts v is _NonSpecialToken;
+	nonSpecialToken(v: { readonly $type: string | number } | number): asserts v is NonSpecialToken;
 	modItem(v: { readonly $type: string | number } | number): asserts v is ModItem;
 	foreignModItem(v: { readonly $type: string | number } | number): asserts v is ForeignModItem;
 	structItem(v: { readonly $type: string | number } | number): asserts v is StructItem;

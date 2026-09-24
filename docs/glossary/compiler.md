@@ -212,41 +212,6 @@ parents.
 #### body
 
 ```text
-// Nested-supertype alias materialization: a nested SUPERTYPE rule (e.g.
-// rust's `_non_special_token`, itself a SUPERTYPE referenced as a
-// subtype of `_tokens`/`_non_delim_token`/ `_token_pattern`) can be
-// aliased by tree-sitter's real compile into a genuinely distinct, named
-// CST node at that occurrence (`SupertypeRule.subtypeParseNames`,
-// confirmed against grammar.json — see `resolveHiddenSubtypes`'s doc
-// comment). That aliased name has no entry of its own in
-// `normalized.normalizedRules` (it's a parse-time label, not a rule
-// sittir's own grammar declares), so the main loop above never assembles
-// it. Give it one here: reuse the nested rule's OWN already-resolved
-// subtypes (identical union either way — the alias and the hidden rule
-// are the same underlying content, just a different name at this
-// occurrence) under a fresh `AssembledSupertype` keyed by the alias, so
-// it gets a real kindId/typeName/dispatch entry like any other node.
-// Multiple parents aliasing the SAME nested rule to the SAME name
-// (confirmed: `_tokens`/`_non_delim_token`/ `_token_pattern` all alias
-// `_non_special_token` to "token_pattern_group1") register it exactly
-// once.
-```
-
-#### body
-
-```text
-// Only nested SUPERTYPE arms materialize their own node —
-// other parse-alias occurrences (e.g. an ENUM-shaped hidden
-// rule like rust's `_primitive_type`, aliased to
-// `primitive_type` at this same site) aren't a case of
-// tree-sitter inserting a distinct intermediate node; they
-// stay resolved via `resolveHiddenSubtypes`'s existing
-// flatten-through path.
-```
-
-#### body
-
-```text
 // Pre-compute the two cross-node sets once, then run the merged
 // markUserFacing pass (M3 — one pass marks both alias-source + variant-
 // children; see _UserFacingCtx / markUserFacing JSDoc).

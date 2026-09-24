@@ -427,7 +427,7 @@ export enum TSKindId {
 	FragmentSpecifier = 181,
 	TokenTree = 182,
 	TokenRepetition = 183,
-	_NonSpecialToken = 184,
+	NonSpecialToken = 184,
 	AttributeItem = 185,
 	InnerAttributeItem = 186,
 	Attribute = 187,
@@ -2031,7 +2031,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'token_repetition':
 			return TSKindId.TokenRepetition;
 		case '_non_special_token':
-			return TSKindId._NonSpecialToken;
+			return TSKindId.NonSpecialToken;
 		case 'attribute_item':
 			return TSKindId.AttributeItem;
 		case 'inner_attribute_item':
@@ -2865,7 +2865,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'doc_comment':
 			return TSKindId.LineDocContent;
 		case 'non_special_token':
-			return TSKindId._NonSpecialToken;
+			return TSKindId.NonSpecialToken;
 		case 'let_chain':
 			return TSKindId.LetChain;
 		case 'inner_line_doc_comment_marker':
@@ -2985,7 +2985,7 @@ export enum TokenPatternKind {
 	TokenRepetitionPattern = 'token_repetition_pattern',
 	TokenBindingPattern = 'token_binding_pattern',
 	Metavariable = 'metavariable',
-	_NonSpecialToken = '_non_special_token',
+	NonSpecialToken = '_non_special_token',
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -3013,7 +3013,7 @@ export enum TokensKind {
 	TokenTree = 'token_tree',
 	TokenRepetition = 'token_repetition',
 	Metavariable = 'metavariable',
-	_NonSpecialToken = '_non_special_token',
+	NonSpecialToken = '_non_special_token',
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -3037,7 +3037,7 @@ export enum TokenTreeKind {
 	TokenTreeBrace = 'token_tree_brace'
 }
 
-export enum _NonSpecialTokenKind {
+export enum NonSpecialTokenKind {
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -3292,7 +3292,7 @@ export enum DelimTokenTreeKind {
 }
 
 export enum DelimTokensKind {
-	_NonSpecialToken = '_non_special_token',
+	NonSpecialToken = '_non_special_token',
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -3313,7 +3313,7 @@ export enum DelimTokensKind {
 }
 
 export enum NonDelimTokenKind {
-	_NonSpecialToken = '_non_special_token',
+	NonSpecialToken = '_non_special_token',
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -3566,24 +3566,6 @@ export enum WhitespaceKind {
 	Dedent = '_dedent'
 }
 
-export enum NonSpecialTokenKind {
-	Literal = '_literal',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	MutableSpecifier = 'mutable_specifier',
-	Self = 'self',
-	Super = 'super',
-	Crate = 'crate',
-	PrimitiveType = '_primitive_type',
-	TokenTreePunctuation = '_token_tree_punctuation',
-	TokenKeywords = '_token_keywords'
-}
-
 // Node types — concrete interfaces
 export interface SourceFile {
 	readonly $type: TSKindId.SourceFile;
@@ -3683,7 +3665,7 @@ export interface TokenRepetitionPattern {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
 	readonly _separator?: string;
 	readonly _operator: number;
@@ -3887,7 +3869,7 @@ export interface TokenRepetitionPattern {
 			| TokenRepetitionPattern
 			| TokenBindingPattern
 			| Metavariable
-			| _NonSpecialToken
+			| NonSpecialToken
 		)[];
 		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
 	};
@@ -3896,7 +3878,7 @@ export interface TokenRepetitionPattern {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
 	separator(): string | undefined;
 	operator(): number;
@@ -3904,7 +3886,7 @@ export interface TokenRepetitionPattern {
 
 export interface TokenRepetition {
 	readonly $type: TSKindId.TokenRepetition;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 	readonly _separator?: string;
 	readonly _operator: number;
 	readonly __inputHints__?: {
@@ -4106,11 +4088,11 @@ export interface TokenRepetition {
 			| TokenTree
 			| TokenRepetition
 			| Metavariable
-			| _NonSpecialToken
+			| NonSpecialToken
 		)[];
 		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
 	};
-	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 	separator(): string | undefined;
 	operator(): number;
 }
@@ -9129,7 +9111,7 @@ export interface TokenTreePatternParen {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
 	readonly __inputHints__?: {
 		readonly token_patterns?: readonly (
@@ -9331,7 +9313,7 @@ export interface TokenTreePatternParen {
 			| TokenRepetitionPattern
 			| TokenBindingPattern
 			| Metavariable
-			| _NonSpecialToken
+			| NonSpecialToken
 		)[];
 	};
 	tokenPatterns(): readonly (
@@ -9339,7 +9321,7 @@ export interface TokenTreePatternParen {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
 }
 
@@ -9350,7 +9332,7 @@ export interface TokenTreePatternBracket {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
 	readonly __inputHints__?: {
 		readonly token_patterns?: readonly (
@@ -9552,7 +9534,7 @@ export interface TokenTreePatternBracket {
 			| TokenRepetitionPattern
 			| TokenBindingPattern
 			| Metavariable
-			| _NonSpecialToken
+			| NonSpecialToken
 		)[];
 	};
 	tokenPatterns(): readonly (
@@ -9560,7 +9542,7 @@ export interface TokenTreePatternBracket {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
 }
 
@@ -9571,7 +9553,7 @@ export interface TokenTreePatternBrace {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
 	readonly __inputHints__?: {
 		readonly token_patterns?: readonly (
@@ -9773,7 +9755,7 @@ export interface TokenTreePatternBrace {
 			| TokenRepetitionPattern
 			| TokenBindingPattern
 			| Metavariable
-			| _NonSpecialToken
+			| NonSpecialToken
 		)[];
 	};
 	tokenPatterns(): readonly (
@@ -9781,13 +9763,13 @@ export interface TokenTreePatternBrace {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
 }
 
 export interface TokenTreeParen {
 	readonly $type: TSKindId.TokenTreeParen;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 	readonly __inputHints__?: {
 		readonly tokens?: readonly (
 			| KindEnum<
@@ -9987,15 +9969,15 @@ export interface TokenTreeParen {
 			| TokenTree
 			| TokenRepetition
 			| Metavariable
-			| _NonSpecialToken
+			| NonSpecialToken
 		)[];
 	};
-	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 }
 
 export interface TokenTreeBracket {
 	readonly $type: TSKindId.TokenTreeBracket;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 	readonly __inputHints__?: {
 		readonly tokens?: readonly (
 			| KindEnum<
@@ -10195,15 +10177,15 @@ export interface TokenTreeBracket {
 			| TokenTree
 			| TokenRepetition
 			| Metavariable
-			| _NonSpecialToken
+			| NonSpecialToken
 		)[];
 	};
-	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 }
 
 export interface TokenTreeBrace {
 	readonly $type: TSKindId.TokenTreeBrace;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 	readonly __inputHints__?: {
 		readonly tokens?: readonly (
 			| KindEnum<
@@ -10403,15 +10385,15 @@ export interface TokenTreeBrace {
 			| TokenTree
 			| TokenRepetition
 			| Metavariable
-			| _NonSpecialToken
+			| NonSpecialToken
 		)[];
 	};
-	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 }
 
 export interface DelimTokenTreeParen {
 	readonly $type: TSKindId.DelimTokenTreeParen;
-	readonly _delim_tokens?: readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly _delim_tokens?: readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 	readonly __inputHints__?: {
 		readonly delim_tokens?: readonly (
 			| KindEnum<
@@ -10610,16 +10592,16 @@ export interface DelimTokenTreeParen {
 					| TSKindId.WhileKeyword
 					| TSKindId.Dollar
 			  >
-			| _NonSpecialToken
+			| NonSpecialToken
 			| DelimTokenTree
 		)[];
 	};
-	delimTokens(): readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	delimTokens(): readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 }
 
 export interface DelimTokenTreeBracket {
 	readonly $type: TSKindId.DelimTokenTreeBracket;
-	readonly _delim_tokens?: readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly _delim_tokens?: readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 	readonly __inputHints__?: {
 		readonly delim_tokens?: readonly (
 			| KindEnum<
@@ -10818,16 +10800,16 @@ export interface DelimTokenTreeBracket {
 					| TSKindId.WhileKeyword
 					| TSKindId.Dollar
 			  >
-			| _NonSpecialToken
+			| NonSpecialToken
 			| DelimTokenTree
 		)[];
 	};
-	delimTokens(): readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	delimTokens(): readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 }
 
 export interface DelimTokenTreeBrace {
 	readonly $type: TSKindId.DelimTokenTreeBrace;
-	readonly _delim_tokens?: readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly _delim_tokens?: readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 	readonly __inputHints__?: {
 		readonly delim_tokens?: readonly (
 			| KindEnum<
@@ -11026,11 +11008,11 @@ export interface DelimTokenTreeBrace {
 					| TSKindId.WhileKeyword
 					| TSKindId.Dollar
 			  >
-			| _NonSpecialToken
+			| NonSpecialToken
 			| DelimTokenTree
 		)[];
 	};
-	delimTokens(): readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	delimTokens(): readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 }
 
 export interface FieldPatternShorthand {
@@ -12657,7 +12639,7 @@ export type TokenPattern =
 	| TokenRepetitionPattern
 	| TokenBindingPattern
 	| Metavariable
-	| _NonSpecialToken
+	| NonSpecialToken
 	| Literal
 	| StringLiteral
 	| RawStringLiteral
@@ -12699,7 +12681,7 @@ export type Tokens =
 	| TokenTree
 	| TokenRepetition
 	| Metavariable
-	| _NonSpecialToken
+	| NonSpecialToken
 	| Literal
 	| StringLiteral
 	| RawStringLiteral
@@ -12736,7 +12718,7 @@ export type TokenTree = TokenTreeParen | TokenTreeBracket | TokenTreeBrace;
 
 export type TokenTreeTree = TokenTreeParenTree | TokenTreeBracketTree | TokenTreeBraceTree;
 
-export type _NonSpecialToken =
+export type NonSpecialToken =
 	| Literal
 	| StringLiteral
 	| RawStringLiteral
@@ -12753,7 +12735,7 @@ export type _NonSpecialToken =
 	| TokenTreePunctuation
 	| TokenKeywords;
 
-export type _NonSpecialTokenTree =
+export type NonSpecialTokenTree =
 	| StringLiteralTree
 	| RawStringLiteralTree
 	| BooleanLiteralTree
@@ -13177,7 +13159,7 @@ export type DelimTokenTree = DelimTokenTreeParen | DelimTokenTreeBracket | Delim
 export type DelimTokenTreeTree = DelimTokenTreeParenTree | DelimTokenTreeBracketTree | DelimTokenTreeBraceTree;
 
 export type DelimTokens =
-	| _NonSpecialToken
+	| NonSpecialToken
 	| Literal
 	| StringLiteral
 	| RawStringLiteral
@@ -13211,7 +13193,7 @@ export type DelimTokensTree =
 	| TokenKeywordsTree;
 
 export type NonDelimToken =
-	| _NonSpecialToken
+	| NonSpecialToken
 	| Literal
 	| StringLiteral
 	| RawStringLiteral
@@ -13605,37 +13587,6 @@ export type PathTree =
 
 export type Whitespace = Tight | Space | Newline | Blankline | Indent | Dedent;
 
-export type NonSpecialToken =
-	| Literal
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| MutableSpecifier
-	| Self
-	| Super
-	| Crate
-	| PrimitiveType
-	| TokenTreePunctuation
-	| TokenKeywords;
-
-export type NonSpecialTokenTree =
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| BooleanLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| MutableSpecifierTree
-	| SelfTree
-	| SuperTree
-	| CrateTree
-	| PrimitiveTypeTree
-	| TokenTreePunctuationTree
-	| TokenKeywordsTree;
-
 export namespace Statement {
 	export type Kind = '_statement';
 	export type Tree = StatementTree;
@@ -13671,9 +13622,9 @@ export namespace TokenTree {
 	export type Tree = TokenTreeTree;
 }
 
-export namespace _NonSpecialToken {
+export namespace NonSpecialToken {
 	export type Kind = '_non_special_token';
-	export type Tree = _NonSpecialTokenTree;
+	export type Tree = NonSpecialTokenTree;
 }
 
 export namespace ModItem {
@@ -13818,11 +13769,6 @@ export namespace Path {
 
 export namespace Whitespace {
 	export type Kind = '_whitespace';
-}
-
-export namespace NonSpecialToken {
-	export type Kind = 'non_special_token';
-	export type Tree = NonSpecialTokenTree;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
@@ -24507,7 +24453,7 @@ export namespace TokenTreePatternParen {
 					| T.TokenRepetitionPattern
 					| T.TokenBindingPattern
 					| T.Metavariable
-					| T._NonSpecialToken
+					| T.NonSpecialToken
 				)[]
 			): T.TokenTreePatternParen.Built;
 		};
@@ -24520,12 +24466,12 @@ export namespace TokenTreePatternParen {
 			| T.TokenRepetitionPattern
 			| T.TokenBindingPattern
 			| T.Metavariable
-			| T._NonSpecialToken
+			| T.NonSpecialToken
 		)[]
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24546,7 +24492,7 @@ export namespace TokenTreePatternBracket {
 					| T.TokenRepetitionPattern
 					| T.TokenBindingPattern
 					| T.Metavariable
-					| T._NonSpecialToken
+					| T.NonSpecialToken
 				)[]
 			): T.TokenTreePatternBracket.Built;
 		};
@@ -24559,12 +24505,12 @@ export namespace TokenTreePatternBracket {
 			| T.TokenRepetitionPattern
 			| T.TokenBindingPattern
 			| T.Metavariable
-			| T._NonSpecialToken
+			| T.NonSpecialToken
 		)[]
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24585,7 +24531,7 @@ export namespace TokenTreePatternBrace {
 					| T.TokenRepetitionPattern
 					| T.TokenBindingPattern
 					| T.Metavariable
-					| T._NonSpecialToken
+					| T.NonSpecialToken
 				)[]
 			): T.TokenTreePatternBrace.Built;
 		};
@@ -24598,12 +24544,12 @@ export namespace TokenTreePatternBrace {
 			| T.TokenRepetitionPattern
 			| T.TokenBindingPattern
 			| T.Metavariable
-			| T._NonSpecialToken
+			| T.NonSpecialToken
 		)[]
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24618,15 +24564,15 @@ export namespace TokenTreeParen {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			tokens(...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]): T.TokenTreeParen.Built;
+			tokens(...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]): T.TokenTreeParen.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TokenTreeParen>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TokenTreeParen>;
-	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]];
+	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+			T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24641,17 +24587,15 @@ export namespace TokenTreeBracket {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			tokens(
-				...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]
-			): T.TokenTreeBracket.Built;
+			tokens(...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]): T.TokenTreeBracket.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TokenTreeBracket>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TokenTreeBracket>;
-	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]];
+	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+			T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24666,15 +24610,15 @@ export namespace TokenTreeBrace {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			tokens(...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]): T.TokenTreeBrace.Built;
+			tokens(...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]): T.TokenTreeBrace.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TokenTreeBrace>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TokenTreeBrace>;
-	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]];
+	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+			T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24689,15 +24633,15 @@ export namespace DelimTokenTreeParen {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			delimTokens(...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeParen.Built;
+			delimTokens(...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeParen.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.DelimTokenTreeParen>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DelimTokenTreeParen>;
-	export type BuildArgs = [...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
+	export type BuildArgs = [...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+			T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24712,15 +24656,15 @@ export namespace DelimTokenTreeBracket {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			delimTokens(...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeBracket.Built;
+			delimTokens(...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeBracket.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.DelimTokenTreeBracket>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DelimTokenTreeBracket>;
-	export type BuildArgs = [...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
+	export type BuildArgs = [...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+			T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24735,15 +24679,15 @@ export namespace DelimTokenTreeBrace {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			delimTokens(...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeBrace.Built;
+			delimTokens(...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeBrace.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.DelimTokenTreeBrace>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DelimTokenTreeBrace>;
-	export type BuildArgs = [...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
+	export type BuildArgs = [...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+			T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
