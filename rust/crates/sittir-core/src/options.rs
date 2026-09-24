@@ -81,10 +81,10 @@ pub enum Side {
 impl ResolvedOptions {
     /// The edge seams the resolved options give a node of `kind`, or none when the kind owns no edge site.
     pub fn edge_arms(&self, kind: crate::types::KindId) -> Option<crate::slot::CoordinateEdges> {
-        self.edge_row(kind)?;
+        let row = self.edge_row(kind)?;
         Some(crate::slot::CoordinateEdges {
-            before: self.edge_arm(kind, Side::Before, None),
-            after: self.edge_arm(kind, Side::After, None),
+            before: self.row_arm(row, Side::Before, None),
+            after: self.row_arm(row, Side::After, None),
         })
     }
 
@@ -103,7 +103,10 @@ impl ResolvedOptions {
         side: Side,
         stamped: Option<u16>,
     ) -> Option<crate::slot::SeamArm> {
-        let row = self.edge_row(kind)?;
+        self.row_arm(self.edge_row(kind)?, side, stamped)
+    }
+
+    fn row_arm(&self, row: &EdgeSite, side: Side, stamped: Option<u16>) -> Option<crate::slot::SeamArm> {
         let slot = match side {
             Side::Before => &row.before,
             Side::After => &row.after,

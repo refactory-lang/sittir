@@ -280,7 +280,8 @@ element type has no enum and takes the assignment directly.
 A variant that is not itself seated is walked through rather than skipped:
 a nested supertype variant opens a match on its own enum, and a polymorph
 parent with no seat of its own opens its one slot, recursively, so the
-assignment lands on the transport that carries the seated `after` field. Every
+assignment lands on the transport whose base `after` edge is seated
+(`t.edges_mut().<side>`, the side read by `seatEdgeSide`). Every
 level rebinds `t` through `BorrowMut::borrow_mut`, which std implements for
 `T` and `Box<T>` alike, because a content slot may be boxed to break a
 recursive type and a pattern cannot see through a box; the annotated type on
@@ -3938,14 +3939,13 @@ named for its text rather than for its kind name.
 
 
 A literal arm whose token has seam sites under the owner kind (a
-statement's `;` terminator, `semi_before`) carries `LiteralSeams` as its
-payload: `literalArmSeamSites` finds the owner's `before` and `after` site
-constants in the render plan, `prepareEnumImpl`'s `fill` hook seats them
-from `ctx.options.spacing`, and `literalSeamedArm` writes them around the
-literal. The choice's seams sit inside the arm in the render rule, and the
-template collapses the choice to one slot, so the enum is where they are
-written; the parent never sees them. Literal arms with no such site stay
-unit variants.
+statement's `;` terminator, `semi_before`) is still a unit variant:
+`literalArmSeamSites` finds the owner's `before` and `after` site constants
+in the render plan, and `literalSeamedArm` writes `w.site_at(SITE)` around
+the literal, so the sink reads the arm from its resolved options. The
+choice's seams sit inside the arm in the render rule, and the template
+collapses the choice to one slot, so the enum is where they are written;
+the parent never sees them.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderAnyTransportWithNapiFromValue`
 
@@ -4405,30 +4405,12 @@ property names with the `$`-prefixed keys explicitly.
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::armSeamSupport`
-
-The per-grammar `Seamed<T>` carrier and the `ArmSeams` trait it prepares
-through. It is generated beside the transports rather than living in
-`sittir-core` because its `Render` impl resolves the grammar's own site ids
-through `w.site(...)`, which core's writer already does generically —
-`Seamed` just calls it before and after the value. `Seamed` holds the value
-and the two resolved whitespace kind ids, filled from `ctx.options.spacing`
-in its `Prepare` impl; every position that already accepted the enum
-accepts it unchanged, because the enum's public name becomes an alias for
-it.
-
 ### `packages/codegen/src/emitters/render-module.ts::armSeamPairsOf`
 
 The seam pair each literal arm of an enum owns, keyed by the arm's text. A
 site records the arm's token kind as its slot and `resolvedByText` records
 the same kind for the text, so the two meet without re-deriving the
 identity here. An arm missing either side is left out.
-
-### `packages/codegen/src/emitters/render-module.ts::armSeamsImpl`
-
-The `ArmSeams` impl mapping each arm to its site pair. Arms with no pair
-answer `None`, which leaves both fields unset and writes nothing, so the
-wildcard arm appears only when some arm needs it.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderEnumType`
 
@@ -5468,11 +5450,15 @@ its seam payload, `w.dedent()`, `w.token_seam(...)`) — see
 whitespace becomes that call's argument. A residual gate chain is an
 `if … else if … else` block over the views' `is_present`.
 
-A `seam` node prints as `w.site_with(node.<field>.unwrap_or(0),
-options::site_strength(<SITE const>, …))`: the printer's `site(name)` names
-the `options::SITE_*` constant for the field, so the writer receives the
-strength beside the arm. `render-module.ts` supplies it from the public kind
-name and the field, the same spelling `render-options-rs.ts` emits.
+A `seam` node that is the kind's own edge (the printer's `edge(name)`
+answers its kind id and side) prints as `w.edge(KindId(N), Side::…,
+node.edges.and_then(|e| e.<side>))`: the sink takes the stamped arm when the
+node carries one, else the kind's edge row, with the row's strength. Every
+other seam prints as `w.site_at(<SITE const>)`: the transport carries no
+field for it, and the sink reads the site's arm from its resolved options.
+The printer's `site(name)` names the `options::SITE_*` constant from the
+public kind name and the field, the same spelling `render-options-rs.ts`
+emits.
 
 ### `packages/codegen/src/emitters/render-body.ts::printStatements`
 
@@ -8870,7 +8856,17 @@ name on the wire, `rustName` the Rust struct field, `rustType` its type.
 ### `packages/codegen/src/emitters/render-module.ts::TRANSPORT_METADATA_FIELDS`
 
 The metadata fields every transport struct carries besides its content:
-one entry, `$_trivia` → `transport_trivia_data: Option<TransportTrivia>`.
+`$_trivia` → `transport_trivia_data: Option<TransportTrivia>`, and `$_edges`
+→ `edges: Option<Edges>`, the kind's two edges in the transport's base.
+
+`edges` is an `Option` for the wire, not for the model. Compound transports
+derive `napi(object)`, napi-derive has no way to skip a field, and napi maps
+an absent key to `None`, so a bare `Edges` would make every JS object that
+omits `$_edges` fail with "missing field" — and no JS code sends it. `None`
+means "not yet prepared": `prepare_edges` is the only code that branches on
+it, filling each unset side from the kind's edge row, and a body passes
+`node.edges.and_then(|e| e.<side>)` to `w.edge`, which falls back to the row
+itself. No render path reads `None` as "this node has no edges".
 Every emission helper that produces the field declarations, the `None`
 initialisers or the `obj.get(...)` reads derives from this array. A
 transport carries no coordinate fields: a coordinate is the `Coord` arm of
@@ -15682,14 +15678,44 @@ An exhaustive switch over `SeamOrigin | undefined`: `preference`,
 `fallback` or no origin is 0. A new origin fails to compile here until it is
 given a strength.
 
+### `packages/codegen/src/emitters/render-options-rs.ts::SEAM_DECLARED`
+
+The declared strength (2), named once on the TypeScript side so the plan's
+fixed-strength rows (separators, list flanks) and `seamStrength`'s declared
+origins spell the same value core's `spacing::SEAM_DECLARED` holds.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::edgeSitesOf`
 
-The per-kind edge table: for each spacing site whose address is a token face
-(`parseSeamLabel(address).token` equals the site's kind), the kind's id and,
+The per-kind edge table: for each spacing site that is its kind's own edge
+(`isKindEdge`), the kind's id (`edgeKindId`) and,
 for its before and after edge, the site index, default arm and strength.
 Kinds whose name resolves to more than one id are dropped, and rows are
 sorted by id so the runtime finds a kind by binary search. A source
-coordinate of that kind meets these seams like a rendered node would.
+coordinate of that kind meets these seams like a rendered node would, and a
+transport's `prepare_edges` and `w.edge` read the same rows, so the render
+emitter checks a kind with edge sites against this table (`edgeIdOf`).
+
+### `packages/codegen/src/emitters/render-options-rs.ts::isKindEdge`
+
+Whether a spacing site is its kind's own edge: its address parses as a seam
+whose token is the kind itself (`<kind>_before`/`<kind>_after`). One
+predicate for the edge table, the transport emitter's edge writes and its
+field filter, so they cannot disagree on which sites live in the base.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::edgeKindId`
+
+The id a kind's edges are keyed by: the kind's catalog entry by public name.
+`EDGE_SITES` rows, a transport's `Edged::kind_id` and every `w.edge` call
+take it from here, so a kind's edges are found under the id they were
+written with.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::carriesPerNodeValue`
+
+Whether a spacing site keeps a field on its transport: only list facts do —
+the separator row and a list's gap sites (`before`, `after`, `gap`), which
+the reader's gap classifier stamps per node. A token seam and a list flank
+have no per-node value; the body reads them from the resolved options with
+`w.site_at`, and a kind edge lives in the transport's base `edges`.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::DelimiterSite`
 
@@ -15735,12 +15761,16 @@ A `source: 'separator'` site becomes a spacing-table row under its kind
 default's token text is stamped on the row as `defaultText` here, where
 the kind catalog is in hand, so the render emitter never re-derives it.
 
-The emitted `site_strength(site, arm)` returns the row's strength when `arm`
-is the row's default and `SEAM_DECLARED` otherwise, so a value set on the
-node counts as declared. A value set explicitly to the default of a
-cascaded site is indistinguishable from the default and takes the cascade
-tier; the read-side inference that will set such values records
-explicitness when it lands.
+A row's strength is what the sink writes the site's default arm at:
+`SiteSpec` carries it into the resolved options, and `site_arm`/`edge_arm`
+use it when the arm is the default and `SEAM_DECLARED` otherwise, so a value
+set on the node counts as declared. A separator row and a list flank row
+(`start`/`end`) carry `SEAM_DECLARED` regardless of origin: the list view
+writes both at declared strength, so the row states the strength render
+uses. A value set explicitly to the default of a cascaded site is
+indistinguishable from the default and takes the cascade tier; the
+read-side inference that will set such values records explicitness when it
+lands.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
 
@@ -16064,6 +16094,36 @@ children, and the classifier resolves the coordinates it measures itself).
 /** The spacing sites of a kind that own a transport field: the separator
  *  spacing sites, each `Option<u16>` named by the site key. */
 ```
+
+### `packages/codegen/src/emitters/render-module.ts::kindEdgeSidesOf`
+
+A kind's own edge sites among its synthesized sites, by field name to side:
+the seams `isKindEdge` accepts, their side read from the parsed seam label.
+
+### `packages/codegen/src/emitters/render-module.ts::kindEdgeWriterOf`
+
+The body printer's `edge` lookup for one struct: a seam name answers its
+kind id and side when it is the kind's own edge, nothing otherwise. A kind
+with edge sites resolves its id once, through `edgeIdOf`.
+
+### `packages/codegen/src/emitters/render-module.ts::edgeIdOf`
+
+The edge-row id of a kind that has kind-edge sites. A kind whose id is
+missing, or that `edgeSitesOf` dropped as ambiguous, has no row to prepare
+and write its edges from; generation fails here rather than rendering the
+kind with its edges silently gone.
+
+### `packages/codegen/src/emitters/render-module.ts::seatEdgeSide`
+
+The side of a seated site's edge, read from the parsed label of the child's
+edge address the site carries (`seat.field`). A seat whose label is not the
+seated kind's own edge is a malformed site and fails generation.
+
+### `packages/codegen/src/emitters/render-module.ts::edgedImplLines`
+
+A transport's `Edged` impl: its edge-row id, and access to its base `edges`,
+inserting the default on first write. `edges()` answers `Edges::NONE` for a
+transport not yet prepared.
 
 ### `packages/codegen/src/emitters/render-module.ts::delimiterSiteOf`
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { planRenderOptions, renderOptionsRs } from '../render-options-rs.ts';
+import { SEAM_DECLARED, planRenderOptions, renderOptionsRs } from '../render-options-rs.ts';
 import { deriveAddressTables, kindIdArmType } from '../options.ts';
 import type { SitePreference } from '../../compiler/model/site-preferences.ts';
 
@@ -183,7 +183,7 @@ describe('renderOptionsRs', () => {
 		const flank: SitePreference = { kind: 'arguments', slot: 'elements', address: 'elements_start', label: 'start', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'start' };
 		const plan = planRenderOptions([...sites, flank], kindEntries, whitespaceText);
 		const row = plan.spacingSites.find((s) => s.kind === 'arguments' && s.side === 'start');
-		expect(row?.strength).toBe(2);
+		expect(row?.strength).toBe(SEAM_DECLARED);
 	});
 
 	it("exposes each site's admitted arms to the prepare walk", () => {

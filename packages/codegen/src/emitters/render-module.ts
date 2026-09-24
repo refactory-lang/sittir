@@ -931,15 +931,10 @@ function buildTypedTemplateBody(
 			`render body for '${struct.kind}' names seam '${name}', which its transport has no spacing site for`
 		);
 	}
-	const kindEdges = node === undefined ? new Map<string, 'before' | 'after'>() : kindEdgeSidesOf(plan, node);
-	const edgeId = kindEdges.size === 0 ? undefined : edgeIdOf(plan, node!, kindEntries);
 	lines.push(
 		...printRustBody(struct.body, {
 			field: rustFieldIdent,
-			edge: (name) => {
-				const side = kindEdges.get(rustFieldIdent(name));
-				return side === undefined ? undefined : { kindId: edgeId!, side };
-			},
+			edge: kindEdgeWriterOf(plan, node, kindEntries),
 			site: (name) => `options::SITE_${toScreamingSnakeCase(publicKindName(struct.kind), publicKindName(struct.kind))}_${toScreamingSnakeCase(name, name)}`,
 			kinds: (names) => rustKindIdSlice(names, nodeMap, kindIdByKind, struct.kind)
 		})
@@ -2605,13 +2600,27 @@ function kindEdgeSidesOf(plan: RenderPlan, node: AssembledNode): ReadonlyMap<str
 	return out;
 }
 
+function kindEdgeWriterOf(
+	plan: RenderPlan,
+	node: AssembledNode | undefined,
+	kindEntries: readonly KindEntryLike[] | undefined
+): (name: string) => { readonly kindId: number; readonly side: 'before' | 'after' } | undefined {
+	const sides = node === undefined ? new Map<string, 'before' | 'after'>() : kindEdgeSidesOf(plan, node);
+	if (node === undefined || sides.size === 0) return () => undefined;
+	const kindId = edgeIdOf(plan, node, kindEntries);
+	return (name) => {
+		const side = sides.get(rustFieldIdent(name));
+		return side === undefined ? undefined : { kindId, side };
+	};
+}
+
 function edgeIdOf(plan: RenderPlan, node: AssembledNode, kindEntries: readonly KindEntryLike[] | undefined): number {
 	const kind = publicKindName(node.kind);
-	const id = kindEntries === undefined ? undefined : edgeKindId(kindEntries, kind);
-	if (id === undefined || !edgeSitesOf(plan, kindEntries!).some((row) => row.kind === id)) {
-		throw new Error(`kind '${kind}' has kind-edge sites but no edge row to prepare and write them from`);
+	if (kindEntries !== undefined) {
+		const id = edgeKindId(kindEntries, kind);
+		if (id !== undefined && edgeSitesOf(plan, kindEntries).some((row) => row.kind === id)) return id;
 	}
-	return id;
+	throw new Error(`kind '${kind}' has kind-edge sites but no edge row to prepare and write them from`);
 }
 
 function seatedSitesOf(plan: RenderPlan, parentKind: string, slot: string): ReadonlyMap<string, SpacingSite> {
@@ -2707,10 +2716,11 @@ function spacingFieldExprs(
 }
 
 function seatEdgeSide(seat: SpacingSite): 'before' | 'after' {
-	const field = seat.seat!.field;
-	if (field.endsWith('_after')) return 'after';
-	if (field.endsWith('_before')) return 'before';
-	throw new Error(`seated site '${seat.address}' writes '${field}', which is not a kind edge`);
+	const edge = seat.seat === undefined ? undefined : parseSeamLabel(seat.seat.field);
+	if (edge === undefined || edge.token !== seat.seat!.kind) {
+		throw new Error(`seated site '${seat.address}' writes '${seat.seat?.field}', which is not the seated kind's edge`);
+	}
+	return edge.side;
 }
 
 function seatVariantArms(

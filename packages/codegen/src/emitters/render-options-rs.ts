@@ -15,12 +15,14 @@ import { nestedKey, type AddressBranchEntry, type AddressLeafEntry, type Address
 
 export type SeamStrength = 0 | 1 | 2;
 
+export const SEAM_DECLARED: SeamStrength = 2;
+
 export function seamStrength(origin: SeamOrigin | undefined): SeamStrength {
 	switch (origin) {
 		case 'preference':
 		case 'literal-default':
 		case 'word-default':
-			return 2;
+			return SEAM_DECLARED;
 		case 'cascade':
 			return 1;
 		case 'fallback':
@@ -139,7 +141,7 @@ export function planRenderOptions(
 				wireKey: '_separator',
 				defaultId: idOf(kindEntries, site.defaultArm, at),
 				allowedIds: site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at)),
-				strength: 2,
+				strength: SEAM_DECLARED,
 				role: 'separator',
 				defaultText: defaultEntry.literalText
 			});
@@ -160,7 +162,7 @@ export function planRenderOptions(
 			wireKey: `_${field}`,
 			defaultId: idOf(kindEntries, defaultArm.kind ?? defaultArm.value, at),
 			allowedIds,
-			strength: isFlank ? 2 : seamStrength(site.origin),
+			strength: isFlank ? SEAM_DECLARED : seamStrength(site.origin),
 			...(site.side === undefined ? {} : { side: site.side }),
 			...(site.seat === undefined ? {} : { seat: site.seat }),
 			...(site.path === undefined ? {} : { path: site.path })
