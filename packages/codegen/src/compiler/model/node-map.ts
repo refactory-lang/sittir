@@ -798,7 +798,7 @@ export function deriveValuesForRule(
 				const name = subRef.name;
 				const armFacts = armFactsOf(subRef);
 				const display = aliasEnvelopeValueOf(subRef, ctx, multiplicity);
-				if (display !== undefined) return display;
+				if (display !== undefined) return { ...display, ...armFacts };
 				if (subRef.kindId !== undefined) {
 					return {
 						node: { kind: 'unresolved-ref' as const, name },
