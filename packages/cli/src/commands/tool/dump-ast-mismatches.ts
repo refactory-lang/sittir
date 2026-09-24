@@ -1,6 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
-import { dumpAstMismatches as runDumpAstMismatches } from '@sittir/tools';
 
 export const dumpAstMismatches: CommandModule = {
 	name: 'dump-ast-mismatches',
@@ -23,6 +22,7 @@ export const dumpAstMismatches: CommandModule = {
 					format?: string;
 					verbose?: boolean;
 				}) => {
+					const { dumpAstMismatches: runDumpAstMismatches } = await import('@sittir/tools');
 					const code = await runDumpAstMismatches({
 						grammar: opts.grammar ?? 'rust',
 						allGrammars: opts.allGrammars ?? false,

@@ -1,6 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
-import { separatedLists as runSeparatedLists } from '@sittir/tools';
 
 export const separatedLists: CommandModule = {
 	name: 'separated-lists',
@@ -10,6 +9,7 @@ export const separatedLists: CommandModule = {
 			.option('--all-grammars', 'Run all three grammars')
 			.option('--format <fmt>', 'Output format: table | json', 'table')
 			.action(async (opts: { grammar?: string; allGrammars?: boolean; format?: string }) => {
+				const { separatedLists: runSeparatedLists } = await import('@sittir/tools');
 				const code = await runSeparatedLists({
 					grammar: opts.grammar ?? 'rust',
 					allGrammars: opts.allGrammars ?? false,

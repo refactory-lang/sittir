@@ -1,6 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withRecursive } from '../../framework/options.ts';
-import { runTraceRtCli } from '@sittir/tools';
 
 export const traceRt: CommandModule = {
 	name: 'trace-rt',
@@ -9,6 +8,7 @@ export const traceRt: CommandModule = {
 		withRecursive(defineCommand(program, traceRt))
 			.argument('<grammar>', 'Grammar to trace (rust, typescript, python)')
 			.action(async (grammar: string, opts: { recursive: boolean }) => {
+				const { runTraceRtCli } = await import('@sittir/tools');
 				await runTraceRtCli(grammar as 'rust' | 'typescript' | 'python', 'native', { recursive: opts.recursive });
 			});
 	}
