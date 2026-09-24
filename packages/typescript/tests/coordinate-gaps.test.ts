@@ -36,17 +36,14 @@ describe('gaps between coordinates', () => {
 		const call = (
 			engine.parse('f(a,b,c);\n').statements()[0] as unknown as {
 				expression(): {
-					content(): {
-						arguments(): {
-							$with: { arguments(...v: readonly unknown[]): unknown };
-							arguments(): readonly unknown[];
-						};
+					arguments(): {
+						$with: { arguments(...v: readonly unknown[]): unknown };
+						arguments(): readonly unknown[];
 					};
 				};
 			}
 		)
 			.expression()
-			.content()
 			.arguments();
 		const [a, , c] = call.arguments();
 		const rebuilt = call.$with.arguments(a, ir.identifier('x'), c);

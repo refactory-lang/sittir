@@ -3,6 +3,7 @@ import {
 	ALIAS,
 	CHOICE,
 	FIELD,
+	IMMEDIATE_TOKEN,
 	OPTIONAL,
 	PATTERN,
 	REPEAT,
@@ -36,7 +37,6 @@ import { isComplexBody, isNonInlinableLeafShape, isParserHiddenName } from '../d
 import { collectOrphanedRules } from '../util/reachable-rules.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
-import { ENRICH_UNALIAS_DIAGNOSTICS_KEY, getEnrichUnaliasDiagnostics } from '../dsl/enrich.ts';
 import type { WireContext, RefineForm } from '../dsl/wire/wire.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
@@ -233,7 +233,7 @@ function stripPrecedenceWrappers(rules: Record<string, Rule<'evaluate'>>): void 
 
 function foldImmediateTokenRule(rule: Rule<'evaluate'>): Rule<'evaluate'> {
 	const toToken = (r: Rule<'evaluate'>): Rule<'evaluate'> =>
-		r.type === 'IMMEDIATE_TOKEN'
+		r.type === IMMEDIATE_TOKEN
 			? ({
 					type: TOKEN,
 					content: (r as unknown as { content: Rule<'evaluate'> }).content,
@@ -292,7 +292,7 @@ interface MetadataSinks {
 	precedences: string[][];
 }
 
-interface EvaluateCtx {
+export interface EvaluateCtx {
 	readonly rules: Record<string, Rule<'evaluate'>>;
 	readonly provenanceByKind: Map<string, RuleProvenance>;
 	readonly refs: SymbolRef[];
@@ -373,7 +373,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
 	const optionsBlock = drainOptionsMetadata(opts);
 
-	synthesizeInlineAliasSources(rules, ctx);
 	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: ctx.sinks.supertypes });
 	const references = attachReferenceRuleIds(refs, { ruleCatalog: identified.ruleCatalog });
 
@@ -402,15 +401,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined,
 		desugarDivergences: ctx.desugarDivergences.length > 0 ? [...ctx.desugarDivergences] : undefined
 	} satisfies RawGrammar;
-	const inheritedUnaliasDiagnostics = getEnrichUnaliasDiagnostics(optionsOrBase);
-	if (inheritedUnaliasDiagnostics.length > 0) {
-		Object.defineProperty(grammarResult, ENRICH_UNALIAS_DIAGNOSTICS_KEY, {
-			value: inheritedUnaliasDiagnostics,
-			enumerable: false,
-			writable: false,
-			configurable: true
-		});
-	}
 	return { grammar: grammarResult };
 }
 
@@ -439,71 +429,6 @@ function canonicalizeRawGrammar(raw: RawGrammar): RawGrammar {
 		rules[name] = { ...stampRef(canonicalWalker.map(rule, stampRef)), hidden: isParserHiddenName(name) };
 	}
 	return { ...raw, rules, visibleInlineNames: raw.inline.filter((name) => !name.startsWith('_')) };
-}
-
-function synthesizeInlineAliasSources(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
-	const externalSet = new Set(ctx.externals);
-	const ruleEntries = Object.entries(rules);
-	for (const [name, rule] of ruleEntries) {
-		rules[name] = rewriteInlineAliases(rule, ctx, externalSet);
-	}
-}
-
-function innermostNamedAliasContent(rule: Rule<'evaluate'>): Rule<'evaluate'> {
-	let current = rule;
-	while (current.type === ALIAS && current.named && current.value) current = current.content;
-	return current;
-}
-
-function rewriteInlineAliases(
-	rule: Rule<'evaluate'>,
-	ctx: EvaluateCtx,
-	externals: ReadonlySet<string>
-): Rule<'evaluate'> {
-	const { rules, provenanceByKind } = ctx;
-	const recurse = (r: Rule<'evaluate'>): Rule<'evaluate'> => rewriteInlineAliases(r, ctx, externals);
-	switch (rule.type) {
-		case ALIAS: {
-			if (rule.named && rule.value) {
-				const inner = innermostNamedAliasContent(rule.content);
-				const isBareSymbolToKnownSource =
-					inner.type === SYMBOL && (rules[inner.name] !== undefined || externals.has(inner.name));
-				const targetAlreadyExists = rules[rule.value] !== undefined;
-				if (!targetAlreadyExists && !isBareSymbolToKnownSource && inner.type !== STRING) {
-					const syntheticHiddenName = `_${rule.value}`;
-					if (!rules[syntheticHiddenName]) {
-						rules[syntheticHiddenName] = recurse(rule.content);
-						provenanceByKind.set(syntheticHiddenName, 'evaluate-synthesized');
-						ctx.desugarDivergences.push({ site: 'inline-alias-source', name: syntheticHiddenName });
-					}
-					return { ...rule, content: { type: SYMBOL, name: syntheticHiddenName } };
-				}
-			}
-			return { ...rule, content: recurse(rule.content) };
-		}
-		case SEQ:
-			return { ...rule, members: rule.members.map((m) => recurse(m)) } as Rule<'evaluate'>;
-		case CHOICE:
-			return {
-				...rule,
-				members: rule.members.map((m) => recurse(m))
-			} as Rule<'evaluate'>;
-		case OPTIONAL:
-			return {
-				...rule,
-				content: recurse((rule as { content: Rule<'evaluate'> }).content)
-			} as Rule<'evaluate'>;
-		case REPEAT:
-		case REPEAT1:
-		case FIELD:
-		case TOKEN:
-			return {
-				...rule,
-				content: recurse((rule as { content: Rule<'evaluate'> }).content)
-			} as Rule<'evaluate'>;
-		default:
-			return rule;
-	}
 }
 
 function getWireContext(opts: GrammarOptions): WireContext | undefined {

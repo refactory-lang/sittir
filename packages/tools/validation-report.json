@@ -84,6 +84,25 @@
     "source": "grammar",
     "grammar": "rust",
     "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "_reserved_identifier",
+    "message": "[assemble] typeName collision: kind '_reserved_identifier' renamed 'ReservedIdentifier' → '_ReservedIdentifier' (visible sibling(s): 'reserved_identifier')",
+    "canProceed": true,
+    "details": {
+      "typeName": "ReservedIdentifier",
+      "newType": "_ReservedIdentifier",
+      "visibleKinds": [
+        "reserved_identifier"
+      ]
+    },
+    "location": "_reserved_identifier"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
     "code": "kindid-unstamped-symbols",
     "message": "3 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
@@ -91,7 +110,7 @@
       "kinds": [
         "_compound_assignment_expr_operator",
         "_declaration_statement",
-        "_primitive_type"
+        "_reserved_identifier"
       ]
     },
     "severity": "warning",
@@ -123,12 +142,13 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-inline-excluded-symbols",
-    "message": "1 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "2 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "kinds": [
-        "_declaration_statement"
+        "_declaration_statement",
+        "_reserved_identifier"
       ]
     },
     "scope": "grammar"
@@ -159,13 +179,12 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-unclassified-symbols",
-    "message": "2 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
       "kinds": [
-        "_compound_assignment_expr_operator",
-        "_primitive_type"
+        "_compound_assignment_expr_operator"
       ]
     },
     "scope": "grammar"
@@ -238,11 +257,12 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "ownerKind": "enum_body_elements",
-    "message": "[collect-slots] kind 'enum_body_elements': choice rule:enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 5 label-routed arm(s) [field(name):_property_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
+    "message": "[collect-slots] kind 'enum_body_elements': choice rule:enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 6 label-routed arm(s) [field(name):identifier, field(name):_reserved_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
       "degenerateFields": [
+        "name",
         "name",
         "name",
         "name",
@@ -397,17 +417,17 @@
     "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
-    "ownerKind": "_property_identifier",
-    "message": "[assemble] typeName collision: kind '_property_identifier' renamed 'PropertyIdentifier' → '_PropertyIdentifier' (visible sibling(s): 'property_identifier')",
+    "ownerKind": "_reserved_identifier",
+    "message": "[assemble] typeName collision: kind '_reserved_identifier' renamed 'ReservedIdentifier' → '_ReservedIdentifier' (visible sibling(s): 'reserved_identifier')",
     "canProceed": true,
     "details": {
-      "typeName": "PropertyIdentifier",
-      "newType": "_PropertyIdentifier",
+      "typeName": "ReservedIdentifier",
+      "newType": "_ReservedIdentifier",
       "visibleKinds": [
-        "property_identifier"
+        "reserved_identifier"
       ]
     },
-    "location": "_property_identifier"
+    "location": "_reserved_identifier"
   },
   {
     "source": "grammar",
@@ -430,13 +450,14 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "4 referenced kind(s) resolved no parser kindId",
+    "message": "5 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "__number_operator",
         "_augmented_assignment_expression_operator",
         "_operator",
+        "_reserved_identifier",
         "_unary_expression_operator"
       ]
     },
@@ -462,6 +483,21 @@
       ]
     },
     "severity": "warning",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "code": "kindid-inline-excluded-symbols",
+    "message": "1 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "kinds": [
+        "_reserved_identifier"
+      ]
+    },
     "scope": "grammar"
   },
   {
@@ -683,7 +719,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Ambient declarations",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"baz\",\"$span\":{\"start\":96,\"end\":99},\"$nodeHandle\":4458176053608}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":95,\"end\":96},\"$nodeHandle\":4458176053607,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":99,\"end\":100},\"$nodeHandle\":4458176053607,\"$childIndex\":2}],\"$span\":{\"start\":95,\"end\":100},\"$nodeHandle\":4458176053607}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"baz\",\"$span\":{\"start\":96,\"end\":99},\"$nodeHandle\":4007204487528}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":95,\"end\":96},\"$nodeHandle\":4007204487527,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":99,\"end\":100},\"$nodeHandle\":4007204487527,\"$childIndex\":2}],\"$span\":{\"start\":95,\"end\":100},\"$nodeHandle\":4007204487527}, got undefined",
     "input": "\"baz\"",
     "start": 95,
     "end": 100,
@@ -713,7 +749,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Ambient module declarations",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"example\",\"$span\":{\"start\":116,\"end\":123},\"$nodeHandle\":4509715661045}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":115,\"end\":116},\"$nodeHandle\":4509715661044,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":123,\"end\":124},\"$nodeHandle\":4509715661044,\"$childIndex\":2}],\"$span\":{\"start\":115,\"end\":124},\"$nodeHandle\":4509715661044}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"example\",\"$span\":{\"start\":116,\"end\":123},\"$nodeHandle\":4058744094965}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":115,\"end\":116},\"$nodeHandle\":4058744094964,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":123,\"end\":124},\"$nodeHandle\":4058744094964,\"$childIndex\":2}],\"$span\":{\"start\":115,\"end\":124},\"$nodeHandle\":4058744094964}, got undefined",
     "input": "\"example\"",
     "start": 115,
     "end": 124,
@@ -728,7 +764,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Type casts",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"foobar\",\"$span\":{\"start\":52,\"end\":58},\"$nodeHandle\":4518305595454}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":51,\"end\":52},\"$nodeHandle\":4518305595453,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":58,\"end\":59},\"$nodeHandle\":4518305595453,\"$childIndex\":2}],\"$span\":{\"start\":51,\"end\":59},\"$nodeHandle\":4518305595453}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"foobar\",\"$span\":{\"start\":52,\"end\":58},\"$nodeHandle\":4067334029374}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":51,\"end\":52},\"$nodeHandle\":4067334029373,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":58,\"end\":59},\"$nodeHandle\":4067334029373,\"$childIndex\":2}],\"$span\":{\"start\":51,\"end\":59},\"$nodeHandle\":4067334029373}, got undefined",
     "input": "\"foobar\"",
     "start": 51,
     "end": 59,
@@ -743,7 +779,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Classes with property names as strings or numbers",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"string\",\"$span\":{\"start\":61,\"end\":67},\"$nodeHandle\":4548370366643}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":60,\"end\":61},\"$nodeHandle\":4548370366642,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":67,\"end\":68},\"$nodeHandle\":4548370366642,\"$childIndex\":2}],\"$span\":{\"start\":60,\"end\":68},\"$nodeHandle\":4548370366642}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"string\",\"$span\":{\"start\":61,\"end\":67},\"$nodeHandle\":4097398800563}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":60,\"end\":61},\"$nodeHandle\":4097398800562,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":67,\"end\":68},\"$nodeHandle\":4097398800562,\"$childIndex\":2}],\"$span\":{\"start\":60,\"end\":68},\"$nodeHandle\":4097398800562}, got undefined",
     "input": "'string'",
     "start": 60,
     "end": 68,
@@ -758,7 +794,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Classes with decorators",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"string\",\"$span\":{\"start\":92,\"end\":98},\"$nodeHandle\":4556960301304}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":91,\"end\":92},\"$nodeHandle\":4556960301303,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":98,\"end\":99},\"$nodeHandle\":4556960301303,\"$childIndex\":2}],\"$span\":{\"start\":91,\"end\":99},\"$nodeHandle\":4556960301303}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"string\",\"$span\":{\"start\":92,\"end\":98},\"$nodeHandle\":4105988735224}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":91,\"end\":92},\"$nodeHandle\":4105988735223,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":98,\"end\":99},\"$nodeHandle\":4105988735223,\"$childIndex\":2}],\"$span\":{\"start\":91,\"end\":99},\"$nodeHandle\":4105988735223}, got undefined",
     "input": "'string'",
     "start": 91,
     "end": 99,
@@ -773,7 +809,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Classes with static blocks",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"$span\":{\"start\":39,\"end\":41},\"$nodeHandle\":4565550235752,\"_elements\":[]}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"$span\":{\"start\":39,\"end\":41},\"$nodeHandle\":4114578669672,\"_elements\":[]}, got undefined",
     "input": "''",
     "start": 39,
     "end": 41,
@@ -788,7 +824,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Abstract classes",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"roaming the earth...\",\"$span\":{\"start\":272,\"end\":292},\"$nodeHandle\":4574140170420}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":271,\"end\":272},\"$nodeHandle\":4574140170419,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":292,\"end\":293},\"$nodeHandle\":4574140170419,\"$childIndex\":2}],\"$span\":{\"start\":271,\"end\":293},\"$nodeHandle\":4574140170419}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"roaming the earth...\",\"$span\":{\"start\":272,\"end\":292},\"$nodeHandle\":4123168604340}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":271,\"end\":272},\"$nodeHandle\":4123168604339,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":292,\"end\":293},\"$nodeHandle\":4123168604339,\"$childIndex\":2}],\"$span\":{\"start\":271,\"end\":293},\"$nodeHandle\":4123168604339}, got undefined",
     "input": "\"roaming the earth...\"",
     "start": 271,
     "end": 293,
@@ -803,7 +839,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Index type queries",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"id\",\"$span\":{\"start\":42,\"end\":44},\"$nodeHandle\":4582730104914}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":41,\"end\":42},\"$nodeHandle\":4582730104913,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":44,\"end\":45},\"$nodeHandle\":4582730104913,\"$childIndex\":2}],\"$span\":{\"start\":41,\"end\":45},\"$nodeHandle\":4582730104913}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"id\",\"$span\":{\"start\":42,\"end\":44},\"$nodeHandle\":4131758538834}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":41,\"end\":42},\"$nodeHandle\":4131758538833,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":44,\"end\":45},\"$nodeHandle\":4131758538833,\"$childIndex\":2}],\"$span\":{\"start\":41,\"end\":45},\"$nodeHandle\":4131758538833}, got undefined",
     "input": "\"id\"",
     "start": 41,
     "end": 45,
@@ -818,7 +854,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Typeof expressions",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"function\",\"$span\":{\"start\":21,\"end\":29},\"$nodeHandle\":4625679777854}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":20,\"end\":21},\"$nodeHandle\":4625679777853,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":29,\"end\":30},\"$nodeHandle\":4625679777853,\"$childIndex\":2}],\"$span\":{\"start\":20,\"end\":30},\"$nodeHandle\":4625679777853}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"function\",\"$span\":{\"start\":21,\"end\":29},\"$nodeHandle\":4174708211778}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":20,\"end\":21},\"$nodeHandle\":4174708211777,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":29,\"end\":30},\"$nodeHandle\":4174708211777,\"$childIndex\":2}],\"$span\":{\"start\":20,\"end\":30},\"$nodeHandle\":4174708211777}, got undefined",
     "input": "\"function\"",
     "start": 20,
     "end": 30,
@@ -833,7 +869,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Strings mixing text with escapes",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"a\",\"$span\":{\"start\":11,\"end\":12},\"$nodeHandle\":4677219385403},{\"$type\":91,\"$source\":0,\"$named\":true,\"$text\":\"\\\\n\",\"$span\":{\"start\":12,\"end\":14},\"$nodeHandle\":4677219385404,\"_content\":\"n\"},{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"b\",\"$span\":{\"start\":14,\"end\":15},\"$nodeHandle\":4677219385405},{\"$type\":91,\"$source\":0,\"$named\":true,\"$text\":\"\\\\t\",\"$span\":{\"start\":15,\"end\":17},\"$nodeHandle\":4677219385406,\"_content\":\"t\"},{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"c\",\"$span\":{\"start\":17,\"end\":18},\"$nodeHandle\":4677219385407}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":10,\"end\":11},\"$nodeHandle\":4677219385402,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":18,\"end\":19},\"$nodeHandle\":4677219385402,\"$childIndex\":6}],\"$span\":{\"start\":10,\"end\":19},\"$nodeHandle\":4677219385402}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"a\",\"$span\":{\"start\":11,\"end\":12},\"$nodeHandle\":4226247819323},{\"$type\":91,\"$source\":0,\"$named\":true,\"$text\":\"\\\\n\",\"$span\":{\"start\":12,\"end\":14},\"$nodeHandle\":4226247819324,\"_content\":\"n\"},{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"b\",\"$span\":{\"start\":14,\"end\":15},\"$nodeHandle\":4226247819325},{\"$type\":91,\"$source\":0,\"$named\":true,\"$text\":\"\\\\t\",\"$span\":{\"start\":15,\"end\":17},\"$nodeHandle\":4226247819326,\"_content\":\"t\"},{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"c\",\"$span\":{\"start\":17,\"end\":18},\"$nodeHandle\":4226247819327}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":10,\"end\":11},\"$nodeHandle\":4226247819322,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":18,\"end\":19},\"$nodeHandle\":4226247819322,\"$childIndex\":6}],\"$span\":{\"start\":10,\"end\":19},\"$nodeHandle\":4226247819322}, got undefined",
     "input": "\"a\\nb\\tc\"",
     "start": 10,
     "end": 19,
@@ -848,7 +884,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Functions with typed parameters",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"Hello, \",\"$span\":{\"start\":45,\"end\":52},\"$nodeHandle\":4685809320191}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":44,\"end\":45},\"$nodeHandle\":4685809320190,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":52,\"end\":53},\"$nodeHandle\":4685809320190,\"$childIndex\":2}],\"$span\":{\"start\":44,\"end\":53},\"$nodeHandle\":4685809320190}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"Hello, \",\"$span\":{\"start\":45,\"end\":52},\"$nodeHandle\":4234837754111}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":44,\"end\":45},\"$nodeHandle\":4234837754110,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":52,\"end\":53},\"$nodeHandle\":4234837754110,\"$childIndex\":2}],\"$span\":{\"start\":44,\"end\":53},\"$nodeHandle\":4234837754110}, got undefined",
     "input": "\"Hello, \"",
     "start": 44,
     "end": 53,
@@ -863,7 +899,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Super",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\" y=\",\"$span\":{\"start\":143,\"end\":146},\"$nodeHandle\":4711579123989}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":142,\"end\":143},\"$nodeHandle\":4711579123988,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":146,\"end\":147},\"$nodeHandle\":4711579123988,\"$childIndex\":2}],\"$span\":{\"start\":142,\"end\":147},\"$nodeHandle\":4711579123988}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\" y=\",\"$span\":{\"start\":143,\"end\":146},\"$nodeHandle\":4260607557909}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":142,\"end\":143},\"$nodeHandle\":4260607557908,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":146,\"end\":147},\"$nodeHandle\":4260607557908,\"$childIndex\":2}],\"$span\":{\"start\":142,\"end\":147},\"$nodeHandle\":4260607557908}, got undefined",
     "input": "\" y=\"",
     "start": 142,
     "end": 147,
@@ -878,7 +914,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Built-in types",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"hi\",\"$span\":{\"start\":17,\"end\":19},\"$nodeHandle\":4728758992931}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":16,\"end\":17},\"$nodeHandle\":4728758992930,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":19,\"end\":20},\"$nodeHandle\":4728758992930,\"$childIndex\":2}],\"$span\":{\"start\":16,\"end\":20},\"$nodeHandle\":4728758992930}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"hi\",\"$span\":{\"start\":17,\"end\":19},\"$nodeHandle\":4277787426851}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":16,\"end\":17},\"$nodeHandle\":4277787426850,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":19,\"end\":20},\"$nodeHandle\":4277787426850,\"$childIndex\":2}],\"$span\":{\"start\":16,\"end\":20},\"$nodeHandle\":4277787426850}, got undefined",
     "input": "'hi'",
     "start": 16,
     "end": 20,
@@ -893,7 +929,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Automatic semicolon disabled before return type",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"a\",\"$span\":{\"start\":23,\"end\":24},\"$nodeHandle\":4750233829453}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":22,\"end\":23},\"$nodeHandle\":4750233829452,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":24,\"end\":25},\"$nodeHandle\":4750233829452,\"$childIndex\":2}],\"$span\":{\"start\":22,\"end\":25},\"$nodeHandle\":4750233829452}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"a\",\"$span\":{\"start\":23,\"end\":24},\"$nodeHandle\":4299262263373}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":22,\"end\":23},\"$nodeHandle\":4299262263372,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":24,\"end\":25},\"$nodeHandle\":4299262263372,\"$childIndex\":2}],\"$span\":{\"start\":22,\"end\":25},\"$nodeHandle\":4299262263372}, got undefined",
     "input": "'a'",
     "start": 22,
     "end": 25,
@@ -908,7 +944,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Symbol types",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"foo\",\"$span\":{\"start\":38,\"end\":41},\"$nodeHandle\":4771708665939}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":37,\"end\":38},\"$nodeHandle\":4771708665938,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":41,\"end\":42},\"$nodeHandle\":4771708665938,\"$childIndex\":2}],\"$span\":{\"start\":37,\"end\":42},\"$nodeHandle\":4771708665938}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"foo\",\"$span\":{\"start\":38,\"end\":41},\"$nodeHandle\":4320737099859}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":37,\"end\":38},\"$nodeHandle\":4320737099858,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":41,\"end\":42},\"$nodeHandle\":4320737099858,\"$childIndex\":2}],\"$span\":{\"start\":37,\"end\":42},\"$nodeHandle\":4320737099858}, got undefined",
     "input": "\"foo\"",
     "start": 37,
     "end": 42,
@@ -923,7 +959,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Flow Import Types",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"./User.js\",\"$span\":{\"start\":33,\"end\":42},\"$nodeHandle\":4784593568051}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":32,\"end\":33},\"$nodeHandle\":4784593568050,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":42,\"end\":43},\"$nodeHandle\":4784593568050,\"$childIndex\":2}],\"$span\":{\"start\":32,\"end\":43},\"$nodeHandle\":4784593568050}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"./User.js\",\"$span\":{\"start\":33,\"end\":42},\"$nodeHandle\":4333622001971}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":32,\"end\":33},\"$nodeHandle\":4333622001970,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":42,\"end\":43},\"$nodeHandle\":4333622001970,\"$childIndex\":2}],\"$span\":{\"start\":32,\"end\":43},\"$nodeHandle\":4333622001970}, got undefined",
     "input": "\"./User.js\"",
     "start": 32,
     "end": 43,
@@ -938,7 +974,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Type-only Export",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"./User.js\",\"$span\":{\"start\":56,\"end\":65},\"$nodeHandle\":4788888535104}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":55,\"end\":56},\"$nodeHandle\":4788888535103,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":65,\"end\":66},\"$nodeHandle\":4788888535103,\"$childIndex\":2}],\"$span\":{\"start\":55,\"end\":66},\"$nodeHandle\":4788888535103}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"./User.js\",\"$span\":{\"start\":56,\"end\":65},\"$nodeHandle\":4337916969024}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":55,\"end\":56},\"$nodeHandle\":4337916969023,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":65,\"end\":66},\"$nodeHandle\":4337916969023,\"$childIndex\":2}],\"$span\":{\"start\":55,\"end\":66},\"$nodeHandle\":4337916969023}, got undefined",
     "input": "\"./User.js\"",
     "start": 55,
     "end": 66,
@@ -953,7 +989,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Enum declarations",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"B\",\"$span\":{\"start\":24,\"end\":25},\"$nodeHandle\":4801773437124}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":23,\"end\":24},\"$nodeHandle\":4801773437123,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":25,\"end\":26},\"$nodeHandle\":4801773437123,\"$childIndex\":2}],\"$span\":{\"start\":23,\"end\":26},\"$nodeHandle\":4801773437123}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"B\",\"$span\":{\"start\":24,\"end\":25},\"$nodeHandle\":4350801871044}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":23,\"end\":24},\"$nodeHandle\":4350801871043,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":25,\"end\":26},\"$nodeHandle\":4350801871043,\"$childIndex\":2}],\"$span\":{\"start\":23,\"end\":26},\"$nodeHandle\":4350801871043}, got undefined",
     "input": "'B'",
     "start": 23,
     "end": 26,
@@ -968,7 +1004,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Flow Union types",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"foo\",\"$span\":{\"start\":38,\"end\":41},\"$nodeHandle\":4814658338867}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":37,\"end\":38},\"$nodeHandle\":4814658338866,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":41,\"end\":42},\"$nodeHandle\":4814658338866,\"$childIndex\":2}],\"$span\":{\"start\":37,\"end\":42},\"$nodeHandle\":4814658338866}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"foo\",\"$span\":{\"start\":38,\"end\":41},\"$nodeHandle\":4363686772787}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":37,\"end\":38},\"$nodeHandle\":4363686772786,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":41,\"end\":42},\"$nodeHandle\":4363686772786,\"$childIndex\":2}],\"$span\":{\"start\":37,\"end\":42},\"$nodeHandle\":4363686772786}, got undefined",
     "input": "\"foo\"",
     "start": 37,
     "end": 42,
@@ -983,7 +1019,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Literal types",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"string\",\"$span\":{\"start\":36,\"end\":42},\"$nodeHandle\":4827543240794}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":35,\"end\":36},\"$nodeHandle\":4827543240793,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":42,\"end\":43},\"$nodeHandle\":4827543240793,\"$childIndex\":2}],\"$span\":{\"start\":35,\"end\":43},\"$nodeHandle\":4827543240793}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"string\",\"$span\":{\"start\":36,\"end\":42},\"$nodeHandle\":4376571674714}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":35,\"end\":36},\"$nodeHandle\":4376571674713,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":42,\"end\":43},\"$nodeHandle\":4376571674713,\"$childIndex\":2}],\"$span\":{\"start\":35,\"end\":43},\"$nodeHandle\":4376571674713}, got undefined",
     "input": "\"string\"",
     "start": 35,
     "end": 43,
@@ -998,7 +1034,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Type query and index type query types",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"person\",\"$span\":{\"start\":174,\"end\":180},\"$nodeHandle\":4849018077334}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":173,\"end\":174},\"$nodeHandle\":4849018077333,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":180,\"end\":181},\"$nodeHandle\":4849018077333,\"$childIndex\":2}],\"$span\":{\"start\":173,\"end\":181},\"$nodeHandle\":4849018077333}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"person\",\"$span\":{\"start\":174,\"end\":180},\"$nodeHandle\":4398046511254}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":173,\"end\":174},\"$nodeHandle\":4398046511253,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":180,\"end\":181},\"$nodeHandle\":4398046511253,\"$childIndex\":2}],\"$span\":{\"start\":173,\"end\":181},\"$nodeHandle\":4398046511253}, got undefined",
     "input": "'person'",
     "start": 173,
     "end": 181,
@@ -1013,7 +1049,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Lookup types",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"bar\",\"$span\":{\"start\":34,\"end\":37},\"$nodeHandle\":4853313044535}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":33,\"end\":34},\"$nodeHandle\":4853313044534,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":37,\"end\":38},\"$nodeHandle\":4853313044534,\"$childIndex\":2}],\"$span\":{\"start\":33,\"end\":38},\"$nodeHandle\":4853313044534}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"bar\",\"$span\":{\"start\":34,\"end\":37},\"$nodeHandle\":4402341478455}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":33,\"end\":34},\"$nodeHandle\":4402341478454,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":37,\"end\":38},\"$nodeHandle\":4402341478454,\"$childIndex\":2}],\"$span\":{\"start\":33,\"end\":38},\"$nodeHandle\":4402341478454}, got undefined",
     "input": "'bar'",
     "start": 33,
     "end": 38,
@@ -1028,7 +1064,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Template literal types",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"a\",\"$span\":{\"start\":84,\"end\":85},\"$nodeHandle\":4891967750431}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":83,\"end\":84},\"$nodeHandle\":4891967750430,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":85,\"end\":86},\"$nodeHandle\":4891967750430,\"$childIndex\":2}],\"$span\":{\"start\":83,\"end\":86},\"$nodeHandle\":4891967750430}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"a\",\"$span\":{\"start\":84,\"end\":85},\"$nodeHandle\":4440996184351}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":83,\"end\":84},\"$nodeHandle\":4440996184350,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":85,\"end\":86},\"$nodeHandle\":4440996184350,\"$childIndex\":2}],\"$span\":{\"start\":83,\"end\":86},\"$nodeHandle\":4440996184350}, got undefined",
     "input": "'a'",
     "start": 83,
     "end": 86,
@@ -1043,7 +1079,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "typeof in generic arguments",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"baz\",\"$span\":{\"start\":93,\"end\":96},\"$nodeHandle\":4900557684869}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":92,\"end\":93},\"$nodeHandle\":4900557684868,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":96,\"end\":97},\"$nodeHandle\":4900557684868,\"$childIndex\":2}],\"$span\":{\"start\":92,\"end\":97},\"$nodeHandle\":4900557684868}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"baz\",\"$span\":{\"start\":93,\"end\":96},\"$nodeHandle\":4449586118789}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":92,\"end\":93},\"$nodeHandle\":4449586118788,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":96,\"end\":97},\"$nodeHandle\":4449586118788,\"$childIndex\":2}],\"$span\":{\"start\":92,\"end\":97},\"$nodeHandle\":4449586118788}, got undefined",
     "input": "\"baz\"",
     "start": 92,
     "end": 97,
@@ -1058,7 +1094,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Literal types and pre-defined types",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"foo\",\"$span\":{\"start\":83,\"end\":86},\"$nodeHandle\":4904852652145}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":82,\"end\":83},\"$nodeHandle\":4904852652144,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":86,\"end\":87},\"$nodeHandle\":4904852652144,\"$childIndex\":2}],\"$span\":{\"start\":82,\"end\":87},\"$nodeHandle\":4904852652144}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"foo\",\"$span\":{\"start\":83,\"end\":86},\"$nodeHandle\":4453881086065}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":82,\"end\":83},\"$nodeHandle\":4453881086064,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":86,\"end\":87},\"$nodeHandle\":4453881086064,\"$childIndex\":2}],\"$span\":{\"start\":82,\"end\":87},\"$nodeHandle\":4453881086064}, got undefined",
     "input": "\"foo\"",
     "start": 82,
     "end": 87,
@@ -1073,7 +1109,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Typeof this",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"green\",\"$span\":{\"start\":32,\"end\":37},\"$nodeHandle\":4926327488792}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":31,\"end\":32},\"$nodeHandle\":4926327488791,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":37,\"end\":38},\"$nodeHandle\":4926327488791,\"$childIndex\":2}],\"$span\":{\"start\":31,\"end\":38},\"$nodeHandle\":4926327488791}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":411,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":89,\"$source\":0,\"$named\":true,\"$text\":\"green\",\"$span\":{\"start\":32,\"end\":37},\"$nodeHandle\":4475355922712}],\"$other\":[{\"$type\":162,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":31,\"end\":32},\"$nodeHandle\":4475355922711,\"$childIndex\":0},{\"$type\":163,\"$source\":0,\"$named\":false,\"$text\":\"\\\"\",\"$span\":{\"start\":37,\"end\":38},\"$nodeHandle\":4475355922711,\"$childIndex\":2}],\"$span\":{\"start\":31,\"end\":38},\"$nodeHandle\":4475355922711}, got undefined",
     "input": "\"green\"",
     "start": 31,
     "end": 38,
@@ -1088,7 +1124,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Import in type",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"node:fs\",\"$span\":{\"start\":19,\"end\":26},\"$nodeHandle\":4930622455879}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":18,\"end\":19},\"$nodeHandle\":4930622455878,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":26,\"end\":27},\"$nodeHandle\":4930622455878,\"$childIndex\":2}],\"$span\":{\"start\":18,\"end\":27},\"$nodeHandle\":4930622455878}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"node:fs\",\"$span\":{\"start\":19,\"end\":26},\"$nodeHandle\":4479650889799}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":18,\"end\":19},\"$nodeHandle\":4479650889798,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":26,\"end\":27},\"$nodeHandle\":4479650889798,\"$childIndex\":2}],\"$span\":{\"start\":18,\"end\":27},\"$nodeHandle\":4479650889798}, got undefined",
     "input": "'node:fs'",
     "start": 18,
     "end": 27,
@@ -1103,7 +1139,7 @@
     "backend": "native",
     "kind": "string",
     "entry": "Import assert",
-    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"foo.css\",\"$span\":{\"start\":23,\"end\":30},\"$nodeHandle\":4934917423156}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":22,\"end\":23},\"$nodeHandle\":4934917423155,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":30,\"end\":31},\"$nodeHandle\":4934917423155,\"$childIndex\":2}],\"$span\":{\"start\":22,\"end\":31},\"$nodeHandle\":4934917423155}, got undefined",
+    "message": "root._content: shape mismatch (node vs scalar) — expected {\"$type\":412,\"$source\":0,\"$named\":true,\"_elements\":[{\"$type\":90,\"$source\":0,\"$named\":true,\"$text\":\"foo.css\",\"$span\":{\"start\":23,\"end\":30},\"$nodeHandle\":4483945857079}],\"$other\":[{\"$type\":164,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":22,\"end\":23},\"$nodeHandle\":4483945857078,\"$childIndex\":0},{\"$type\":165,\"$source\":0,\"$named\":false,\"$text\":\"'\",\"$span\":{\"start\":30,\"end\":31},\"$nodeHandle\":4483945857078,\"$childIndex\":2}],\"$span\":{\"start\":22,\"end\":31},\"$nodeHandle\":4483945857078}, got undefined",
     "input": "'foo.css'",
     "start": 22,
     "end": 31,

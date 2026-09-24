@@ -2407,6 +2407,12 @@
 			"field": "field_expression_after"
 		}
 	],
+	"field_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"field_initializer": [
 		{
 			"kind": "seam",
@@ -4534,9 +4540,6 @@
 			"text": "=>"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "eq_gt_after"
 		},
@@ -5967,6 +5970,12 @@
 			"text": "\n"
 		}
 	],
+	"shorthand_field_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"shorthand_field_initializer": [
 		{
 			"kind": "seam",
@@ -6686,12 +6695,6 @@
 			"field": "token_repetition_pattern_after"
 		}
 	],
-	"token_tree": [
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
 	"token_tree_brace": [
 		{
 			"kind": "seam",
@@ -7328,6 +7331,12 @@
 		{
 			"kind": "seam",
 			"field": "type_cast_expression_after"
+		}
+	],
+	"type_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"type_item": [

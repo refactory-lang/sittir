@@ -60,6 +60,7 @@ function classify(node: AssembledNode): RenderKindPath {
 		case 'list':
 			return 'template';
 		case 'polymorph':
+		case 'alias':
 			return 'template';
 		case 'supertype':
 			return 'dispatch';

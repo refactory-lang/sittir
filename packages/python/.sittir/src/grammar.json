@@ -839,7 +839,7 @@
               "name": "_match_block"
             },
             "named": true,
-            "value": "block"
+            "value": "match_block"
           }
         }
       ]
@@ -1740,13 +1740,8 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "parenthesized_list_splat"
-                },
-                "named": true,
-                "value": "parenthesized_expression"
+                "type": "SYMBOL",
+                "name": "parenthesized_list_splat"
               },
               {
                 "type": "SYMBOL",
@@ -5299,46 +5294,61 @@
           "type": "PREC",
           "value": -3,
           "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
                   "type": "STRING",
                   "value": "print"
                 },
-                {
+                "named": true,
+                "value": "identifier"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
                   "type": "STRING",
                   "value": "exec"
                 },
-                {
+                "named": true,
+                "value": "identifier"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
                   "type": "STRING",
                   "value": "async"
                 },
-                {
+                "named": true,
+                "value": "identifier"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
                   "type": "STRING",
                   "value": "await"
-                }
-              ]
-            },
-            "named": true,
-            "value": "identifier"
+                },
+                "named": true,
+                "value": "identifier"
+              }
+            ]
           }
         },
         {
           "type": "ALIAS",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "type"
-              },
-              {
-                "type": "STRING",
-                "value": "match"
-              }
-            ]
+            "type": "STRING",
+            "value": "type"
+          },
+          "named": true,
+          "value": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "match"
           },
           "named": true,
           "value": "identifier"

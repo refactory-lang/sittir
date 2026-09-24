@@ -1,4 +1,5 @@
 import type { ChoiceRule, FieldRule, OptionalRule, SeqRule, StringRule, SymbolRule } from './rule.ts';
+import { IMMEDIATE_TOKEN, TOKEN } from './rule-types.ts'; // @rule-type-consts
 
 export type RuntimeRule = { readonly type: string };
 
@@ -50,14 +51,17 @@ export function isContainerType(t: string): boolean {
 	return t === 'SEQ' || t === 'CHOICE';
 }
 
+export function isTokenWrapperType(t: string): boolean {
+	return t === TOKEN || t === IMMEDIATE_TOKEN;
+}
+
 export function isWrapperType(t: string): boolean {
 	return (
 		t === 'OPTIONAL' ||
 		t === 'REPEAT' ||
 		t === 'REPEAT1' ||
 		t === 'FIELD' ||
-		t === 'TOKEN' ||
-		t === 'IMMEDIATE_TOKEN' ||
+		isTokenWrapperType(t) ||
 		t === 'BLANK'
 	);
 }

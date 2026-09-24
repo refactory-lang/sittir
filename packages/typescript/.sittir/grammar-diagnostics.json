@@ -42,11 +42,35 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "enum_body_elements",
-    "message": "[collect-slots] kind 'enum_body_elements': choice rule:enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 5 label-routed arm(s) [field(name):_property_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
+    "message": "[collect-slots] kind 'enum_body_elements': choice rule:enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 29 label-routed arm(s) [field(name):identifier, field(name):declare_keyword, field(name):namespace_keyword, field(name):type_keyword, field(name):public_keyword, field(name):private_keyword, field(name):protected_keyword, field(name):override_keyword, field(name):readonly_keyword, field(name):module_keyword, field(name):any_keyword, field(name):number_keyword, field(name):boolean_keyword, field(name):string_keyword, field(name):symbol_keyword, field(name):export_keyword, field(name):object_keyword, field(name):new_keyword, field(name):readonly_keyword, field(name):get_keyword, field(name):set_keyword, field(name):async_keyword, field(name):static_keyword, field(name):export_keyword, field(name):let_keyword, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
       "degenerateFields": [
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
+        "name",
         "name",
         "name",
         "name",
@@ -166,22 +190,6 @@
       "newType": "_Identifier",
       "visibleKinds": [
         "identifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_property_identifier",
-    "message": "[assemble] typeName collision: kind '_property_identifier' renamed 'PropertyIdentifier' → '_PropertyIdentifier' (visible sibling(s): 'property_identifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "PropertyIdentifier",
-      "newType": "_PropertyIdentifier",
-      "visibleKinds": [
-        "property_identifier"
       ]
     }
   },

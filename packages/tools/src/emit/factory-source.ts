@@ -24,6 +24,7 @@ export interface PrintContext {
 	readonly leafPatterns?: Record<string, RegExp>;
 	readonly leafFindings?: string[];
 	readonly enumKinds?: ReadonlySet<string>;
+	readonly aliasKinds?: ReadonlySet<string>;
 	readonly keywordKinds?: ReadonlySet<string>;
 	readonly slotStorage?: Record<string, Record<string, string>>;
 	readonly memberIdOfText?: (text: string) => number | undefined;
@@ -257,7 +258,7 @@ function wrapTextLeaves(kind: string, config: unknown, ctx: PrintContext): unkno
 
 const BRANCH_MODEL_TYPES: ReadonlySet<string> = new Set(['branch', 'envelope', 'polymorph', 'list']);
 
-function expandSlotKinds(kinds: readonly string[], loose: LooseFacts): string[] {
+function expandSlotKinds(kinds: readonly string[], loose: LooseFacts, ctx: PrintContext): string[] {
 	const out: string[] = [];
 	const seen = new Set<string>();
 	const visit = (kind: string): void => {
@@ -268,6 +269,10 @@ function expandSlotKinds(kinds: readonly string[], loose: LooseFacts): string[] 
 			for (const subtype of subtypes) visit(subtype);
 			return;
 		}
+		if (ctx.aliasKinds?.has(kind)) {
+			for (const content of Object.values(ctx.slotKinds?.[kind] ?? {})) for (const k of content) visit(k);
+			return;
+		}
 		out.push(kind);
 	};
 	for (const kind of kinds) visit(kind);
@@ -276,7 +281,7 @@ function expandSlotKinds(kinds: readonly string[], loose: LooseFacts): string[] 
 
 function slotKindsAt(kind: string, property: string, ctx: PrintContext): readonly string[] | undefined {
 	const kinds = ctx.slotKinds?.[kind]?.[property];
-	return kinds === undefined || ctx.loose === undefined ? undefined : expandSlotKinds(kinds, ctx.loose);
+	return kinds === undefined || ctx.loose === undefined ? undefined : expandSlotKinds(kinds, ctx.loose, ctx);
 }
 
 function soleLeafKind(kinds: readonly string[], text: string, ctx: PrintContext): string | undefined {
@@ -383,7 +388,7 @@ function listElementKinds(listKind: string, ctx: PrintContext): readonly string[
 		.filter((seat) => seat.shape === 'elements')
 		.map((seat) => seat.kind);
 	const kinds = seated.length > 0 ? seated : loose.listElementKinds[listKind];
-	return kinds === undefined ? undefined : expandSlotKinds(kinds, loose);
+	return kinds === undefined ? undefined : expandSlotKinds(kinds, loose, ctx);
 }
 
 function contentSlotKinds(kind: string, ctx: PrintContext): readonly string[] | undefined {
@@ -391,7 +396,7 @@ function contentSlotKinds(kind: string, ctx: PrintContext): readonly string[] | 
 	const required = Object.entries(loose.slotRequired[kind] ?? {}).flatMap(([p, r]) => (r ? [p] : []));
 	if (required.length !== 1 || loose.slotMultiple[kind]?.[required[0]!] === true) return undefined;
 	const kinds = ctx.slotKinds?.[kind]?.[required[0]!];
-	return kinds === undefined ? undefined : expandSlotKinds(kinds, loose);
+	return kinds === undefined ? undefined : expandSlotKinds(kinds, loose, ctx);
 }
 
 function leafReachedThrough(target: string, text: string, ctx: PrintContext): string | undefined {
@@ -543,6 +548,7 @@ export function printingFactoryMap(
 		const publicName = kind.replace(/^_+/, '');
 		const call = callSpelling(path, ctx);
 		const entry = (...args: unknown[]): Printed | string => {
+			if (ctx.aliasKinds?.has(kind)) return args[0] instanceof Printed ? args[0] : printValue(args[0], ctx, 0);
 			switch (shape) {
 				case 'text': {
 					const text = String(args[0] ?? '');
@@ -877,6 +883,7 @@ export async function emitFactorySourceText(
 		leafPatterns: model.leafPatterns,
 		leafFindings,
 		enumKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'enum')),
+		aliasKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'alias')),
 		absorbedKinds: absorbedKindsOf(model),
 		slotStorage: withPublicNames(model.slotStorage),
 		keywordKinds: new Set(

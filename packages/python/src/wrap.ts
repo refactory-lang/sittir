@@ -492,7 +492,15 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'exec_statement',
 		'type_alias_statement'
 	]),
-	_named_expression_lhs: new Set(['identifier']),
+	_named_expression_lhs: new Set([
+		'identifier',
+		'print_keyword',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword'
+	]),
 	_expressions: new Set([
 		'expression',
 		'comparison_operator',
@@ -503,6 +511,12 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'await',
 		'binary_operator',
 		'identifier',
+		'print_keyword',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword',
 		'string',
 		'concatenated_string',
 		'integer',
@@ -579,7 +593,20 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'positional_separator',
 		'dictionary_splat_pattern'
 	]),
-	pattern: new Set(['identifier', 'subscript', 'attribute', 'list_splat_pattern', 'tuple_pattern', 'list_pattern']),
+	pattern: new Set([
+		'identifier',
+		'print_keyword',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword',
+		'subscript',
+		'attribute',
+		'list_splat_pattern',
+		'tuple_pattern',
+		'list_pattern'
+	]),
 	_expression_within_for_in_clause: new Set([
 		'expression',
 		'comparison_operator',
@@ -590,6 +617,12 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'await',
 		'binary_operator',
 		'identifier',
+		'print_keyword',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword',
 		'string',
 		'concatenated_string',
 		'integer',
@@ -633,6 +666,12 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'await',
 		'binary_operator',
 		'identifier',
+		'print_keyword',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword',
 		'string',
 		'concatenated_string',
 		'integer',
@@ -670,6 +709,12 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'await',
 		'binary_operator',
 		'identifier',
+		'print_keyword',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword',
 		'string',
 		'concatenated_string',
 		'integer',
@@ -704,6 +749,12 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	_left_hand_side: new Set([
 		'pattern',
 		'identifier',
+		'print_keyword',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword',
 		'subscript',
 		'attribute',
 		'list_splat_pattern',
@@ -721,6 +772,12 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'await',
 		'binary_operator',
 		'identifier',
+		'print_keyword',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword',
 		'string',
 		'concatenated_string',
 		'integer',
@@ -772,6 +829,12 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'await',
 		'binary_operator',
 		'identifier',
+		'print_keyword',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword',
 		'string',
 		'concatenated_string',
 		'integer',
@@ -819,7 +882,6 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	]),
 	integer: new Set(['integer_hex', 'integer_octal', 'integer_binary', 'integer_decimal']),
 	float: new Set(['float_point', 'float_leading_point', 'float_scientific']),
-	keyword_identifier: new Set(['identifier']),
 	line_continuation: new Set(['line_continuation_newline', 'line_continuation_nul']),
 	_whitespace: new Set([
 		'_tight',
@@ -1395,6 +1457,7 @@ export function wrapExpressionStatement(
 			| T.AugmentedAssignment
 			| T.Yield;
 		readonly _lambda?: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield;
+		readonly _identifier?: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield;
 		readonly _await?: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield;
 		readonly _binary_operator?:
 			| T.Expression
@@ -1402,7 +1465,32 @@ export function wrapExpressionStatement(
 			| T.Assignment
 			| T.AugmentedAssignment
 			| T.Yield;
-		readonly _identifier?: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield;
+		readonly _print_keyword?:
+			| T.Expression
+			| T.ExpressionStatementTuple
+			| T.Assignment
+			| T.AugmentedAssignment
+			| T.Yield;
+		readonly _exec_keyword?: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield;
+		readonly _async_keyword?:
+			| T.Expression
+			| T.ExpressionStatementTuple
+			| T.Assignment
+			| T.AugmentedAssignment
+			| T.Yield;
+		readonly _await_keyword?:
+			| T.Expression
+			| T.ExpressionStatementTuple
+			| T.Assignment
+			| T.AugmentedAssignment
+			| T.Yield;
+		readonly _type_keyword?: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield;
+		readonly _match_keyword?:
+			| T.Expression
+			| T.ExpressionStatementTuple
+			| T.Assignment
+			| T.AugmentedAssignment
+			| T.Yield;
 		readonly _string?: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield;
 		readonly _concatenated_string?:
 			| T.Expression
@@ -1548,9 +1636,15 @@ export function wrapExpressionStatement(
 		'_not_operator',
 		'_boolean_operator',
 		'_lambda',
+		'_identifier',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -1595,9 +1689,11 @@ export function wrapExpressionStatement(
 				'_assignment_eq',
 				'_assignment_type',
 				'_assignment_typed',
+				'_async_keyword',
 				'_attribute',
 				'_augmented_assignment',
 				'_await',
+				'_await_keyword',
 				'_binary_operator',
 				'_boolean_operator',
 				'_call',
@@ -1607,6 +1703,7 @@ export function wrapExpressionStatement(
 				'_dictionary',
 				'_dictionary_comprehension',
 				'_ellipsis',
+				'_exec_keyword',
 				'_expression_statement_tuple',
 				'_false',
 				'_float_leading_point',
@@ -1622,16 +1719,19 @@ export function wrapExpressionStatement(
 				'_list',
 				'_list_comprehension',
 				'_list_splat_pattern',
+				'_match_keyword',
 				'_named_expression',
 				'_none',
 				'_not_operator',
 				'_parenthesized_expression',
+				'_print_keyword',
 				'_set',
 				'_set_comprehension',
 				'_string',
 				'_subscript',
 				'_true',
 				'_tuple',
+				'_type_keyword',
 				'_unary_operator',
 				'_yield'
 			]),
@@ -1643,9 +1743,15 @@ export function wrapExpressionStatement(
 						data._not_operator ??
 						data._boolean_operator ??
 						data._lambda ??
+						data._identifier ??
 						data._await ??
 						data._binary_operator ??
-						data._identifier ??
+						data._print_keyword ??
+						data._exec_keyword ??
+						data._async_keyword ??
+						data._await_keyword ??
+						data._type_keyword ??
+						data._match_keyword ??
 						data._string ??
 						data._concatenated_string ??
 						data._integer_hex ??
@@ -1708,16 +1814,21 @@ export function wrapExpressionStatement(
 
 export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_name', '_value']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.NamedExpression as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
 			$type: TSKindId.NamedExpression as const,
-			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'name',
-				span: (data as _NodeData).$span
-			}),
+			_name: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'name',
+					span: (data as _NodeData).$span
+				}),
+				{ print: 68, exec: 38, async: 69, await: 70, type: 39, match: 22 }
+			),
 			_value: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 					tree,
@@ -1729,7 +1840,15 @@ export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle) {
 			),
 
 			name() {
-				return drillIn<T.Identifier>(this._name, tree);
+				return drillIn<
+					| T.Identifier
+					| TSKindId.PrintKeyword
+					| TSKindId.ExecKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.MatchKeyword
+				>(this._name, tree);
 			},
 			value() {
 				return drillIn<T.Expression>(this._value, tree);
@@ -1750,12 +1869,35 @@ export function wrapNamedExpressionLhs(
 	tree: TreeHandle
 ) {
 	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, ['_identifier']);
-	const kindKeyed = _firstKindKeyedWrapChild(node, ['identifier']) as
-		| T.NamedExpressionLhs
-		| readonly T.NamedExpressionLhs[]
-		| undefined;
-	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['identifier']);
+	const node = _keepModelledSlots(data, [
+		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword'
+	]);
+	const kindKeyed = _firstKindKeyedWrapChild(node, [
+		'identifier',
+		'print_keyword',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword'
+	]) as T.NamedExpressionLhs | readonly T.NamedExpressionLhs[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(node.$other, [
+			'identifier',
+			'print_keyword',
+			'exec_keyword',
+			'async_keyword',
+			'await_keyword',
+			'type_keyword',
+			'match_keyword'
+		]);
 	if (
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
@@ -1779,9 +1921,15 @@ export function wrapReturnStatement(
 		readonly _not_operator?: T.Expression | T.ExpressionList;
 		readonly _boolean_operator?: T.Expression | T.ExpressionList;
 		readonly _lambda?: T.Expression | T.ExpressionList;
+		readonly _identifier?: T.Expression | T.ExpressionList;
 		readonly _await?: T.Expression | T.ExpressionList;
 		readonly _binary_operator?: T.Expression | T.ExpressionList;
-		readonly _identifier?: T.Expression | T.ExpressionList;
+		readonly _print_keyword?: T.Expression | T.ExpressionList;
+		readonly _exec_keyword?: T.Expression | T.ExpressionList;
+		readonly _async_keyword?: T.Expression | T.ExpressionList;
+		readonly _await_keyword?: T.Expression | T.ExpressionList;
+		readonly _type_keyword?: T.Expression | T.ExpressionList;
+		readonly _match_keyword?: T.Expression | T.ExpressionList;
 		readonly _string?: T.Expression | T.ExpressionList;
 		readonly _concatenated_string?: T.Expression | T.ExpressionList;
 		readonly _integer_hex?: T.Expression | T.ExpressionList;
@@ -1822,9 +1970,15 @@ export function wrapReturnStatement(
 		'_not_operator',
 		'_boolean_operator',
 		'_lambda',
+		'_identifier',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -1861,8 +2015,10 @@ export function wrapReturnStatement(
 		{
 			..._omitWrapKeys(data, [
 				'_as_pattern',
+				'_async_keyword',
 				'_attribute',
 				'_await',
+				'_await_keyword',
 				'_binary_operator',
 				'_boolean_operator',
 				'_call',
@@ -1872,6 +2028,7 @@ export function wrapReturnStatement(
 				'_dictionary',
 				'_dictionary_comprehension',
 				'_ellipsis',
+				'_exec_keyword',
 				'_expression_list',
 				'_false',
 				'_float_leading_point',
@@ -1887,16 +2044,19 @@ export function wrapReturnStatement(
 				'_list',
 				'_list_comprehension',
 				'_list_splat_pattern',
+				'_match_keyword',
 				'_named_expression',
 				'_none',
 				'_not_operator',
 				'_parenthesized_expression',
+				'_print_keyword',
 				'_set',
 				'_set_comprehension',
 				'_string',
 				'_subscript',
 				'_true',
 				'_tuple',
+				'_type_keyword',
 				'_unary_operator'
 			]),
 			$type: TSKindId.ReturnStatement as const,
@@ -1907,9 +2067,15 @@ export function wrapReturnStatement(
 						data._not_operator ??
 						data._boolean_operator ??
 						data._lambda ??
+						data._identifier ??
 						data._await ??
 						data._binary_operator ??
-						data._identifier ??
+						data._print_keyword ??
+						data._exec_keyword ??
+						data._async_keyword ??
+						data._await_keyword ??
+						data._type_keyword ??
+						data._match_keyword ??
 						data._string ??
 						data._concatenated_string ??
 						data._integer_hex ??
@@ -1968,9 +2134,15 @@ export function wrapDeleteStatement(
 		readonly _not_operator?: T.Expression | T.ExpressionList;
 		readonly _boolean_operator?: T.Expression | T.ExpressionList;
 		readonly _lambda?: T.Expression | T.ExpressionList;
+		readonly _identifier?: T.Expression | T.ExpressionList;
 		readonly _await?: T.Expression | T.ExpressionList;
 		readonly _binary_operator?: T.Expression | T.ExpressionList;
-		readonly _identifier?: T.Expression | T.ExpressionList;
+		readonly _print_keyword?: T.Expression | T.ExpressionList;
+		readonly _exec_keyword?: T.Expression | T.ExpressionList;
+		readonly _async_keyword?: T.Expression | T.ExpressionList;
+		readonly _await_keyword?: T.Expression | T.ExpressionList;
+		readonly _type_keyword?: T.Expression | T.ExpressionList;
+		readonly _match_keyword?: T.Expression | T.ExpressionList;
 		readonly _string?: T.Expression | T.ExpressionList;
 		readonly _concatenated_string?: T.Expression | T.ExpressionList;
 		readonly _integer_hex?: T.Expression | T.ExpressionList;
@@ -2011,9 +2183,15 @@ export function wrapDeleteStatement(
 		'_not_operator',
 		'_boolean_operator',
 		'_lambda',
+		'_identifier',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -2050,8 +2228,10 @@ export function wrapDeleteStatement(
 		{
 			..._omitWrapKeys(data, [
 				'_as_pattern',
+				'_async_keyword',
 				'_attribute',
 				'_await',
+				'_await_keyword',
 				'_binary_operator',
 				'_boolean_operator',
 				'_call',
@@ -2061,6 +2241,7 @@ export function wrapDeleteStatement(
 				'_dictionary',
 				'_dictionary_comprehension',
 				'_ellipsis',
+				'_exec_keyword',
 				'_expression_list',
 				'_false',
 				'_float_leading_point',
@@ -2076,16 +2257,19 @@ export function wrapDeleteStatement(
 				'_list',
 				'_list_comprehension',
 				'_list_splat_pattern',
+				'_match_keyword',
 				'_named_expression',
 				'_none',
 				'_not_operator',
 				'_parenthesized_expression',
+				'_print_keyword',
 				'_set',
 				'_set_comprehension',
 				'_string',
 				'_subscript',
 				'_true',
 				'_tuple',
+				'_type_keyword',
 				'_unary_operator'
 			]),
 			$type: TSKindId.DeleteStatement as const,
@@ -2096,9 +2280,15 @@ export function wrapDeleteStatement(
 						data._not_operator ??
 						data._boolean_operator ??
 						data._lambda ??
+						data._identifier ??
 						data._await ??
 						data._binary_operator ??
-						data._identifier ??
+						data._print_keyword ??
+						data._exec_keyword ??
+						data._async_keyword ??
+						data._await_keyword ??
+						data._type_keyword ??
+						data._match_keyword ??
 						data._string ??
 						data._concatenated_string ??
 						data._integer_hex ??
@@ -2157,9 +2347,15 @@ export function wrapRaiseStatement(
 		readonly _not_operator?: T.Expression | T.ExpressionList;
 		readonly _boolean_operator?: T.Expression | T.ExpressionList;
 		readonly _lambda?: T.Expression | T.ExpressionList;
+		readonly _identifier?: T.Expression | T.ExpressionList;
 		readonly _await?: T.Expression | T.ExpressionList;
 		readonly _binary_operator?: T.Expression | T.ExpressionList;
-		readonly _identifier?: T.Expression | T.ExpressionList;
+		readonly _print_keyword?: T.Expression | T.ExpressionList;
+		readonly _exec_keyword?: T.Expression | T.ExpressionList;
+		readonly _async_keyword?: T.Expression | T.ExpressionList;
+		readonly _await_keyword?: T.Expression | T.ExpressionList;
+		readonly _type_keyword?: T.Expression | T.ExpressionList;
+		readonly _match_keyword?: T.Expression | T.ExpressionList;
 		readonly _string?: T.Expression | T.ExpressionList;
 		readonly _concatenated_string?: T.Expression | T.ExpressionList;
 		readonly _integer_hex?: T.Expression | T.ExpressionList;
@@ -2201,9 +2397,15 @@ export function wrapRaiseStatement(
 		'_not_operator',
 		'_boolean_operator',
 		'_lambda',
+		'_identifier',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -2240,8 +2442,10 @@ export function wrapRaiseStatement(
 		{
 			..._omitWrapKeys(data, [
 				'_as_pattern',
+				'_async_keyword',
 				'_attribute',
 				'_await',
+				'_await_keyword',
 				'_binary_operator',
 				'_boolean_operator',
 				'_call',
@@ -2251,6 +2455,7 @@ export function wrapRaiseStatement(
 				'_dictionary',
 				'_dictionary_comprehension',
 				'_ellipsis',
+				'_exec_keyword',
 				'_expression_list',
 				'_false',
 				'_float_leading_point',
@@ -2266,16 +2471,19 @@ export function wrapRaiseStatement(
 				'_list',
 				'_list_comprehension',
 				'_list_splat_pattern',
+				'_match_keyword',
 				'_named_expression',
 				'_none',
 				'_not_operator',
 				'_parenthesized_expression',
+				'_print_keyword',
 				'_set',
 				'_set_comprehension',
 				'_string',
 				'_subscript',
 				'_true',
 				'_tuple',
+				'_type_keyword',
 				'_unary_operator'
 			]),
 			$type: TSKindId.RaiseStatement as const,
@@ -2286,9 +2494,15 @@ export function wrapRaiseStatement(
 						data._not_operator ??
 						data._boolean_operator ??
 						data._lambda ??
+						data._identifier ??
 						data._await ??
 						data._binary_operator ??
-						data._identifier ??
+						data._print_keyword ??
+						data._exec_keyword ??
+						data._async_keyword ??
+						data._await_keyword ??
+						data._type_keyword ??
+						data._match_keyword ??
 						data._string ??
 						data._concatenated_string ??
 						data._integer_hex ??
@@ -3391,18 +3605,18 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
 
 export function wrapParenthesizedListSplat(
 	data: T.ParenthesizedListSplat & {
-		readonly _parenthesized_expression?: T.ParenthesizedListSplat | T.ListSplat;
+		readonly _parenthesized_list_splat?: T.ParenthesizedListSplat | T.ListSplat;
 		readonly _list_splat?: T.ParenthesizedListSplat | T.ListSplat;
 	},
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, ['_content', '_parenthesized_expression', '_list_splat']);
+	data = _keepModelledSlots(data, ['_content', '_parenthesized_list_splat', '_list_splat']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_list_splat', '_parenthesized_expression']),
+			..._omitWrapKeys(data, ['_list_splat', '_parenthesized_list_splat']),
 			$type: TSKindId.ParenthesizedListSplat as const,
 			_content: normalizeSingularWrapSlot(
-				data._content ?? data._parenthesized_expression ?? data._list_splat,
+				data._content ?? data._parenthesized_list_splat ?? data._list_splat,
 				'content',
 				true,
 				data.$type,
@@ -3549,9 +3763,15 @@ export function wrapExpressionList(
 		readonly _not_operator?: T.Expression;
 		readonly _boolean_operator?: T.Expression;
 		readonly _lambda?: T.Expression;
+		readonly _identifier?: T.Expression;
 		readonly _await?: T.Expression;
 		readonly _binary_operator?: T.Expression;
-		readonly _identifier?: T.Expression;
+		readonly _print_keyword?: T.Expression;
+		readonly _exec_keyword?: T.Expression;
+		readonly _async_keyword?: T.Expression;
+		readonly _await_keyword?: T.Expression;
+		readonly _type_keyword?: T.Expression;
+		readonly _match_keyword?: T.Expression;
 		readonly _string?: T.Expression;
 		readonly _concatenated_string?: T.Expression;
 		readonly _integer_hex?: T.Expression;
@@ -3592,9 +3812,15 @@ export function wrapExpressionList(
 		'_not_operator',
 		'_boolean_operator',
 		'_lambda',
+		'_identifier',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -3632,8 +3858,10 @@ export function wrapExpressionList(
 		{
 			..._omitWrapKeys(data, [
 				'_as_pattern',
+				'_async_keyword',
 				'_attribute',
 				'_await',
+				'_await_keyword',
 				'_binary_operator',
 				'_boolean_operator',
 				'_call',
@@ -3643,6 +3871,7 @@ export function wrapExpressionList(
 				'_dictionary',
 				'_dictionary_comprehension',
 				'_ellipsis',
+				'_exec_keyword',
 				'_false',
 				'_float_leading_point',
 				'_float_point',
@@ -3657,16 +3886,19 @@ export function wrapExpressionList(
 				'_list',
 				'_list_comprehension',
 				'_list_splat_pattern',
+				'_match_keyword',
 				'_named_expression',
 				'_none',
 				'_not_operator',
 				'_parenthesized_expression',
+				'_print_keyword',
 				'_set',
 				'_set_comprehension',
 				'_string',
 				'_subscript',
 				'_true',
 				'_tuple',
+				'_type_keyword',
 				'_unary_operator'
 			]),
 			$type: TSKindId.ExpressionList as const,
@@ -3677,9 +3909,15 @@ export function wrapExpressionList(
 						data._not_operator ??
 						data._boolean_operator ??
 						data._lambda ??
+						data._identifier ??
 						data._await ??
 						data._binary_operator ??
-						data._identifier ??
+						data._print_keyword ??
+						data._exec_keyword ??
+						data._async_keyword ??
+						data._await_keyword ??
+						data._type_keyword ??
+						data._match_keyword ??
 						data._string ??
 						data._concatenated_string ??
 						data._integer_hex ??
@@ -4778,6 +5016,12 @@ export function wrapPattern(
 	if (typeof data === 'number') return data;
 	const node = _keepModelledSlots(data, [
 		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_subscript',
 		'_attribute',
 		'_list_splat_pattern',
@@ -4786,6 +5030,12 @@ export function wrapPattern(
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'identifier',
+		'print_keyword',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword',
 		'subscript',
 		'attribute',
 		'list_splat_pattern',
@@ -4796,6 +5046,12 @@ export function wrapPattern(
 		kindKeyed ??
 		_filterWrapChildrenByKind(node.$other, [
 			'identifier',
+			'print_keyword',
+			'exec_keyword',
+			'async_keyword',
+			'await_keyword',
+			'type_keyword',
+			'match_keyword',
 			'subscript',
 			'attribute',
 			'list_splat_pattern',
@@ -4964,27 +5220,159 @@ export function wrapTypedDefaultParameter(data: T.TypedDefaultParameter, tree: T
 
 export function wrapListSplatPattern(
 	data: T.ListSplatPattern & {
-		readonly _identifier?: T.Identifier | T.Subscript | T.Attribute;
-		readonly _subscript?: T.Identifier | T.Subscript | T.Attribute;
-		readonly _attribute?: T.Identifier | T.Subscript | T.Attribute;
+		readonly _identifier?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _print_keyword?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _exec_keyword?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _async_keyword?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _await_keyword?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _type_keyword?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _match_keyword?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _subscript?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _attribute?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
 	},
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, ['_content', '_identifier', '_subscript', '_attribute']);
+	data = _keepModelledSlots(data, [
+		'_content',
+		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
+		'_subscript',
+		'_attribute'
+	]);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.ListSplatPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_attribute', '_identifier', '_subscript']),
+			..._omitWrapKeys(data, [
+				'_async_keyword',
+				'_attribute',
+				'_await_keyword',
+				'_exec_keyword',
+				'_identifier',
+				'_match_keyword',
+				'_print_keyword',
+				'_subscript',
+				'_type_keyword'
+			]),
 			$type: TSKindId.ListSplatPattern as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._identifier ?? data._subscript ?? data._attribute,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ??
+						data._identifier ??
+						data._print_keyword ??
+						data._exec_keyword ??
+						data._async_keyword ??
+						data._await_keyword ??
+						data._type_keyword ??
+						data._match_keyword ??
+						data._subscript ??
+						data._attribute,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ print: 68, exec: 38, async: 69, await: 70, type: 39, match: 22 }
 			),
 
 			content() {
-				return drillIn<T.Identifier | T.Subscript | T.Attribute>(this._content, tree);
+				return drillIn<
+					| T.Identifier
+					| TSKindId.PrintKeyword
+					| TSKindId.ExecKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.MatchKeyword
+					| T.Subscript
+					| T.Attribute
+				>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.ListSplatPattern['_content']>) =>
@@ -4998,27 +5386,159 @@ export function wrapListSplatPattern(
 
 export function wrapDictionarySplatPattern(
 	data: T.DictionarySplatPattern & {
-		readonly _identifier?: T.Identifier | T.Subscript | T.Attribute;
-		readonly _subscript?: T.Identifier | T.Subscript | T.Attribute;
-		readonly _attribute?: T.Identifier | T.Subscript | T.Attribute;
+		readonly _identifier?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _print_keyword?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _exec_keyword?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _async_keyword?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _await_keyword?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _type_keyword?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _match_keyword?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _subscript?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
+		readonly _attribute?:
+			| T.Identifier
+			| TSKindId.PrintKeyword
+			| TSKindId.ExecKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.MatchKeyword
+			| T.Subscript
+			| T.Attribute;
 	},
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, ['_content', '_identifier', '_subscript', '_attribute']);
+	data = _keepModelledSlots(data, [
+		'_content',
+		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
+		'_subscript',
+		'_attribute'
+	]);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.DictionarySplatPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_attribute', '_identifier', '_subscript']),
+			..._omitWrapKeys(data, [
+				'_async_keyword',
+				'_attribute',
+				'_await_keyword',
+				'_exec_keyword',
+				'_identifier',
+				'_match_keyword',
+				'_print_keyword',
+				'_subscript',
+				'_type_keyword'
+			]),
 			$type: TSKindId.DictionarySplatPattern as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._identifier ?? data._subscript ?? data._attribute,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ??
+						data._identifier ??
+						data._print_keyword ??
+						data._exec_keyword ??
+						data._async_keyword ??
+						data._await_keyword ??
+						data._type_keyword ??
+						data._match_keyword ??
+						data._subscript ??
+						data._attribute,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ print: 68, exec: 38, async: 69, await: 70, type: 39, match: 22 }
 			),
 
 			content() {
-				return drillIn<T.Identifier | T.Subscript | T.Attribute>(this._content, tree);
+				return drillIn<
+					| T.Identifier
+					| TSKindId.PrintKeyword
+					| TSKindId.ExecKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.MatchKeyword
+					| T.Subscript
+					| T.Attribute
+				>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.DictionarySplatPattern['_content']>) =>
@@ -5045,21 +5565,18 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle) {
 				}),
 				{ True: 71, False: 72, None: 73, '...': 64 }
 			),
-			_alias: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._alias, 'alias', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'alias',
-					span: (data as _NodeData).$span
-				}),
-				{ True: 71, False: 72, None: 73, '...': 64 }
-			),
+			_alias: normalizeSingularWrapSlot(data._alias, 'alias', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'alias',
+				span: (data as _NodeData).$span
+			}),
 
 			expression() {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			alias() {
-				return drillIn<T.Expression>(this._alias, tree);
+				return drillIn<T.AsPatternTarget>(this._alias, tree);
 			},
 			$with: {
 				expression: (v: NonNullable<T.AsPattern['_expression']>) =>
@@ -5086,9 +5603,14 @@ export function wrapExpressionWithinForInClause(
 		'_not_operator',
 		'_boolean_operator',
 		'_lambda',
+		'_print_keyword',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -5127,9 +5649,14 @@ export function wrapExpressionWithinForInClause(
 		'not_operator',
 		'boolean_operator',
 		'lambda',
+		'print_keyword',
 		'await',
 		'binary_operator',
-		'identifier',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword',
 		'string',
 		'concatenated_string',
 		'integer_hex',
@@ -5170,9 +5697,14 @@ export function wrapExpressionWithinForInClause(
 			'not_operator',
 			'boolean_operator',
 			'lambda',
+			'print_keyword',
 			'await',
 			'binary_operator',
-			'identifier',
+			'exec_keyword',
+			'async_keyword',
+			'await_keyword',
+			'type_keyword',
+			'match_keyword',
 			'string',
 			'concatenated_string',
 			'integer_hex',
@@ -5235,9 +5767,14 @@ export function wrapExpression(
 		'_conditional_expression',
 		'_named_expression',
 		'_as_pattern',
+		'_print_keyword',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -5275,9 +5812,14 @@ export function wrapExpression(
 		'conditional_expression',
 		'named_expression',
 		'as_pattern',
+		'print_keyword',
 		'await',
 		'binary_operator',
-		'identifier',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword',
 		'string',
 		'concatenated_string',
 		'integer_hex',
@@ -5317,9 +5859,14 @@ export function wrapExpression(
 			'conditional_expression',
 			'named_expression',
 			'as_pattern',
+			'print_keyword',
 			'await',
 			'binary_operator',
-			'identifier',
+			'exec_keyword',
+			'async_keyword',
+			'await_keyword',
+			'type_keyword',
+			'match_keyword',
 			'string',
 			'concatenated_string',
 			'integer_hex',
@@ -5374,6 +5921,12 @@ export function wrapPrimaryExpression(
 		'_await',
 		'_binary_operator',
 		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer',
@@ -5408,6 +5961,12 @@ export function wrapPrimaryExpression(
 		'await',
 		'binary_operator',
 		'identifier',
+		'print_keyword',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword',
 		'string',
 		'concatenated_string',
 		'integer',
@@ -5444,6 +6003,12 @@ export function wrapPrimaryExpression(
 			'await',
 			'binary_operator',
 			'identifier',
+			'print_keyword',
+			'exec_keyword',
+			'async_keyword',
+			'await_keyword',
+			'type_keyword',
+			'match_keyword',
 			'string',
 			'concatenated_string',
 			'integer',
@@ -5952,6 +6517,12 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 export function wrapPatternList(
 	data: T.PatternList & {
 		readonly _identifier?: T.Pattern;
+		readonly _print_keyword?: T.Pattern;
+		readonly _exec_keyword?: T.Pattern;
+		readonly _async_keyword?: T.Pattern;
+		readonly _await_keyword?: T.Pattern;
+		readonly _type_keyword?: T.Pattern;
+		readonly _match_keyword?: T.Pattern;
 		readonly _subscript?: T.Pattern;
 		readonly _attribute?: T.Pattern;
 		readonly _list_splat_pattern?: T.Pattern;
@@ -5964,6 +6535,12 @@ export function wrapPatternList(
 		'_pattern',
 		'_tail',
 		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_subscript',
 		'_attribute',
 		'_list_splat_pattern',
@@ -5974,17 +6551,29 @@ export function wrapPatternList(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
+				'_async_keyword',
 				'_attribute',
+				'_await_keyword',
+				'_exec_keyword',
 				'_identifier',
 				'_list_pattern',
 				'_list_splat_pattern',
+				'_match_keyword',
+				'_print_keyword',
 				'_subscript',
-				'_tuple_pattern'
+				'_tuple_pattern',
+				'_type_keyword'
 			]),
 			$type: TSKindId.PatternList as const,
 			_pattern: normalizeSingularWrapSlot(
 				data._pattern ??
 					data._identifier ??
+					data._print_keyword ??
+					data._exec_keyword ??
+					data._async_keyword ??
+					data._await_keyword ??
+					data._type_keyword ??
+					data._match_keyword ??
 					data._subscript ??
 					data._attribute ??
 					data._list_splat_pattern ??
@@ -6038,9 +6627,14 @@ export function wrapRightHandSide(
 		'_not_operator',
 		'_boolean_operator',
 		'_lambda',
+		'_print_keyword',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -6086,9 +6680,14 @@ export function wrapRightHandSide(
 		'not_operator',
 		'boolean_operator',
 		'lambda',
+		'print_keyword',
 		'await',
 		'binary_operator',
-		'identifier',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword',
 		'string',
 		'concatenated_string',
 		'integer_hex',
@@ -6136,9 +6735,14 @@ export function wrapRightHandSide(
 			'not_operator',
 			'boolean_operator',
 			'lambda',
+			'print_keyword',
 			'await',
 			'binary_operator',
-			'identifier',
+			'exec_keyword',
+			'async_keyword',
+			'await_keyword',
+			'type_keyword',
+			'match_keyword',
 			'string',
 			'concatenated_string',
 			'integer_hex',
@@ -6197,9 +6801,15 @@ export function wrapYield(
 		readonly _not_operator?: T.YieldFromClause | T.Expression | T.ExpressionList;
 		readonly _boolean_operator?: T.YieldFromClause | T.Expression | T.ExpressionList;
 		readonly _lambda?: T.YieldFromClause | T.Expression | T.ExpressionList;
+		readonly _identifier?: T.YieldFromClause | T.Expression | T.ExpressionList;
 		readonly _await?: T.YieldFromClause | T.Expression | T.ExpressionList;
 		readonly _binary_operator?: T.YieldFromClause | T.Expression | T.ExpressionList;
-		readonly _identifier?: T.YieldFromClause | T.Expression | T.ExpressionList;
+		readonly _print_keyword?: T.YieldFromClause | T.Expression | T.ExpressionList;
+		readonly _exec_keyword?: T.YieldFromClause | T.Expression | T.ExpressionList;
+		readonly _async_keyword?: T.YieldFromClause | T.Expression | T.ExpressionList;
+		readonly _await_keyword?: T.YieldFromClause | T.Expression | T.ExpressionList;
+		readonly _type_keyword?: T.YieldFromClause | T.Expression | T.ExpressionList;
+		readonly _match_keyword?: T.YieldFromClause | T.Expression | T.ExpressionList;
 		readonly _string?: T.YieldFromClause | T.Expression | T.ExpressionList;
 		readonly _concatenated_string?: T.YieldFromClause | T.Expression | T.ExpressionList;
 		readonly _integer_hex?: T.YieldFromClause | T.Expression | T.ExpressionList;
@@ -6241,9 +6851,15 @@ export function wrapYield(
 		'_not_operator',
 		'_boolean_operator',
 		'_lambda',
+		'_identifier',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -6280,8 +6896,10 @@ export function wrapYield(
 		{
 			..._omitWrapKeys(data, [
 				'_as_pattern',
+				'_async_keyword',
 				'_attribute',
 				'_await',
+				'_await_keyword',
 				'_binary_operator',
 				'_boolean_operator',
 				'_call',
@@ -6291,6 +6909,7 @@ export function wrapYield(
 				'_dictionary',
 				'_dictionary_comprehension',
 				'_ellipsis',
+				'_exec_keyword',
 				'_expression_list',
 				'_false',
 				'_float_leading_point',
@@ -6306,16 +6925,19 @@ export function wrapYield(
 				'_list',
 				'_list_comprehension',
 				'_list_splat_pattern',
+				'_match_keyword',
 				'_named_expression',
 				'_none',
 				'_not_operator',
 				'_parenthesized_expression',
+				'_print_keyword',
 				'_set',
 				'_set_comprehension',
 				'_string',
 				'_subscript',
 				'_true',
 				'_tuple',
+				'_type_keyword',
 				'_unary_operator',
 				'_yield_from_clause'
 			]),
@@ -6328,9 +6950,15 @@ export function wrapYield(
 						data._not_operator ??
 						data._boolean_operator ??
 						data._lambda ??
+						data._identifier ??
 						data._await ??
 						data._binary_operator ??
-						data._identifier ??
+						data._print_keyword ??
+						data._exec_keyword ??
+						data._async_keyword ??
+						data._await_keyword ??
+						data._type_keyword ??
+						data._match_keyword ??
 						data._string ??
 						data._concatenated_string ??
 						data._integer_hex ??
@@ -6623,6 +7251,7 @@ export function wrapType(
 			| T.ConstrainedType
 			| T.MemberType;
 		readonly _lambda?: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType;
+		readonly _identifier?: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType;
 		readonly _await?: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType;
 		readonly _binary_operator?:
 			| T.Expression
@@ -6631,7 +7260,48 @@ export function wrapType(
 			| T.UnionType
 			| T.ConstrainedType
 			| T.MemberType;
-		readonly _identifier?: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType;
+		readonly _print_keyword?:
+			| T.Expression
+			| T.SplatType
+			| T.GenericType
+			| T.UnionType
+			| T.ConstrainedType
+			| T.MemberType;
+		readonly _exec_keyword?:
+			| T.Expression
+			| T.SplatType
+			| T.GenericType
+			| T.UnionType
+			| T.ConstrainedType
+			| T.MemberType;
+		readonly _async_keyword?:
+			| T.Expression
+			| T.SplatType
+			| T.GenericType
+			| T.UnionType
+			| T.ConstrainedType
+			| T.MemberType;
+		readonly _await_keyword?:
+			| T.Expression
+			| T.SplatType
+			| T.GenericType
+			| T.UnionType
+			| T.ConstrainedType
+			| T.MemberType;
+		readonly _type_keyword?:
+			| T.Expression
+			| T.SplatType
+			| T.GenericType
+			| T.UnionType
+			| T.ConstrainedType
+			| T.MemberType;
+		readonly _match_keyword?:
+			| T.Expression
+			| T.SplatType
+			| T.GenericType
+			| T.UnionType
+			| T.ConstrainedType
+			| T.MemberType;
 		readonly _string?: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType;
 		readonly _concatenated_string?:
 			| T.Expression
@@ -6778,9 +7448,15 @@ export function wrapType(
 		'_not_operator',
 		'_boolean_operator',
 		'_lambda',
+		'_identifier',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -6821,8 +7497,10 @@ export function wrapType(
 		{
 			..._omitWrapKeys(data, [
 				'_as_pattern',
+				'_async_keyword',
 				'_attribute',
 				'_await',
+				'_await_keyword',
 				'_binary_operator',
 				'_boolean_operator',
 				'_call',
@@ -6833,6 +7511,7 @@ export function wrapType(
 				'_dictionary',
 				'_dictionary_comprehension',
 				'_ellipsis',
+				'_exec_keyword',
 				'_false',
 				'_float_leading_point',
 				'_float_point',
@@ -6848,11 +7527,13 @@ export function wrapType(
 				'_list',
 				'_list_comprehension',
 				'_list_splat_pattern',
+				'_match_keyword',
 				'_member_type',
 				'_named_expression',
 				'_none',
 				'_not_operator',
 				'_parenthesized_expression',
+				'_print_keyword',
 				'_set',
 				'_set_comprehension',
 				'_splat_type',
@@ -6860,6 +7541,7 @@ export function wrapType(
 				'_subscript',
 				'_true',
 				'_tuple',
+				'_type_keyword',
 				'_unary_operator',
 				'_union_type'
 			]),
@@ -6871,9 +7553,15 @@ export function wrapType(
 						data._not_operator ??
 						data._boolean_operator ??
 						data._lambda ??
+						data._identifier ??
 						data._await ??
 						data._binary_operator ??
-						data._identifier ??
+						data._print_keyword ??
+						data._exec_keyword ??
+						data._async_keyword ??
+						data._await_keyword ??
+						data._type_keyword ??
+						data._match_keyword ??
 						data._string ??
 						data._concatenated_string ??
 						data._integer_hex ??
@@ -7122,16 +7810,21 @@ export function wrapMemberType(data: T.MemberType, tree: TreeHandle) {
 
 export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_name', '_value']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.KeywordArgument as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
 			$type: TSKindId.KeywordArgument as const,
-			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'name',
-				span: (data as _NodeData).$span
-			}),
+			_name: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'name',
+					span: (data as _NodeData).$span
+				}),
+				{ print: 68, exec: 38, async: 69, await: 70, type: 39, match: 22 }
+			),
 			_value: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 					tree,
@@ -7143,7 +7836,15 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle) {
 			),
 
 			name() {
-				return drillIn<T.Identifier>(this._name, tree);
+				return drillIn<
+					| T.Identifier
+					| TSKindId.PrintKeyword
+					| TSKindId.ExecKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.MatchKeyword
+				>(this._name, tree);
 			},
 			value() {
 				return drillIn<T.Expression>(this._value, tree);
@@ -7469,45 +8170,50 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
 
 export function wrapParenthesizedExpression(
 	data: T.ParenthesizedExpression & {
-		readonly _comparison_operator?: T.Expression | T.Yield | T.ListSplat;
-		readonly _not_operator?: T.Expression | T.Yield | T.ListSplat;
-		readonly _boolean_operator?: T.Expression | T.Yield | T.ListSplat;
-		readonly _lambda?: T.Expression | T.Yield | T.ListSplat;
-		readonly _await?: T.Expression | T.Yield | T.ListSplat;
-		readonly _binary_operator?: T.Expression | T.Yield | T.ListSplat;
-		readonly _identifier?: T.Expression | T.Yield | T.ListSplat;
-		readonly _string?: T.Expression | T.Yield | T.ListSplat;
-		readonly _concatenated_string?: T.Expression | T.Yield | T.ListSplat;
-		readonly _integer_hex?: T.Expression | T.Yield | T.ListSplat;
-		readonly _integer_octal?: T.Expression | T.Yield | T.ListSplat;
-		readonly _integer_binary?: T.Expression | T.Yield | T.ListSplat;
-		readonly _integer_decimal?: T.Expression | T.Yield | T.ListSplat;
-		readonly _float_point?: T.Expression | T.Yield | T.ListSplat;
-		readonly _float_leading_point?: T.Expression | T.Yield | T.ListSplat;
-		readonly _float_scientific?: T.Expression | T.Yield | T.ListSplat;
-		readonly _true?: T.Expression | T.Yield | T.ListSplat;
-		readonly _false?: T.Expression | T.Yield | T.ListSplat;
-		readonly _none?: T.Expression | T.Yield | T.ListSplat;
-		readonly _unary_operator?: T.Expression | T.Yield | T.ListSplat;
-		readonly _attribute?: T.Expression | T.Yield | T.ListSplat;
-		readonly _subscript?: T.Expression | T.Yield | T.ListSplat;
-		readonly _call?: T.Expression | T.Yield | T.ListSplat;
-		readonly _list?: T.Expression | T.Yield | T.ListSplat;
-		readonly _list_comprehension?: T.Expression | T.Yield | T.ListSplat;
-		readonly _dictionary?: T.Expression | T.Yield | T.ListSplat;
-		readonly _dictionary_comprehension?: T.Expression | T.Yield | T.ListSplat;
-		readonly _set?: T.Expression | T.Yield | T.ListSplat;
-		readonly _set_comprehension?: T.Expression | T.Yield | T.ListSplat;
-		readonly _tuple?: T.Expression | T.Yield | T.ListSplat;
-		readonly _parenthesized_expression?: T.Expression | T.Yield | T.ListSplat;
-		readonly _generator_expression?: T.Expression | T.Yield | T.ListSplat;
-		readonly _ellipsis?: T.Expression | T.Yield | T.ListSplat;
-		readonly _list_splat_pattern?: T.Expression | T.Yield | T.ListSplat;
-		readonly _conditional_expression?: T.Expression | T.Yield | T.ListSplat;
-		readonly _named_expression?: T.Expression | T.Yield | T.ListSplat;
-		readonly _as_pattern?: T.Expression | T.Yield | T.ListSplat;
-		readonly _yield?: T.Expression | T.Yield | T.ListSplat;
-		readonly _list_splat?: T.Expression | T.Yield | T.ListSplat;
+		readonly _comparison_operator?: T.Expression | T.Yield;
+		readonly _not_operator?: T.Expression | T.Yield;
+		readonly _boolean_operator?: T.Expression | T.Yield;
+		readonly _lambda?: T.Expression | T.Yield;
+		readonly _identifier?: T.Expression | T.Yield;
+		readonly _await?: T.Expression | T.Yield;
+		readonly _binary_operator?: T.Expression | T.Yield;
+		readonly _print_keyword?: T.Expression | T.Yield;
+		readonly _exec_keyword?: T.Expression | T.Yield;
+		readonly _async_keyword?: T.Expression | T.Yield;
+		readonly _await_keyword?: T.Expression | T.Yield;
+		readonly _type_keyword?: T.Expression | T.Yield;
+		readonly _match_keyword?: T.Expression | T.Yield;
+		readonly _string?: T.Expression | T.Yield;
+		readonly _concatenated_string?: T.Expression | T.Yield;
+		readonly _integer_hex?: T.Expression | T.Yield;
+		readonly _integer_octal?: T.Expression | T.Yield;
+		readonly _integer_binary?: T.Expression | T.Yield;
+		readonly _integer_decimal?: T.Expression | T.Yield;
+		readonly _float_point?: T.Expression | T.Yield;
+		readonly _float_leading_point?: T.Expression | T.Yield;
+		readonly _float_scientific?: T.Expression | T.Yield;
+		readonly _true?: T.Expression | T.Yield;
+		readonly _false?: T.Expression | T.Yield;
+		readonly _none?: T.Expression | T.Yield;
+		readonly _unary_operator?: T.Expression | T.Yield;
+		readonly _attribute?: T.Expression | T.Yield;
+		readonly _subscript?: T.Expression | T.Yield;
+		readonly _call?: T.Expression | T.Yield;
+		readonly _list?: T.Expression | T.Yield;
+		readonly _list_comprehension?: T.Expression | T.Yield;
+		readonly _dictionary?: T.Expression | T.Yield;
+		readonly _dictionary_comprehension?: T.Expression | T.Yield;
+		readonly _set?: T.Expression | T.Yield;
+		readonly _set_comprehension?: T.Expression | T.Yield;
+		readonly _tuple?: T.Expression | T.Yield;
+		readonly _parenthesized_expression?: T.Expression | T.Yield;
+		readonly _generator_expression?: T.Expression | T.Yield;
+		readonly _ellipsis?: T.Expression | T.Yield;
+		readonly _list_splat_pattern?: T.Expression | T.Yield;
+		readonly _conditional_expression?: T.Expression | T.Yield;
+		readonly _named_expression?: T.Expression | T.Yield;
+		readonly _as_pattern?: T.Expression | T.Yield;
+		readonly _yield?: T.Expression | T.Yield;
 	},
 	tree: TreeHandle
 ) {
@@ -7517,9 +8223,15 @@ export function wrapParenthesizedExpression(
 		'_not_operator',
 		'_boolean_operator',
 		'_lambda',
+		'_identifier',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -7550,15 +8262,16 @@ export function wrapParenthesizedExpression(
 		'_conditional_expression',
 		'_named_expression',
 		'_as_pattern',
-		'_yield',
-		'_list_splat'
+		'_yield'
 	]);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
 				'_as_pattern',
+				'_async_keyword',
 				'_attribute',
 				'_await',
+				'_await_keyword',
 				'_binary_operator',
 				'_boolean_operator',
 				'_call',
@@ -7568,6 +8281,7 @@ export function wrapParenthesizedExpression(
 				'_dictionary',
 				'_dictionary_comprehension',
 				'_ellipsis',
+				'_exec_keyword',
 				'_false',
 				'_float_leading_point',
 				'_float_point',
@@ -7581,18 +8295,20 @@ export function wrapParenthesizedExpression(
 				'_lambda',
 				'_list',
 				'_list_comprehension',
-				'_list_splat',
 				'_list_splat_pattern',
+				'_match_keyword',
 				'_named_expression',
 				'_none',
 				'_not_operator',
 				'_parenthesized_expression',
+				'_print_keyword',
 				'_set',
 				'_set_comprehension',
 				'_string',
 				'_subscript',
 				'_true',
 				'_tuple',
+				'_type_keyword',
 				'_unary_operator',
 				'_yield'
 			]),
@@ -7604,9 +8320,15 @@ export function wrapParenthesizedExpression(
 						data._not_operator ??
 						data._boolean_operator ??
 						data._lambda ??
+						data._identifier ??
 						data._await ??
 						data._binary_operator ??
-						data._identifier ??
+						data._print_keyword ??
+						data._exec_keyword ??
+						data._async_keyword ??
+						data._await_keyword ??
+						data._type_keyword ??
+						data._match_keyword ??
 						data._string ??
 						data._concatenated_string ??
 						data._integer_hex ??
@@ -7637,8 +8359,7 @@ export function wrapParenthesizedExpression(
 						data._conditional_expression ??
 						data._named_expression ??
 						data._as_pattern ??
-						data._yield ??
-						data._list_splat,
+						data._yield,
 					'content',
 					true,
 					data.$type,
@@ -7648,7 +8369,7 @@ export function wrapParenthesizedExpression(
 			),
 
 			content() {
-				return drillIn<T.Expression | T.Yield | T.ListSplat>(this._content, tree);
+				return drillIn<T.Expression | T.Yield>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.ParenthesizedExpression['_content']>) =>
@@ -8139,9 +8860,14 @@ export function wrapFExpression(
 		'_not_operator',
 		'_boolean_operator',
 		'_lambda',
+		'_print_keyword',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -8182,9 +8908,14 @@ export function wrapFExpression(
 		'not_operator',
 		'boolean_operator',
 		'lambda',
+		'print_keyword',
 		'await',
 		'binary_operator',
-		'identifier',
+		'exec_keyword',
+		'async_keyword',
+		'await_keyword',
+		'type_keyword',
+		'match_keyword',
 		'string',
 		'concatenated_string',
 		'integer_hex',
@@ -8227,9 +8958,14 @@ export function wrapFExpression(
 			'not_operator',
 			'boolean_operator',
 			'lambda',
+			'print_keyword',
 			'await',
 			'binary_operator',
-			'identifier',
+			'exec_keyword',
+			'async_keyword',
+			'await_keyword',
+			'type_keyword',
+			'match_keyword',
 			'string',
 			'concatenated_string',
 			'integer_hex',
@@ -8331,7 +9067,7 @@ export function wrapEscapeSequence(
 
 export function wrapFormatSpecifier(
 	data: T.FormatSpecifier & {
-		readonly _format_expression?: '[^{}\\n]+' | T.Interpolation | readonly ('[^{}\\n]+' | T.Interpolation)[];
+		readonly _format_expression?: '[^{}\\n]+' | T.FormatExpression | readonly ('[^{}\\n]+' | T.FormatExpression)[];
 	},
 	tree: TreeHandle
 ) {
@@ -8352,8 +9088,8 @@ export function wrapFormatSpecifier(
 			),
 
 			contents() {
-				return drillInAll<'[^{}\\n]+' | T.Interpolation>(
-					this._content as readonly ('[^{}\\n]+' | T.Interpolation)[] | undefined,
+				return drillInAll<'[^{}\\n]+' | T.FormatExpression>(
+					this._content as readonly ('[^{}\\n]+' | T.FormatExpression)[] | undefined,
 					tree
 				);
 			},
@@ -8675,9 +9411,15 @@ export function wrapExpressionListExpressions(
 		readonly _not_operator?: T.Expression;
 		readonly _boolean_operator?: T.Expression;
 		readonly _lambda?: T.Expression;
+		readonly _identifier?: T.Expression;
 		readonly _await?: T.Expression;
 		readonly _binary_operator?: T.Expression;
-		readonly _identifier?: T.Expression;
+		readonly _print_keyword?: T.Expression;
+		readonly _exec_keyword?: T.Expression;
+		readonly _async_keyword?: T.Expression;
+		readonly _await_keyword?: T.Expression;
+		readonly _type_keyword?: T.Expression;
+		readonly _match_keyword?: T.Expression;
 		readonly _string?: T.Expression;
 		readonly _concatenated_string?: T.Expression;
 		readonly _integer_hex?: T.Expression;
@@ -8719,9 +9461,15 @@ export function wrapExpressionListExpressions(
 		'_not_operator',
 		'_boolean_operator',
 		'_lambda',
+		'_identifier',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -8761,9 +9509,15 @@ export function wrapExpressionListExpressions(
 					['not_operator', data._not_operator],
 					['boolean_operator', data._boolean_operator],
 					['lambda', data._lambda],
+					['identifier', data._identifier],
 					['await', data._await],
 					['binary_operator', data._binary_operator],
-					['identifier', data._identifier],
+					['print_keyword', data._print_keyword],
+					['exec_keyword', data._exec_keyword],
+					['async_keyword', data._async_keyword],
+					['await_keyword', data._await_keyword],
+					['type_keyword', data._type_keyword],
+					['match_keyword', data._match_keyword],
 					['string', data._string],
 					['concatenated_string', data._concatenated_string],
 					['integer_hex', data._integer_hex],
@@ -8803,8 +9557,10 @@ export function wrapExpressionListExpressions(
 		{
 			..._omitWrapKeys(data, [
 				'_as_pattern',
+				'_async_keyword',
 				'_attribute',
 				'_await',
+				'_await_keyword',
 				'_binary_operator',
 				'_boolean_operator',
 				'_call',
@@ -8814,6 +9570,7 @@ export function wrapExpressionListExpressions(
 				'_dictionary',
 				'_dictionary_comprehension',
 				'_ellipsis',
+				'_exec_keyword',
 				'_false',
 				'_float_leading_point',
 				'_float_point',
@@ -8828,16 +9585,19 @@ export function wrapExpressionListExpressions(
 				'_list',
 				'_list_comprehension',
 				'_list_splat_pattern',
+				'_match_keyword',
 				'_named_expression',
 				'_none',
 				'_not_operator',
 				'_parenthesized_expression',
+				'_print_keyword',
 				'_set',
 				'_set_comprehension',
 				'_string',
 				'_subscript',
 				'_true',
 				'_tuple',
+				'_type_keyword',
 				'_unary_operator'
 			]),
 			$type: TSKindId.ExpressionListExpressions as const,
@@ -8925,6 +9685,12 @@ export function wrapDictPatternElements(
 export function wrapPatternListPatterns(
 	data: T.PatternListPatterns & {
 		readonly _identifier?: T.Pattern;
+		readonly _print_keyword?: T.Pattern;
+		readonly _exec_keyword?: T.Pattern;
+		readonly _async_keyword?: T.Pattern;
+		readonly _await_keyword?: T.Pattern;
+		readonly _type_keyword?: T.Pattern;
+		readonly _match_keyword?: T.Pattern;
 		readonly _subscript?: T.Pattern;
 		readonly _attribute?: T.Pattern;
 		readonly _list_splat_pattern?: T.Pattern;
@@ -8938,6 +9704,12 @@ export function wrapPatternListPatterns(
 	data = _keepModelledSlots(data, [
 		'_pattern',
 		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_subscript',
 		'_attribute',
 		'_list_splat_pattern',
@@ -8949,6 +9721,12 @@ export function wrapPatternListPatterns(
 			? _toArr(data._pattern)
 			: _interleaveBySlotOrder(data as _NodeData, [
 					['identifier', data._identifier],
+					['print_keyword', data._print_keyword],
+					['exec_keyword', data._exec_keyword],
+					['async_keyword', data._async_keyword],
+					['await_keyword', data._await_keyword],
+					['type_keyword', data._type_keyword],
+					['match_keyword', data._match_keyword],
 					['subscript', data._subscript],
 					['attribute', data._attribute],
 					['list_splat_pattern', data._list_splat_pattern],
@@ -8962,12 +9740,18 @@ export function wrapPatternListPatterns(
 	return withMethods(
 		{
 			..._omitWrapKeys(data, [
+				'_async_keyword',
 				'_attribute',
+				'_await_keyword',
+				'_exec_keyword',
 				'_identifier',
 				'_list_pattern',
 				'_list_splat_pattern',
+				'_match_keyword',
+				'_print_keyword',
 				'_subscript',
-				'_tuple_pattern'
+				'_tuple_pattern',
+				'_type_keyword'
 			]),
 			$type: TSKindId.PatternListPatterns as const,
 			_pattern: _content,
@@ -9057,9 +9841,15 @@ export function wrapSliceGroup(
 		readonly _not_operator?: T.Expression;
 		readonly _boolean_operator?: T.Expression;
 		readonly _lambda?: T.Expression;
+		readonly _identifier?: T.Expression;
 		readonly _await?: T.Expression;
 		readonly _binary_operator?: T.Expression;
-		readonly _identifier?: T.Expression;
+		readonly _print_keyword?: T.Expression;
+		readonly _exec_keyword?: T.Expression;
+		readonly _async_keyword?: T.Expression;
+		readonly _await_keyword?: T.Expression;
+		readonly _type_keyword?: T.Expression;
+		readonly _match_keyword?: T.Expression;
 		readonly _string?: T.Expression;
 		readonly _concatenated_string?: T.Expression;
 		readonly _integer_hex?: T.Expression;
@@ -9099,9 +9889,15 @@ export function wrapSliceGroup(
 		'_not_operator',
 		'_boolean_operator',
 		'_lambda',
+		'_identifier',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -9137,8 +9933,10 @@ export function wrapSliceGroup(
 		{
 			..._omitWrapKeys(data, [
 				'_as_pattern',
+				'_async_keyword',
 				'_attribute',
 				'_await',
+				'_await_keyword',
 				'_binary_operator',
 				'_boolean_operator',
 				'_call',
@@ -9148,6 +9946,7 @@ export function wrapSliceGroup(
 				'_dictionary',
 				'_dictionary_comprehension',
 				'_ellipsis',
+				'_exec_keyword',
 				'_false',
 				'_float_leading_point',
 				'_float_point',
@@ -9162,16 +9961,19 @@ export function wrapSliceGroup(
 				'_list',
 				'_list_comprehension',
 				'_list_splat_pattern',
+				'_match_keyword',
 				'_named_expression',
 				'_none',
 				'_not_operator',
 				'_parenthesized_expression',
+				'_print_keyword',
 				'_set',
 				'_set_comprehension',
 				'_string',
 				'_subscript',
 				'_true',
 				'_tuple',
+				'_type_keyword',
 				'_unary_operator'
 			]),
 			$type: TSKindId.SliceGroup as const,
@@ -9182,9 +9984,15 @@ export function wrapSliceGroup(
 						data._not_operator ??
 						data._boolean_operator ??
 						data._lambda ??
+						data._identifier ??
 						data._await ??
 						data._binary_operator ??
-						data._identifier ??
+						data._print_keyword ??
+						data._exec_keyword ??
+						data._async_keyword ??
+						data._await_keyword ??
+						data._type_keyword ??
+						data._match_keyword ??
 						data._string ??
 						data._concatenated_string ??
 						data._integer_hex ??
@@ -10525,9 +11333,15 @@ export function wrapSuiteEmpty(data: T.SuiteEmpty, tree: TreeHandle) {
 
 export function wrapComparisonOperatorComparator(
 	data: T.ComparisonOperatorComparator & {
+		readonly _identifier?: T.PrimaryExpression;
 		readonly _await?: T.PrimaryExpression;
 		readonly _binary_operator?: T.PrimaryExpression;
-		readonly _identifier?: T.PrimaryExpression;
+		readonly _print_keyword?: T.PrimaryExpression;
+		readonly _exec_keyword?: T.PrimaryExpression;
+		readonly _async_keyword?: T.PrimaryExpression;
+		readonly _await_keyword?: T.PrimaryExpression;
+		readonly _type_keyword?: T.PrimaryExpression;
+		readonly _match_keyword?: T.PrimaryExpression;
 		readonly _string?: T.PrimaryExpression;
 		readonly _concatenated_string?: T.PrimaryExpression;
 		readonly _integer_hex?: T.PrimaryExpression;
@@ -10561,9 +11375,15 @@ export function wrapComparisonOperatorComparator(
 	data = _keepModelledSlots(data, [
 		'_operators',
 		'_primary_expression',
+		'_identifier',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -10597,14 +11417,17 @@ export function wrapComparisonOperatorComparator(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
+				'_async_keyword',
 				'_attribute',
 				'_await',
+				'_await_keyword',
 				'_binary_operator',
 				'_call',
 				'_concatenated_string',
 				'_dictionary',
 				'_dictionary_comprehension',
 				'_ellipsis',
+				'_exec_keyword',
 				'_false',
 				'_float_leading_point',
 				'_float_point',
@@ -10618,14 +11441,17 @@ export function wrapComparisonOperatorComparator(
 				'_list',
 				'_list_comprehension',
 				'_list_splat_pattern',
+				'_match_keyword',
 				'_none',
 				'_parenthesized_expression',
+				'_print_keyword',
 				'_set',
 				'_set_comprehension',
 				'_string',
 				'_subscript',
 				'_true',
 				'_tuple',
+				'_type_keyword',
 				'_unary_operator'
 			]),
 			$type: TSKindId.ComparisonOperatorComparator as const,
@@ -10667,9 +11493,15 @@ export function wrapComparisonOperatorComparator(
 			_primary_expression: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
 					data._primary_expression ??
+						data._identifier ??
 						data._await ??
 						data._binary_operator ??
-						data._identifier ??
+						data._print_keyword ??
+						data._exec_keyword ??
+						data._async_keyword ??
+						data._await_keyword ??
+						data._type_keyword ??
+						data._match_keyword ??
 						data._string ??
 						data._concatenated_string ??
 						data._integer_hex ??
@@ -10729,9 +11561,15 @@ export function wrapYieldFromClause(
 		readonly _not_operator?: T.Expression;
 		readonly _boolean_operator?: T.Expression;
 		readonly _lambda?: T.Expression;
+		readonly _identifier?: T.Expression;
 		readonly _await?: T.Expression;
 		readonly _binary_operator?: T.Expression;
-		readonly _identifier?: T.Expression;
+		readonly _print_keyword?: T.Expression;
+		readonly _exec_keyword?: T.Expression;
+		readonly _async_keyword?: T.Expression;
+		readonly _await_keyword?: T.Expression;
+		readonly _type_keyword?: T.Expression;
+		readonly _match_keyword?: T.Expression;
 		readonly _string?: T.Expression;
 		readonly _concatenated_string?: T.Expression;
 		readonly _integer_hex?: T.Expression;
@@ -10771,9 +11609,15 @@ export function wrapYieldFromClause(
 		'_not_operator',
 		'_boolean_operator',
 		'_lambda',
+		'_identifier',
 		'_await',
 		'_binary_operator',
-		'_identifier',
+		'_print_keyword',
+		'_exec_keyword',
+		'_async_keyword',
+		'_await_keyword',
+		'_type_keyword',
+		'_match_keyword',
 		'_string',
 		'_concatenated_string',
 		'_integer_hex',
@@ -10809,8 +11653,10 @@ export function wrapYieldFromClause(
 		{
 			..._omitWrapKeys(data, [
 				'_as_pattern',
+				'_async_keyword',
 				'_attribute',
 				'_await',
+				'_await_keyword',
 				'_binary_operator',
 				'_boolean_operator',
 				'_call',
@@ -10820,6 +11666,7 @@ export function wrapYieldFromClause(
 				'_dictionary',
 				'_dictionary_comprehension',
 				'_ellipsis',
+				'_exec_keyword',
 				'_false',
 				'_float_leading_point',
 				'_float_point',
@@ -10834,16 +11681,19 @@ export function wrapYieldFromClause(
 				'_list',
 				'_list_comprehension',
 				'_list_splat_pattern',
+				'_match_keyword',
 				'_named_expression',
 				'_none',
 				'_not_operator',
 				'_parenthesized_expression',
+				'_print_keyword',
 				'_set',
 				'_set_comprehension',
 				'_string',
 				'_subscript',
 				'_true',
 				'_tuple',
+				'_type_keyword',
 				'_unary_operator'
 			]),
 			$type: TSKindId.YieldFromClause as const,
@@ -10854,9 +11704,15 @@ export function wrapYieldFromClause(
 						data._not_operator ??
 						data._boolean_operator ??
 						data._lambda ??
+						data._identifier ??
 						data._await ??
 						data._binary_operator ??
-						data._identifier ??
+						data._print_keyword ??
+						data._exec_keyword ??
+						data._async_keyword ??
+						data._await_keyword ??
+						data._type_keyword ??
+						data._match_keyword ??
 						data._string ??
 						data._concatenated_string ??
 						data._integer_hex ??
@@ -10901,6 +11757,61 @@ export function wrapYieldFromClause(
 			$with: {
 				expression: (v: NonNullable<T.YieldFromClause['_expression']>) =>
 					wrapYieldFromClause({ ...$edited(data), _expression: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapAsPatternTarget(data: T.AsPatternTarget, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId._AsPatternTarget as const,
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'content',
+					span: (data as _NodeData).$span
+				}),
+				{ True: 71, False: 72, None: 73, '...': 64 }
+			),
+
+			content() {
+				return drillIn<T.Expression>(this._content, tree);
+			},
+			$with: {
+				content: (v: NonNullable<T.AsPatternTarget['_content']>) =>
+					wrapAsPatternTarget({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapFormatExpression(data: T.FormatExpression, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId._FormatExpression as const,
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
+
+			content() {
+				return drillIn<T.Interpolation>(this._content, tree);
+			},
+			$with: {
+				content: (v: NonNullable<T.FormatExpression['_content']>) =>
+					wrapFormatExpression({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -11121,8 +12032,43 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.EscapeInterpolation]: (d) => ({ ...d, $type: TSKindId.EscapeInterpolation as const }),
 	[TSKindId.StringEnd]: (d) => ({ ...d, $type: TSKindId.StringEnd as const }),
 	[TSKindId.Indent]: (d) => ({ ...d, $type: TSKindId.Indent as const }),
-	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const })
+	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const }),
+	[TSKindId._AsPatternTarget]: (d, t) => wrapAsPatternTarget(_aliasEnvelope(d, t) as unknown as T.AsPatternTarget, t),
+	[TSKindId._FormatExpression]: (d, t) => wrapFormatExpression(_aliasEnvelope(d, t) as unknown as T.FormatExpression, t)
 };
+
+function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
+	type Wire = _NodeData & {
+		readonly $storageType?: number;
+		readonly $_trivia?: unknown;
+		readonly $nodeHandle?: number;
+		readonly $childIndex?: number;
+		readonly $span?: unknown;
+	};
+	const shown = data as Wire;
+	if (shown.$storageType === undefined) {
+		const slots = Object.keys(shown).filter((key) => key.charCodeAt(0) === 95);
+		if (slots.length !== 1 || slots[0] === '_content') return data;
+		const { [slots[0]!]: child, ...container } = shown as unknown as Record<string, unknown>;
+		return { ...container, _content: child } as unknown as _NodeData;
+	}
+	const full = (
+		shown.$nodeHandle != null && shown.$childIndex != null
+			? readNode(tree, shown.$nodeHandle, shown.$childIndex)
+			: shown
+	) as Wire;
+	const { $storageType, $_trivia, $childIndex, ...storage } = full;
+	return {
+		$type: shown.$type,
+		$source: shown.$source,
+		$named: shown.$named,
+		$span: shown.$span,
+		$nodeHandle: shown.$nodeHandle,
+		$childIndex: shown.$childIndex,
+		$_trivia,
+		_content: { ...storage, $type: $storageType }
+	} as unknown as _NodeData;
+}
 
 interface _WrapReturnByKindId {
 	[TSKindId.Module]: ReturnType<typeof wrapModule>;
@@ -11323,6 +12269,8 @@ interface _WrapReturnByKindId {
 	[TSKindId.StringEnd]: _NodeData & { readonly $type: TSKindId.StringEnd };
 	[TSKindId.Indent]: _NodeData & { readonly $type: TSKindId.Indent };
 	[TSKindId.Dedent]: _NodeData & { readonly $type: TSKindId.Dedent };
+	[TSKindId._AsPatternTarget]: ReturnType<typeof wrapAsPatternTarget>;
+	[TSKindId._FormatExpression]: ReturnType<typeof wrapFormatExpression>;
 }
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

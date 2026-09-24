@@ -373,7 +373,13 @@ the strict factory builds the same node without it.
 /** The same value as the loose surface spells it there. */
 ```
 
+### `packages/tools/src/emit/factory-source.ts::expandSlotKinds`
+
+A slot's kinds as the loose surface sees them: supertypes expand to their subtypes and an alias kind to its content kinds, since an alias is never spelled at a slot — its content is.
+
 ### `packages/tools/src/emit/factory-source.ts::printingFactoryMap`
+
+An alias kind's entry returns its argument unchanged: the printed source is the content, which the parent's builder wraps.
 
 #### body
 

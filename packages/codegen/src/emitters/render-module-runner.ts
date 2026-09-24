@@ -45,6 +45,7 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 				renderModuleEmitter.emitBranch?.(node);
 				break;
 			case 'polymorph':
+			case 'alias':
 				if (node instanceof AssembledSupertype) break;
 				templateEmitter.emitBranch?.(node);
 				renderModuleEmitter.emitBranch?.(node);

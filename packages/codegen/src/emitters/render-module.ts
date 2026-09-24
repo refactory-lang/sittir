@@ -1,3 +1,4 @@
+import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { isFixedTextLeaf } from '../compiler/model/node-map.ts';
 import { isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
@@ -171,7 +172,7 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 
 	emitLeaf(_node: AssembledPattern | AssembledKeyword | AssembledPunctuation | AssembledEnum): void {}
 
-	emitBranch(_node: AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList): void {}
+	emitBranch(_node: SlotBearingCompound): void {}
 
 
 	finalize(templates: EmittedTemplates): RenderModuleBundle {
@@ -310,7 +311,7 @@ function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNont
 }
 
 function renderSlotAuditVariantsOf(
-	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList
+	node: SlotBearingCompound
 ): readonly (readonly AssembledNonterminal[])[] {
 	return [node.slots];
 }
@@ -666,7 +667,8 @@ function renderTypedKindFn(
 			}
 			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
 		}
-		case 'polymorph': {
+		case 'polymorph':
+		case 'alias': {
 			if (node instanceof AssembledSupertype) return [];
 			const struct = structsByKind.get(node.kind);
 			if (struct === undefined) {
@@ -1322,11 +1324,10 @@ function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: Nod
 
 function buildKindIdByKind(kindEntries: readonly KindEnumEntry[]): ReadonlyMap<string, number> {
 	const map = new Map<string, number>();
-	for (const e of kindEntries) {
-		map.set(e.kind, e.id);
-		if (e.symbolName !== undefined && !map.has(e.symbolName)) {
-			map.set(e.symbolName, e.id);
-		}
+	const names = new Set(kindEntries.flatMap((e) => (e.symbolName !== undefined ? [e.kind, e.symbolName] : [e.kind])));
+	for (const name of names) {
+		const id = findKindEntry(kindEntries, name)?.id;
+		if (id !== undefined) map.set(name, id);
 	}
 	return map;
 }
@@ -1589,17 +1590,11 @@ function emitSupertypeTransportEnum(
 				emittedIds.add(aliasId);
 				arms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'self-alias', selfAliasLeafTrials));
 			}
-			for (const { subKind, subNode } of kindIdStoredFirst(validSubtypes, (s) => s.subNode)) {
+			const members = kindIdStoredFirst(validSubtypes, (s) => s.subNode).map(({ subKind, subNode }) => {
 				const variant = rustTypeIdent(subNode.typeName);
-				const typeName = rustTransportStructName(subNode);
-				const acceptedIds = resolveAcceptedTransportIds({
-					kind: subKind,
-					node: subNode,
-					nodeMap,
-					kindIdByKind,
-					kindEntries,
-					parseName: parseNames.get(subKind)
-				});
+				const idsOf = (parseName: string | undefined): number[] =>
+					resolveAcceptedTransportIds({ kind: subKind, node: subNode, nodeMap, kindIdByKind, kindEntries, parseName });
+				const acceptedIds = idsOf(parseNames.get(subKind));
 				assertRoutableTransportIds(
 					acceptedIds,
 					subKind,
@@ -1608,21 +1603,25 @@ function emitSupertypeTransportEnum(
 					`under supertype '${ownerKind}'`,
 					kindEntries
 				);
-				const boxed = isBoxed(subKind, subNode);
-				for (const id of acceptedIds) {
+				return { variant, typeName: rustTransportStructName(subNode), boxed: isBoxed(subKind, subNode), ownIds: idsOf(undefined), acceptedIds };
+			});
+			const claim = (member: (typeof members)[number], ids: readonly number[]): void => {
+				for (const id of ids) {
 					if (emittedIds.has(id)) continue;
 					emittedIds.add(id);
-					if (boxed) {
-						arms.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
-						arms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
+					if (member.boxed) {
+						arms.push(`                ${id} => Ok(Self::${member.variant}(Box::new(`);
+						arms.push(`                    ${member.typeName}::from_napi_value(env, napi_val)?`);
 						arms.push(`                ))),`);
 					} else {
-						arms.push(`                ${id} => Ok(Self::${variant}(`);
-						arms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
+						arms.push(`                ${id} => Ok(Self::${member.variant}(`);
+						arms.push(`                    ${member.typeName}::from_napi_value(env, napi_val)?`);
 						arms.push(`                )),`);
 					}
 				}
-			}
+			};
+			for (const member of members) claim(member, member.ownIds);
+			for (const member of members) claim(member, member.acceptedIds);
 			arms.push(`                other => Err(::napi::Error::from_reason(format!(`);
 			arms.push(`                    "unknown kind id {other} in ${enumName}",`);
 			arms.push(`                ))),`);
@@ -2953,6 +2952,7 @@ function renderTransportDataStruct(
 		node.modelType === 'branch' ||
 		node.modelType === 'envelope' ||
 		node.modelType === 'list' ||
+		node.modelType === 'alias' ||
 		(node.modelType === 'polymorph' && !(node instanceof AssembledSupertype));
 	if (isCompoundNode) {
 		lines.push(...renderTransportMetadataFields());

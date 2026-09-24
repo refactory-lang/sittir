@@ -1,6 +1,11 @@
 import { withAnnotations, withHoistedAnnotation } from './annotations.ts';
 import type { Rule, AnyRule } from '../types/rule.ts';
-import { RuleWalker } from './rule-walker.ts';
+import {
+	distributeInlineAliasChoices,
+	liftAliasedHiddenRuleBodies,
+	mintInlineLiteralAliasStorage,
+	unaliasOverloadedDisplays
+} from './rule-transforms.ts';
 import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import type { EnrichRule } from '../grammar-shapes/enrich-type.ts';
@@ -38,14 +43,11 @@ import {
 	armLeadingSymbolName,
 	armStartsWithSymbol,
 	armsDifferOnlyByLiteralChoice,
-	type SeparatedListBodyInfo
+	selfReferentialFoldOf,
+	type SeparatedListBodyInfo,
+	tokenUseCounts
 } from './rule-patterns.ts';
 import { ruleKey } from './shared.ts';
-import {
-	diagnoseParseKindCollisions,
-	type ParseKindCollisionDiagnostic,
-	type ParseKindCollisionValue
-} from '../types/parsekind-collisions.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { distributeTokenForms } from './transform/token-forms.ts';
@@ -80,14 +82,13 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		| { word?: string | null | ((dollar: unknown) => unknown) }
 		| undefined;
 	const wordMatcher = compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag);
-	const supertypeNames = extractSupertypeNames(base, hasWrapper);
+	const supertypeNames = extractGrammarSymbolNames(base, hasWrapper, 'supertypes');
 	const kwRules: Record<string, Rule> = {};
 	const clauseGroupRules: Record<string, Rule> = {};
 	const clauseDedupeMap: Record<string, string> = {};
 	const groupDedupeMap: Record<string, string> = {};
 	const visibleGroupSources = new Set<string>();
 	const clauseGroupOwners = new Map<string, string>();
-	const unaliasSink: UnaliasDiagnosticSink = { diagnostics: [], seen: new Set() };
 	const enrichedRules: Record<string, Rule> = {};
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
@@ -106,13 +107,34 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		if (info.flatMembers === members) continue;
 		enrichedRules[name] = { ...rule, members: info.flatMembers } as Rule;
 	}
+	Object.assign(enrichedRules, mintInlineLiteralAliasStorage(enrichedRules));
+	const inlineNames = extractGrammarSymbolNames(base, hasWrapper, 'inline');
+	Object.assign(enrichedRules, liftAliasedHiddenRuleBodies(enrichedRules));
+	for (const name of Object.keys(enrichedRules)) {
+		const rule = enrichedRules[name];
+		if (!rule) continue;
+		enrichedRules[name] = distributeInlineAliasChoices(rule, {
+			inlineBodyOf: (target) => (inlineNames.has(target) ? (enrichedRules[target] ?? rulesBag[target]) : undefined)
+		});
+	}
+	Object.assign(
+		enrichedRules,
+		unaliasOverloadedDisplays(enrichedRules, {
+			symbols: {
+				rules: enrichedRules,
+				externals: extractGrammarSymbolNames(base, hasWrapper, 'externals'),
+				inline: inlineNames,
+				tokenUses: tokenUseCounts(enrichedRules)
+			}
+		})
+	);
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
 		if (!rule) continue;
 		enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
 	}
 	const wordName = extractWordName(grammarMeta?.word);
-	const unhoistableNames = new Set([...extractExternalNames(base, hasWrapper), ...(wordName === null ? [] : [wordName])]);
+	const unhoistableNames = new Set([...extractGrammarSymbolNames(base, hasWrapper, 'externals'), ...(wordName === null ? [] : [wordName])]);
 	const tokenFormParents: string[] = [];
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
@@ -131,18 +153,16 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		for (const name of Object.keys(enrichedRules)) {
 			const rule = enrichedRules[name];
 			if (!rule) continue;
-			enrichedRules[name] = applyHoistAndUnalias(
+			enrichedRules[name] = applyClauseHoist(
 				name,
 				rule,
-				kwRules,
-				supertypeNames,
 				rulesBag,
 				clauseGroupRules,
 				clauseDedupeMap,
+				{ opt: 0, grp: 0, arm: 0, supertypeNames },
 				groupDedupeMap,
 				visibleGroupSources,
-				clauseGroupOwners,
-				unaliasSink
+				clauseGroupOwners
 			);
 		}
 	} finally {
@@ -153,19 +173,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	}
 	for (const groupName of Object.keys(clauseGroupRules)) {
 		const groupBody = clauseGroupRules[groupName];
-		if (!groupBody) continue;
-		const groupUnaliasResult = applyUnaliasDistinct(
-			groupName,
-			groupBody,
-			rulesBag,
-			kwRules,
-			clauseGroupRules,
-			supertypeNames
-		);
-		clauseGroupRules[groupName] = withHoistedAnnotation(groupUnaliasResult.rule);
-		for (const diagnostic of groupUnaliasResult.diagnostics) {
-			recordUnaliasDiagnostic(unaliasSink, diagnostic);
-		}
+		if (groupBody) clauseGroupRules[groupName] = withHoistedAnnotation(groupBody);
 	}
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
 	collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners);
@@ -198,14 +206,6 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	if (clauseGroupOwners.size > 0) {
 		Object.defineProperty(result, ENRICH_CLAUSE_GROUP_OWNERS_KEY, {
 			value: clauseGroupOwners,
-			enumerable: false,
-			writable: false,
-			configurable: true
-		});
-	}
-	if (unaliasSink.diagnostics.length > 0) {
-		Object.defineProperty(result, ENRICH_UNALIAS_DIAGNOSTICS_KEY, {
-			value: unaliasSink.diagnostics,
 			enumerable: false,
 			writable: false,
 			configurable: true
@@ -412,69 +412,15 @@ function addSupertypes(result: Record<string, unknown>, names: readonly string[]
 	result.supertypes = [...base, ...names.filter((n) => !listed.has(n))];
 }
 
-function applyHoistAndUnalias(
-	ruleName: string,
-	rule: Rule,
-	kwRules: Record<string, Rule>,
-	supertypeNames: ReadonlySet<string>,
-	rulesBag: Record<string, Rule>,
-	clauseGroupRules: Record<string, Rule>,
-	clauseDedupeMap: Record<string, string>,
-	groupDedupeMap: Record<string, string>,
-	visibleGroupSources: Set<string>,
-	clauseGroupOwners: Map<string, string>,
-	unaliasSink: UnaliasDiagnosticSink
-): Rule {
-	let r = rule;
-	const clauseHoistCounter: ClauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
-	r = applyClauseHoist(
-		ruleName,
-		r,
-		rulesBag,
-		clauseGroupRules,
-		clauseDedupeMap,
-		clauseHoistCounter,
-		groupDedupeMap,
-		visibleGroupSources,
-		clauseGroupOwners
-	);
-	const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules, supertypeNames);
-	r = unaliasResult.rule;
-	for (const diagnostic of unaliasResult.diagnostics) {
-		recordUnaliasDiagnostic(unaliasSink, diagnostic);
-	}
-	return r;
-}
-
-function extractSupertypeNames(base: unknown, hasWrapper: boolean): ReadonlySet<string> {
+function extractGrammarSymbolNames(
+	base: unknown,
+	hasWrapper: boolean,
+	key: 'supertypes' | 'externals' | 'inline'
+): ReadonlySet<string> {
 	const root = hasWrapper ? (base as { grammar?: Record<string, unknown> }).grammar : (base as Record<string, unknown>);
-	const supertypes = root?.supertypes;
-	if (typeof supertypes === 'function') {
-		const dollar = new Proxy(
-			{},
-			{
-				get(_t, prop) {
-					if (typeof prop === 'string') return { type: 'SYMBOL', name: prop };
-					return undefined;
-				}
-			}
-		);
-		let result: unknown;
-		try {
-			result = (supertypes as (proxy: unknown) => unknown)(dollar);
-		} catch {
-			return new Set();
-		}
-		return harvestSupertypeNames(result);
-	}
-	if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
-	return new Set();
-}
-
-function extractExternalNames(base: unknown, hasWrapper: boolean): ReadonlySet<string> {
-	const root = hasWrapper ? (base as { grammar?: Record<string, unknown> }).grammar : (base as Record<string, unknown>);
-	const externals = root?.externals;
-	if (typeof externals !== 'function') return Array.isArray(externals) ? harvestSupertypeNames(externals) : new Set();
+	const list = root?.[key];
+	if (Array.isArray(list)) return harvestSupertypeNames(list);
+	if (typeof list !== 'function') return new Set();
 	const dollar = new Proxy(
 		{},
 		{
@@ -484,7 +430,7 @@ function extractExternalNames(base: unknown, hasWrapper: boolean): ReadonlySet<s
 		}
 	);
 	try {
-		return harvestSupertypeNames((externals as (proxy: unknown) => unknown)(dollar));
+		return harvestSupertypeNames((list as (proxy: unknown) => unknown)(dollar));
 	} catch {
 		return new Set();
 	}
@@ -1909,6 +1855,7 @@ function applyClauseHoist(
 	if (isChoiceType(rule.type)) {
 		let choiceRule = rule;
 		const permutationChoice = isPermutationChoice(rule, rulesBag, hoistKwRules ?? undefined, hoistWordMatcher);
+		const selfFold = selfReferentialFoldOf(parentKind, rule) !== undefined;
 		if (permutationChoice && hoistKwRules !== null) {
 			choiceRule = promotePermutationArmKeywords(rule, hoistKwRules, rulesBag, hoistWordMatcher);
 		}
@@ -1939,7 +1886,7 @@ function applyClauseHoist(
 			);
 			const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
 			const promoted =
-				permutationChoice || literalOnlySplit
+				permutationChoice || literalOnlySplit || selfFold
 					? null
 					: mintStructuredChoiceArm(
 							out,
@@ -2002,239 +1949,6 @@ function applyClauseHoist(
 	}
 
 	return rule;
-}
-
-export function clusterSignatures(values: readonly RuntimeRule[]): string[] {
-	const indexByKey = new Map<string, number>();
-	const clusterOf: string[] = [];
-	for (const value of values) {
-		const key = ruleKey(value);
-		let idx = indexByKey.get(key);
-		if (idx === undefined) {
-			idx = indexByKey.size;
-			indexByKey.set(key, idx);
-		}
-		clusterOf.push(String(idx));
-	}
-	return clusterOf;
-}
-
-export const ENRICH_UNALIAS_DIAGNOSTICS_KEY = '__enrichUnaliasDiagnostics__' as const;
-
-function unaliasDiagnosticKey(diagnostic: ParseKindCollisionDiagnostic): string {
-	return [
-		diagnostic.code,
-		diagnostic.ownerKind,
-		diagnostic.slotName,
-		diagnostic.parseKind,
-		diagnostic.storageKinds.join(',')
-	].join(' ');
-}
-
-interface UnaliasDiagnosticSink {
-	readonly diagnostics: ParseKindCollisionDiagnostic[];
-	readonly seen: Set<string>;
-}
-
-function recordUnaliasDiagnostic(sink: UnaliasDiagnosticSink, diagnostic: ParseKindCollisionDiagnostic): void {
-	const key = unaliasDiagnosticKey(diagnostic);
-	if (sink.seen.has(key)) return;
-	sink.seen.add(key);
-	sink.diagnostics.push(diagnostic);
-}
-
-export function getEnrichUnaliasDiagnostics(grammar: unknown): readonly ParseKindCollisionDiagnostic[] {
-	if (!grammar || typeof grammar !== 'object') return [];
-	const diagnostics = (grammar as Record<string, unknown>)[ENRICH_UNALIAS_DIAGNOSTICS_KEY];
-	return Array.isArray(diagnostics) ? (diagnostics as ParseKindCollisionDiagnostic[]) : [];
-}
-
-interface UnaliasCandidate {
-	readonly targetName: string;
-	readonly slotKey: string | undefined;
-	readonly storageKind: string | undefined;
-	readonly resolvedBody: RuntimeRule;
-	readonly aliasSite?: { readonly path: readonly (string | number)[]; readonly content: Rule; readonly named: boolean };
-}
-
-function collectUnaliasCandidates(
-	node: Rule,
-	path: readonly (string | number)[],
-	slotKey: string | undefined,
-	rulesBag: Record<string, Rule>,
-	out: UnaliasCandidate[],
-	walker: RuleWalker,
-	visited: Set<string> = new Set(),
-	supertypeNames: ReadonlySet<string> = new Set(),
-	rewritable = true
-): void {
-	const t = (node as { type?: string }).type;
-	if (!t) return;
-	if (t === 'ALIAS') {
-		const aliasRule = node as unknown as { content: Rule; value: string; named: boolean };
-		const storageKind = isSymbolType(aliasRule.content.type)
-			? (aliasRule.content as unknown as { name?: string }).name
-			: undefined;
-		const resolvedBody = normalizeMember(
-			(storageKind !== undefined ? rulesBag[storageKind] : undefined) ?? aliasRule.content
-		);
-		out.push({
-			targetName: aliasRule.value,
-			slotKey,
-			storageKind,
-			resolvedBody,
-			aliasSite: rewritable ? { path, content: aliasRule.content, named: aliasRule.named } : undefined
-		});
-		return;
-	}
-	if (isSymbolType(t)) {
-		const name = (node as unknown as { name?: string }).name;
-		if (typeof name === 'string') {
-			const target = rulesBag[name];
-			const resolvedBody = normalizeMember(target ?? node);
-			const erasesToArms = name.startsWith('_') || supertypeNames.has(name);
-			if (target !== undefined && erasesToArms && isChoiceType(resolvedBody.type) && !visited.has(name)) {
-				visited.add(name);
-				collectUnaliasCandidates(target, path, slotKey, rulesBag, out, walker, visited, supertypeNames, false);
-				return;
-			}
-			out.push({ targetName: name, slotKey, storageKind: name, resolvedBody });
-		}
-		return;
-	}
-	const nextSlotKey = isFieldType(t) ? ((node as unknown as { name?: string }).name ?? slotKey) : slotKey;
-	for (const { segment, child } of walker.childEdgesOf(node as unknown as AnyRule)) {
-		collectUnaliasCandidates(
-			child as unknown as Rule,
-			[...path, ...segment],
-			nextSlotKey,
-			rulesBag,
-			out,
-			walker,
-			visited,
-			supertypeNames,
-			rewritable
-		);
-	}
-}
-
-function rewriteUnaliasAt(node: Rule, path: readonly (string | number)[], replacement: Rule): Rule {
-	if (path.length === 0) return replacement;
-	const [key, ...rest] = path;
-	if (key === 'members') {
-		const idx = rest[0] as number;
-		const members = (node as unknown as { members: Rule[] }).members.slice();
-		members[idx] = rest.length > 1 ? rewriteUnaliasAt(members[idx]!, rest.slice(1), replacement) : replacement;
-		return { ...node, members } as Rule;
-	}
-	const k = key as string;
-	const child = (node as unknown as Record<string, Rule>)[k]!;
-	return { ...node, [k]: rest.length > 0 ? rewriteUnaliasAt(child, rest, replacement) : replacement } as Rule;
-}
-
-function applyUnaliasDistinct(
-	ruleName: string,
-	rule: Rule,
-	rulesBag: Record<string, Rule>,
-	kwRules: Record<string, Rule>,
-	clauseGroupRules: Record<string, Rule>,
-	supertypeNames: ReadonlySet<string>
-): { rule: Rule; diagnostics: ParseKindCollisionDiagnostic[] } {
-	const candidates: UnaliasCandidate[] = [];
-	collectUnaliasCandidates(rule, [], undefined, rulesBag, candidates, new RuleWalker(), new Set(), supertypeNames);
-	if (candidates.length === 0) return { rule, diagnostics: [] };
-
-	const byBucket = new Map<string, { slotName: string; targetName: string; bucket: UnaliasCandidate[] }>();
-	for (const candidate of candidates) {
-		const slotName = candidate.slotKey ?? candidate.targetName;
-		const key = `${slotName} ${candidate.targetName}`;
-		const entry = byBucket.get(key) ?? { slotName, targetName: candidate.targetName, bucket: [] };
-		entry.bucket.push(candidate);
-		byBucket.set(key, entry);
-	}
-
-	const toDrop = new Set<UnaliasCandidate>();
-	const toRetarget = new Map<UnaliasCandidate, string>();
-	const diagnostics: ParseKindCollisionDiagnostic[] = [];
-	const claimedRetargetNames = new Set<string>();
-
-	for (const { slotName, targetName, bucket } of byBucket.values()) {
-		if (bucket.length < 2 || !bucket.some((c) => c.aliasSite)) continue;
-		const signatures = clusterSignatures(bucket.map((c) => c.resolvedBody));
-		const values: ParseKindCollisionValue<UnaliasCandidate>[] = bucket.map((candidate, i) => ({
-			original: candidate,
-			parseKind: targetName,
-			storageKind: candidate.storageKind,
-			structuralSignature: signatures[i]!
-		}));
-		let representativeSignature: string | undefined;
-		const nativeIndex = bucket.findIndex((c) => c.storageKind !== undefined && c.storageKind === targetName);
-		if (nativeIndex !== -1) {
-			representativeSignature = signatures[nativeIndex];
-		} else {
-			const signatureCounts = new Map<string, number>();
-			for (const signature of signatures) signatureCounts.set(signature, (signatureCounts.get(signature) ?? 0) + 1);
-			let representativeCount = 1;
-			for (const [signature, count] of signatureCounts) {
-				if (count > representativeCount) {
-					representativeSignature = signature;
-					representativeCount = count;
-				}
-			}
-		}
-		const resolution = diagnoseParseKindCollisions({ ownerKind: ruleName, slotName, values });
-		for (const diagnostic of resolution.diagnostics) {
-			let anyActed = false;
-			for (const [index, candidate] of bucket.entries()) {
-				if (!candidate.aliasSite || candidate.storageKind === undefined) continue;
-				if (representativeSignature !== undefined && signatures[index] === representativeSignature) continue;
-				const isHidden = candidate.storageKind.startsWith('_');
-				if (!isHidden) {
-					toDrop.add(candidate);
-					anyActed = true;
-					continue;
-				}
-				const strippedName = candidate.storageKind.replace(/^_+/, '');
-				const collides =
-					strippedName === '' ||
-					claimedRetargetNames.has(strippedName) ||
-					Object.hasOwn(rulesBag, strippedName) ||
-					Object.hasOwn(kwRules, strippedName) ||
-					Object.hasOwn(clauseGroupRules, strippedName);
-				if (collides) {
-					continue;
-				}
-				claimedRetargetNames.add(strippedName);
-				toRetarget.set(candidate, strippedName);
-				anyActed = true;
-			}
-			if (anyActed) {
-				diagnostics.push({
-					...diagnostic,
-					severity: 'info',
-					message: `${diagnostic.message} Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.`,
-					proposal: 'Already resolved by enrich() — no action needed.'
-				});
-			}
-		}
-	}
-
-	if (toDrop.size === 0 && toRetarget.size === 0) return { rule, diagnostics: [] };
-
-	let result = rule;
-	for (const candidate of toDrop) {
-		result = rewriteUnaliasAt(result, candidate.aliasSite!.path, candidate.aliasSite!.content);
-	}
-	for (const [candidate, strippedName] of toRetarget) {
-		const retargeted = {
-			type: 'ALIAS',
-			content: candidate.aliasSite!.content,
-			named: candidate.aliasSite!.named,
-			value: strippedName
-		} as unknown as Rule;
-		result = rewriteUnaliasAt(result, candidate.aliasSite!.path, retargeted);
-	}
-	return { rule: result, diagnostics };
 }
 
 function clauseHoistSynthName(

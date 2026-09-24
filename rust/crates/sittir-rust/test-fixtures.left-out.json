@@ -15,6 +15,7 @@
   "source_file": 13,
   "struct_expression": 1,
   "struct_item_tuple": 1,
-  "token_tree": 5,
+  "token_tree_brace": 1,
+  "token_tree_paren": 4,
   "use_declaration": 3
 }

@@ -1,10 +1,11 @@
+import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import { DelimiterFlags, isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { bareInteriorText, numericLeafKinds, numericLeafShape, numericSlotKeys, numericSlotShape } from './interior.ts';
-import {
+import { findOwnKindEntry, modelKindOfEntry,
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,
@@ -23,7 +24,16 @@ export {
 } from './kind-discriminant.ts';
 
 function hasKindId(kind: string, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
-	return kindEntries !== undefined && kindEntries.some((e) => e.kind === kind);
+	return kindEntries !== undefined && findOwnKindEntry(kindEntries, kind) !== undefined;
+}
+
+function stampedDiscriminant(
+	kind: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	if (!kindEntries || findKindEntry(kindEntries, kind) === undefined) return JSON.stringify(kind);
+	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
 
 function kindDiscriminantOrLiteral(
@@ -32,7 +42,7 @@ function kindDiscriminantOrLiteral(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
 	if (!kindEntries) return JSON.stringify(kind);
-	const hasEntry = kindEntries.some((e) => e.kind === kind);
+	const hasEntry = findOwnKindEntry(kindEntries, kind) !== undefined;
 	if (!hasEntry) return JSON.stringify(kind);
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
@@ -43,7 +53,7 @@ import type {
 	AssembledEnvelope,
 	AssembledPolymorph
 } from '../compiler/model/node-map.ts';
-import { AssembledList, AssembledEnum, fixedTextOfKind, snakeToCamel } from '../compiler/model/node-map.ts';
+import { AssembledAlias, AssembledList, AssembledEnum, fixedTextOfKind, snakeToCamel } from '../compiler/model/node-map.ts';
 import { loadRawEntries } from '../validate/node-types-loader.ts';
 import {
 	isRequired,
@@ -84,7 +94,7 @@ import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
 
-type StructuralNode = AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList;
+type StructuralNode = SlotBearingCompound;
 
 export interface EmitTypesConfig {
 	grammar: string;
@@ -198,7 +208,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 			node,
 			nodeMap,
 			lookupUnion,
-			kindDiscriminantOrLiteral(node.kind, nodeMap, kindEntries),
+			stampedDiscriminant(node.kind, nodeMap, kindEntries),
 			kindEntries
 		);
 	}
@@ -247,7 +257,10 @@ export function emitTypes(config: EmitTypesConfig): string {
 
 	lines.push('// Per-kind namespace interfaces — one computed base per kind');
 	const namespaceKinds = nodeKinds.filter(
-		(kind) => generatedTypes.has(nodeMap.nodes.get(kind)!.typeName) && hasKindId(kind, kindEntries)
+		(kind) =>
+			generatedTypes.has(nodeMap.nodes.get(kind)!.typeName) &&
+			kindEntries !== undefined &&
+			findKindEntry(kindEntries, kind) !== undefined
 	);
 	for (const kind of namespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
@@ -295,7 +308,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		...leafNamespaceKinds.filter((kind) => hasKindId(kind, kindEntries))
 	]) {
 		const node = nodeMap.nodes.get(kind)!;
-		lines.push(`  [${kindDiscriminantExpr(kind, nodeMap, kindEntries)}]: ${node.typeName}Ns;`);
+		lines.push(`  [${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]: ${node.typeName}Ns;`);
 	}
 	lines.push('}');
 	lines.push('');
@@ -320,7 +333,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 			kind,
 			node,
 			refineInfoByKind.get(kind),
-			kindDiscriminantExpr(kind, nodeMap, kindEntries),
+			kindDiscriminantOrLiteral(kind, nodeMap, kindEntries),
 			nodeMap,
 			kindEntries
 		);
@@ -380,7 +393,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		'AnyTreeNodeOf as AnyTreeNode',
 		'Terminal',
 		'NonEmptyArray',
-		'BooleanKeyword',
+		'BooleanKeyword as BaseBooleanKeyword',
 		...(usesBitflag ? ['Bitflag'] : []),
 		...(usesKindEnum ? ['KindEnum'] : []),
 		...(usesHiddenLeaf ? ['HiddenLeaf'] : []),
@@ -422,6 +435,7 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 			case 'envelope':
 			case 'branch':
 			case 'polymorph':
+			case 'alias':
 				structNodes.push(node);
 				break;
 			case 'supertype':
@@ -477,9 +491,10 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 
 	lines.push('export const KIND_NAMES: ReadonlyMap<number, string> = new Map([');
 	for (const entry of entries) {
-		lines.push(`  [${entry.id}, ${JSON.stringify(entry.kind)}],`);
+		const kind = modelKindOfEntry(entry);
+		lines.push(`  [${entry.id}, ${JSON.stringify(kind)}],`);
 		if (entry.parseId !== undefined && entry.parseId !== entry.id) {
-			lines.push(`  [${entry.parseId}, ${JSON.stringify(entry.kind)}],`);
+			lines.push(`  [${entry.parseId}, ${JSON.stringify(kind)}],`);
 		}
 	}
 	lines.push(']);');
@@ -523,10 +538,13 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 
 	lines.push('export function kindIdFromName(kindName: string): TSKindId {');
 	lines.push('  switch (kindName) {');
+	const seenCases = new Set<string>();
 	for (const entry of entries) {
-		lines.push(`    case ${JSON.stringify(entry.kind)}: return TSKindId.${entry.member};`);
+		const kind = modelKindOfEntry(entry);
+		if (seenCases.has(kind)) continue;
+		seenCases.add(kind);
+		lines.push(`    case ${JSON.stringify(kind)}: return TSKindId.${entry.member};`);
 	}
-	const seenCases = new Set(entries.map((e) => e.kind));
 	for (const entry of entries) {
 		const parserTypeString = entry.symbolName;
 		if (!parserTypeString) continue;
@@ -777,6 +795,14 @@ function emitBuiltInterface(lines: string[], surface: BuiltTypeSurface, indent: 
 
 type LookupUnion = (parts: readonly string[]) => string | undefined;
 
+function aliasContentTypeExpr(node: AssembledNode, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string | undefined {
+	if (!(node instanceof AssembledAlias) || node.slots.length !== 1) return undefined;
+	const content = node.slots[0]!;
+	const storage = storageFieldTypeExpr(content, nodeMap, fieldTypeExpr(content, nodeMap), kindEntries);
+	if (resolveFieldStorageInfo(content, nodeMap, kindEntries).kind !== 'kindEnum') return storage;
+	return mixedEnumStorageTypeExpr(content, nodeMap, kindEntries) ?? storage;
+}
+
 function emitInterface(
 	lines: string[],
 	node: StructuralNode,
@@ -803,6 +829,9 @@ function emitInterface(
 			}
 		}
 		emitFieldInputHints(lines, slots, node.kind, nodeMap, kindEntries, lookupUnion);
+		if (aliasContentTypeExpr(node, nodeMap, kindEntries) !== undefined) {
+			lines.push(`  readonly __aliasContent__?: ${node.typeName}.Types;`);
+		}
 		for (const f of slots) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
@@ -966,7 +995,7 @@ function fieldInputHintTypeExpr(
 	}
 	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	if (storageInfo.kind === 'boolean') {
-		return `BooleanKeyword<${stringUnion(storageInfo.texts)}>`;
+		return `BaseBooleanKeyword<${stringUnion(storageInfo.texts)}>`;
 	}
 	if (storageInfo.kind === 'bitflag') {
 		const constName = resolveBitflagConstName(kind, f, nodeMap) ?? 'number';
@@ -1110,6 +1139,8 @@ function emitNamespaceSugarBlock(
 	}
 	const spelling = spellingTypeOf(node, nodeMap, kindEntries);
 	if (spelling !== undefined) lines.push(`  export type Options = ${spelling};`);
+	const aliasContent = aliasContentTypeExpr(node, nodeMap, kindEntries);
+	if (aliasContent !== undefined) lines.push(`  export type Types = ${aliasContent};`);
 	const surface = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 		? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 		: undefined;

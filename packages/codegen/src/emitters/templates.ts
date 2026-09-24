@@ -1,3 +1,4 @@
+import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import {
 	CHOICE,
 	DEDENT,
@@ -280,6 +281,7 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): Body | undefined {
 		case 'envelope':
 			return emitBranchTemplate(node, ctxK);
 		case 'polymorph':
+		case 'alias':
 			return emitBranchTemplate(node, ctxK);
 		case 'supertype':
 		case 'pattern':
@@ -297,7 +299,7 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): Body | undefined {
 }
 
 export function emitBranchTemplate(
-	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList,
+	node: SlotBearingCompound,
 	ctx: EmitCtx
 ): Body {
 	const top = ctx.rules[node.kind] ?? node.renderRule;
@@ -1365,6 +1367,7 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 				te.emitBranch(node);
 				break;
 			case 'polymorph':
+			case 'alias':
 				te.emitBranch(node);
 				break;
 			case 'supertype':

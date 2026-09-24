@@ -29,6 +29,8 @@ export interface GeneratedKindEntry {
 	readonly literalText?: string;
 	readonly anon?: boolean;
 	readonly literalRule?: boolean;
+	readonly alias?: boolean;
+	readonly hidden?: boolean;
 }
 
 export interface TreeSitterLanguageMetadata {
@@ -202,7 +204,9 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 				: undefined,
 			literalText: entry.parser?.literalText,
 			anon: entry.parser?.anon || undefined,
-			literalRule: entry.parser?.literalRule || undefined
+			literalRule: entry.parser?.literalRule || undefined,
+			alias: entry.parser?.alias || undefined,
+			hidden: entry.parser?.hidden || undefined
 		}));
 }
 
@@ -212,11 +216,12 @@ export interface KindEntryLike {
 	readonly literalText?: string;
 	readonly anon?: boolean;
 	readonly literalRule?: boolean;
+	readonly alias?: boolean;
 }
 
 export function findEntryForKindName<T extends KindEntryLike>(entries: readonly T[], name: string): T | undefined {
 	return (
-		entries.find((entry) => entry.kind === name) ??
+		entries.find((entry) => entry.kind === name && entry.alias !== true) ??
 		entries.find((entry) => entry.kind === `_${name}`) ??
 		entries.find((entry) => entry.anon === true && entry.symbolName === name) ??
 		entries.find((entry) => entry.anon !== true && entry.symbolName === name) ??

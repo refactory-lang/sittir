@@ -842,8 +842,7 @@ export interface AddressBranch {
 	readonly generator_expression: 'after' | 'before' | 'lparen' | 'rparen';
 	readonly 'generator_expression/lparen': 'after';
 	readonly 'generator_expression/rparen': 'before';
-	readonly generic_type: 'after' | 'before' | 'type_keyword';
-	readonly 'generic_type/type_keyword': 'after';
+	readonly generic_type: 'after' | 'before';
 	readonly global_statement: 'after' | 'before' | 'global_keyword' | 'names';
 	readonly 'global_statement/global_keyword': 'after';
 	readonly 'global_statement/names': 'separator';
@@ -2040,7 +2039,6 @@ export interface AddressLeaf {
 	readonly 'generator_expression/rparen/before': SpacingArm;
 	readonly 'generic_type/after': SpacingArm;
 	readonly 'generic_type/before': SpacingArm;
-	readonly 'generic_type/type_keyword/after': SpacingArm;
 	readonly 'global_statement/after': SpacingArm;
 	readonly 'global_statement/before': SpacingArm;
 	readonly 'global_statement/global_keyword/after': SpacingArm;
