@@ -1043,12 +1043,19 @@ built from the name-neutral `$` and compared as `canonicalRuleText`
 #### body
 
 ```text
-// An arm that already carries an alias keeps its content and takes
-// the placeholder's name as its face, becoming named if it was not (an
-// unnamed alias such as rust's `alias(/[bc]?"/, '"')` is promoted) — an upsert, never a second alias
-// around the first and never a deposit under the target's hidden name,
-// which would redefine an existing rule as an alias of itself.
+// An arm that already aliases a symbol keeps that symbol and takes the
+// placeholder's name as its face, becoming named if it was not — an upsert,
+// never a second alias around the first and never a deposit under the
+// target's hidden name, which would redefine an existing rule as an alias
+// of itself.
 ```
+
+An alias over inline content (a pattern, string or token, such as rust's
+unnamed `alias(/[bc]?"/, '"')`) has no rule behind it, so promoting it in
+place would leave the parser a named node the model has no kind for. Its
+content is minted like any other `alias()` target instead: the terminal
+becomes the hidden leaf rule `_<name>` (no `hoisted`, since it lexes as one
+token) and the arm becomes `alias($._<name>, $.<name>)`.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::hoistedUnlessToken`
 

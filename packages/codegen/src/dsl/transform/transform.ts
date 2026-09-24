@@ -51,6 +51,7 @@ import {
 	isChoiceType,
 	isOptionalType,
 	isPlainRepeatType,
+	isSymbolType,
 	matchesEmpty
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
@@ -882,10 +883,13 @@ function resolveAliasPlaceholder(
 	const ruleName = '_' + patch.name;
 	const lift = enrichLiftArmOf(originalMember);
 	if (lift !== null) return renameEnrichLift(originalMember, lift, ruleName, patch.name);
+	const mint = (body: RuntimeRule): RuntimeRule => registerAliasedVariant(ruleName, patch.name, body, (b) => wrapInPrec(b, precStack));
 	if ((originalMember as { type?: string }).type === 'ALIAS') {
+		const content = contentOf(originalMember);
+		if (!isSymbolType(content.type)) return mint(content);
 		return { ...(originalMember as object), named: true, value: patch.name } as unknown as RuntimeRule;
 	}
-	return registerAliasedVariant(ruleName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
+	return mint(originalMember);
 }
 
 export function registerAliasedVariant(

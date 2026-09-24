@@ -9,11 +9,20 @@ const P = (value: string) => ({ type: 'PATTERN', value });
 beforeAll(() => installFakeDsl());
 afterAll(() => restoreFakeDsl());
 
-describe('alias() on an existing unnamed alias', () => {
-	it('promotes it to a named alias and keeps the content', () => {
+const sym = (name: string) => ({ type: 'SYMBOL', name });
+
+describe('alias() on an existing alias', () => {
+	it('over an inline terminal mints the terminal as a leaf rule, so the named node has a rule of its own', () => {
 		const member = { type: 'ALIAS', named: false, value: '"', content: P('[bc]?"') };
-		const { result } = applyTransformForTest('string_literal', { type: 'SEQ', members: [member, S('x')] }, { 0: alias('string_open') });
-		expect((result as { members: unknown[] }).members[0]).toMatchObject({ type: 'ALIAS', named: true, value: 'string_open', content: P('[bc]?"') });
+		const { result, deposits } = applyTransformForTest('string_literal', { type: 'SEQ', members: [member, S('x')] }, { 0: alias('string_open') });
+		expect(deposits.get('_string_open')).toEqual(P('[bc]?"'));
+		expect((result as { members: unknown[] }).members[0]).toMatchObject({ type: 'ALIAS', named: true, value: 'string_open', content: sym('_string_open') });
+	});
+	it('over a symbol takes the new name in place and deposits nothing', () => {
+		const member = { type: 'ALIAS', named: true, value: 'as_pattern', content: sym('_as_pattern') };
+		const { result, deposits } = applyTransformForTest('case_pattern', { type: 'CHOICE', members: [member, sym('keyword_pattern')] }, { 0: alias('case_as_pattern') });
+		expect(deposits.size).toBe(0);
+		expect((result as { members: unknown[] }).members[0]).toMatchObject({ type: 'ALIAS', named: true, value: 'case_as_pattern', content: sym('_as_pattern') });
 	});
 });
 

@@ -4683,10 +4683,13 @@ function resolveAliasPlaceholder(patch, originalMember, precStack) {
   const ruleName = "_" + patch.name;
   const lift = enrichLiftArmOf(originalMember);
   if (lift !== null) return renameEnrichLift(originalMember, lift, ruleName, patch.name);
+  const mint = (body) => registerAliasedVariant(ruleName, patch.name, body, (b) => wrapInPrec(b, precStack));
   if (originalMember.type === "ALIAS") {
+    const content = contentOf3(originalMember);
+    if (!isSymbolType(content.type)) return mint(content);
     return { ...originalMember, named: true, value: patch.name };
   }
-  return registerAliasedVariant(ruleName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
+  return mint(originalMember);
 }
 function registerAliasedVariant(ruleName, nodeName, originalMember, bodyWrapper) {
   const single = originalMember;
