@@ -432,7 +432,7 @@ the grammar does not name it.
 
 ### `packages/codegen/src/dsl/primitives/variant.ts::variant`
 
-Builds the placeholder; `options.absent` is carried only when set.
+Builds the placeholder; `options.absent` and `options.default` are carried only when set. `default: true` names the arm the parent's own factory builds when given a bare value; it replaces any default the arms already carry (see `clearSiblingDefaults`).
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_SUPERTYPE`
 
@@ -555,6 +555,12 @@ The label of a list slot's declared separator token,
 address is `<slot>_separator` and its arm is a token kind name, checked
 against the list's literal separator kinds where separator sites are
 collected, not by the wire.
+
+### `packages/codegen/src/dsl/primitives/spacing.ts::VARIANT_LABEL`
+
+```text
+The address segment and label of a supertype's variant-choice options site.
+```
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::isSeparatorAddress`
 

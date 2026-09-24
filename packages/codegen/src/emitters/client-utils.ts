@@ -13,7 +13,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('// Typed facade over @sittir/common/utils with grammar-local narrowing helpers');
 	lines.push('');
 	lines.push(
-		"import type { AnyNodeData, AnyTreeNodeOf, ArgsOf, ByteRange, Edit, ElementsOf, FlavorPair, Hoisted, OmitEach } from '@sittir/types';"
+		"import type { AnyNodeData, AnyTreeNodeOf, ArgsOf, ByteRange, Edit, ElementsOf, FlavorPair, Hoisted, OmitEach, OptionsArg } from '@sittir/types';"
 	);
 	if (triviaTypeNames.length > 0) {
 		lines.push(`import type { ${triviaTypeNames.join(', ')}, NamespaceMap } from './types.js';`);
@@ -22,11 +22,11 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	}
 	lines.push("import { render, toEdit } from './boundary.ts';");
 	lines.push(
-		"import { withMethods as withCommonMethods, isNodeData as _isNodeData, isTreeNode as _isTreeNode, hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors } from '@sittir/common/utils';"
+		"import { withMethods as withCommonMethods, isNodeData as _isNodeData, isTreeNode as _isTreeNode, hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors, numberText } from '@sittir/common/utils';"
 	);
 	lines.push("import type { WithMethodsEngine } from '@sittir/common/utils';");
 	lines.push('');
-	lines.push('export { hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors };');
+	lines.push('export { hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors, numberText };');
 	lines.push('');
 	lines.push(...emitIsNodeData());
 	lines.push('');
@@ -57,7 +57,7 @@ function emitAttachProps(): string[] {
 		'  return { strict, coerce };',
 		'}',
 		'',
-		'export type { ArgsOf, ElementsOf, FlavorPair, Hoisted, OmitEach };',
+		'export type { ArgsOf, ElementsOf, FlavorPair, Hoisted, OmitEach, OptionsArg };',
 		'',
 		'type AnyFlavorFn = (...args: never[]) => unknown;',
 		'',
@@ -102,17 +102,24 @@ function emitMethodsEngine(): string[] {
 
 function emitWithMethods(triviaTypeNames: readonly string[]): string[] {
 	const triviaType = buildTriviaParamType(triviaTypeNames);
+	const triviaEntry = buildTriviaEntryType(triviaTypeNames);
 	return [
 		'/** The methods every node carries. Named, and self-referential through',
 		' *  the polymorphic `this`, because `$trivia` rebuilds the node and hands',
 		' *  back the same kind. A type alias cannot name itself, so the earlier',
 		' *  declaration fell back to `AnyNodeData` and lost the type at every',
 		' *  `$trivia` call site. */',
+		'export interface TriviaSetterOf<Self> {',
+		`  (...args: ${triviaType}[]): Self;`,
+		`  leading(...items: ${triviaEntry}[]): Self;`,
+		`  trailing(...items: ${triviaEntry}[]): Self;`,
+		'}',
+		'',
 		'export interface NodeMethodsOf {',
 		'  $render(): string;',
 		'  $toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;',
 		'  $replace(target: { range(): ByteRange }): Edit;',
-		`  $trivia(...args: ${triviaType}[]): this;`,
+		'  $trivia: TriviaSetterOf<this>;',
 		'}',
 		'',
 		'export function withMethods<T extends object>(',
@@ -196,6 +203,16 @@ function emitTransportHelpers(): string[] {
 		'  return hit[2](value) as T;',
 		'}',
 		'',
+		'export type AliasBuilder = readonly [storage: readonly number[], build: (content: unknown) => unknown];',
+		'',
+		'export function admitAliasContent<T = unknown>(value: unknown, aliases: readonly AliasBuilder[]): T {',
+		'  if (Array.isArray(value)) return value.map((item) => admitAliasContent(item, aliases)) as T;',
+		"  const id = isRecord(value) && typeof value.$type === 'number' ? value.$type : typeof value === 'number' ? value : undefined;",
+		'  if (id === undefined) return value as T;',
+		'  const hit = aliases.find(([storage]) => storage.includes(id));',
+		'  return (hit === undefined ? value : hit[1](value)) as T;',
+		'}',
+		'',
 		'export function coerceMixedEnumStorage<T = unknown>(',
 		'  value: unknown,',
 		'  byText: readonly (readonly [string, number])[] = []',
@@ -270,9 +287,13 @@ export function resolveTriviaTypeNames(triviaKinds: readonly string[], nodeMap: 
 	return [...new Set(names)].sort();
 }
 
-export function buildTriviaParamType(triviaTypeNames: readonly string[], qualify = ''): string {
+export function buildTriviaEntryType(triviaTypeNames: readonly string[], qualify = ''): string {
 	const triviaType =
 		triviaTypeNames.length > 0 ? triviaTypeNames.map((n) => `${qualify}${n}`).join(' | ') : 'AnyNodeData';
-	const entry = `${triviaType} | string`;
-	return `(${entry} | { leading?: (${entry})[]; trailing?: (${entry})[] })`;
+	return `(${triviaType} | string)`;
+}
+
+export function buildTriviaParamType(triviaTypeNames: readonly string[], qualify = ''): string {
+	const entry = buildTriviaEntryType(triviaTypeNames, qualify);
+	return `(${entry} | { leading?: ${entry}[]; trailing?: ${entry}[] })`;
 }

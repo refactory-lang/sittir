@@ -1,5 +1,4 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
-import { bindingsInventory as runBindingsInventory } from '@sittir/tools';
 
 export const bindingsInventory: CommandModule = {
 	name: 'bindings-inventory',
@@ -10,6 +9,7 @@ export const bindingsInventory: CommandModule = {
 			.option('--members', 'Print member names and kinds per shared kind')
 			.option('--emit [dir]', 'Emit the vocabulary tree into a directory (default: packages/types/src/vocabulary, the checked-in tree)')
 			.action(async (opts: { check?: boolean; members?: boolean; emit?: string | true }) => {
+				const { bindingsInventory: runBindingsInventory } = await import('@sittir/tools');
 				const code = await runBindingsInventory({
 					check: opts.check ?? false,
 					members: opts.members ?? false,

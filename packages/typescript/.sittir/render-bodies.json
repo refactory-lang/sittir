@@ -545,7 +545,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "arguments"
+			"name": "elements"
 		},
 		{
 			"kind": "seam",
@@ -1037,12 +1037,6 @@
 		{
 			"kind": "seam",
 			"field": "break_statement_after"
-		}
-	],
-	"call_expression": [
-		{
-			"kind": "slot",
-			"name": "content"
 		}
 	],
 	"call_expression_call": [
@@ -2083,9 +2077,6 @@
 			"text": "while"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "while_keyword_after"
 		},
@@ -2488,9 +2479,6 @@
 			"name": "content"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "slot",
 			"name": "automatic_semicolon"
 		},
@@ -2515,9 +2503,6 @@
 		{
 			"kind": "text",
 			"text": "from"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -2548,9 +2533,6 @@
 		{
 			"kind": "text",
 			"text": "from"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -2585,9 +2567,6 @@
 		{
 			"kind": "text",
 			"text": "from"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -3870,9 +3849,6 @@
 			"text": "if"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "if_keyword_after"
 		},
@@ -4093,9 +4069,6 @@
 			"text": "("
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "lparen_after"
 		},
@@ -4272,9 +4245,6 @@
 		{
 			"kind": "text",
 			"text": "from"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -4571,6 +4541,12 @@
 		{
 			"kind": "seam",
 			"field": "instantiation_expression_after"
+		}
+	],
+	"interface_body": [
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"interface_declaration": [
@@ -5563,6 +5539,254 @@
 			"field": "non_null_expression_after"
 		}
 	],
+	"number_bigint": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": "n"
+		}
+	],
+	"number_binary": [
+		{
+			"kind": "slot",
+			"name": "prefix"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"number_float_leading_point": [
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "fraction"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "marker",
+					"body": [
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "marker",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "marker"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "sign",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "sign"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "exponent",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "exponent"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"number_float_point": [
+		{
+			"kind": "slot",
+			"name": "integer"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "fraction",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "fraction"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "marker",
+					"body": [
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "marker",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "marker"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "sign",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "sign"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "exponent",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "exponent"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"number_float_scientific": [
+		{
+			"kind": "slot",
+			"name": "integer"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "marker"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "sign",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "sign"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "exponent"
+		}
+	],
+	"number_hex": [
+		{
+			"kind": "slot",
+			"name": "prefix"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"number_octal": [
+		{
+			"kind": "slot",
+			"name": "prefix"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"object": [
 		{
 			"kind": "seam",
@@ -5996,12 +6220,6 @@
 			"field": "pair_pattern_after"
 		}
 	],
-	"parenthesized_expression": [
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
 	"parenthesized_expression_sequence": [
 		{
 			"kind": "seam",
@@ -6145,6 +6363,12 @@
 		{
 			"kind": "seam",
 			"field": "program_after"
+		}
+	],
+	"property_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"property_signature": [
@@ -6775,6 +6999,12 @@
 			"field": "satisfies_expression_after"
 		}
 	],
+	"semicolon": [
+		{
+			"kind": "text",
+			"text": ";"
+		}
+	],
 	"sequence_expression": [
 		{
 			"kind": "seam",
@@ -6787,6 +7017,18 @@
 		{
 			"kind": "seam",
 			"field": "sequence_expression_after"
+		}
+	],
+	"shorthand_property_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"shorthand_property_identifier_pattern": [
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"spread_element": [
@@ -6859,7 +7101,7 @@
 			"field": "statement_block_after"
 		}
 	],
-	"string": [
+	"statement_identifier": [
 		{
 			"kind": "slot",
 			"name": "content"
@@ -7081,18 +7323,12 @@
 			"text": "switch"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "switch_keyword_after"
 		},
 		{
 			"kind": "slot",
 			"name": "value"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "slot",
@@ -7522,6 +7758,12 @@
 			"field": "type_assertion_after"
 		}
 	],
+	"type_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"type_parameter": [
 		{
 			"kind": "seam",
@@ -7941,9 +8183,6 @@
 			"text": "while"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "while_keyword_after"
 		},
@@ -7968,9 +8207,6 @@
 		{
 			"kind": "text",
 			"text": "with"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",

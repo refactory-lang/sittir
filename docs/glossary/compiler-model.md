@@ -2725,11 +2725,20 @@ tightening any of the four regenerates all three grammars differently.
  */
 ```
 
+#### body
+
+```text
+A SYMBOL body is 'alias' when the kind is an alias display
+(isAliasEnvelopeKind, which is why the kind is a parameter); otherwise
+'envelope'. Classification is structural — never keyed on which phase minted
+the rule.
+```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::branchClassFor`
 
 ```text
 /** The constructing class (`AssembledBranch`/`AssembledEnvelope`/
- *  `AssembledPolymorph`) for a compositional rule's `compoundModelTypeFor`
+ *  `AssembledPolymorph`/`AssembledAlias`) for a compositional rule's `compoundModelTypeFor`
  *  classification — `assemble.ts` calls this once it has already ruled
  *  out the SUPERTYPE-body and list-shaped cases, which construct
  *  `AssembledSupertype`/`AssembledList` directly instead. */
@@ -2952,6 +2961,13 @@ for a named non-word literal kind so it keeps its factory and type.
  *  `resolvedByText` order — what a reference to this enum stamps. */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.literalMembers`
+
+```text
+The enum's literal arms with nested choices flattened, the list its `values` read. An inline alias of a keyword
+choice onto a display arrives as a choice inside a choice.
+```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.constructor`
 
 #### body
@@ -3025,6 +3041,13 @@ emission).
 // second reference vocabulary for the same kind of fact. No stamped ids
 // (`storageKindId`/`parseKindId` absent) — this closure only needs to
 // answer "is this parse kind reachable here", by name.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.optionDefaultArm`
+
+```text
+The arm an `options:` choice at the supertype's variant site names as default. A slot holding the supertype falls
+back to it when the slot has no default of its own.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.constructor`
@@ -3693,6 +3716,13 @@ SYMBOL carrying a `literal` and no field. Whitespace-only text is not a
 token, and a literal with no catalog kind gets no site. A keyword seam is
 what reaches `from 'x'`, which the lexical rule leaves tight.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::isDisplayedLiteral`
+
+A literal member shown under another kind's name: a string, or a symbol carrying `literal`, with an `aliasedTo`
+display (a contextual keyword distributed as `alias('default', $.identifier)`). It renders as that display, so it
+names no seam of its own: `literalTokenOf`, `punctuationReferenceTokenOf` and `armSeamName` pass over it, and its
+spacing is addressed through the display like any other member of that kind.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::literalSlotOf`
 
 The slot name of a member that renders a literal chosen per node: a
@@ -4228,6 +4258,20 @@ The candidate a slot offers when it holds more than one value and every value
 names an arm. Arms come from the slot's own members, the way a separated
 list's arms come from its separator rule.
 
+### `packages/codegen/src/compiler/model/site-preferences.ts::variantChoiceCandidate`
+
+```text
+The options site of a supertype's choice between its variants, addressed `<kind>/variant` and labelled
+`VARIANT_LABEL`. It lets a binding pick a default variant at the kind itself (typescript `string/variant` →
+quote style) rather than at each slot that holds it.
+```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::armsOf`
+
+```text
+The arms of a choice site with the kind each resolves to, shared by slot choices and supertype variant choices.
+```
+
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::stampResolvedDefaults`
 
@@ -4238,6 +4282,18 @@ The factory reads the stamp rather than the options block, so the arm it
 bakes in and the arm the renderer resolves have one source. Resolution runs
 before the emitters walk the model, and a slot with no stamp is one no option
 addressed.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.registeredOption`
+
+Whether an `options:` declaration registered this slot as a spelling site: a slot whose values are literal text with no kind ids, such as `0x` and `0X`. A registered slot is no longer part of the configuration a caller supplies; its value is an option that defaults to `optionDefaultArm`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.configSlots`
+
+The slots a caller supplies, which is every slot except the ones registered as an option. The sole-slot classification reads this list, so a node with one real slot and one registered spelling takes that value directly.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::registerSpellingSite`
+
+Stamps the slot a declared spelling site names with its default arm and marks it registered. A spelling site has no kind ids, so it never joins the native option table.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.optionDefaultArm`
 
@@ -4280,3 +4336,61 @@ True for a slot value that is free text constrained by a pattern rather than a l
 ```text
 True for a kind whose slot structure is a token interior; such a kind is skipped by the interior seam pass and owns no edges.
 ```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledAlias.aliasTypeId`
+
+```text
+Required: the parser's
+alias type id, which is the node's identity (`$type`) in place of its
+content's grammar id. The reader stamps this id on the node, wrap dispatches
+it to the envelope, and kind-id-rust emits the set as `is_alias_envelope`.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::CompoundOpts.aliasTypeId`
+
+```text
+The alias type id, set by assemble for a kind classified 'alias'. The
+AssembledAlias constructor throws without it, since a display with no alias
+row could never be dispatched from a read.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledAlias`
+
+```text
+The single-slot envelope for a display kind the parser issues only under an
+alias symbol (isAliasEnvelopeKind): its identity is the alias type id, its
+one slot the storage it displays. The content alone distinguishes the cases —
+a single storage node (`type_identifier` over `identifier`), or an enum of
+storage kinds with no parser symbol of their own (`reserved_identifier` over
+keyword terminals), where the parser issues each member's terminal under the
+alias id. Reading, wrap dispatch and the factory shape (`direct`) are the
+same for every content. When the displayed rule has its own symbol (a renamed
+hidden rule such as rust `_primitive_type`), that symbol is the container and
+the kind is a plain AssembledEnvelope.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isAliasEnvelopeKind`
+
+```text
+A display kind the parser only ever issues under an alias symbol, whose node
+is either the storage node itself or a container of it: its simplified body
+is a single SYMBOL, its catalog row is an `alias_sym`, and its storage is not
+hidden (or is itself only an alias row). The per-node choice between storage
+and container is made by the reader from the node's grammar symbol.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::aliasEnvelopeOf`
+
+```text
+The alias envelope an alias-site ref displays as, if any. Slot values and
+supertype members at such a site resolve to the envelope, not the storage
+kind, so types, transports and factories agree with what the read delivers.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::resolveSlotAliasPairs`
+
+The name-keyed display → storage redirects a slot needs when a node arrives under its display name: from the slot's
+aliased values whose parse id differs from their storage id, and from the restamp pairs of any supertype the slot
+holds. A redirect is kept only when it is unambiguous — the display has exactly one storage in the slot and is not
+itself a storage there. `identifier` over a dozen keyword storages beside `identifier` itself redirects nowhere; the
+read's own storage id decides.

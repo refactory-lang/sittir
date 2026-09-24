@@ -12,12 +12,12 @@ describe('rust text-leaf factories always run their guard', () => {
 
 	it('rejects empty text', () => {
 		expect(() => ir.identifier('')).toThrow(/non-empty/);
-		expect(() => ir.integerLiteral('')).toThrow(/integer_literal.content: text does not match/);
+		expect(() => ir.integerLiteral('')).toThrow(/integer_literal_decimal.content: text does not match/);
 	});
 
 	it('anchors the pattern: a valid prefix followed by more text is rejected', () => {
 		expect(() => ir.identifier('a b')).toThrow(/does not match/);
-		expect(() => ir.integerLiteral('12z')).toThrow(/integer_literal.content: text does not match/);
+		expect(() => ir.integerLiteral('12z')).toThrow(/integer_literal_decimal.content: text does not match/);
 		expect(() => ir.metavariable('x y')).toThrow(/metavariable.name: text does not match/);
 	});
 
@@ -26,7 +26,7 @@ describe('rust text-leaf factories always run their guard', () => {
 	});
 
 	it('takes the content of a token and never the delimiters it always carries', () => {
-		expect(() => ir.charLiteral("'a'")).toThrow(/char_literal.content: text does not match/);
+		expect(() => ir.charLiteral("'a'")).toThrow(/char_literal_plain.content: text does not match/);
 		expect(() => ir.metavariable('$x')).toThrow(/metavariable.name: text does not match/);
 	});
 });

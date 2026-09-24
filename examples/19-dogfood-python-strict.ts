@@ -63,5 +63,5 @@ export function mainDefStrict() {
 export function rebuildProbeSweepStrict() {
 	return ir.module
 		.strict(...importsStrict(), mainDefStrict(), callStatementStrict())
-		.$trivia({ leading: headerStrict() });
+		.$trivia.leading(...headerStrict());
 }

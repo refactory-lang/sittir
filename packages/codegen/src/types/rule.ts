@@ -39,6 +39,7 @@ export type RuleAnnotations = {
 	readonly spliced?: true;
 	readonly origin?: SeamOrigin;
 	readonly edgeLiterals?: readonly string[];
+	readonly tokenForm?: true;
 };
 
 export type RuleBase<Phase extends PhaseName = 'normalize'> = {
@@ -283,6 +284,14 @@ export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly kindId?: number;
 	readonly aliasedToId?: number;
 };
+
+export function aliasTargetOf(ref: SymbolRule<PhaseName>): string | undefined {
+	return ref.aliasedTo;
+}
+
+export function storageNameOf(ref: SymbolRule<PhaseName>): string {
+	return ref.name;
+}
 
 export type AliasRule<Phase extends PhaseName = 'link'> = Phase extends WrapperPhase
 	? RuleBase<Phase> & {

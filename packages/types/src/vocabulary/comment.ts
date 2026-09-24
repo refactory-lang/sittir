@@ -54,12 +54,12 @@ export namespace Comment {
 	export interface Line<G extends GrammarContext> extends Simplify<SubKindOf<V.Comment<G>>> {
 		// claimed by prt
 		readonly kind: 'comment.line';
-		readonly content?:
+		readonly content:
 			| V.Unmapped<'rust:line_comment_content'>
 			| V.Unmapped<'rust:line_comment_doc_inner'>
 			| V.Unmapped<'rust:line_comment_doc_outer'>
 			| V.Unmapped<'rust:line_comment_regular_dslash'>;
-		// r only
+		// pr only
 		// unmapped: <rust:line_comment_content> <rust:line_comment_doc_inner> <rust:line_comment_doc_outer> <rust:line_comment_regular_dslash>
 	}
 	export namespace Line {

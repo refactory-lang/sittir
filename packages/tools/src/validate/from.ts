@@ -29,7 +29,8 @@ import {
 	getChildFactoryArgs,
 	nodeToConfig,
 	loadNodeModel,
-	type TSTree
+	type TSTree,
+	type ValidatorSkip
 } from './common.ts';
 
 const FROM_MODULE_PATHS: Record<string, string> = {
@@ -184,6 +185,8 @@ export interface FromValidationResult {
 	undefinedCount: number;
 	divergentCount: number;
 	errors: FromValidationError[];
+	skips: ValidatorSkip[];
+	excluded: ValidatorSkip[];
 }
 
 export async function validateFrom(grammar: string, backend?: 'native' | 'js'): Promise<FromValidationResult> {
@@ -272,30 +275,50 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 			skip: 0,
 			undefinedCount: 0,
 			divergentCount: 0,
-			errors
+			errors,
+			skips: [],
+			excluded: []
 		};
 	}
 
 	const entries = loadCorpusEntries(grammar);
 	const testedKinds = new Set<string>();
 	let pass = 0;
-	let skip = 0;
 	let total = 0;
+	const skips: ValidatorSkip[] = [];
+	const excluded: ValidatorSkip[] = [];
+	const excludedKinds = new Set<string>();
 	let undefinedCount = 0;
 	let divergentCount = 0;
 
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;
-		if (tree1.rootNode.hasError) continue;
+		if (tree1.rootNode.hasError) {
+			excluded.push({ entry: entry.name, reason: 'parse-error', input: entry.source });
+			continue;
+		}
 
 		for (const kind of collectKinds(tree1.rootNode)) {
-			if (!(kind in fromMap) || !(kind in factoryMap)) continue;
+			if (!(kind in fromMap) || !(kind in factoryMap)) {
+				if (!excludedKinds.has(kind)) {
+					excludedKinds.add(kind);
+					excluded.push({
+						entry: entry.name,
+						kind,
+						reason: !(kind in fromMap) ? 'no-from-function' : 'no-factory-function'
+					});
+				}
+				continue;
+			}
 			if (testedKinds.has(kind)) continue;
 			testedKinds.add(kind);
 			total++;
 
 			const node1 = findFirst(tree1.rootNode, kind);
-			if (!node1) continue;
+			if (!node1) {
+				errors.push({ kind, severity: 'error', message: `no node of kind '${kind}' found in entry '${entry.name}'` });
+				continue;
+			}
 
 			let readData: AnyNodeData;
 			try {
@@ -474,7 +497,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						severity: 'error',
 						message: `factory build throws: ${(e as Error).message}`
 					});
-					skip++;
+					skips.push({ entry: entry.name, kind, reason: 'factory-build-throws' });
 					continue;
 				}
 
@@ -534,11 +557,13 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		grammar,
 		total,
 		pass,
-		fail: total - pass - skip,
-		skip,
+		fail: total - pass - skips.length,
+		skip: skips.length,
 		undefinedCount,
 		divergentCount,
-		errors
+		errors,
+		skips,
+		excluded
 	};
 }
 

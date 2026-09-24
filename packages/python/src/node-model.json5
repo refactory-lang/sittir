@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 283,
+  "nodeCount": 301,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -16,8 +16,11 @@
     "_suite",
     "_whitespace",
     "assignment",
+    "escape_sequence",
     "expression",
-    "keyword_identifier",
+    "float",
+    "integer",
+    "line_continuation",
     "parameter",
     "pattern",
     "primary_expression",
@@ -66,6 +69,22 @@
     "assignment_eq": "assignment.eq",
     "assignment_type": "assignment.type",
     "assignment_typed": "assignment.typed",
+    "escape_sequence_hex": "escapeSequence.hex",
+    "escape_sequence_line_break": "escapeSequence.lineBreak",
+    "escape_sequence_named": "escapeSequence.named",
+    "escape_sequence_octal": "escapeSequence.octal",
+    "escape_sequence_simple": "escapeSequence.simple",
+    "escape_sequence_unicode_fixed": "escapeSequence.unicodeFixed",
+    "escape_sequence_unicode_wide": "escapeSequence.unicodeWide",
+    "float_leading_point": "float.leadingPoint",
+    "float_point": "float.point",
+    "float_scientific": "float.scientific",
+    "integer_binary": "integer.binary",
+    "integer_decimal": "integer.decimal",
+    "integer_hex": "integer.hex",
+    "integer_octal": "integer.octal",
+    "line_continuation_newline": "lineContinuation.newline",
+    "line_continuation_nul": "lineContinuation.nul",
     "suite_block": "suite.block",
     "suite_empty": "suite.empty",
     "suite_inline": "suite.inline",
@@ -79,20 +98,8 @@
     "import_statement.import_list": {
       "names": "_import_list"
     },
-    "match_statement.body": {
-      "block": "_match_block"
-    },
-    "parenthesized_list_splat.content": {
-      "parenthesized_expression": "parenthesized_list_splat"
-    },
     "block.statements": {
       "simple_statements": "_simple_statements"
-    },
-    "as_pattern.alias": {
-      "as_pattern_target": "expression"
-    },
-    "format_specifier.content": {
-      "format_expression": "interpolation"
     }
   },
   "factorySlots": {
@@ -244,13 +251,24 @@
           "_not_operator",
           "_boolean_operator",
           "_lambda",
+          "_identifier",
           "_await",
           "_binary_operator",
-          "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -309,13 +327,24 @@
           "_not_operator",
           "_boolean_operator",
           "_lambda",
+          "_identifier",
           "_await",
           "_binary_operator",
-          "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -353,13 +382,24 @@
           "_not_operator",
           "_boolean_operator",
           "_lambda",
+          "_identifier",
           "_await",
           "_binary_operator",
-          "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -397,13 +437,24 @@
           "_not_operator",
           "_boolean_operator",
           "_lambda",
+          "_identifier",
           "_await",
           "_binary_operator",
-          "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -740,15 +791,12 @@
       }
     },
     "parameters": {
-      "parameters": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_parameters_elements"
-        ]
+        "nonEmpty": false
       }
     },
     "lambda_parameters": {
@@ -878,7 +926,7 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_parenthesized_expression",
+          "_parenthesized_list_splat",
           "_list_splat"
         ]
       }
@@ -938,13 +986,24 @@
           "_not_operator",
           "_boolean_operator",
           "_lambda",
+          "_identifier",
           "_await",
           "_binary_operator",
-          "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -1124,8 +1183,13 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_integer",
-          "_float"
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific"
         ]
       }
     },
@@ -1213,6 +1277,12 @@
         "nonEmpty": false,
         "wireKeys": [
           "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_subscript",
           "_attribute"
         ]
@@ -1227,6 +1297,12 @@
         "nonEmpty": false,
         "wireKeys": [
           "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_subscript",
           "_attribute"
         ]
@@ -1399,6 +1475,12 @@
         "nonEmpty": false,
         "wireKeys": [
           "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_subscript",
           "_attribute",
           "_list_splat_pattern",
@@ -1427,13 +1509,24 @@
           "_not_operator",
           "_boolean_operator",
           "_lambda",
+          "_identifier",
           "_await",
           "_binary_operator",
-          "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -1563,13 +1656,24 @@
           "_not_operator",
           "_boolean_operator",
           "_lambda",
+          "_identifier",
           "_await",
           "_binary_operator",
-          "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -1823,13 +1927,24 @@
           "_not_operator",
           "_boolean_operator",
           "_lambda",
+          "_identifier",
           "_await",
           "_binary_operator",
-          "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -1851,8 +1966,7 @@
           "_conditional_expression",
           "_named_expression",
           "_as_pattern",
-          "_yield",
-          "_list_splat"
+          "_yield"
         ]
       }
     },
@@ -1968,7 +2082,13 @@
         "nonEmpty": false,
         "wireKeys": [
           "_escape_interpolation",
-          "_escape_sequence",
+          "_escape_sequence_unicode_fixed",
+          "_escape_sequence_unicode_wide",
+          "_escape_sequence_hex",
+          "_escape_sequence_octal",
+          "_escape_sequence_line_break",
+          "_escape_sequence_simple",
+          "_escape_sequence_named",
           "_not_escape_sequence",
           "_string_fragment"
         ]
@@ -2004,15 +2124,6 @@
         "nonEmpty": false
       }
     },
-    "escape_sequence": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "format_specifier": {
       "content": {
         "unnamed": false,
@@ -2023,6 +2134,15 @@
         "wireKeys": [
           "_format_expression"
         ]
+      }
+    },
+    "keyword_identifier": {
+      "identifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "await": {
@@ -2109,13 +2229,24 @@
           "_not_operator",
           "_boolean_operator",
           "_lambda",
+          "_identifier",
           "_await",
           "_binary_operator",
-          "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -2167,6 +2298,12 @@
         "nonEmpty": true,
         "wireKeys": [
           "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_subscript",
           "_attribute",
           "_list_splat_pattern",
@@ -2205,13 +2342,24 @@
           "_not_operator",
           "_boolean_operator",
           "_lambda",
+          "_identifier",
           "_await",
           "_binary_operator",
-          "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -2351,6 +2499,224 @@
         "nonEmpty": false
       }
     },
+    "integer_hex": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false,
+        "registered": true
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "integer_octal": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false,
+        "registered": true
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "integer_binary": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false,
+        "registered": true
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "float_point": {
+      "integer": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "fraction": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "exponent": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "imaginary": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "float_leading_point": {
+      "integer": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "fraction": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "exponent": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "imaginary": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "float_scientific": {
+      "integer": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "exponent": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "imaginary": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_unicode_fixed": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_unicode_wide": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_hex": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_octal": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_line_break": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_simple": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_named": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "simple_pattern_negative": {
       "sign": {
         "unnamed": false,
@@ -2366,8 +2732,13 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_integer",
-          "_float"
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific"
         ]
       }
     },
@@ -2526,13 +2897,24 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
+          "_identifier",
           "_await",
           "_binary_operator",
-          "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -2566,13 +2948,24 @@
           "_not_operator",
           "_boolean_operator",
           "_lambda",
+          "_identifier",
           "_await",
           "_binary_operator",
-          "_identifier",
+          "_print_keyword",
+          "_exec_keyword",
+          "_async_keyword",
+          "_await_keyword",
+          "_type_keyword",
+          "_match_keyword",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -2595,6 +2988,24 @@
           "_named_expression",
           "_as_pattern"
         ]
+      }
+    },
+    "as_pattern_target": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "format_expression": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
       }
     }
   },
@@ -2669,8 +3080,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -2682,29 +3095,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -3174,7 +3596,13 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "identifier"
+        "async_keyword",
+        "await_keyword",
+        "exec_keyword",
+        "identifier",
+        "match_keyword",
+        "print_keyword",
+        "type_keyword"
       ]
     },
     {
@@ -3218,16 +3646,22 @@
       ],
       "bareAccepts": [
         "_patterns",
+        "async_keyword",
         "attribute",
+        "await_keyword",
         "default_parameter",
         "dictionary_splat_pattern",
+        "exec_keyword",
         "identifier",
         "keyword_separator",
         "list_pattern",
         "list_splat_pattern",
+        "match_keyword",
         "positional_separator",
+        "print_keyword",
         "subscript",
         "tuple_pattern",
+        "type_keyword",
         "typed_default_parameter",
         "typed_parameter"
       ]
@@ -3293,12 +3727,18 @@
       ],
       "bareAccepts": [
         "_patterns",
+        "async_keyword",
         "attribute",
+        "await_keyword",
+        "exec_keyword",
         "identifier",
         "list_pattern",
         "list_splat_pattern",
+        "match_keyword",
+        "print_keyword",
         "subscript",
-        "tuple_pattern"
+        "tuple_pattern",
+        "type_keyword"
       ]
     },
     {
@@ -3324,8 +3764,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -3337,29 +3779,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -3387,8 +3838,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -3400,29 +3853,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -3540,9 +4002,11 @@
         "assignment_eq",
         "assignment_type",
         "assignment_typed",
+        "async_keyword",
         "attribute",
         "augmented_assignment",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "break_statement",
@@ -3558,24 +4022,31 @@
         "dictionary_splat",
         "dotted_name",
         "ellipsis",
+        "exec_keyword",
         "exec_statement",
         "expression_list",
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "nonlocal_statement",
@@ -3584,6 +4055,7 @@
         "parenthesized_expression",
         "parenthesized_list_splat",
         "pass_statement",
+        "print_keyword",
         "print_statement",
         "print_statement_chevron",
         "print_statement_plain",
@@ -3597,6 +4069,7 @@
         "true",
         "tuple",
         "type_alias_statement",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -3748,8 +4221,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -3761,29 +4236,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -3913,8 +4397,10 @@
         "_yield_from_clause",
         "argument_list_elements",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -3926,30 +4412,39 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "keyword_argument",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -3984,8 +4479,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -3997,30 +4494,39 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "keyword_argument",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -4071,15 +4577,15 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
-            "expression"
+            "as_pattern_target"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "expression",
+              "name": "as_pattern_target",
               "parseKind": "as_pattern_target"
             }
           ]
@@ -4089,6 +4595,94 @@
       "factoryFields": [
         "expression",
         "alias"
+      ]
+    },
+    {
+      "kind": "as_pattern_target",
+      "modelType": "alias",
+      "typeName": "AsPatternTarget",
+      "factoryName": "asPatternTarget",
+      "irKey": "asPatternTarget",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "_collection_elements",
+        "_yield_from_clause",
+        "as_pattern",
+        "async_keyword",
+        "attribute",
+        "await",
+        "await_keyword",
+        "binary_operator",
+        "boolean_operator",
+        "call",
+        "comparison_operator",
+        "concatenated_string",
+        "conditional_expression",
+        "dictionary",
+        "dictionary_comprehension",
+        "dictionary_elements",
+        "dictionary_splat",
+        "ellipsis",
+        "exec_keyword",
+        "expression_list",
+        "false",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
+        "generator_expression",
+        "identifier",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
+        "lambda",
+        "list",
+        "list_comprehension",
+        "list_splat",
+        "list_splat_pattern",
+        "match_keyword",
+        "named_expression",
+        "none",
+        "not_operator",
+        "pair",
+        "parenthesized_expression",
+        "parenthesized_list_splat",
+        "print_keyword",
+        "set",
+        "set_comprehension",
+        "string",
+        "subscript",
+        "true",
+        "tuple",
+        "type_keyword",
+        "unary_operator",
+        "yield"
       ]
     },
     {
@@ -4679,8 +5273,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -4692,29 +5288,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -5641,8 +6246,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -5654,29 +6261,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -6456,8 +7072,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -6469,29 +7087,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -6624,8 +7251,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -6637,29 +7266,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -6770,8 +7408,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -6783,29 +7423,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -6892,8 +7541,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -6905,29 +7556,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -6969,8 +7629,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -6982,29 +7644,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -7024,7 +7695,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "verbatim",
+          "storage": "mixedEnum",
           "kinds": [
             "identifier",
             "subscript",
@@ -7036,6 +7707,42 @@
               "multiplicity": "single",
               "name": "identifier",
               "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "print",
+              "parseKind": "print_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "exec",
+              "parseKind": "exec_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "async_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "await",
+              "parseKind": "await_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "type_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "match",
+              "parseKind": "match_keyword"
             },
             {
               "kind": "node-ref",
@@ -7230,9 +7937,11 @@
         "assignment_eq",
         "assignment_type",
         "assignment_typed",
+        "async_keyword",
         "attribute",
         "augmented_assignment",
         "await",
+        "await_keyword",
         "binary_operator",
         "block",
         "boolean_operator",
@@ -7249,24 +7958,31 @@
         "dictionary_splat",
         "dotted_name",
         "ellipsis",
+        "exec_keyword",
         "exec_statement",
         "expression_list",
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "nonlocal_statement",
@@ -7275,6 +7991,7 @@
         "parenthesized_expression",
         "parenthesized_list_splat",
         "pass_statement",
+        "print_keyword",
         "print_statement",
         "print_statement_chevron",
         "print_statement_plain",
@@ -7291,6 +8008,7 @@
         "true",
         "tuple",
         "type_alias_statement",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -7339,11 +8057,32 @@
     },
     {
       "kind": "escape_sequence",
-      "modelType": "branch",
+      "modelType": "supertype",
       "typeName": "EscapeSequence",
-      "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "escape_sequence_hex",
+        "escape_sequence_line_break",
+        "escape_sequence_named",
+        "escape_sequence_octal",
+        "escape_sequence_simple",
+        "escape_sequence_unicode_fixed",
+        "escape_sequence_unicode_wide"
+      ]
+    },
+    {
+      "kind": "escape_sequence_hex",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceHex",
+      "factoryName": "escapeSequenceHex",
+      "irKey": "escapeSequenceHex",
       "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "content",
@@ -7362,6 +8101,7 @@
           ]
         }
       ],
+      "name": "escape_sequence_hex",
       "interior": {
         "entries": [
           {
@@ -7369,10 +8109,328 @@
           },
           {
             "slot": "content",
-            "pattern": "(?:(?:u[a-fA-F\\d]{4})|(?:U[a-fA-F\\d]{8})|(?:x[a-fA-F\\d]{2})|(?:\\d{1,3})|(?:\\r?\\n)|(?:['\"abfrntv\\\\])|(?:N\\{[^}]+\\}))"
+            "pattern": "(?:x[a-fA-F\\d]{2})"
           }
         ],
-        "regex": "^\\\\(?<content>(?:(?:u[a-fA-F\\d]{4})|(?:U[a-fA-F\\d]{8})|(?:x[a-fA-F\\d]{2})|(?:\\d{1,3})|(?:\\r?\\n)|(?:['\"abfrntv\\\\])|(?:N\\{[^}]+\\})))$",
+        "regex": "^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_line_break",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceLineBreak",
+      "factoryName": "escapeSequenceLineBreak",
+      "irKey": "escapeSequenceLineBreak",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_line_break",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:\\r?\\n)"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:\\r?\\n))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_named",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceNamed",
+      "factoryName": "escapeSequenceNamed",
+      "irKey": "escapeSequenceNamed",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_named",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:N\\{[^}]+\\})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:N\\{[^}]+\\}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_octal",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceOctal",
+      "factoryName": "escapeSequenceOctal",
+      "irKey": "escapeSequenceOctal",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_octal",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:\\d{1,3})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:\\d{1,3}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_simple",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceSimple",
+      "factoryName": "escapeSequenceSimple",
+      "irKey": "escapeSequenceSimple",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_simple",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:['\"abfrntv\\\\])"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:['\"abfrntv\\\\]))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_unicode_fixed",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceUnicodeFixed",
+      "factoryName": "escapeSequenceUnicodeFixed",
+      "irKey": "escapeSequenceUnicodeFixed",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_unicode_fixed",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:u[a-fA-F\\d]{4})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_unicode_wide",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceUnicodeWide",
+      "factoryName": "escapeSequenceUnicodeWide",
+      "irKey": "escapeSequenceUnicodeWide",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_unicode_wide",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:U[a-fA-F\\d]{8})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$",
         "slots": [
           {
             "name": "content",
@@ -7806,8 +8864,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -7819,29 +8879,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -7919,9 +8988,11 @@
         "assignment_eq",
         "assignment_type",
         "assignment_typed",
+        "async_keyword",
         "attribute",
         "augmented_assignment",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -7933,30 +9004,39 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -7987,8 +9067,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -8000,29 +9082,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -8085,9 +9176,11 @@
         "assignment_eq",
         "assignment_type",
         "assignment_typed",
+        "async_keyword",
         "attribute",
         "augmented_assignment",
         "await",
+        "await_keyword",
         "binary_operator",
         "block",
         "boolean_operator",
@@ -8104,24 +9197,31 @@
         "dictionary_splat",
         "dotted_name",
         "ellipsis",
+        "exec_keyword",
         "exec_statement",
         "expression_list",
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "nonlocal_statement",
@@ -8130,6 +9230,7 @@
         "parenthesized_expression",
         "parenthesized_list_splat",
         "pass_statement",
+        "print_keyword",
         "print_statement",
         "print_statement_chevron",
         "print_statement_plain",
@@ -8146,6 +9247,7 @@
         "true",
         "tuple",
         "type_alias_statement",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -8163,13 +9265,456 @@
     },
     {
       "kind": "float",
-      "modelType": "pattern",
+      "modelType": "supertype",
       "typeName": "Float",
-      "factoryName": "float",
       "irKey": "float",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "float_leading_point",
+        "float_point",
+        "float_scientific"
+      ]
+    },
+    {
+      "kind": "float_leading_point",
+      "modelType": "branch",
+      "typeName": "FloatLeadingPoint",
+      "factoryName": "floatLeadingPoint",
+      "irKey": "floatLeadingPoint",
       "hidden": false,
-      "leafPattern": "/^(?:(?:(?:(?:[0-9]+_?))+\\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))*\\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+)(?:(?:[jJ]))?)$/u",
-      "factoryShape": "text"
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "integer",
+          "propertyName": "integer",
+          "paramName": "integer",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "fraction",
+          "propertyName": "fraction",
+          "paramName": "fraction",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "marker",
+          "propertyName": "marker",
+          "paramName": "marker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "propertyName": "exponent",
+          "paramName": "exponent",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "imaginary",
+          "propertyName": "imaginary",
+          "paramName": "imaginary",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        }
+      ],
+      "name": "float_leading_point",
+      "interior": {
+        "entries": [
+          {
+            "slot": "integer",
+            "pattern": "(?:(?:[0-9]+_?))+",
+            "optional": true
+          },
+          {
+            "lit": "."
+          },
+          {
+            "slot": "fraction",
+            "pattern": "(?:(?:[0-9]+_?))+"
+          },
+          {
+            "slot": "marker",
+            "pattern": "(?:[eE][\\+-]?)",
+            "optional": true
+          },
+          {
+            "slot": "exponent",
+            "pattern": "(?:(?:[0-9]+_?))+",
+            "optional": true
+          },
+          {
+            "slot": "imaginary",
+            "pattern": "(?:[jJ])",
+            "optional": true
+          }
+        ],
+        "regex": "^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$",
+        "slots": [
+          {
+            "name": "integer",
+            "configKey": "integer"
+          },
+          {
+            "name": "fraction",
+            "configKey": "fraction"
+          },
+          {
+            "name": "marker",
+            "configKey": "marker"
+          },
+          {
+            "name": "exponent",
+            "configKey": "exponent"
+          },
+          {
+            "name": "imaginary",
+            "configKey": "imaginary"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "integer",
+        "fraction",
+        "marker",
+        "exponent",
+        "imaginary"
+      ]
+    },
+    {
+      "kind": "float_point",
+      "modelType": "branch",
+      "typeName": "FloatPoint",
+      "factoryName": "floatPoint",
+      "irKey": "floatPoint",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "integer",
+          "propertyName": "integer",
+          "paramName": "integer",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "fraction",
+          "propertyName": "fraction",
+          "paramName": "fraction",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "marker",
+          "propertyName": "marker",
+          "paramName": "marker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "propertyName": "exponent",
+          "paramName": "exponent",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "imaginary",
+          "propertyName": "imaginary",
+          "paramName": "imaginary",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        }
+      ],
+      "name": "float_point",
+      "interior": {
+        "entries": [
+          {
+            "slot": "integer",
+            "pattern": "(?:(?:[0-9]+_?))+"
+          },
+          {
+            "lit": "."
+          },
+          {
+            "slot": "fraction",
+            "pattern": "(?:(?:[0-9]+_?))+",
+            "optional": true
+          },
+          {
+            "slot": "marker",
+            "pattern": "(?:[eE][\\+-]?)",
+            "optional": true
+          },
+          {
+            "slot": "exponent",
+            "pattern": "(?:(?:[0-9]+_?))+",
+            "optional": true
+          },
+          {
+            "slot": "imaginary",
+            "pattern": "(?:[jJ])",
+            "optional": true
+          }
+        ],
+        "regex": "^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$",
+        "slots": [
+          {
+            "name": "integer",
+            "configKey": "integer"
+          },
+          {
+            "name": "fraction",
+            "configKey": "fraction"
+          },
+          {
+            "name": "marker",
+            "configKey": "marker"
+          },
+          {
+            "name": "exponent",
+            "configKey": "exponent"
+          },
+          {
+            "name": "imaginary",
+            "configKey": "imaginary"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "integer",
+        "fraction",
+        "marker",
+        "exponent",
+        "imaginary"
+      ]
+    },
+    {
+      "kind": "float_scientific",
+      "modelType": "branch",
+      "typeName": "FloatScientific",
+      "factoryName": "floatScientific",
+      "irKey": "floatScientific",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "integer",
+          "propertyName": "integer",
+          "paramName": "integer",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "marker",
+          "propertyName": "marker",
+          "paramName": "marker",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "propertyName": "exponent",
+          "paramName": "exponent",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "imaginary",
+          "propertyName": "imaginary",
+          "paramName": "imaginary",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        }
+      ],
+      "name": "float_scientific",
+      "interior": {
+        "entries": [
+          {
+            "slot": "integer",
+            "pattern": "(?:(?:[0-9]+_?))+"
+          },
+          {
+            "slot": "marker",
+            "pattern": "(?:[eE][\\+-]?)"
+          },
+          {
+            "slot": "exponent",
+            "pattern": "(?:(?:[0-9]+_?))+"
+          },
+          {
+            "slot": "imaginary",
+            "pattern": "(?:[jJ])",
+            "optional": true
+          }
+        ],
+        "regex": "^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>(?:[eE][\\+-]?))(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$",
+        "slots": [
+          {
+            "name": "integer",
+            "configKey": "integer"
+          },
+          {
+            "name": "marker",
+            "configKey": "marker"
+          },
+          {
+            "name": "exponent",
+            "configKey": "exponent"
+          },
+          {
+            "name": "imaginary",
+            "configKey": "imaginary"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "integer",
+        "marker",
+        "exponent",
+        "imaginary"
+      ]
     },
     {
       "kind": "for_in_clause",
@@ -8424,6 +9969,43 @@
       ]
     },
     {
+      "kind": "format_expression",
+      "modelType": "alias",
+      "typeName": "FormatExpression",
+      "factoryName": "formatExpression",
+      "irKey": "formatExpression",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "interpolation"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "interpolation",
+              "parseKind": "interpolation"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "interpolation"
+      ]
+    },
+    {
       "kind": "format_specifier",
       "modelType": "envelope",
       "typeName": "FormatSpecifier",
@@ -8440,7 +10022,7 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "interpolation"
+            "format_expression"
           ],
           "values": [
             {
@@ -8451,7 +10033,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "interpolation",
+              "name": "format_expression",
               "parseKind": "format_expression"
             }
           ]
@@ -8908,8 +10490,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -8921,29 +10505,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -9192,13 +10785,283 @@
     },
     {
       "kind": "integer",
-      "modelType": "pattern",
+      "modelType": "supertype",
       "typeName": "Integer",
-      "factoryName": "integer",
       "irKey": "integer",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal"
+      ]
+    },
+    {
+      "kind": "integer_binary",
+      "modelType": "branch",
+      "typeName": "IntegerBinary",
+      "factoryName": "integerBinary",
+      "irKey": "integerBinary",
       "hidden": false,
-      "leafPattern": "/^(?:(?:(?:0x|0X)(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?|(?:0o|0O)(?:(?:_?[0-7]+))+(?:(?:[Ll]))?|(?:0b|0B)(?:(?:_?[0-1]+))+(?:(?:[Ll]))?|(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?)))$/u",
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0b"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0B"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "integer_binary",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0b",
+              "0B"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:_?[0-1]+))+(?:(?:[Ll]))?"
+          }
+        ],
+        "regex": "^(?<prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "integer_decimal",
+      "modelType": "pattern",
+      "typeName": "IntegerDecimal",
+      "factoryName": "integerDecimal",
+      "irKey": "integerDecimal",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "leafPattern": "/^(?:(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?))$/u",
       "factoryShape": "text"
+    },
+    {
+      "kind": "integer_hex",
+      "modelType": "branch",
+      "typeName": "IntegerHex",
+      "factoryName": "integerHex",
+      "irKey": "integerHex",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0x"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0X"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "integer_hex",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0x",
+              "0X"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?"
+          }
+        ],
+        "regex": "^(?<prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "integer_octal",
+      "modelType": "branch",
+      "typeName": "IntegerOctal",
+      "factoryName": "integerOctal",
+      "irKey": "integerOctal",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0o"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0O"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "integer_octal",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0o",
+              "0O"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:_?[0-7]+))+(?:(?:[Ll]))?"
+          }
+        ],
+        "regex": "^(?<prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "interpolation",
@@ -9342,7 +11205,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "verbatim",
+          "storage": "mixedEnum",
           "kinds": [
             "identifier"
           ],
@@ -9351,6 +11214,42 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "print",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "exec",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "await",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "match",
               "parseKind": "identifier"
             }
           ]
@@ -9384,12 +11283,33 @@
     },
     {
       "kind": "keyword_identifier",
-      "modelType": "supertype",
+      "modelType": "envelope",
       "typeName": "KeywordIdentifier",
+      "factoryName": "keywordIdentifier",
       "irKey": "keywordIdentifier",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
+      "hidden": false,
+      "slots": [
+        {
+          "name": "identifier",
+          "propertyName": "identifier",
+          "paramName": "identifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "print",
+              "parseKind": "identifier"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
         "identifier"
       ]
     },
@@ -9666,16 +11586,22 @@
       "bareAccepts": [
         "_parameters",
         "_patterns",
+        "async_keyword",
         "attribute",
+        "await_keyword",
         "default_parameter",
         "dictionary_splat_pattern",
+        "exec_keyword",
         "identifier",
         "keyword_separator",
         "list_pattern",
         "list_splat_pattern",
+        "match_keyword",
         "positional_separator",
+        "print_keyword",
         "subscript",
         "tuple_pattern",
+        "type_keyword",
         "typed_default_parameter",
         "typed_parameter"
       ]
@@ -9764,12 +11690,44 @@
     },
     {
       "kind": "line_continuation",
-      "modelType": "pattern",
+      "modelType": "supertype",
       "typeName": "LineContinuation",
-      "factoryName": "lineContinuation",
       "irKey": "lineContinuation",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "line_continuation_newline",
+        "line_continuation_nul"
+      ]
+    },
+    {
+      "kind": "line_continuation_newline",
+      "modelType": "pattern",
+      "typeName": "LineContinuationNewline",
+      "factoryName": "lineContinuationNewline",
+      "irKey": "lineContinuationNewline",
       "hidden": false,
-      "leafPattern": "/^(?:\\\\(?:(?:\\r)?\\n|\\0))$/u",
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "leafPattern": "/^(?:\\\\(?:\\r)?\\n)$/u",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "line_continuation_nul",
+      "modelType": "punctuation",
+      "typeName": "LineContinuationNul",
+      "factoryName": "lineContinuationNul",
+      "irKey": "lineContinuationNul",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "isParameterless": true,
+      "stampExpression": "\"\\\\\\u0000\" as const",
+      "text": "\\\u0000",
       "factoryShape": "text"
     },
     {
@@ -9810,8 +11768,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -9823,29 +11783,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -9941,12 +11910,18 @@
       ],
       "bareAccepts": [
         "_patterns",
+        "async_keyword",
         "attribute",
+        "await_keyword",
+        "exec_keyword",
         "identifier",
         "list_pattern",
         "list_splat_pattern",
+        "match_keyword",
+        "print_keyword",
         "subscript",
-        "tuple_pattern"
+        "tuple_pattern",
+        "type_keyword"
       ]
     },
     {
@@ -10032,8 +12007,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -10045,29 +12022,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -10087,7 +12073,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "verbatim",
+          "storage": "mixedEnum",
           "kinds": [
             "identifier",
             "subscript",
@@ -10099,6 +12085,42 @@
               "multiplicity": "single",
               "name": "identifier",
               "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "print",
+              "parseKind": "print_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "exec",
+              "parseKind": "exec_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "async_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "await",
+              "parseKind": "await_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "type_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "match",
+              "parseKind": "match_keyword"
             },
             {
               "kind": "node-ref",
@@ -10282,7 +12304,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_match_block",
-              "parseKind": "block"
+              "parseKind": "match_block"
             }
           ]
         }
@@ -10404,7 +12426,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "verbatim",
+          "storage": "mixedEnum",
           "kinds": [
             "identifier"
           ],
@@ -10413,6 +12435,42 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "print",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "exec",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "await",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "match",
               "parseKind": "identifier"
             }
           ]
@@ -10549,8 +12607,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -10562,29 +12622,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -10683,9 +12752,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "parameters",
-          "propertyName": "parameters",
-          "paramName": "parameters",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -10706,21 +12775,27 @@
       "factoryShape": "forwarded",
       "forwardsTo": "_parameters",
       "factoryFields": [
-        "parameters"
+        "elements"
       ],
       "bareAccepts": [
         "_parameters",
         "_patterns",
+        "async_keyword",
         "attribute",
+        "await_keyword",
         "default_parameter",
         "dictionary_splat_pattern",
+        "exec_keyword",
         "identifier",
         "keyword_separator",
         "list_pattern",
         "list_splat_pattern",
+        "match_keyword",
         "positional_separator",
+        "print_keyword",
         "subscript",
         "tuple_pattern",
+        "type_keyword",
         "typed_default_parameter",
         "typed_parameter"
       ]
@@ -10743,8 +12818,7 @@
           "storage": "mixedEnum",
           "kinds": [
             "expression",
-            "yield",
-            "list_splat"
+            "yield"
           ],
           "values": [
             {
@@ -10758,12 +12832,6 @@
               "multiplicity": "single",
               "name": "yield",
               "parseKind": "yield"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "list_splat",
-              "parseKind": "list_splat"
             }
           ]
         }
@@ -10776,8 +12844,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -10789,29 +12859,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -10841,7 +12920,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "parenthesized_list_splat",
-              "parseKind": "parenthesized_expression"
+              "parseKind": "parenthesized_list_splat"
             },
             {
               "kind": "node-ref",
@@ -10860,8 +12939,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -10873,29 +12954,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -10931,12 +13021,18 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
+        "async_keyword",
         "attribute",
+        "await_keyword",
+        "exec_keyword",
         "identifier",
         "list_pattern",
         "list_splat_pattern",
+        "match_keyword",
+        "print_keyword",
         "subscript",
-        "tuple_pattern"
+        "tuple_pattern",
+        "type_keyword"
       ]
     },
     {
@@ -11029,12 +13125,18 @@
       ],
       "bareAccepts": [
         "_patterns",
+        "async_keyword",
         "attribute",
+        "await_keyword",
+        "exec_keyword",
         "identifier",
         "list_pattern",
         "list_splat_pattern",
+        "match_keyword",
+        "print_keyword",
         "subscript",
-        "tuple_pattern"
+        "tuple_pattern",
+        "type_keyword"
       ]
     },
     {
@@ -11117,14 +13219,17 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "call",
         "concatenated_string",
         "dictionary",
         "dictionary_comprehension",
         "ellipsis",
+        "exec_keyword",
         "false",
         "float",
         "generator_expression",
@@ -11133,14 +13238,17 @@
         "list",
         "list_comprehension",
         "list_splat_pattern",
+        "match_keyword",
         "none",
         "parenthesized_expression",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator"
       ]
     },
@@ -11200,8 +13308,10 @@
         "_print_arguments",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -11213,23 +13323,31 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "print_statement_chevron",
         "print_statement_plain",
         "set",
@@ -11238,6 +13356,7 @@
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -11342,8 +13461,10 @@
         "_print_arguments",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -11355,29 +13476,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -11585,8 +13715,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -11598,29 +13730,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -11673,8 +13814,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -11686,29 +13829,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -11866,9 +14018,11 @@
         "assignment_eq",
         "assignment_type",
         "assignment_typed",
+        "async_keyword",
         "attribute",
         "augmented_assignment",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "break_statement",
@@ -11884,24 +14038,31 @@
         "dictionary_splat",
         "dotted_name",
         "ellipsis",
+        "exec_keyword",
         "exec_statement",
         "expression_list",
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "nonlocal_statement",
@@ -11910,6 +14071,7 @@
         "parenthesized_expression",
         "parenthesized_list_splat",
         "pass_statement",
+        "print_keyword",
         "print_statement",
         "print_statement_chevron",
         "print_statement_plain",
@@ -11922,6 +14084,7 @@
         "true",
         "tuple",
         "type_alias_statement",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -12087,8 +14250,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -12100,29 +14265,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -12477,8 +14651,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -12490,29 +14666,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -12603,8 +14788,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -12616,23 +14803,31 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "slice",
@@ -12640,6 +14835,7 @@
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -12777,9 +14973,11 @@
         "assignment_eq",
         "assignment_type",
         "assignment_typed",
+        "async_keyword",
         "attribute",
         "augmented_assignment",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "break_statement",
@@ -12795,24 +14993,31 @@
         "dictionary_splat",
         "dotted_name",
         "ellipsis",
+        "exec_keyword",
         "exec_statement",
         "expression_list",
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "nonlocal_statement",
@@ -12821,6 +15026,7 @@
         "parenthesized_expression",
         "parenthesized_list_splat",
         "pass_statement",
+        "print_keyword",
         "print_statement",
         "print_statement_chevron",
         "print_statement_plain",
@@ -12834,6 +15040,7 @@
         "true",
         "tuple",
         "type_alias_statement",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -13006,8 +15213,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -13019,29 +15228,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -13082,12 +15300,18 @@
       ],
       "bareAccepts": [
         "_patterns",
+        "async_keyword",
         "attribute",
+        "await_keyword",
+        "exec_keyword",
         "identifier",
         "list_pattern",
         "list_splat_pattern",
+        "match_keyword",
+        "print_keyword",
         "subscript",
-        "tuple_pattern"
+        "tuple_pattern",
+        "type_keyword"
       ]
     },
     {
@@ -13162,8 +15386,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -13176,18 +15402,25 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "generic_type",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "member_type",
         "named_expression",
         "none",
@@ -13195,6 +15428,7 @@
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "splat_type",
@@ -13202,6 +15436,7 @@
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "union_type",
         "yield"
@@ -13322,8 +15557,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -13336,18 +15573,25 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "generic_type",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "member_type",
         "named_expression",
         "none",
@@ -13355,6 +15599,7 @@
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "splat_type",
@@ -13363,6 +15608,7 @@
         "true",
         "tuple",
         "type",
+        "type_keyword",
         "types",
         "unary_operator",
         "union_type",
@@ -13540,8 +15786,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -13554,18 +15802,25 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "generic_type",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "member_type",
         "named_expression",
         "none",
@@ -13573,6 +15828,7 @@
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "splat_type",
@@ -13581,6 +15837,7 @@
         "true",
         "tuple",
         "type",
+        "type_keyword",
         "unary_operator",
         "union_type",
         "yield"
@@ -13980,8 +16237,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -13993,29 +16252,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "with_item",
         "yield"
@@ -14063,8 +16331,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -14076,29 +16346,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "with_clause_with_items",
         "with_item",
@@ -14131,8 +16410,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -14144,29 +16425,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "with_item",
         "yield"
@@ -14209,8 +16499,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -14222,29 +16514,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]
@@ -14393,8 +16694,10 @@
         "_collection_elements",
         "_yield_from_clause",
         "as_pattern",
+        "async_keyword",
         "attribute",
         "await",
+        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -14406,29 +16709,38 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
+        "exec_keyword",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
+        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
+        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
+        "type_keyword",
         "unary_operator",
         "yield"
       ]

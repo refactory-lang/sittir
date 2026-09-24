@@ -30,7 +30,7 @@ export const synonym = {
 		}
 	),
 	type(name: string): ReturnType<typeof F.buildTypeIdentifier> {
-		return F.buildTypeIdentifier(name);
+		return F.buildTypeIdentifier(F.buildIdentifier(name));
 	},
 	identifier(name: string): ReturnType<typeof F.buildIdentifier> {
 		return F.buildIdentifier(name);
@@ -150,21 +150,61 @@ export const tokenPattern: {
 	readonly repetition: typeof F.tokenRepetitionPattern;
 	readonly binding: typeof F.tokenBindingPattern;
 	readonly metavariable: typeof F.metavariable;
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
+	readonly float: typeof F.buildFloatLiteral;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
+	readonly self: typeof F.buildSelf;
+	readonly super: typeof F.buildSuper;
+	readonly crate: typeof F.buildCrate;
 } = {
 	tree: F.tokenTreePattern,
 	repetition: F.tokenRepetitionPattern,
 	binding: F.tokenBindingPattern,
-	metavariable: F.metavariable
+	metavariable: F.metavariable,
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutableSpecifier: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate
 };
 
 export const tokens: {
 	readonly tokenTree: typeof F.tokenTree;
 	readonly tokenRepetition: typeof F.tokenRepetition;
 	readonly metavariable: typeof F.metavariable;
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
+	readonly float: typeof F.buildFloatLiteral;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
+	readonly self: typeof F.buildSelf;
+	readonly super: typeof F.buildSuper;
+	readonly crate: typeof F.buildCrate;
 } = {
 	tokenTree: F.tokenTree,
 	tokenRepetition: F.tokenRepetition,
-	metavariable: F.metavariable
+	metavariable: F.metavariable,
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutableSpecifier: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate
 };
 
 export const nonSpecialToken: {
@@ -193,10 +233,10 @@ export const nonSpecialToken: {
 
 export const useClause: {
 	readonly self: typeof F.buildSelf;
-	readonly identifier: typeof F.buildIdentifier;
 	readonly metavariable: typeof F.metavariable;
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
+	readonly identifier: typeof F.buildIdentifier;
 	readonly scopedIdentifier: typeof F.scopedIdentifier;
 	readonly as: typeof F.useAsClause;
 	readonly list: typeof F.useList;
@@ -204,10 +244,10 @@ export const useClause: {
 	readonly wildcard: typeof F.useWildcard;
 } = {
 	self: F.buildSelf,
-	identifier: F.buildIdentifier,
 	metavariable: F.metavariable,
 	super: F.buildSuper,
 	crate: F.buildCrate,
+	identifier: F.buildIdentifier,
 	scopedIdentifier: F.scopedIdentifier,
 	as: F.useAsClause,
 	list: F.useList,
@@ -226,7 +266,6 @@ export const type: {
 	readonly unit: typeof F.buildUnitType;
 	readonly array: typeof F.arrayType;
 	readonly function: typeof F.functionType;
-	readonly identifier: typeof F.buildIdentifier;
 	readonly macroInvocation: typeof F.macroInvocation;
 	readonly never: typeof F.buildNeverType;
 	readonly dynamic: typeof F.dynamicType;
@@ -243,7 +282,6 @@ export const type: {
 	unit: F.buildUnitType,
 	array: F.arrayType,
 	function: F.functionType,
-	identifier: F.buildIdentifier,
 	macroInvocation: F.macroInvocation,
 	never: F.buildNeverType,
 	dynamic: F.dynamicType,
@@ -460,9 +498,53 @@ export const expressionEndingWithBlock: {
 };
 
 export const delimTokens: {
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
+	readonly float: typeof F.buildFloatLiteral;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
+	readonly self: typeof F.buildSelf;
+	readonly super: typeof F.buildSuper;
+	readonly crate: typeof F.buildCrate;
 	readonly tokenTree: typeof F.delimTokenTree;
 } = {
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutableSpecifier: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate,
 	tokenTree: F.delimTokenTree
+};
+
+export const nonDelimToken: {
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
+	readonly float: typeof F.buildFloatLiteral;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
+	readonly self: typeof F.buildSelf;
+	readonly super: typeof F.buildSuper;
+	readonly crate: typeof F.buildCrate;
+} = {
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutableSpecifier: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate
 };
 
 export const condition: {
@@ -639,17 +721,17 @@ export const literalPattern: {
 
 export const path: {
 	readonly self: typeof F.buildSelf;
-	readonly identifier: typeof F.buildIdentifier;
 	readonly metavariable: typeof F.metavariable;
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
+	readonly identifier: typeof F.buildIdentifier;
 	readonly scopedIdentifier: typeof F.scopedIdentifier;
 } = {
 	self: F.buildSelf,
-	identifier: F.buildIdentifier,
 	metavariable: F.metavariable,
 	super: F.buildSuper,
 	crate: F.buildCrate,
+	identifier: F.buildIdentifier,
 	scopedIdentifier: F.scopedIdentifier
 };
 
@@ -659,7 +741,6 @@ export const ir: {
 	readonly macroRule: typeof F.macroRule;
 	readonly tokenBindingPattern: typeof F.tokenBindingPattern;
 	readonly tokenRepetitionPattern: typeof F.tokenRepetitionPattern;
-	readonly tokenTree: typeof F.tokenTree;
 	readonly tokenRepetition: typeof F.tokenRepetition;
 	readonly attributeItem: typeof F.attributeItem;
 	readonly innerAttributeItem: typeof F.innerAttributeItem;
@@ -775,11 +856,8 @@ export const ir: {
 	readonly capturedPattern: typeof F.capturedPattern;
 	readonly referencePattern: typeof F.referencePattern;
 	readonly negativeLiteral: typeof F.negativeLiteral;
-	readonly integerLiteral: typeof F.integerLiteral;
 	readonly stringLiteral: typeof F.stringLiteral;
 	readonly rawStringLiteral: typeof F.rawStringLiteral;
-	readonly charLiteral: typeof F.charLiteral;
-	readonly escapeSequence: typeof F.escapeSequence;
 	readonly lineComment: typeof F.lineComment;
 	readonly blockComment: typeof F.blockComment;
 	readonly shebang: typeof F.shebang;
@@ -806,6 +884,7 @@ export const ir: {
 	readonly tupleExpressionElements: typeof F.tupleExpressionElements;
 	readonly macroDefinition: typeof F.macroDefinition;
 	readonly tokenTreePattern: typeof F.tokenTreePattern;
+	readonly tokenTree: typeof F.tokenTree;
 	readonly modItem: typeof F.modItem;
 	readonly foreignModItem: typeof F.foreignModItem;
 	readonly structItem: typeof F.structItem;
@@ -819,6 +898,9 @@ export const ir: {
 	readonly fieldPattern: typeof F.fieldPattern;
 	readonly rangePattern: typeof F.rangePattern;
 	readonly orPattern: typeof F.orPattern;
+	readonly integerLiteral: typeof F.integerLiteral;
+	readonly charLiteral: typeof F.charLiteral;
+	readonly escapeSequence: typeof F.escapeSequence;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly unitType: typeof F.buildUnitType;
 	readonly neverType: typeof F.buildNeverType;
@@ -853,7 +935,6 @@ export const ir: {
 	readonly break: typeof F.breakExpression;
 	readonly call: typeof F.callExpression;
 	readonly captured: typeof F.capturedPattern;
-	readonly char: typeof F.charLiteral;
 	readonly compoundAssignment: typeof F.compoundAssignmentExpr;
 	readonly const: typeof F.constItem;
 	readonly continue: typeof F.continueExpression;
@@ -871,7 +952,6 @@ export const ir: {
 	readonly if: typeof F.ifExpression;
 	readonly index: typeof F.indexExpression;
 	readonly innerAttribute: typeof F.innerAttributeItem;
-	readonly integer: typeof F.integerLiteral;
 	readonly let: typeof F.letDeclaration;
 	readonly list: typeof F.useList;
 	readonly loop: typeof F.loopExpression;
@@ -916,6 +996,7 @@ export const ir: {
 	readonly expression: typeof expression;
 	readonly expressionEndingWithBlock: typeof expressionEndingWithBlock;
 	readonly delimTokens: typeof delimTokens;
+	readonly nonDelimToken: typeof nonDelimToken;
 	readonly condition: typeof condition;
 	readonly pattern: typeof pattern;
 	readonly literal: typeof literal;
@@ -929,7 +1010,6 @@ export const ir: {
 	macroRule: F.macroRule,
 	tokenBindingPattern: F.tokenBindingPattern,
 	tokenRepetitionPattern: F.tokenRepetitionPattern,
-	tokenTree: F.tokenTree,
 	tokenRepetition: F.tokenRepetition,
 	attributeItem: F.attributeItem,
 	innerAttributeItem: F.innerAttributeItem,
@@ -1045,11 +1125,8 @@ export const ir: {
 	capturedPattern: F.capturedPattern,
 	referencePattern: F.referencePattern,
 	negativeLiteral: F.negativeLiteral,
-	integerLiteral: F.integerLiteral,
 	stringLiteral: F.stringLiteral,
 	rawStringLiteral: F.rawStringLiteral,
-	charLiteral: F.charLiteral,
-	escapeSequence: F.escapeSequence,
 	lineComment: F.lineComment,
 	blockComment: F.blockComment,
 	shebang: F.shebang,
@@ -1076,6 +1153,7 @@ export const ir: {
 	tupleExpressionElements: F.tupleExpressionElements,
 	macroDefinition: F.macroDefinition,
 	tokenTreePattern: F.tokenTreePattern,
+	tokenTree: F.tokenTree,
 	modItem: F.modItem,
 	foreignModItem: F.foreignModItem,
 	structItem: F.structItem,
@@ -1089,6 +1167,9 @@ export const ir: {
 	fieldPattern: F.fieldPattern,
 	rangePattern: F.rangePattern,
 	orPattern: F.orPattern,
+	integerLiteral: F.integerLiteral,
+	charLiteral: F.charLiteral,
+	escapeSequence: F.escapeSequence,
 
 	// Keyword factories
 	emptyStatement: F.buildEmptyStatement,
@@ -1129,7 +1210,6 @@ export const ir: {
 	break: F.breakExpression,
 	call: F.callExpression,
 	captured: F.capturedPattern,
-	char: F.charLiteral,
 	compoundAssignment: F.compoundAssignmentExpr,
 	const: F.constItem,
 	continue: F.continueExpression,
@@ -1147,7 +1227,6 @@ export const ir: {
 	if: F.ifExpression,
 	index: F.indexExpression,
 	innerAttribute: F.innerAttributeItem,
-	integer: F.integerLiteral,
 	let: F.letDeclaration,
 	list: F.useList,
 	loop: F.loopExpression,
@@ -1194,6 +1273,7 @@ export const ir: {
 	expression,
 	expressionEndingWithBlock,
 	delimTokens,
+	nonDelimToken,
 	condition,
 	pattern,
 	literal,

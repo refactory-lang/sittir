@@ -1185,7 +1185,28 @@
 			"field": "captured_pattern_after"
 		}
 	],
-	"char_literal": [
+	"char_literal_escaped": [
+		{
+			"kind": "slot",
+			"name": "b"
+		},
+		{
+			"kind": "text",
+			"text": "'"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": "'"
+		}
+	],
+	"char_literal_plain": [
 		{
 			"kind": "slot",
 			"name": "b"
@@ -2050,7 +2071,46 @@
 			"field": "enum_variant_list_elements_after"
 		}
 	],
-	"escape_sequence": [
+	"escape_sequence_hex": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_simple": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_unicode_braced": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_unicode_fixed": [
 		{
 			"kind": "text",
 			"text": "\\"
@@ -2345,6 +2405,12 @@
 		{
 			"kind": "seam",
 			"field": "field_expression_after"
+		}
+	],
+	"field_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"field_initializer": [
@@ -3698,7 +3764,76 @@
 			"field": "inner_attribute_item_after"
 		}
 	],
-	"integer_literal": [
+	"integer_literal_binary": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "suffix",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "suffix"
+						}
+					]
+				}
+			]
+		}
+	],
+	"integer_literal_decimal": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "suffix",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "suffix"
+						}
+					]
+				}
+			]
+		}
+	],
+	"integer_literal_hex": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "suffix",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "suffix"
+						}
+					]
+				}
+			]
+		}
+	],
+	"integer_literal_octal": [
 		{
 			"kind": "slot",
 			"name": "content"
@@ -4403,9 +4538,6 @@
 		{
 			"kind": "text",
 			"text": "=>"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",
@@ -5838,6 +5970,12 @@
 			"text": "\n"
 		}
 	],
+	"shorthand_field_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"shorthand_field_initializer": [
 		{
 			"kind": "seam",
@@ -6557,12 +6695,6 @@
 			"field": "token_repetition_pattern_after"
 		}
 	],
-	"token_tree": [
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
 	"token_tree_brace": [
 		{
 			"kind": "seam",
@@ -7199,6 +7331,12 @@
 		{
 			"kind": "seam",
 			"field": "type_cast_expression_after"
+		}
+	],
+	"type_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"type_item": [

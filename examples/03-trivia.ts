@@ -8,7 +8,7 @@ export function attachDocComment() {
 			parameters: ir.parameters.strict(),
 			body: ir.block.strict(),
 		})
-		.$trivia(ir.lineComment.docOuter('Entry point.'));
+		.$trivia.leading(ir.lineComment.docOuter('Entry point.'));
 
 	return fn.$render();
 }
@@ -19,7 +19,5 @@ export function attachLeadingTrivia() {
 		name: 'main',
 		parameters: ir.parameters.strict(),
 		body: ir.block.strict(),
-	}).$trivia({
-		leading: [ir.lineComment.docOuter('Main entry point.')],
-	});
+	}).$trivia.leading(ir.lineComment.docOuter('Main entry point.'));
 }

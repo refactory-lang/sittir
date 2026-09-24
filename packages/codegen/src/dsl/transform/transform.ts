@@ -114,36 +114,35 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 		const segments = parsePath(String(key));
 		if (isArmDefault(value)) assertChoiceArmPath(rule, String(key), segments);
 		rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
+		if (isArmDefault(value)) rule = clearSiblingDefaults(rule, segments);
 	}
-	if (variantEntries.length > 0) {
-		rule = applyVariantPatches(hoistTokenChoiceForVariants(rule, variantEntries), variantEntries);
+	if (variantEntries.length > 0) rule = applyVariantPatches(rule, variantEntries);
+	for (const [key, value] of variantEntries) {
+		if (value.default === true) rule = clearSiblingDefaults(rule, parsePath(key));
 	}
 	return rule;
 }
 
-function isStringLedSeq(arm: RuntimeRule): boolean {
-	const a = arm as { type?: string; members?: RuntimeRule[] };
-	return a.type === 'SEQ' && Array.isArray(a.members) && (a.members[0] as { type?: string } | undefined)?.type === 'STRING';
+function clearSiblingDefaults(rule: RuntimeRule, segments: readonly PathSegment[]): RuntimeRule {
+	const last = segments[segments.length - 1];
+	if (last?.kind !== 'index') return rule;
+	return applyPath(rule, segments.slice(0, -1), (parent) => {
+		const members = (parent as { members?: RuntimeRule[] }).members;
+		if (members === undefined) return parent;
+		return {
+			...parent,
+			members: members.map((m, i) => (i === last.value || !isDefaultArm(m) ? m : dropDefault(m)))
+		} as RuntimeRule;
+	});
 }
 
-function hoistTokenChoiceForVariants(
-	rule: RuntimeRule,
-	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
-): RuntimeRule {
-	const wrapper = rule as { type?: string; content?: RuntimeRule };
-	if (wrapper.type !== 'TOKEN' && wrapper.type !== 'IMMEDIATE_TOKEN') return rule;
-	const choice = wrapper.content as { type?: string; members?: RuntimeRule[] } | undefined;
-	if (choice?.type !== 'CHOICE' || !Array.isArray(choice.members)) return rule;
-	const arms = choice.members;
-	const named = variantEntries.map(([key]) => parsePath(key));
-	if (!named.every((segs) => segs.length === 1 && segs[0]!.kind === 'index')) return rule;
-	const offending = arms.findIndex((arm) => !isStringLedSeq(arm));
-	if (offending >= 0) {
-		throw new Error(
-			`variant() on the arms of a token choice: arm ${offending} of '${wireGetCurrentRuleKind() ?? '(unknown)'}' is not a seq led by a string`
-		);
-	}
-	return { ...(choice as object), members: arms.map((arm) => ({ ...(wrapper as object), content: arm })) } as unknown as RuntimeRule;
+function dropDefault(rule: RuntimeRule): RuntimeRule {
+	const strip = (node: RuntimeRule): RuntimeRule => {
+		const { default: _drop, ...rest } = (((node as { annotations?: RuleAnnotations }).annotations) ?? {}) as RuleAnnotations & { default?: true };
+		return { ...node, annotations: rest } as RuntimeRule;
+	};
+	const node = rule as { type?: string; content?: RuntimeRule };
+	return node.type === 'ALIAS' && node.content !== undefined ? ({ ...rule, content: strip(node.content) } as RuntimeRule) : strip(rule);
 }
 
 function assertChoiceArmPath(rule: RuntimeRule, key: string, segments: readonly PathSegment[]): void {
@@ -187,7 +186,12 @@ function applyVariantPatches(
 	for (const [key, value] of ordered) {
 		if (hoisted?.consumed.has(key)) continue;
 		const segments = parsePath(key);
-		result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack));
+		try {
+			result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack));
+		} catch (error) {
+			if (error instanceof Error) error.message = `${wireGetCurrentRuleKind()} patch ${key}: ${error.message}`;
+			throw error;
+		}
 	}
 	registerIfPureVariantChoice(result);
 	return result;
@@ -615,7 +619,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 			throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`);
 		}
 		const name = polymorphVisibleName(parentKind, variantMintName(patch));
-		const annotated = (rule: unknown): RuntimeRule => withVariantAnnotation(rule, patch.name, parentKind);
+		const annotated = (rule: unknown): RuntimeRule => withVariantAnnotation(rule, patch.name, parentKind, patch.default === true ? { annotations: { default: true } } : undefined);
 		const lift = enrichLiftArmOf(originalMember);
 		if (lift !== null) return annotated(renameEnrichLift(originalMember, lift, name, name));
 		if ((originalMember as { type?: string }).type === 'ALIAS') {

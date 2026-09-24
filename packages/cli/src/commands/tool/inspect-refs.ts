@@ -1,6 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
-import { inspectRefs as runInspectRefs } from '@sittir/tools';
 
 export const inspectRefs: CommandModule = {
 	name: 'inspect-refs',
@@ -12,6 +11,7 @@ export const inspectRefs: CommandModule = {
 			.option('--base', 'Use base grammar.js instead of overrides')
 			.option('--limit <n>', 'Max entries per section (suggestions mode)', '10')
 			.action(async (opts: { grammar?: string; mode?: string; symbol?: string; base?: boolean; limit?: string }) => {
+				const { inspectRefs: runInspectRefs } = await import('@sittir/tools');
 				const code = await runInspectRefs({
 					mode: opts.mode ?? 'refs',
 					grammar: opts.grammar ?? 'rust',

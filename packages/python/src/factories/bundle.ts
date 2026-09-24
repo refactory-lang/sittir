@@ -109,7 +109,6 @@ export const concatenatedString = bundle(F.buildConcatenatedString, C.coerceToCo
 export const string = bundle(F.buildString, C.coerceToString);
 export const stringContent = bundle(F.buildStringContent, C.coerceToStringContent);
 export const interpolation = bundle(F.buildInterpolation, C.coerceToInterpolation);
-export const escapeSequence = bundle(F.buildEscapeSequence, C.coerceToEscapeSequence);
 export const formatSpecifier = bundle(F.buildFormatSpecifier, C.coerceToFormatSpecifier);
 export const await_ = bundle(F.buildAwait, C.coerceToAwait);
 export const comment = bundle(F.buildComment, C.coerceToComment);

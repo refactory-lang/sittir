@@ -21,7 +21,7 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 
 	it('prints a leading comment as verbatim trivia', async () => {
 		const source = await emitFactorySourceText('rust', '// hello\nfn main() {}\n', 'rebuildMain');
-		expect(source).toContain('$trivia({ leading: ["// hello"] })');
+		expect(source).toContain('$trivia.leading("// hello")');
 	});
 	it('prints a token tree through its form with kind-id punctuation', async () => {
 		const source = await emitFactorySourceText('rust', '#[derive(Debug, Clone)]\nstruct S;\n', 'rebuildDerive');

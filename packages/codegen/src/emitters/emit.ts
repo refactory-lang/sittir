@@ -283,6 +283,7 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 			case 'envelope':
 			case 'branch':
 			case 'polymorph':
+			case 'alias':
 				if (fromEmission === 'emit') fromEmitter.emitBranch(node);
 				if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
 				if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
