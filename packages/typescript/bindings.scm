@@ -260,6 +260,14 @@
 (template_string) @literal.template
 (regex) @literal.regex
 (number) @literal.number
+(number_decimal) @literal.number.integer
+(number_hex) @literal.number.integer.hex
+(number_binary) @literal.number.integer
+(number_octal) @literal.number.integer
+(number_bigint) @literal.number.integer
+(number_float_point) @literal.number.float
+(number_float_leading_point) @literal.number.float
+(number_float_scientific) @literal.number.float
 (true) @literal.boolean.true
 (false) @literal.boolean.false
 (null) @literal.null

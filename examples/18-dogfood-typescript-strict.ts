@@ -46,8 +46,7 @@ export function importTypesStrict() {
 			),
 			source: ir.string.single.strict(ir.unescapedSingleStringFragment('@sittir/types')),
 		},
-		terminator: ';',
-	});
+	}).$with.terminator(TSKindId.Semi);
 }
 
 /** The JSDoc block that leads `applyFormat`. */
@@ -107,7 +106,7 @@ export function rebuildFormatStrict() {
 	return ir.program.strict({
 		statements: [
 			importTypesStrict(),
-			applyFormatStrict().$trivia({ leading: [applyFormatDocStrict()] }),
+			applyFormatStrict().$trivia.leading(applyFormatDocStrict()),
 			applyBoundaryStrict(),
 		],
 	});

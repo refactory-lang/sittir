@@ -5,7 +5,7 @@ describe('python text-leaf factories always run their guard', () => {
 	it('builds text that matches the whole token', () => {
 		expect(() => ir.identifier('abc')).not.toThrow();
 		expect(ir.comment(' hello').$render!()).toBe('# hello');
-		expect(() => ir.integer('0x1F')).not.toThrow();
+		expect(() => ir.integer.hex({ content: '1F' }, { prefix: '0x' })).not.toThrow();
 	});
 
 	it('rejects empty text', () => {
@@ -23,6 +23,6 @@ describe('python text-leaf factories always run their guard', () => {
 
 	it('takes the content of a structured token and the marker is written for it', () => {
 		expect(ir.comment('').$render!()).toBe('#');
-		expect(() => ir.escapeSequence('q')).toThrow(/escape_sequence.content: text does not match/);
+		expect(() => ir.escapeSequence('q')).toThrow(/escape_sequence_simple.content: text does not match/);
 	});
 });

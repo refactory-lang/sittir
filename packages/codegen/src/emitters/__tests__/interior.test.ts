@@ -11,6 +11,10 @@ describe('interiorEntryPattern', () => {
 		expect(interiorEntryPattern({ enum: 'suffix', values: ['u8', 'u16'], optional: true })).toBe('(?<suffix>u16|u8)?');
 		expect(interiorEntryPattern({ slot: 'content', pattern: '[a-z]+' })).toBe('(?<content>[a-z]+)');
 	});
+
+	it('makes an optional pattern slot an optional group', () => {
+		expect(interiorEntryPattern({ slot: 'fraction', pattern: '\\d+', optional: true })).toBe('(?<fraction>\\d+)?');
+	});
 });
 
 describe('assertUnambiguous', () => {

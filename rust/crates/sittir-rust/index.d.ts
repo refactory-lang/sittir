@@ -169,7 +169,7 @@ export interface AssignmentExpressionTransport {
 
 export interface AssociatedTypeTransport {
   '$_trivia'?: TransportTrivia
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<TypeIdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _bounds?: SlotValue<TraitBoundsTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
@@ -394,7 +394,13 @@ export interface CapturedPatternTransport {
   _captured_pattern_after?: number
 }
 
-export interface CharLiteralTransport {
+export interface CharLiteralEscapedTransport {
+  '$_trivia'?: TransportTrivia
+  _b?: boolean
+  _content: string
+}
+
+export interface CharLiteralPlainTransport {
   '$_trivia'?: TransportTrivia
   _b?: boolean
   _content: string
@@ -583,7 +589,7 @@ export interface EngineOptions {
 export interface EnumItemTransport {
   '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<TypeIdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
   _body: SlotValue<EnumVariantListTransport>
@@ -626,7 +632,22 @@ export interface EnumVariantTransport {
   _enum_variant_after?: number
 }
 
-export interface EscapeSequenceTransport {
+export interface EscapeSequenceHexTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
+export interface EscapeSequenceSimpleTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
+export interface EscapeSequenceUnicodeBracedTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
+export interface EscapeSequenceUnicodeFixedTransport {
   '$_trivia'?: TransportTrivia
   _content: string
 }
@@ -692,7 +713,7 @@ export interface FieldDeclarationListTransport {
 export interface FieldDeclarationTransport {
   '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<FieldIdentifierTransport>
   _type: SlotValue<TypeTransport>
   _colon_before?: number
   _colon_after?: number
@@ -708,6 +729,11 @@ export interface FieldExpressionTransport {
   _dot_after?: number
   _field_expression_before?: number
   _field_expression_after?: number
+}
+
+export interface FieldIdentifierTransport {
+  '$_trivia'?: TransportTrivia
+  _content: SlotValue<IdentifierTransport>
 }
 
 export interface FieldInitializerListElementsTransport {
@@ -749,7 +775,7 @@ export interface FieldPatternNamedTransport {
   '$_trivia'?: TransportTrivia
   _ref_marker?: SlotValue<KwRefMarkerTransport>
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<FieldIdentifierTransport>
   _pattern: SlotValue<PatternTransport>
   _mutable_specifier_before?: number
   _mutable_specifier_after?: number
@@ -764,7 +790,7 @@ export interface FieldPatternShorthandTransport {
   '$_trivia'?: TransportTrivia
   _ref_marker?: SlotValue<KwRefMarkerTransport>
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<ShorthandFieldIdentifierTransport>
   _mutable_specifier_before?: number
   _mutable_specifier_after?: number
   _ref_marker_after?: number
@@ -1027,10 +1053,28 @@ export interface InnerAttributeItemTransport {
   _inner_attribute_item_after?: number
 }
 
-export interface IntegerLiteralTransport {
+export interface IntegerLiteralBinaryTransport {
   '$_trivia'?: TransportTrivia
   _content: string
-  _suffix?: SlotValue<Box<AnyTransport>>
+  _suffix?: string
+}
+
+export interface IntegerLiteralDecimalTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+  _suffix?: string
+}
+
+export interface IntegerLiteralHexTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+  _suffix?: string
+}
+
+export interface IntegerLiteralOctalTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+  _suffix?: string
 }
 
 export interface LabelTransport {
@@ -1160,7 +1204,7 @@ export interface LoopExpressionTransport {
 
 export interface MacroDefinitionBraceTransport {
   '$_trivia'?: TransportTrivia
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<MacroDefinitionBraceNameTransportSlot>
   _macro_rules?: SlotValue<MacroRulesTransport>
   _macro_rules_bang_after?: number
   _lbrace_before?: number
@@ -1172,7 +1216,7 @@ export interface MacroDefinitionBraceTransport {
 
 export interface MacroDefinitionBracketTransport {
   '$_trivia'?: TransportTrivia
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<MacroDefinitionBracketNameTransportSlot>
   _macro_rules?: SlotValue<MacroRulesTransport>
   _semi_before?: number
   _lbrack_before?: number
@@ -1186,7 +1230,7 @@ export interface MacroDefinitionBracketTransport {
 
 export interface MacroDefinitionParenTransport {
   '$_trivia'?: TransportTrivia
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<MacroDefinitionParenNameTransportSlot>
   _macro_rules?: SlotValue<MacroRulesTransport>
   _lparen_before?: number
   _lparen_after?: number
@@ -1631,7 +1675,7 @@ export interface ScopedIdentifierTransport {
 export interface ScopedTypeIdentifierInExpressionPositionTransport {
   '$_trivia'?: TransportTrivia
   _path?: SlotValue<Box<ScopedTypeIdentifierInExpressionPositionPathTransportSlot>>
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<TypeIdentifierTransport>
   _colon_colon_before?: number
   _colon_colon_after?: number
   _scoped_type_identifier_in_expression_position_before?: number
@@ -1641,7 +1685,7 @@ export interface ScopedTypeIdentifierInExpressionPositionTransport {
 export interface ScopedTypeIdentifierTransport {
   '$_trivia'?: TransportTrivia
   _path?: SlotValue<Box<ScopedTypeIdentifierPathTransportSlot>>
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<TypeIdentifierTransport>
   _colon_colon_before?: number
   _colon_colon_after?: number
   _scoped_type_identifier_before?: number
@@ -1674,6 +1718,11 @@ export interface SelfParameterTransport {
 export interface ShebangTransport {
   '$_trivia'?: TransportTrivia
   _content: string
+}
+
+export interface ShorthandFieldIdentifierTransport {
+  '$_trivia'?: TransportTrivia
+  _content: SlotValue<IdentifierTransport>
 }
 
 export interface ShorthandFieldInitializerTransport {
@@ -1749,7 +1798,7 @@ export interface StructExpressionTransport {
 export interface StructItemBraceTransport {
   '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<TypeIdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _body: SlotValue<FieldDeclarationListTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
@@ -1762,7 +1811,7 @@ export interface StructItemBraceTransport {
 export interface StructItemTupleTransport {
   '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<TypeIdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _body: SlotValue<OrderedFieldDeclarationListTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
@@ -1776,7 +1825,7 @@ export interface StructItemTupleTransport {
 export interface StructItemUnitTransport {
   '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<TypeIdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _semi_before?: number
   _struct_keyword_before?: number
@@ -1927,11 +1976,6 @@ export interface TokenTreePatternParenTransport {
   _token_tree_pattern_paren_after?: number
 }
 
-export interface TokenTreeTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<TokenTreeContentTransportSlot>
-}
-
 export interface TraitBoundsTransport {
   '$_trivia'?: TransportTrivia
   _bounds: Array<SlotValue<TraitBoundsBoundsTransportSlot>>
@@ -1948,7 +1992,7 @@ export interface TraitItemTransport {
   '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _unsafe_marker?: SlotValue<KwUnsafeMarkerTransport>
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<TypeIdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _bounds?: SlotValue<TraitBoundsTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
@@ -2086,7 +2130,7 @@ export interface TypeArgumentTransport {
 
 export interface TypeBindingTransport {
   '$_trivia'?: TransportTrivia
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<TypeIdentifierTransport>
   _type_arguments?: SlotValue<TypeArgumentsTransport>
   _type: SlotValue<TypeTransport>
   _eq_before?: number
@@ -2105,10 +2149,15 @@ export interface TypeCastExpressionTransport {
   _type_cast_expression_after?: number
 }
 
+export interface TypeIdentifierTransport {
+  '$_trivia'?: TransportTrivia
+  _content: SlotValue<IdentifierTransport>
+}
+
 export interface TypeItemTransport {
   '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<TypeIdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
   _type: SlotValue<TypeTransport>
@@ -2145,7 +2194,7 @@ export interface TypeParametersTransport {
 
 export interface TypeParameterTransport {
   '$_trivia'?: TransportTrivia
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<TypeIdentifierTransport>
   _bounds?: SlotValue<TraitBoundsTransport>
   _default_type?: SlotValue<TypeTransport>
   _eq_before?: number
@@ -2166,7 +2215,7 @@ export interface UnaryExpressionTransport {
 export interface UnionItemTransport {
   '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
-  _name: SlotValue<IdentifierTransport>
+  _name: SlotValue<TypeIdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
   _body: SlotValue<FieldDeclarationListTransport>

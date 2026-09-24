@@ -48,6 +48,7 @@ export type AddressRoot =
 	| 'break_expression'
 	| 'call_expression'
 	| 'captured_pattern'
+	| 'char_literal_empty'
 	| 'closure_expression_block'
 	| 'closure_expression_expr'
 	| 'closure_parameters'
@@ -397,6 +398,8 @@ export interface AddressBranch {
 	readonly call_expression: 'after' | 'before';
 	readonly captured_pattern: 'after' | 'at' | 'before';
 	readonly 'captured_pattern/at': 'after' | 'before';
+	readonly char_literal_empty: 'squote';
+	readonly 'char_literal_empty/squote': 'before';
 	readonly closure_expression_block: 'after' | 'async_marker' | 'before' | 'dash_gt' | 'move_marker' | 'static_marker';
 	readonly 'closure_expression_block/async_marker': 'after' | 'before';
 	readonly 'closure_expression_block/dash_gt': 'after' | 'before';
@@ -1455,7 +1458,6 @@ export interface AddressBranch {
 		| 'dash'
 		| 'dash_eq'
 		| 'dash_gt'
-		| 'dollar'
 		| 'dot'
 		| 'dot_dot'
 		| 'dot_dot_dot'
@@ -1500,7 +1502,6 @@ export interface AddressBranch {
 	readonly 'token_tree_punctuation/dash': 'after' | 'before';
 	readonly 'token_tree_punctuation/dash_eq': 'after' | 'before';
 	readonly 'token_tree_punctuation/dash_gt': 'after' | 'before';
-	readonly 'token_tree_punctuation/dollar': 'after' | 'before';
 	readonly 'token_tree_punctuation/dot': 'after' | 'before';
 	readonly 'token_tree_punctuation/dot_dot': 'after' | 'before';
 	readonly 'token_tree_punctuation/dot_dot_dot': 'after' | 'before';
@@ -2063,6 +2064,7 @@ export interface AddressLeaf {
 	readonly 'captured_pattern/at/after': WhitespaceArm;
 	readonly 'captured_pattern/at/before': WhitespaceArm;
 	readonly 'captured_pattern/before': WhitespaceArm;
+	readonly 'char_literal_empty/squote/before': WhitespaceArm;
 	readonly 'closure_expression_block/after': WhitespaceArm;
 	readonly 'closure_expression_block/async_marker/after': WhitespaceArm;
 	readonly 'closure_expression_block/async_marker/before': WhitespaceArm;
@@ -3078,8 +3080,6 @@ export interface AddressLeaf {
 	readonly 'token_tree_punctuation/dash_eq/before': WhitespaceArm;
 	readonly 'token_tree_punctuation/dash_gt/after': WhitespaceArm;
 	readonly 'token_tree_punctuation/dash_gt/before': WhitespaceArm;
-	readonly 'token_tree_punctuation/dollar/after': WhitespaceArm;
-	readonly 'token_tree_punctuation/dollar/before': WhitespaceArm;
 	readonly 'token_tree_punctuation/dot/after': WhitespaceArm;
 	readonly 'token_tree_punctuation/dot/before': WhitespaceArm;
 	readonly 'token_tree_punctuation/dot_dot/after': WhitespaceArm;

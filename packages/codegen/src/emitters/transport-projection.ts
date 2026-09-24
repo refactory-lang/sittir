@@ -46,6 +46,7 @@ function isConcreteTransportNode(node: AssembledNode): boolean {
 		case 'branch':
 		case 'envelope':
 		case 'polymorph':
+		case 'alias':
 			return true;
 		case 'supertype':
 			return false;

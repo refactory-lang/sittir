@@ -35,7 +35,8 @@ import {
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData,
-	type AccessorThrowRecord
+	type AccessorThrowRecord,
+	type ValidatorSkip
 } from './common.ts';
 
 /**
@@ -184,30 +185,12 @@ function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
  * Returns `null` if the subtrees match, otherwise a short human-
  * readable diff path explaining the first mismatch.
  */
-/**
- * Per-grammar set of `extras` kind names that are NAMED in tree-sitter's
- * output (line continuations, comments) and therefore appear as children
- * in the strict structural compare. Render reads NodeData fields/children
- * — extras aren't part of the rule structure and don't surface there —
- * so the rendered output can never re-emit them. Filtering them from
- * BOTH sides keeps the compare focused on rule-structural content.
- *
- * Anonymous extras (whitespace regex patterns) are already invisible to
- * the compare's named-child filter. Only NAMED extras need explicit
- * exclusion. (016 Cluster I.)
- */
-export const NAMED_EXTRAS_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {
-	rust: new Set(['line_comment', 'block_comment']),
-	typescript: new Set(['comment', 'html_comment']),
-	python: new Set(['comment', 'line_continuation'])
-};
-
-function collectVisibleChildren(n: TSNode, namedExtras: ReadonlySet<string>): TSNode[] {
+function collectVisibleChildren(n: TSNode): TSNode[] {
 	const out: TSNode[] = [];
 	for (let i = 0; i < n.childCount; i++) {
 		const c = n.child(i);
 		if (!c) continue;
-		if (c.isNamed && namedExtras.has(c.type)) continue;
+		if (c.isNamed && c.isExtra) continue;
 		out.push(c);
 	}
 	return out;
@@ -238,7 +221,6 @@ export function leafAliasKey(a: string, b: string): string {
 export function astStructuralDiff(
 	a: TSNode,
 	b: TSNode,
-	namedExtras: ReadonlySet<string>,
 	path: string = '',
 	rootAliasPair?: readonly [string, string],
 	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>,
@@ -272,8 +254,8 @@ export function astStructuralDiff(
 		}
 		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
 	}
-	const aChildren = collectVisibleChildren(a, namedExtras);
-	let bChildren = collectVisibleChildren(b, namedExtras);
+	const aChildren = collectVisibleChildren(a);
+	let bChildren = collectVisibleChildren(b);
 	// Group-lift transparency: sittir's enrich lifts choice arms of canonical
 	// rules into visible variant children (`call_expression` parses as
 	// `(call_expression (call_expression_call …))`; `parenthesized_expression`
@@ -294,7 +276,7 @@ export function astStructuralDiff(
 		const aTypes = new Set(aChildren.map((c) => c.type));
 		if (bChildren.some((c) => ownedVariants.has(c.type) && !aTypes.has(c.type))) {
 			bChildren = bChildren.flatMap((c) =>
-				ownedVariants.has(c.type) && !aTypes.has(c.type) ? collectVisibleChildren(c, namedExtras) : [c]
+				ownedVariants.has(c.type) && !aTypes.has(c.type) ? collectVisibleChildren(c) : [c]
 			);
 		}
 	}
@@ -339,7 +321,6 @@ export function astStructuralDiff(
 		const sub = astStructuralDiff(
 			ac,
 			bc,
-			namedExtras,
 			`${path || a.type}[${i}].${ac.type}`,
 			undefined,
 			variantChildKinds,
@@ -393,6 +374,8 @@ export interface ReadRenderParseResult {
 	 * beyond the transient stderr line.
 	 */
 	accessorThrows: AccessorThrowRecord[];
+	skips: ValidatorSkip[];
+	excluded: ValidatorSkip[];
 }
 
 /**
@@ -657,12 +640,13 @@ export async function validateReadRenderParse(
 		end: number;
 	}[] = [];
 	const accessorThrows: AccessorThrowRecord[] = [];
+	const skips: ValidatorSkip[] = [];
+	const excluded: ValidatorSkip[] = [];
 	const onAccessorThrow = (rec: AccessorThrowRecord): void => {
 		accessorThrows.push(rec);
 	};
 	let pass = 0;
 	let astMatchPass = 0;
-	let skip = 0;
 	let total = 0;
 	let shouldStop = false;
 
@@ -673,7 +657,7 @@ export async function validateReadRenderParse(
 			// Parse original
 			const tree1 = parser.parse(entry.source) as TSTree;
 			if (tree1.rootNode.hasError) {
-				skip++;
+				skips.push({ entry: entry.name, reason: 'parse-error', input: entry.source });
 				if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
 					console.log(`ENTRY\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\tskip-parse-error\tast-fail`);
 				}
@@ -722,7 +706,7 @@ export async function validateReadRenderParse(
 			const testableKinds = [...candidatesByKind.keys()];
 
 			if (testableKinds.length === 0) {
-				skip++;
+				skips.push({ entry: entry.name, reason: 'no-testable-kind', input: entry.source });
 				if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
 					console.log(`ENTRY\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\tskip-no-testable\tast-fail`);
 				}
@@ -833,11 +817,17 @@ export async function validateReadRenderParse(
 							adoptedVariantKinds: adoptedVariantKindNames,
 							targetKind
 						});
-						if (wrapped === null) continue; // no supertype - skip this candidate
+						if (wrapped === null) {
+							excluded.push({ entry: entry.name, kind, reason: 'no-reparse-wrapper', input: inputSource });
+							continue;
+						}
 						// Skip candidates whose render produces only whitespace: an
 						// empty render is indistinguishable from a missing node and
 						// cannot be reparsed meaningfully.
-						if (rendered.trim() === '') continue;
+						if (rendered.trim() === '') {
+							excluded.push({ entry: entry.name, kind, reason: 'empty-render', input: inputSource });
+							continue;
+						}
 
 						// Re-parse
 						const tree2 = parser.parse(wrapped.text) as TSTree;
@@ -925,7 +915,6 @@ export async function validateReadRenderParse(
 						// broken candidate for every WASM node and never set this flag.
 						kindHadCandidate = true;
 						kindOk = true;
-						const namedExtras = NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set<string>();
 						// AST comparison: only when we have a WASM source node to
 						// compare against (native path without $span skips this).
 						const rootAliasPair: readonly [string, string] | undefined =
@@ -934,7 +923,6 @@ export async function validateReadRenderParse(
 							? astStructuralDiff(
 									node1ForAst,
 									node2,
-									namedExtras,
 									'',
 									rootAliasPair,
 									variantChildKinds,
@@ -1025,26 +1013,22 @@ export async function validateReadRenderParse(
 					// error line, no fail count), which masked a whole regression
 					// class from the standard tooling.
 					if (kindErrors.length > 0) {
-						errors.push(kindErrors[0]!);
+						errors.push(...kindErrors);
 						entryHadAnyCandidate = true;
 						entryOk = false;
 						entryAstMatch = false;
-						// KIND_LOG mode: keep walking remaining kinds for full
-						// per-kind coverage — entry scoring is already latched.
-						if (!process.env.SITTIR_VALIDATOR_KIND_LOG) break;
 						continue;
 					}
 					continue; // every candidate neutrally skipped — neutral on this kind
 				}
 				entryHadAnyCandidate = true;
 				if (!kindOk) {
-					if (kindErrors.length > 0) errors.push(kindErrors[0]!);
+					errors.push(...kindErrors);
 					entryOk = false;
 					entryAstMatch = false;
-					if (!process.env.SITTIR_VALIDATOR_KIND_LOG) break;
 				}
 				if (!kindAstMatch) {
-					if (kindAstMismatches.length > 0) astMismatches.push(kindAstMismatches[0]!);
+					astMismatches.push(...kindAstMismatches);
 					entryAstMatch = false;
 				}
 			}
@@ -1054,7 +1038,7 @@ export async function validateReadRenderParse(
 			// nothing — score it like the testableKinds.length===0 case above
 			// (skip), not a silent pass. See entryHadAnyCandidate's doc comment.
 			if (!entryHadAnyCandidate) {
-				skip++;
+				skips.push({ entry: entry.name, reason: 'all-candidates-neutral', input: entry.source });
 			} else {
 				if (entryOk) pass++;
 				if (entryAstMatch) astMatchPass++;
@@ -1086,12 +1070,14 @@ export async function validateReadRenderParse(
 		grammar,
 		total,
 		pass,
-		fail: total - pass - skip,
-		skip,
+		fail: total - pass - skips.length,
+		skip: skips.length,
 		astMatchPass,
 		errors,
 		astMismatches: dedupeMismatchesByContainment(astMismatches),
-		accessorThrows
+		accessorThrows,
+		skips,
+		excluded
 	};
 }
 

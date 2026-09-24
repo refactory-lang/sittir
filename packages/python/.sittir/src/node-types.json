@@ -148,6 +148,40 @@
     ]
   },
   {
+    "type": "escape_sequence",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "escape_sequence_hex",
+        "named": true
+      },
+      {
+        "type": "escape_sequence_line_break",
+        "named": true
+      },
+      {
+        "type": "escape_sequence_named",
+        "named": true
+      },
+      {
+        "type": "escape_sequence_octal",
+        "named": true
+      },
+      {
+        "type": "escape_sequence_simple",
+        "named": true
+      },
+      {
+        "type": "escape_sequence_unicode_fixed",
+        "named": true
+      },
+      {
+        "type": "escape_sequence_unicode_wide",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "expression",
     "named": true,
     "subtypes": [
@@ -181,6 +215,46 @@
       },
       {
         "type": "primary_expression",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "float",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "float_leading_point",
+        "named": true
+      },
+      {
+        "type": "float_point",
+        "named": true
+      },
+      {
+        "type": "float_scientific",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "integer",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "integer_binary",
+        "named": true
+      },
+      {
+        "type": "integer_decimal",
+        "named": true
+      },
+      {
+        "type": "integer_hex",
+        "named": true
+      },
+      {
+        "type": "integer_octal",
         "named": true
       }
     ]
@@ -885,20 +959,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "match_block_block",
-          "named": true
-        },
-        {
-          "type": "newline",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -2987,6 +3047,25 @@
     }
   },
   {
+    "type": "match_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "match_block_block",
+          "named": true
+        },
+        {
+          "type": "newline",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "match_block_block",
     "named": true,
     "fields": {
@@ -3011,7 +3090,7 @@
         "required": true,
         "types": [
           {
-            "type": "block",
+            "type": "match_block",
             "named": true
           }
         ]
@@ -3192,16 +3271,17 @@
   {
     "type": "parameters",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "parameters_elements",
-          "named": true
-        }
-      ]
+    "fields": {
+      "elements": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "parameters_elements",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -3230,14 +3310,6 @@
       "types": [
         {
           "type": "expression",
-          "named": true
-        },
-        {
-          "type": "list_splat",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -3275,7 +3347,7 @@
           "named": true
         },
         {
-          "type": "parenthesized_expression",
+          "type": "parenthesized_list_splat",
           "named": true
         }
       ]
@@ -4710,7 +4782,31 @@
     "named": true
   },
   {
-    "type": "escape_sequence",
+    "type": "escape_sequence_hex",
+    "named": true
+  },
+  {
+    "type": "escape_sequence_line_break",
+    "named": true
+  },
+  {
+    "type": "escape_sequence_named",
+    "named": true
+  },
+  {
+    "type": "escape_sequence_octal",
+    "named": true
+  },
+  {
+    "type": "escape_sequence_simple",
+    "named": true
+  },
+  {
+    "type": "escape_sequence_unicode_fixed",
+    "named": true
+  },
+  {
+    "type": "escape_sequence_unicode_wide",
     "named": true
   },
   {
@@ -4730,7 +4826,15 @@
     "named": false
   },
   {
-    "type": "float",
+    "type": "float_leading_point",
+    "named": true
+  },
+  {
+    "type": "float_point",
+    "named": true
+  },
+  {
+    "type": "float_scientific",
     "named": true
   },
   {
@@ -4762,7 +4866,19 @@
     "named": false
   },
   {
-    "type": "integer",
+    "type": "integer_binary",
+    "named": true
+  },
+  {
+    "type": "integer_decimal",
+    "named": true
+  },
+  {
+    "type": "integer_hex",
+    "named": true
+  },
+  {
+    "type": "integer_octal",
     "named": true
   },
   {
@@ -4774,7 +4890,12 @@
     "named": false
   },
   {
-    "type": "line_continuation",
+    "type": "line_continuation_newline",
+    "named": true,
+    "extra": true
+  },
+  {
+    "type": "line_continuation_nul",
     "named": true,
     "extra": true
   },

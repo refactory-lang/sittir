@@ -321,7 +321,7 @@ describe('Assemble — classifyNode', () => {
 		expect(classifyNode('_enum_body_elements', flatten(rule), { hoisted: true })).toBe('list');
 	});
 
-	it('assembles hidden alias sources from their captured leaf body', () => {
+	it('does not assemble a hidden rule whose whole body is an alias over a leaf — the parser issues only its display', () => {
 		const normalized = makeNormalized(
 			{
 				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
@@ -335,11 +335,10 @@ describe('Assemble — classifyNode', () => {
 				topLevelAliasBodies: new Map([['_type_identifier', { type: PATTERN, value: '[A-Za-z_]\\w*' } satisfies Rule]])
 			}
 		);
-		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_type_identifier');
-		expect(node?.modelType).toBe('pattern');
+		expect(assemble(AssembleCtx.from(normalized)).nodes.has('_type_identifier')).toBe(false);
 	});
 
-	it('assembles hidden alias sources from their captured structural body', () => {
+	it('does not assemble a hidden rule whose whole body is an alias over a structure — the parser issues only its display', () => {
 		const normalized = makeNormalized(
 			{
 				expr: { type: PATTERN, value: '[A-Za-z_]\\w*' },
@@ -373,9 +372,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_pair_alias');
-		expect(node?.modelType).toBe('branch');
-		expect(node!.slots.map((slot) => slot.name)).toEqual(['left', 'right']);
+		expect(assemble(AssembleCtx.from(normalized)).nodes.has('_pair_alias')).toBe(false);
 	});
 
 	it('includes alias-member hidden kinds in supertype subtype expansion', () => {

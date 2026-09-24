@@ -2,6 +2,7 @@ import type { NodeMap } from '../../compiler/types.ts';
 import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import {
 	AbstractAssembledCompound,
+	AssembledAlias,
 	AssembledList,
 	AssembledSupertype,
 	FACTORY_NAME_RESERVED,
@@ -67,6 +68,7 @@ export function bundleEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdT
 		if (!node.rawFactoryName || !node.fromFunctionName) continue;
 		if (!(node instanceof AbstractAssembledCompound) && !(node instanceof AssembledList)) continue;
 		if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && node.annotations?.hoisted === true) continue;
+		if (node instanceof AssembledAlias) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
 		const key = node.irKey ?? camelCase(kind);

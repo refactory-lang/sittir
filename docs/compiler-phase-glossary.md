@@ -166,6 +166,12 @@ a field name shared by ≥2 distinct parent kinds; else `_<parent>_<field>`.
 The low precedence defers to whatever else the same literal could
 previously start, without a `conflicts:` entry per migrated occurrence.
 
+A whole-rule token whose body alternates between forms is distributed into
+one token kind per form (`hoistTokenForms`), so the parser lexes the forms
+as distinct symbols and the rule becomes their supertype; the arms carry
+polymorph annotations, with one default arm the parent's own factory builds
+(`defaultTokenFormArm`, overridden by `variant(name, { default: true })`).
+
 Reference: [glossary/dsl.md](glossary/dsl.md).
 
 ## Phase 1: Evaluate (`compiler/evaluate.ts`, `dsl/wire/wire.ts`, `types/runtime-shapes.ts`)
@@ -174,11 +180,11 @@ Reference: [glossary/dsl.md](glossary/dsl.md).
 grammar.sittir.ts) with sittir extensions (`role()`, `variant()`,
 `transform()`) and produces a `RawGrammar`. The DSL constructors normalize
 as they build (degenerate-nesting collapse, `choice(x, blank())` →
-optional, all-string choices → enum, comma-separated seq lift); a
-post-pass synthesizes hidden rules for non-bare alias sources
-(`synthesizeInlineAliasSources`) — field-enum synthesis is `enrich()`'s job
-(Phase 0), not evaluate's, so the same rule tree-sitter compiled reaches
-the IR unchanged. `wire(config, base?)` folds the declarative override config (rules,
+optional, all-string choices → enum, comma-separated seq lift). Inline
+alias content is not rewritten here: enrich (Phase 0) distributes an alias
+over a choice and mints the storage of an alias over literals, and
+field-enum synthesis is enrich's job too, so the same rule tree-sitter
+compiled reaches the IR unchanged. `wire(config, base?)` folds the declarative override config (rules,
 patches, groups, renderAs, conflicts, inline) into the
 options object before tree-sitter sees it, and exposes the collected
 metadata to the later phases via its wire context. The DSL globals run in

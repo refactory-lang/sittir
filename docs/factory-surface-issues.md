@@ -263,12 +263,13 @@ every generated rebuild, strict and loose alike. The loose list call types its
 options bag the way the strict one does (options first and optional, L2), so a
 list whose read delimiter is not the stamped default is a plain call.
 
-One spelling the printer deliberately does not attempt: elements inside a
-bare array, and inside a tuple seat's array, keep their calls. The runtime
-resolves each element through the element slot (L7), so a bare `'a'` is an
-identifier node and a bare `1` an integer literal there, but an element slot
-admits many leaf kinds, and the printer spells a leaf bare only where exactly
-one pattern kind could take it.
+Elements inside a bare array loosen the way a slot's value does: each is
+hoisted out of its seat config and resolved at the list's element kinds, so
+`arguments: ["source"]` and `typeArguments: ["String", "SpliceError"]` print
+bare, and a kind id under a single-slot wrapper drops the wrapper
+(`returnType: TSKindId.StringKeyword`). A call survives only where the text is
+ambiguous among the slot's leaf patterns, or where a tuple seat's array is one
+argument list the envelope builder takes as given.
 
 ### L1 — The stamped kind enum is rejected as a `kind:` discriminant — RESOLVED
 

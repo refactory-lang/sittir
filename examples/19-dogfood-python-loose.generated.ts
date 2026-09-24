@@ -13,30 +13,30 @@ export function rebuildPython4spaceLoose() {
 		name: "User",
 		body: ir.block(ir.functionDefinition({
 			name: "__init__",
-			parameters: [ir.identifier("self"), ir.typedParameter({
+			parameters: ["self", ir.typedParameter({
 				type: "int",
 				content: "user_id",
 			}), ir.typedParameter({
 				type: "str",
 				content: "name",
 			})],
-			returnType: ir.type(TSKindId.None),
-			body: ir.block(ir.simpleStatementsElements(ir.expressionStatement(ir.assignment.eq({
+			returnType: TSKindId.None,
+			body: ir.block(ir.simpleStatementsElements(ir.assignment.eq({
 				left: ir.attribute({
 					object: "self",
 					attribute: "user_id",
 				}),
 				right: "user_id",
-			}))), ir.simpleStatementsElements(ir.expressionStatement(ir.assignment.eq({
+			})), ir.simpleStatementsElements(ir.assignment.eq({
 				left: ir.attribute({
 					object: "self",
 					attribute: "name",
 				}),
 				right: "name",
-			})))),
+			}))),
 		}), ir.functionDefinition({
 			name: "greet",
-			parameters: ir.identifier("self"),
+			parameters: "self",
 			returnType: "str",
 			body: ir.block(ir.simpleStatementsElements(ir.returnStatement(ir.string({
 				stringStart: "f\"",
@@ -60,7 +60,7 @@ export function rebuildPython4spaceLoose() {
 		})],
 		returnType: ir.genericType({
 			name: "Optional",
-			typeParameter: ir.type("User"),
+			typeParameter: "User",
 		}),
 		body: ir.block(ir.forStatement({
 			left: "user",

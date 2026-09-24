@@ -6,18 +6,18 @@ export function rebuildKeywordOpenersPythonGenerated() {
 		name: ir.identifier("f"),
 		parameters: ir.parameters.strict(ir._parameters.strict({ delimiter: Delimiter.None }, ir.identifier("a"), ir.defaultParameter.strict({
 			name: ir.identifier("b"),
-			value: ir.tuple.strict(ir.collectionElements.strict({ delimiter: Delimiter.None }, ir.integer("1"), ir.integer("2"))),
+			value: ir.tuple.strict(ir.collectionElements.strict({ delimiter: Delimiter.None }, ir.integer.decimal("1"), ir.integer.decimal("2"))),
 		}))),
 		body: ir.suite.block.strict(ir.block.strict(ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.expressionStatement.strict(ir.assignment.eq.strict({
 			left: ir.identifier("x"),
 			right: ir.binaryOperator.strict({
 				left: ir.parenthesizedExpression.strict(ir.binaryOperator.strict({
-					left: ir.integer("1"),
+					left: ir.integer.decimal("1"),
 					operator: TSKindId.Plus,
-					right: ir.integer("2"),
+					right: ir.integer.decimal("2"),
 				})),
 				operator: TSKindId.Star,
-				right: ir.integer("3"),
+				right: ir.integer.decimal("3"),
 			}),
 		}))), ir.ifStatement.strict({
 			condition: ir.parenthesizedExpression.strict(ir.identifier("x")),
@@ -26,7 +26,7 @@ export function rebuildKeywordOpenersPythonGenerated() {
 			condition: ir.parenthesizedExpression.strict(ir.identifier("x")),
 			body: ir.suite.block.strict(ir.block.strict(ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.expressionStatement.strict(ir.assignment.eq.strict({
 				left: ir.identifier("x"),
-				right: ir.list.strict(ir.collectionElements.strict({ delimiter: Delimiter.None }, ir.integer("1"))),
+				right: ir.list.strict(ir.collectionElements.strict({ delimiter: Delimiter.None }, ir.integer.decimal("1"))),
 			}))))),
 		}), ir.forStatement.strict({
 			left: ir.identifier("i"),
@@ -49,7 +49,7 @@ export function rebuildKeywordOpenersPythonGenerated() {
 					right: ir.parenthesizedExpression.strict(ir.identifier("y")),
 				}),
 				operator: TSKindId.OrKeyword,
-				right: ir.list.strict(ir.collectionElements.strict({ delimiter: Delimiter.None }, ir.integer("1"))),
+				right: ir.list.strict(ir.collectionElements.strict({ delimiter: Delimiter.None }, ir.integer.decimal("1"))),
 			}),
 		}))), ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.expressionStatement.strict(ir.yield.strict(ir.parenthesizedExpression.strict(ir.identifier("x"))))), ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.raiseStatement.strict({
 			expressions: ir.parenthesizedExpression.strict(ir.identifier("E")),
@@ -66,7 +66,7 @@ export function rebuildKeywordOpenersPythonGenerated() {
 			left: ir.identifier("v"),
 			right: ir.subscript.strict({
 				value: ir.identifier("a"),
-				subscripts: [{ delimiter: Delimiter.None }, ir.parenthesizedExpression.strict(ir.integer("1"))],
+				subscripts: [{ delimiter: Delimiter.None }, ir.parenthesizedExpression.strict(ir.integer.decimal("1"))],
 			}),
 		}))), ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.expressionStatement.strict(ir.assignment.eq.strict({
 			left: ir.identifier("u"),
@@ -76,14 +76,14 @@ export function rebuildKeywordOpenersPythonGenerated() {
 					content: [ir.stringContent.strict("k")],
 					stringEnd: ir.stringEnd("\""),
 				}),
-				value: ir.parenthesizedExpression.strict(ir.integer("1")),
+				value: ir.parenthesizedExpression.strict(ir.integer.decimal("1")),
 			}), ir.pair.strict({
 				key: ir.string.strict({
 					stringStart: ir.stringStart("\""),
 					content: [ir.stringContent.strict("j")],
 					stringEnd: ir.stringEnd("\""),
 				}),
-				value: ir.list.strict(ir.collectionElements.strict({ delimiter: Delimiter.None }, ir.integer("2"))),
+				value: ir.list.strict(ir.collectionElements.strict({ delimiter: Delimiter.None }, ir.integer.decimal("2"))),
 			})),
 		}))), ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.expressionStatement.strict(ir.assignment.eq.strict({
 			left: ir.identifier("s"),

@@ -118,6 +118,7 @@ type Bag = {
 	readonly tokenized?: boolean;
 	readonly immediate?: boolean;
 	readonly literal?: string;
+	readonly aliasedTo?: string;
 	readonly inline?: boolean;
 	readonly staticSeamBefore?: 'glued' | 'spaced';
 	readonly members?: readonly RenderRule[];
@@ -448,7 +449,12 @@ export function tokenNameOfText(text: string, kindEntries: readonly KindEntryLik
 	return entry === undefined ? undefined : publicKindName(entry.kind);
 }
 
+function isDisplayedLiteral(rule: RenderRule): boolean {
+	const r = bag(rule);
+	return r.aliasedTo !== undefined && (r.type === STRING || (r.type === SYMBOL && r.literal !== undefined));
+}
 function literalTokenOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+	if (isDisplayedLiteral(rule)) return undefined;
 	const text = literalTextOf(rule);
 	return text === undefined ? undefined : tokenNameOfText(text, config.kindEntries);
 }
@@ -458,6 +464,7 @@ export function punctuationTokenOfNode(node: AssembledNode | undefined, kindEntr
 }
 
 function punctuationReferenceTokenOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+	if (isDisplayedLiteral(rule)) return undefined;
 	const r = bag(rule);
 	return r.type === SYMBOL && r.name !== undefined ? punctuationTokenOfNode(config.nodeMap.nodes.get(r.name), config.kindEntries) : undefined;
 }
@@ -694,6 +701,7 @@ function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfi
 }
 
 function armSeamName(rule: RenderRule, config: RenderRulesConfig, includeWords: boolean): string | undefined {
+	if (isDisplayedLiteral(rule)) return undefined;
 	const text = literalTextOf(rule);
 	if (text === undefined || text.trim() === '' || (!includeWords && matchesWordShape(text, config.nodeMap.wordMatcher))) return undefined;
 	const entry = findAnonEntryForLiteralText(config.kindEntries, text);

@@ -26,6 +26,7 @@ export function isDelimiterAddress(address: string): boolean {
 }
 
 export const SEPARATOR_LABEL = 'separator';
+export const VARIANT_LABEL = 'variant';
 
 export function isSeparatorAddress(address: string): boolean {
 	return address.endsWith(`_${SEPARATOR_LABEL}`);

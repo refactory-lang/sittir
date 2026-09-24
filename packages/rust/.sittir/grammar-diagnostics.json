@@ -67,13 +67,12 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "3 referenced kind(s) resolved no parser kindId",
+    "message": "2 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "_compound_assignment_expr_operator",
-        "_declaration_statement",
-        "_primitive_type"
+        "_declaration_statement"
       ]
     },
     "severity": "warning",
@@ -133,13 +132,12 @@
   },
   {
     "code": "kindid-unclassified-symbols",
-    "message": "2 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
       "kinds": [
-        "_compound_assignment_expr_operator",
-        "_primitive_type"
+        "_compound_assignment_expr_operator"
       ]
     },
     "scope": "grammar",

@@ -132,7 +132,14 @@ export interface AnyNodeData {
 	 * (`(LineComment | BlockComment | ...)[]`) remain assignable —
 	 * function parameters are contravariant, and `unknown` would
 	 * reject narrower argument types. */
-	$trivia?: (...args: any[]) => AnyNodeData;
+	$trivia?: TriviaSetter;
+}
+
+/** `$trivia`: a callable (rest args are leading, or one `{ leading, trailing }` object) that also has `leading(...items)` and `trailing(...items)`, each setting one side from a spread. */
+export interface TriviaSetter {
+	(...args: any[]): AnyNodeData;
+	leading(...items: any[]): AnyNodeData;
+	trailing(...items: any[]): AnyNodeData;
 }
 
 // ---------------------------------------------------------------------------

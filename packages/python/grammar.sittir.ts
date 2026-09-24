@@ -72,6 +72,9 @@ export default grammar(
 			},
 			options: {
 				gap: { separator: preference('tight') },
+				integer_hex: { 'prefix:': preference('0x') },
+				integer_octal: { 'prefix:': preference('0o') },
+				integer_binary: { 'prefix:': preference('0b') },
 				module: {
 					'statements:/separator': preference('tight'),
 					'statements:/(function_definition)/after': preference('double_newline'),
@@ -127,10 +130,46 @@ export default grammar(
 			},
 
 			patches: {
-				// See docs/python-grammar-sittir-glossary.md::parameters
-				parameters: {
-					'1/0': alias('parameters_elements')
+				integer: {
+					0: variant('hex'),
+					1: variant('octal'),
+					2: variant('binary'),
+					3: variant('decimal', { default: true })
 				},
+				float: {
+					'0/0/0/0': field('integer'),
+					'0/0/0/2': field('fraction'),
+					'0/0/0/3/0/0': field('marker'),
+					'0/0/0/3/0/1': field('exponent'),
+					'0/0/1': field('imaginary'),
+					'1/0/0/0': field('integer'),
+					'1/0/0/2': field('fraction'),
+					'1/0/0/3/0/0': field('marker'),
+					'1/0/0/3/0/1': field('exponent'),
+					'1/0/1': field('imaginary'),
+					'2/0/0/0': field('integer'),
+					'2/0/0/1/0': field('marker'),
+					'2/0/0/1/1': field('exponent'),
+					'2/0/1': field('imaginary'),
+					0: variant('point', { default: true }),
+					1: variant('leading_point'),
+					2: variant('scientific')
+				},
+				escape_sequence: {
+					0: variant('unicode_fixed'),
+					1: variant('unicode_wide'),
+					2: variant('hex'),
+					3: variant('octal'),
+					4: variant('line_break'),
+					5: variant('simple', { default: true }),
+					6: variant('named')
+				},
+				line_continuation: {
+					0: variant('newline', { default: true }),
+					1: variant('nul')
+				},
+				// See docs/python-grammar-sittir-glossary.md::parameters
+				parameters: [{ '1/0': alias('parameters_elements') }, { '1/0': field('elements') }],
 				lambda_parameters: {
 					'.': alias('parameters_elements')
 				},

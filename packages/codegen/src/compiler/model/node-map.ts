@@ -472,7 +472,7 @@ function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledN
 	try {
 		if (ctx?.shapeAudit !== false) auditDerivationShape(rule, 'fields', ctx?.diagnostics);
 		const kindName = ctx?.kindName ?? currentAuditKind;
-		let slots = mergeSlotsByName(collectSlots(rule, kindName, ctx?.kindEntries, undefined, undefined, ctx?.diagnostics));
+		let slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx?.diagnostics));
 		const unionChoiceIds = drainSynthesizedUnionChoiceIds();
 		if (unionChoiceIds.size > 0) {
 			const isUnionSlot = (s: AssembledNonterminal): boolean => s.sourceRuleIds.some((id) => unionChoiceIds.has(id));
@@ -492,7 +492,7 @@ function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledN
 				const prev = setUnionSlotRouting(false);
 				try {
 					slots = mergeSlotsByName(
-						collectSlots(rule, kindName, ctx?.kindEntries, undefined, undefined, ctx?.diagnostics)
+						collectSlots(rule, kindName, ctx, undefined, undefined, ctx?.diagnostics)
 					);
 				} finally {
 					setUnionSlotRouting(prev);
@@ -712,6 +712,23 @@ export function armFactsOf(rule: { annotations?: RuleAnnotations }): ArmFacts {
 	};
 }
 
+function aliasEnvelopeValueOf(
+	ref: { readonly aliasedTo?: string; readonly aliasedToId?: number },
+	ctx: DeriveCtx | undefined,
+	multiplicity: Multiplicity
+): NodeOrTerminal | undefined {
+	if (ctx?.simplifiedRules === undefined) return undefined;
+	const display = aliasEnvelopeOf(ref, { simplifiedRules: ctx.simplifiedRules, kindEntries: ctx.kindEntries ?? [] });
+	if (display === undefined) return undefined;
+	return {
+		node: { kind: 'unresolved-ref', name: display },
+		storageKindId: ref.aliasedToId,
+		parseKind: { kind: 'unresolved-ref', name: display },
+		parseKindId: ref.aliasedToId,
+		multiplicity
+	};
+}
+
 export function deriveValuesForRule(
 	rule: RenderRule,
 	ctx: DeriveCtx | undefined,
@@ -747,6 +764,8 @@ export function deriveValuesForRule(
 					}
 				];
 			}
+			const display = aliasEnvelopeValueOf(rule, ctx, multiplicity);
+			if (display !== undefined) return [{ ...display, ...armFacts }];
 			if (rule.kindId !== undefined) {
 				return [
 					{
@@ -776,6 +795,8 @@ export function deriveValuesForRule(
 		case SUPERTYPE:
 			return rule.subtypes.map((subRef) => {
 				const name = subRef.name;
+				const display = aliasEnvelopeValueOf(subRef, ctx, multiplicity);
+				if (display !== undefined) return display;
 				if (subRef.kindId !== undefined) {
 					return {
 						node: { kind: 'unresolved-ref' as const, name },
@@ -956,7 +977,17 @@ export function nameNode(kind: string): {
 	return { typeName, factoryName, irKey };
 }
 
-export type ModelType = 'envelope' | 'branch' | 'polymorph' | 'supertype' | 'enum' | 'keyword' | 'punctuation' | 'pattern' | 'list';
+export type ModelType =
+	| 'envelope'
+	| 'branch'
+	| 'polymorph'
+	| 'alias'
+	| 'supertype'
+	| 'enum'
+	| 'keyword'
+	| 'punctuation'
+	| 'pattern'
+	| 'list';
 
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kind: string;
@@ -1104,6 +1135,7 @@ export class AssembledNonterminal {
 	readonly ruleMetadata?: RuleMetadata;
 	storageInfo?: FieldStorageInfo;
 	optionDefaultArm?: string;
+	registeredOption?: 'spelling' | 'choice';
 
 	get storageName(): string {
 		return projectSlotNaming(this).storageName;
@@ -1265,22 +1297,30 @@ export function resolveSlotAliasPairs(
 	slot: { values: readonly NodeOrTerminal[] },
 	ctx: SlotAliasPairsCtx
 ): readonly (readonly [string, string])[] | undefined {
-	const byParseName = new Map<string, string>();
+	const candidates: (readonly [string, string])[] = [];
+	const ownStorages = new Set<string>();
 	for (const value of slot.values) {
 		if (!isNodeRef(value)) continue;
 		const parseKind = value.parseKind?.name;
 		const sourceKind = storageKindOfRef(value.node);
-		if (parseKind === undefined || parseKind === sourceKind) continue;
-		if (!aliasRestampRequired(value.parseKindId, value.storageKindId)) continue;
-		byParseName.set(parseKind, sourceKind);
+		if (parseKind === undefined || parseKind === sourceKind) {
+			ownStorages.add(sourceKind);
+			continue;
+		}
+		if (aliasRestampRequired(value.parseKindId, value.storageKindId)) candidates.push([parseKind, sourceKind]);
 	}
-	const pairs: (readonly [string, string])[] = [...byParseName.entries()];
 	for (const parseKind of valueParseKindsOf(slot)) {
 		const normalized = parseKind.startsWith('_') ? parseKind.slice(1) : parseKind;
 		const node = ctx.nodes.get(parseKind) ?? ctx.nodes.get(normalized);
-		if (node?.subtypeRestampPairs === undefined) continue;
-		for (const pair of node.subtypeRestampPairs ?? []) pairs.push(pair);
+		candidates.push(...(node?.subtypeRestampPairs ?? []));
 	}
+	const storagesByParseName = new Map<string, Set<string>>();
+	for (const [parseKind, storage] of candidates) {
+		storagesByParseName.set(parseKind, (storagesByParseName.get(parseKind) ?? new Set<string>()).add(storage));
+	}
+	const pairs = [...storagesByParseName].flatMap(([parseKind, storages]) =>
+		storages.size === 1 && !ownStorages.has(parseKind) ? [[parseKind, [...storages][0]!] as const] : []
+	);
 	return pairs.length > 0 ? pairs : undefined;
 }
 
@@ -1486,6 +1526,7 @@ export interface CompoundOpts {
 	visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	simplifiedRules?: Record<string, SimplifiedRule>;
 	assembleDiagnostics?: AssembleDiagnosticsCollector;
+	aliasTypeId?: number;
 }
 
 export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRule> extends AssembledNodeBase<R> {
@@ -1575,8 +1616,19 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		return this._slots;
 	}
 
+	get configSlots(): readonly AssembledNonterminal[] {
+		// A registered site never collapses a node to zero remaining config
+		// slots — a node whose ONLY slot is registered (e.g. a polymorph's
+		// sole dispatch slot bound to a preference default) still needs
+		// something a caller can construct from, so registration is inert
+		// for that node: every slot stays a config slot.
+		const real = this._slots.filter((slot) => slot.registeredOption === undefined);
+		return real.length > 0 ? real : this._slots;
+	}
+
 	get soleSlot(): AssembledNonterminal | undefined {
-		return this._slots.length === 1 ? this._slots[0] : undefined;
+		const slots = this.configSlots;
+		return slots.length === 1 ? slots[0] : undefined;
 	}
 
 	get keywordConstructibleText(): string | undefined {
@@ -1620,7 +1672,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		// (exactly one slot total) undercounts this: a node can have several
 		// slots and still take no argument as long as all but one are
 		// optional and that one forwards to an argument-optional target.
-		const requiredSlots = this._slots.filter((slot) => isRequired(slot));
+		const requiredSlots = this.configSlots.filter((slot) => isRequired(slot));
 		if (requiredSlots.length === 0) return true;
 		if (requiredSlots.length > 1) return false;
 		const slot = requiredSlots[0]!;
@@ -1638,7 +1690,7 @@ export class AssembledBranch extends AbstractAssembledCompound {
 
 export class AssembledEnvelope<
 	R extends RenderRule = RenderRule,
-	M extends 'envelope' | 'polymorph' | 'list' = 'envelope'
+	M extends 'envelope' | 'polymorph' | 'list' | 'alias' = 'envelope'
 > extends AbstractAssembledCompound<R> {
 	readonly modelType: M = 'envelope' as M;
 }
@@ -1649,6 +1701,19 @@ export class AssembledPolymorph extends AssembledEnvelope<RenderRule, 'polymorph
 	get arms(): readonly SimplifiedRule[] {
 		const body = this.simplifiedRule;
 		return body.type === CHOICE ? body.members : [];
+	}
+}
+
+export class AssembledAlias extends AssembledEnvelope<RenderRule, 'alias'> {
+	override readonly modelType = 'alias' as const;
+	readonly aliasTypeId: number;
+
+	constructor(kind: string, simplifiedRule: SimplifiedRule, renderRule: RenderRule, opts?: CompoundOpts) {
+		super(kind, simplifiedRule, renderRule, opts);
+		if (opts?.aliasTypeId === undefined) {
+			throw new Error(`AssembledAlias: '${kind}' has no alias type id — its display has no alias row in the kind catalog`);
+		}
+		this.aliasTypeId = opts.aliasTypeId;
 	}
 }
 
@@ -1667,13 +1732,32 @@ export function isLeafShapedMember(rule: SimplifiedRule): boolean {
 	}
 }
 
-export type CompoundClass = typeof AssembledBranch | typeof AssembledEnvelope | typeof AssembledPolymorph;
+export type AuthoredCompound = AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledAlias;
 
-export type CompoundModelType = 'envelope' | 'branch' | 'polymorph';
+export type SlotBearingCompound = AuthoredCompound | AssembledList;
 
-export function compoundModelTypeFor(simplifiedRule: SimplifiedRule): CompoundModelType {
+export type CompoundClass =
+	| typeof AssembledBranch
+	| typeof AssembledEnvelope
+	| typeof AssembledPolymorph
+	| typeof AssembledAlias;
+
+export type CompoundModelType = 'envelope' | 'branch' | 'polymorph' | 'alias';
+
+export interface CompoundModelTypeCtx {
+	readonly simplifiedRules: Readonly<Record<string, SimplifiedRule>>;
+	readonly kindEntries: readonly GeneratedKindEntry[];
+}
+
+export function compoundModelTypeFor(
+	kind: string,
+	simplifiedRule: SimplifiedRule,
+	ctx: CompoundModelTypeCtx
+): CompoundModelType {
 	const body = simplifiedRule;
-	if (body.type === SYMBOL || (body.type === SEQ && body.members.length === 0)) return 'envelope';
+	if (isAliasEnvelopeKind(kind, ctx)) return 'alias';
+	if (body.type === SYMBOL) return 'envelope';
+	if (body.type === SEQ && body.members.length === 0) return 'envelope';
 	if (body.type === CHOICE && (body.multiplicity === 'array' || body.multiplicity === 'nonEmptyArray'))
 		return 'envelope';
 	if (body.type === CHOICE && body.members.length > 0 && body.members.every(isLeafShapedMember)) return 'polymorph';
@@ -1683,11 +1767,31 @@ export function compoundModelTypeFor(simplifiedRule: SimplifiedRule): CompoundMo
 const COMPOUND_CLASS_BY_MODEL_TYPE: Record<CompoundModelType, CompoundClass> = {
 	envelope: AssembledEnvelope,
 	branch: AssembledBranch,
-	polymorph: AssembledPolymorph
+	polymorph: AssembledPolymorph,
+	alias: AssembledAlias
 };
 
-export function branchClassFor(simplifiedRule: SimplifiedRule): CompoundClass {
-	return COMPOUND_CLASS_BY_MODEL_TYPE[compoundModelTypeFor(simplifiedRule)];
+function aliasContentRefs(body: SimplifiedRule | undefined): readonly { readonly name: string }[] | undefined {
+	if (body?.type === SYMBOL) return [body];
+	if (body?.type === CHOICE && body.members.length > 0 && body.members.every((m) => m.type === SYMBOL))
+		return body.members as readonly { readonly name: string }[];
+	return undefined;
+}
+
+export function isAliasEnvelopeKind(display: string, ctx: CompoundModelTypeCtx): boolean {
+	const refs = aliasContentRefs(ctx.simplifiedRules[display]);
+	if (refs === undefined) return false;
+	if (findEntryForKindName(ctx.kindEntries, display)?.alias !== true) return false;
+	return refs.every((ref) => {
+		const storage = findEntryForKindName(ctx.kindEntries, ref.name);
+		return storage === undefined || storage.alias === true || storage.hidden !== true;
+	});
+}
+export function aliasEnvelopeOf(ref: { readonly aliasedTo?: string }, ctx: CompoundModelTypeCtx): string | undefined {
+	return ref.aliasedTo !== undefined && isAliasEnvelopeKind(ref.aliasedTo, ctx) ? ref.aliasedTo : undefined;
+}
+export function branchClassFor(kind: string, simplifiedRule: SimplifiedRule, ctx: CompoundModelTypeCtx): CompoundClass {
+	return COMPOUND_CLASS_BY_MODEL_TYPE[compoundModelTypeFor(kind, simplifiedRule, ctx)];
 }
 
 export abstract class AssembledLeaf<R extends AnyRule = RenderRule> extends AssembledNodeBase<R> {
@@ -1843,7 +1947,7 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 		const resolved: string[] = [];
 		const resolvedIds: number[] = [];
 		const byText = new Map<string, { kind: string; id: number }>();
-		for (const member of rule.members) {
+		for (const member of this.literalMembers) {
 			const text = literalTextOf(member);
 			if (text === undefined) continue;
 			const entry =
@@ -1864,8 +1968,14 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 		}
 	}
 
+	get literalMembers(): readonly RenderRule[] {
+		const flatten = (member: RenderRule): readonly RenderRule[] =>
+			member.type === CHOICE ? member.members.flatMap(flatten) : [member];
+		return this.rule.members.flatMap(flatten);
+	}
+
 	get values(): string[] {
-		return [...new Set(this.rule.members.map((m) => literalTextOf(m) ?? '').filter(Boolean))];
+		return [...new Set(this.literalMembers.map((m) => literalTextOf(m) ?? '').filter(Boolean))];
 	}
 
 	override get storage(): KindStorage {
@@ -1893,6 +2003,7 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 	}
 	readonly #subtypes: readonly NodeOrTerminal[];
 	transitiveParseKinds?: readonly NodeOrTerminal[];
+	optionDefaultArm?: string;
 
 	constructor(kind: string, rule: SupertypeRule | ChoiceRule, subtypes: readonly SubtypeRef[]) {
 		super(kind, rule, { hidden: true });
@@ -1963,7 +2074,8 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 				factoryName: nameNode(kind).factoryName,
 				kindEntries: opts.kindEntries,
 				parseKindCollisionContext: opts.parseKindCollisionContext,
-				assembleDiagnostics: ctx?.diagnostics
+				assembleDiagnostics: ctx?.diagnostics,
+				simplifiedRules: ctx?.simplifiedRules
 			},
 			rule
 		);
@@ -1998,6 +2110,7 @@ export type AssembledNode =
 	| AssembledBranch
 	| AssembledEnvelope
 	| AssembledPolymorph
+	| AssembledAlias
 	| AssembledPattern
 	| AssembledKeyword
 	| AssembledPunctuation

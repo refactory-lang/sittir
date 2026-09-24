@@ -110,7 +110,7 @@ export interface RawGrammar {
 }
 
 export interface DesugarDivergenceEvent {
-	readonly site: 'inline-alias-source' | 'body-pattern-group';
+	readonly site: 'body-pattern-group';
 	readonly name: string;
 }
 
@@ -173,6 +173,7 @@ export interface LinkedGrammar {
 	readonly references: SymbolRef[];
 	readonly derivations: DerivationLog;
 	readonly aliasedHiddenKinds?: Map<string, string>;
+	readonly displayUnions?: ReadonlyMap<string, ReadonlySet<string>>;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
@@ -202,6 +203,7 @@ export interface NormalizedGrammar {
 	readonly extras?: readonly string[];
 	readonly derivations: DerivationLog;
 	readonly aliasedHiddenKinds?: Map<string, string>;
+	readonly displayUnions?: ReadonlyMap<string, ReadonlySet<string>>;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
@@ -214,6 +216,7 @@ export interface NormalizedGrammar {
 export interface SimplifiedGrammar {
 	readonly name: string;
 	readonly aliasedHiddenKinds?: Map<string, string>;
+	readonly displayUnions?: ReadonlyMap<string, ReadonlySet<string>>;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
@@ -257,6 +260,7 @@ export interface NodeMap {
 	readonly nodeByKindId: ReadonlyMap<number, AssembledNode>;
 	readonly slotByRuleId: ReadonlyMap<RuleId, AssembledNonterminal>;
 	readonly aliasedHiddenKinds?: ReadonlyMap<string, string>;
+	readonly displayUnions?: ReadonlyMap<string, ReadonlySet<string>>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly signatures: SignaturePool;
 	readonly derivations: DerivationLog;

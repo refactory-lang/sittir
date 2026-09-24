@@ -206,6 +206,7 @@
 (char_literal) @literal.char
 (escape_sequence) @literal.string.escape
 (integer_literal) @literal.number.integer
+(integer_literal_hex) @literal.number.integer.hex
 (float_literal) @literal.number.float
 (negative_literal) @literal.number.negative
 (boolean_literal) @literal.boolean

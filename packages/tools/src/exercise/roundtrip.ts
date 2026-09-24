@@ -192,6 +192,8 @@ function isAnyNodeData(value: unknown): value is AnyNodeData {
 	return value !== null && typeof value === 'object' && '$type' in value;
 }
 
+const TREE_PROVENANCE_KEYS = new Set(['$span', '$nodeHandle', '$childIndex', '$source']);
+
 function toRenderableNode(value: unknown, seen = new WeakMap<object, unknown>()): unknown {
 	if (Array.isArray(value)) {
 		return value.map((entry) => toRenderableNode(entry, seen));
@@ -207,7 +209,7 @@ function toRenderableNode(value: unknown, seen = new WeakMap<object, unknown>())
 	const out: Record<string, unknown> = {};
 	seen.set(ref, out);
 	for (const [key, entry] of Object.entries(ref)) {
-		if (!key.startsWith('$')) continue;
+		if (!key.startsWith('$') || TREE_PROVENANCE_KEYS.has(key)) continue;
 		if (typeof entry === 'function') continue;
 		out[key] = toRenderableNode(entry, seen);
 	}

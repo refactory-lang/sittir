@@ -11,58 +11,40 @@ export function rebuildSpliceLoose() {
 				}),
 				name: "Edit",
 			}),
-		}).$trivia({ leading: ["//! Byte-level `apply_edits` on a source string.\n", "//!\n", "//! Sorts edits by `start_pos` descending, applies each as a raw byte\n", "//! splice on a `String`. Descending order guarantees earlier edits\n", "//! aren't shifted by later ones, so consumers can produce edits in any\n", "//! order and let us canonicalize.\n", "//!\n", "//! # Overlap handling\n", "//!\n", "//! Overlap detection is **explicitly** the consumer's responsibility —\n", "//! see contracts/napi-api.md `applyEdits` contract. This function does\n", "//! NOT validate that edits are disjoint; overlapping edits fall through\n", "//! to last-wins behavior (after sort-descending, the edit with the\n", "//! greatest `start_pos` applies first, and subsequent edits whose\n", "//! ranges still reference valid offsets within the intermediate string\n", "//! apply afterward).\n", "//!\n", "//! # Validation\n", "//!\n", "//! Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n", "//! Violations return `Err` rather than panic so the napi wrapper can\n", "//! surface a typed error to JS. UTF-8 boundary correctness is also\n", "//! checked on the splice (via `String::replace_range`) — non-char-\n", "//! boundary ranges produce a `Result::Err` instead of panicking.\n"] }), ir.attributeItem(ir.attribute.input({
+		}).$trivia.leading("//! Byte-level `apply_edits` on a source string.\n", "//!\n", "//! Sorts edits by `start_pos` descending, applies each as a raw byte\n", "//! splice on a `String`. Descending order guarantees earlier edits\n", "//! aren't shifted by later ones, so consumers can produce edits in any\n", "//! order and let us canonicalize.\n", "//!\n", "//! # Overlap handling\n", "//!\n", "//! Overlap detection is **explicitly** the consumer's responsibility —\n", "//! see contracts/napi-api.md `applyEdits` contract. This function does\n", "//! NOT validate that edits are disjoint; overlapping edits fall through\n", "//! to last-wins behavior (after sort-descending, the edit with the\n", "//! greatest `start_pos` applies first, and subsequent edits whose\n", "//! ranges still reference valid offsets within the intermediate string\n", "//! apply afterward).\n", "//!\n", "//! # Validation\n", "//!\n", "//! Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n", "//! Violations return `Err` rather than panic so the napi wrapper can\n", "//! surface a typed error to JS. UTF-8 boundary correctness is also\n", "//! checked on the splice (via `String::replace_range`) — non-char-\n", "//! boundary ranges produce a `Result::Err` instead of panicking.\n"), ir.attributeItem(ir.attribute.input({
 			path: "derive",
 			arguments: ir.delimTokenTree.paren("Debug", TSKindId.Comma, "Clone", TSKindId.Comma, "PartialEq", TSKindId.Comma, "Eq"),
-		})).$trivia({ leading: ["/// Error returned from [`apply_edits`] when an edit is invalid.\n"] }), ir.enumItem({
+		})).$trivia.leading("/// Error returned from [`apply_edits`] when an edit is invalid.\n"), ir.enumItem({
 			visibilityModifier: ir.visibilityModifier.pub(),
 			name: "SpliceError",
-			body: ir.enumVariantListElements({
-				enumVariant: ir.enumVariant({
-					name: "InvalidRange",
-					body: ir.fieldDeclarationListElements({ delimiter: Delimiter.None }, {
-						fieldDeclaration: ir.fieldDeclaration({
-							name: "start",
-							type: TSKindId.U32Keyword,
-						}),
-					}, {
-						fieldDeclaration: ir.fieldDeclaration({
-							name: "end",
-							type: TSKindId.U32Keyword,
-						}),
-					}),
-				}),
-			}, {
-				enumVariant: ir.enumVariant({
-					name: "OutOfBounds",
-					body: ir.fieldDeclarationListElements({ delimiter: Delimiter.None }, {
-						fieldDeclaration: ir.fieldDeclaration({
-							name: "end",
-							type: TSKindId.U32Keyword,
-						}),
-					}, {
-						fieldDeclaration: ir.fieldDeclaration({
-							name: "source_len",
-							type: TSKindId.UsizeKeyword,
-						}),
-					}),
-				}).$trivia({ leading: ["/// `end_pos > source.len()` — edit reaches past end of source.\n"] }),
-			}, {
-				enumVariant: ir.enumVariant({
-					name: "NonCharBoundary",
-					body: ir.fieldDeclarationListElements({ delimiter: Delimiter.None }, {
-						fieldDeclaration: ir.fieldDeclaration({
-							name: "start",
-							type: TSKindId.U32Keyword,
-						}),
-					}, {
-						fieldDeclaration: ir.fieldDeclaration({
-							name: "end",
-							type: TSKindId.U32Keyword,
-						}),
-					}),
-				}).$trivia({ leading: ["/// `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n"] }),
-			}).$trivia({ leading: ["/// `end_pos < start_pos` — the edit range is reversed.\n"] }),
+			body: ir.enumVariantListElements(ir.enumVariant({
+				name: "InvalidRange",
+				body: ir.fieldDeclarationListElements({ delimiter: Delimiter.None }, ir.fieldDeclaration({
+					name: "start",
+					type: TSKindId.U32Keyword,
+				}), ir.fieldDeclaration({
+					name: "end",
+					type: TSKindId.U32Keyword,
+				})),
+			}), ir.enumVariant({
+				name: "OutOfBounds",
+				body: ir.fieldDeclarationListElements({ delimiter: Delimiter.None }, ir.fieldDeclaration({
+					name: "end",
+					type: TSKindId.U32Keyword,
+				}), ir.fieldDeclaration({
+					name: "source_len",
+					type: TSKindId.UsizeKeyword,
+				})),
+			}).$trivia.leading("/// `end_pos > source.len()` — edit reaches past end of source.\n"), ir.enumVariant({
+				name: "NonCharBoundary",
+				body: ir.fieldDeclarationListElements({ delimiter: Delimiter.None }, ir.fieldDeclaration({
+					name: "start",
+					type: TSKindId.U32Keyword,
+				}), ir.fieldDeclaration({
+					name: "end",
+					type: TSKindId.U32Keyword,
+				})),
+			}).$trivia.leading("/// `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n")).$trivia.leading("/// `end_pos < start_pos` — the edit range is reversed.\n"),
 		}), ir.implItem.body.positiveClause({
 			traitClause: ir.scopedTypeIdentifier({
 				path: ir.scopedIdentifier({
@@ -192,12 +174,12 @@ export function rebuildSpliceLoose() {
 				name: "edits",
 				type: ir.genericType({
 					type: "Vec",
-					typeArguments: ir.identifier("Edit"),
+					typeArguments: "Edit",
 				}),
 			})],
 			returnType: ir.genericType({
 				type: "Result",
-				typeArguments: [ir.identifier("String"), ir.identifier("SpliceError")],
+				typeArguments: ["String", "SpliceError"],
 			}),
 			body: ir.block({
 				statements: [ir.letDeclaration({
@@ -209,7 +191,7 @@ export function rebuildSpliceLoose() {
 						}),
 						arguments: ir.arguments(),
 					}),
-				}).$trivia({ leading: ["// Pre-validate every edit up-front so we fail atomically (no", "// partial application)."] }), ir.forExpression({
+				}).$trivia.leading("// Pre-validate every edit up-front so we fail atomically (no", "// partial application)."), ir.forExpression({
 					pattern: "e",
 					value: ir.referenceExpression.bare("edits"),
 					body: ir.block({
@@ -228,27 +210,25 @@ export function rebuildSpliceLoose() {
 							consequence: ir.block({
 								statements: [ir.expressionStatement.withSemi(ir.returnExpression(ir.callExpression({
 									function: "Err",
-									arguments: [{
-										expression: ir.structExpression({
-											name: ir.scopedTypeIdentifierInExpressionPosition({
-												path: "SpliceError",
-												name: "InvalidRange",
-											}),
-											body: ir.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, ir.fieldInitializer({
-												field: "start",
-												value: ir.fieldExpression({
-													value: "e",
-													field: "start_pos",
-												}),
-											}), ir.fieldInitializer({
-												field: "end",
-												value: ir.fieldExpression({
-													value: "e",
-													field: "end_pos",
-												}),
-											})),
+									arguments: ir.structExpression({
+										name: ir.scopedTypeIdentifierInExpressionPosition({
+											path: "SpliceError",
+											name: "InvalidRange",
 										}),
-									}],
+										body: ir.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, ir.fieldInitializer({
+											field: "start",
+											value: ir.fieldExpression({
+												value: "e",
+												field: "start_pos",
+											}),
+										}), ir.fieldInitializer({
+											field: "end",
+											value: ir.fieldExpression({
+												value: "e",
+												field: "end_pos",
+											}),
+										})),
+									}),
 								})))],
 							}),
 						}), ir.ifExpression({
@@ -266,23 +246,21 @@ export function rebuildSpliceLoose() {
 							consequence: ir.block({
 								statements: [ir.expressionStatement.withSemi(ir.returnExpression(ir.callExpression({
 									function: "Err",
-									arguments: [{
-										expression: ir.structExpression({
-											name: ir.scopedTypeIdentifierInExpressionPosition({
-												path: "SpliceError",
-												name: "OutOfBounds",
-											}),
-											body: ir.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, ir.fieldInitializer({
-												field: "end",
-												value: ir.fieldExpression({
-													value: "e",
-													field: "end_pos",
-												}),
-											}), ir.shorthandFieldInitializer({
-												name: "source_len",
-											})),
+									arguments: ir.structExpression({
+										name: ir.scopedTypeIdentifierInExpressionPosition({
+											path: "SpliceError",
+											name: "OutOfBounds",
 										}),
-									}],
+										body: ir.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, ir.fieldInitializer({
+											field: "end",
+											value: ir.fieldExpression({
+												value: "e",
+												field: "end_pos",
+											}),
+										}), ir.shorthandFieldInitializer({
+											name: "source_len",
+										})),
+									}),
 								})))],
 							}),
 						}), ir.ifExpression({
@@ -294,15 +272,13 @@ export function rebuildSpliceLoose() {
 											value: "source",
 											field: "is_char_boundary",
 										}),
-										arguments: [{
-											expression: ir.typeCastExpression({
-												value: ir.fieldExpression({
-													value: "e",
-													field: "start_pos",
-												}),
-												type: TSKindId.UsizeKeyword,
+										arguments: ir.typeCastExpression({
+											value: ir.fieldExpression({
+												value: "e",
+												field: "start_pos",
 											}),
-										}],
+											type: TSKindId.UsizeKeyword,
+										}),
 									}),
 								}),
 								operator: TSKindId.PipePipe,
@@ -313,42 +289,38 @@ export function rebuildSpliceLoose() {
 											value: "source",
 											field: "is_char_boundary",
 										}),
-										arguments: [{
-											expression: ir.typeCastExpression({
-												value: ir.fieldExpression({
-													value: "e",
-													field: "end_pos",
-												}),
-												type: TSKindId.UsizeKeyword,
+										arguments: ir.typeCastExpression({
+											value: ir.fieldExpression({
+												value: "e",
+												field: "end_pos",
 											}),
-										}],
+											type: TSKindId.UsizeKeyword,
+										}),
 									}),
 								}),
 							}),
 							consequence: ir.block({
 								statements: [ir.expressionStatement.withSemi(ir.returnExpression(ir.callExpression({
 									function: "Err",
-									arguments: [{
-										expression: ir.structExpression({
-											name: ir.scopedTypeIdentifierInExpressionPosition({
-												path: "SpliceError",
-												name: "NonCharBoundary",
-											}),
-											body: ir.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, ir.fieldInitializer({
-												field: "start",
-												value: ir.fieldExpression({
-													value: "e",
-													field: "start_pos",
-												}),
-											}), ir.fieldInitializer({
-												field: "end",
-												value: ir.fieldExpression({
-													value: "e",
-													field: "end_pos",
-												}),
-											})),
+									arguments: ir.structExpression({
+										name: ir.scopedTypeIdentifierInExpressionPosition({
+											path: "SpliceError",
+											name: "NonCharBoundary",
 										}),
-									}],
+										body: ir.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, ir.fieldInitializer({
+											field: "start",
+											value: ir.fieldExpression({
+												value: "e",
+												field: "start_pos",
+											}),
+										}), ir.fieldInitializer({
+											field: "end",
+											value: ir.fieldExpression({
+												value: "e",
+												field: "end_pos",
+											}),
+										})),
+									}),
 								})))],
 							}),
 						})],
@@ -358,54 +330,46 @@ export function rebuildSpliceLoose() {
 						value: "edits",
 						field: "sort_by",
 					}),
-					arguments: [{
-						expression: ir.closureExpression.expr({
-							parameters: ["a", "b"],
-							body: ir.block({
-								trailingExpression: ir.callExpression({
-									function: ir.fieldExpression({
-										value: ir.callExpression({
-											function: ir.fieldExpression({
-												value: ir.fieldExpression({
-													value: "b",
-													field: "start_pos",
-												}),
-												field: "cmp",
+					arguments: ir.closureExpression.expr({
+						parameters: ["a", "b"],
+						body: ir.block({
+							trailingExpression: ir.callExpression({
+								function: ir.fieldExpression({
+									value: ir.callExpression({
+										function: ir.fieldExpression({
+											value: ir.fieldExpression({
+												value: "b",
+												field: "start_pos",
 											}),
-											arguments: [{
-												expression: ir.referenceExpression.bare(ir.fieldExpression({
-													value: "a",
-													field: "start_pos",
-												})),
-											}],
+											field: "cmp",
 										}),
-										field: "then_with",
+										arguments: ir.referenceExpression.bare(ir.fieldExpression({
+											value: "a",
+											field: "start_pos",
+										})),
 									}),
-									arguments: [{
-										expression: ir.closureExpression.expr({
-											parameters: [],
-											body: ir.callExpression({
-												function: ir.fieldExpression({
-													value: ir.fieldExpression({
-														value: "b",
-														field: "end_pos",
-													}),
-													field: "cmp",
-												}),
-												arguments: [{
-													expression: ir.referenceExpression.bare(ir.fieldExpression({
-														value: "a",
-														field: "end_pos",
-													})),
-												}],
+									field: "then_with",
+								}),
+								arguments: ir.closureExpression.expr({
+									parameters: [],
+									body: ir.callExpression({
+										function: ir.fieldExpression({
+											value: ir.fieldExpression({
+												value: "b",
+												field: "end_pos",
 											}),
+											field: "cmp",
 										}),
-									}],
+										arguments: ir.referenceExpression.bare(ir.fieldExpression({
+											value: "a",
+											field: "end_pos",
+										})),
+									}),
 								}),
 							}),
 						}),
-					}],
-				})).$trivia({ leading: ["// Sort descending by start_pos. Ties broken by end_pos descending —", "// with identical start positions, the longer replacement applies", "// first so the shorter doesn't overwrite its tail. (Tie-breaking is", "// documented consumer-visible behavior; overlap detection is still", "// theirs.)"] }), ir.letDeclaration({
+					}),
+				})).$trivia.leading("// Sort descending by start_pos. Ties broken by end_pos descending —", "// with identical start positions, the longer replacement applies", "// first so the shorter doesn't overwrite its tail. (Tie-breaking is", "// documented consumer-visible behavior; overlap detection is still", "// theirs.)"), ir.letDeclaration({
 					mutableSpecifier: true,
 					pattern: "buf",
 					value: ir.callExpression({
@@ -413,9 +377,7 @@ export function rebuildSpliceLoose() {
 							path: "String",
 							name: "from",
 						}),
-						arguments: [{
-							expression: ir.identifier("source"),
-						}],
+						arguments: "source",
 					}),
 				}), ir.forExpression({
 					pattern: "e",
@@ -444,28 +406,22 @@ export function rebuildSpliceLoose() {
 								value: "buf",
 								field: "replace_range",
 							}),
-							arguments: [{
-								expression: ir.rangeExpression.binary({
-									start: "start",
-									operator: TSKindId.DotDot,
-									end: "end",
-								}),
-							}, {
-								expression: ir.referenceExpression.bare(ir.fieldExpression({
-									value: "e",
-									field: "inserted_text",
-								})),
-							}],
+							arguments: [ir.rangeExpression.binary({
+								start: "start",
+								operator: TSKindId.DotDot,
+								end: "end",
+							}), ir.referenceExpression.bare(ir.fieldExpression({
+								value: "e",
+								field: "inserted_text",
+							}))],
 						}))],
 					}),
 				})],
 				trailingExpression: ir.callExpression({
 					function: "Ok",
-					arguments: [{
-						expression: ir.identifier("buf"),
-					}],
+					arguments: "buf",
 				}),
 			}),
-		}).$trivia({ leading: ["/// Apply a batch of edits to a source string, returning the modified\n", "/// source. See module docs for the sort-descending strategy and the\n", "/// consumer-owned overlap contract.\n", "///\n", "/// # Errors\n", "///\n", "/// - [`SpliceError::InvalidRange`] if any edit has `end_pos < start_pos`.\n", "/// - [`SpliceError::OutOfBounds`] if any edit's `end_pos` exceeds\n", "///   `source.len()` (bytes).\n", "/// - [`SpliceError::NonCharBoundary`] if any edit's start or end is\n", "///   not a UTF-8 character boundary of the source.\n"] })],
+		}).$trivia.leading("/// Apply a batch of edits to a source string, returning the modified\n", "/// source. See module docs for the sort-descending strategy and the\n", "/// consumer-owned overlap contract.\n", "///\n", "/// # Errors\n", "///\n", "/// - [`SpliceError::InvalidRange`] if any edit has `end_pos < start_pos`.\n", "/// - [`SpliceError::OutOfBounds`] if any edit's `end_pos` exceeds\n", "///   `source.len()` (bytes).\n", "/// - [`SpliceError::NonCharBoundary`] if any edit's start or end is\n", "///   not a UTF-8 character boundary of the source.\n")],
 	});
 }

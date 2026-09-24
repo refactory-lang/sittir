@@ -11,12 +11,12 @@ import {
 	TOKEN,
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, ChoiceRule, RuleBase, Multiplicity, SimplifiedRule } from '../types/rule.ts';
-import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import { sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import {
 	AssembledNonterminal,
 	type AssembleDiagnosticsCollector,
+	type DeriveCtx,
 	type NodeOrTerminal,
 	deriveValuesForRule,
 	dedupeValues,
@@ -286,6 +286,8 @@ function isSlotNode(rule: SimplifiedRule): boolean {
 	return isNonterminalRuleType(rule);
 }
 
+export type SlotDeriveCtx = Pick<DeriveCtx, 'kindEntries' | 'simplifiedRules'>;
+
 function slotMultiplicity(rule: AnyRule, inherited: Multiplicity): Multiplicity {
 	const own = (rule as { multiplicity?: Multiplicity }).multiplicity;
 	if (own !== undefined) return own;
@@ -296,7 +298,7 @@ function slotMultiplicity(rule: AnyRule, inherited: Multiplicity): Multiplicity 
 function buildSlot(
 	rule: SimplifiedRule,
 	kindForName: string | undefined,
-	kindEntries: readonly GeneratedKindEntry[] | undefined,
+	deriveCtx: SlotDeriveCtx | undefined,
 	inherited: Multiplicity,
 	inheritedSeparator: RuleBase<'normalize'>['separator'],
 	sanctionedUnion = false,
@@ -338,7 +340,7 @@ function buildSlot(
 		}
 	}
 
-	const rawValues = deriveValuesForRule(rule, { kindEntries, stampArmFieldNamesAsParseName: sanctionedUnion }, mult);
+	const rawValues = deriveValuesForRule(rule, { ...deriveCtx, stampArmFieldNamesAsParseName: sanctionedUnion }, mult);
 	let dedupedValues = dedupeValues(rawValues);
 	if (dedupedValues.length === 0) return null;
 
@@ -400,7 +402,7 @@ function buildSlot(
 export function collectSlots(
 	rule: SimplifiedRule,
 	kindForName?: string,
-	kindEntries?: readonly GeneratedKindEntry[],
+	deriveCtx?: SlotDeriveCtx,
 	inherited: Multiplicity = 'single',
 	inheritedSeparator: RuleBase<'normalize'>['separator'] = undefined,
 	diagnostics?: AssembleDiagnosticsCollector
@@ -408,9 +410,9 @@ export function collectSlots(
 	if (rule.type === SEQ) {
 		const seqMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
 		const seqSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
-		return rule.members.flatMap((m) => resolveMember(m, kindForName, kindEntries, seqMult, seqSep, diagnostics));
+		return rule.members.flatMap((m) => resolveMember(m, kindForName, deriveCtx, seqMult, seqSep, diagnostics));
 	}
-	return resolveMember(rule, kindForName, kindEntries, inherited, inheritedSeparator, diagnostics);
+	return resolveMember(rule, kindForName, deriveCtx, inherited, inheritedSeparator, diagnostics);
 }
 
 function recordUnclassifiableShape(
@@ -432,7 +434,7 @@ function recordUnclassifiableShape(
 function resolveMember(
 	rule: SimplifiedRule,
 	kindForName: string | undefined,
-	kindEntries: readonly GeneratedKindEntry[] | undefined,
+	deriveCtx: SlotDeriveCtx | undefined,
 	inherited: Multiplicity,
 	inheritedSeparator: RuleBase<'normalize'>['separator'],
 	diagnostics?: AssembleDiagnosticsCollector
@@ -443,7 +445,7 @@ function resolveMember(
 				(rule as { multiplicity?: Multiplicity }).multiplicity !== undefined ||
 				(rule as { separator?: RuleBase<'normalize'>['separator'] }).separator !== undefined;
 			if (!isList) recordUnclassifiableShape(kindForName, rule, 'nested-seq', diagnostics);
-			return collectSlots(rule, kindForName, kindEntries, inherited, inheritedSeparator, diagnostics);
+			return collectSlots(rule, kindForName, deriveCtx, inherited, inheritedSeparator, diagnostics);
 		}
 
 		case CHOICE: {
@@ -508,7 +510,7 @@ function resolveMember(
 						});
 						if (unionSlotRouting) {
 							const namedArmSlots = partition.structuredNamedArms.map((m) =>
-								mergeByName(collectSlots(m, kindForName, kindEntries, armMult, choiceSep, diagnostics))
+								mergeByName(collectSlots(m, kindForName, deriveCtx, armMult, choiceSep, diagnostics))
 							);
 							const restricted = {
 								...rule,
@@ -517,7 +519,7 @@ function resolveMember(
 							const unionSlot = buildSlot(
 								restricted,
 								kindForName,
-								kindEntries,
+								deriveCtx,
 								inherited,
 								inheritedSeparator,
 								true,
@@ -545,18 +547,18 @@ function resolveMember(
 					}
 				}
 				const armSlots = rule.members.map((m) =>
-					mergeByName(collectSlots(m, kindForName, kindEntries, armMult, choiceSep, diagnostics))
+					mergeByName(collectSlots(m, kindForName, deriveCtx, armMult, choiceSep, diagnostics))
 				);
 				return mergeChoiceArms(armSlots);
 			}
 			if (!isSlotNode(rule)) return [];
-			const slot = buildSlot(rule, kindForName, kindEntries, inherited, inheritedSeparator, undefined, diagnostics);
+			const slot = buildSlot(rule, kindForName, deriveCtx, inherited, inheritedSeparator, undefined, diagnostics);
 			return slot ? [slot] : [];
 		}
 
 		default: {
 			if (!isSlotNode(rule)) return [];
-			const slot = buildSlot(rule, kindForName, kindEntries, inherited, inheritedSeparator, undefined, diagnostics);
+			const slot = buildSlot(rule, kindForName, deriveCtx, inherited, inheritedSeparator, undefined, diagnostics);
 			return slot ? [slot] : [];
 		}
 	}

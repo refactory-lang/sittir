@@ -1,7 +1,6 @@
 {
   "_parameters": 1,
   "argument_list": 2,
-  "as_pattern": 6,
   "assignment_eq": 1,
   "call": 2,
   "conditional_expression": 1,
@@ -9,7 +8,7 @@
   "function_definition": 3,
   "list": 3,
   "list_comprehension": 1,
-  "module": 7,
+  "module": 5,
   "parameters": 1,
   "tuple": 2,
   "tuple_pattern": 1

@@ -1,3 +1,4 @@
+import { IMMEDIATE_TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import {
 	isPrecWrapper as isPrecWrapperShape,
 	isContainerType,
@@ -500,7 +501,7 @@ export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): 
 		return carryOverProperties(rule, nativeRequired(t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent));
 	}
 	if (t === 'TOKEN') return carryOverProperties(rule, nativeRequired('token')(newContent));
-	if (t === 'IMMEDIATE_TOKEN') {
+	if (t === IMMEDIATE_TOKEN) {
 		const immediate = nativeRequired('token').immediate;
 		if (typeof immediate !== 'function') throw new Error('transform: native token.immediate not available');
 		return carryOverProperties(rule, immediate(newContent));

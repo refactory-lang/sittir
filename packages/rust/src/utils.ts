@@ -10,7 +10,8 @@ import type {
 	ElementsOf,
 	FlavorPair,
 	Hoisted,
-	OmitEach
+	OmitEach,
+	OptionsArg
 } from '@sittir/types';
 import type { BlockComment, LineComment, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
@@ -21,11 +22,12 @@ import {
 	hasKind,
 	coerceBooleanKeywordStorage,
 	coerceBitflagStorage,
-	withAccessors
+	withAccessors,
+	numberText
 } from '@sittir/common/utils';
 import type { WithMethodsEngine } from '@sittir/common/utils';
 
-export { hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors };
+export { hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors, numberText };
 
 export function isNodeData<K extends keyof NamespaceMap>(
 	v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']
@@ -57,18 +59,22 @@ export const methodsEngine = {
  *  back the same kind. A type alias cannot name itself, so the earlier
  *  declaration fell back to `AnyNodeData` and lost the type at every
  *  `$trivia` call site. */
+export interface TriviaSetterOf<Self> {
+	(
+		...args: (
+			| (BlockComment | LineComment | string)
+			| { leading?: (BlockComment | LineComment | string)[]; trailing?: (BlockComment | LineComment | string)[] }
+		)[]
+	): Self;
+	leading(...items: (BlockComment | LineComment | string)[]): Self;
+	trailing(...items: (BlockComment | LineComment | string)[]): Self;
+}
+
 export interface NodeMethodsOf {
 	$render(): string;
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
 	$replace(target: { range(): ByteRange }): Edit;
-	$trivia(
-		...args: (
-			| BlockComment
-			| LineComment
-			| string
-			| { leading?: (BlockComment | LineComment | string)[]; trailing?: (BlockComment | LineComment | string)[] }
-		)[]
-	): this;
+	$trivia: TriviaSetterOf<this>;
 }
 
 export function withMethods<T extends object>(node: T, engine: typeof methodsEngine): T & NodeMethodsOf {
@@ -105,6 +111,17 @@ export function admitHiddenText<T = unknown>(value: unknown, leaves: readonly Hi
 		throw new Error(`${where}: ${JSON.stringify(value)} matches none of [${leaves.map(([kind]) => kind).join(', ')}]`);
 	}
 	return hit[2](value) as T;
+}
+
+export type AliasBuilder = readonly [storage: readonly number[], build: (content: unknown) => unknown];
+
+export function admitAliasContent<T = unknown>(value: unknown, aliases: readonly AliasBuilder[]): T {
+	if (Array.isArray(value)) return value.map((item) => admitAliasContent(item, aliases)) as T;
+	const id =
+		isRecord(value) && typeof value.$type === 'number' ? value.$type : typeof value === 'number' ? value : undefined;
+	if (id === undefined) return value as T;
+	const hit = aliases.find(([storage]) => storage.includes(id));
+	return (hit === undefined ? value : hit[1](value)) as T;
 }
 
 export function coerceMixedEnumStorage<T = unknown>(
@@ -182,7 +199,7 @@ export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {
 	return { strict, coerce };
 }
 
-export type { ArgsOf, ElementsOf, FlavorPair, Hoisted, OmitEach };
+export type { ArgsOf, ElementsOf, FlavorPair, Hoisted, OmitEach, OptionsArg };
 
 type AnyFlavorFn = (...args: never[]) => unknown;
 
