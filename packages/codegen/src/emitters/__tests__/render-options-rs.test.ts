@@ -123,30 +123,31 @@ describe('planRenderOptions', () => {
 });
 
 describe('renderOptionsRs', () => {
-	it('emits one struct per address branch, a strict deserializer and a straight-line resolver', () => {
+	it('emits a static address trie over the site constants and no per-address structs', () => {
 		const kindEntries = [...BASE_KIND_ENTRIES, { kind: 'comma', member: 'Comma', id: 14, symbolName: ',', literalText: ',', anon: true }];
 		const plan = planRenderOptions(sites, kindEntries, whitespaceText);
 		const addresses = deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries as never), (() => []) as never);
 		const source = renderOptionsRs(plan, addresses, kindEntries);
+		expect(source).toContain('pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[');
+		expect(source).toContain('::sittir_core::options::AddressNode::Branch { key: "formal_parameters", path: "(formal_parameters)", children: &[');
+		expect(source).toContain('::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_FORMAL_PARAMETERS_ELEMENTS, path: "(formal_parameters)/elements:/delimiter" }] },');
 		expect(source).toContain(
-			'pub struct Options {\n    pub indent: Option<String>,\n    pub call_expression: Option<CallExpressionOptions>,\n    pub formal_parameters: Option<FormalParametersOptions>,'
+			'::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER, path: "(formal_parameters)/elements:/separator/\\",\\"/after" }] },'
 		);
-		expect(source).toContain(
-			'pub struct FormalParametersElementsSeparatorCommaOptions {\n    pub after: Option<u16>,\n    pub before: Option<u16>,\n}'
-		);
-		expect(source).toContain(
-			'pub struct FormalParametersElementsOptions {\n    pub delimiter: Option<u8>,\n    pub separator: Option<FormalParametersElementsSeparatorOptions>,\n}'
-		);
-		expect(source).toContain(
-			'::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(formal_parameters)/elements:/separator/\\",\\"")?;'
-		);
-		expect(source).toContain('separator: obj.get("separator")?,');
-		expect(source).toContain('comma: obj.get("comma")?,');
-		expect(source).toContain(
-			'if let Some(v) = options.formal_parameters.as_ref().and_then(|o| o.elements.as_ref()).and_then(|o| o.separator.as_ref()).and_then(|o| o.comma.as_ref()).and_then(|o| o.after) {\n        set_spacing(&mut table, SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER, SPACING_SITES[SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER].4, v, "(formal_parameters)/elements:/separator/\\",\\"/after")?;\n    }'
-		);
-		expect(source).not.toContain('SITE_PATHS');
-		expect(source).not.toContain('serde_json');
+		expect(source).toContain('pub type Options = ::sittir_core::options::Options<Sites>;');
+		expect(source).not.toContain('pub struct Options {');
+		expect(source).not.toContain('FromNapiValue');
+		expect(source).not.toContain('pub fn resolve(');
+	});
+
+	it('emits smoke tests for the admitted, unknown-key and refused-value shapes', () => {
+		const plan = planRenderOptions(sites, kindEntries, whitespaceText);
+		const addresses = deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries as never), (() => []) as never);
+		const source = renderOptionsRs(plan, addresses, kindEntries);
+		expect(source).toContain('fn an_unknown_key_is_refused()');
+		expect(source).toContain('fn an_unknown_key_beneath_a_branch_names_the_branch()');
+		expect(source).toContain('fn a_differing_admitted_value_changes_only_its_own_sites()');
+		expect(source).toContain('fn a_value_the_site_does_not_admit_is_refused_with_its_path()');
 	});
 
 	it('emits the constants, the defaults, the resolver tables and spacing_text', () => {
@@ -160,12 +161,10 @@ describe('renderOptionsRs', () => {
 		expect(src).toContain('("formal_parameters", "elements_delimiter", 2, 0),');
 		expect(src).toContain('delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
 		expect(src).toContain('pub static DEPTH_SITES: &[(&str, &[usize])] = &[\n];');
-		expect(src).toContain('opens an indent it never dedents');
-		expect(src).toContain('dedents an indent it never opened');
 		expect(src).toContain('167 => "",');
 		expect(src).toContain('169 => "\\n",');
 		expect(src).not.toContain('\\u{FDD2}');
-		expect(src).toContain('pub fn resolve(options: &Options, base: &ResolvedOptions) -> Result<ResolvedOptions, String>');
+		expect(src).toContain('        depth_sites: DEPTH_SITES,');
 	});
 
 	it('emits a SiteSpec per spacing site in vector order and wires it into the resolved options', () => {

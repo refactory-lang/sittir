@@ -144,24 +144,207 @@ impl Default for ResolvedOptions {
     }
 }
 
-/// Refuse a napi object whose keys are not all in `allowed`: an address-keyed
-/// deserializer's only defense against a typo, since napi otherwise drops an
-/// unknown property silently.
-#[cfg(feature = "napi-bindings")]
-pub fn reject_unknown_keys(
-    obj: &::napi::bindgen_prelude::Object,
-    allowed: &[&str],
-    at: &str,
-) -> ::napi::Result<()> {
-    for key in ::napi::bindgen_prelude::Object::keys(obj)? {
-        if !allowed.contains(&key.as_str()) {
-            let message = if at.is_empty() {
-                format!("options: unknown key {key}")
-            } else {
-                format!("options: {at}/{key} names no site")
-            };
-            return Err(::napi::Error::from_reason(message));
+/// One site an address leaf sets, with the site's canonical path for errors.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SiteRef {
+    pub site: usize,
+    pub path: &'static str,
+}
+
+/// One node of a grammar's address trie: a branch names the keys beneath it,
+/// a leaf the sites its value sets.
+#[derive(Debug)]
+pub enum AddressNode {
+    Branch { key: &'static str, path: &'static str, children: &'static [AddressNode] },
+    Spacing { key: &'static str, sites: &'static [SiteRef] },
+    Delimiter { key: &'static str, sites: &'static [SiteRef] },
+}
+
+impl AddressNode {
+    fn key(&self) -> &'static str {
+        match self {
+            AddressNode::Branch { key, .. } | AddressNode::Spacing { key, .. } | AddressNode::Delimiter { key, .. } => key,
         }
     }
-    Ok(())
+}
+
+/// The generated facts an options object is read and resolved against.
+pub struct OptionTables {
+    pub addresses: &'static [AddressNode],
+    pub allowed: fn(usize) -> &'static [u16],
+    pub delimiter_allowed: fn(usize) -> u8,
+    pub depth_sites: &'static [(&'static str, &'static [usize])],
+    pub indent: u16,
+    pub dedent: u16,
+}
+
+/// A grammar's option tables, named by a marker type.
+pub trait OptionSites {
+    const TABLES: OptionTables;
+}
+
+/// The view of a JS-shaped object the trie walk reads.
+pub trait OptionObject: Sized {
+    fn keys(&self) -> Result<Vec<String>, String>;
+    fn object(&self, key: &str) -> Result<Option<Self>, String>;
+    fn number(&self, key: &str) -> Result<Option<u32>, String>;
+    fn string(&self, key: &str) -> Result<Option<String>, String>;
+}
+
+/// The settings an options object names, read through a grammar's address
+/// trie and applied over a base table by `resolve`.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct Options<S> {
+    pub indent: Option<String>,
+    pub spacing: Vec<(SiteRef, u32)>,
+    pub delimiter: Vec<(SiteRef, u32)>,
+    sites: ::std::marker::PhantomData<S>,
+}
+
+impl<S: OptionSites> Options<S> {
+    pub fn read<O: OptionObject>(obj: &O) -> Result<Self, String> {
+        let mut options = Self {
+            indent: obj.string("indent")?,
+            spacing: Vec::new(),
+            delimiter: Vec::new(),
+            sites: ::std::marker::PhantomData,
+        };
+        options.read_level(obj, S::TABLES.addresses, "")?;
+        Ok(options)
+    }
+
+    fn read_level<O: OptionObject>(&mut self, obj: &O, nodes: &'static [AddressNode], at: &str) -> Result<(), String> {
+        for key in obj.keys()? {
+            if at.is_empty() && key == "indent" {
+                continue;
+            }
+            let Some(node) = nodes.iter().find(|n| n.key() == key) else {
+                return Err(if at.is_empty() {
+                    format!("options: unknown key {key}")
+                } else {
+                    format!("options: {at}/{key} names no site")
+                });
+            };
+            match node {
+                AddressNode::Branch { path, children, .. } => {
+                    if let Some(inner) = obj.object(&key)? {
+                        self.read_level(&inner, children, path)?;
+                    }
+                }
+                AddressNode::Spacing { sites, .. } => {
+                    if let Some(value) = obj.number(&key)? {
+                        self.spacing.extend(sites.iter().map(|site| (*site, value)));
+                    }
+                }
+                AddressNode::Delimiter { sites, .. } => {
+                    if let Some(value) = obj.number(&key)? {
+                        self.delimiter.extend(sites.iter().map(|site| (*site, value)));
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+
+    /// Apply the settings over `base`. A value a site does not admit, or an
+    /// indent a kind's sites leave unbalanced, is an error naming it.
+    pub fn resolve(&self, base: &ResolvedOptions) -> Result<ResolvedOptions, String> {
+        let tables = S::TABLES;
+        let mut table = base.clone();
+        if let Some(indent) = &self.indent {
+            table.indent = indent.clone();
+        }
+        for (site, value) in &self.spacing {
+            let allowed = (tables.allowed)(site.site);
+            match u16::try_from(*value) {
+                Ok(id) if allowed.contains(&id) => table.spacing[site.site] = id,
+                _ => return Err(format!("options: {} does not admit kind id {value} (allowed: {allowed:?})", site.path)),
+            }
+        }
+        for (site, value) in &self.delimiter {
+            let allowed = (tables.delimiter_allowed)(site.site);
+            match u8::try_from(*value) {
+                Ok(bits) if bits & !allowed == 0 => table.delimiter[site.site] = bits,
+                _ => return Err(format!("options: {} does not admit delimiter {value} (allowed bits: {allowed})", site.path)),
+            }
+        }
+        for (kind, sites) in tables.depth_sites {
+            let mut depth = 0usize;
+            for site in sites.iter() {
+                let value = table.spacing[*site];
+                if tables.indent != 0 && value == tables.indent {
+                    depth += 1;
+                } else if tables.dedent != 0 && value == tables.dedent {
+                    if depth == 0 {
+                        return Err(format!("options: {kind} dedents an indent it never opened"));
+                    }
+                    depth -= 1;
+                }
+            }
+            if depth != 0 {
+                return Err(format!("options: {kind} opens an indent it never dedents"));
+            }
+        }
+        Ok(table)
+    }
+}
+
+impl OptionObject for ::serde_json::Map<String, ::serde_json::Value> {
+    fn keys(&self) -> Result<Vec<String>, String> {
+        Ok(self.keys().cloned().collect())
+    }
+
+    fn object(&self, key: &str) -> Result<Option<Self>, String> {
+        match self.get(key) {
+            None | Some(::serde_json::Value::Null) => Ok(None),
+            Some(::serde_json::Value::Object(map)) => Ok(Some(map.clone())),
+            Some(other) => Err(format!("options: {key} must be an object, not {other}")),
+        }
+    }
+
+    fn number(&self, key: &str) -> Result<Option<u32>, String> {
+        match self.get(key) {
+            None | Some(::serde_json::Value::Null) => Ok(None),
+            Some(value) => value
+                .as_u64()
+                .and_then(|v| u32::try_from(v).ok())
+                .map(Some)
+                .ok_or_else(|| format!("options: {key} must be a kind id, not {value}")),
+        }
+    }
+
+    fn string(&self, key: &str) -> Result<Option<String>, String> {
+        match self.get(key) {
+            None | Some(::serde_json::Value::Null) => Ok(None),
+            Some(::serde_json::Value::String(s)) => Ok(Some(s.clone())),
+            Some(other) => Err(format!("options: {key} must be a string, not {other}")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl OptionObject for ::napi::bindgen_prelude::Object<'_> {
+    fn keys(&self) -> Result<Vec<String>, String> {
+        ::napi::bindgen_prelude::Object::keys(self).map_err(|e| e.reason.clone())
+    }
+
+    fn object(&self, key: &str) -> Result<Option<Self>, String> {
+        self.get::<Self>(key).map_err(|e| e.reason.clone())
+    }
+
+    fn number(&self, key: &str) -> Result<Option<u32>, String> {
+        self.get::<u32>(key).map_err(|e| e.reason.clone())
+    }
+
+    fn string(&self, key: &str) -> Result<Option<String>, String> {
+        self.get::<String>(key).map_err(|e| e.reason.clone())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<S: OptionSites> ::napi::bindgen_prelude::FromNapiValue for Options<S> {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
+        Self::read(&obj).map_err(::napi::Error::from_reason)
+    }
 }
