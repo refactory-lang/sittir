@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { deriveAddressTables, renderOptionsModule, type ArmTypeResolver } from '../options.ts';
+import { deriveAddressTables, hintEmitterOf, renderOptionsModule, type ArmTypeResolver } from '../options.ts';
 import type { PreferenceArm, SitePreference } from '../../compiler/model/site-preferences.ts';
 import { siteKey } from '../../dsl/primitives/spacing.ts';
 
@@ -34,7 +34,7 @@ describe('renderOptionsModule', () => {
 		{ kind: 'newline', member: 'newline' }
 	];
 
-	it('emits the address types and the mapped Options type, importing the enums the sites name', () => {
+	it('derives Options from the node interfaces and the label roots; no address tables', () => {
 		const spacingType = 'TSKindId.tight | TSKindId.space | TSKindId.newline';
 		const delimiter: SitePreference = {
 			kind: 'formal_parameters',
@@ -46,16 +46,26 @@ describe('renderOptionsModule', () => {
 			source: 'delimiter'
 		};
 		const sites = [terminator('return_statement'), spacing('formal_parameters', 'elements', 'comma_separator_space_after'), delimiter];
-		const src = renderOptionsModule({ spacingType, addresses: deriveAddressTables(sites, kindEntries, armType, new Map()) });
-		expect(src).toContain("import type { Delimiter, TSKindId } from './types.js';");
-		expect(src).toContain(`export type SpacingArm = ${spacingType};`);
-		expect(src).toContain(`export type WhitespaceArm = ${spacingType};`);
-		expect(src).toContain("export type AddressRoot = 'formal_parameters' | 'return_statement';");
-		expect(src).toContain("readonly 'formal_parameters/elements/delimiter': Delimiter.Trailing;");
-		expect(src).toContain("readonly 'formal_parameters/elements/separator/comma/after': SpacingArm;");
-		expect(src).toContain("readonly 'return_statement/terminator/statement_terminator': TSKindId.automatic_semicolon | TSKindId.semi;");
-		expect(src).toContain('export type Options = AddressedOptions & { readonly indent?: string };');
-		expect(src).not.toMatch(/SpacingLabel|KindSpacing|SitesOf|Members|EdgeKind|OPTION_CATALOG|export const/);
+		const arms = { spacingType, whitespaceType: spacingType };
+		const addresses = deriveAddressTables(sites, kindEntries, armType, new Map());
+		const hints = hintEmitterOf(addresses, kindEntries, arms, new Set(['formal_parameters']));
+		expect(hints.hintOf('formal_parameters')).toBe('{ readonly elements?: { readonly delimiter?: Delimiter.Trailing; readonly separator?: { readonly comma?: { readonly after?: SpacingArm } } } }');
+		expect(hints.labelRoots).toEqual(['return_statement']);
+		const src = renderOptionsModule({ arms, hints });
+		expect(src).toContain("import type { DerivedOptions } from '@sittir/types';");
+		expect(src).toContain("import type { TSKindId, SpacingArm, WhitespaceArm } from './types.js';");
+		expect(src).toContain('export type { SpacingArm, WhitespaceArm };');
+		expect(src).toContain('export interface LabelOptions {\n\treadonly returnStatement?: { readonly terminator?: { readonly statementTerminator?: TSKindId.automatic_semicolon | TSKindId.semi } };\n}');
+		expect(src).toContain('export type Options = DerivedOptions<T.OptionsHintMap> & LabelOptions;');
+		expect(src).not.toMatch(/AddressRoot|AddressBranch|AddressLeaf|AddressedOptions|export const/);
+	});
+
+	it('spells every key camel-cased, including literal tokens and list kinds', () => {
+		const entries = [...kindEntries, { kind: 'colon_colon', member: 'ColonColon', symbolName: '::', literalText: '::', anon: true }];
+		const site: SitePreference = { kind: 'token_tree_punctuation', slot: 'colon_colon', address: 'colon_colon_after', label: 'colon_colon_after', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'seam' };
+		const hints = hintEmitterOf(deriveAddressTables([site], entries, armType, new Map()), entries, undefined, new Set());
+		expect(hints.labelRoots).toEqual(['token_tree_punctuation']);
+		expect(renderOptionsModule({ hints })).toContain('readonly tokenTreePunctuation?: { readonly colonColon?: { readonly after?: TSKindId.tight | TSKindId.space | TSKindId.newline } };');
 	});
 
 	it('types a site that admits indent and dedent by the wider union', () => {
@@ -63,9 +73,8 @@ describe('renderOptionsModule', () => {
 		const whitespaceType = `${spacingType} | TSKindId.indent | TSKindId.dedent`;
 		const WHITESPACE = ['tight', 'space', 'newline', 'indent', 'dedent'].map((k) => ({ value: k, kind: k }));
 		const edge: SitePreference = { kind: 'block', slot: 'block', address: 'block_before', label: 'block_before', arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', side: 'seam' };
-		const src = renderOptionsModule({ spacingType, whitespaceType, addresses: deriveAddressTables([edge], kindEntries, armType, new Map()) });
-		expect(src).toContain(`export type WhitespaceArm = ${whitespaceType};`);
-		expect(src).toContain("readonly 'block/before': WhitespaceArm;");
+		const hints = hintEmitterOf(deriveAddressTables([edge], kindEntries, armType, new Map()), kindEntries, { spacingType, whitespaceType }, new Set(['block']));
+		expect(hints.hintOf('block')).toBe('{ readonly before?: WhitespaceArm }');
 	});
 });
 
@@ -106,19 +115,6 @@ describe('deriveAddressTables', () => {
 		expect(tables.depth).toBe(3);
 	});
 
-	it('emits the tables and a mapped type unrolled to the depth the grammar needs', () => {
-		const sites = [site('block', 'lbrace', 'lbrace_after')];
-		const src = renderOptionsModule({
-			spacingType: 'TSKindId.tight | TSKindId.space',
-			addresses: deriveAddressTables(sites, kindEntries, addressArm, new Map())
-		});
-		expect(src).toContain("export type AddressRoot = 'block';");
-		expect(src).toContain("export interface AddressBranch {\n\treadonly block: 'lbrace';\n\treadonly 'block/lbrace': 'after';\n}");
-		expect(src).toContain("export interface AddressLeaf {\n\treadonly 'block/lbrace/after': SpacingArm;\n}");
-		expect(src).toContain('export type AddressedOptions = { readonly [K in AddressRoot]?: AddressNode1<K> };');
-		expect(src).toContain('type AddressNode2<P extends string> = P extends keyof AddressBranch');
-		expect(src).not.toContain('AddressNode3<');
-	});
 
 	it('rejects a literal segment whose text has no kind entry', () => {
 		const orphanLiteral: SitePreference = {

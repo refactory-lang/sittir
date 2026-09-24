@@ -90,6 +90,8 @@ import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
+import { armAliasesOf, hintEmitterOf, publicKindNames, rootKeyOf, type AddressTables, type HintEmitter } from './options.ts';
+import { publicKindName, type SitePreference } from '../compiler/model/site-preferences.ts';
 
 type StructuralNode = SlotBearingCompound;
 
@@ -97,6 +99,8 @@ export interface EmitTypesConfig {
 	grammar: string;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
+	sites?: readonly SitePreference[];
+	addresses?: AddressTables;
 }
 
 const missingKindTypes = new Map<string, string>();
@@ -167,6 +171,13 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('');
 
 	if (kindEntries) emitKindIdEnumAndLookups(lines, kindEntries, nodeMap);
+	const arms = kindEntries === undefined || config.sites === undefined ? undefined : armAliasesOf(nodeMap, kindEntries, config.sites);
+	if (arms !== undefined) {
+		lines.push(`export type SpacingArm = ${arms.spacingType};`);
+		lines.push(`export type WhitespaceArm = ${arms.whitespaceType};`);
+		lines.push('');
+	}
+	const hints = kindEntries !== undefined && config.addresses !== undefined ? hintEmitterOf(config.addresses, kindEntries, arms, publicKindNames(nodeMap)) : undefined;
 
 	emitDelimiterEnum(lines);
 
@@ -228,7 +239,8 @@ export function emitTypes(config: EmitTypesConfig): string {
 	const refineInfos = collectRefineKindInfos(nodeMap);
 	emitRefineFormTreeAliases(lines, refineInfos);
 
-	emitSupertypeUnionDeclarations(lines, supertypes, nodeMap, generatedTypes);
+	const emittedSupertypes = emitSupertypeUnionDeclarations(lines, supertypes, nodeMap, generatedTypes);
+	emitSupertypeNamespaces(lines, emittedSupertypes);
 
 	collectAndEmitTokenTypeAliases(lines, nodeMap, generatedTypes, treeEmitted, kindEntries);
 
@@ -240,15 +252,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push(';');
 	lines.push('');
 
-	lines.push('export interface KindMap {');
-	for (const kind of allKinds) {
-		const node = nodeMap.nodes.get(kind);
-		if (node && generatedTypes.has(node.typeName)) {
-			lines.push(`  '${kind}': ${node.typeName};`);
-		}
-	}
-	lines.push('}');
-	lines.push('');
+	emitOptionsHints(lines, [...allKinds.map((kind) => ({ kind, typeName: nodeMap.nodes.get(kind)?.typeName })), ...emittedSupertypes], generatedTypes, hints);
 
 	assertNoCamelCaseCollisions(nodeKinds);
 
@@ -630,13 +634,60 @@ function emitTreeInterfaceDeclarations(
 	return treeEmitted;
 }
 
+interface EmittedSupertype {
+	readonly kind: string;
+	readonly typeName: string;
+	readonly hasTree: boolean;
+}
+
+function supertypeTypeName(kind: string, nodeMap: NodeMap): string {
+	return nodeMap.nodes.get(kind)?.typeName ?? toPascal(kind.replace(/^_/, ''));
+}
+
+function emitOptionsHints(
+	lines: string[],
+	kinds: readonly { readonly kind: string; readonly typeName: string | undefined }[],
+	generatedTypes: ReadonlySet<string>,
+	hints: HintEmitter | undefined
+): void {
+	const homes = new Map<string, { kind: string; typeName: string; hint: string }>();
+	for (const { kind, typeName } of kinds) {
+		const hint = hints?.hintOf(publicKindName(kind));
+		if (typeName === undefined || hint === undefined || !generatedTypes.has(typeName)) continue;
+		const key = rootKeyOf(kind);
+		const prior = homes.get(key);
+		if (prior !== undefined && prior.kind !== publicKindName(prior.kind) && kind !== publicKindName(kind)) {
+			throw new Error(`types emitter: options hint key '${key}' names both '${prior.kind}' and '${kind}', neither the visible spelling`);
+		}
+		if (prior === undefined || prior.kind !== publicKindName(prior.kind)) homes.set(key, { kind, typeName, hint });
+	}
+	lines.push('export interface OptionsHintMap {');
+	for (const [key, { typeName }] of homes) lines.push(`  ${key}: ${typeName}.Hints;`);
+	lines.push('}');
+	lines.push('');
+	for (const { typeName, hint } of homes.values()) {
+		lines.push(`export namespace ${typeName} {`, '  export interface Hints {', `    readonly __optionsHint__?: ${hint};`, '  }', '}', '');
+	}
+}
+
+function emitSupertypeNamespaces(lines: string[], emitted: readonly EmittedSupertype[]): void {
+	for (const st of emitted) {
+		lines.push(`export namespace ${st.typeName} {`);
+		lines.push(`  export type Kind = '${st.kind}';`);
+		if (st.hasTree) lines.push(`  export type Tree = ${st.typeName}Tree;`);
+		lines.push('}');
+		lines.push('');
+	}
+}
+
 function emitSupertypeUnionDeclarations(
 	lines: string[],
 	supertypes: { kind: string; subtypes: string[] }[],
 	nodeMap: NodeMap,
 	generatedTypes: Set<string>
-): void {
-	if (supertypes.length === 0) return;
+): EmittedSupertype[] {
+	const emitted: EmittedSupertype[] = [];
+	if (supertypes.length === 0) return emitted;
 	lines.push('// Supertype unions');
 	const interfaceTypes = new Set(generatedTypes);
 	const pending: { kind: string; subtypes: string[]; typeName: string }[] = [];
@@ -647,8 +698,7 @@ function emitSupertypeUnionDeclarations(
 					`Link's classifyHiddenRule promoted a non-symbol-choice as supertype — fix it there.`
 			);
 		}
-		const stNode = nodeMap.nodes.get(st.kind);
-		const typeName = stNode?.typeName ?? toPascal(st.kind.replace(/^_/, ''));
+		const typeName = supertypeTypeName(st.kind, nodeMap);
 		if (generatedTypes.has(typeName)) continue;
 		generatedTypes.add(typeName);
 		pending.push({ ...st, typeName });
@@ -679,7 +729,9 @@ function emitSupertypeUnionDeclarations(
 			lines.push(`export type ${typeName}Tree = ${treeMembers.join(' | ')};`);
 			lines.push('');
 		}
+		emitted.push({ kind: st.kind, typeName, hasTree: treeMembers.length > 0 });
 	}
+	return emitted;
 }
 
 function collectAndEmitTokenTypeAliases(

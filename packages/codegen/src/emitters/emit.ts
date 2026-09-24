@@ -176,7 +176,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const templates = templateEmitter.finalize();
 	const renderModule = renderModuleEmitterInst?.finalize(templates);
 
-	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
+	const types = emitTypes({ grammar, nodeMap, generatedIdTables, sites: sitePreferences, addresses: addressTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
 	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule();
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });

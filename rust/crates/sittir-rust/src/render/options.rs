@@ -6394,14 +6394,14 @@ pub fn delimiter_allowed(site: usize) -> u8 {
 }
 
 pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
-    ::sittir_core::options::AddressNode::Branch { key: "abstract_type", path: "(abstract_type)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "abstractType", path: "(abstract_type)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ABSTRACT_TYPE_ABSTRACT_TYPE_AFTER, path: "(abstract_type)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ABSTRACT_TYPE_ABSTRACT_TYPE_BEFORE, path: "(abstract_type)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "for_keyword", path: "(abstract_type)/\"for\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "forKeyword", path: "(abstract_type)/\"for\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ABSTRACT_TYPE_FOR_KEYWORD_AFTER, path: "(abstract_type)/\"for\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ABSTRACT_TYPE_FOR_KEYWORD_BEFORE, path: "(abstract_type)/\"for\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "impl_keyword", path: "(abstract_type)/\"impl\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "implKeyword", path: "(abstract_type)/\"impl\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ABSTRACT_TYPE_IMPL_KEYWORD_AFTER, path: "(abstract_type)/\"impl\"/after" }] },
         ] },
     ] },
@@ -6415,11 +6415,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ARGUMENTS_RPAREN_BEFORE, path: "(arguments)/\")\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "arguments_elements", path: "(arguments_elements)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "argumentsElements", path: "(arguments_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ARGUMENTS_ELEMENTS_ARGUMENTS_ELEMENTS_AFTER, path: "(arguments_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ARGUMENTS_ELEMENTS_ARGUMENTS_ELEMENTS_BEFORE, path: "(arguments_elements)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "element", path: "(arguments_elements)/element:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attributed_argument", path: "(arguments_elements)/element:/(attributed_argument)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributedArgument", path: "(arguments_elements)/element:/(attributed_argument)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ARGUMENTS_ELEMENTS_ELEMENT_ATTRIBUTED_ARGUMENT_AFTER, path: "(arguments_elements)/element:/(attributed_argument)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_ARGUMENTS_ELEMENTS_ELEMENT, path: "(arguments_elements)/element:/delimiter" }] },
@@ -6433,10 +6433,10 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_ARGUMENTS_ELEMENTS_ELEMENT_START, path: "(arguments_elements)/element:/start" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "array_expression_list", path: "(array_expression_list)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "arrayExpressionList", path: "(array_expression_list)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ARRAY_EXPRESSION_LIST_ARRAY_EXPRESSION_LIST_AFTER, path: "(array_expression_list)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "attributes", path: "(array_expression_list)/attributes:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(array_expression_list)/attributes:/(attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(array_expression_list)/attributes:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_ATTRIBUTE_ITEM_AFTER, path: "(array_expression_list)/attributes:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_END, path: "(array_expression_list)/attributes:/end" }] },
@@ -6451,10 +6451,10 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ARRAY_EXPRESSION_LIST_RBRACK_BEFORE, path: "(array_expression_list)/\"]\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "array_expression_semi", path: "(array_expression_semi)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "arrayExpressionSemi", path: "(array_expression_semi)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ARRAY_EXPRESSION_SEMI_ARRAY_EXPRESSION_SEMI_AFTER, path: "(array_expression_semi)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "attributes", path: "(array_expression_semi)/attributes:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(array_expression_semi)/attributes:/(attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(array_expression_semi)/attributes:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_ATTRIBUTE_ITEM_AFTER, path: "(array_expression_semi)/attributes:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_END, path: "(array_expression_semi)/attributes:/end" }] },
@@ -6473,7 +6473,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ARRAY_EXPRESSION_SEMI_SEMI_BEFORE, path: "(array_expression_semi)/\";\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "array_type", path: "(array_type)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "arrayType", path: "(array_type)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ARRAY_TYPE_ARRAY_TYPE_AFTER, path: "(array_type)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ARRAY_TYPE_ARRAY_TYPE_BEFORE, path: "(array_type)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrack", path: "(array_type)/\"[\"", children: &[
@@ -6487,7 +6487,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ARRAY_TYPE_SEMI_BEFORE, path: "(array_type)/\";\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "assignment_expression", path: "(assignment_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "assignmentExpression", path: "(assignment_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSIGNMENT_EXPRESSION_ASSIGNMENT_EXPRESSION_AFTER, path: "(assignment_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSIGNMENT_EXPRESSION_ASSIGNMENT_EXPRESSION_BEFORE, path: "(assignment_expression)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "eq", path: "(assignment_expression)/\"=\"", children: &[
@@ -6495,23 +6495,23 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSIGNMENT_EXPRESSION_EQ_BEFORE, path: "(assignment_expression)/\"=\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "associated_type", path: "(associated_type)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "associatedType", path: "(associated_type)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSOCIATED_TYPE_ASSOCIATED_TYPE_AFTER, path: "(associated_type)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSOCIATED_TYPE_ASSOCIATED_TYPE_BEFORE, path: "(associated_type)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "semi", path: "(associated_type)/\";\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSOCIATED_TYPE_SEMI_BEFORE, path: "(associated_type)/\";\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "type_keyword", path: "(associated_type)/\"type\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "typeKeyword", path: "(associated_type)/\"type\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSOCIATED_TYPE_TYPE_KEYWORD_AFTER, path: "(associated_type)/\"type\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "async_block", path: "(async_block)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "asyncBlock", path: "(async_block)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASYNC_BLOCK_ASYNC_BLOCK_AFTER, path: "(async_block)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "async_keyword", path: "(async_block)/\"async\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "asyncKeyword", path: "(async_block)/\"async\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASYNC_BLOCK_ASYNC_KEYWORD_AFTER, path: "(async_block)/\"async\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ASYNC_BLOCK_ASYNC_BLOCK_BEFORE, path: "(async_block)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "move_marker", path: "(async_block)/move_marker:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "moveMarker", path: "(async_block)/move_marker:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASYNC_BLOCK_MOVE_MARKER_AFTER, path: "(async_block)/move_marker:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ASYNC_BLOCK_MOVE_MARKER_BEFORE, path: "(async_block)/move_marker:/before" }] },
         ] },
@@ -6520,12 +6520,12 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTE_ATTRIBUTE_AFTER, path: "(attribute)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTE_ATTRIBUTE_BEFORE, path: "(attribute)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "attribute_input", path: "(attribute_input)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "attributeInput", path: "(attribute_input)", children: &[
         ::sittir_core::options::AddressNode::Branch { key: "eq", path: "(attribute_input)/\"=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTE_INPUT_EQ_AFTER, path: "(attribute_input)/\"=\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(attribute_item)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(attribute_item)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTE_ITEM_ATTRIBUTE_ITEM_AFTER, path: "(attribute_item)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTE_ITEM_ATTRIBUTE_ITEM_BEFORE, path: "(attribute_item)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrack", path: "(attribute_item)/\"[\"", children: &[
@@ -6539,10 +6539,10 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTE_ITEM_RBRACK_BEFORE, path: "(attribute_item)/\"]\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "attributed_argument", path: "(attributed_argument)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "attributedArgument", path: "(attributed_argument)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTED_ARGUMENT_AFTER, path: "(attributed_argument)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(attributed_argument)/attribute_item:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(attributed_argument)/attribute_item:/(attribute_item)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(attributed_argument)/attribute_item:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(attributed_argument)/attribute_item:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_ATTRIBUTE_ITEM_AFTER, path: "(attributed_argument)/attribute_item:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_END, path: "(attributed_argument)/attribute_item:/end" }] },
@@ -6551,10 +6551,10 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTED_ARGUMENT_BEFORE, path: "(attributed_argument)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "attributed_enum_variant", path: "(attributed_enum_variant)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "attributedEnumVariant", path: "(attributed_enum_variant)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTED_ENUM_VARIANT_AFTER, path: "(attributed_enum_variant)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(attributed_enum_variant)/attribute_item:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(attributed_enum_variant)/attribute_item:/(attribute_item)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(attributed_enum_variant)/attribute_item:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(attributed_enum_variant)/attribute_item:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_ATTRIBUTE_ITEM_AFTER, path: "(attributed_enum_variant)/attribute_item:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_END, path: "(attributed_enum_variant)/attribute_item:/end" }] },
@@ -6563,10 +6563,10 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTED_ENUM_VARIANT_BEFORE, path: "(attributed_enum_variant)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "attributed_field_declaration", path: "(attributed_field_declaration)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "attributedFieldDeclaration", path: "(attributed_field_declaration)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTED_FIELD_DECLARATION_AFTER, path: "(attributed_field_declaration)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(attributed_field_declaration)/attribute_item:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(attributed_field_declaration)/attribute_item:/(attribute_item)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(attributed_field_declaration)/attribute_item:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(attributed_field_declaration)/attribute_item:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_ATTRIBUTE_ITEM_AFTER, path: "(attributed_field_declaration)/attribute_item:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_END, path: "(attributed_field_declaration)/attribute_item:/end" }] },
@@ -6575,10 +6575,10 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTED_FIELD_DECLARATION_BEFORE, path: "(attributed_field_declaration)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "attributed_ordered_field", path: "(attributed_ordered_field)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "attributedOrderedField", path: "(attributed_ordered_field)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTED_ORDERED_FIELD_AFTER, path: "(attributed_ordered_field)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(attributed_ordered_field)/attribute_item:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(attributed_ordered_field)/attribute_item:/(attribute_item)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(attributed_ordered_field)/attribute_item:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(attributed_ordered_field)/attribute_item:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_ATTRIBUTE_ITEM_AFTER, path: "(attributed_ordered_field)/attribute_item:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_END, path: "(attributed_ordered_field)/attribute_item:/end" }] },
@@ -6587,17 +6587,17 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTED_ORDERED_FIELD_BEFORE, path: "(attributed_ordered_field)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "attributed_parameter", path: "(attributed_parameter)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "attributedParameter", path: "(attributed_parameter)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_PARAMETER_ATTRIBUTED_PARAMETER_AFTER, path: "(attributed_parameter)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_PARAMETER_ATTRIBUTED_PARAMETER_BEFORE, path: "(attributed_parameter)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "underscore", path: "(attributed_parameter)/\"_\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_PARAMETER_UNDERSCORE_BEFORE, path: "(attributed_parameter)/\"_\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "attributed_type_parameter", path: "(attributed_type_parameter)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "attributedTypeParameter", path: "(attributed_type_parameter)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTED_TYPE_PARAMETER_AFTER, path: "(attributed_type_parameter)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(attributed_type_parameter)/attribute_item:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(attributed_type_parameter)/attribute_item:/(attribute_item)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(attributed_type_parameter)/attribute_item:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(attributed_type_parameter)/attribute_item:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_ATTRIBUTE_ITEM_AFTER, path: "(attributed_type_parameter)/attribute_item:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_END, path: "(attributed_type_parameter)/attribute_item:/end" }] },
@@ -6606,9 +6606,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTED_TYPE_PARAMETER_BEFORE, path: "(attributed_type_parameter)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "await_expression", path: "(await_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "awaitExpression", path: "(await_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_AWAIT_EXPRESSION_AWAIT_EXPRESSION_AFTER, path: "(await_expression)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "await_keyword", path: "(await_expression)/\"await\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "awaitKeyword", path: "(await_expression)/\"await\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_AWAIT_EXPRESSION_AWAIT_KEYWORD_BEFORE, path: "(await_expression)/\"await\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_AWAIT_EXPRESSION_AWAIT_EXPRESSION_BEFORE, path: "(await_expression)/before" }] },
@@ -6617,14 +6617,14 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_AWAIT_EXPRESSION_DOT_BEFORE, path: "(await_expression)/\".\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "base_field_initializer", path: "(base_field_initializer)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "baseFieldInitializer", path: "(base_field_initializer)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BASE_FIELD_INITIALIZER_BASE_FIELD_INITIALIZER_AFTER, path: "(base_field_initializer)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_BASE_FIELD_INITIALIZER_BASE_FIELD_INITIALIZER_BEFORE, path: "(base_field_initializer)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "dot_dot", path: "(base_field_initializer)/\"..\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dotDot", path: "(base_field_initializer)/\"..\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BASE_FIELD_INITIALIZER_DOT_DOT_AFTER, path: "(base_field_initializer)/\"..\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "binary_expression", path: "(binary_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "binaryExpression", path: "(binary_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BINARY_EXPRESSION_BINARY_EXPRESSION_AFTER, path: "(binary_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_BINARY_EXPRESSION_BINARY_EXPRESSION_BEFORE, path: "(binary_expression)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "operator", path: "(binary_expression)/operator:", children: &[
@@ -6647,149 +6647,149 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_RBRACE_BEFORE, path: "(block)/\"}\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "statements", path: "(block)/statements:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "associated_type", path: "(block)/statements:/(associated_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "associatedType", path: "(block)/statements:/(associated_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_ASSOCIATED_TYPE_AFTER, path: "(block)/statements:/(associated_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "async_block", path: "(block)/statements:/(async_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "asyncBlock", path: "(block)/statements:/(async_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_ASYNC_BLOCK_AFTER, path: "(block)/statements:/(async_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(block)/statements:/(attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(block)/statements:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_ATTRIBUTE_ITEM_AFTER, path: "(block)/statements:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "block", path: "(block)/statements:/(block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_BLOCK_AFTER, path: "(block)/statements:/(block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "const_block", path: "(block)/statements:/(const_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "constBlock", path: "(block)/statements:/(const_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_CONST_BLOCK_AFTER, path: "(block)/statements:/(const_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "const_item", path: "(block)/statements:/(const_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "constItem", path: "(block)/statements:/(const_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_CONST_ITEM_AFTER, path: "(block)/statements:/(const_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_END, path: "(block)/statements:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "enum_item", path: "(block)/statements:/(enum_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "enumItem", path: "(block)/statements:/(enum_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_ENUM_ITEM_AFTER, path: "(block)/statements:/(enum_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "expression_statement_with_semi", path: "(block)/statements:/(expression_statement_with_semi)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "expressionStatementWithSemi", path: "(block)/statements:/(expression_statement_with_semi)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_EXPRESSION_STATEMENT_WITH_SEMI_AFTER, path: "(block)/statements:/(expression_statement_with_semi)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "extern_crate_declaration", path: "(block)/statements:/(extern_crate_declaration)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "externCrateDeclaration", path: "(block)/statements:/(extern_crate_declaration)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_EXTERN_CRATE_DECLARATION_AFTER, path: "(block)/statements:/(extern_crate_declaration)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "for_expression", path: "(block)/statements:/(for_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "forExpression", path: "(block)/statements:/(for_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_FOR_EXPRESSION_AFTER, path: "(block)/statements:/(for_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "foreign_mod_item_body", path: "(block)/statements:/(foreign_mod_item_body)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "foreignModItemBody", path: "(block)/statements:/(foreign_mod_item_body)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_FOREIGN_MOD_ITEM_BODY_AFTER, path: "(block)/statements:/(foreign_mod_item_body)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "foreign_mod_item_semi", path: "(block)/statements:/(foreign_mod_item_semi)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "foreignModItemSemi", path: "(block)/statements:/(foreign_mod_item_semi)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_FOREIGN_MOD_ITEM_SEMI_AFTER, path: "(block)/statements:/(foreign_mod_item_semi)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "function_item", path: "(block)/statements:/(function_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "functionItem", path: "(block)/statements:/(function_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_FUNCTION_ITEM_AFTER, path: "(block)/statements:/(function_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "function_signature_item", path: "(block)/statements:/(function_signature_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "functionSignatureItem", path: "(block)/statements:/(function_signature_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_FUNCTION_SIGNATURE_ITEM_AFTER, path: "(block)/statements:/(function_signature_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "gen_block", path: "(block)/statements:/(gen_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "genBlock", path: "(block)/statements:/(gen_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_GEN_BLOCK_AFTER, path: "(block)/statements:/(gen_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "if_expression", path: "(block)/statements:/(if_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "ifExpression", path: "(block)/statements:/(if_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_IF_EXPRESSION_AFTER, path: "(block)/statements:/(if_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "impl_item_body", path: "(block)/statements:/(impl_item_body)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "implItemBody", path: "(block)/statements:/(impl_item_body)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_IMPL_ITEM_BODY_AFTER, path: "(block)/statements:/(impl_item_body)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "impl_item_semi", path: "(block)/statements:/(impl_item_semi)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "implItemSemi", path: "(block)/statements:/(impl_item_semi)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_IMPL_ITEM_SEMI_AFTER, path: "(block)/statements:/(impl_item_semi)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "inner_attribute_item", path: "(block)/statements:/(inner_attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "innerAttributeItem", path: "(block)/statements:/(inner_attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_INNER_ATTRIBUTE_ITEM_AFTER, path: "(block)/statements:/(inner_attribute_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "let_declaration", path: "(block)/statements:/(let_declaration)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "letDeclaration", path: "(block)/statements:/(let_declaration)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_LET_DECLARATION_AFTER, path: "(block)/statements:/(let_declaration)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "loop_expression", path: "(block)/statements:/(loop_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "loopExpression", path: "(block)/statements:/(loop_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_LOOP_EXPRESSION_AFTER, path: "(block)/statements:/(loop_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_definition_brace", path: "(block)/statements:/(macro_definition_brace)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroDefinitionBrace", path: "(block)/statements:/(macro_definition_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_MACRO_DEFINITION_BRACE_AFTER, path: "(block)/statements:/(macro_definition_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_definition_bracket", path: "(block)/statements:/(macro_definition_bracket)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroDefinitionBracket", path: "(block)/statements:/(macro_definition_bracket)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_MACRO_DEFINITION_BRACKET_AFTER, path: "(block)/statements:/(macro_definition_bracket)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_definition_paren", path: "(block)/statements:/(macro_definition_paren)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroDefinitionParen", path: "(block)/statements:/(macro_definition_paren)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_MACRO_DEFINITION_PAREN_AFTER, path: "(block)/statements:/(macro_definition_paren)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_invocation", path: "(block)/statements:/(macro_invocation)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroInvocation", path: "(block)/statements:/(macro_invocation)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_MACRO_INVOCATION_AFTER, path: "(block)/statements:/(macro_invocation)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "match_expression", path: "(block)/statements:/(match_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "matchExpression", path: "(block)/statements:/(match_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_MATCH_EXPRESSION_AFTER, path: "(block)/statements:/(match_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "mod_item_external", path: "(block)/statements:/(mod_item_external)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "modItemExternal", path: "(block)/statements:/(mod_item_external)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_MOD_ITEM_EXTERNAL_AFTER, path: "(block)/statements:/(mod_item_external)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "mod_item_inline", path: "(block)/statements:/(mod_item_inline)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "modItemInline", path: "(block)/statements:/(mod_item_inline)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_MOD_ITEM_INLINE_AFTER, path: "(block)/statements:/(mod_item_inline)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE, path: "(block)/statements:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_START, path: "(block)/statements:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "static_item", path: "(block)/statements:/(static_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "staticItem", path: "(block)/statements:/(static_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_STATIC_ITEM_AFTER, path: "(block)/statements:/(static_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "struct_item_brace", path: "(block)/statements:/(struct_item_brace)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "structItemBrace", path: "(block)/statements:/(struct_item_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_STRUCT_ITEM_BRACE_AFTER, path: "(block)/statements:/(struct_item_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "struct_item_tuple", path: "(block)/statements:/(struct_item_tuple)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "structItemTuple", path: "(block)/statements:/(struct_item_tuple)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_STRUCT_ITEM_TUPLE_AFTER, path: "(block)/statements:/(struct_item_tuple)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "struct_item_unit", path: "(block)/statements:/(struct_item_unit)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "structItemUnit", path: "(block)/statements:/(struct_item_unit)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_STRUCT_ITEM_UNIT_AFTER, path: "(block)/statements:/(struct_item_unit)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "trait_item", path: "(block)/statements:/(trait_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "traitItem", path: "(block)/statements:/(trait_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_TRAIT_ITEM_AFTER, path: "(block)/statements:/(trait_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "try_block", path: "(block)/statements:/(try_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tryBlock", path: "(block)/statements:/(try_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_TRY_BLOCK_AFTER, path: "(block)/statements:/(try_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "type_item", path: "(block)/statements:/(type_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "typeItem", path: "(block)/statements:/(type_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_TYPE_ITEM_AFTER, path: "(block)/statements:/(type_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "union_item", path: "(block)/statements:/(union_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "unionItem", path: "(block)/statements:/(union_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_UNION_ITEM_AFTER, path: "(block)/statements:/(union_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "unsafe_block", path: "(block)/statements:/(unsafe_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "unsafeBlock", path: "(block)/statements:/(unsafe_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_UNSAFE_BLOCK_AFTER, path: "(block)/statements:/(unsafe_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "use_declaration", path: "(block)/statements:/(use_declaration)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "useDeclaration", path: "(block)/statements:/(use_declaration)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_USE_DECLARATION_AFTER, path: "(block)/statements:/(use_declaration)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "while_expression", path: "(block)/statements:/(while_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "whileExpression", path: "(block)/statements:/(while_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_WHILE_EXPRESSION_AFTER, path: "(block)/statements:/(while_expression)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "block_comment", path: "(block_comment)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "blockComment", path: "(block_comment)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_COMMENT_BLOCK_COMMENT_AFTER, path: "(block_comment)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_COMMENT_BLOCK_COMMENT_BEFORE, path: "(block_comment)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "slash_star", path: "(block_comment)/\"/*\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "slashStar", path: "(block_comment)/\"/*\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_COMMENT_SLASH_STAR_AFTER, path: "(block_comment)/\"/*\"/after" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "star_slash", path: "(block_comment)/\"*/\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "starSlash", path: "(block_comment)/\"*/\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_COMMENT_STAR_SLASH_BEFORE, path: "(block_comment)/\"*/\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "block_comment_doc_inner", path: "(block_comment_doc_inner)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "blockCommentDocInner", path: "(block_comment_doc_inner)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_COMMENT_DOC_INNER_BLOCK_COMMENT_DOC_INNER_AFTER, path: "(block_comment_doc_inner)/after" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "block_comment_doc_outer", path: "(block_comment_doc_outer)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "blockCommentDocOuter", path: "(block_comment_doc_outer)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_COMMENT_DOC_OUTER_BLOCK_COMMENT_DOC_OUTER_AFTER, path: "(block_comment_doc_outer)/after" }] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "body", path: "body", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_RBRACE_BEFORE, path: "(block)/\"}\"/before" }, ::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_RBRACE_BEFORE, path: "(match_block)/\"}\"/before" }, ::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_RBRACE_BEFORE, path: "(declaration_list)/\"}\"/before" }, ::sittir_core::options::SiteRef { site: SITE_FIELD_DECLARATION_LIST_RBRACE_BEFORE, path: "(field_declaration_list)/\"}\"/before" }, ::sittir_core::options::SiteRef { site: SITE_ENUM_VARIANT_LIST_RBRACE_BEFORE, path: "(enum_variant_list)/\"}\"/before" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_LBRACE_AFTER, path: "(block)/\"{\"/after" }, ::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_LBRACE_AFTER, path: "(match_block)/\"{\"/after" }, ::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_LBRACE_AFTER, path: "(declaration_list)/\"{\"/after" }, ::sittir_core::options::SiteRef { site: SITE_FIELD_DECLARATION_LIST_LBRACE_AFTER, path: "(field_declaration_list)/\"{\"/after" }, ::sittir_core::options::SiteRef { site: SITE_ENUM_VARIANT_LIST_LBRACE_AFTER, path: "(enum_variant_list)/\"{\"/after" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "bounded_type", path: "(bounded_type)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "boundedType", path: "(bounded_type)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BOUNDED_TYPE_BOUNDED_TYPE_AFTER, path: "(bounded_type)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_BOUNDED_TYPE_BOUNDED_TYPE_BEFORE, path: "(bounded_type)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "plus", path: "(bounded_type)/\"+\"", children: &[
@@ -6797,7 +6797,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_BOUNDED_TYPE_PLUS_BEFORE, path: "(bounded_type)/\"+\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "bracketed_type", path: "(bracketed_type)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "bracketedType", path: "(bracketed_type)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BRACKETED_TYPE_BRACKETED_TYPE_AFTER, path: "(bracketed_type)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_BRACKETED_TYPE_BRACKETED_TYPE_BEFORE, path: "(bracketed_type)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "gt", path: "(bracketed_type)/\">\"", children: &[
@@ -6807,18 +6807,18 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BRACKETED_TYPE_LT_AFTER, path: "(bracketed_type)/\"<\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "break_expression", path: "(break_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "breakExpression", path: "(break_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BREAK_EXPRESSION_BREAK_EXPRESSION_AFTER, path: "(break_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_BREAK_EXPRESSION_BREAK_EXPRESSION_BEFORE, path: "(break_expression)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "break_keyword", path: "(break_expression)/\"break\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "breakKeyword", path: "(break_expression)/\"break\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BREAK_EXPRESSION_BREAK_KEYWORD_AFTER, path: "(break_expression)/\"break\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "call_expression", path: "(call_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "callExpression", path: "(call_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CALL_EXPRESSION_CALL_EXPRESSION_AFTER, path: "(call_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CALL_EXPRESSION_CALL_EXPRESSION_BEFORE, path: "(call_expression)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "captured_pattern", path: "(captured_pattern)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "capturedPattern", path: "(captured_pattern)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CAPTURED_PATTERN_CAPTURED_PATTERN_AFTER, path: "(captured_pattern)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "at", path: "(captured_pattern)/\"@\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CAPTURED_PATTERN_AT_AFTER, path: "(captured_pattern)/\"@\"/after" }] },
@@ -6826,96 +6826,96 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CAPTURED_PATTERN_CAPTURED_PATTERN_BEFORE, path: "(captured_pattern)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "char_literal_empty", path: "(char_literal_empty)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "charLiteralEmpty", path: "(char_literal_empty)", children: &[
         ::sittir_core::options::AddressNode::Branch { key: "squote", path: "(char_literal_empty)/\"'\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CHAR_LITERAL_EMPTY_SQUOTE_BEFORE, path: "(char_literal_empty)/\"'\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "closure_expression_block", path: "(closure_expression_block)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "closureExpressionBlock", path: "(closure_expression_block)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_CLOSURE_EXPRESSION_BLOCK_AFTER, path: "(closure_expression_block)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "async_marker", path: "(closure_expression_block)/async_marker:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "asyncMarker", path: "(closure_expression_block)/async_marker:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_ASYNC_MARKER_AFTER, path: "(closure_expression_block)/async_marker:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_ASYNC_MARKER_BEFORE, path: "(closure_expression_block)/async_marker:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_CLOSURE_EXPRESSION_BLOCK_BEFORE, path: "(closure_expression_block)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "dash_gt", path: "(closure_expression_block)/\"->\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dashGt", path: "(closure_expression_block)/\"->\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_DASH_GT_AFTER, path: "(closure_expression_block)/\"->\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_DASH_GT_BEFORE, path: "(closure_expression_block)/\"->\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "move_marker", path: "(closure_expression_block)/move_marker:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "moveMarker", path: "(closure_expression_block)/move_marker:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_MOVE_MARKER_AFTER, path: "(closure_expression_block)/move_marker:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_MOVE_MARKER_BEFORE, path: "(closure_expression_block)/move_marker:/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "static_marker", path: "(closure_expression_block)/static_marker:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "staticMarker", path: "(closure_expression_block)/static_marker:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_BLOCK_STATIC_MARKER_AFTER, path: "(closure_expression_block)/static_marker:/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "closure_expression_expr", path: "(closure_expression_expr)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "closureExpressionExpr", path: "(closure_expression_expr)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_CLOSURE_EXPRESSION_EXPR_AFTER, path: "(closure_expression_expr)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "async_marker", path: "(closure_expression_expr)/async_marker:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "asyncMarker", path: "(closure_expression_expr)/async_marker:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_ASYNC_MARKER_AFTER, path: "(closure_expression_expr)/async_marker:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_ASYNC_MARKER_BEFORE, path: "(closure_expression_expr)/async_marker:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_CLOSURE_EXPRESSION_EXPR_BEFORE, path: "(closure_expression_expr)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "move_marker", path: "(closure_expression_expr)/move_marker:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "moveMarker", path: "(closure_expression_expr)/move_marker:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_MOVE_MARKER_AFTER, path: "(closure_expression_expr)/move_marker:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_MOVE_MARKER_BEFORE, path: "(closure_expression_expr)/move_marker:/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "static_marker", path: "(closure_expression_expr)/static_marker:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "staticMarker", path: "(closure_expression_expr)/static_marker:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_STATIC_MARKER_AFTER, path: "(closure_expression_expr)/static_marker:/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "underscore", path: "(closure_expression_expr)/\"_\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_EXPRESSION_EXPR_UNDERSCORE_BEFORE, path: "(closure_expression_expr)/\"_\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "closure_parameters", path: "(closure_parameters)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "closureParameters", path: "(closure_parameters)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_CLOSURE_PARAMETERS_AFTER, path: "(closure_parameters)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_CLOSURE_PARAMETERS_BEFORE, path: "(closure_parameters)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "parameters", path: "(closure_parameters)/parameters:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "captured_pattern", path: "(closure_parameters)/parameters:/(captured_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "capturedPattern", path: "(closure_parameters)/parameters:/(captured_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_CAPTURED_PATTERN_AFTER, path: "(closure_parameters)/parameters:/(captured_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "const_block", path: "(closure_parameters)/parameters:/(const_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "constBlock", path: "(closure_parameters)/parameters:/(const_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_CONST_BLOCK_AFTER, path: "(closure_parameters)/parameters:/(const_block)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_END, path: "(closure_parameters)/parameters:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "generic_pattern", path: "(closure_parameters)/parameters:/(generic_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "genericPattern", path: "(closure_parameters)/parameters:/(generic_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_GENERIC_PATTERN_AFTER, path: "(closure_parameters)/parameters:/(generic_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_invocation", path: "(closure_parameters)/parameters:/(macro_invocation)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroInvocation", path: "(closure_parameters)/parameters:/(macro_invocation)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_MACRO_INVOCATION_AFTER, path: "(closure_parameters)/parameters:/(macro_invocation)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "mut_pattern", path: "(closure_parameters)/parameters:/(mut_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "mutPattern", path: "(closure_parameters)/parameters:/(mut_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_MUT_PATTERN_AFTER, path: "(closure_parameters)/parameters:/(mut_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "negative_literal", path: "(closure_parameters)/parameters:/(negative_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "negativeLiteral", path: "(closure_parameters)/parameters:/(negative_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_NEGATIVE_LITERAL_AFTER, path: "(closure_parameters)/parameters:/(negative_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "or_pattern_binary", path: "(closure_parameters)/parameters:/(or_pattern_binary)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "orPatternBinary", path: "(closure_parameters)/parameters:/(or_pattern_binary)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_OR_PATTERN_BINARY_AFTER, path: "(closure_parameters)/parameters:/(or_pattern_binary)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "or_pattern_prefix", path: "(closure_parameters)/parameters:/(or_pattern_prefix)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "orPatternPrefix", path: "(closure_parameters)/parameters:/(or_pattern_prefix)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_OR_PATTERN_PREFIX_AFTER, path: "(closure_parameters)/parameters:/(or_pattern_prefix)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "parameter", path: "(closure_parameters)/parameters:/(parameter)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_PARAMETER_AFTER, path: "(closure_parameters)/parameters:/(parameter)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "range_pattern_prefix", path: "(closure_parameters)/parameters:/(range_pattern_prefix)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rangePatternPrefix", path: "(closure_parameters)/parameters:/(range_pattern_prefix)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_RANGE_PATTERN_PREFIX_AFTER, path: "(closure_parameters)/parameters:/(range_pattern_prefix)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "range_pattern_with_left", path: "(closure_parameters)/parameters:/(range_pattern_with_left)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rangePatternWithLeft", path: "(closure_parameters)/parameters:/(range_pattern_with_left)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_RANGE_PATTERN_WITH_LEFT_AFTER, path: "(closure_parameters)/parameters:/(range_pattern_with_left)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(closure_parameters)/parameters:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(closure_parameters)/parameters:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_RAW_STRING_LITERAL_AFTER, path: "(closure_parameters)/parameters:/(raw_string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "ref_pattern", path: "(closure_parameters)/parameters:/(ref_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "refPattern", path: "(closure_parameters)/parameters:/(ref_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_REF_PATTERN_AFTER, path: "(closure_parameters)/parameters:/(ref_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "reference_pattern", path: "(closure_parameters)/parameters:/(reference_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "referencePattern", path: "(closure_parameters)/parameters:/(reference_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_REFERENCE_PATTERN_AFTER, path: "(closure_parameters)/parameters:/(reference_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "scoped_identifier", path: "(closure_parameters)/parameters:/(scoped_identifier)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "scopedIdentifier", path: "(closure_parameters)/parameters:/(scoped_identifier)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_SCOPED_IDENTIFIER_AFTER, path: "(closure_parameters)/parameters:/(scoped_identifier)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(closure_parameters)/parameters:/separator", children: &[
@@ -6924,20 +6924,20 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
                     ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_BEFORE, path: "(closure_parameters)/parameters:/separator/\",\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "slice_pattern", path: "(closure_parameters)/parameters:/(slice_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "slicePattern", path: "(closure_parameters)/parameters:/(slice_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_SLICE_PATTERN_AFTER, path: "(closure_parameters)/parameters:/(slice_pattern)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_START, path: "(closure_parameters)/parameters:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(closure_parameters)/parameters:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(closure_parameters)/parameters:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_STRING_LITERAL_AFTER, path: "(closure_parameters)/parameters:/(string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "struct_pattern", path: "(closure_parameters)/parameters:/(struct_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "structPattern", path: "(closure_parameters)/parameters:/(struct_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_STRUCT_PATTERN_AFTER, path: "(closure_parameters)/parameters:/(struct_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tuple_pattern", path: "(closure_parameters)/parameters:/(tuple_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tuplePattern", path: "(closure_parameters)/parameters:/(tuple_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_TUPLE_PATTERN_AFTER, path: "(closure_parameters)/parameters:/(tuple_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tuple_struct_pattern", path: "(closure_parameters)/parameters:/(tuple_struct_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tupleStructPattern", path: "(closure_parameters)/parameters:/(tuple_struct_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PARAMETERS_TUPLE_STRUCT_PATTERN_AFTER, path: "(closure_parameters)/parameters:/(tuple_struct_pattern)/after" }] },
             ] },
         ] },
@@ -6946,67 +6946,67 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLOSURE_PARAMETERS_PIPE_BEFORE, path: "(closure_parameters)/\"|\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "compound_assignment_expr", path: "(compound_assignment_expr)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "compoundAssignmentExpr", path: "(compound_assignment_expr)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_COMPOUND_ASSIGNMENT_EXPR_AFTER, path: "(compound_assignment_expr)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_COMPOUND_ASSIGNMENT_EXPR_BEFORE, path: "(compound_assignment_expr)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "compound_assignment_expr_operator", path: "(compound_assignment_expr_operator)", children: &[
-        ::sittir_core::options::AddressNode::Branch { key: "amp_eq", path: "(compound_assignment_expr_operator)/\"&=\"", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "compoundAssignmentExprOperator", path: "(compound_assignment_expr_operator)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "ampEq", path: "(compound_assignment_expr_operator)/\"&=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_AMP_EQ_AFTER, path: "(compound_assignment_expr_operator)/\"&=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_AMP_EQ_BEFORE, path: "(compound_assignment_expr_operator)/\"&=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "caret_eq", path: "(compound_assignment_expr_operator)/\"^=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "caretEq", path: "(compound_assignment_expr_operator)/\"^=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_CARET_EQ_AFTER, path: "(compound_assignment_expr_operator)/\"^=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_CARET_EQ_BEFORE, path: "(compound_assignment_expr_operator)/\"^=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "dash_eq", path: "(compound_assignment_expr_operator)/\"-=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dashEq", path: "(compound_assignment_expr_operator)/\"-=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_DASH_EQ_AFTER, path: "(compound_assignment_expr_operator)/\"-=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_DASH_EQ_BEFORE, path: "(compound_assignment_expr_operator)/\"-=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "gt_gt_eq", path: "(compound_assignment_expr_operator)/\">>=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "gtGtEq", path: "(compound_assignment_expr_operator)/\">>=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_GT_GT_EQ_AFTER, path: "(compound_assignment_expr_operator)/\">>=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_GT_GT_EQ_BEFORE, path: "(compound_assignment_expr_operator)/\">>=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "lt_lt_eq", path: "(compound_assignment_expr_operator)/\"<<=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "ltLtEq", path: "(compound_assignment_expr_operator)/\"<<=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_LT_LT_EQ_AFTER, path: "(compound_assignment_expr_operator)/\"<<=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_LT_LT_EQ_BEFORE, path: "(compound_assignment_expr_operator)/\"<<=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "percent_eq", path: "(compound_assignment_expr_operator)/\"%=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "percentEq", path: "(compound_assignment_expr_operator)/\"%=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_PERCENT_EQ_AFTER, path: "(compound_assignment_expr_operator)/\"%=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_PERCENT_EQ_BEFORE, path: "(compound_assignment_expr_operator)/\"%=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "pipe_eq", path: "(compound_assignment_expr_operator)/\"|=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "pipeEq", path: "(compound_assignment_expr_operator)/\"|=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_PIPE_EQ_AFTER, path: "(compound_assignment_expr_operator)/\"|=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_PIPE_EQ_BEFORE, path: "(compound_assignment_expr_operator)/\"|=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "plus_eq", path: "(compound_assignment_expr_operator)/\"+=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "plusEq", path: "(compound_assignment_expr_operator)/\"+=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_PLUS_EQ_AFTER, path: "(compound_assignment_expr_operator)/\"+=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_PLUS_EQ_BEFORE, path: "(compound_assignment_expr_operator)/\"+=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "slash_eq", path: "(compound_assignment_expr_operator)/\"/=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "slashEq", path: "(compound_assignment_expr_operator)/\"/=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_SLASH_EQ_AFTER, path: "(compound_assignment_expr_operator)/\"/=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_SLASH_EQ_BEFORE, path: "(compound_assignment_expr_operator)/\"/=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "star_eq", path: "(compound_assignment_expr_operator)/\"*=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "starEq", path: "(compound_assignment_expr_operator)/\"*=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_STAR_EQ_AFTER, path: "(compound_assignment_expr_operator)/\"*=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPOUND_ASSIGNMENT_EXPR_OPERATOR_STAR_EQ_BEFORE, path: "(compound_assignment_expr_operator)/\"*=\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "const_block", path: "(const_block)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "constBlock", path: "(const_block)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_BLOCK_CONST_BLOCK_AFTER, path: "(const_block)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_BLOCK_CONST_BLOCK_BEFORE, path: "(const_block)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "const_keyword", path: "(const_block)/\"const\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "constKeyword", path: "(const_block)/\"const\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_BLOCK_CONST_KEYWORD_AFTER, path: "(const_block)/\"const\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "const_item", path: "(const_item)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "constItem", path: "(const_item)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_ITEM_CONST_ITEM_AFTER, path: "(const_item)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_ITEM_CONST_ITEM_BEFORE, path: "(const_item)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(const_item)/\":\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_ITEM_COLON_AFTER, path: "(const_item)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_ITEM_COLON_BEFORE, path: "(const_item)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "const_keyword", path: "(const_item)/\"const\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "constKeyword", path: "(const_item)/\"const\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_ITEM_CONST_KEYWORD_AFTER, path: "(const_item)/\"const\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_ITEM_CONST_KEYWORD_BEFORE, path: "(const_item)/\"const\"/before" }] },
         ] },
@@ -7018,14 +7018,14 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_ITEM_SEMI_BEFORE, path: "(const_item)/\";\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "const_parameter", path: "(const_parameter)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "constParameter", path: "(const_parameter)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_PARAMETER_CONST_PARAMETER_AFTER, path: "(const_parameter)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_PARAMETER_CONST_PARAMETER_BEFORE, path: "(const_parameter)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(const_parameter)/\":\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_PARAMETER_COLON_AFTER, path: "(const_parameter)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_PARAMETER_COLON_BEFORE, path: "(const_parameter)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "const_keyword", path: "(const_parameter)/\"const\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "constKeyword", path: "(const_parameter)/\"const\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_PARAMETER_CONST_KEYWORD_AFTER, path: "(const_parameter)/\"const\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "eq", path: "(const_parameter)/\"=\"", children: &[
@@ -7033,99 +7033,99 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CONST_PARAMETER_EQ_BEFORE, path: "(const_parameter)/\"=\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "continue_expression", path: "(continue_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "continueExpression", path: "(continue_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONTINUE_EXPRESSION_CONTINUE_EXPRESSION_AFTER, path: "(continue_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CONTINUE_EXPRESSION_CONTINUE_EXPRESSION_BEFORE, path: "(continue_expression)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "continue_keyword", path: "(continue_expression)/\"continue\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "continueKeyword", path: "(continue_expression)/\"continue\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CONTINUE_EXPRESSION_CONTINUE_KEYWORD_AFTER, path: "(continue_expression)/\"continue\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "declaration_list", path: "(declaration_list)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "declarationList", path: "(declaration_list)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATION_LIST_AFTER, path: "(declaration_list)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATION_LIST_BEFORE, path: "(declaration_list)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "declarations", path: "(declaration_list)/declarations:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "associated_type", path: "(declaration_list)/declarations:/(associated_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "associatedType", path: "(declaration_list)/declarations:/(associated_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_ASSOCIATED_TYPE_AFTER, path: "(declaration_list)/declarations:/(associated_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(declaration_list)/declarations:/(attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(declaration_list)/declarations:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_ATTRIBUTE_ITEM_AFTER, path: "(declaration_list)/declarations:/(attribute_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "const_item", path: "(declaration_list)/declarations:/(const_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "constItem", path: "(declaration_list)/declarations:/(const_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_CONST_ITEM_AFTER, path: "(declaration_list)/declarations:/(const_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_END, path: "(declaration_list)/declarations:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "enum_item", path: "(declaration_list)/declarations:/(enum_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "enumItem", path: "(declaration_list)/declarations:/(enum_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_ENUM_ITEM_AFTER, path: "(declaration_list)/declarations:/(enum_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "extern_crate_declaration", path: "(declaration_list)/declarations:/(extern_crate_declaration)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "externCrateDeclaration", path: "(declaration_list)/declarations:/(extern_crate_declaration)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_EXTERN_CRATE_DECLARATION_AFTER, path: "(declaration_list)/declarations:/(extern_crate_declaration)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "foreign_mod_item_body", path: "(declaration_list)/declarations:/(foreign_mod_item_body)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "foreignModItemBody", path: "(declaration_list)/declarations:/(foreign_mod_item_body)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_FOREIGN_MOD_ITEM_BODY_AFTER, path: "(declaration_list)/declarations:/(foreign_mod_item_body)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "foreign_mod_item_semi", path: "(declaration_list)/declarations:/(foreign_mod_item_semi)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "foreignModItemSemi", path: "(declaration_list)/declarations:/(foreign_mod_item_semi)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_FOREIGN_MOD_ITEM_SEMI_AFTER, path: "(declaration_list)/declarations:/(foreign_mod_item_semi)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "function_item", path: "(declaration_list)/declarations:/(function_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "functionItem", path: "(declaration_list)/declarations:/(function_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_FUNCTION_ITEM_AFTER, path: "(declaration_list)/declarations:/(function_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "function_signature_item", path: "(declaration_list)/declarations:/(function_signature_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "functionSignatureItem", path: "(declaration_list)/declarations:/(function_signature_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_FUNCTION_SIGNATURE_ITEM_AFTER, path: "(declaration_list)/declarations:/(function_signature_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "impl_item_body", path: "(declaration_list)/declarations:/(impl_item_body)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "implItemBody", path: "(declaration_list)/declarations:/(impl_item_body)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_IMPL_ITEM_BODY_AFTER, path: "(declaration_list)/declarations:/(impl_item_body)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "impl_item_semi", path: "(declaration_list)/declarations:/(impl_item_semi)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "implItemSemi", path: "(declaration_list)/declarations:/(impl_item_semi)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_IMPL_ITEM_SEMI_AFTER, path: "(declaration_list)/declarations:/(impl_item_semi)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "inner_attribute_item", path: "(declaration_list)/declarations:/(inner_attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "innerAttributeItem", path: "(declaration_list)/declarations:/(inner_attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_INNER_ATTRIBUTE_ITEM_AFTER, path: "(declaration_list)/declarations:/(inner_attribute_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "let_declaration", path: "(declaration_list)/declarations:/(let_declaration)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "letDeclaration", path: "(declaration_list)/declarations:/(let_declaration)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_LET_DECLARATION_AFTER, path: "(declaration_list)/declarations:/(let_declaration)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_definition_brace", path: "(declaration_list)/declarations:/(macro_definition_brace)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroDefinitionBrace", path: "(declaration_list)/declarations:/(macro_definition_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_MACRO_DEFINITION_BRACE_AFTER, path: "(declaration_list)/declarations:/(macro_definition_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_definition_bracket", path: "(declaration_list)/declarations:/(macro_definition_bracket)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroDefinitionBracket", path: "(declaration_list)/declarations:/(macro_definition_bracket)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_MACRO_DEFINITION_BRACKET_AFTER, path: "(declaration_list)/declarations:/(macro_definition_bracket)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_definition_paren", path: "(declaration_list)/declarations:/(macro_definition_paren)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroDefinitionParen", path: "(declaration_list)/declarations:/(macro_definition_paren)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_MACRO_DEFINITION_PAREN_AFTER, path: "(declaration_list)/declarations:/(macro_definition_paren)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_invocation", path: "(declaration_list)/declarations:/(macro_invocation)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroInvocation", path: "(declaration_list)/declarations:/(macro_invocation)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_MACRO_INVOCATION_AFTER, path: "(declaration_list)/declarations:/(macro_invocation)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "mod_item_external", path: "(declaration_list)/declarations:/(mod_item_external)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "modItemExternal", path: "(declaration_list)/declarations:/(mod_item_external)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_MOD_ITEM_EXTERNAL_AFTER, path: "(declaration_list)/declarations:/(mod_item_external)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "mod_item_inline", path: "(declaration_list)/declarations:/(mod_item_inline)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "modItemInline", path: "(declaration_list)/declarations:/(mod_item_inline)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_MOD_ITEM_INLINE_AFTER, path: "(declaration_list)/declarations:/(mod_item_inline)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE, path: "(declaration_list)/declarations:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_START, path: "(declaration_list)/declarations:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "static_item", path: "(declaration_list)/declarations:/(static_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "staticItem", path: "(declaration_list)/declarations:/(static_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_STATIC_ITEM_AFTER, path: "(declaration_list)/declarations:/(static_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "struct_item_brace", path: "(declaration_list)/declarations:/(struct_item_brace)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "structItemBrace", path: "(declaration_list)/declarations:/(struct_item_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_STRUCT_ITEM_BRACE_AFTER, path: "(declaration_list)/declarations:/(struct_item_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "struct_item_tuple", path: "(declaration_list)/declarations:/(struct_item_tuple)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "structItemTuple", path: "(declaration_list)/declarations:/(struct_item_tuple)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_STRUCT_ITEM_TUPLE_AFTER, path: "(declaration_list)/declarations:/(struct_item_tuple)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "struct_item_unit", path: "(declaration_list)/declarations:/(struct_item_unit)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "structItemUnit", path: "(declaration_list)/declarations:/(struct_item_unit)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_STRUCT_ITEM_UNIT_AFTER, path: "(declaration_list)/declarations:/(struct_item_unit)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "trait_item", path: "(declaration_list)/declarations:/(trait_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "traitItem", path: "(declaration_list)/declarations:/(trait_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_TRAIT_ITEM_AFTER, path: "(declaration_list)/declarations:/(trait_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "type_item", path: "(declaration_list)/declarations:/(type_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "typeItem", path: "(declaration_list)/declarations:/(type_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_TYPE_ITEM_AFTER, path: "(declaration_list)/declarations:/(type_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "union_item", path: "(declaration_list)/declarations:/(union_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "unionItem", path: "(declaration_list)/declarations:/(union_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_UNION_ITEM_AFTER, path: "(declaration_list)/declarations:/(union_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "use_declaration", path: "(declaration_list)/declarations:/(use_declaration)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "useDeclaration", path: "(declaration_list)/declarations:/(use_declaration)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_USE_DECLARATION_AFTER, path: "(declaration_list)/declarations:/(use_declaration)/after" }] },
             ] },
         ] },
@@ -7136,26 +7136,26 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_RBRACE_BEFORE, path: "(declaration_list)/\"}\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "delim_token_tree_brace", path: "(delim_token_tree_brace)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "delimTokenTreeBrace", path: "(delim_token_tree_brace)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKEN_TREE_BRACE_AFTER, path: "(delim_token_tree_brace)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKEN_TREE_BRACE_BEFORE, path: "(delim_token_tree_brace)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "delim_tokens", path: "(delim_token_tree_brace)/delim_tokens:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "delim_token_tree_brace", path: "(delim_token_tree_brace)/delim_tokens:/(delim_token_tree_brace)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "delimTokens", path: "(delim_token_tree_brace)/delim_tokens:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "delimTokenTreeBrace", path: "(delim_token_tree_brace)/delim_tokens:/(delim_token_tree_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_DELIM_TOKEN_TREE_BRACE_AFTER, path: "(delim_token_tree_brace)/delim_tokens:/(delim_token_tree_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "delim_token_tree_bracket", path: "(delim_token_tree_brace)/delim_tokens:/(delim_token_tree_bracket)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "delimTokenTreeBracket", path: "(delim_token_tree_brace)/delim_tokens:/(delim_token_tree_bracket)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_DELIM_TOKEN_TREE_BRACKET_AFTER, path: "(delim_token_tree_brace)/delim_tokens:/(delim_token_tree_bracket)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "delim_token_tree_paren", path: "(delim_token_tree_brace)/delim_tokens:/(delim_token_tree_paren)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "delimTokenTreeParen", path: "(delim_token_tree_brace)/delim_tokens:/(delim_token_tree_paren)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_DELIM_TOKEN_TREE_PAREN_AFTER, path: "(delim_token_tree_brace)/delim_tokens:/(delim_token_tree_paren)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_END, path: "(delim_token_tree_brace)/delim_tokens:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(delim_token_tree_brace)/delim_tokens:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(delim_token_tree_brace)/delim_tokens:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_RAW_STRING_LITERAL_AFTER, path: "(delim_token_tree_brace)/delim_tokens:/(raw_string_literal)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_SEPARATOR_SPACE, path: "(delim_token_tree_brace)/delim_tokens:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_START, path: "(delim_token_tree_brace)/delim_tokens:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(delim_token_tree_brace)/delim_tokens:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(delim_token_tree_brace)/delim_tokens:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_STRING_LITERAL_AFTER, path: "(delim_token_tree_brace)/delim_tokens:/(string_literal)/after" }] },
             ] },
         ] },
@@ -7166,26 +7166,26 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACE_RBRACE_BEFORE, path: "(delim_token_tree_brace)/\"}\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "delim_token_tree_bracket", path: "(delim_token_tree_bracket)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "delimTokenTreeBracket", path: "(delim_token_tree_bracket)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKEN_TREE_BRACKET_AFTER, path: "(delim_token_tree_bracket)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKEN_TREE_BRACKET_BEFORE, path: "(delim_token_tree_bracket)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "delim_tokens", path: "(delim_token_tree_bracket)/delim_tokens:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "delim_token_tree_brace", path: "(delim_token_tree_bracket)/delim_tokens:/(delim_token_tree_brace)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "delimTokens", path: "(delim_token_tree_bracket)/delim_tokens:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "delimTokenTreeBrace", path: "(delim_token_tree_bracket)/delim_tokens:/(delim_token_tree_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_DELIM_TOKEN_TREE_BRACE_AFTER, path: "(delim_token_tree_bracket)/delim_tokens:/(delim_token_tree_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "delim_token_tree_bracket", path: "(delim_token_tree_bracket)/delim_tokens:/(delim_token_tree_bracket)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "delimTokenTreeBracket", path: "(delim_token_tree_bracket)/delim_tokens:/(delim_token_tree_bracket)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_DELIM_TOKEN_TREE_BRACKET_AFTER, path: "(delim_token_tree_bracket)/delim_tokens:/(delim_token_tree_bracket)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "delim_token_tree_paren", path: "(delim_token_tree_bracket)/delim_tokens:/(delim_token_tree_paren)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "delimTokenTreeParen", path: "(delim_token_tree_bracket)/delim_tokens:/(delim_token_tree_paren)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_DELIM_TOKEN_TREE_PAREN_AFTER, path: "(delim_token_tree_bracket)/delim_tokens:/(delim_token_tree_paren)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_END, path: "(delim_token_tree_bracket)/delim_tokens:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(delim_token_tree_bracket)/delim_tokens:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(delim_token_tree_bracket)/delim_tokens:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_RAW_STRING_LITERAL_AFTER, path: "(delim_token_tree_bracket)/delim_tokens:/(raw_string_literal)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_SEPARATOR_SPACE, path: "(delim_token_tree_bracket)/delim_tokens:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_START, path: "(delim_token_tree_bracket)/delim_tokens:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(delim_token_tree_bracket)/delim_tokens:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(delim_token_tree_bracket)/delim_tokens:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_STRING_LITERAL_AFTER, path: "(delim_token_tree_bracket)/delim_tokens:/(string_literal)/after" }] },
             ] },
         ] },
@@ -7196,26 +7196,26 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_BRACKET_RBRACK_BEFORE, path: "(delim_token_tree_bracket)/\"]\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "delim_token_tree_paren", path: "(delim_token_tree_paren)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "delimTokenTreeParen", path: "(delim_token_tree_paren)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKEN_TREE_PAREN_AFTER, path: "(delim_token_tree_paren)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKEN_TREE_PAREN_BEFORE, path: "(delim_token_tree_paren)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "delim_tokens", path: "(delim_token_tree_paren)/delim_tokens:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "delim_token_tree_brace", path: "(delim_token_tree_paren)/delim_tokens:/(delim_token_tree_brace)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "delimTokens", path: "(delim_token_tree_paren)/delim_tokens:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "delimTokenTreeBrace", path: "(delim_token_tree_paren)/delim_tokens:/(delim_token_tree_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_DELIM_TOKEN_TREE_BRACE_AFTER, path: "(delim_token_tree_paren)/delim_tokens:/(delim_token_tree_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "delim_token_tree_bracket", path: "(delim_token_tree_paren)/delim_tokens:/(delim_token_tree_bracket)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "delimTokenTreeBracket", path: "(delim_token_tree_paren)/delim_tokens:/(delim_token_tree_bracket)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_DELIM_TOKEN_TREE_BRACKET_AFTER, path: "(delim_token_tree_paren)/delim_tokens:/(delim_token_tree_bracket)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "delim_token_tree_paren", path: "(delim_token_tree_paren)/delim_tokens:/(delim_token_tree_paren)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "delimTokenTreeParen", path: "(delim_token_tree_paren)/delim_tokens:/(delim_token_tree_paren)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_DELIM_TOKEN_TREE_PAREN_AFTER, path: "(delim_token_tree_paren)/delim_tokens:/(delim_token_tree_paren)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_END, path: "(delim_token_tree_paren)/delim_tokens:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(delim_token_tree_paren)/delim_tokens:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(delim_token_tree_paren)/delim_tokens:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_RAW_STRING_LITERAL_AFTER, path: "(delim_token_tree_paren)/delim_tokens:/(raw_string_literal)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_SEPARATOR_SPACE, path: "(delim_token_tree_paren)/delim_tokens:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_START, path: "(delim_token_tree_paren)/delim_tokens:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(delim_token_tree_paren)/delim_tokens:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(delim_token_tree_paren)/delim_tokens:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_STRING_LITERAL_AFTER, path: "(delim_token_tree_paren)/delim_tokens:/(string_literal)/after" }] },
             ] },
         ] },
@@ -7226,29 +7226,29 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_DELIM_TOKEN_TREE_PAREN_RPAREN_BEFORE, path: "(delim_token_tree_paren)/\")\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "dynamic_type", path: "(dynamic_type)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "dynamicType", path: "(dynamic_type)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DYNAMIC_TYPE_DYNAMIC_TYPE_AFTER, path: "(dynamic_type)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_DYNAMIC_TYPE_DYNAMIC_TYPE_BEFORE, path: "(dynamic_type)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "dyn_keyword", path: "(dynamic_type)/\"dyn\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dynKeyword", path: "(dynamic_type)/\"dyn\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_DYNAMIC_TYPE_DYN_KEYWORD_AFTER, path: "(dynamic_type)/\"dyn\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "else_clause", path: "(else_clause)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "elseClause", path: "(else_clause)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ELSE_CLAUSE_ELSE_CLAUSE_AFTER, path: "(else_clause)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ELSE_CLAUSE_ELSE_CLAUSE_BEFORE, path: "(else_clause)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "else_keyword", path: "(else_clause)/\"else\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "elseKeyword", path: "(else_clause)/\"else\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ELSE_CLAUSE_ELSE_KEYWORD_AFTER, path: "(else_clause)/\"else\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "enum_item", path: "(enum_item)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "enumItem", path: "(enum_item)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_ITEM_ENUM_ITEM_AFTER, path: "(enum_item)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_ITEM_ENUM_ITEM_BEFORE, path: "(enum_item)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "enum_keyword", path: "(enum_item)/\"enum\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "enumKeyword", path: "(enum_item)/\"enum\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_ITEM_ENUM_KEYWORD_AFTER, path: "(enum_item)/\"enum\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_ITEM_ENUM_KEYWORD_BEFORE, path: "(enum_item)/\"enum\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "enum_variant", path: "(enum_variant)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "enumVariant", path: "(enum_variant)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_VARIANT_ENUM_VARIANT_AFTER, path: "(enum_variant)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_VARIANT_ENUM_VARIANT_BEFORE, path: "(enum_variant)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "eq", path: "(enum_variant)/\"=\"", children: &[
@@ -7256,7 +7256,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_VARIANT_EQ_BEFORE, path: "(enum_variant)/\"=\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "enum_variant_list", path: "(enum_variant_list)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "enumVariantList", path: "(enum_variant_list)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_VARIANT_LIST_ENUM_VARIANT_LIST_AFTER, path: "(enum_variant_list)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_VARIANT_LIST_ENUM_VARIANT_LIST_BEFORE, path: "(enum_variant_list)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrace", path: "(enum_variant_list)/\"{\"", children: &[
@@ -7266,11 +7266,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_VARIANT_LIST_RBRACE_BEFORE, path: "(enum_variant_list)/\"}\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "enum_variant_list_elements", path: "(enum_variant_list_elements)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "enumVariantListElements", path: "(enum_variant_list_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_VARIANT_LIST_ELEMENTS_ENUM_VARIANT_LIST_ELEMENTS_AFTER, path: "(enum_variant_list_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_VARIANT_LIST_ELEMENTS_ENUM_VARIANT_LIST_ELEMENTS_BEFORE, path: "(enum_variant_list_elements)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "element", path: "(enum_variant_list_elements)/element:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attributed_enum_variant", path: "(enum_variant_list_elements)/element:/(attributed_enum_variant)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributedEnumVariant", path: "(enum_variant_list_elements)/element:/(attributed_enum_variant)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_ATTRIBUTED_ENUM_VARIANT_AFTER, path: "(enum_variant_list_elements)/element:/(attributed_enum_variant)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT, path: "(enum_variant_list_elements)/element:/delimiter" }] },
@@ -7284,16 +7284,16 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT_START, path: "(enum_variant_list_elements)/element:/start" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "expression_statement_with_semi", path: "(expression_statement_with_semi)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "expressionStatementWithSemi", path: "(expression_statement_with_semi)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_STATEMENT_WITH_SEMI_EXPRESSION_STATEMENT_WITH_SEMI_AFTER, path: "(expression_statement_with_semi)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_STATEMENT_WITH_SEMI_EXPRESSION_STATEMENT_WITH_SEMI_BEFORE, path: "(expression_statement_with_semi)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "semi", path: "(expression_statement_with_semi)/\";\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_STATEMENT_WITH_SEMI_SEMI_BEFORE, path: "(expression_statement_with_semi)/\";\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "extern_crate_declaration", path: "(extern_crate_declaration)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "externCrateDeclaration", path: "(extern_crate_declaration)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTERN_CRATE_DECLARATION_EXTERN_CRATE_DECLARATION_AFTER, path: "(extern_crate_declaration)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "as_keyword", path: "(extern_crate_declaration)/\"as\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "asKeyword", path: "(extern_crate_declaration)/\"as\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTERN_CRATE_DECLARATION_AS_KEYWORD_AFTER, path: "(extern_crate_declaration)/\"as\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTERN_CRATE_DECLARATION_AS_KEYWORD_BEFORE, path: "(extern_crate_declaration)/\"as\"/before" }] },
         ] },
@@ -7302,7 +7302,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTERN_CRATE_DECLARATION_CRATE_AFTER, path: "(extern_crate_declaration)/crate:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTERN_CRATE_DECLARATION_CRATE_BEFORE, path: "(extern_crate_declaration)/crate:/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "extern_keyword", path: "(extern_crate_declaration)/\"extern\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "externKeyword", path: "(extern_crate_declaration)/\"extern\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTERN_CRATE_DECLARATION_EXTERN_KEYWORD_AFTER, path: "(extern_crate_declaration)/\"extern\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTERN_CRATE_DECLARATION_EXTERN_KEYWORD_BEFORE, path: "(extern_crate_declaration)/\"extern\"/before" }] },
         ] },
@@ -7310,14 +7310,14 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTERN_CRATE_DECLARATION_SEMI_BEFORE, path: "(extern_crate_declaration)/\";\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "extern_modifier", path: "(extern_modifier)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "externModifier", path: "(extern_modifier)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTERN_MODIFIER_EXTERN_MODIFIER_AFTER, path: "(extern_modifier)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTERN_MODIFIER_EXTERN_MODIFIER_BEFORE, path: "(extern_modifier)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "extern_keyword", path: "(extern_modifier)/\"extern\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "externKeyword", path: "(extern_modifier)/\"extern\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTERN_MODIFIER_EXTERN_KEYWORD_AFTER, path: "(extern_modifier)/\"extern\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "field_declaration", path: "(field_declaration)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "fieldDeclaration", path: "(field_declaration)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_DECLARATION_FIELD_DECLARATION_AFTER, path: "(field_declaration)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_DECLARATION_FIELD_DECLARATION_BEFORE, path: "(field_declaration)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(field_declaration)/\":\"", children: &[
@@ -7325,7 +7325,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_DECLARATION_COLON_BEFORE, path: "(field_declaration)/\":\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "field_declaration_list", path: "(field_declaration_list)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "fieldDeclarationList", path: "(field_declaration_list)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_DECLARATION_LIST_FIELD_DECLARATION_LIST_AFTER, path: "(field_declaration_list)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_DECLARATION_LIST_FIELD_DECLARATION_LIST_BEFORE, path: "(field_declaration_list)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrace", path: "(field_declaration_list)/\"{\"", children: &[
@@ -7335,11 +7335,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_DECLARATION_LIST_RBRACE_BEFORE, path: "(field_declaration_list)/\"}\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "field_declaration_list_elements", path: "(field_declaration_list_elements)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "fieldDeclarationListElements", path: "(field_declaration_list_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_DECLARATION_LIST_ELEMENTS_FIELD_DECLARATION_LIST_ELEMENTS_AFTER, path: "(field_declaration_list_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_DECLARATION_LIST_ELEMENTS_FIELD_DECLARATION_LIST_ELEMENTS_BEFORE, path: "(field_declaration_list_elements)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "element", path: "(field_declaration_list_elements)/element:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attributed_field_declaration", path: "(field_declaration_list_elements)/element:/(attributed_field_declaration)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributedFieldDeclaration", path: "(field_declaration_list_elements)/element:/(attributed_field_declaration)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_ATTRIBUTED_FIELD_DECLARATION_AFTER, path: "(field_declaration_list_elements)/element:/(attributed_field_declaration)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT, path: "(field_declaration_list_elements)/element:/delimiter" }] },
@@ -7353,7 +7353,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_START, path: "(field_declaration_list_elements)/element:/start" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "field_expression", path: "(field_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "fieldExpression", path: "(field_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_EXPRESSION_FIELD_EXPRESSION_AFTER, path: "(field_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_EXPRESSION_FIELD_EXPRESSION_BEFORE, path: "(field_expression)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "dot", path: "(field_expression)/\".\"", children: &[
@@ -7361,10 +7361,10 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_EXPRESSION_DOT_BEFORE, path: "(field_expression)/\".\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "field_initializer", path: "(field_initializer)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "fieldInitializer", path: "(field_initializer)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_FIELD_INITIALIZER_AFTER, path: "(field_initializer)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(field_initializer)/attribute_item:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(field_initializer)/attribute_item:/(attribute_item)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(field_initializer)/attribute_item:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(field_initializer)/attribute_item:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_ATTRIBUTE_ITEM_AFTER, path: "(field_initializer)/attribute_item:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_END, path: "(field_initializer)/attribute_item:/end" }] },
@@ -7377,7 +7377,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_COLON_BEFORE, path: "(field_initializer)/\":\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "field_initializer_list", path: "(field_initializer_list)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "fieldInitializerList", path: "(field_initializer_list)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_LIST_FIELD_INITIALIZER_LIST_AFTER, path: "(field_initializer_list)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_LIST_FIELD_INITIALIZER_LIST_BEFORE, path: "(field_initializer_list)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrace", path: "(field_initializer_list)/\"{\"", children: &[
@@ -7387,16 +7387,16 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_LIST_RBRACE_BEFORE, path: "(field_initializer_list)/\"}\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "field_initializer_list_elements", path: "(field_initializer_list_elements)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "fieldInitializerListElements", path: "(field_initializer_list_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_LIST_ELEMENTS_FIELD_INITIALIZER_LIST_ELEMENTS_AFTER, path: "(field_initializer_list_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_LIST_ELEMENTS_FIELD_INITIALIZER_LIST_ELEMENTS_BEFORE, path: "(field_initializer_list_elements)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "element", path: "(field_initializer_list_elements)/element:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "base_field_initializer", path: "(field_initializer_list_elements)/element:/(base_field_initializer)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "baseFieldInitializer", path: "(field_initializer_list_elements)/element:/(base_field_initializer)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_BASE_FIELD_INITIALIZER_AFTER, path: "(field_initializer_list_elements)/element:/(base_field_initializer)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT, path: "(field_initializer_list_elements)/element:/delimiter" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_END, path: "(field_initializer_list_elements)/element:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "field_initializer", path: "(field_initializer_list_elements)/element:/(field_initializer)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "fieldInitializer", path: "(field_initializer_list_elements)/element:/(field_initializer)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_FIELD_INITIALIZER_AFTER, path: "(field_initializer_list_elements)/element:/(field_initializer)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(field_initializer_list_elements)/element:/separator", children: &[
@@ -7405,58 +7405,58 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
                     ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE, path: "(field_initializer_list_elements)/element:/separator/\",\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "shorthand_field_initializer", path: "(field_initializer_list_elements)/element:/(shorthand_field_initializer)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "shorthandFieldInitializer", path: "(field_initializer_list_elements)/element:/(shorthand_field_initializer)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_SHORTHAND_FIELD_INITIALIZER_AFTER, path: "(field_initializer_list_elements)/element:/(shorthand_field_initializer)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_LIST_ELEMENTS_ELEMENT_START, path: "(field_initializer_list_elements)/element:/start" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "field_pattern_named", path: "(field_pattern_named)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "fieldPatternNamed", path: "(field_pattern_named)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_FIELD_PATTERN_NAMED_AFTER, path: "(field_pattern_named)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_FIELD_PATTERN_NAMED_BEFORE, path: "(field_pattern_named)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(field_pattern_named)/\":\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_COLON_AFTER, path: "(field_pattern_named)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_COLON_BEFORE, path: "(field_pattern_named)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutable_specifier", path: "(field_pattern_named)/mutable_specifier:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(field_pattern_named)/mutable_specifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_MUTABLE_SPECIFIER_AFTER, path: "(field_pattern_named)/mutable_specifier:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_MUTABLE_SPECIFIER_BEFORE, path: "(field_pattern_named)/mutable_specifier:/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "ref_marker", path: "(field_pattern_named)/ref_marker:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "refMarker", path: "(field_pattern_named)/ref_marker:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_NAMED_REF_MARKER_AFTER, path: "(field_pattern_named)/ref_marker:/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "field_pattern_shorthand", path: "(field_pattern_shorthand)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "fieldPatternShorthand", path: "(field_pattern_shorthand)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_FIELD_PATTERN_SHORTHAND_AFTER, path: "(field_pattern_shorthand)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_FIELD_PATTERN_SHORTHAND_BEFORE, path: "(field_pattern_shorthand)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutable_specifier", path: "(field_pattern_shorthand)/mutable_specifier:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(field_pattern_shorthand)/mutable_specifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_SPECIFIER_AFTER, path: "(field_pattern_shorthand)/mutable_specifier:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_SPECIFIER_BEFORE, path: "(field_pattern_shorthand)/mutable_specifier:/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "ref_marker", path: "(field_pattern_shorthand)/ref_marker:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "refMarker", path: "(field_pattern_shorthand)/ref_marker:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FIELD_PATTERN_SHORTHAND_REF_MARKER_AFTER, path: "(field_pattern_shorthand)/ref_marker:/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "for_expression", path: "(for_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "forExpression", path: "(for_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_EXPRESSION_FOR_EXPRESSION_AFTER, path: "(for_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_EXPRESSION_FOR_EXPRESSION_BEFORE, path: "(for_expression)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(for_expression)/\":\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_EXPRESSION_COLON_AFTER, path: "(for_expression)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_EXPRESSION_COLON_BEFORE, path: "(for_expression)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "for_keyword", path: "(for_expression)/\"for\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "forKeyword", path: "(for_expression)/\"for\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_EXPRESSION_FOR_KEYWORD_AFTER, path: "(for_expression)/\"for\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_EXPRESSION_FOR_KEYWORD_BEFORE, path: "(for_expression)/\"for\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "in_keyword", path: "(for_expression)/\"in\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "inKeyword", path: "(for_expression)/\"in\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_EXPRESSION_IN_KEYWORD_AFTER, path: "(for_expression)/\"in\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_EXPRESSION_IN_KEYWORD_BEFORE, path: "(for_expression)/\"in\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "for_lifetimes", path: "(for_lifetimes)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "forLifetimes", path: "(for_lifetimes)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_LIFETIMES_FOR_LIFETIMES_AFTER, path: "(for_lifetimes)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_LIFETIMES_FOR_LIFETIMES_BEFORE, path: "(for_lifetimes)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "for_keyword", path: "(for_lifetimes)/\"for\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "forKeyword", path: "(for_lifetimes)/\"for\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_LIFETIMES_FOR_KEYWORD_AFTER, path: "(for_lifetimes)/\"for\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "gt", path: "(for_lifetimes)/\">\"", children: &[
@@ -7467,49 +7467,49 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_LIFETIMES_LT_BEFORE, path: "(for_lifetimes)/\"<\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "foreign_mod_item_body", path: "(foreign_mod_item_body)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "foreignModItemBody", path: "(foreign_mod_item_body)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOREIGN_MOD_ITEM_BODY_FOREIGN_MOD_ITEM_BODY_AFTER, path: "(foreign_mod_item_body)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOREIGN_MOD_ITEM_BODY_FOREIGN_MOD_ITEM_BODY_BEFORE, path: "(foreign_mod_item_body)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "foreign_mod_item_semi", path: "(foreign_mod_item_semi)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "foreignModItemSemi", path: "(foreign_mod_item_semi)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOREIGN_MOD_ITEM_SEMI_FOREIGN_MOD_ITEM_SEMI_AFTER, path: "(foreign_mod_item_semi)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOREIGN_MOD_ITEM_SEMI_FOREIGN_MOD_ITEM_SEMI_BEFORE, path: "(foreign_mod_item_semi)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "semi", path: "(foreign_mod_item_semi)/\";\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FOREIGN_MOD_ITEM_SEMI_SEMI_BEFORE, path: "(foreign_mod_item_semi)/\";\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "function_item", path: "(function_item)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "functionItem", path: "(function_item)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_ITEM_FUNCTION_ITEM_AFTER, path: "(function_item)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_ITEM_FUNCTION_ITEM_BEFORE, path: "(function_item)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "dash_gt", path: "(function_item)/\"->\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dashGt", path: "(function_item)/\"->\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_ITEM_DASH_GT_AFTER, path: "(function_item)/\"->\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_ITEM_DASH_GT_BEFORE, path: "(function_item)/\"->\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "fn_keyword", path: "(function_item)/\"fn\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "fnKeyword", path: "(function_item)/\"fn\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_ITEM_FN_KEYWORD_AFTER, path: "(function_item)/\"fn\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_ITEM_FN_KEYWORD_BEFORE, path: "(function_item)/\"fn\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "function_modifiers", path: "(function_modifiers)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "functionModifiers", path: "(function_modifiers)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_MODIFIERS_FUNCTION_MODIFIERS_AFTER, path: "(function_modifiers)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_MODIFIERS_FUNCTION_MODIFIERS_BEFORE, path: "(function_modifiers)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "modifier", path: "(function_modifiers)/modifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_MODIFIERS_MODIFIER_END, path: "(function_modifiers)/modifier:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "extern_modifier", path: "(function_modifiers)/modifier:/(extern_modifier)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "externModifier", path: "(function_modifiers)/modifier:/(extern_modifier)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_MODIFIERS_MODIFIER_EXTERN_MODIFIER_AFTER, path: "(function_modifiers)/modifier:/(extern_modifier)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_MODIFIERS_MODIFIER_SEPARATOR_SPACE, path: "(function_modifiers)/modifier:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_MODIFIERS_MODIFIER_START, path: "(function_modifiers)/modifier:/start" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "function_signature_item", path: "(function_signature_item)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "functionSignatureItem", path: "(function_signature_item)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_SIGNATURE_ITEM_FUNCTION_SIGNATURE_ITEM_AFTER, path: "(function_signature_item)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_SIGNATURE_ITEM_FUNCTION_SIGNATURE_ITEM_BEFORE, path: "(function_signature_item)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "dash_gt", path: "(function_signature_item)/\"->\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dashGt", path: "(function_signature_item)/\"->\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_SIGNATURE_ITEM_DASH_GT_AFTER, path: "(function_signature_item)/\"->\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_SIGNATURE_ITEM_DASH_GT_BEFORE, path: "(function_signature_item)/\"->\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "fn_keyword", path: "(function_signature_item)/\"fn\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "fnKeyword", path: "(function_signature_item)/\"fn\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_SIGNATURE_ITEM_FN_KEYWORD_AFTER, path: "(function_signature_item)/\"fn\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_SIGNATURE_ITEM_FN_KEYWORD_BEFORE, path: "(function_signature_item)/\"fn\"/before" }] },
         ] },
@@ -7517,120 +7517,120 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_SIGNATURE_ITEM_SEMI_BEFORE, path: "(function_signature_item)/\";\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "function_type", path: "(function_type)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "functionType", path: "(function_type)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_TYPE_FUNCTION_TYPE_AFTER, path: "(function_type)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_TYPE_FUNCTION_TYPE_BEFORE, path: "(function_type)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "dash_gt", path: "(function_type)/\"->\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dashGt", path: "(function_type)/\"->\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_TYPE_DASH_GT_AFTER, path: "(function_type)/\"->\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_TYPE_DASH_GT_BEFORE, path: "(function_type)/\"->\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "function_type_fn_form", path: "(function_type_fn_form)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "functionTypeFnForm", path: "(function_type_fn_form)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_TYPE_FN_FORM_FUNCTION_TYPE_FN_FORM_AFTER, path: "(function_type_fn_form)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_TYPE_FN_FORM_FUNCTION_TYPE_FN_FORM_BEFORE, path: "(function_type_fn_form)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "fn_keyword", path: "(function_type_fn_form)/\"fn\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "fnKeyword", path: "(function_type_fn_form)/\"fn\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FUNCTION_TYPE_FN_FORM_FN_KEYWORD_BEFORE, path: "(function_type_fn_form)/\"fn\"/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "gap", path: "gap", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_SEPARATOR_SPACE, path: "(array_expression_list)/attributes:/separator" }, ::sittir_core::options::SiteRef { site: SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_SEPARATOR_SPACE, path: "(array_expression_semi)/attributes:/separator" }, ::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_SEPARATOR_SPACE, path: "(attributed_argument)/attribute_item:/separator" }, ::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_SEPARATOR_SPACE, path: "(attributed_enum_variant)/attribute_item:/separator" }, ::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_SEPARATOR_SPACE, path: "(attributed_field_declaration)/attribute_item:/separator" }, ::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_SEPARATOR_SPACE, path: "(attributed_ordered_field)/attribute_item:/separator" }, ::sittir_core::options::SiteRef { site: SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_SEPARATOR_SPACE, path: "(attributed_type_parameter)/attribute_item:/separator" }, ::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE, path: "(block)/statements:/separator" }, ::sittir_core::options::SiteRef { site: SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE, path: "(declaration_list)/declarations:/separator" }, ::sittir_core::options::SiteRef { site: SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE, path: "(field_initializer)/attribute_item:/separator" }, ::sittir_core::options::SiteRef { site: SITE_FUNCTION_MODIFIERS_MODIFIER_SEPARATOR_SPACE, path: "(function_modifiers)/modifier:/separator" }, ::sittir_core::options::SiteRef { site: SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE, path: "(last_match_arm)/attributes:/separator" }, ::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_SEPARATOR_SPACE, path: "(match_arm_block_ending)/attributes:/separator" }, ::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_SEPARATOR_SPACE, path: "(match_arm_with_comma)/attributes:/separator" }, ::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_ARMS_MATCH_ARM_SEPARATOR_SPACE, path: "(match_block_arms)/match_arm:/separator" }, ::sittir_core::options::SiteRef { site: SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE, path: "(shorthand_field_initializer)/attributes:/separator" }, ::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE, path: "(token_repetition)/tokens:/separator" }, ::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE, path: "(token_repetition_pattern)/token_patterns:/separator" }, ::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE, path: "(tuple_expression)/attributes:/separator" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "gen_block", path: "(gen_block)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "genBlock", path: "(gen_block)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GEN_BLOCK_GEN_BLOCK_AFTER, path: "(gen_block)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_GEN_BLOCK_GEN_BLOCK_BEFORE, path: "(gen_block)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "gen_keyword", path: "(gen_block)/\"gen\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "genKeyword", path: "(gen_block)/\"gen\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GEN_BLOCK_GEN_KEYWORD_AFTER, path: "(gen_block)/\"gen\"/after" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "move_marker", path: "(gen_block)/move_marker:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "moveMarker", path: "(gen_block)/move_marker:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GEN_BLOCK_MOVE_MARKER_AFTER, path: "(gen_block)/move_marker:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_GEN_BLOCK_MOVE_MARKER_BEFORE, path: "(gen_block)/move_marker:/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "generic_function", path: "(generic_function)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "genericFunction", path: "(generic_function)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERIC_FUNCTION_GENERIC_FUNCTION_AFTER, path: "(generic_function)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERIC_FUNCTION_GENERIC_FUNCTION_BEFORE, path: "(generic_function)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "colon_colon", path: "(generic_function)/\"::\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "colonColon", path: "(generic_function)/\"::\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERIC_FUNCTION_COLON_COLON_AFTER, path: "(generic_function)/\"::\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERIC_FUNCTION_COLON_COLON_BEFORE, path: "(generic_function)/\"::\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "generic_pattern", path: "(generic_pattern)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "genericPattern", path: "(generic_pattern)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERIC_PATTERN_GENERIC_PATTERN_AFTER, path: "(generic_pattern)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERIC_PATTERN_GENERIC_PATTERN_BEFORE, path: "(generic_pattern)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "colon_colon", path: "(generic_pattern)/\"::\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "colonColon", path: "(generic_pattern)/\"::\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERIC_PATTERN_COLON_COLON_AFTER, path: "(generic_pattern)/\"::\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERIC_PATTERN_COLON_COLON_BEFORE, path: "(generic_pattern)/\"::\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "generic_type", path: "(generic_type)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "genericType", path: "(generic_type)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERIC_TYPE_GENERIC_TYPE_AFTER, path: "(generic_type)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERIC_TYPE_GENERIC_TYPE_BEFORE, path: "(generic_type)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "generic_type_with_turbofish", path: "(generic_type_with_turbofish)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "genericTypeWithTurbofish", path: "(generic_type_with_turbofish)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERIC_TYPE_WITH_TURBOFISH_GENERIC_TYPE_WITH_TURBOFISH_AFTER, path: "(generic_type_with_turbofish)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERIC_TYPE_WITH_TURBOFISH_GENERIC_TYPE_WITH_TURBOFISH_BEFORE, path: "(generic_type_with_turbofish)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "colon_colon", path: "(generic_type_with_turbofish)/\"::\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "colonColon", path: "(generic_type_with_turbofish)/\"::\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERIC_TYPE_WITH_TURBOFISH_COLON_COLON_AFTER, path: "(generic_type_with_turbofish)/\"::\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERIC_TYPE_WITH_TURBOFISH_COLON_COLON_BEFORE, path: "(generic_type_with_turbofish)/\"::\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "higher_ranked_trait_bound", path: "(higher_ranked_trait_bound)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "higherRankedTraitBound", path: "(higher_ranked_trait_bound)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_HIGHER_RANKED_TRAIT_BOUND_HIGHER_RANKED_TRAIT_BOUND_AFTER, path: "(higher_ranked_trait_bound)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_HIGHER_RANKED_TRAIT_BOUND_HIGHER_RANKED_TRAIT_BOUND_BEFORE, path: "(higher_ranked_trait_bound)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "for_keyword", path: "(higher_ranked_trait_bound)/\"for\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "forKeyword", path: "(higher_ranked_trait_bound)/\"for\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_HIGHER_RANKED_TRAIT_BOUND_FOR_KEYWORD_AFTER, path: "(higher_ranked_trait_bound)/\"for\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "if_expression", path: "(if_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "ifExpression", path: "(if_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IF_EXPRESSION_IF_EXPRESSION_AFTER, path: "(if_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IF_EXPRESSION_IF_EXPRESSION_BEFORE, path: "(if_expression)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "if_keyword", path: "(if_expression)/\"if\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "ifKeyword", path: "(if_expression)/\"if\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IF_EXPRESSION_IF_KEYWORD_AFTER, path: "(if_expression)/\"if\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "impl_item_body", path: "(impl_item_body)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "implItemBody", path: "(impl_item_body)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_BODY_IMPL_ITEM_BODY_AFTER, path: "(impl_item_body)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_BODY_IMPL_ITEM_BODY_BEFORE, path: "(impl_item_body)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "impl_keyword", path: "(impl_item_body)/\"impl\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "implKeyword", path: "(impl_item_body)/\"impl\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_BODY_IMPL_KEYWORD_AFTER, path: "(impl_item_body)/\"impl\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_BODY_IMPL_KEYWORD_BEFORE, path: "(impl_item_body)/\"impl\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "unsafe_marker", path: "(impl_item_body)/unsafe_marker:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "unsafeMarker", path: "(impl_item_body)/unsafe_marker:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_BODY_UNSAFE_MARKER_AFTER, path: "(impl_item_body)/unsafe_marker:/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "impl_item_negative_clause", path: "(impl_item_negative_clause)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "implItemNegativeClause", path: "(impl_item_negative_clause)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_NEGATIVE_CLAUSE_IMPL_ITEM_NEGATIVE_CLAUSE_AFTER, path: "(impl_item_negative_clause)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "bang", path: "(impl_item_negative_clause)/\"!\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_NEGATIVE_CLAUSE_BANG_AFTER, path: "(impl_item_negative_clause)/\"!\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_NEGATIVE_CLAUSE_IMPL_ITEM_NEGATIVE_CLAUSE_BEFORE, path: "(impl_item_negative_clause)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "for_keyword", path: "(impl_item_negative_clause)/\"for\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "forKeyword", path: "(impl_item_negative_clause)/\"for\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_NEGATIVE_CLAUSE_FOR_KEYWORD_BEFORE, path: "(impl_item_negative_clause)/\"for\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "impl_item_positive_clause", path: "(impl_item_positive_clause)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "implItemPositiveClause", path: "(impl_item_positive_clause)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_POSITIVE_CLAUSE_IMPL_ITEM_POSITIVE_CLAUSE_AFTER, path: "(impl_item_positive_clause)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_POSITIVE_CLAUSE_IMPL_ITEM_POSITIVE_CLAUSE_BEFORE, path: "(impl_item_positive_clause)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "for_keyword", path: "(impl_item_positive_clause)/\"for\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "forKeyword", path: "(impl_item_positive_clause)/\"for\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_POSITIVE_CLAUSE_FOR_KEYWORD_BEFORE, path: "(impl_item_positive_clause)/\"for\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "impl_item_semi", path: "(impl_item_semi)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "implItemSemi", path: "(impl_item_semi)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_SEMI_IMPL_ITEM_SEMI_AFTER, path: "(impl_item_semi)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_SEMI_IMPL_ITEM_SEMI_BEFORE, path: "(impl_item_semi)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "impl_keyword", path: "(impl_item_semi)/\"impl\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "implKeyword", path: "(impl_item_semi)/\"impl\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_SEMI_IMPL_KEYWORD_AFTER, path: "(impl_item_semi)/\"impl\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_SEMI_IMPL_KEYWORD_BEFORE, path: "(impl_item_semi)/\"impl\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "semi", path: "(impl_item_semi)/\";\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_SEMI_SEMI_BEFORE, path: "(impl_item_semi)/\";\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "unsafe_marker", path: "(impl_item_semi)/unsafe_marker:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "unsafeMarker", path: "(impl_item_semi)/unsafe_marker:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_IMPL_ITEM_SEMI_UNSAFE_MARKER_AFTER, path: "(impl_item_semi)/unsafe_marker:/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "index_expression", path: "(index_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "indexExpression", path: "(index_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_EXPRESSION_INDEX_EXPRESSION_AFTER, path: "(index_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_EXPRESSION_INDEX_EXPRESSION_BEFORE, path: "(index_expression)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrack", path: "(index_expression)/\"[\"", children: &[
@@ -7641,7 +7641,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_INDEX_EXPRESSION_RBRACK_BEFORE, path: "(index_expression)/\"]\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "inner_attribute_item", path: "(inner_attribute_item)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "innerAttributeItem", path: "(inner_attribute_item)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INNER_ATTRIBUTE_ITEM_INNER_ATTRIBUTE_ITEM_AFTER, path: "(inner_attribute_item)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "bang", path: "(inner_attribute_item)/\"!\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_INNER_ATTRIBUTE_ITEM_BANG_AFTER, path: "(inner_attribute_item)/\"!\"/after" }] },
@@ -7666,14 +7666,14 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LABEL_SQUOTE_AFTER, path: "(label)/\"'\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "last_match_arm", path: "(last_match_arm)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "lastMatchArm", path: "(last_match_arm)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LAST_MATCH_ARM_LAST_MATCH_ARM_AFTER, path: "(last_match_arm)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "attributes", path: "(last_match_arm)/attributes:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(last_match_arm)/attributes:/(attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(last_match_arm)/attributes:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LAST_MATCH_ARM_ATTRIBUTES_ATTRIBUTE_ITEM_AFTER, path: "(last_match_arm)/attributes:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_LAST_MATCH_ARM_ATTRIBUTES_END, path: "(last_match_arm)/attributes:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "inner_attribute_item", path: "(last_match_arm)/attributes:/(inner_attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "innerAttributeItem", path: "(last_match_arm)/attributes:/(inner_attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LAST_MATCH_ARM_ATTRIBUTES_INNER_ATTRIBUTE_ITEM_AFTER, path: "(last_match_arm)/attributes:/(inner_attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE, path: "(last_match_arm)/attributes:/separator" }] },
@@ -7683,179 +7683,179 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(last_match_arm)/\",\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LAST_MATCH_ARM_COMMA_BEFORE, path: "(last_match_arm)/\",\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "eq_gt", path: "(last_match_arm)/\"=>\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "eqGt", path: "(last_match_arm)/\"=>\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LAST_MATCH_ARM_EQ_GT_AFTER, path: "(last_match_arm)/\"=>\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LAST_MATCH_ARM_EQ_GT_BEFORE, path: "(last_match_arm)/\"=>\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "let_chain", path: "(let_chain)", children: &[
-        ::sittir_core::options::AddressNode::Branch { key: "amp_amp", path: "(let_chain)/\"&&\"", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "letChain", path: "(let_chain)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "ampAmp", path: "(let_chain)/\"&&\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_AMP_AMP_AFTER, path: "(let_chain)/\"&&\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_AMP_AMP_BEFORE, path: "(let_chain)/\"&&\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "right", path: "(let_chain)/right:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "array_expression_list", path: "(let_chain)/right:/(array_expression_list)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "arrayExpressionList", path: "(let_chain)/right:/(array_expression_list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_ARRAY_EXPRESSION_LIST_AFTER, path: "(let_chain)/right:/(array_expression_list)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "array_expression_semi", path: "(let_chain)/right:/(array_expression_semi)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "arrayExpressionSemi", path: "(let_chain)/right:/(array_expression_semi)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_ARRAY_EXPRESSION_SEMI_AFTER, path: "(let_chain)/right:/(array_expression_semi)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "assignment_expression", path: "(let_chain)/right:/(assignment_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "assignmentExpression", path: "(let_chain)/right:/(assignment_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_ASSIGNMENT_EXPRESSION_AFTER, path: "(let_chain)/right:/(assignment_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "async_block", path: "(let_chain)/right:/(async_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "asyncBlock", path: "(let_chain)/right:/(async_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_ASYNC_BLOCK_AFTER, path: "(let_chain)/right:/(async_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "await_expression", path: "(let_chain)/right:/(await_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "awaitExpression", path: "(let_chain)/right:/(await_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_AWAIT_EXPRESSION_AFTER, path: "(let_chain)/right:/(await_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "binary_expression", path: "(let_chain)/right:/(binary_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "binaryExpression", path: "(let_chain)/right:/(binary_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_BINARY_EXPRESSION_AFTER, path: "(let_chain)/right:/(binary_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "block", path: "(let_chain)/right:/(block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_BLOCK_AFTER, path: "(let_chain)/right:/(block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "break_expression", path: "(let_chain)/right:/(break_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "breakExpression", path: "(let_chain)/right:/(break_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_BREAK_EXPRESSION_AFTER, path: "(let_chain)/right:/(break_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "call_expression", path: "(let_chain)/right:/(call_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "callExpression", path: "(let_chain)/right:/(call_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_CALL_EXPRESSION_AFTER, path: "(let_chain)/right:/(call_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "closure_expression_block", path: "(let_chain)/right:/(closure_expression_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "closureExpressionBlock", path: "(let_chain)/right:/(closure_expression_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_CLOSURE_EXPRESSION_BLOCK_AFTER, path: "(let_chain)/right:/(closure_expression_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "closure_expression_expr", path: "(let_chain)/right:/(closure_expression_expr)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "closureExpressionExpr", path: "(let_chain)/right:/(closure_expression_expr)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_CLOSURE_EXPRESSION_EXPR_AFTER, path: "(let_chain)/right:/(closure_expression_expr)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "compound_assignment_expr", path: "(let_chain)/right:/(compound_assignment_expr)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "compoundAssignmentExpr", path: "(let_chain)/right:/(compound_assignment_expr)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_COMPOUND_ASSIGNMENT_EXPR_AFTER, path: "(let_chain)/right:/(compound_assignment_expr)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "const_block", path: "(let_chain)/right:/(const_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "constBlock", path: "(let_chain)/right:/(const_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_CONST_BLOCK_AFTER, path: "(let_chain)/right:/(const_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "continue_expression", path: "(let_chain)/right:/(continue_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "continueExpression", path: "(let_chain)/right:/(continue_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_CONTINUE_EXPRESSION_AFTER, path: "(let_chain)/right:/(continue_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "field_expression", path: "(let_chain)/right:/(field_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "fieldExpression", path: "(let_chain)/right:/(field_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_FIELD_EXPRESSION_AFTER, path: "(let_chain)/right:/(field_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "for_expression", path: "(let_chain)/right:/(for_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "forExpression", path: "(let_chain)/right:/(for_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_FOR_EXPRESSION_AFTER, path: "(let_chain)/right:/(for_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "gen_block", path: "(let_chain)/right:/(gen_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "genBlock", path: "(let_chain)/right:/(gen_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_GEN_BLOCK_AFTER, path: "(let_chain)/right:/(gen_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "generic_function", path: "(let_chain)/right:/(generic_function)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "genericFunction", path: "(let_chain)/right:/(generic_function)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_GENERIC_FUNCTION_AFTER, path: "(let_chain)/right:/(generic_function)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "if_expression", path: "(let_chain)/right:/(if_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "ifExpression", path: "(let_chain)/right:/(if_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_IF_EXPRESSION_AFTER, path: "(let_chain)/right:/(if_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "index_expression", path: "(let_chain)/right:/(index_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "indexExpression", path: "(let_chain)/right:/(index_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_INDEX_EXPRESSION_AFTER, path: "(let_chain)/right:/(index_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "let_condition", path: "(let_chain)/right:/(let_condition)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "letCondition", path: "(let_chain)/right:/(let_condition)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_LET_CONDITION_AFTER, path: "(let_chain)/right:/(let_condition)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "loop_expression", path: "(let_chain)/right:/(loop_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "loopExpression", path: "(let_chain)/right:/(loop_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_LOOP_EXPRESSION_AFTER, path: "(let_chain)/right:/(loop_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_invocation", path: "(let_chain)/right:/(macro_invocation)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroInvocation", path: "(let_chain)/right:/(macro_invocation)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_MACRO_INVOCATION_AFTER, path: "(let_chain)/right:/(macro_invocation)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "match_expression", path: "(let_chain)/right:/(match_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "matchExpression", path: "(let_chain)/right:/(match_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_MATCH_EXPRESSION_AFTER, path: "(let_chain)/right:/(match_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "parenthesized_expression", path: "(let_chain)/right:/(parenthesized_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "parenthesizedExpression", path: "(let_chain)/right:/(parenthesized_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_PARENTHESIZED_EXPRESSION_AFTER, path: "(let_chain)/right:/(parenthesized_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "range_expression_binary", path: "(let_chain)/right:/(range_expression_binary)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rangeExpressionBinary", path: "(let_chain)/right:/(range_expression_binary)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_RANGE_EXPRESSION_BINARY_AFTER, path: "(let_chain)/right:/(range_expression_binary)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "range_expression_postfix", path: "(let_chain)/right:/(range_expression_postfix)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rangeExpressionPostfix", path: "(let_chain)/right:/(range_expression_postfix)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_RANGE_EXPRESSION_POSTFIX_AFTER, path: "(let_chain)/right:/(range_expression_postfix)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "range_expression_prefix", path: "(let_chain)/right:/(range_expression_prefix)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rangeExpressionPrefix", path: "(let_chain)/right:/(range_expression_prefix)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_RANGE_EXPRESSION_PREFIX_AFTER, path: "(let_chain)/right:/(range_expression_prefix)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(let_chain)/right:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(let_chain)/right:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_RAW_STRING_LITERAL_AFTER, path: "(let_chain)/right:/(raw_string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "reference_expression_bare", path: "(let_chain)/right:/(reference_expression_bare)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "referenceExpressionBare", path: "(let_chain)/right:/(reference_expression_bare)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_REFERENCE_EXPRESSION_BARE_AFTER, path: "(let_chain)/right:/(reference_expression_bare)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "reference_expression_mut", path: "(let_chain)/right:/(reference_expression_mut)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "referenceExpressionMut", path: "(let_chain)/right:/(reference_expression_mut)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_REFERENCE_EXPRESSION_MUT_AFTER, path: "(let_chain)/right:/(reference_expression_mut)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "reference_expression_raw_const", path: "(let_chain)/right:/(reference_expression_raw_const)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "referenceExpressionRawConst", path: "(let_chain)/right:/(reference_expression_raw_const)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_REFERENCE_EXPRESSION_RAW_CONST_AFTER, path: "(let_chain)/right:/(reference_expression_raw_const)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "reference_expression_raw_mut", path: "(let_chain)/right:/(reference_expression_raw_mut)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "referenceExpressionRawMut", path: "(let_chain)/right:/(reference_expression_raw_mut)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_REFERENCE_EXPRESSION_RAW_MUT_AFTER, path: "(let_chain)/right:/(reference_expression_raw_mut)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "return_expression", path: "(let_chain)/right:/(return_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "returnExpression", path: "(let_chain)/right:/(return_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_RETURN_EXPRESSION_AFTER, path: "(let_chain)/right:/(return_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "scoped_identifier", path: "(let_chain)/right:/(scoped_identifier)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "scopedIdentifier", path: "(let_chain)/right:/(scoped_identifier)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_SCOPED_IDENTIFIER_AFTER, path: "(let_chain)/right:/(scoped_identifier)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(let_chain)/right:/separator", children: &[
-                ::sittir_core::options::AddressNode::Branch { key: "amp_amp", path: "(let_chain)/right:/separator/\"&&\"", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "ampAmp", path: "(let_chain)/right:/separator/\"&&\"", children: &[
                     ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER, path: "(let_chain)/right:/separator/\"&&\"/after" }] },
                     ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE, path: "(let_chain)/right:/separator/\"&&\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(let_chain)/right:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(let_chain)/right:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_STRING_LITERAL_AFTER, path: "(let_chain)/right:/(string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "struct_expression", path: "(let_chain)/right:/(struct_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "structExpression", path: "(let_chain)/right:/(struct_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_STRUCT_EXPRESSION_AFTER, path: "(let_chain)/right:/(struct_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "try_block", path: "(let_chain)/right:/(try_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tryBlock", path: "(let_chain)/right:/(try_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_TRY_BLOCK_AFTER, path: "(let_chain)/right:/(try_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "try_expression", path: "(let_chain)/right:/(try_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tryExpression", path: "(let_chain)/right:/(try_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_TRY_EXPRESSION_AFTER, path: "(let_chain)/right:/(try_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tuple_expression", path: "(let_chain)/right:/(tuple_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tupleExpression", path: "(let_chain)/right:/(tuple_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_TUPLE_EXPRESSION_AFTER, path: "(let_chain)/right:/(tuple_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "type_cast_expression", path: "(let_chain)/right:/(type_cast_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "typeCastExpression", path: "(let_chain)/right:/(type_cast_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_TYPE_CAST_EXPRESSION_AFTER, path: "(let_chain)/right:/(type_cast_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "unary_expression", path: "(let_chain)/right:/(unary_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "unaryExpression", path: "(let_chain)/right:/(unary_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_UNARY_EXPRESSION_AFTER, path: "(let_chain)/right:/(unary_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "unsafe_block", path: "(let_chain)/right:/(unsafe_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "unsafeBlock", path: "(let_chain)/right:/(unsafe_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_UNSAFE_BLOCK_AFTER, path: "(let_chain)/right:/(unsafe_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "while_expression", path: "(let_chain)/right:/(while_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "whileExpression", path: "(let_chain)/right:/(while_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_WHILE_EXPRESSION_AFTER, path: "(let_chain)/right:/(while_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "yield_expression", path: "(let_chain)/right:/(yield_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "yieldExpression", path: "(let_chain)/right:/(yield_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CHAIN_RIGHT_YIELD_EXPRESSION_AFTER, path: "(let_chain)/right:/(yield_expression)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "let_condition", path: "(let_condition)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "letCondition", path: "(let_condition)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CONDITION_LET_CONDITION_AFTER, path: "(let_condition)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CONDITION_LET_CONDITION_BEFORE, path: "(let_condition)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "eq", path: "(let_condition)/\"=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CONDITION_EQ_AFTER, path: "(let_condition)/\"=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CONDITION_EQ_BEFORE, path: "(let_condition)/\"=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "let_keyword", path: "(let_condition)/\"let\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "letKeyword", path: "(let_condition)/\"let\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_CONDITION_LET_KEYWORD_AFTER, path: "(let_condition)/\"let\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "let_declaration", path: "(let_declaration)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "letDeclaration", path: "(let_declaration)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_LET_DECLARATION_AFTER, path: "(let_declaration)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_LET_DECLARATION_BEFORE, path: "(let_declaration)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(let_declaration)/\":\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_COLON_AFTER, path: "(let_declaration)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_COLON_BEFORE, path: "(let_declaration)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "else_keyword", path: "(let_declaration)/\"else\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "elseKeyword", path: "(let_declaration)/\"else\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_ELSE_KEYWORD_AFTER, path: "(let_declaration)/\"else\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_ELSE_KEYWORD_BEFORE, path: "(let_declaration)/\"else\"/before" }] },
         ] },
@@ -7863,10 +7863,10 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_EQ_AFTER, path: "(let_declaration)/\"=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_EQ_BEFORE, path: "(let_declaration)/\"=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "let_keyword", path: "(let_declaration)/\"let\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "letKeyword", path: "(let_declaration)/\"let\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_LET_KEYWORD_AFTER, path: "(let_declaration)/\"let\"/after" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutable_specifier", path: "(let_declaration)/mutable_specifier:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(let_declaration)/mutable_specifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_MUTABLE_SPECIFIER_AFTER, path: "(let_declaration)/mutable_specifier:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LET_DECLARATION_MUTABLE_SPECIFIER_BEFORE, path: "(let_declaration)/mutable_specifier:/before" }] },
         ] },
@@ -7881,7 +7881,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LIFETIME_SQUOTE_AFTER, path: "(lifetime)/\"'\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "lifetime_parameter", path: "(lifetime_parameter)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "lifetimeParameter", path: "(lifetime_parameter)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LIFETIME_PARAMETER_LIFETIME_PARAMETER_AFTER, path: "(lifetime_parameter)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LIFETIME_PARAMETER_LIFETIME_PARAMETER_BEFORE, path: "(lifetime_parameter)/before" }] },
     ] },
@@ -7903,50 +7903,50 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_LIFETIMES_LIFETIME_START, path: "(lifetimes)/lifetime:/start" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "line_comment", path: "(line_comment)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "lineComment", path: "(line_comment)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LINE_COMMENT_LINE_COMMENT_AFTER, path: "(line_comment)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LINE_COMMENT_LINE_COMMENT_BEFORE, path: "(line_comment)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "line_comment_doc_inner", path: "(line_comment_doc_inner)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "lineCommentDocInner", path: "(line_comment_doc_inner)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LINE_COMMENT_DOC_INNER_LINE_COMMENT_DOC_INNER_AFTER, path: "(line_comment_doc_inner)/after" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "line_comment_doc_outer", path: "(line_comment_doc_outer)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "lineCommentDocOuter", path: "(line_comment_doc_outer)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LINE_COMMENT_DOC_OUTER_LINE_COMMENT_DOC_OUTER_AFTER, path: "(line_comment_doc_outer)/after" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "loop_expression", path: "(loop_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "loopExpression", path: "(loop_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LOOP_EXPRESSION_LOOP_EXPRESSION_AFTER, path: "(loop_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LOOP_EXPRESSION_LOOP_EXPRESSION_BEFORE, path: "(loop_expression)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(loop_expression)/\":\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LOOP_EXPRESSION_COLON_AFTER, path: "(loop_expression)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LOOP_EXPRESSION_COLON_BEFORE, path: "(loop_expression)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "loop_keyword", path: "(loop_expression)/\"loop\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "loopKeyword", path: "(loop_expression)/\"loop\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LOOP_EXPRESSION_LOOP_KEYWORD_AFTER, path: "(loop_expression)/\"loop\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LOOP_EXPRESSION_LOOP_KEYWORD_BEFORE, path: "(loop_expression)/\"loop\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "macro_definition_brace", path: "(macro_definition_brace)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "macroDefinitionBrace", path: "(macro_definition_brace)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_BRACE_MACRO_DEFINITION_BRACE_AFTER, path: "(macro_definition_brace)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_BRACE_MACRO_DEFINITION_BRACE_BEFORE, path: "(macro_definition_brace)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrace", path: "(macro_definition_brace)/\"{\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_BRACE_LBRACE_AFTER, path: "(macro_definition_brace)/\"{\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_BRACE_LBRACE_BEFORE, path: "(macro_definition_brace)/\"{\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "macro_rules_bang", path: "(macro_definition_brace)/\"macro_rules!\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "macroRulesBang", path: "(macro_definition_brace)/\"macro_rules!\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_BRACE_MACRO_RULES_BANG_AFTER, path: "(macro_definition_brace)/\"macro_rules!\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "rbrace", path: "(macro_definition_brace)/\"}\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_BRACE_RBRACE_BEFORE, path: "(macro_definition_brace)/\"}\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "macro_definition_bracket", path: "(macro_definition_bracket)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "macroDefinitionBracket", path: "(macro_definition_bracket)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_BRACKET_MACRO_DEFINITION_BRACKET_AFTER, path: "(macro_definition_bracket)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_BRACKET_MACRO_DEFINITION_BRACKET_BEFORE, path: "(macro_definition_bracket)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrack", path: "(macro_definition_bracket)/\"[\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_BRACKET_LBRACK_AFTER, path: "(macro_definition_bracket)/\"[\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_BRACKET_LBRACK_BEFORE, path: "(macro_definition_bracket)/\"[\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "macro_rules_bang", path: "(macro_definition_bracket)/\"macro_rules!\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "macroRulesBang", path: "(macro_definition_bracket)/\"macro_rules!\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_BRACKET_MACRO_RULES_BANG_AFTER, path: "(macro_definition_bracket)/\"macro_rules!\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "rbrack", path: "(macro_definition_bracket)/\"]\"", children: &[
@@ -7957,14 +7957,14 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_BRACKET_SEMI_BEFORE, path: "(macro_definition_bracket)/\";\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "macro_definition_paren", path: "(macro_definition_paren)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "macroDefinitionParen", path: "(macro_definition_paren)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_PAREN_MACRO_DEFINITION_PAREN_AFTER, path: "(macro_definition_paren)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_PAREN_MACRO_DEFINITION_PAREN_BEFORE, path: "(macro_definition_paren)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(macro_definition_paren)/\"(\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_PAREN_LPAREN_AFTER, path: "(macro_definition_paren)/\"(\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_PAREN_LPAREN_BEFORE, path: "(macro_definition_paren)/\"(\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "macro_rules_bang", path: "(macro_definition_paren)/\"macro_rules!\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "macroRulesBang", path: "(macro_definition_paren)/\"macro_rules!\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_PAREN_MACRO_RULES_BANG_AFTER, path: "(macro_definition_paren)/\"macro_rules!\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "rparen", path: "(macro_definition_paren)/\")\"", children: &[
@@ -7975,7 +7975,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_DEFINITION_PAREN_SEMI_BEFORE, path: "(macro_definition_paren)/\";\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "macro_invocation", path: "(macro_invocation)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "macroInvocation", path: "(macro_invocation)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_INVOCATION_MACRO_INVOCATION_AFTER, path: "(macro_invocation)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "bang", path: "(macro_invocation)/\"!\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_INVOCATION_BANG_AFTER, path: "(macro_invocation)/\"!\"/after" }] },
@@ -7983,21 +7983,21 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_INVOCATION_MACRO_INVOCATION_BEFORE, path: "(macro_invocation)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "macro_rule", path: "(macro_rule)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "macroRule", path: "(macro_rule)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_RULE_MACRO_RULE_AFTER, path: "(macro_rule)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_RULE_MACRO_RULE_BEFORE, path: "(macro_rule)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "eq_gt", path: "(macro_rule)/\"=>\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "eqGt", path: "(macro_rule)/\"=>\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_RULE_EQ_GT_AFTER, path: "(macro_rule)/\"=>\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_RULE_EQ_GT_BEFORE, path: "(macro_rule)/\"=>\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "macro_rules", path: "(macro_rules)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "macroRules", path: "(macro_rules)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_RULES_MACRO_RULES_AFTER, path: "(macro_rules)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_RULES_MACRO_RULES_BEFORE, path: "(macro_rules)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "macro_rule", path: "(macro_rules)/macro_rule:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "macroRule", path: "(macro_rules)/macro_rule:", children: &[
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_MACRO_RULES_MACRO_RULE, path: "(macro_rules)/macro_rule:/delimiter" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_RULES_MACRO_RULE_END, path: "(macro_rules)/macro_rule:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_rule", path: "(macro_rules)/macro_rule:/(macro_rule)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroRule", path: "(macro_rules)/macro_rule:/(macro_rule)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_RULES_MACRO_RULE_MACRO_RULE_AFTER, path: "(macro_rules)/macro_rule:/(macro_rule)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(macro_rules)/macro_rule:/separator", children: &[
@@ -8009,33 +8009,33 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_MACRO_RULES_MACRO_RULE_START, path: "(macro_rules)/macro_rule:/start" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "match_arm_block_ending", path: "(match_arm_block_ending)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "matchArmBlockEnding", path: "(match_arm_block_ending)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_BLOCK_ENDING_MATCH_ARM_BLOCK_ENDING_AFTER, path: "(match_arm_block_ending)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "attributes", path: "(match_arm_block_ending)/attributes:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(match_arm_block_ending)/attributes:/(attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(match_arm_block_ending)/attributes:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_ATTRIBUTE_ITEM_AFTER, path: "(match_arm_block_ending)/attributes:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_END, path: "(match_arm_block_ending)/attributes:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "inner_attribute_item", path: "(match_arm_block_ending)/attributes:/(inner_attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "innerAttributeItem", path: "(match_arm_block_ending)/attributes:/(inner_attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_INNER_ATTRIBUTE_ITEM_AFTER, path: "(match_arm_block_ending)/attributes:/(inner_attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_SEPARATOR_SPACE, path: "(match_arm_block_ending)/attributes:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_START, path: "(match_arm_block_ending)/attributes:/start" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_BLOCK_ENDING_MATCH_ARM_BLOCK_ENDING_BEFORE, path: "(match_arm_block_ending)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "eq_gt", path: "(match_arm_block_ending)/\"=>\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "eqGt", path: "(match_arm_block_ending)/\"=>\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_BLOCK_ENDING_EQ_GT_AFTER, path: "(match_arm_block_ending)/\"=>\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_BLOCK_ENDING_EQ_GT_BEFORE, path: "(match_arm_block_ending)/\"=>\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "match_arm_with_comma", path: "(match_arm_with_comma)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "matchArmWithComma", path: "(match_arm_with_comma)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_WITH_COMMA_MATCH_ARM_WITH_COMMA_AFTER, path: "(match_arm_with_comma)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "attributes", path: "(match_arm_with_comma)/attributes:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(match_arm_with_comma)/attributes:/(attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(match_arm_with_comma)/attributes:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_ATTRIBUTE_ITEM_AFTER, path: "(match_arm_with_comma)/attributes:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_END, path: "(match_arm_with_comma)/attributes:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "inner_attribute_item", path: "(match_arm_with_comma)/attributes:/(inner_attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "innerAttributeItem", path: "(match_arm_with_comma)/attributes:/(inner_attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_INNER_ATTRIBUTE_ITEM_AFTER, path: "(match_arm_with_comma)/attributes:/(inner_attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_SEPARATOR_SPACE, path: "(match_arm_with_comma)/attributes:/separator" }] },
@@ -8045,12 +8045,12 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(match_arm_with_comma)/\",\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_WITH_COMMA_COMMA_BEFORE, path: "(match_arm_with_comma)/\",\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "eq_gt", path: "(match_arm_with_comma)/\"=>\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "eqGt", path: "(match_arm_with_comma)/\"=>\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_WITH_COMMA_EQ_GT_AFTER, path: "(match_arm_with_comma)/\"=>\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_ARM_WITH_COMMA_EQ_GT_BEFORE, path: "(match_arm_with_comma)/\"=>\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "match_block", path: "(match_block)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "matchBlock", path: "(match_block)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_MATCH_BLOCK_AFTER, path: "(match_block)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_MATCH_BLOCK_BEFORE, path: "(match_block)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrace", path: "(match_block)/\"{\"", children: &[
@@ -8060,40 +8060,40 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_RBRACE_BEFORE, path: "(match_block)/\"}\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "match_block_arms", path: "(match_block_arms)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "matchBlockArms", path: "(match_block_arms)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_ARMS_MATCH_BLOCK_ARMS_AFTER, path: "(match_block_arms)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_ARMS_MATCH_BLOCK_ARMS_BEFORE, path: "(match_block_arms)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "match_arm", path: "(match_block_arms)/match_arm:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "matchArm", path: "(match_block_arms)/match_arm:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_ARMS_MATCH_ARM_END, path: "(match_block_arms)/match_arm:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "match_arm_block_ending", path: "(match_block_arms)/match_arm:/(match_arm_block_ending)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "matchArmBlockEnding", path: "(match_block_arms)/match_arm:/(match_arm_block_ending)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_ARMS_MATCH_ARM_MATCH_ARM_BLOCK_ENDING_AFTER, path: "(match_block_arms)/match_arm:/(match_arm_block_ending)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "match_arm_with_comma", path: "(match_block_arms)/match_arm:/(match_arm_with_comma)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "matchArmWithComma", path: "(match_block_arms)/match_arm:/(match_arm_with_comma)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_ARMS_MATCH_ARM_MATCH_ARM_WITH_COMMA_AFTER, path: "(match_block_arms)/match_arm:/(match_arm_with_comma)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_ARMS_MATCH_ARM_SEPARATOR_SPACE, path: "(match_block_arms)/match_arm:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_ARMS_MATCH_ARM_START, path: "(match_block_arms)/match_arm:/start" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "match_expression", path: "(match_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "matchExpression", path: "(match_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_EXPRESSION_MATCH_EXPRESSION_AFTER, path: "(match_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_EXPRESSION_MATCH_EXPRESSION_BEFORE, path: "(match_expression)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "match_keyword", path: "(match_expression)/\"match\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "matchKeyword", path: "(match_expression)/\"match\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_EXPRESSION_MATCH_KEYWORD_AFTER, path: "(match_expression)/\"match\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "match_pattern", path: "(match_pattern)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "matchPattern", path: "(match_pattern)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_PATTERN_MATCH_PATTERN_AFTER, path: "(match_pattern)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_PATTERN_MATCH_PATTERN_BEFORE, path: "(match_pattern)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "if_keyword", path: "(match_pattern)/\"if\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "ifKeyword", path: "(match_pattern)/\"if\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_PATTERN_IF_KEYWORD_AFTER, path: "(match_pattern)/\"if\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MATCH_PATTERN_IF_KEYWORD_BEFORE, path: "(match_pattern)/\"if\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "mod_item_external", path: "(mod_item_external)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "modItemExternal", path: "(mod_item_external)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MOD_ITEM_EXTERNAL_MOD_ITEM_EXTERNAL_AFTER, path: "(mod_item_external)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MOD_ITEM_EXTERNAL_MOD_ITEM_EXTERNAL_BEFORE, path: "(mod_item_external)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "mod_keyword", path: "(mod_item_external)/\"mod\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "modKeyword", path: "(mod_item_external)/\"mod\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MOD_ITEM_EXTERNAL_MOD_KEYWORD_AFTER, path: "(mod_item_external)/\"mod\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MOD_ITEM_EXTERNAL_MOD_KEYWORD_BEFORE, path: "(mod_item_external)/\"mod\"/before" }] },
         ] },
@@ -8101,29 +8101,29 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MOD_ITEM_EXTERNAL_SEMI_BEFORE, path: "(mod_item_external)/\";\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "mod_item_inline", path: "(mod_item_inline)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "modItemInline", path: "(mod_item_inline)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MOD_ITEM_INLINE_MOD_ITEM_INLINE_AFTER, path: "(mod_item_inline)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MOD_ITEM_INLINE_MOD_ITEM_INLINE_BEFORE, path: "(mod_item_inline)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "mod_keyword", path: "(mod_item_inline)/\"mod\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "modKeyword", path: "(mod_item_inline)/\"mod\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MOD_ITEM_INLINE_MOD_KEYWORD_AFTER, path: "(mod_item_inline)/\"mod\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MOD_ITEM_INLINE_MOD_KEYWORD_BEFORE, path: "(mod_item_inline)/\"mod\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "mut_pattern", path: "(mut_pattern)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "mutPattern", path: "(mut_pattern)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MUT_PATTERN_MUT_PATTERN_AFTER, path: "(mut_pattern)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_MUT_PATTERN_MUT_PATTERN_BEFORE, path: "(mut_pattern)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutable_specifier", path: "(mut_pattern)/mutable_specifier:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(mut_pattern)/mutable_specifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MUT_PATTERN_MUTABLE_SPECIFIER_AFTER, path: "(mut_pattern)/mutable_specifier:/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "negative_literal", path: "(negative_literal)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "negativeLiteral", path: "(negative_literal)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_NEGATIVE_LITERAL_NEGATIVE_LITERAL_AFTER, path: "(negative_literal)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_NEGATIVE_LITERAL_NEGATIVE_LITERAL_BEFORE, path: "(negative_literal)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "dash", path: "(negative_literal)/\"-\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_NEGATIVE_LITERAL_DASH_AFTER, path: "(negative_literal)/\"-\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "or_pattern_binary", path: "(or_pattern_binary)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "orPatternBinary", path: "(or_pattern_binary)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OR_PATTERN_BINARY_OR_PATTERN_BINARY_AFTER, path: "(or_pattern_binary)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OR_PATTERN_BINARY_OR_PATTERN_BINARY_BEFORE, path: "(or_pattern_binary)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "pipe", path: "(or_pattern_binary)/\"|\"", children: &[
@@ -8131,14 +8131,14 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OR_PATTERN_BINARY_PIPE_BEFORE, path: "(or_pattern_binary)/\"|\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "or_pattern_prefix", path: "(or_pattern_prefix)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "orPatternPrefix", path: "(or_pattern_prefix)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OR_PATTERN_PREFIX_OR_PATTERN_PREFIX_AFTER, path: "(or_pattern_prefix)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OR_PATTERN_PREFIX_OR_PATTERN_PREFIX_BEFORE, path: "(or_pattern_prefix)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "pipe", path: "(or_pattern_prefix)/\"|\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OR_PATTERN_PREFIX_PIPE_AFTER, path: "(or_pattern_prefix)/\"|\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "ordered_field_declaration_list", path: "(ordered_field_declaration_list)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "orderedFieldDeclarationList", path: "(ordered_field_declaration_list)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ORDERED_FIELD_DECLARATION_LIST_ORDERED_FIELD_DECLARATION_LIST_AFTER, path: "(ordered_field_declaration_list)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ORDERED_FIELD_DECLARATION_LIST_ORDERED_FIELD_DECLARATION_LIST_BEFORE, path: "(ordered_field_declaration_list)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(ordered_field_declaration_list)/\"(\"", children: &[
@@ -8148,11 +8148,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ORDERED_FIELD_DECLARATION_LIST_RPAREN_BEFORE, path: "(ordered_field_declaration_list)/\")\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "ordered_field_declaration_list_elements", path: "(ordered_field_declaration_list_elements)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "orderedFieldDeclarationListElements", path: "(ordered_field_declaration_list_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_AFTER, path: "(ordered_field_declaration_list_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_BEFORE, path: "(ordered_field_declaration_list_elements)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "element", path: "(ordered_field_declaration_list_elements)/element:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attributed_ordered_field", path: "(ordered_field_declaration_list_elements)/element:/(attributed_ordered_field)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributedOrderedField", path: "(ordered_field_declaration_list_elements)/element:/(attributed_ordered_field)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT_ATTRIBUTED_ORDERED_FIELD_AFTER, path: "(ordered_field_declaration_list_elements)/element:/(attributed_ordered_field)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_ORDERED_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT, path: "(ordered_field_declaration_list_elements)/element:/delimiter" }] },
@@ -8173,7 +8173,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETER_COLON_AFTER, path: "(parameter)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETER_COLON_BEFORE, path: "(parameter)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutable_specifier", path: "(parameter)/mutable_specifier:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(parameter)/mutable_specifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETER_MUTABLE_SPECIFIER_AFTER, path: "(parameter)/mutable_specifier:/after" }] },
         ] },
     ] },
@@ -8187,11 +8187,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_RPAREN_BEFORE, path: "(parameters)/\")\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "parameters_elements", path: "(parameters_elements)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "parametersElements", path: "(parameters_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_ELEMENTS_PARAMETERS_ELEMENTS_AFTER, path: "(parameters_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_ELEMENTS_PARAMETERS_ELEMENTS_BEFORE, path: "(parameters_elements)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "element", path: "(parameters_elements)/element:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attributed_parameter", path: "(parameters_elements)/element:/(attributed_parameter)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributedParameter", path: "(parameters_elements)/element:/(attributed_parameter)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_ELEMENTS_ELEMENT_ATTRIBUTED_PARAMETER_AFTER, path: "(parameters_elements)/element:/(attributed_parameter)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_PARAMETERS_ELEMENTS_ELEMENT, path: "(parameters_elements)/element:/delimiter" }] },
@@ -8205,7 +8205,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_ELEMENTS_ELEMENT_START, path: "(parameters_elements)/element:/start" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "parenthesized_expression", path: "(parenthesized_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "parenthesizedExpression", path: "(parenthesized_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARENTHESIZED_EXPRESSION_PARENTHESIZED_EXPRESSION_AFTER, path: "(parenthesized_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PARENTHESIZED_EXPRESSION_PARENTHESIZED_EXPRESSION_BEFORE, path: "(parenthesized_expression)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(parenthesized_expression)/\"(\"", children: &[
@@ -8219,48 +8219,48 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERNS_AFTER, path: "(patterns)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERNS_BEFORE, path: "(patterns)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "pattern", path: "(patterns)/pattern:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "captured_pattern", path: "(patterns)/pattern:/(captured_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "capturedPattern", path: "(patterns)/pattern:/(captured_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_CAPTURED_PATTERN_AFTER, path: "(patterns)/pattern:/(captured_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "const_block", path: "(patterns)/pattern:/(const_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "constBlock", path: "(patterns)/pattern:/(const_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_CONST_BLOCK_AFTER, path: "(patterns)/pattern:/(const_block)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_PATTERNS_PATTERN, path: "(patterns)/pattern:/delimiter" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_END, path: "(patterns)/pattern:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "generic_pattern", path: "(patterns)/pattern:/(generic_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "genericPattern", path: "(patterns)/pattern:/(generic_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_GENERIC_PATTERN_AFTER, path: "(patterns)/pattern:/(generic_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_invocation", path: "(patterns)/pattern:/(macro_invocation)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroInvocation", path: "(patterns)/pattern:/(macro_invocation)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_MACRO_INVOCATION_AFTER, path: "(patterns)/pattern:/(macro_invocation)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "mut_pattern", path: "(patterns)/pattern:/(mut_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "mutPattern", path: "(patterns)/pattern:/(mut_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_MUT_PATTERN_AFTER, path: "(patterns)/pattern:/(mut_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "negative_literal", path: "(patterns)/pattern:/(negative_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "negativeLiteral", path: "(patterns)/pattern:/(negative_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_NEGATIVE_LITERAL_AFTER, path: "(patterns)/pattern:/(negative_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "or_pattern_binary", path: "(patterns)/pattern:/(or_pattern_binary)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "orPatternBinary", path: "(patterns)/pattern:/(or_pattern_binary)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_OR_PATTERN_BINARY_AFTER, path: "(patterns)/pattern:/(or_pattern_binary)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "or_pattern_prefix", path: "(patterns)/pattern:/(or_pattern_prefix)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "orPatternPrefix", path: "(patterns)/pattern:/(or_pattern_prefix)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_OR_PATTERN_PREFIX_AFTER, path: "(patterns)/pattern:/(or_pattern_prefix)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "range_pattern_prefix", path: "(patterns)/pattern:/(range_pattern_prefix)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rangePatternPrefix", path: "(patterns)/pattern:/(range_pattern_prefix)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_RANGE_PATTERN_PREFIX_AFTER, path: "(patterns)/pattern:/(range_pattern_prefix)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "range_pattern_with_left", path: "(patterns)/pattern:/(range_pattern_with_left)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rangePatternWithLeft", path: "(patterns)/pattern:/(range_pattern_with_left)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_RANGE_PATTERN_WITH_LEFT_AFTER, path: "(patterns)/pattern:/(range_pattern_with_left)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(patterns)/pattern:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(patterns)/pattern:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_RAW_STRING_LITERAL_AFTER, path: "(patterns)/pattern:/(raw_string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "ref_pattern", path: "(patterns)/pattern:/(ref_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "refPattern", path: "(patterns)/pattern:/(ref_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_REF_PATTERN_AFTER, path: "(patterns)/pattern:/(ref_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "reference_pattern", path: "(patterns)/pattern:/(reference_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "referencePattern", path: "(patterns)/pattern:/(reference_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_REFERENCE_PATTERN_AFTER, path: "(patterns)/pattern:/(reference_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "scoped_identifier", path: "(patterns)/pattern:/(scoped_identifier)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "scopedIdentifier", path: "(patterns)/pattern:/(scoped_identifier)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_SCOPED_IDENTIFIER_AFTER, path: "(patterns)/pattern:/(scoped_identifier)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(patterns)/pattern:/separator", children: &[
@@ -8269,28 +8269,28 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
                     ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_SEPARATOR_SPACE_BEFORE, path: "(patterns)/pattern:/separator/\",\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "slice_pattern", path: "(patterns)/pattern:/(slice_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "slicePattern", path: "(patterns)/pattern:/(slice_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_SLICE_PATTERN_AFTER, path: "(patterns)/pattern:/(slice_pattern)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_START, path: "(patterns)/pattern:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(patterns)/pattern:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(patterns)/pattern:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_STRING_LITERAL_AFTER, path: "(patterns)/pattern:/(string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "struct_pattern", path: "(patterns)/pattern:/(struct_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "structPattern", path: "(patterns)/pattern:/(struct_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_STRUCT_PATTERN_AFTER, path: "(patterns)/pattern:/(struct_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tuple_pattern", path: "(patterns)/pattern:/(tuple_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tuplePattern", path: "(patterns)/pattern:/(tuple_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_TUPLE_PATTERN_AFTER, path: "(patterns)/pattern:/(tuple_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tuple_struct_pattern", path: "(patterns)/pattern:/(tuple_struct_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tupleStructPattern", path: "(patterns)/pattern:/(tuple_struct_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERNS_PATTERN_TUPLE_STRUCT_PATTERN_AFTER, path: "(patterns)/pattern:/(tuple_struct_pattern)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "pointer_type_const", path: "(pointer_type_const)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "pointerTypeConst", path: "(pointer_type_const)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_POINTER_TYPE_CONST_POINTER_TYPE_CONST_AFTER, path: "(pointer_type_const)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_POINTER_TYPE_CONST_POINTER_TYPE_CONST_BEFORE, path: "(pointer_type_const)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "const_keyword", path: "(pointer_type_const)/\"const\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "constKeyword", path: "(pointer_type_const)/\"const\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_POINTER_TYPE_CONST_CONST_KEYWORD_AFTER, path: "(pointer_type_const)/\"const\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_POINTER_TYPE_CONST_CONST_KEYWORD_BEFORE, path: "(pointer_type_const)/\"const\"/before" }] },
         ] },
@@ -8298,22 +8298,22 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_POINTER_TYPE_CONST_STAR_AFTER, path: "(pointer_type_const)/\"*\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "pointer_type_mut", path: "(pointer_type_mut)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "pointerTypeMut", path: "(pointer_type_mut)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_POINTER_TYPE_MUT_POINTER_TYPE_MUT_AFTER, path: "(pointer_type_mut)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_POINTER_TYPE_MUT_POINTER_TYPE_MUT_BEFORE, path: "(pointer_type_mut)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "star", path: "(pointer_type_mut)/\"*\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_POINTER_TYPE_MUT_STAR_AFTER, path: "(pointer_type_mut)/\"*\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "qualified_type", path: "(qualified_type)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "qualifiedType", path: "(qualified_type)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_QUALIFIED_TYPE_QUALIFIED_TYPE_AFTER, path: "(qualified_type)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "as_keyword", path: "(qualified_type)/\"as\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "asKeyword", path: "(qualified_type)/\"as\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_QUALIFIED_TYPE_AS_KEYWORD_AFTER, path: "(qualified_type)/\"as\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_QUALIFIED_TYPE_AS_KEYWORD_BEFORE, path: "(qualified_type)/\"as\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_QUALIFIED_TYPE_QUALIFIED_TYPE_BEFORE, path: "(qualified_type)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "range_expression_binary", path: "(range_expression_binary)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "rangeExpressionBinary", path: "(range_expression_binary)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_EXPRESSION_BINARY_RANGE_EXPRESSION_BINARY_AFTER, path: "(range_expression_binary)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_EXPRESSION_BINARY_RANGE_EXPRESSION_BINARY_BEFORE, path: "(range_expression_binary)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "operator", path: "(range_expression_binary)/operator:", children: &[
@@ -8321,173 +8321,173 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_EXPRESSION_BINARY_OPERATOR_BEFORE, path: "(range_expression_binary)/operator:/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "range_expression_postfix", path: "(range_expression_postfix)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "rangeExpressionPostfix", path: "(range_expression_postfix)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_EXPRESSION_POSTFIX_RANGE_EXPRESSION_POSTFIX_AFTER, path: "(range_expression_postfix)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_EXPRESSION_POSTFIX_RANGE_EXPRESSION_POSTFIX_BEFORE, path: "(range_expression_postfix)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "operator", path: "(range_expression_postfix)/operator:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_EXPRESSION_POSTFIX_OPERATOR_BEFORE, path: "(range_expression_postfix)/operator:/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "range_expression_prefix", path: "(range_expression_prefix)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "rangeExpressionPrefix", path: "(range_expression_prefix)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_EXPRESSION_PREFIX_RANGE_EXPRESSION_PREFIX_AFTER, path: "(range_expression_prefix)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_EXPRESSION_PREFIX_RANGE_EXPRESSION_PREFIX_BEFORE, path: "(range_expression_prefix)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "operator", path: "(range_expression_prefix)/operator:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_EXPRESSION_PREFIX_OPERATOR_AFTER, path: "(range_expression_prefix)/operator:/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "range_pattern_prefix", path: "(range_pattern_prefix)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "rangePatternPrefix", path: "(range_pattern_prefix)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_PATTERN_PREFIX_RANGE_PATTERN_PREFIX_AFTER, path: "(range_pattern_prefix)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_PATTERN_PREFIX_RANGE_PATTERN_PREFIX_BEFORE, path: "(range_pattern_prefix)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "dot_dot", path: "(range_pattern_prefix)/\"..\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dotDot", path: "(range_pattern_prefix)/\"..\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_PATTERN_PREFIX_DOT_DOT_AFTER, path: "(range_pattern_prefix)/\"..\"/after" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "dot_dot_eq", path: "(range_pattern_prefix)/\"..=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dotDotEq", path: "(range_pattern_prefix)/\"..=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_PATTERN_PREFIX_DOT_DOT_EQ_AFTER, path: "(range_pattern_prefix)/\"..=\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "range_pattern_with_left", path: "(range_pattern_with_left)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "rangePatternWithLeft", path: "(range_pattern_with_left)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_PATTERN_WITH_LEFT_RANGE_PATTERN_WITH_LEFT_AFTER, path: "(range_pattern_with_left)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_PATTERN_WITH_LEFT_RANGE_PATTERN_WITH_LEFT_BEFORE, path: "(range_pattern_with_left)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "dot_dot", path: "(range_pattern_with_left)/\"..\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dotDot", path: "(range_pattern_with_left)/\"..\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_PATTERN_WITH_LEFT_DOT_DOT_BEFORE, path: "(range_pattern_with_left)/\"..\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "range_pattern_with_left_with_right", path: "(range_pattern_with_left_with_right)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "rangePatternWithLeftWithRight", path: "(range_pattern_with_left_with_right)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_AFTER, path: "(range_pattern_with_left_with_right)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_BEFORE, path: "(range_pattern_with_left_with_right)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "dot_dot", path: "(range_pattern_with_left_with_right)/\"..\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dotDot", path: "(range_pattern_with_left_with_right)/\"..\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_AFTER, path: "(range_pattern_with_left_with_right)/\"..\"/after" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "dot_dot_dot", path: "(range_pattern_with_left_with_right)/\"...\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dotDotDot", path: "(range_pattern_with_left_with_right)/\"...\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_DOT_AFTER, path: "(range_pattern_with_left_with_right)/\"...\"/after" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "dot_dot_eq", path: "(range_pattern_with_left_with_right)/\"..=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dotDotEq", path: "(range_pattern_with_left_with_right)/\"..=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_EQ_AFTER, path: "(range_pattern_with_left_with_right)/\"..=\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(raw_string_literal)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(raw_string_literal)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RAW_STRING_LITERAL_RAW_STRING_LITERAL_AFTER, path: "(raw_string_literal)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_RAW_STRING_LITERAL_RAW_STRING_LITERAL_BEFORE, path: "(raw_string_literal)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "ref_pattern", path: "(ref_pattern)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "refPattern", path: "(ref_pattern)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REF_PATTERN_REF_PATTERN_AFTER, path: "(ref_pattern)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REF_PATTERN_REF_PATTERN_BEFORE, path: "(ref_pattern)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "ref_keyword", path: "(ref_pattern)/\"ref\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "refKeyword", path: "(ref_pattern)/\"ref\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REF_PATTERN_REF_KEYWORD_AFTER, path: "(ref_pattern)/\"ref\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "reference_expression_bare", path: "(reference_expression_bare)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "referenceExpressionBare", path: "(reference_expression_bare)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_BARE_REFERENCE_EXPRESSION_BARE_AFTER, path: "(reference_expression_bare)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "amp", path: "(reference_expression_bare)/\"&\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_BARE_AMP_AFTER, path: "(reference_expression_bare)/\"&\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_BARE_REFERENCE_EXPRESSION_BARE_BEFORE, path: "(reference_expression_bare)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "reference_expression_mut", path: "(reference_expression_mut)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "referenceExpressionMut", path: "(reference_expression_mut)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_MUT_REFERENCE_EXPRESSION_MUT_AFTER, path: "(reference_expression_mut)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "amp", path: "(reference_expression_mut)/\"&\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_MUT_AMP_AFTER, path: "(reference_expression_mut)/\"&\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_MUT_REFERENCE_EXPRESSION_MUT_BEFORE, path: "(reference_expression_mut)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "reference_expression_raw_const", path: "(reference_expression_raw_const)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "referenceExpressionRawConst", path: "(reference_expression_raw_const)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_RAW_CONST_REFERENCE_EXPRESSION_RAW_CONST_AFTER, path: "(reference_expression_raw_const)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "amp", path: "(reference_expression_raw_const)/\"&\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_RAW_CONST_AMP_AFTER, path: "(reference_expression_raw_const)/\"&\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_RAW_CONST_REFERENCE_EXPRESSION_RAW_CONST_BEFORE, path: "(reference_expression_raw_const)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "const_keyword", path: "(reference_expression_raw_const)/\"const\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "constKeyword", path: "(reference_expression_raw_const)/\"const\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_RAW_CONST_CONST_KEYWORD_AFTER, path: "(reference_expression_raw_const)/\"const\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_RAW_CONST_CONST_KEYWORD_BEFORE, path: "(reference_expression_raw_const)/\"const\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "raw_keyword", path: "(reference_expression_raw_const)/\"raw\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "rawKeyword", path: "(reference_expression_raw_const)/\"raw\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_RAW_CONST_RAW_KEYWORD_AFTER, path: "(reference_expression_raw_const)/\"raw\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_RAW_CONST_RAW_KEYWORD_BEFORE, path: "(reference_expression_raw_const)/\"raw\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "reference_expression_raw_mut", path: "(reference_expression_raw_mut)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "referenceExpressionRawMut", path: "(reference_expression_raw_mut)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_RAW_MUT_REFERENCE_EXPRESSION_RAW_MUT_AFTER, path: "(reference_expression_raw_mut)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "amp", path: "(reference_expression_raw_mut)/\"&\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_RAW_MUT_AMP_AFTER, path: "(reference_expression_raw_mut)/\"&\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_RAW_MUT_REFERENCE_EXPRESSION_RAW_MUT_BEFORE, path: "(reference_expression_raw_mut)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "raw_keyword", path: "(reference_expression_raw_mut)/\"raw\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "rawKeyword", path: "(reference_expression_raw_mut)/\"raw\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_RAW_MUT_RAW_KEYWORD_AFTER, path: "(reference_expression_raw_mut)/\"raw\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_EXPRESSION_RAW_MUT_RAW_KEYWORD_BEFORE, path: "(reference_expression_raw_mut)/\"raw\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "reference_pattern", path: "(reference_pattern)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "referencePattern", path: "(reference_pattern)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_PATTERN_REFERENCE_PATTERN_AFTER, path: "(reference_pattern)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "amp", path: "(reference_pattern)/\"&\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_PATTERN_AMP_AFTER, path: "(reference_pattern)/\"&\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_PATTERN_REFERENCE_PATTERN_BEFORE, path: "(reference_pattern)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutable_specifier", path: "(reference_pattern)/mutable_specifier:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(reference_pattern)/mutable_specifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_PATTERN_MUTABLE_SPECIFIER_AFTER, path: "(reference_pattern)/mutable_specifier:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_PATTERN_MUTABLE_SPECIFIER_BEFORE, path: "(reference_pattern)/mutable_specifier:/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "reference_type", path: "(reference_type)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "referenceType", path: "(reference_type)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_TYPE_REFERENCE_TYPE_AFTER, path: "(reference_type)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "amp", path: "(reference_type)/\"&\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_TYPE_AMP_AFTER, path: "(reference_type)/\"&\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_TYPE_REFERENCE_TYPE_BEFORE, path: "(reference_type)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutable_specifier", path: "(reference_type)/mutable_specifier:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(reference_type)/mutable_specifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_TYPE_MUTABLE_SPECIFIER_AFTER, path: "(reference_type)/mutable_specifier:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REFERENCE_TYPE_MUTABLE_SPECIFIER_BEFORE, path: "(reference_type)/mutable_specifier:/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "removed_trait_bound", path: "(removed_trait_bound)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "removedTraitBound", path: "(removed_trait_bound)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REMOVED_TRAIT_BOUND_REMOVED_TRAIT_BOUND_AFTER, path: "(removed_trait_bound)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_REMOVED_TRAIT_BOUND_REMOVED_TRAIT_BOUND_BEFORE, path: "(removed_trait_bound)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "qmark", path: "(removed_trait_bound)/\"?\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_REMOVED_TRAIT_BOUND_QMARK_AFTER, path: "(removed_trait_bound)/\"?\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "return_expression", path: "(return_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "returnExpression", path: "(return_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RETURN_EXPRESSION_RETURN_EXPRESSION_AFTER, path: "(return_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_RETURN_EXPRESSION_RETURN_EXPRESSION_BEFORE, path: "(return_expression)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "return_keyword", path: "(return_expression)/\"return\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "returnKeyword", path: "(return_expression)/\"return\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_RETURN_EXPRESSION_RETURN_KEYWORD_AFTER, path: "(return_expression)/\"return\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "scoped_identifier", path: "(scoped_identifier)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "scopedIdentifier", path: "(scoped_identifier)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_IDENTIFIER_SCOPED_IDENTIFIER_AFTER, path: "(scoped_identifier)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_IDENTIFIER_SCOPED_IDENTIFIER_BEFORE, path: "(scoped_identifier)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "colon_colon", path: "(scoped_identifier)/\"::\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "colonColon", path: "(scoped_identifier)/\"::\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_IDENTIFIER_COLON_COLON_AFTER, path: "(scoped_identifier)/\"::\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_IDENTIFIER_COLON_COLON_BEFORE, path: "(scoped_identifier)/\"::\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "scoped_type_identifier", path: "(scoped_type_identifier)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "scopedTypeIdentifier", path: "(scoped_type_identifier)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_TYPE_IDENTIFIER_SCOPED_TYPE_IDENTIFIER_AFTER, path: "(scoped_type_identifier)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_TYPE_IDENTIFIER_SCOPED_TYPE_IDENTIFIER_BEFORE, path: "(scoped_type_identifier)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "colon_colon", path: "(scoped_type_identifier)/\"::\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "colonColon", path: "(scoped_type_identifier)/\"::\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_TYPE_IDENTIFIER_COLON_COLON_AFTER, path: "(scoped_type_identifier)/\"::\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_TYPE_IDENTIFIER_COLON_COLON_BEFORE, path: "(scoped_type_identifier)/\"::\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "scoped_type_identifier_in_expression_position", path: "(scoped_type_identifier_in_expression_position)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "scopedTypeIdentifierInExpressionPosition", path: "(scoped_type_identifier_in_expression_position)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION_SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION_AFTER, path: "(scoped_type_identifier_in_expression_position)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION_SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION_BEFORE, path: "(scoped_type_identifier_in_expression_position)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "colon_colon", path: "(scoped_type_identifier_in_expression_position)/\"::\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "colonColon", path: "(scoped_type_identifier_in_expression_position)/\"::\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION_COLON_COLON_AFTER, path: "(scoped_type_identifier_in_expression_position)/\"::\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION_COLON_COLON_BEFORE, path: "(scoped_type_identifier_in_expression_position)/\"::\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "scoped_use_list", path: "(scoped_use_list)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "scopedUseList", path: "(scoped_use_list)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_USE_LIST_SCOPED_USE_LIST_AFTER, path: "(scoped_use_list)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_USE_LIST_SCOPED_USE_LIST_BEFORE, path: "(scoped_use_list)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "colon_colon", path: "(scoped_use_list)/\"::\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "colonColon", path: "(scoped_use_list)/\"::\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_USE_LIST_COLON_COLON_AFTER, path: "(scoped_use_list)/\"::\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SCOPED_USE_LIST_COLON_COLON_BEFORE, path: "(scoped_use_list)/\"::\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "self_parameter", path: "(self_parameter)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "selfParameter", path: "(self_parameter)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SELF_PARAMETER_SELF_PARAMETER_AFTER, path: "(self_parameter)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SELF_PARAMETER_SELF_PARAMETER_BEFORE, path: "(self_parameter)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutable_specifier", path: "(self_parameter)/mutable_specifier:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(self_parameter)/mutable_specifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SELF_PARAMETER_MUTABLE_SPECIFIER_AFTER, path: "(self_parameter)/mutable_specifier:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SELF_PARAMETER_MUTABLE_SPECIFIER_BEFORE, path: "(self_parameter)/mutable_specifier:/before" }] },
         ] },
@@ -8498,10 +8498,10 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SELF_PARAMETER_SELF_BEFORE, path: "(self_parameter)/self:/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "shorthand_field_initializer", path: "(shorthand_field_initializer)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "shorthandFieldInitializer", path: "(shorthand_field_initializer)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SHORTHAND_FIELD_INITIALIZER_SHORTHAND_FIELD_INITIALIZER_AFTER, path: "(shorthand_field_initializer)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "attributes", path: "(shorthand_field_initializer)/attributes:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(shorthand_field_initializer)/attributes:/(attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(shorthand_field_initializer)/attributes:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_ATTRIBUTE_ITEM_AFTER, path: "(shorthand_field_initializer)/attributes:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_END, path: "(shorthand_field_initializer)/attributes:/end" }] },
@@ -8510,7 +8510,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SHORTHAND_FIELD_INITIALIZER_SHORTHAND_FIELD_INITIALIZER_BEFORE, path: "(shorthand_field_initializer)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "slice_pattern", path: "(slice_pattern)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "slicePattern", path: "(slice_pattern)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SLICE_PATTERN_SLICE_PATTERN_AFTER, path: "(slice_pattern)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SLICE_PATTERN_SLICE_PATTERN_BEFORE, path: "(slice_pattern)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrack", path: "(slice_pattern)/\"[\"", children: &[
@@ -8520,133 +8520,133 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SLICE_PATTERN_RBRACK_BEFORE, path: "(slice_pattern)/\"]\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "source_file", path: "(source_file)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "sourceFile", path: "(source_file)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_SOURCE_FILE_AFTER, path: "(source_file)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_SOURCE_FILE_BEFORE, path: "(source_file)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "statements", path: "(source_file)/statements:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "associated_type", path: "(source_file)/statements:/(associated_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "associatedType", path: "(source_file)/statements:/(associated_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_ASSOCIATED_TYPE_AFTER, path: "(source_file)/statements:/(associated_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "async_block", path: "(source_file)/statements:/(async_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "asyncBlock", path: "(source_file)/statements:/(async_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_ASYNC_BLOCK_AFTER, path: "(source_file)/statements:/(async_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(source_file)/statements:/(attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(source_file)/statements:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_ATTRIBUTE_ITEM_AFTER, path: "(source_file)/statements:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "block", path: "(source_file)/statements:/(block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_BLOCK_AFTER, path: "(source_file)/statements:/(block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "const_block", path: "(source_file)/statements:/(const_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "constBlock", path: "(source_file)/statements:/(const_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_CONST_BLOCK_AFTER, path: "(source_file)/statements:/(const_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "const_item", path: "(source_file)/statements:/(const_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "constItem", path: "(source_file)/statements:/(const_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_CONST_ITEM_AFTER, path: "(source_file)/statements:/(const_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_END, path: "(source_file)/statements:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "enum_item", path: "(source_file)/statements:/(enum_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "enumItem", path: "(source_file)/statements:/(enum_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_ENUM_ITEM_AFTER, path: "(source_file)/statements:/(enum_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "expression_statement_with_semi", path: "(source_file)/statements:/(expression_statement_with_semi)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "expressionStatementWithSemi", path: "(source_file)/statements:/(expression_statement_with_semi)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_EXPRESSION_STATEMENT_WITH_SEMI_AFTER, path: "(source_file)/statements:/(expression_statement_with_semi)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "extern_crate_declaration", path: "(source_file)/statements:/(extern_crate_declaration)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "externCrateDeclaration", path: "(source_file)/statements:/(extern_crate_declaration)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_EXTERN_CRATE_DECLARATION_AFTER, path: "(source_file)/statements:/(extern_crate_declaration)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "for_expression", path: "(source_file)/statements:/(for_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "forExpression", path: "(source_file)/statements:/(for_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_FOR_EXPRESSION_AFTER, path: "(source_file)/statements:/(for_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "foreign_mod_item_body", path: "(source_file)/statements:/(foreign_mod_item_body)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "foreignModItemBody", path: "(source_file)/statements:/(foreign_mod_item_body)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_FOREIGN_MOD_ITEM_BODY_AFTER, path: "(source_file)/statements:/(foreign_mod_item_body)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "foreign_mod_item_semi", path: "(source_file)/statements:/(foreign_mod_item_semi)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "foreignModItemSemi", path: "(source_file)/statements:/(foreign_mod_item_semi)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_FOREIGN_MOD_ITEM_SEMI_AFTER, path: "(source_file)/statements:/(foreign_mod_item_semi)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "function_item", path: "(source_file)/statements:/(function_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "functionItem", path: "(source_file)/statements:/(function_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_FUNCTION_ITEM_AFTER, path: "(source_file)/statements:/(function_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "function_signature_item", path: "(source_file)/statements:/(function_signature_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "functionSignatureItem", path: "(source_file)/statements:/(function_signature_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_FUNCTION_SIGNATURE_ITEM_AFTER, path: "(source_file)/statements:/(function_signature_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "gen_block", path: "(source_file)/statements:/(gen_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "genBlock", path: "(source_file)/statements:/(gen_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_GEN_BLOCK_AFTER, path: "(source_file)/statements:/(gen_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "if_expression", path: "(source_file)/statements:/(if_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "ifExpression", path: "(source_file)/statements:/(if_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_IF_EXPRESSION_AFTER, path: "(source_file)/statements:/(if_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "impl_item_body", path: "(source_file)/statements:/(impl_item_body)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "implItemBody", path: "(source_file)/statements:/(impl_item_body)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_IMPL_ITEM_BODY_AFTER, path: "(source_file)/statements:/(impl_item_body)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "impl_item_semi", path: "(source_file)/statements:/(impl_item_semi)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "implItemSemi", path: "(source_file)/statements:/(impl_item_semi)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_IMPL_ITEM_SEMI_AFTER, path: "(source_file)/statements:/(impl_item_semi)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "inner_attribute_item", path: "(source_file)/statements:/(inner_attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "innerAttributeItem", path: "(source_file)/statements:/(inner_attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_INNER_ATTRIBUTE_ITEM_AFTER, path: "(source_file)/statements:/(inner_attribute_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "let_declaration", path: "(source_file)/statements:/(let_declaration)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "letDeclaration", path: "(source_file)/statements:/(let_declaration)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_LET_DECLARATION_AFTER, path: "(source_file)/statements:/(let_declaration)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "loop_expression", path: "(source_file)/statements:/(loop_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "loopExpression", path: "(source_file)/statements:/(loop_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_LOOP_EXPRESSION_AFTER, path: "(source_file)/statements:/(loop_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_definition_brace", path: "(source_file)/statements:/(macro_definition_brace)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroDefinitionBrace", path: "(source_file)/statements:/(macro_definition_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_MACRO_DEFINITION_BRACE_AFTER, path: "(source_file)/statements:/(macro_definition_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_definition_bracket", path: "(source_file)/statements:/(macro_definition_bracket)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroDefinitionBracket", path: "(source_file)/statements:/(macro_definition_bracket)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_MACRO_DEFINITION_BRACKET_AFTER, path: "(source_file)/statements:/(macro_definition_bracket)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_definition_paren", path: "(source_file)/statements:/(macro_definition_paren)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroDefinitionParen", path: "(source_file)/statements:/(macro_definition_paren)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_MACRO_DEFINITION_PAREN_AFTER, path: "(source_file)/statements:/(macro_definition_paren)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_invocation", path: "(source_file)/statements:/(macro_invocation)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroInvocation", path: "(source_file)/statements:/(macro_invocation)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_MACRO_INVOCATION_AFTER, path: "(source_file)/statements:/(macro_invocation)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "match_expression", path: "(source_file)/statements:/(match_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "matchExpression", path: "(source_file)/statements:/(match_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_MATCH_EXPRESSION_AFTER, path: "(source_file)/statements:/(match_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "mod_item_external", path: "(source_file)/statements:/(mod_item_external)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "modItemExternal", path: "(source_file)/statements:/(mod_item_external)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_MOD_ITEM_EXTERNAL_AFTER, path: "(source_file)/statements:/(mod_item_external)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "mod_item_inline", path: "(source_file)/statements:/(mod_item_inline)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "modItemInline", path: "(source_file)/statements:/(mod_item_inline)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_MOD_ITEM_INLINE_AFTER, path: "(source_file)/statements:/(mod_item_inline)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE, path: "(source_file)/statements:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_START, path: "(source_file)/statements:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "static_item", path: "(source_file)/statements:/(static_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "staticItem", path: "(source_file)/statements:/(static_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_STATIC_ITEM_AFTER, path: "(source_file)/statements:/(static_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "struct_item_brace", path: "(source_file)/statements:/(struct_item_brace)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "structItemBrace", path: "(source_file)/statements:/(struct_item_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_STRUCT_ITEM_BRACE_AFTER, path: "(source_file)/statements:/(struct_item_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "struct_item_tuple", path: "(source_file)/statements:/(struct_item_tuple)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "structItemTuple", path: "(source_file)/statements:/(struct_item_tuple)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_STRUCT_ITEM_TUPLE_AFTER, path: "(source_file)/statements:/(struct_item_tuple)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "struct_item_unit", path: "(source_file)/statements:/(struct_item_unit)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "structItemUnit", path: "(source_file)/statements:/(struct_item_unit)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_STRUCT_ITEM_UNIT_AFTER, path: "(source_file)/statements:/(struct_item_unit)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "trait_item", path: "(source_file)/statements:/(trait_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "traitItem", path: "(source_file)/statements:/(trait_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_TRAIT_ITEM_AFTER, path: "(source_file)/statements:/(trait_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "try_block", path: "(source_file)/statements:/(try_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tryBlock", path: "(source_file)/statements:/(try_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_TRY_BLOCK_AFTER, path: "(source_file)/statements:/(try_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "type_item", path: "(source_file)/statements:/(type_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "typeItem", path: "(source_file)/statements:/(type_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_TYPE_ITEM_AFTER, path: "(source_file)/statements:/(type_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "union_item", path: "(source_file)/statements:/(union_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "unionItem", path: "(source_file)/statements:/(union_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_UNION_ITEM_AFTER, path: "(source_file)/statements:/(union_item)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "unsafe_block", path: "(source_file)/statements:/(unsafe_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "unsafeBlock", path: "(source_file)/statements:/(unsafe_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_UNSAFE_BLOCK_AFTER, path: "(source_file)/statements:/(unsafe_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "use_declaration", path: "(source_file)/statements:/(use_declaration)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "useDeclaration", path: "(source_file)/statements:/(use_declaration)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_USE_DECLARATION_AFTER, path: "(source_file)/statements:/(use_declaration)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "while_expression", path: "(source_file)/statements:/(while_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "whileExpression", path: "(source_file)/statements:/(while_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SOURCE_FILE_STATEMENTS_WHILE_EXPRESSION_AFTER, path: "(source_file)/statements:/(while_expression)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "static_item", path: "(static_item)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "staticItem", path: "(static_item)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_STATIC_ITEM_AFTER, path: "(static_item)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_STATIC_ITEM_BEFORE, path: "(static_item)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(static_item)/\":\"", children: &[
@@ -8657,61 +8657,61 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_EQ_AFTER, path: "(static_item)/\"=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_EQ_BEFORE, path: "(static_item)/\"=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutable_specifier", path: "(static_item)/mutable_specifier:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(static_item)/mutable_specifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_MUTABLE_SPECIFIER_AFTER, path: "(static_item)/mutable_specifier:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_MUTABLE_SPECIFIER_BEFORE, path: "(static_item)/mutable_specifier:/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "ref_marker", path: "(static_item)/ref_marker:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "refMarker", path: "(static_item)/ref_marker:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_REF_MARKER_AFTER, path: "(static_item)/ref_marker:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_REF_MARKER_BEFORE, path: "(static_item)/ref_marker:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "semi", path: "(static_item)/\";\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_SEMI_BEFORE, path: "(static_item)/\";\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "static_keyword", path: "(static_item)/\"static\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "staticKeyword", path: "(static_item)/\"static\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_STATIC_KEYWORD_AFTER, path: "(static_item)/\"static\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STATIC_ITEM_STATIC_KEYWORD_BEFORE, path: "(static_item)/\"static\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(string_literal)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(string_literal)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STRING_LITERAL_STRING_LITERAL_AFTER, path: "(string_literal)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STRING_LITERAL_STRING_LITERAL_BEFORE, path: "(string_literal)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "struct_expression", path: "(struct_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "structExpression", path: "(struct_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_EXPRESSION_STRUCT_EXPRESSION_AFTER, path: "(struct_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_EXPRESSION_STRUCT_EXPRESSION_BEFORE, path: "(struct_expression)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "struct_item_brace", path: "(struct_item_brace)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "structItemBrace", path: "(struct_item_brace)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_ITEM_BRACE_STRUCT_ITEM_BRACE_AFTER, path: "(struct_item_brace)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_ITEM_BRACE_STRUCT_ITEM_BRACE_BEFORE, path: "(struct_item_brace)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "struct_keyword", path: "(struct_item_brace)/\"struct\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "structKeyword", path: "(struct_item_brace)/\"struct\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_ITEM_BRACE_STRUCT_KEYWORD_AFTER, path: "(struct_item_brace)/\"struct\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_ITEM_BRACE_STRUCT_KEYWORD_BEFORE, path: "(struct_item_brace)/\"struct\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "struct_item_tuple", path: "(struct_item_tuple)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "structItemTuple", path: "(struct_item_tuple)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_ITEM_TUPLE_STRUCT_ITEM_TUPLE_AFTER, path: "(struct_item_tuple)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_ITEM_TUPLE_STRUCT_ITEM_TUPLE_BEFORE, path: "(struct_item_tuple)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "semi", path: "(struct_item_tuple)/\";\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_ITEM_TUPLE_SEMI_BEFORE, path: "(struct_item_tuple)/\";\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "struct_keyword", path: "(struct_item_tuple)/\"struct\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "structKeyword", path: "(struct_item_tuple)/\"struct\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_ITEM_TUPLE_STRUCT_KEYWORD_AFTER, path: "(struct_item_tuple)/\"struct\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_ITEM_TUPLE_STRUCT_KEYWORD_BEFORE, path: "(struct_item_tuple)/\"struct\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "struct_item_unit", path: "(struct_item_unit)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "structItemUnit", path: "(struct_item_unit)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_ITEM_UNIT_STRUCT_ITEM_UNIT_AFTER, path: "(struct_item_unit)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_ITEM_UNIT_STRUCT_ITEM_UNIT_BEFORE, path: "(struct_item_unit)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "semi", path: "(struct_item_unit)/\";\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_ITEM_UNIT_SEMI_BEFORE, path: "(struct_item_unit)/\";\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "struct_keyword", path: "(struct_item_unit)/\"struct\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "structKeyword", path: "(struct_item_unit)/\"struct\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_ITEM_UNIT_STRUCT_KEYWORD_AFTER, path: "(struct_item_unit)/\"struct\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_ITEM_UNIT_STRUCT_KEYWORD_BEFORE, path: "(struct_item_unit)/\"struct\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "struct_pattern", path: "(struct_pattern)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "structPattern", path: "(struct_pattern)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_PATTERN_STRUCT_PATTERN_AFTER, path: "(struct_pattern)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_PATTERN_STRUCT_PATTERN_BEFORE, path: "(struct_pattern)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrace", path: "(struct_pattern)/\"{\"", children: &[
@@ -8722,16 +8722,16 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_PATTERN_RBRACE_BEFORE, path: "(struct_pattern)/\"}\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "struct_pattern_elements", path: "(struct_pattern_elements)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "structPatternElements", path: "(struct_pattern_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_PATTERN_ELEMENTS_STRUCT_PATTERN_ELEMENTS_AFTER, path: "(struct_pattern_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_PATTERN_ELEMENTS_STRUCT_PATTERN_ELEMENTS_BEFORE, path: "(struct_pattern_elements)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "element", path: "(struct_pattern_elements)/element:", children: &[
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_STRUCT_PATTERN_ELEMENTS_ELEMENT, path: "(struct_pattern_elements)/element:/delimiter" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_END, path: "(struct_pattern_elements)/element:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "field_pattern_named", path: "(struct_pattern_elements)/element:/(field_pattern_named)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "fieldPatternNamed", path: "(struct_pattern_elements)/element:/(field_pattern_named)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_FIELD_PATTERN_NAMED_AFTER, path: "(struct_pattern_elements)/element:/(field_pattern_named)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "field_pattern_shorthand", path: "(struct_pattern_elements)/element:/(field_pattern_shorthand)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "fieldPatternShorthand", path: "(struct_pattern_elements)/element:/(field_pattern_shorthand)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_FIELD_PATTERN_SHORTHAND_AFTER, path: "(struct_pattern_elements)/element:/(field_pattern_shorthand)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(struct_pattern_elements)/element:/separator", children: &[
@@ -8743,7 +8743,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_STRUCT_PATTERN_ELEMENTS_ELEMENT_START, path: "(struct_pattern_elements)/element:/start" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "token_binding_pattern", path: "(token_binding_pattern)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tokenBindingPattern", path: "(token_binding_pattern)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_BINDING_PATTERN_TOKEN_BINDING_PATTERN_AFTER, path: "(token_binding_pattern)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_BINDING_PATTERN_TOKEN_BINDING_PATTERN_BEFORE, path: "(token_binding_pattern)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(token_binding_pattern)/\":\"", children: &[
@@ -8754,80 +8754,80 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_BINDING_PATTERN_TYPE_BEFORE, path: "(token_binding_pattern)/type:/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "token_keywords", path: "(token_keywords)", children: &[
-        ::sittir_core::options::AddressNode::Branch { key: "as_keyword", path: "(token_keywords)/\"as\"", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tokenKeywords", path: "(token_keywords)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "asKeyword", path: "(token_keywords)/\"as\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_AS_KEYWORD_AFTER, path: "(token_keywords)/\"as\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_AS_KEYWORD_BEFORE, path: "(token_keywords)/\"as\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "async_keyword", path: "(token_keywords)/\"async\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "asyncKeyword", path: "(token_keywords)/\"async\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_ASYNC_KEYWORD_AFTER, path: "(token_keywords)/\"async\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_ASYNC_KEYWORD_BEFORE, path: "(token_keywords)/\"async\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "await_keyword", path: "(token_keywords)/\"await\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "awaitKeyword", path: "(token_keywords)/\"await\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_AWAIT_KEYWORD_AFTER, path: "(token_keywords)/\"await\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_AWAIT_KEYWORD_BEFORE, path: "(token_keywords)/\"await\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "break_keyword", path: "(token_keywords)/\"break\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "breakKeyword", path: "(token_keywords)/\"break\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_BREAK_KEYWORD_AFTER, path: "(token_keywords)/\"break\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_BREAK_KEYWORD_BEFORE, path: "(token_keywords)/\"break\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "const_keyword", path: "(token_keywords)/\"const\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "constKeyword", path: "(token_keywords)/\"const\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_CONST_KEYWORD_AFTER, path: "(token_keywords)/\"const\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_CONST_KEYWORD_BEFORE, path: "(token_keywords)/\"const\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "continue_keyword", path: "(token_keywords)/\"continue\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "continueKeyword", path: "(token_keywords)/\"continue\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_CONTINUE_KEYWORD_AFTER, path: "(token_keywords)/\"continue\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_CONTINUE_KEYWORD_BEFORE, path: "(token_keywords)/\"continue\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "default_keyword", path: "(token_keywords)/\"default\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "defaultKeyword", path: "(token_keywords)/\"default\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_DEFAULT_KEYWORD_AFTER, path: "(token_keywords)/\"default\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_DEFAULT_KEYWORD_BEFORE, path: "(token_keywords)/\"default\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "enum_keyword", path: "(token_keywords)/\"enum\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "enumKeyword", path: "(token_keywords)/\"enum\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_ENUM_KEYWORD_AFTER, path: "(token_keywords)/\"enum\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_ENUM_KEYWORD_BEFORE, path: "(token_keywords)/\"enum\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "fn_keyword", path: "(token_keywords)/\"fn\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "fnKeyword", path: "(token_keywords)/\"fn\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_FN_KEYWORD_AFTER, path: "(token_keywords)/\"fn\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_FN_KEYWORD_BEFORE, path: "(token_keywords)/\"fn\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "for_keyword", path: "(token_keywords)/\"for\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "forKeyword", path: "(token_keywords)/\"for\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_FOR_KEYWORD_AFTER, path: "(token_keywords)/\"for\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_FOR_KEYWORD_BEFORE, path: "(token_keywords)/\"for\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "gen_keyword", path: "(token_keywords)/\"gen\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "genKeyword", path: "(token_keywords)/\"gen\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_GEN_KEYWORD_AFTER, path: "(token_keywords)/\"gen\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_GEN_KEYWORD_BEFORE, path: "(token_keywords)/\"gen\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "if_keyword", path: "(token_keywords)/\"if\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "ifKeyword", path: "(token_keywords)/\"if\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_IF_KEYWORD_AFTER, path: "(token_keywords)/\"if\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_IF_KEYWORD_BEFORE, path: "(token_keywords)/\"if\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "impl_keyword", path: "(token_keywords)/\"impl\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "implKeyword", path: "(token_keywords)/\"impl\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_IMPL_KEYWORD_AFTER, path: "(token_keywords)/\"impl\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_IMPL_KEYWORD_BEFORE, path: "(token_keywords)/\"impl\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "let_keyword", path: "(token_keywords)/\"let\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "letKeyword", path: "(token_keywords)/\"let\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_LET_KEYWORD_AFTER, path: "(token_keywords)/\"let\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_LET_KEYWORD_BEFORE, path: "(token_keywords)/\"let\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "loop_keyword", path: "(token_keywords)/\"loop\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "loopKeyword", path: "(token_keywords)/\"loop\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_LOOP_KEYWORD_AFTER, path: "(token_keywords)/\"loop\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_LOOP_KEYWORD_BEFORE, path: "(token_keywords)/\"loop\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "match_keyword", path: "(token_keywords)/\"match\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "matchKeyword", path: "(token_keywords)/\"match\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_MATCH_KEYWORD_AFTER, path: "(token_keywords)/\"match\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_MATCH_KEYWORD_BEFORE, path: "(token_keywords)/\"match\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "mod_keyword", path: "(token_keywords)/\"mod\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "modKeyword", path: "(token_keywords)/\"mod\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_MOD_KEYWORD_AFTER, path: "(token_keywords)/\"mod\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_MOD_KEYWORD_BEFORE, path: "(token_keywords)/\"mod\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "pub_keyword", path: "(token_keywords)/\"pub\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "pubKeyword", path: "(token_keywords)/\"pub\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_PUB_KEYWORD_AFTER, path: "(token_keywords)/\"pub\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_PUB_KEYWORD_BEFORE, path: "(token_keywords)/\"pub\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "return_keyword", path: "(token_keywords)/\"return\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "returnKeyword", path: "(token_keywords)/\"return\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_RETURN_KEYWORD_AFTER, path: "(token_keywords)/\"return\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_RETURN_KEYWORD_BEFORE, path: "(token_keywords)/\"return\"/before" }] },
         ] },
@@ -8835,44 +8835,44 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_SQUOTE_AFTER, path: "(token_keywords)/\"'\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_SQUOTE_BEFORE, path: "(token_keywords)/\"'\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "static_keyword", path: "(token_keywords)/\"static\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "staticKeyword", path: "(token_keywords)/\"static\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_STATIC_KEYWORD_AFTER, path: "(token_keywords)/\"static\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_STATIC_KEYWORD_BEFORE, path: "(token_keywords)/\"static\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "struct_keyword", path: "(token_keywords)/\"struct\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "structKeyword", path: "(token_keywords)/\"struct\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_STRUCT_KEYWORD_AFTER, path: "(token_keywords)/\"struct\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_STRUCT_KEYWORD_BEFORE, path: "(token_keywords)/\"struct\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "trait_keyword", path: "(token_keywords)/\"trait\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "traitKeyword", path: "(token_keywords)/\"trait\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_TRAIT_KEYWORD_AFTER, path: "(token_keywords)/\"trait\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_TRAIT_KEYWORD_BEFORE, path: "(token_keywords)/\"trait\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "type_keyword", path: "(token_keywords)/\"type\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "typeKeyword", path: "(token_keywords)/\"type\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_TYPE_KEYWORD_AFTER, path: "(token_keywords)/\"type\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_TYPE_KEYWORD_BEFORE, path: "(token_keywords)/\"type\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "union_keyword", path: "(token_keywords)/\"union\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "unionKeyword", path: "(token_keywords)/\"union\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_UNION_KEYWORD_AFTER, path: "(token_keywords)/\"union\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_UNION_KEYWORD_BEFORE, path: "(token_keywords)/\"union\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "unsafe_keyword", path: "(token_keywords)/\"unsafe\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "unsafeKeyword", path: "(token_keywords)/\"unsafe\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_UNSAFE_KEYWORD_AFTER, path: "(token_keywords)/\"unsafe\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_UNSAFE_KEYWORD_BEFORE, path: "(token_keywords)/\"unsafe\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "use_keyword", path: "(token_keywords)/\"use\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "useKeyword", path: "(token_keywords)/\"use\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_USE_KEYWORD_AFTER, path: "(token_keywords)/\"use\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_USE_KEYWORD_BEFORE, path: "(token_keywords)/\"use\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "where_keyword", path: "(token_keywords)/\"where\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "whereKeyword", path: "(token_keywords)/\"where\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_WHERE_KEYWORD_AFTER, path: "(token_keywords)/\"where\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_WHERE_KEYWORD_BEFORE, path: "(token_keywords)/\"where\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "while_keyword", path: "(token_keywords)/\"while\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "whileKeyword", path: "(token_keywords)/\"while\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_WHILE_KEYWORD_AFTER, path: "(token_keywords)/\"while\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_KEYWORDS_WHILE_KEYWORD_BEFORE, path: "(token_keywords)/\"while\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "token_repetition", path: "(token_repetition)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tokenRepetition", path: "(token_repetition)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_TOKEN_REPETITION_AFTER, path: "(token_repetition)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_TOKEN_REPETITION_BEFORE, path: "(token_repetition)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "dollar", path: "(token_repetition)/\"$\"", children: &[
@@ -8891,29 +8891,29 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "tokens", path: "(token_repetition)/tokens:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_TOKENS_END, path: "(token_repetition)/tokens:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(token_repetition)/tokens:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(token_repetition)/tokens:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_TOKENS_RAW_STRING_LITERAL_AFTER, path: "(token_repetition)/tokens:/(raw_string_literal)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE, path: "(token_repetition)/tokens:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_TOKENS_START, path: "(token_repetition)/tokens:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(token_repetition)/tokens:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(token_repetition)/tokens:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_TOKENS_STRING_LITERAL_AFTER, path: "(token_repetition)/tokens:/(string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_repetition", path: "(token_repetition)/tokens:/(token_repetition)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenRepetition", path: "(token_repetition)/tokens:/(token_repetition)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_TOKENS_TOKEN_REPETITION_AFTER, path: "(token_repetition)/tokens:/(token_repetition)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_brace", path: "(token_repetition)/tokens:/(token_tree_brace)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreeBrace", path: "(token_repetition)/tokens:/(token_tree_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_TOKENS_TOKEN_TREE_BRACE_AFTER, path: "(token_repetition)/tokens:/(token_tree_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_bracket", path: "(token_repetition)/tokens:/(token_tree_bracket)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreeBracket", path: "(token_repetition)/tokens:/(token_tree_bracket)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_TOKENS_TOKEN_TREE_BRACKET_AFTER, path: "(token_repetition)/tokens:/(token_tree_bracket)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_paren", path: "(token_repetition)/tokens:/(token_tree_paren)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreeParen", path: "(token_repetition)/tokens:/(token_tree_paren)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_TOKENS_TOKEN_TREE_PAREN_AFTER, path: "(token_repetition)/tokens:/(token_tree_paren)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "token_repetition_pattern", path: "(token_repetition_pattern)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tokenRepetitionPattern", path: "(token_repetition_pattern)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_TOKEN_REPETITION_PATTERN_AFTER, path: "(token_repetition_pattern)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_TOKEN_REPETITION_PATTERN_BEFORE, path: "(token_repetition_pattern)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "dollar", path: "(token_repetition_pattern)/\"$\"", children: &[
@@ -8930,34 +8930,34 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_RPAREN_AFTER, path: "(token_repetition_pattern)/\")\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_RPAREN_BEFORE, path: "(token_repetition_pattern)/\")\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "token_patterns", path: "(token_repetition_pattern)/token_patterns:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "tokenPatterns", path: "(token_repetition_pattern)/token_patterns:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_END, path: "(token_repetition_pattern)/token_patterns:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(token_repetition_pattern)/token_patterns:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(token_repetition_pattern)/token_patterns:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_RAW_STRING_LITERAL_AFTER, path: "(token_repetition_pattern)/token_patterns:/(raw_string_literal)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE, path: "(token_repetition_pattern)/token_patterns:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_START, path: "(token_repetition_pattern)/token_patterns:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(token_repetition_pattern)/token_patterns:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(token_repetition_pattern)/token_patterns:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_STRING_LITERAL_AFTER, path: "(token_repetition_pattern)/token_patterns:/(string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_binding_pattern", path: "(token_repetition_pattern)/token_patterns:/(token_binding_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenBindingPattern", path: "(token_repetition_pattern)/token_patterns:/(token_binding_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_TOKEN_BINDING_PATTERN_AFTER, path: "(token_repetition_pattern)/token_patterns:/(token_binding_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_repetition_pattern", path: "(token_repetition_pattern)/token_patterns:/(token_repetition_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenRepetitionPattern", path: "(token_repetition_pattern)/token_patterns:/(token_repetition_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_TOKEN_REPETITION_PATTERN_AFTER, path: "(token_repetition_pattern)/token_patterns:/(token_repetition_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_brace", path: "(token_repetition_pattern)/token_patterns:/(token_tree_pattern_brace)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternBrace", path: "(token_repetition_pattern)/token_patterns:/(token_tree_pattern_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_TOKEN_TREE_PATTERN_BRACE_AFTER, path: "(token_repetition_pattern)/token_patterns:/(token_tree_pattern_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_bracket", path: "(token_repetition_pattern)/token_patterns:/(token_tree_pattern_bracket)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternBracket", path: "(token_repetition_pattern)/token_patterns:/(token_tree_pattern_bracket)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_TOKEN_TREE_PATTERN_BRACKET_AFTER, path: "(token_repetition_pattern)/token_patterns:/(token_tree_pattern_bracket)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_paren", path: "(token_repetition_pattern)/token_patterns:/(token_tree_pattern_paren)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternParen", path: "(token_repetition_pattern)/token_patterns:/(token_tree_pattern_paren)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_TOKEN_TREE_PATTERN_PAREN_AFTER, path: "(token_repetition_pattern)/token_patterns:/(token_tree_pattern_paren)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "token_tree_brace", path: "(token_tree_brace)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tokenTreeBrace", path: "(token_tree_brace)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACE_TOKEN_TREE_BRACE_AFTER, path: "(token_tree_brace)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACE_TOKEN_TREE_BRACE_BEFORE, path: "(token_tree_brace)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrace", path: "(token_tree_brace)/\"{\"", children: &[
@@ -8968,29 +8968,29 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "tokens", path: "(token_tree_brace)/tokens:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACE_TOKENS_END, path: "(token_tree_brace)/tokens:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(token_tree_brace)/tokens:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(token_tree_brace)/tokens:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACE_TOKENS_RAW_STRING_LITERAL_AFTER, path: "(token_tree_brace)/tokens:/(raw_string_literal)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACE_TOKENS_SEPARATOR_SPACE, path: "(token_tree_brace)/tokens:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACE_TOKENS_START, path: "(token_tree_brace)/tokens:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(token_tree_brace)/tokens:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(token_tree_brace)/tokens:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACE_TOKENS_STRING_LITERAL_AFTER, path: "(token_tree_brace)/tokens:/(string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_repetition", path: "(token_tree_brace)/tokens:/(token_repetition)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenRepetition", path: "(token_tree_brace)/tokens:/(token_repetition)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACE_TOKENS_TOKEN_REPETITION_AFTER, path: "(token_tree_brace)/tokens:/(token_repetition)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_brace", path: "(token_tree_brace)/tokens:/(token_tree_brace)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreeBrace", path: "(token_tree_brace)/tokens:/(token_tree_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACE_TOKENS_TOKEN_TREE_BRACE_AFTER, path: "(token_tree_brace)/tokens:/(token_tree_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_bracket", path: "(token_tree_brace)/tokens:/(token_tree_bracket)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreeBracket", path: "(token_tree_brace)/tokens:/(token_tree_bracket)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACE_TOKENS_TOKEN_TREE_BRACKET_AFTER, path: "(token_tree_brace)/tokens:/(token_tree_bracket)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_paren", path: "(token_tree_brace)/tokens:/(token_tree_paren)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreeParen", path: "(token_tree_brace)/tokens:/(token_tree_paren)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACE_TOKENS_TOKEN_TREE_PAREN_AFTER, path: "(token_tree_brace)/tokens:/(token_tree_paren)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "token_tree_bracket", path: "(token_tree_bracket)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tokenTreeBracket", path: "(token_tree_bracket)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACKET_TOKEN_TREE_BRACKET_AFTER, path: "(token_tree_bracket)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACKET_TOKEN_TREE_BRACKET_BEFORE, path: "(token_tree_bracket)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrack", path: "(token_tree_bracket)/\"[\"", children: &[
@@ -9001,29 +9001,29 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "tokens", path: "(token_tree_bracket)/tokens:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACKET_TOKENS_END, path: "(token_tree_bracket)/tokens:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(token_tree_bracket)/tokens:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(token_tree_bracket)/tokens:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACKET_TOKENS_RAW_STRING_LITERAL_AFTER, path: "(token_tree_bracket)/tokens:/(raw_string_literal)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACKET_TOKENS_SEPARATOR_SPACE, path: "(token_tree_bracket)/tokens:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACKET_TOKENS_START, path: "(token_tree_bracket)/tokens:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(token_tree_bracket)/tokens:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(token_tree_bracket)/tokens:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACKET_TOKENS_STRING_LITERAL_AFTER, path: "(token_tree_bracket)/tokens:/(string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_repetition", path: "(token_tree_bracket)/tokens:/(token_repetition)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenRepetition", path: "(token_tree_bracket)/tokens:/(token_repetition)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACKET_TOKENS_TOKEN_REPETITION_AFTER, path: "(token_tree_bracket)/tokens:/(token_repetition)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_brace", path: "(token_tree_bracket)/tokens:/(token_tree_brace)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreeBrace", path: "(token_tree_bracket)/tokens:/(token_tree_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACKET_TOKENS_TOKEN_TREE_BRACE_AFTER, path: "(token_tree_bracket)/tokens:/(token_tree_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_bracket", path: "(token_tree_bracket)/tokens:/(token_tree_bracket)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreeBracket", path: "(token_tree_bracket)/tokens:/(token_tree_bracket)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACKET_TOKENS_TOKEN_TREE_BRACKET_AFTER, path: "(token_tree_bracket)/tokens:/(token_tree_bracket)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_paren", path: "(token_tree_bracket)/tokens:/(token_tree_paren)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreeParen", path: "(token_tree_bracket)/tokens:/(token_tree_paren)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_BRACKET_TOKENS_TOKEN_TREE_PAREN_AFTER, path: "(token_tree_bracket)/tokens:/(token_tree_paren)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "token_tree_paren", path: "(token_tree_paren)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tokenTreeParen", path: "(token_tree_paren)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PAREN_TOKEN_TREE_PAREN_AFTER, path: "(token_tree_paren)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PAREN_TOKEN_TREE_PAREN_BEFORE, path: "(token_tree_paren)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(token_tree_paren)/\"(\"", children: &[
@@ -9034,29 +9034,29 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "tokens", path: "(token_tree_paren)/tokens:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PAREN_TOKENS_END, path: "(token_tree_paren)/tokens:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(token_tree_paren)/tokens:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(token_tree_paren)/tokens:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PAREN_TOKENS_RAW_STRING_LITERAL_AFTER, path: "(token_tree_paren)/tokens:/(raw_string_literal)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PAREN_TOKENS_SEPARATOR_SPACE, path: "(token_tree_paren)/tokens:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PAREN_TOKENS_START, path: "(token_tree_paren)/tokens:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(token_tree_paren)/tokens:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(token_tree_paren)/tokens:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PAREN_TOKENS_STRING_LITERAL_AFTER, path: "(token_tree_paren)/tokens:/(string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_repetition", path: "(token_tree_paren)/tokens:/(token_repetition)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenRepetition", path: "(token_tree_paren)/tokens:/(token_repetition)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PAREN_TOKENS_TOKEN_REPETITION_AFTER, path: "(token_tree_paren)/tokens:/(token_repetition)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_brace", path: "(token_tree_paren)/tokens:/(token_tree_brace)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreeBrace", path: "(token_tree_paren)/tokens:/(token_tree_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PAREN_TOKENS_TOKEN_TREE_BRACE_AFTER, path: "(token_tree_paren)/tokens:/(token_tree_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_bracket", path: "(token_tree_paren)/tokens:/(token_tree_bracket)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreeBracket", path: "(token_tree_paren)/tokens:/(token_tree_bracket)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PAREN_TOKENS_TOKEN_TREE_BRACKET_AFTER, path: "(token_tree_paren)/tokens:/(token_tree_bracket)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_paren", path: "(token_tree_paren)/tokens:/(token_tree_paren)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreeParen", path: "(token_tree_paren)/tokens:/(token_tree_paren)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PAREN_TOKENS_TOKEN_TREE_PAREN_AFTER, path: "(token_tree_paren)/tokens:/(token_tree_paren)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_brace", path: "(token_tree_pattern_brace)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternBrace", path: "(token_tree_pattern_brace)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_TREE_PATTERN_BRACE_AFTER, path: "(token_tree_pattern_brace)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_TREE_PATTERN_BRACE_BEFORE, path: "(token_tree_pattern_brace)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrace", path: "(token_tree_pattern_brace)/\"{\"", children: &[
@@ -9065,34 +9065,34 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Branch { key: "rbrace", path: "(token_tree_pattern_brace)/\"}\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACE_RBRACE_BEFORE, path: "(token_tree_pattern_brace)/\"}\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "token_patterns", path: "(token_tree_pattern_brace)/token_patterns:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "tokenPatterns", path: "(token_tree_pattern_brace)/token_patterns:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_END, path: "(token_tree_pattern_brace)/token_patterns:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(token_tree_pattern_brace)/token_patterns:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(token_tree_pattern_brace)/token_patterns:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_RAW_STRING_LITERAL_AFTER, path: "(token_tree_pattern_brace)/token_patterns:/(raw_string_literal)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_SEPARATOR_SPACE, path: "(token_tree_pattern_brace)/token_patterns:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_START, path: "(token_tree_pattern_brace)/token_patterns:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(token_tree_pattern_brace)/token_patterns:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(token_tree_pattern_brace)/token_patterns:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_STRING_LITERAL_AFTER, path: "(token_tree_pattern_brace)/token_patterns:/(string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_binding_pattern", path: "(token_tree_pattern_brace)/token_patterns:/(token_binding_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenBindingPattern", path: "(token_tree_pattern_brace)/token_patterns:/(token_binding_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_TOKEN_BINDING_PATTERN_AFTER, path: "(token_tree_pattern_brace)/token_patterns:/(token_binding_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_repetition_pattern", path: "(token_tree_pattern_brace)/token_patterns:/(token_repetition_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenRepetitionPattern", path: "(token_tree_pattern_brace)/token_patterns:/(token_repetition_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_TOKEN_REPETITION_PATTERN_AFTER, path: "(token_tree_pattern_brace)/token_patterns:/(token_repetition_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_brace", path: "(token_tree_pattern_brace)/token_patterns:/(token_tree_pattern_brace)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternBrace", path: "(token_tree_pattern_brace)/token_patterns:/(token_tree_pattern_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_TOKEN_TREE_PATTERN_BRACE_AFTER, path: "(token_tree_pattern_brace)/token_patterns:/(token_tree_pattern_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_bracket", path: "(token_tree_pattern_brace)/token_patterns:/(token_tree_pattern_bracket)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternBracket", path: "(token_tree_pattern_brace)/token_patterns:/(token_tree_pattern_bracket)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_TOKEN_TREE_PATTERN_BRACKET_AFTER, path: "(token_tree_pattern_brace)/token_patterns:/(token_tree_pattern_bracket)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_paren", path: "(token_tree_pattern_brace)/token_patterns:/(token_tree_pattern_paren)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternParen", path: "(token_tree_pattern_brace)/token_patterns:/(token_tree_pattern_paren)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_TOKEN_TREE_PATTERN_PAREN_AFTER, path: "(token_tree_pattern_brace)/token_patterns:/(token_tree_pattern_paren)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_bracket", path: "(token_tree_pattern_bracket)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternBracket", path: "(token_tree_pattern_bracket)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_TREE_PATTERN_BRACKET_AFTER, path: "(token_tree_pattern_bracket)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_TREE_PATTERN_BRACKET_BEFORE, path: "(token_tree_pattern_bracket)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrack", path: "(token_tree_pattern_bracket)/\"[\"", children: &[
@@ -9101,34 +9101,34 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Branch { key: "rbrack", path: "(token_tree_pattern_bracket)/\"]\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACKET_RBRACK_BEFORE, path: "(token_tree_pattern_bracket)/\"]\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "token_patterns", path: "(token_tree_pattern_bracket)/token_patterns:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "tokenPatterns", path: "(token_tree_pattern_bracket)/token_patterns:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_END, path: "(token_tree_pattern_bracket)/token_patterns:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(token_tree_pattern_bracket)/token_patterns:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(token_tree_pattern_bracket)/token_patterns:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_RAW_STRING_LITERAL_AFTER, path: "(token_tree_pattern_bracket)/token_patterns:/(raw_string_literal)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_SEPARATOR_SPACE, path: "(token_tree_pattern_bracket)/token_patterns:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_START, path: "(token_tree_pattern_bracket)/token_patterns:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(token_tree_pattern_bracket)/token_patterns:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(token_tree_pattern_bracket)/token_patterns:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_STRING_LITERAL_AFTER, path: "(token_tree_pattern_bracket)/token_patterns:/(string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_binding_pattern", path: "(token_tree_pattern_bracket)/token_patterns:/(token_binding_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenBindingPattern", path: "(token_tree_pattern_bracket)/token_patterns:/(token_binding_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_TOKEN_BINDING_PATTERN_AFTER, path: "(token_tree_pattern_bracket)/token_patterns:/(token_binding_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_repetition_pattern", path: "(token_tree_pattern_bracket)/token_patterns:/(token_repetition_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenRepetitionPattern", path: "(token_tree_pattern_bracket)/token_patterns:/(token_repetition_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_TOKEN_REPETITION_PATTERN_AFTER, path: "(token_tree_pattern_bracket)/token_patterns:/(token_repetition_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_brace", path: "(token_tree_pattern_bracket)/token_patterns:/(token_tree_pattern_brace)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternBrace", path: "(token_tree_pattern_bracket)/token_patterns:/(token_tree_pattern_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_TOKEN_TREE_PATTERN_BRACE_AFTER, path: "(token_tree_pattern_bracket)/token_patterns:/(token_tree_pattern_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_bracket", path: "(token_tree_pattern_bracket)/token_patterns:/(token_tree_pattern_bracket)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternBracket", path: "(token_tree_pattern_bracket)/token_patterns:/(token_tree_pattern_bracket)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_TOKEN_TREE_PATTERN_BRACKET_AFTER, path: "(token_tree_pattern_bracket)/token_patterns:/(token_tree_pattern_bracket)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_paren", path: "(token_tree_pattern_bracket)/token_patterns:/(token_tree_pattern_paren)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternParen", path: "(token_tree_pattern_bracket)/token_patterns:/(token_tree_pattern_paren)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_TOKEN_TREE_PATTERN_PAREN_AFTER, path: "(token_tree_pattern_bracket)/token_patterns:/(token_tree_pattern_paren)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_paren", path: "(token_tree_pattern_paren)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternParen", path: "(token_tree_pattern_paren)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_TREE_PATTERN_PAREN_AFTER, path: "(token_tree_pattern_paren)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_TREE_PATTERN_PAREN_BEFORE, path: "(token_tree_pattern_paren)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(token_tree_pattern_paren)/\"(\"", children: &[
@@ -9137,43 +9137,43 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Branch { key: "rparen", path: "(token_tree_pattern_paren)/\")\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_PAREN_RPAREN_BEFORE, path: "(token_tree_pattern_paren)/\")\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "token_patterns", path: "(token_tree_pattern_paren)/token_patterns:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "tokenPatterns", path: "(token_tree_pattern_paren)/token_patterns:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_END, path: "(token_tree_pattern_paren)/token_patterns:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(token_tree_pattern_paren)/token_patterns:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(token_tree_pattern_paren)/token_patterns:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_RAW_STRING_LITERAL_AFTER, path: "(token_tree_pattern_paren)/token_patterns:/(raw_string_literal)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_SEPARATOR_SPACE, path: "(token_tree_pattern_paren)/token_patterns:/separator" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_START, path: "(token_tree_pattern_paren)/token_patterns:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(token_tree_pattern_paren)/token_patterns:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(token_tree_pattern_paren)/token_patterns:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_STRING_LITERAL_AFTER, path: "(token_tree_pattern_paren)/token_patterns:/(string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_binding_pattern", path: "(token_tree_pattern_paren)/token_patterns:/(token_binding_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenBindingPattern", path: "(token_tree_pattern_paren)/token_patterns:/(token_binding_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_TOKEN_BINDING_PATTERN_AFTER, path: "(token_tree_pattern_paren)/token_patterns:/(token_binding_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_repetition_pattern", path: "(token_tree_pattern_paren)/token_patterns:/(token_repetition_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenRepetitionPattern", path: "(token_tree_pattern_paren)/token_patterns:/(token_repetition_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_TOKEN_REPETITION_PATTERN_AFTER, path: "(token_tree_pattern_paren)/token_patterns:/(token_repetition_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_brace", path: "(token_tree_pattern_paren)/token_patterns:/(token_tree_pattern_brace)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternBrace", path: "(token_tree_pattern_paren)/token_patterns:/(token_tree_pattern_brace)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_TOKEN_TREE_PATTERN_BRACE_AFTER, path: "(token_tree_pattern_paren)/token_patterns:/(token_tree_pattern_brace)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_bracket", path: "(token_tree_pattern_paren)/token_patterns:/(token_tree_pattern_bracket)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternBracket", path: "(token_tree_pattern_paren)/token_patterns:/(token_tree_pattern_bracket)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_TOKEN_TREE_PATTERN_BRACKET_AFTER, path: "(token_tree_pattern_paren)/token_patterns:/(token_tree_pattern_bracket)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "token_tree_pattern_paren", path: "(token_tree_pattern_paren)/token_patterns:/(token_tree_pattern_paren)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tokenTreePatternParen", path: "(token_tree_pattern_paren)/token_patterns:/(token_tree_pattern_paren)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_TOKEN_TREE_PATTERN_PAREN_AFTER, path: "(token_tree_pattern_paren)/token_patterns:/(token_tree_pattern_paren)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "token_tree_punctuation", path: "(token_tree_punctuation)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tokenTreePunctuation", path: "(token_tree_punctuation)", children: &[
         ::sittir_core::options::AddressNode::Branch { key: "amp", path: "(token_tree_punctuation)/\"&\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_AMP_AFTER, path: "(token_tree_punctuation)/\"&\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_AMP_BEFORE, path: "(token_tree_punctuation)/\"&\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "amp_amp", path: "(token_tree_punctuation)/\"&&\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "ampAmp", path: "(token_tree_punctuation)/\"&&\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_AMP_AMP_AFTER, path: "(token_tree_punctuation)/\"&&\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_AMP_AMP_BEFORE, path: "(token_tree_punctuation)/\"&&\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "amp_eq", path: "(token_tree_punctuation)/\"&=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "ampEq", path: "(token_tree_punctuation)/\"&=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_AMP_EQ_AFTER, path: "(token_tree_punctuation)/\"&=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_AMP_EQ_BEFORE, path: "(token_tree_punctuation)/\"&=\"/before" }] },
         ] },
@@ -9185,7 +9185,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_BANG_AFTER, path: "(token_tree_punctuation)/\"!\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_BANG_BEFORE, path: "(token_tree_punctuation)/\"!\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "bang_eq", path: "(token_tree_punctuation)/\"!=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "bangEq", path: "(token_tree_punctuation)/\"!=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_BANG_EQ_AFTER, path: "(token_tree_punctuation)/\"!=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_BANG_EQ_BEFORE, path: "(token_tree_punctuation)/\"!=\"/before" }] },
         ] },
@@ -9193,7 +9193,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_CARET_AFTER, path: "(token_tree_punctuation)/\"^\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_CARET_BEFORE, path: "(token_tree_punctuation)/\"^\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "caret_eq", path: "(token_tree_punctuation)/\"^=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "caretEq", path: "(token_tree_punctuation)/\"^=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_CARET_EQ_AFTER, path: "(token_tree_punctuation)/\"^=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_CARET_EQ_BEFORE, path: "(token_tree_punctuation)/\"^=\"/before" }] },
         ] },
@@ -9201,7 +9201,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_COLON_AFTER, path: "(token_tree_punctuation)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_COLON_BEFORE, path: "(token_tree_punctuation)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "colon_colon", path: "(token_tree_punctuation)/\"::\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "colonColon", path: "(token_tree_punctuation)/\"::\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_COLON_COLON_AFTER, path: "(token_tree_punctuation)/\"::\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_COLON_COLON_BEFORE, path: "(token_tree_punctuation)/\"::\"/before" }] },
         ] },
@@ -9213,11 +9213,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_DASH_AFTER, path: "(token_tree_punctuation)/\"-\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_DASH_BEFORE, path: "(token_tree_punctuation)/\"-\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "dash_eq", path: "(token_tree_punctuation)/\"-=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dashEq", path: "(token_tree_punctuation)/\"-=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_DASH_EQ_AFTER, path: "(token_tree_punctuation)/\"-=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_DASH_EQ_BEFORE, path: "(token_tree_punctuation)/\"-=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "dash_gt", path: "(token_tree_punctuation)/\"->\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dashGt", path: "(token_tree_punctuation)/\"->\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_DASH_GT_AFTER, path: "(token_tree_punctuation)/\"->\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_DASH_GT_BEFORE, path: "(token_tree_punctuation)/\"->\"/before" }] },
         ] },
@@ -9225,15 +9225,15 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_DOT_AFTER, path: "(token_tree_punctuation)/\".\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_DOT_BEFORE, path: "(token_tree_punctuation)/\".\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "dot_dot", path: "(token_tree_punctuation)/\"..\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dotDot", path: "(token_tree_punctuation)/\"..\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_AFTER, path: "(token_tree_punctuation)/\"..\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_BEFORE, path: "(token_tree_punctuation)/\"..\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "dot_dot_dot", path: "(token_tree_punctuation)/\"...\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dotDotDot", path: "(token_tree_punctuation)/\"...\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_DOT_AFTER, path: "(token_tree_punctuation)/\"...\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_DOT_BEFORE, path: "(token_tree_punctuation)/\"...\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "dot_dot_eq", path: "(token_tree_punctuation)/\"..=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dotDotEq", path: "(token_tree_punctuation)/\"..=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_EQ_AFTER, path: "(token_tree_punctuation)/\"..=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_DOT_DOT_EQ_BEFORE, path: "(token_tree_punctuation)/\"..=\"/before" }] },
         ] },
@@ -9241,11 +9241,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_EQ_AFTER, path: "(token_tree_punctuation)/\"=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_EQ_BEFORE, path: "(token_tree_punctuation)/\"=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "eq_eq", path: "(token_tree_punctuation)/\"==\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "eqEq", path: "(token_tree_punctuation)/\"==\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_EQ_EQ_AFTER, path: "(token_tree_punctuation)/\"==\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_EQ_EQ_BEFORE, path: "(token_tree_punctuation)/\"==\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "eq_gt", path: "(token_tree_punctuation)/\"=>\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "eqGt", path: "(token_tree_punctuation)/\"=>\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_EQ_GT_AFTER, path: "(token_tree_punctuation)/\"=>\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_EQ_GT_BEFORE, path: "(token_tree_punctuation)/\"=>\"/before" }] },
         ] },
@@ -9253,15 +9253,15 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_GT_AFTER, path: "(token_tree_punctuation)/\">\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_GT_BEFORE, path: "(token_tree_punctuation)/\">\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "gt_eq", path: "(token_tree_punctuation)/\">=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "gtEq", path: "(token_tree_punctuation)/\">=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_GT_EQ_AFTER, path: "(token_tree_punctuation)/\">=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_GT_EQ_BEFORE, path: "(token_tree_punctuation)/\">=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "gt_gt", path: "(token_tree_punctuation)/\">>\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "gtGt", path: "(token_tree_punctuation)/\">>\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_GT_GT_AFTER, path: "(token_tree_punctuation)/\">>\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_GT_GT_BEFORE, path: "(token_tree_punctuation)/\">>\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "gt_gt_eq", path: "(token_tree_punctuation)/\">>=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "gtGtEq", path: "(token_tree_punctuation)/\">>=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_GT_GT_EQ_AFTER, path: "(token_tree_punctuation)/\">>=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_GT_GT_EQ_BEFORE, path: "(token_tree_punctuation)/\">>=\"/before" }] },
         ] },
@@ -9269,15 +9269,15 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_LT_AFTER, path: "(token_tree_punctuation)/\"<\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_LT_BEFORE, path: "(token_tree_punctuation)/\"<\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "lt_eq", path: "(token_tree_punctuation)/\"<=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "ltEq", path: "(token_tree_punctuation)/\"<=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_LT_EQ_AFTER, path: "(token_tree_punctuation)/\"<=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_LT_EQ_BEFORE, path: "(token_tree_punctuation)/\"<=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "lt_lt", path: "(token_tree_punctuation)/\"<<\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "ltLt", path: "(token_tree_punctuation)/\"<<\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_LT_LT_AFTER, path: "(token_tree_punctuation)/\"<<\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_LT_LT_BEFORE, path: "(token_tree_punctuation)/\"<<\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "lt_lt_eq", path: "(token_tree_punctuation)/\"<<=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "ltLtEq", path: "(token_tree_punctuation)/\"<<=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_LT_LT_EQ_AFTER, path: "(token_tree_punctuation)/\"<<=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_LT_LT_EQ_BEFORE, path: "(token_tree_punctuation)/\"<<=\"/before" }] },
         ] },
@@ -9285,7 +9285,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_PERCENT_AFTER, path: "(token_tree_punctuation)/\"%\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_PERCENT_BEFORE, path: "(token_tree_punctuation)/\"%\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "percent_eq", path: "(token_tree_punctuation)/\"%=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "percentEq", path: "(token_tree_punctuation)/\"%=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_PERCENT_EQ_AFTER, path: "(token_tree_punctuation)/\"%=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_PERCENT_EQ_BEFORE, path: "(token_tree_punctuation)/\"%=\"/before" }] },
         ] },
@@ -9293,11 +9293,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_PIPE_AFTER, path: "(token_tree_punctuation)/\"|\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_PIPE_BEFORE, path: "(token_tree_punctuation)/\"|\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "pipe_eq", path: "(token_tree_punctuation)/\"|=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "pipeEq", path: "(token_tree_punctuation)/\"|=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_PIPE_EQ_AFTER, path: "(token_tree_punctuation)/\"|=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_PIPE_EQ_BEFORE, path: "(token_tree_punctuation)/\"|=\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "pipe_pipe", path: "(token_tree_punctuation)/\"||\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "pipePipe", path: "(token_tree_punctuation)/\"||\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_PIPE_PIPE_AFTER, path: "(token_tree_punctuation)/\"||\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_PIPE_PIPE_BEFORE, path: "(token_tree_punctuation)/\"||\"/before" }] },
         ] },
@@ -9305,7 +9305,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_PLUS_AFTER, path: "(token_tree_punctuation)/\"+\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_PLUS_BEFORE, path: "(token_tree_punctuation)/\"+\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "plus_eq", path: "(token_tree_punctuation)/\"+=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "plusEq", path: "(token_tree_punctuation)/\"+=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_PLUS_EQ_AFTER, path: "(token_tree_punctuation)/\"+=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_PLUS_EQ_BEFORE, path: "(token_tree_punctuation)/\"+=\"/before" }] },
         ] },
@@ -9325,7 +9325,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_SLASH_AFTER, path: "(token_tree_punctuation)/\"/\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_SLASH_BEFORE, path: "(token_tree_punctuation)/\"/\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "slash_eq", path: "(token_tree_punctuation)/\"/=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "slashEq", path: "(token_tree_punctuation)/\"/=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_SLASH_EQ_AFTER, path: "(token_tree_punctuation)/\"/=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_SLASH_EQ_BEFORE, path: "(token_tree_punctuation)/\"/=\"/before" }] },
         ] },
@@ -9333,7 +9333,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_STAR_AFTER, path: "(token_tree_punctuation)/\"*\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_STAR_BEFORE, path: "(token_tree_punctuation)/\"*\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "star_eq", path: "(token_tree_punctuation)/\"*=\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "starEq", path: "(token_tree_punctuation)/\"*=\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_STAR_EQ_AFTER, path: "(token_tree_punctuation)/\"*=\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_STAR_EQ_BEFORE, path: "(token_tree_punctuation)/\"*=\"/before" }] },
         ] },
@@ -9342,51 +9342,51 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TOKEN_TREE_PUNCTUATION_UNDERSCORE_BEFORE, path: "(token_tree_punctuation)/\"_\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "trait_bounds", path: "(trait_bounds)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "traitBounds", path: "(trait_bounds)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_TRAIT_BOUNDS_AFTER, path: "(trait_bounds)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_TRAIT_BOUNDS_BEFORE, path: "(trait_bounds)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "bounds", path: "(trait_bounds)/bounds:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "abstract_type", path: "(trait_bounds)/bounds:/(abstract_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "abstractType", path: "(trait_bounds)/bounds:/(abstract_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_ABSTRACT_TYPE_AFTER, path: "(trait_bounds)/bounds:/(abstract_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "array_type", path: "(trait_bounds)/bounds:/(array_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "arrayType", path: "(trait_bounds)/bounds:/(array_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_ARRAY_TYPE_AFTER, path: "(trait_bounds)/bounds:/(array_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "bounded_type", path: "(trait_bounds)/bounds:/(bounded_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "boundedType", path: "(trait_bounds)/bounds:/(bounded_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_BOUNDED_TYPE_AFTER, path: "(trait_bounds)/bounds:/(bounded_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "dynamic_type", path: "(trait_bounds)/bounds:/(dynamic_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "dynamicType", path: "(trait_bounds)/bounds:/(dynamic_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_DYNAMIC_TYPE_AFTER, path: "(trait_bounds)/bounds:/(dynamic_type)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_END, path: "(trait_bounds)/bounds:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "function_type", path: "(trait_bounds)/bounds:/(function_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "functionType", path: "(trait_bounds)/bounds:/(function_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_FUNCTION_TYPE_AFTER, path: "(trait_bounds)/bounds:/(function_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "generic_type", path: "(trait_bounds)/bounds:/(generic_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "genericType", path: "(trait_bounds)/bounds:/(generic_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_GENERIC_TYPE_AFTER, path: "(trait_bounds)/bounds:/(generic_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "higher_ranked_trait_bound", path: "(trait_bounds)/bounds:/(higher_ranked_trait_bound)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "higherRankedTraitBound", path: "(trait_bounds)/bounds:/(higher_ranked_trait_bound)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_HIGHER_RANKED_TRAIT_BOUND_AFTER, path: "(trait_bounds)/bounds:/(higher_ranked_trait_bound)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "lifetime", path: "(trait_bounds)/bounds:/(lifetime)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_LIFETIME_AFTER, path: "(trait_bounds)/bounds:/(lifetime)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_invocation", path: "(trait_bounds)/bounds:/(macro_invocation)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroInvocation", path: "(trait_bounds)/bounds:/(macro_invocation)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_MACRO_INVOCATION_AFTER, path: "(trait_bounds)/bounds:/(macro_invocation)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "pointer_type_const", path: "(trait_bounds)/bounds:/(pointer_type_const)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "pointerTypeConst", path: "(trait_bounds)/bounds:/(pointer_type_const)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_POINTER_TYPE_CONST_AFTER, path: "(trait_bounds)/bounds:/(pointer_type_const)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "pointer_type_mut", path: "(trait_bounds)/bounds:/(pointer_type_mut)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "pointerTypeMut", path: "(trait_bounds)/bounds:/(pointer_type_mut)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_POINTER_TYPE_MUT_AFTER, path: "(trait_bounds)/bounds:/(pointer_type_mut)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "reference_type", path: "(trait_bounds)/bounds:/(reference_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "referenceType", path: "(trait_bounds)/bounds:/(reference_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_REFERENCE_TYPE_AFTER, path: "(trait_bounds)/bounds:/(reference_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "removed_trait_bound", path: "(trait_bounds)/bounds:/(removed_trait_bound)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "removedTraitBound", path: "(trait_bounds)/bounds:/(removed_trait_bound)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_REMOVED_TRAIT_BOUND_AFTER, path: "(trait_bounds)/bounds:/(removed_trait_bound)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "scoped_type_identifier", path: "(trait_bounds)/bounds:/(scoped_type_identifier)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "scopedTypeIdentifier", path: "(trait_bounds)/bounds:/(scoped_type_identifier)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_SCOPED_TYPE_IDENTIFIER_AFTER, path: "(trait_bounds)/bounds:/(scoped_type_identifier)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(trait_bounds)/bounds:/separator", children: &[
@@ -9396,7 +9396,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
                 ] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_START, path: "(trait_bounds)/bounds:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "tuple_type", path: "(trait_bounds)/bounds:/(tuple_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tupleType", path: "(trait_bounds)/bounds:/(tuple_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_BOUNDS_TUPLE_TYPE_AFTER, path: "(trait_bounds)/bounds:/(tuple_type)/after" }] },
             ] },
         ] },
@@ -9404,36 +9404,36 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_BOUNDS_COLON_AFTER, path: "(trait_bounds)/\":\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "trait_item", path: "(trait_item)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "traitItem", path: "(trait_item)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_ITEM_TRAIT_ITEM_AFTER, path: "(trait_item)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_ITEM_TRAIT_ITEM_BEFORE, path: "(trait_item)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "trait_keyword", path: "(trait_item)/\"trait\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "traitKeyword", path: "(trait_item)/\"trait\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_ITEM_TRAIT_KEYWORD_AFTER, path: "(trait_item)/\"trait\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_ITEM_TRAIT_KEYWORD_BEFORE, path: "(trait_item)/\"trait\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "unsafe_marker", path: "(trait_item)/unsafe_marker:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "unsafeMarker", path: "(trait_item)/unsafe_marker:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_ITEM_UNSAFE_MARKER_AFTER, path: "(trait_item)/unsafe_marker:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TRAIT_ITEM_UNSAFE_MARKER_BEFORE, path: "(trait_item)/unsafe_marker:/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "try_block", path: "(try_block)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tryBlock", path: "(try_block)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRY_BLOCK_TRY_BLOCK_AFTER, path: "(try_block)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TRY_BLOCK_TRY_BLOCK_BEFORE, path: "(try_block)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "try_keyword", path: "(try_block)/\"try\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "tryKeyword", path: "(try_block)/\"try\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRY_BLOCK_TRY_KEYWORD_AFTER, path: "(try_block)/\"try\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "try_expression", path: "(try_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tryExpression", path: "(try_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRY_EXPRESSION_TRY_EXPRESSION_AFTER, path: "(try_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TRY_EXPRESSION_TRY_EXPRESSION_BEFORE, path: "(try_expression)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "qmark", path: "(try_expression)/\"?\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TRY_EXPRESSION_QMARK_BEFORE, path: "(try_expression)/\"?\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "tuple_expression", path: "(tuple_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tupleExpression", path: "(tuple_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_TUPLE_EXPRESSION_AFTER, path: "(tuple_expression)/after" }] },
         ::sittir_core::options::AddressNode::Branch { key: "attributes", path: "(tuple_expression)/attributes:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attribute_item", path: "(tuple_expression)/attributes:/(attribute_item)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributeItem", path: "(tuple_expression)/attributes:/(attribute_item)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ATTRIBUTES_ATTRIBUTE_ITEM_AFTER, path: "(tuple_expression)/attributes:/(attribute_item)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ATTRIBUTES_END, path: "(tuple_expression)/attributes:/end" }] },
@@ -9448,112 +9448,112 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_RPAREN_BEFORE, path: "(tuple_expression)/\")\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "tuple_expression_elements", path: "(tuple_expression_elements)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tupleExpressionElements", path: "(tuple_expression_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_TUPLE_EXPRESSION_ELEMENTS_AFTER, path: "(tuple_expression_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_TUPLE_EXPRESSION_ELEMENTS_BEFORE, path: "(tuple_expression_elements)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "element", path: "(tuple_expression_elements)/element:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "array_expression_list", path: "(tuple_expression_elements)/element:/(array_expression_list)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "arrayExpressionList", path: "(tuple_expression_elements)/element:/(array_expression_list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_ARRAY_EXPRESSION_LIST_AFTER, path: "(tuple_expression_elements)/element:/(array_expression_list)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "array_expression_semi", path: "(tuple_expression_elements)/element:/(array_expression_semi)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "arrayExpressionSemi", path: "(tuple_expression_elements)/element:/(array_expression_semi)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_ARRAY_EXPRESSION_SEMI_AFTER, path: "(tuple_expression_elements)/element:/(array_expression_semi)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "assignment_expression", path: "(tuple_expression_elements)/element:/(assignment_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "assignmentExpression", path: "(tuple_expression_elements)/element:/(assignment_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_ASSIGNMENT_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(assignment_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "async_block", path: "(tuple_expression_elements)/element:/(async_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "asyncBlock", path: "(tuple_expression_elements)/element:/(async_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_ASYNC_BLOCK_AFTER, path: "(tuple_expression_elements)/element:/(async_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "await_expression", path: "(tuple_expression_elements)/element:/(await_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "awaitExpression", path: "(tuple_expression_elements)/element:/(await_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_AWAIT_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(await_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "binary_expression", path: "(tuple_expression_elements)/element:/(binary_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "binaryExpression", path: "(tuple_expression_elements)/element:/(binary_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_BINARY_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(binary_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "block", path: "(tuple_expression_elements)/element:/(block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_BLOCK_AFTER, path: "(tuple_expression_elements)/element:/(block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "break_expression", path: "(tuple_expression_elements)/element:/(break_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "breakExpression", path: "(tuple_expression_elements)/element:/(break_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_BREAK_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(break_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "call_expression", path: "(tuple_expression_elements)/element:/(call_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "callExpression", path: "(tuple_expression_elements)/element:/(call_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_CALL_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(call_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "closure_expression_block", path: "(tuple_expression_elements)/element:/(closure_expression_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "closureExpressionBlock", path: "(tuple_expression_elements)/element:/(closure_expression_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_CLOSURE_EXPRESSION_BLOCK_AFTER, path: "(tuple_expression_elements)/element:/(closure_expression_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "closure_expression_expr", path: "(tuple_expression_elements)/element:/(closure_expression_expr)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "closureExpressionExpr", path: "(tuple_expression_elements)/element:/(closure_expression_expr)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_CLOSURE_EXPRESSION_EXPR_AFTER, path: "(tuple_expression_elements)/element:/(closure_expression_expr)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "compound_assignment_expr", path: "(tuple_expression_elements)/element:/(compound_assignment_expr)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "compoundAssignmentExpr", path: "(tuple_expression_elements)/element:/(compound_assignment_expr)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_COMPOUND_ASSIGNMENT_EXPR_AFTER, path: "(tuple_expression_elements)/element:/(compound_assignment_expr)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "const_block", path: "(tuple_expression_elements)/element:/(const_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "constBlock", path: "(tuple_expression_elements)/element:/(const_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_CONST_BLOCK_AFTER, path: "(tuple_expression_elements)/element:/(const_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "continue_expression", path: "(tuple_expression_elements)/element:/(continue_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "continueExpression", path: "(tuple_expression_elements)/element:/(continue_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_CONTINUE_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(continue_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_TUPLE_EXPRESSION_ELEMENTS_ELEMENT, path: "(tuple_expression_elements)/element:/delimiter" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_END, path: "(tuple_expression_elements)/element:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "field_expression", path: "(tuple_expression_elements)/element:/(field_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "fieldExpression", path: "(tuple_expression_elements)/element:/(field_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_FIELD_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(field_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "for_expression", path: "(tuple_expression_elements)/element:/(for_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "forExpression", path: "(tuple_expression_elements)/element:/(for_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_FOR_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(for_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "gen_block", path: "(tuple_expression_elements)/element:/(gen_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "genBlock", path: "(tuple_expression_elements)/element:/(gen_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_GEN_BLOCK_AFTER, path: "(tuple_expression_elements)/element:/(gen_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "generic_function", path: "(tuple_expression_elements)/element:/(generic_function)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "genericFunction", path: "(tuple_expression_elements)/element:/(generic_function)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_GENERIC_FUNCTION_AFTER, path: "(tuple_expression_elements)/element:/(generic_function)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "if_expression", path: "(tuple_expression_elements)/element:/(if_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "ifExpression", path: "(tuple_expression_elements)/element:/(if_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_IF_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(if_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "index_expression", path: "(tuple_expression_elements)/element:/(index_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "indexExpression", path: "(tuple_expression_elements)/element:/(index_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_INDEX_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(index_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "loop_expression", path: "(tuple_expression_elements)/element:/(loop_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "loopExpression", path: "(tuple_expression_elements)/element:/(loop_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_LOOP_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(loop_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_invocation", path: "(tuple_expression_elements)/element:/(macro_invocation)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroInvocation", path: "(tuple_expression_elements)/element:/(macro_invocation)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_MACRO_INVOCATION_AFTER, path: "(tuple_expression_elements)/element:/(macro_invocation)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "match_expression", path: "(tuple_expression_elements)/element:/(match_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "matchExpression", path: "(tuple_expression_elements)/element:/(match_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_MATCH_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(match_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "parenthesized_expression", path: "(tuple_expression_elements)/element:/(parenthesized_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "parenthesizedExpression", path: "(tuple_expression_elements)/element:/(parenthesized_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_PARENTHESIZED_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(parenthesized_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "range_expression_binary", path: "(tuple_expression_elements)/element:/(range_expression_binary)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rangeExpressionBinary", path: "(tuple_expression_elements)/element:/(range_expression_binary)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_RANGE_EXPRESSION_BINARY_AFTER, path: "(tuple_expression_elements)/element:/(range_expression_binary)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "range_expression_postfix", path: "(tuple_expression_elements)/element:/(range_expression_postfix)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rangeExpressionPostfix", path: "(tuple_expression_elements)/element:/(range_expression_postfix)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_RANGE_EXPRESSION_POSTFIX_AFTER, path: "(tuple_expression_elements)/element:/(range_expression_postfix)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "range_expression_prefix", path: "(tuple_expression_elements)/element:/(range_expression_prefix)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rangeExpressionPrefix", path: "(tuple_expression_elements)/element:/(range_expression_prefix)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_RANGE_EXPRESSION_PREFIX_AFTER, path: "(tuple_expression_elements)/element:/(range_expression_prefix)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(tuple_expression_elements)/element:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(tuple_expression_elements)/element:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_RAW_STRING_LITERAL_AFTER, path: "(tuple_expression_elements)/element:/(raw_string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "reference_expression_bare", path: "(tuple_expression_elements)/element:/(reference_expression_bare)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "referenceExpressionBare", path: "(tuple_expression_elements)/element:/(reference_expression_bare)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_REFERENCE_EXPRESSION_BARE_AFTER, path: "(tuple_expression_elements)/element:/(reference_expression_bare)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "reference_expression_mut", path: "(tuple_expression_elements)/element:/(reference_expression_mut)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "referenceExpressionMut", path: "(tuple_expression_elements)/element:/(reference_expression_mut)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_REFERENCE_EXPRESSION_MUT_AFTER, path: "(tuple_expression_elements)/element:/(reference_expression_mut)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "reference_expression_raw_const", path: "(tuple_expression_elements)/element:/(reference_expression_raw_const)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "referenceExpressionRawConst", path: "(tuple_expression_elements)/element:/(reference_expression_raw_const)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_REFERENCE_EXPRESSION_RAW_CONST_AFTER, path: "(tuple_expression_elements)/element:/(reference_expression_raw_const)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "reference_expression_raw_mut", path: "(tuple_expression_elements)/element:/(reference_expression_raw_mut)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "referenceExpressionRawMut", path: "(tuple_expression_elements)/element:/(reference_expression_raw_mut)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_REFERENCE_EXPRESSION_RAW_MUT_AFTER, path: "(tuple_expression_elements)/element:/(reference_expression_raw_mut)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "return_expression", path: "(tuple_expression_elements)/element:/(return_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "returnExpression", path: "(tuple_expression_elements)/element:/(return_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_RETURN_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(return_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "scoped_identifier", path: "(tuple_expression_elements)/element:/(scoped_identifier)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "scopedIdentifier", path: "(tuple_expression_elements)/element:/(scoped_identifier)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_SCOPED_IDENTIFIER_AFTER, path: "(tuple_expression_elements)/element:/(scoped_identifier)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(tuple_expression_elements)/element:/separator", children: &[
@@ -9563,39 +9563,39 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
                 ] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_START, path: "(tuple_expression_elements)/element:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(tuple_expression_elements)/element:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(tuple_expression_elements)/element:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_STRING_LITERAL_AFTER, path: "(tuple_expression_elements)/element:/(string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "struct_expression", path: "(tuple_expression_elements)/element:/(struct_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "structExpression", path: "(tuple_expression_elements)/element:/(struct_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_STRUCT_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(struct_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "try_block", path: "(tuple_expression_elements)/element:/(try_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tryBlock", path: "(tuple_expression_elements)/element:/(try_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_TRY_BLOCK_AFTER, path: "(tuple_expression_elements)/element:/(try_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "try_expression", path: "(tuple_expression_elements)/element:/(try_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tryExpression", path: "(tuple_expression_elements)/element:/(try_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_TRY_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(try_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tuple_expression", path: "(tuple_expression_elements)/element:/(tuple_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tupleExpression", path: "(tuple_expression_elements)/element:/(tuple_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_TUPLE_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(tuple_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "type_cast_expression", path: "(tuple_expression_elements)/element:/(type_cast_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "typeCastExpression", path: "(tuple_expression_elements)/element:/(type_cast_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_TYPE_CAST_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(type_cast_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "unary_expression", path: "(tuple_expression_elements)/element:/(unary_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "unaryExpression", path: "(tuple_expression_elements)/element:/(unary_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_UNARY_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(unary_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "unsafe_block", path: "(tuple_expression_elements)/element:/(unsafe_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "unsafeBlock", path: "(tuple_expression_elements)/element:/(unsafe_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_UNSAFE_BLOCK_AFTER, path: "(tuple_expression_elements)/element:/(unsafe_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "while_expression", path: "(tuple_expression_elements)/element:/(while_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "whileExpression", path: "(tuple_expression_elements)/element:/(while_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_WHILE_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(while_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "yield_expression", path: "(tuple_expression_elements)/element:/(yield_expression)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "yieldExpression", path: "(tuple_expression_elements)/element:/(yield_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_EXPRESSION_ELEMENTS_ELEMENT_YIELD_EXPRESSION_AFTER, path: "(tuple_expression_elements)/element:/(yield_expression)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "tuple_pattern", path: "(tuple_pattern)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tuplePattern", path: "(tuple_pattern)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_TUPLE_PATTERN_AFTER, path: "(tuple_pattern)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_TUPLE_PATTERN_BEFORE, path: "(tuple_pattern)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(tuple_pattern)/\"(\"", children: &[
@@ -9605,58 +9605,58 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_RPAREN_BEFORE, path: "(tuple_pattern)/\")\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "tuple_pattern_elements", path: "(tuple_pattern_elements)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tuplePatternElements", path: "(tuple_pattern_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_TUPLE_PATTERN_ELEMENTS_AFTER, path: "(tuple_pattern_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_TUPLE_PATTERN_ELEMENTS_BEFORE, path: "(tuple_pattern_elements)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "element", path: "(tuple_pattern_elements)/element:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "captured_pattern", path: "(tuple_pattern_elements)/element:/(captured_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "capturedPattern", path: "(tuple_pattern_elements)/element:/(captured_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_CAPTURED_PATTERN_AFTER, path: "(tuple_pattern_elements)/element:/(captured_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "closure_expression_block", path: "(tuple_pattern_elements)/element:/(closure_expression_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "closureExpressionBlock", path: "(tuple_pattern_elements)/element:/(closure_expression_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_CLOSURE_EXPRESSION_BLOCK_AFTER, path: "(tuple_pattern_elements)/element:/(closure_expression_block)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "closure_expression_expr", path: "(tuple_pattern_elements)/element:/(closure_expression_expr)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "closureExpressionExpr", path: "(tuple_pattern_elements)/element:/(closure_expression_expr)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_CLOSURE_EXPRESSION_EXPR_AFTER, path: "(tuple_pattern_elements)/element:/(closure_expression_expr)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "const_block", path: "(tuple_pattern_elements)/element:/(const_block)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "constBlock", path: "(tuple_pattern_elements)/element:/(const_block)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_CONST_BLOCK_AFTER, path: "(tuple_pattern_elements)/element:/(const_block)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_TUPLE_PATTERN_ELEMENTS_ELEMENT, path: "(tuple_pattern_elements)/element:/delimiter" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_END, path: "(tuple_pattern_elements)/element:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "generic_pattern", path: "(tuple_pattern_elements)/element:/(generic_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "genericPattern", path: "(tuple_pattern_elements)/element:/(generic_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_GENERIC_PATTERN_AFTER, path: "(tuple_pattern_elements)/element:/(generic_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_invocation", path: "(tuple_pattern_elements)/element:/(macro_invocation)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroInvocation", path: "(tuple_pattern_elements)/element:/(macro_invocation)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_MACRO_INVOCATION_AFTER, path: "(tuple_pattern_elements)/element:/(macro_invocation)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "mut_pattern", path: "(tuple_pattern_elements)/element:/(mut_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "mutPattern", path: "(tuple_pattern_elements)/element:/(mut_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_MUT_PATTERN_AFTER, path: "(tuple_pattern_elements)/element:/(mut_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "negative_literal", path: "(tuple_pattern_elements)/element:/(negative_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "negativeLiteral", path: "(tuple_pattern_elements)/element:/(negative_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_NEGATIVE_LITERAL_AFTER, path: "(tuple_pattern_elements)/element:/(negative_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "or_pattern_binary", path: "(tuple_pattern_elements)/element:/(or_pattern_binary)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "orPatternBinary", path: "(tuple_pattern_elements)/element:/(or_pattern_binary)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_OR_PATTERN_BINARY_AFTER, path: "(tuple_pattern_elements)/element:/(or_pattern_binary)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "or_pattern_prefix", path: "(tuple_pattern_elements)/element:/(or_pattern_prefix)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "orPatternPrefix", path: "(tuple_pattern_elements)/element:/(or_pattern_prefix)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_OR_PATTERN_PREFIX_AFTER, path: "(tuple_pattern_elements)/element:/(or_pattern_prefix)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "range_pattern_prefix", path: "(tuple_pattern_elements)/element:/(range_pattern_prefix)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rangePatternPrefix", path: "(tuple_pattern_elements)/element:/(range_pattern_prefix)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_RANGE_PATTERN_PREFIX_AFTER, path: "(tuple_pattern_elements)/element:/(range_pattern_prefix)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "range_pattern_with_left", path: "(tuple_pattern_elements)/element:/(range_pattern_with_left)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rangePatternWithLeft", path: "(tuple_pattern_elements)/element:/(range_pattern_with_left)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_RANGE_PATTERN_WITH_LEFT_AFTER, path: "(tuple_pattern_elements)/element:/(range_pattern_with_left)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "raw_string_literal", path: "(tuple_pattern_elements)/element:/(raw_string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "rawStringLiteral", path: "(tuple_pattern_elements)/element:/(raw_string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_RAW_STRING_LITERAL_AFTER, path: "(tuple_pattern_elements)/element:/(raw_string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "ref_pattern", path: "(tuple_pattern_elements)/element:/(ref_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "refPattern", path: "(tuple_pattern_elements)/element:/(ref_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_REF_PATTERN_AFTER, path: "(tuple_pattern_elements)/element:/(ref_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "reference_pattern", path: "(tuple_pattern_elements)/element:/(reference_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "referencePattern", path: "(tuple_pattern_elements)/element:/(reference_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_REFERENCE_PATTERN_AFTER, path: "(tuple_pattern_elements)/element:/(reference_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "scoped_identifier", path: "(tuple_pattern_elements)/element:/(scoped_identifier)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "scopedIdentifier", path: "(tuple_pattern_elements)/element:/(scoped_identifier)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_SCOPED_IDENTIFIER_AFTER, path: "(tuple_pattern_elements)/element:/(scoped_identifier)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(tuple_pattern_elements)/element:/separator", children: &[
@@ -9665,25 +9665,25 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
                     ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_SEPARATOR_SPACE_BEFORE, path: "(tuple_pattern_elements)/element:/separator/\",\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "slice_pattern", path: "(tuple_pattern_elements)/element:/(slice_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "slicePattern", path: "(tuple_pattern_elements)/element:/(slice_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_SLICE_PATTERN_AFTER, path: "(tuple_pattern_elements)/element:/(slice_pattern)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_START, path: "(tuple_pattern_elements)/element:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "string_literal", path: "(tuple_pattern_elements)/element:/(string_literal)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "stringLiteral", path: "(tuple_pattern_elements)/element:/(string_literal)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_STRING_LITERAL_AFTER, path: "(tuple_pattern_elements)/element:/(string_literal)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "struct_pattern", path: "(tuple_pattern_elements)/element:/(struct_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "structPattern", path: "(tuple_pattern_elements)/element:/(struct_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_STRUCT_PATTERN_AFTER, path: "(tuple_pattern_elements)/element:/(struct_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tuple_pattern", path: "(tuple_pattern_elements)/element:/(tuple_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tuplePattern", path: "(tuple_pattern_elements)/element:/(tuple_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_TUPLE_PATTERN_AFTER, path: "(tuple_pattern_elements)/element:/(tuple_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tuple_struct_pattern", path: "(tuple_pattern_elements)/element:/(tuple_struct_pattern)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tupleStructPattern", path: "(tuple_pattern_elements)/element:/(tuple_struct_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_PATTERN_ELEMENTS_ELEMENT_TUPLE_STRUCT_PATTERN_AFTER, path: "(tuple_pattern_elements)/element:/(tuple_struct_pattern)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "tuple_struct_pattern", path: "(tuple_struct_pattern)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tupleStructPattern", path: "(tuple_struct_pattern)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_STRUCT_PATTERN_TUPLE_STRUCT_PATTERN_AFTER, path: "(tuple_struct_pattern)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_STRUCT_PATTERN_TUPLE_STRUCT_PATTERN_BEFORE, path: "(tuple_struct_pattern)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(tuple_struct_pattern)/\"(\"", children: &[
@@ -9694,7 +9694,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_STRUCT_PATTERN_RPAREN_BEFORE, path: "(tuple_struct_pattern)/\")\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "tuple_type", path: "(tuple_type)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tupleType", path: "(tuple_type)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_TUPLE_TYPE_AFTER, path: "(tuple_type)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_TUPLE_TYPE_BEFORE, path: "(tuple_type)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(tuple_type)/\"(\"", children: &[
@@ -9704,46 +9704,46 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_RPAREN_BEFORE, path: "(tuple_type)/\")\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "tuple_type_elements", path: "(tuple_type_elements)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "tupleTypeElements", path: "(tuple_type_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TUPLE_TYPE_ELEMENTS_AFTER, path: "(tuple_type_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TUPLE_TYPE_ELEMENTS_BEFORE, path: "(tuple_type_elements)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "type", path: "(tuple_type_elements)/type:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "abstract_type", path: "(tuple_type_elements)/type:/(abstract_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "abstractType", path: "(tuple_type_elements)/type:/(abstract_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_ABSTRACT_TYPE_AFTER, path: "(tuple_type_elements)/type:/(abstract_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "array_type", path: "(tuple_type_elements)/type:/(array_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "arrayType", path: "(tuple_type_elements)/type:/(array_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_ARRAY_TYPE_AFTER, path: "(tuple_type_elements)/type:/(array_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "bounded_type", path: "(tuple_type_elements)/type:/(bounded_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "boundedType", path: "(tuple_type_elements)/type:/(bounded_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_BOUNDED_TYPE_AFTER, path: "(tuple_type_elements)/type:/(bounded_type)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_TUPLE_TYPE_ELEMENTS_TYPE, path: "(tuple_type_elements)/type:/delimiter" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "dynamic_type", path: "(tuple_type_elements)/type:/(dynamic_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "dynamicType", path: "(tuple_type_elements)/type:/(dynamic_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_DYNAMIC_TYPE_AFTER, path: "(tuple_type_elements)/type:/(dynamic_type)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_END, path: "(tuple_type_elements)/type:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "function_type", path: "(tuple_type_elements)/type:/(function_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "functionType", path: "(tuple_type_elements)/type:/(function_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_FUNCTION_TYPE_AFTER, path: "(tuple_type_elements)/type:/(function_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "generic_type", path: "(tuple_type_elements)/type:/(generic_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "genericType", path: "(tuple_type_elements)/type:/(generic_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_GENERIC_TYPE_AFTER, path: "(tuple_type_elements)/type:/(generic_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "macro_invocation", path: "(tuple_type_elements)/type:/(macro_invocation)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "macroInvocation", path: "(tuple_type_elements)/type:/(macro_invocation)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_MACRO_INVOCATION_AFTER, path: "(tuple_type_elements)/type:/(macro_invocation)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "pointer_type_const", path: "(tuple_type_elements)/type:/(pointer_type_const)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "pointerTypeConst", path: "(tuple_type_elements)/type:/(pointer_type_const)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_POINTER_TYPE_CONST_AFTER, path: "(tuple_type_elements)/type:/(pointer_type_const)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "pointer_type_mut", path: "(tuple_type_elements)/type:/(pointer_type_mut)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "pointerTypeMut", path: "(tuple_type_elements)/type:/(pointer_type_mut)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_POINTER_TYPE_MUT_AFTER, path: "(tuple_type_elements)/type:/(pointer_type_mut)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "reference_type", path: "(tuple_type_elements)/type:/(reference_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "referenceType", path: "(tuple_type_elements)/type:/(reference_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_REFERENCE_TYPE_AFTER, path: "(tuple_type_elements)/type:/(reference_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "removed_trait_bound", path: "(tuple_type_elements)/type:/(removed_trait_bound)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "removedTraitBound", path: "(tuple_type_elements)/type:/(removed_trait_bound)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_REMOVED_TRAIT_BOUND_AFTER, path: "(tuple_type_elements)/type:/(removed_trait_bound)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "scoped_type_identifier", path: "(tuple_type_elements)/type:/(scoped_type_identifier)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "scopedTypeIdentifier", path: "(tuple_type_elements)/type:/(scoped_type_identifier)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_SCOPED_TYPE_IDENTIFIER_AFTER, path: "(tuple_type_elements)/type:/(scoped_type_identifier)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(tuple_type_elements)/type:/separator", children: &[
@@ -9753,16 +9753,16 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
                 ] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_START, path: "(tuple_type_elements)/type:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "tuple_type", path: "(tuple_type_elements)/type:/(tuple_type)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "tupleType", path: "(tuple_type_elements)/type:/(tuple_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_TYPE_ELEMENTS_TYPE_TUPLE_TYPE_AFTER, path: "(tuple_type_elements)/type:/(tuple_type)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "type_argument", path: "(type_argument)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "typeArgument", path: "(type_argument)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_ARGUMENT_TYPE_ARGUMENT_AFTER, path: "(type_argument)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_ARGUMENT_TYPE_ARGUMENT_BEFORE, path: "(type_argument)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "type_arguments", path: "(type_arguments)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "typeArguments", path: "(type_arguments)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_ARGUMENTS_TYPE_ARGUMENTS_AFTER, path: "(type_arguments)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_ARGUMENTS_TYPE_ARGUMENTS_BEFORE, path: "(type_arguments)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "gt", path: "(type_arguments)/\">\"", children: &[
@@ -9772,7 +9772,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_ARGUMENTS_LT_AFTER, path: "(type_arguments)/\"<\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "type_arguments_elements", path: "(type_arguments_elements)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "typeArgumentsElements", path: "(type_arguments_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_ARGUMENTS_ELEMENTS_TYPE_ARGUMENTS_ELEMENTS_AFTER, path: "(type_arguments_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_ARGUMENTS_ELEMENTS_TYPE_ARGUMENTS_ELEMENTS_BEFORE, path: "(type_arguments_elements)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "element", path: "(type_arguments_elements)/element:", children: &[
@@ -9785,12 +9785,12 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
                 ] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_START, path: "(type_arguments_elements)/element:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "type_argument", path: "(type_arguments_elements)/element:/(type_argument)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "typeArgument", path: "(type_arguments_elements)/element:/(type_argument)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_ARGUMENTS_ELEMENTS_ELEMENT_TYPE_ARGUMENT_AFTER, path: "(type_arguments_elements)/element:/(type_argument)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "type_binding", path: "(type_binding)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "typeBinding", path: "(type_binding)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_BINDING_TYPE_BINDING_AFTER, path: "(type_binding)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_BINDING_TYPE_BINDING_BEFORE, path: "(type_binding)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "eq", path: "(type_binding)/\"=\"", children: &[
@@ -9798,15 +9798,15 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_BINDING_EQ_BEFORE, path: "(type_binding)/\"=\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "type_cast_expression", path: "(type_cast_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "typeCastExpression", path: "(type_cast_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_CAST_EXPRESSION_TYPE_CAST_EXPRESSION_AFTER, path: "(type_cast_expression)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "as_keyword", path: "(type_cast_expression)/\"as\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "asKeyword", path: "(type_cast_expression)/\"as\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_CAST_EXPRESSION_AS_KEYWORD_AFTER, path: "(type_cast_expression)/\"as\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_CAST_EXPRESSION_AS_KEYWORD_BEFORE, path: "(type_cast_expression)/\"as\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_CAST_EXPRESSION_TYPE_CAST_EXPRESSION_BEFORE, path: "(type_cast_expression)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "type_item", path: "(type_item)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "typeItem", path: "(type_item)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_ITEM_TYPE_ITEM_AFTER, path: "(type_item)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_ITEM_TYPE_ITEM_BEFORE, path: "(type_item)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "eq", path: "(type_item)/\"=\"", children: &[
@@ -9816,12 +9816,12 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Branch { key: "semi", path: "(type_item)/\";\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_ITEM_SEMI_BEFORE, path: "(type_item)/\";\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "type_keyword", path: "(type_item)/\"type\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "typeKeyword", path: "(type_item)/\"type\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_ITEM_TYPE_KEYWORD_AFTER, path: "(type_item)/\"type\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_ITEM_TYPE_KEYWORD_BEFORE, path: "(type_item)/\"type\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "type_parameter", path: "(type_parameter)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "typeParameter", path: "(type_parameter)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETER_TYPE_PARAMETER_AFTER, path: "(type_parameter)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETER_TYPE_PARAMETER_BEFORE, path: "(type_parameter)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "eq", path: "(type_parameter)/\"=\"", children: &[
@@ -9829,7 +9829,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETER_EQ_BEFORE, path: "(type_parameter)/\"=\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "type_parameters", path: "(type_parameters)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "typeParameters", path: "(type_parameters)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_TYPE_PARAMETERS_AFTER, path: "(type_parameters)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_TYPE_PARAMETERS_BEFORE, path: "(type_parameters)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "gt", path: "(type_parameters)/\">\"", children: &[
@@ -9839,11 +9839,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_LT_AFTER, path: "(type_parameters)/\"<\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "type_parameters_elements", path: "(type_parameters_elements)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "typeParametersElements", path: "(type_parameters_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETERS_ELEMENTS_AFTER, path: "(type_parameters_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETERS_ELEMENTS_BEFORE, path: "(type_parameters_elements)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "element", path: "(type_parameters_elements)/element:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "attributed_type_parameter", path: "(type_parameters_elements)/element:/(attributed_type_parameter)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "attributedTypeParameter", path: "(type_parameters_elements)/element:/(attributed_type_parameter)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_ATTRIBUTED_TYPE_PARAMETER_AFTER, path: "(type_parameters_elements)/element:/(attributed_type_parameter)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_TYPE_PARAMETERS_ELEMENTS_ELEMENT, path: "(type_parameters_elements)/element:/delimiter" }] },
@@ -9857,22 +9857,22 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPE_PARAMETERS_ELEMENTS_ELEMENT_START, path: "(type_parameters_elements)/element:/start" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "unary_expression", path: "(unary_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "unaryExpression", path: "(unary_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_UNARY_EXPRESSION_UNARY_EXPRESSION_AFTER, path: "(unary_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_UNARY_EXPRESSION_UNARY_EXPRESSION_BEFORE, path: "(unary_expression)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "operator", path: "(unary_expression)/operator:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_UNARY_EXPRESSION_OPERATOR_AFTER, path: "(unary_expression)/operator:/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "union_item", path: "(union_item)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "unionItem", path: "(union_item)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_UNION_ITEM_UNION_ITEM_AFTER, path: "(union_item)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_UNION_ITEM_UNION_ITEM_BEFORE, path: "(union_item)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "union_keyword", path: "(union_item)/\"union\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "unionKeyword", path: "(union_item)/\"union\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_UNION_ITEM_UNION_KEYWORD_AFTER, path: "(union_item)/\"union\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_UNION_ITEM_UNION_KEYWORD_BEFORE, path: "(union_item)/\"union\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "unit_expression", path: "(unit_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "unitExpression", path: "(unit_expression)", children: &[
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(unit_expression)/\"(\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_UNIT_EXPRESSION_LPAREN_AFTER, path: "(unit_expression)/\"(\"/after" }] },
         ] },
@@ -9880,7 +9880,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_UNIT_EXPRESSION_RPAREN_BEFORE, path: "(unit_expression)/\")\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "unit_type", path: "(unit_type)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "unitType", path: "(unit_type)", children: &[
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(unit_type)/\"(\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_UNIT_TYPE_LPAREN_AFTER, path: "(unit_type)/\"(\"/after" }] },
         ] },
@@ -9888,22 +9888,22 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_UNIT_TYPE_RPAREN_BEFORE, path: "(unit_type)/\")\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "unsafe_block", path: "(unsafe_block)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "unsafeBlock", path: "(unsafe_block)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_UNSAFE_BLOCK_UNSAFE_BLOCK_AFTER, path: "(unsafe_block)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_UNSAFE_BLOCK_UNSAFE_BLOCK_BEFORE, path: "(unsafe_block)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "unsafe_keyword", path: "(unsafe_block)/\"unsafe\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "unsafeKeyword", path: "(unsafe_block)/\"unsafe\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_UNSAFE_BLOCK_UNSAFE_KEYWORD_AFTER, path: "(unsafe_block)/\"unsafe\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "use_as_clause", path: "(use_as_clause)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "useAsClause", path: "(use_as_clause)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_AS_CLAUSE_USE_AS_CLAUSE_AFTER, path: "(use_as_clause)/after" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "as_keyword", path: "(use_as_clause)/\"as\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "asKeyword", path: "(use_as_clause)/\"as\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_AS_CLAUSE_AS_KEYWORD_AFTER, path: "(use_as_clause)/\"as\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_AS_CLAUSE_AS_KEYWORD_BEFORE, path: "(use_as_clause)/\"as\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_AS_CLAUSE_USE_AS_CLAUSE_BEFORE, path: "(use_as_clause)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "use_bounds", path: "(use_bounds)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "useBounds", path: "(use_bounds)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_BOUNDS_USE_BOUNDS_AFTER, path: "(use_bounds)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_BOUNDS_USE_BOUNDS_BEFORE, path: "(use_bounds)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "gt", path: "(use_bounds)/\">\"", children: &[
@@ -9913,11 +9913,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_BOUNDS_LT_AFTER, path: "(use_bounds)/\"<\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_BOUNDS_LT_BEFORE, path: "(use_bounds)/\"<\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "use_keyword", path: "(use_bounds)/\"use\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "useKeyword", path: "(use_bounds)/\"use\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_BOUNDS_USE_KEYWORD_AFTER, path: "(use_bounds)/\"use\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "use_bounds_elements", path: "(use_bounds_elements)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "useBoundsElements", path: "(use_bounds_elements)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_BOUNDS_ELEMENTS_USE_BOUNDS_ELEMENTS_AFTER, path: "(use_bounds_elements)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_BOUNDS_ELEMENTS_USE_BOUNDS_ELEMENTS_BEFORE, path: "(use_bounds_elements)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "element", path: "(use_bounds_elements)/element:", children: &[
@@ -9935,16 +9935,16 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_BOUNDS_ELEMENTS_ELEMENT_START, path: "(use_bounds_elements)/element:/start" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "use_clauses", path: "(use_clauses)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "useClauses", path: "(use_clauses)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_CLAUSES_USE_CLAUSES_AFTER, path: "(use_clauses)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_CLAUSES_USE_CLAUSES_BEFORE, path: "(use_clauses)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "use_clause", path: "(use_clauses)/use_clause:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "useClause", path: "(use_clauses)/use_clause:", children: &[
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_USE_CLAUSES_USE_CLAUSE, path: "(use_clauses)/use_clause:/delimiter" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_CLAUSES_USE_CLAUSE_END, path: "(use_clauses)/use_clause:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "scoped_identifier", path: "(use_clauses)/use_clause:/(scoped_identifier)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "scopedIdentifier", path: "(use_clauses)/use_clause:/(scoped_identifier)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_CLAUSES_USE_CLAUSE_SCOPED_IDENTIFIER_AFTER, path: "(use_clauses)/use_clause:/(scoped_identifier)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "scoped_use_list", path: "(use_clauses)/use_clause:/(scoped_use_list)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "scopedUseList", path: "(use_clauses)/use_clause:/(scoped_use_list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_CLAUSES_USE_CLAUSE_SCOPED_USE_LIST_AFTER, path: "(use_clauses)/use_clause:/(scoped_use_list)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(use_clauses)/use_clause:/separator", children: &[
@@ -9954,29 +9954,29 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
                 ] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_CLAUSES_USE_CLAUSE_START, path: "(use_clauses)/use_clause:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "use_as_clause", path: "(use_clauses)/use_clause:/(use_as_clause)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "useAsClause", path: "(use_clauses)/use_clause:/(use_as_clause)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_CLAUSES_USE_CLAUSE_USE_AS_CLAUSE_AFTER, path: "(use_clauses)/use_clause:/(use_as_clause)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "use_list", path: "(use_clauses)/use_clause:/(use_list)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "useList", path: "(use_clauses)/use_clause:/(use_list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_CLAUSES_USE_CLAUSE_USE_LIST_AFTER, path: "(use_clauses)/use_clause:/(use_list)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "use_wildcard", path: "(use_clauses)/use_clause:/(use_wildcard)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "useWildcard", path: "(use_clauses)/use_clause:/(use_wildcard)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_CLAUSES_USE_CLAUSE_USE_WILDCARD_AFTER, path: "(use_clauses)/use_clause:/(use_wildcard)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "use_declaration", path: "(use_declaration)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "useDeclaration", path: "(use_declaration)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_DECLARATION_USE_DECLARATION_AFTER, path: "(use_declaration)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_DECLARATION_USE_DECLARATION_BEFORE, path: "(use_declaration)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "semi", path: "(use_declaration)/\";\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_DECLARATION_SEMI_BEFORE, path: "(use_declaration)/\";\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "use_keyword", path: "(use_declaration)/\"use\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "useKeyword", path: "(use_declaration)/\"use\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_DECLARATION_USE_KEYWORD_AFTER, path: "(use_declaration)/\"use\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_DECLARATION_USE_KEYWORD_BEFORE, path: "(use_declaration)/\"use\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "use_list", path: "(use_list)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "useList", path: "(use_list)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_LIST_USE_LIST_AFTER, path: "(use_list)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_LIST_USE_LIST_BEFORE, path: "(use_list)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrace", path: "(use_list)/\"{\"", children: &[
@@ -9986,35 +9986,35 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_LIST_RBRACE_BEFORE, path: "(use_list)/\"}\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "use_wildcard", path: "(use_wildcard)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "useWildcard", path: "(use_wildcard)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_WILDCARD_USE_WILDCARD_AFTER, path: "(use_wildcard)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_WILDCARD_USE_WILDCARD_BEFORE, path: "(use_wildcard)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "star", path: "(use_wildcard)/\"*\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_WILDCARD_STAR_BEFORE, path: "(use_wildcard)/\"*\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "use_wildcard_group", path: "(use_wildcard_group)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "useWildcardGroup", path: "(use_wildcard_group)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_WILDCARD_GROUP_USE_WILDCARD_GROUP_AFTER, path: "(use_wildcard_group)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_WILDCARD_GROUP_USE_WILDCARD_GROUP_BEFORE, path: "(use_wildcard_group)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "colon_colon", path: "(use_wildcard_group)/\"::\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "colonColon", path: "(use_wildcard_group)/\"::\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_USE_WILDCARD_GROUP_COLON_COLON_BEFORE, path: "(use_wildcard_group)/\"::\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "variadic_parameter", path: "(variadic_parameter)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "variadicParameter", path: "(variadic_parameter)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VARIADIC_PARAMETER_VARIADIC_PARAMETER_AFTER, path: "(variadic_parameter)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VARIADIC_PARAMETER_VARIADIC_PARAMETER_BEFORE, path: "(variadic_parameter)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(variadic_parameter)/\":\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VARIADIC_PARAMETER_COLON_AFTER, path: "(variadic_parameter)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VARIADIC_PARAMETER_COLON_BEFORE, path: "(variadic_parameter)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "dot_dot_dot", path: "(variadic_parameter)/\"...\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "dotDotDot", path: "(variadic_parameter)/\"...\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VARIADIC_PARAMETER_DOT_DOT_DOT_BEFORE, path: "(variadic_parameter)/\"...\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "mutable_specifier", path: "(variadic_parameter)/mutable_specifier:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "mutableSpecifier", path: "(variadic_parameter)/mutable_specifier:", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VARIADIC_PARAMETER_MUTABLE_SPECIFIER_AFTER, path: "(variadic_parameter)/mutable_specifier:/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "visibility_modifier_group", path: "(visibility_modifier_group)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "visibilityModifierGroup", path: "(visibility_modifier_group)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_GROUP_VISIBILITY_MODIFIER_GROUP_AFTER, path: "(visibility_modifier_group)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_GROUP_VISIBILITY_MODIFIER_GROUP_BEFORE, path: "(visibility_modifier_group)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(visibility_modifier_group)/\"(\"", children: &[
@@ -10024,35 +10024,35 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_GROUP_RPAREN_BEFORE, path: "(visibility_modifier_group)/\")\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "visibility_modifier_pub", path: "(visibility_modifier_pub)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "visibilityModifierPub", path: "(visibility_modifier_pub)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_AFTER, path: "(visibility_modifier_pub)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_BEFORE, path: "(visibility_modifier_pub)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "pub_keyword", path: "(visibility_modifier_pub)/\"pub\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "pubKeyword", path: "(visibility_modifier_pub)/\"pub\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_PUB_KEYWORD_AFTER, path: "(visibility_modifier_pub)/\"pub\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "visibility_modifier_pub_in_path", path: "(visibility_modifier_pub_in_path)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "visibilityModifierPubInPath", path: "(visibility_modifier_pub_in_path)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_VISIBILITY_MODIFIER_PUB_IN_PATH_AFTER, path: "(visibility_modifier_pub_in_path)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_VISIBILITY_MODIFIER_PUB_IN_PATH_BEFORE, path: "(visibility_modifier_pub_in_path)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "in_keyword", path: "(visibility_modifier_pub_in_path)/\"in\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "inKeyword", path: "(visibility_modifier_pub_in_path)/\"in\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_IN_AFTER, path: "(visibility_modifier_pub_in_path)/\"in\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "where_clause", path: "(where_clause)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "whereClause", path: "(where_clause)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_WHERE_CLAUSE_WHERE_CLAUSE_AFTER, path: "(where_clause)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_WHERE_CLAUSE_WHERE_CLAUSE_BEFORE, path: "(where_clause)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "where_keyword", path: "(where_clause)/\"where\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "whereKeyword", path: "(where_clause)/\"where\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_WHERE_CLAUSE_WHERE_KEYWORD_AFTER, path: "(where_clause)/\"where\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "where_predicate", path: "(where_predicate)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "wherePredicate", path: "(where_predicate)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_WHERE_PREDICATE_WHERE_PREDICATE_AFTER, path: "(where_predicate)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_WHERE_PREDICATE_WHERE_PREDICATE_BEFORE, path: "(where_predicate)/before" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "where_predicates", path: "(where_predicates)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "wherePredicates", path: "(where_predicates)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_WHERE_PREDICATES_WHERE_PREDICATES_AFTER, path: "(where_predicates)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_WHERE_PREDICATES_WHERE_PREDICATES_BEFORE, path: "(where_predicates)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "where_predicate", path: "(where_predicates)/where_predicate:", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "wherePredicate", path: "(where_predicates)/where_predicate:", children: &[
             ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_WHERE_PREDICATES_WHERE_PREDICATE, path: "(where_predicates)/where_predicate:/delimiter" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_WHERE_PREDICATES_WHERE_PREDICATE_END, path: "(where_predicates)/where_predicate:/end" }] },
             ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(where_predicates)/where_predicate:/separator", children: &[
@@ -10062,27 +10062,27 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
                 ] },
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_WHERE_PREDICATES_WHERE_PREDICATE_START, path: "(where_predicates)/where_predicate:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "where_predicate", path: "(where_predicates)/where_predicate:/(where_predicate)", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "wherePredicate", path: "(where_predicates)/where_predicate:/(where_predicate)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_WHERE_PREDICATES_WHERE_PREDICATE_WHERE_PREDICATE_AFTER, path: "(where_predicates)/where_predicate:/(where_predicate)/after" }] },
             ] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "while_expression", path: "(while_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "whileExpression", path: "(while_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_WHILE_EXPRESSION_WHILE_EXPRESSION_AFTER, path: "(while_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_WHILE_EXPRESSION_WHILE_EXPRESSION_BEFORE, path: "(while_expression)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(while_expression)/\":\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_WHILE_EXPRESSION_COLON_AFTER, path: "(while_expression)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_WHILE_EXPRESSION_COLON_BEFORE, path: "(while_expression)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "while_keyword", path: "(while_expression)/\"while\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "whileKeyword", path: "(while_expression)/\"while\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_WHILE_EXPRESSION_WHILE_KEYWORD_AFTER, path: "(while_expression)/\"while\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_WHILE_EXPRESSION_WHILE_KEYWORD_BEFORE, path: "(while_expression)/\"while\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "yield_expression", path: "(yield_expression)", children: &[
+    ::sittir_core::options::AddressNode::Branch { key: "yieldExpression", path: "(yield_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_YIELD_EXPRESSION_YIELD_EXPRESSION_AFTER, path: "(yield_expression)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_YIELD_EXPRESSION_YIELD_EXPRESSION_BEFORE, path: "(yield_expression)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "yield_keyword", path: "(yield_expression)/\"yield\"", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "yieldKeyword", path: "(yield_expression)/\"yield\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_YIELD_EXPRESSION_YIELD_KEYWORD_AFTER, path: "(yield_expression)/\"yield\"/after" }] },
         ] },
     ] },
@@ -10125,12 +10125,12 @@ mod resolve_tests {
 
     #[test]
     fn an_unknown_key_beneath_a_branch_names_the_branch() {
-        assert_eq!(resolve("{\"abstract_type\":{\"no_such_address\":1}}"), Err("options: (abstract_type)/no_such_address names no site".to_string()));
+        assert_eq!(resolve("{\"abstractType\":{\"no_such_address\":1}}"), Err("options: (abstract_type)/no_such_address names no site".to_string()));
     }
 
     #[test]
     fn a_differing_admitted_value_changes_only_its_own_sites() {
-        let table = resolve("{\"abstract_type\":{\"after\":165}}").unwrap();
+        let table = resolve("{\"abstractType\":{\"after\":165}}").unwrap();
         let expected = defaults();
         let named = [SITE_ABSTRACT_TYPE_ABSTRACT_TYPE_AFTER];
         for i in 0..table.spacing.len() {
@@ -10142,11 +10142,11 @@ mod resolve_tests {
 
     #[test]
     fn a_value_the_site_does_not_admit_is_refused_with_its_path() {
-        assert_eq!(resolve("{\"abstract_type\":{\"after\":65535}}"), Err("options: (abstract_type)/after does not admit kind id 65535 (allowed: [165, 166, 167, 168, 169, 170])".to_string()));
+        assert_eq!(resolve("{\"abstractType\":{\"after\":65535}}"), Err("options: (abstract_type)/after does not admit kind id 65535 (allowed: [165, 166, 167, 168, 169, 170])".to_string()));
     }
 
     #[test]
     fn an_unbalanced_indent_is_refused() {
-        assert_eq!(resolve("{\"abstract_type\":{\"after\":169}}"), Err("options: abstract_type opens an indent it never dedents".to_string()));
+        assert_eq!(resolve("{\"abstractType\":{\"after\":169}}"), Err("options: abstract_type opens an indent it never dedents".to_string()));
     }
 }

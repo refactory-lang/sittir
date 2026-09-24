@@ -9,7 +9,7 @@ import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { rustStringLiteral } from './render-body.ts';
-import { nestedKey, type AddressBranchEntry, type AddressLeafEntry, type AddressTables } from './options.ts';
+import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, type ChildIndex } from './options.ts';
 
 export type SeamStrength = 0 | 1 | 2;
 
@@ -219,55 +219,24 @@ function siteRefsOf(leaf: AddressLeafEntry, siteIndex: SiteIndex): SitePath[] {
 	return refs;
 }
 
-interface DirectChild {
-	readonly key: string;
-	readonly branch?: AddressBranchEntry;
-	readonly leaf?: AddressLeafEntry;
-}
-
-type ChildIndex = ReadonlyMap<string, readonly DirectChild[]>;
-
-function childIndexOf(addresses: AddressTables, kindEntries: readonly KindEntryLike[]): ChildIndex {
-	const index = new Map<string, DirectChild[]>();
-	const add = (parent: readonly PreferenceSegment[], child: DirectChild): void => {
-		const key = formatPreferencePath(parent);
-		const bucket = index.get(key);
-		if (bucket === undefined) index.set(key, [child]);
-		else bucket.push(child);
-	};
-	for (const b of addresses.branches) add(b.segments.slice(0, -1), { key: nestedKey(b.segments[b.segments.length - 1]!, kindEntries), branch: b });
-	for (const l of addresses.leaves) add(l.segments.slice(0, -1), { key: nestedKey(l.segments[l.segments.length - 1]!, kindEntries), leaf: l });
-	return index;
-}
-
 function siteConstOf(ref: SitePath, plan: RenderOptionsPlan): string {
 	return ref.site === 'spacing' ? plan.spacingSites[ref.index]!.constName : plan.delimiterSites[ref.index]!.constName;
 }
 
-function emitAddressLevel(
-	prefix: readonly PreferenceSegment[],
-	keys: readonly string[],
-	indent: string,
-	plan: RenderOptionsPlan,
-	childIndex: ChildIndex,
-	siteIndex: SiteIndex
-): string[] {
-	const direct = childIndex.get(formatPreferencePath(prefix)) ?? [];
-	return keys.flatMap((key) => {
-		const child = direct.find((c) => c.key === key);
-		if (child === undefined) throw new Error(`options.rs: address '${key}' beneath '${formatPreferencePath(prefix)}' is neither a site nor a path`);
+function emitAddressLevel(prefix: readonly PreferenceSegment[], indent: string, plan: RenderOptionsPlan, childIndex: ChildIndex, siteIndex: SiteIndex): string[] {
+	return (childIndex.get(formatPreferencePath(prefix)) ?? []).flatMap((child) => {
 		if (child.branch !== undefined) {
 			const segments = child.branch.segments;
 			return [
-				`${indent}::sittir_core::options::AddressNode::Branch { key: ${q(key)}, path: ${q(formatPreferencePath(segments))}, children: &[`,
-				...emitAddressLevel(segments, child.branch.children, `${indent}    `, plan, childIndex, siteIndex),
+				`${indent}::sittir_core::options::AddressNode::Branch { key: ${q(child.key)}, path: ${q(formatPreferencePath(segments))}, children: &[`,
+				...emitAddressLevel(segments, `${indent}    `, plan, childIndex, siteIndex),
 				`${indent}] },`
 			];
 		}
 		const refs = siteRefsOf(child.leaf!, siteIndex);
 		const variant = refs[0]!.site === 'spacing' ? 'Spacing' : 'Delimiter';
 		const sites = refs.map((ref) => `::sittir_core::options::SiteRef { site: ${siteConstOf(ref, plan)}, path: ${q(ref.path)} }`).join(', ');
-		return [`${indent}::sittir_core::options::AddressNode::${variant} { key: ${q(key)}, sites: &[${sites}] },`];
+		return [`${indent}::sittir_core::options::AddressNode::${variant} { key: ${q(child.key)}, sites: &[${sites}] },`];
 	});
 }
 
@@ -275,7 +244,7 @@ function emitAddressTrie(plan: RenderOptionsPlan, addresses: AddressTables, site
 	const childIndex = childIndexOf(addresses, kindEntries);
 	return [
 		'pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[',
-		...emitAddressLevel([], addresses.roots, '    ', plan, childIndex, siteIndex),
+		...emitAddressLevel([], '    ', plan, childIndex, siteIndex),
 		'];',
 		''
 	];
@@ -287,7 +256,7 @@ interface SmokeLeaf {
 }
 
 function smokeLeavesOf(addresses: AddressTables, siteIndex: SiteIndex, kindEntries: readonly KindEntryLike[]): SmokeLeaf[] {
-	return addresses.leaves.map((leaf) => ({ keys: leaf.segments.map((segment) => nestedKey(segment, kindEntries)), refs: siteRefsOf(leaf, siteIndex) }));
+	return addresses.leaves.map((leaf) => ({ keys: leaf.segments.map((segment) => optionKey(segment, kindEntries)), refs: siteRefsOf(leaf, siteIndex) }));
 }
 
 function jsonAt(keys: readonly string[], value: unknown): string {
@@ -324,7 +293,7 @@ function resolveTests(plan: RenderOptionsPlan, addresses: AddressTables, siteInd
 	];
 	const branch = addresses.branches[0];
 	if (branch !== undefined) {
-		const keys = branch.segments.map((segment) => nestedKey(segment, kindEntries));
+		const keys = branch.segments.map((segment) => optionKey(segment, kindEntries));
 		L.push(
 			'',
 			'    #[test]',

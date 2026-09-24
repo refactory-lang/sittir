@@ -6893,6 +6893,35 @@ A pattern leaf that some slot admits as a hidden text leaf (`hiddenTextLeafKinds
 // through generic helpers rather than a flat alias.
 ```
 
+### `packages/codegen/src/emitters/types.ts::EmittedSupertype`
+
+A supertype union `emitSupertypeUnionDeclarations` wrote: its kind, its type
+name, and whether a `Tree` union was written beside it.
+
+### `packages/codegen/src/emitters/types.ts::supertypeTypeName`
+
+The type name a supertype's union is declared under: the node's own
+`typeName`, else the Pascal-cased kind without its leading underscore.
+
+### `packages/codegen/src/emitters/types.ts::emitSupertypeNamespaces`
+
+`export namespace X { Kind; Tree }` for every emitted supertype, so a
+supertype has the same kind of home a struct kind has. It merges with the
+union alias of the same name.
+
+### `packages/codegen/src/emitters/types.ts::emitOptionsHints`
+
+`OptionsHintMap` and one `export namespace X { export interface Hints {
+readonly __optionsHint__?: … } }` per kind that has option sites: struct
+kinds, supertypes and enum leaves alike, each namespace merging with the
+kind's interface or alias. The hint lives in the namespace, not on the node
+interface, because a member on the node interfaces is re-examined by every
+derived surface (`Built`, `Loose`, `Tree`, the namespace map) and cost about
+30k instantiations on the typescript grammar however its type was spelled;
+in the namespace it costs nothing until `Options` is read. A hidden kind
+and its visible twin share a key (`rootKeyOf`); the visible one is kept,
+and two hidden spellings for one key fail at codegen.
+
 ### `packages/codegen/src/emitters/types.ts::leafTextType`
 
 ```text
@@ -15566,25 +15595,21 @@ Flattened parents emit last as plain route objects (`export const <parent> = { <
 
 ### `packages/codegen/src/emitters/options.ts::renderOptionsModule`
 
-Source text for `options.ts`: the type-only import of the enums the sites
-name, `SpacingArm` (the kind ids of the grammar's `_whitespace` members a
-separator admits, `spacingArmsOf`), `WhitespaceArm` (every member, including
-`indent` and `dedent`, which a seam, edge or flank admits when the grammar
-renders indentation; `whitespaceArmsOf`) — named for the arm they type, since
-`types.ts` already exports the supertype's own `Whitespace` union and the
-package index re-exports both modules — the address tables and
-the `AddressedOptions` type mapped over them (`addressLines`), and
-`Options`, which is that mapped type plus `indent`. Every site is reached
-by its address alone, nested as the path is written; there is no flat
-key, no per-kind object and no runtime catalog — the facts that resolve
-an options object live in the render crate's path table.
+Source text for `options.ts`: a re-export of `SpacingArm` and `WhitespaceArm`
+(declared in `types.ts`, where the hints that use them live), `LabelOptions`,
+and `Options = DerivedOptions<T.OptionsHintMap> & LabelOptions`. There is no
+address table and no mapped type over one: every kind's sites are already on
+its namespace as `X.Hints` (`emitOptionsHints`), `OptionsHintMap` points at
+them by camel key, and `DerivedOptions` in `@sittir/types` is a plain mapped
+type over that map, so each property resolves lazily. `indent` comes with
+`DerivedOptions`. Without arm aliases (a grammar with no sites) the two
+aliases are declared `never` here instead of re-exported.
 
 ### `packages/codegen/src/emitters/options.ts::OptionsModuleInputs`
 
-What the module is written from: the spacing and whitespace arm lists read
-off the grammar's `_whitespace` supertype, so a leaf whose arms are exactly
-one of them is written as `SpacingArm` or `WhitespaceArm` rather than spelled
-out, and the address tables.
+What the module is written from: the arm aliases (`armAliasesOf`) and the
+hint emitter over the address tables (`hintEmitterOf`), whose label roots
+become `LabelOptions`.
 
 ### `packages/codegen/src/emitters/options.ts::addressTablesFor`
 
@@ -15593,26 +15618,99 @@ out, and the address tables.
  *  the declared `options:` block read against the grammar's public kind
  *  names, and the supertype-membership map — from a node map, kind catalog
  *  and already-collected sites. `emit.ts` calls this once per grammar and
- *  threads the resulting `AddressTables` into both `emitOptions` and
- *  `emitRenderModule`, so the TypeScript `AddressedOptions` type and the
- *  generated Rust structs are never derived from two independent builds of
- *  the same inputs. A caller with no `AddressTables` in hand yet (a test)
+ *  threads the resulting `AddressTables` into `emitTypes`, `emitOptions` and
+ *  `emitRenderModule`, so the TypeScript hints and the Rust address trie are
+ *  never derived from two independent builds of the same inputs. A caller with no `AddressTables` in hand yet (a test)
  *  may call this directly; production has exactly one call site. */
 ```
 
 ### `packages/codegen/src/emitters/options.ts::emitOptions`
 
-```text
-/**
- * `options.ts` for one grammar package, from the site preferences read off
- * the model and the spaced render rules (collectSitePreferences), the
- * supertype members map and the kind catalog. The catalog is required:
- * option values are typed by kind id and there is no fallback spelling.
- * `config.addresses`, when the caller already built one (`addressTablesFor`
- * in `emit.ts`), is used as-is; otherwise it is derived here through the
- * same helper.
- */
-```
+`options.ts` for one grammar package, from the site preferences
+(`collectSitePreferences`, unless the caller passes them), the kind catalog
+and the address tables (`config.addresses` when `emit.ts` already built them
+through `addressTablesFor`). The catalog is required: option values are typed
+by kind id and there is no fallback spelling.
+
+### `packages/codegen/src/emitters/options.ts::optionKey`
+
+The key a segment is written under on the options surface, in TypeScript
+and in the Rust trie alike: `snakeToCamel` of its `nestedKey`. It is the one
+casing of an option key. Canonical paths (the `options:` block, error
+messages, `SiteRef.path`) keep the grammar's snake spelling; only the key a
+caller writes is camel-cased. A serde or napi rename on the Rust side would
+be a second casing implementation, and the trie is a codegen table, not a
+derived struct, so the rename happens here once.
+
+### `packages/codegen/src/emitters/options.ts::rootKeyOf`
+
+The option key of a kind at the root: `snakeToCamel` of its public (leading
+underscores dropped) name, so a hidden kind and its visible twin share one
+key and `emitOptionsHints` keeps the visible one.
+
+### `packages/codegen/src/emitters/options.ts::DirectChild`
+
+One address one segment below some prefix: its snake `name` (the order key),
+its option `key`, and whichever of `branch`/`leaf` it is.
+
+### `packages/codegen/src/emitters/options.ts::ChildIndex`
+
+Every branch and leaf bucketed by its parent's canonical address, each bucket
+sorted by snake name, so the hint printer and the trie printer walk the same
+children in the same order with one lookup per level.
+
+### `packages/codegen/src/emitters/options.ts::childIndexOf`
+
+Builds the `ChildIndex`. Takes `kindEntries` because a literal segment's
+name is its token's kind name (`nestedKey`), the same derivation the address
+tables used for `path` and `children`.
+
+### `packages/codegen/src/emitters/options.ts::ArmAliases`
+
+The two arm unions every whitespace leaf is typed by: `spacingType` (the
+`_whitespace` members a separator admits) and `whitespaceType` (every member,
+indent and dedent included when some site admits depth, else the same as
+`spacingType`).
+
+### `packages/codegen/src/emitters/options.ts::armAliasesOf`
+
+`ArmAliases` for a grammar, from `spacingArmsOf`/`whitespaceArmsOf` and
+whether any site admits depth. `types.ts` declares the aliases from it and
+`options.ts` re-exports them, so there is one source.
+
+### `packages/codegen/src/emitters/options.ts::armAliasName`
+
+Writes a leaf type as `SpacingArm` or `WhitespaceArm` when it is exactly one
+of the two unions, and as itself otherwise.
+
+### `packages/codegen/src/emitters/options.ts::HintEmitter`
+
+What the types and options emitters read off the address tables: the hint
+body for a root (`hintOf`), and the roots that are labels rather than kinds
+(`labelRoots`).
+
+### `packages/codegen/src/emitters/options.ts::hintEmitterOf`
+
+Prints each root's sites as one nested object type, from the same
+`ChildIndex` the Rust trie is printed from, so the two surfaces cannot
+disagree on which sites exist. Every level is optional, so the hint is the
+option shape a caller writes and no deep-partial wrapper is needed. A root
+that is not a kind name (`kinds`, the public names) is a label. An address
+that is a site at the root has no hint home and fails at codegen.
+
+### `packages/codegen/src/emitters/options.ts::publicKindNames`
+
+Every kind's public name (`publicKindName`), the set `hintEmitterOf` tells
+kinds from labels by.
+
+### `render options: LabelOptions` (emitted into `options.ts`)
+
+The virtual kinds a grammar declares in its `options:` block (`body`,
+`quotes`, `statements`, …), each typed by the sites bound to it, keyed and
+nested like the kind hints. They are not kinds, so they have no namespace to
+carry a hint; this interface is their home. It is derived from the label
+roots of the same address tables, not kept by hand, and it is the only
+residual table on the TypeScript options surface.
 
 ### `packages/codegen/src/emitters/templates.ts::hasFlankSignal`
 
@@ -15826,13 +15924,6 @@ Builds a `SiteIndex`: every `plan.sitePaths` entry keyed by
 `formatPreferencePath` of its own `segments`, the canonical string identity
 `siteRefsOf`, `childIndexOf` and `emitAddressLevel` all share.
 
-### `packages/codegen/src/emitters/render-options-rs.ts::DirectChild`
-
-```text
-/** One address one segment below some prefix: the JS property key it is
- *  reached by, and whichever of `branch`/`leaf` it actually is. */
-```
-
 ### `packages/codegen/src/emitters/render-options-rs.ts::resolveTests`
 
 The generated `#[cfg(test)] mod resolve_tests`, one smoke test per error
@@ -15854,19 +15945,20 @@ spacing or delimiter site it indexes.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::emitAddressLevel`
 
-One level of `ADDRESSES`: for each key beneath `prefix`, in the order the
-address tables list it, an `AddressNode::Branch` carrying its canonical path
-(the `at` an unknown key beneath it is reported against) and its children
-recursively, or an `AddressNode::Spacing`/`Delimiter` leaf carrying every
-`SiteRef` (site constant plus canonical path) its `canonical` entries name.
-A key that is neither a branch nor a leaf under that prefix is a codegen-time
-error.
+One level of `ADDRESSES`: every child beneath `prefix` from the shared
+`ChildIndex`, in its snake-name order, as an `AddressNode::Branch` carrying
+its canonical path (the `at` an unknown key beneath it is reported against)
+and its children recursively, or an `AddressNode::Spacing`/`Delimiter` leaf
+carrying every `SiteRef` (site constant plus canonical path) its `canonical`
+entries name. The key is the child's `optionKey`, the same camel spelling
+the TypeScript hint uses, so the key a caller writes is the key the trie
+matches.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::emitAddressTrie`
 
 `pub static ADDRESSES: &[AddressNode]`, the whole address trie from the
-roots down (`emitAddressLevel`), with a `ChildIndex` built once for the emit.
-Keys are `nestedKey` spellings, the keys the TypeScript `Options` type admits.
+roots down (`emitAddressLevel`), over one `ChildIndex` (`childIndexOf`)
+built for the emit, the same index the TypeScript hints are printed from.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::SmokeLeaf`
 
@@ -16138,16 +16230,6 @@ mismatch is rejected as `options: address '<path>' names two segments`.
 A key that is both a branch and a leaf, or an address resolving to two types, is
 rejected: an address names one site or a set of them, never both.
 
-### `render options: AddressedOptions` (emitted into `options.ts`)
-
-The nested face of the address tables, as a mapped type over `AddressRoot` that
-descends through `AddressBranch` and bottoms out in `AddressLeaf`. It is
-unrolled rather than recursive, one level per depth the grammar has, so the
-checker never has to bound a recursion it cannot see the end of.
-
-It is the whole of `Options` beside `indent`: every site has exactly one
-spelling, its address, and an excess-property check refuses any other key.
-
 ### `packages/codegen/src/emitters/options.ts::deriveAddressTables` — supertype membership
 
 Takes the public-name members map so a binding or declaration spelled on a
@@ -16195,9 +16277,9 @@ exists.
 
 ### `packages/codegen/src/emitters/options.ts::nestedKey`
 
-The one derivation of a nested option object's key, shared by the TS type
-emitter (`AddressedOptions`) and the Rust struct emitter
-(`render-options-rs.ts`): an index segment's number as a string, `_` for a
+The one derivation of a segment's snake name, the order key of the shared
+`ChildIndex` and the input to `optionKey`, which the TypeScript hints and
+the Rust trie both write keys with: an index segment's number as a string, `_` for a
 wildcard, a named segment's own name, and — for a literal segment — the
 anonymous token's own kind name (`findEntryForLiteralText`), never its raw
 text. The kind name it reads is `generated-metadata.ts::deriveSymbolRuntimeName`'s
@@ -16231,22 +16313,6 @@ segments that would spell the same nested key distinguishable.
  *  `plan.sitePaths` rather than by string; the formatted form is produced
  *  only where a message or an `at` prefix needs one. */
 ```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::ChildIndex`
-
-```text
-/** Every branch/leaf bucketed by its own parent's canonical address, built
- *  once per emit so a struct's fields resolve by one lookup instead of a
- *  scan over every branch and leaf in the grammar. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::childIndexOf`
-
-Every branch/leaf bucketed by its own parent's canonical address, so a
-struct's fields resolve by one lookup instead of a scan over every branch and
-leaf in the grammar. Takes `kindEntries` because bucketing a child under its
-parent keys it by `nestedKey(segment, kindEntries)`, the same derivation the
-address tables used to build `path` and `children` in the first place.
 
 ### `packages/codegen/src/emitters/factories.ts::hiddenTextLeaves`
 

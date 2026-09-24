@@ -129,7 +129,7 @@ describe('renderOptionsRs', () => {
 		const addresses = deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries as never), (() => []) as never);
 		const source = renderOptionsRs(plan, addresses, kindEntries);
 		expect(source).toContain('pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[');
-		expect(source).toContain('::sittir_core::options::AddressNode::Branch { key: "formal_parameters", path: "(formal_parameters)", children: &[');
+		expect(source).toContain('::sittir_core::options::AddressNode::Branch { key: "formalParameters", path: "(formal_parameters)", children: &[');
 		expect(source).toContain('::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_FORMAL_PARAMETERS_ELEMENTS, path: "(formal_parameters)/elements:/delimiter" }] },');
 		expect(source).toContain(
 			'::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER, path: "(formal_parameters)/elements:/separator/\\",\\"/after" }] },'
