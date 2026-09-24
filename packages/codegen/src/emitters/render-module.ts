@@ -7,9 +7,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
-	AssembledBranch,
 	AbstractAssembledCompound,
-	AssembledEnvelope,
 	AssembledPolymorph,
 	AssembledEnum,
 	AssembledKeyword,

@@ -1,4 +1,4 @@
-import type { AuthoredCompound, SlotBearingCompound } from '../compiler/model/node-map.ts';
+import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isVisibleTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
 import {
@@ -26,14 +26,11 @@ import {
 import {
 	type AssembledNode,
 	type AssembledNonterminal,
-	type AssembledBranch,
 	AssembledPattern,
 	AssembledAlias,
 	AssembledEnum,
 	AbstractAssembledCompound,
 	AssembledList,
-	AssembledEnvelope,
-	AssembledPolymorph,
 	AssembledSupertype,
 	AssembledKeyword,
 	AssembledPunctuation,

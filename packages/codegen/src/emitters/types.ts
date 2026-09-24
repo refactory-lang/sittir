@@ -48,10 +48,7 @@ function kindDiscriminantOrLiteral(
 }
 import type {
 	AssembledNode,
-	AssembledNonterminal,
-	AssembledBranch,
-	AssembledEnvelope,
-	AssembledPolymorph
+	AssembledNonterminal
 } from '../compiler/model/node-map.ts';
 import { AssembledAlias, AssembledList, AssembledEnum, fixedTextOfKind, snakeToCamel } from '../compiler/model/node-map.ts';
 import { loadRawEntries } from '../validate/node-types-loader.ts';

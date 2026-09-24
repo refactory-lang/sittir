@@ -1,9 +1,9 @@
 {
   "grammar": "python",
-  "source_hash": "22d2a33d9b57972df42a3e0da8bf5bf39e221222bab0aace5ec1becc90114cb6",
+  "source_hash": "a89bf29b2293d4c441fc42fe6508e82f92a860e264c6c759e7f117a36fa7ff3a",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "b71306e1a03c58aa047ef241b0ae5c48ccb3c815a2be659060b7b0a3669b2f4e",
-    "packages/python/.sittir/grammar.js": "a964f1eb9b435e6125db5f9dab86543f41ba06261d3fdf90088da52f5027b098",
+    "packages/python/.sittir/grammar.js": "e700f6d6046ef8c942bed2ef42289631f26cdc15d56ca3f74f1e70043507ae1e",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
     "packages/python/.sittir/parser.wasm": "3fbdb509852d3be323f79a4b7898128a3444da7190a14d3ba505c1f452dcf308",
     "packages/python/.sittir/render-bodies.json": "40f769e602b187c54d375ee208545c7c8c5dce884c451f1fb5ba51834a794353",
@@ -37,7 +37,7 @@
     "packages/python/src/render-engine.ts": "fcc45ec4608a066a7491d575700c3f1d704dfcf4048c8883feeb659a9b569018",
     "packages/python/src/types.ts": "a44cfb2d076504ca0f6a5c211e2824e8cdbf289e9fba64275d92b2eeab2f1359",
     "packages/python/src/utils.ts": "f8f77824ee54a193d42fffca5720665b0b0ef5abafbef9b6f5d824458978bab8",
-    "packages/python/src/wrap.ts": "748e7a91165b9979f9347a68e4ff7a1fae9ff43f33537b2fab409dc605821d3a",
+    "packages/python/src/wrap.ts": "d8a3e3968557dcdf0e024e81daed868902a647a0c13055fd6412c1fc1d76fff8",
     "rust/crates/sittir-python/index.d.ts": "c0a9f32a56320229f21502a39a555d7ca47c9d6bfe4e0417061165a7f4a5309f",
     "rust/crates/sittir-python/index.js": "5e33261f669652249b6a82047b8c48b87e7c9f1265e772b799933c2bc5b0b3ec",
     "rust/crates/sittir-python/src/lib.rs": "23612603cf55b0da45718ce7b29abfebf8bf4f8222152d4ca55ed4611a9960e8",

@@ -5,11 +5,8 @@ import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './ov
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type {
-	AssembledBranch,
-	AssembledEnvelope,
 	AssembledNode,
 	AssembledNonterminal,
-	AssembledPolymorph,
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
 import {
