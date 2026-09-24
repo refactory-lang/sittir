@@ -254,41 +254,88 @@ The seated child edges of one slot, keyed by the child kind each belongs to.
 
 ### `packages/codegen/src/emitters/render-module.ts::seatLoops`
 
-The seating for every repeat slot the parent holds: one walk per slot that
-writes each element's seated arm into that element's own trailing-edge field
-before the fill descends into it. Only a `Transport` element is seated; a
-`Coord` element renders its own bytes, gap included.
+One `fill_seated_gaps` call per repeat slot that has seated sites and whose
+elements can reach a seat (`slotElementsReach`), passing the slot's seat
+table (`SEATS_<KIND>_<SLOT>`). The runtime walks the elements, so there is
+no per-list match block: each element answers its own seat through
+`SeatTarget`. An optional slot is unwrapped first; a slot whose elements may
+be absent is iterated through `Option::as_mut`, a required one through
+`Some`, so one core function serves both.
 
-The walk skips the last element. A child's edge is written at the end of its
-own body and cannot know whether a sibling follows, so seating the final
-element would leak the gap past the end of the list — `extern"C"fn foo`
-became `extern"C"\nfn foo` when it did. Skipping it leaves that element's edge
-on the kind's own global arm, which is what a trailing edge should be, and
-makes "a sibling gap belongs to the child before it" literally true: element
-*i* is seated only when there is an *i+1*.
+The core walk skips the last element. A child's edge is written at the end
+of its own body and cannot know whether a sibling follows, so seating the
+final element would leak the gap past the end of the list
+(`extern"C"fn foo` became `extern"C"\nfn foo` when it did). Skipping it
+leaves that element's edge on the kind's own arm, which makes "a sibling gap
+belongs to the child before it" literally true: element *i* is seated only
+when there is an *i+1*. The seating happens in the parent's prepare, not in
+the element's, because only the parent knows an element's position.
 
-The seating is applied here rather than inside the element enum's own
-`prepare` because only the parent's walk knows an element's position.
+### `packages/codegen/src/emitters/render-module.ts::SeatReach`
 
-### `packages/codegen/src/emitters/render-module.ts::seatVariantArms`
+Whether a kind can reach a seated element: a predicate over kind names,
+computed once per render plan (`seatReachOf`).
 
-How one slot's elements are reached. A slot carrying a per-slot or supertype
-enum matches its variants, each named from the shape the enum was emitted
-from so a suppressed kind is never named; a slot with a single concrete
-element type has no enum and takes the assignment directly.
+### `packages/codegen/src/emitters/render-module.ts::wrapperSlotOf`
 
-A variant that is not itself seated is walked through rather than skipped:
-a nested supertype variant opens a match on its own enum, and a polymorph
-parent with no seat of its own opens its one slot, recursively, so the
-assignment lands on the transport whose base `after` edge is seated
-(`t.edges_mut().<side>`, the side read by `seatEdgeSide`). Every
-level rebinds `t` through `BorrowMut::borrow_mut`, which std implements for
-`T` and `Box<T>` alike, because a content slot may be boxed to break a
-recursive type and a pattern cannot see through a box; the annotated type on
-the rebinding picks the impl, so the emitter need not know which slots are
-boxed. Only a level that reaches a seat is emitted. The walk mirrors the
-seating in `seatedSites`, which expands the same kinds when it mints the
-sites; a seat with no arm would be a site the renderer never fills.
+The one slot a polymorph wrapper holds its content in, or `undefined` for a
+node that is not a polymorph wrapper (supertypes are excluded: they reach a
+seat through their subtypes, not a slot).
+
+### `packages/codegen/src/emitters/render-module.ts::slotElementsReach`
+
+Whether any element kind a slot admits reaches a seat, classified the way
+the transport emitter classifies the slot (`classifySlotForEmit`): a
+concrete kind is looked up directly, a supertype slot by its supertype kind,
+and a mixed slot through every concrete transport kind it expands to.
+
+### `packages/codegen/src/emitters/render-module.ts::seatedKindsOf`
+
+The public names of every kind some list seats (`site.seat.kind`): the
+kinds whose own base `after` edge a seat table fills.
+
+### `packages/codegen/src/emitters/render-module.ts::seatReachCache`
+
+`seatReachOf`'s memo, keyed weakly by the render plan so a plan's reach set
+is computed once and dropped with the plan.
+
+### `packages/codegen/src/emitters/render-module.ts::SEAT_TARGET_SIG`
+
+The emitted `seat_target` signature line, shared by the struct and enum
+impls so the two cannot drift from the core trait.
+
+### `packages/codegen/src/emitters/render-module.ts::seatReachOf`
+
+The `SeatReach` for a plan, as a fixpoint over the node map: a kind reaches
+a seat when it is seated itself, when it is a supertype one of whose subtypes
+reaches, or when it is a polymorph wrapper whose content slot's elements
+reach. Only kinds that reach get a `SeatTarget` impl, so the runtime descent
+follows data and the emitter needs no visited-set. Cached per plan, since
+every struct and enum impl asks it.
+
+### `packages/codegen/src/emitters/render-module.ts::seatTargetMatchImpl`
+
+`impl SeatTarget` for an enum (a supertype transport enum, a per-slot child
+enum, `AnyTransport`): each reaching variant delegates to its payload, and a
+non-exhaustive list falls through to `None`. An enum with no reaching
+variant gets no impl.
+
+### `packages/codegen/src/emitters/render-module.ts::seatTargetStructImpl`
+
+`impl SeatTarget` for one transport struct that reaches a seat. A seated
+kind looks itself up in the table by its kind id (`seat_site`) and answers
+its own base `edges` with the site; a polymorph wrapper that is not itself
+seated descends into its content slot. A wrapper keeps its own edges: the
+descent is a separate trait, not an `Edged` delegation, so filling a seat
+never overwrites the wrapper's own kind edges. A seated kind with no kind id
+fails at codegen.
+
+### `packages/codegen/src/emitters/render-module.ts::renderSeatTargets`
+
+Every `SeatTarget` impl for one render module, in one pass: struct impls for
+the reaching nodes, then match impls for the used supertype enums, the
+per-slot child enums and `AnyTransport`, each listing only the variants that
+reach.
 
 ### `packages/codegen/src/emitters/shared.ts::emitsPlainBuiltAlias`
 
@@ -15816,6 +15863,32 @@ the reader's gap classifier stamps per node. A token seam and a list flank
 have no per-node value; the body reads them from the resolved options with
 `w.site_at`, and a kind edge lives in the transport's base `edges`.
 
+### `packages/codegen/src/emitters/render-options-rs.ts::SeatTable`
+
+One slot's seat table before emission: its constant name and its rows (kind
+id, site index), sorted by kind id.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::seatTableName`
+
+`SEATS_<KIND>_<SLOT>`, the constant a slot's seat table is emitted under
+and `seatLoops` passes to `fill_seated_gaps`.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::seatEdgeSide`
+
+The side of a seated site's edge, read from the parsed label of the child's
+edge address the site carries (`seat.field`). A seat whose label is not the
+seated kind's own edge is a malformed site and fails generation.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::seatTablesOf`
+
+Groups every seated spacing site by its list (kind, slot) into a
+`SeatTable` keyed by the seated element's kind id, the id the transport
+carries for that element (for an alias element, the envelope's own id). A
+seat must fill the element's `after` edge (a sibling gap is the preceding
+element's own trailing edge); a seat on a `before` edge, a seated kind with
+no id, or one kind seated twice in the same list fails at codegen. The rows
+are written as a dense table indexed by kind id (`denseTable`).
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::DelimiterSite`
 
 ```text
@@ -16165,12 +16238,6 @@ The edge-row id of a kind that has kind-edge sites. A kind whose id is
 missing, or that `edgeSitesOf` dropped as ambiguous, has no row to prepare
 and write its edges from; generation fails here rather than rendering the
 kind with its edges silently gone.
-
-### `packages/codegen/src/emitters/render-module.ts::seatEdgeSide`
-
-The side of a seated site's edge, read from the parsed label of the child's
-edge address the site carries (`seat.field`). A seat whose label is not the
-seated kind's own edge is a malformed site and fails generation.
 
 ### `packages/codegen/src/emitters/render-module.ts::edgedImplLines`
 
