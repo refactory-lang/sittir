@@ -8,6 +8,7 @@ import {
 	isSeqType,
 	isStringType,
 	isSymbolType,
+	isTokenWrapperType,
 	typeEq,
 	type RuntimeRule
 } from '../types/runtime-shapes.ts';
@@ -17,6 +18,7 @@ import {
 	CHOICE,
 	DEDENT,
 	FIELD,
+	IMMEDIATE_TOKEN,
 	INDENT,
 	NEWLINE,
 	OPTIONAL,
@@ -60,7 +62,7 @@ export function classifyByType(
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
 		case 'PREC_DYNAMIC':
-		case 'IMMEDIATE_TOKEN':
+		case IMMEDIATE_TOKEN:
 			return anyChildNonterminal ? 'nonterminal' : 'terminal';
 		default:
 			return assertNever(ruleType);
@@ -83,7 +85,7 @@ function ruleChildren<Phase extends PhaseName>(rule: Rule<Phase>): readonly Rule
 		case 'PREC_LEFT':
 		case 'PREC_RIGHT':
 		case 'PREC_DYNAMIC':
-		case 'IMMEDIATE_TOKEN':
+		case IMMEDIATE_TOKEN:
 			return [anyRule.content as Rule<Phase>];
 		case SEQ:
 			return anyRule.members as Rule<Phase>[];
@@ -544,18 +546,14 @@ interface ExtractedToken {
 	readonly anonymous: boolean;
 }
 
-function isTokenWrapper(type: string): boolean {
-	return type === TOKEN || type === 'IMMEDIATE_TOKEN';
-}
-
 function extractedToken(rule: TokenShape): ExtractedToken | undefined {
 	const params: string[] = [];
 	let tokenized = false;
 	let current = rule;
 	for (;;) {
-		if (isTokenWrapper(current.type)) {
+		if (isTokenWrapperType(current.type)) {
 			tokenized = true;
-			if (current.type === 'IMMEDIATE_TOKEN') params.push('immediate');
+			if (current.type === IMMEDIATE_TOKEN) params.push('immediate');
 		} else if (isPrecWrapper(current)) {
 			params.push(`${current.type}:${String(current.value)}`);
 		} else break;
@@ -582,7 +580,7 @@ export function tokenUseCounts(rules: Readonly<Record<string, AnyRule>>): Map<st
 	const counts = new Map<string, number>();
 	const visit = (rule: TokenShape | undefined): void => {
 		if (rule === undefined || rule === null || typeof rule !== 'object') return;
-		if (isTokenWrapper(rule.type) || rule.type === STRING || rule.type === PATTERN) {
+		if (isTokenWrapperType(rule.type) || rule.type === STRING || rule.type === PATTERN) {
 			const token = extractedToken(rule);
 			if (token !== undefined) counts.set(token.key, (counts.get(token.key) ?? 0) + 1);
 			return;

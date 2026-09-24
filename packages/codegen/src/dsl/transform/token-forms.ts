@@ -1,4 +1,4 @@
-import { isChoiceType, isPrecWrapper, isSeqType, matchesEmpty, type RuntimeRule } from '../../types/runtime-shapes.ts';
+import { isChoiceType, isPrecWrapper, isSeqType, isTokenWrapperType, matchesEmpty, type RuntimeRule } from '../../types/runtime-shapes.ts';
 
 export type TokenChoiceClass = 'presence' | 'spelling' | 'forms';
 
@@ -12,8 +12,7 @@ const isBlank = (rule: RuntimeRule): boolean => typeOf(rule) === 'BLANK';
 const isString = (rule: RuntimeRule): boolean => typeOf(rule) === 'STRING';
 
 export function isTokenWrapper(rule: RuntimeRule): boolean {
-	const t = typeOf(rule);
-	return t === 'TOKEN' || t === 'IMMEDIATE_TOKEN';
+	return isTokenWrapperType(typeOf(rule));
 }
 
 export function classifyTokenChoice(choice: RuntimeRule): TokenChoiceClass {

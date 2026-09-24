@@ -3,6 +3,7 @@ import {
 	ALIAS,
 	CHOICE,
 	FIELD,
+	IMMEDIATE_TOKEN,
 	OPTIONAL,
 	PATTERN,
 	REPEAT,
@@ -232,7 +233,7 @@ function stripPrecedenceWrappers(rules: Record<string, Rule<'evaluate'>>): void 
 
 function foldImmediateTokenRule(rule: Rule<'evaluate'>): Rule<'evaluate'> {
 	const toToken = (r: Rule<'evaluate'>): Rule<'evaluate'> =>
-		r.type === 'IMMEDIATE_TOKEN'
+		r.type === IMMEDIATE_TOKEN
 			? ({
 					type: TOKEN,
 					content: (r as unknown as { content: Rule<'evaluate'> }).content,

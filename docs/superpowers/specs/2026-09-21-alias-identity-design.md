@@ -394,8 +394,9 @@ diagnostics in `2026-09-22-unsupported-shape-diagnostics-design.md`.
   accepts through a display.
 - For every `alias_sym_*` in each grammar's parser.c after enrich, the node
   model has exactly one AssembledEnvelope of that name, its content is the
-  set of grammar symbols the parser issues under it, and no display name is
-  also a storage kind.
+  set of grammar symbols the parser issues under it, and no nonterminal
+  display name is also a storage kind (a terminal display rule keeps the
+  terminal storages the parser gives its symbol, per A.2).
 - `read_node.rs::stamped_kind` stamps `kind_id()` for an aliased node and
   the parity fixtures show the envelope with its storage node as content.
 - `display-union-mixed` fires on a unit fixture and is silent on all three

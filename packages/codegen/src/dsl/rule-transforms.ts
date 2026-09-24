@@ -214,8 +214,8 @@ export function unaliasOverloadedDisplays<R extends AnyRule>(rules: Record<strin
 		} else if (!isParserHiddenName(storage.symbol)) actions.set(`${display} ${storage.key}`, { kind: 'drop' });
 		else actions.set(`${display} ${storage.key}`, { kind: 'rename', display: mintFor({ storage: storage.symbol, display }) });
 	};
-	for (const [display, storages] of storagesByDisplay) {
-		const members = [...storages.values()];
+	for (const display of [...storagesByDisplay.keys()].sort()) {
+		const members = [...storagesByDisplay.get(display)!.values()];
 		if (Object.hasOwn(rules, display)) {
 			const terminalDisplay = terminalSymbol(display);
 			for (const storage of members) {

@@ -81,4 +81,16 @@ describe('unaliasOverloadedDisplays', () => {
 		};
 		expect(() => run(rules)).toThrow(/inline nonterminal/);
 	});
+
+	it('names a storage split under two displays the same whatever the rule order', () => {
+		const tree = seq(S('('), S(')'));
+		const block = seq(S('{'), S('}'));
+		const shared = seq(S('['), S(']'));
+		const a = { first: seq(sym('tree'), alias(sym('_shared'), 'tree')), second: seq(sym('block'), alias(sym('_shared'), 'block')) };
+		const b = { second: a.second, first: a.first };
+		const out = (uses: Record<string, R>) => run({ ...uses, tree, block, _shared: shared });
+		expect(out(b)).toEqual(out(a));
+		expect(out(a).first).toEqual(seq(sym('tree'), alias(sym('_shared'), 'tree_shared')));
+		expect(out(a).second).toEqual(seq(sym('block'), alias(sym('_shared'), 'shared')));
+	});
 });
