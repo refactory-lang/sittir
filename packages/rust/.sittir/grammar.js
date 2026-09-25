@@ -1112,6 +1112,12 @@ function collectSlots(members, rulesBag) {
   }
   return slots;
 }
+function isMultiSlotRepeatElement(content, symbols) {
+  const core = unwrapPrec(content);
+  if (!core || typeof core !== "object" || !isSeqType(core.type)) return false;
+  if (separatorOf(core, symbols) !== null) return false;
+  return collectSlots(core.members, symbols.rules).length >= 2;
+}
 function unwrapPrec(rule) {
   let cur = rule;
   while (cur && typeof cur === "object") {
@@ -3670,6 +3676,14 @@ function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosing
     if (!content) return rule;
     const innerAmbientPrec = isPrecWrapper(rule) ? rule : ambientPrec;
     const newContent = applyClauseHoist(parentKind, content, ctx, counter, innerAmbientPrec, enclosingFieldName);
+    if (isRepeatType(rule.type) && isMultiSlotRepeatElement(newContent, ctx.sourceSymbols)) {
+      const name = visibleGroupSynthName(newContent, parentKind, ctx, counter, ambientPrec, enclosingFieldName);
+      if (name !== null) {
+        visibleGroupSources.add(name);
+        if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+        return withContent(rule, makeGroupLiftSymbol(newContent, name));
+      }
+    }
     if (newContent === content) return rule;
     return withContent(rule, newContent);
   }
@@ -5117,7 +5131,8 @@ function wire(config, base2) {
     precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
     flattenedParents: /* @__PURE__ */ new Set(),
     aliasTargets: /* @__PURE__ */ new Set(),
-    automaticVariants: seedAutomaticVariants(base2)
+    automaticVariants: seedAutomaticVariants(base2),
+    adoptedGroups: baseArg ? adoptMintedGroups(baseArg, base2, cfg.groups) : /* @__PURE__ */ new Map()
   };
   const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
@@ -5138,10 +5153,12 @@ function wire(config, base2) {
       context.syntheticInline.add(name);
     }
     for (const name of getEnrichVisibleGroupSources(base2)) {
+      if (context.adoptedGroups.has(name)) continue;
       context.inlineRemovals.add(name);
     }
     const inlineSafeNames = getEnrichClauseGroups(base2);
     for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base2)) {
+      if (context.adoptedGroups.has(syntheticName)) continue;
       if (context.authoredRuleNames.has(ownerKind)) {
         context.orphanedSyntheticGroups.add(syntheticName);
       }
@@ -5496,6 +5513,55 @@ function hasBodyPatternGroups(groups) {
 var passthroughBaseRuleFn = function passthroughBaseRuleFn2(_$, previous) {
   return previous;
 };
+function declaredPatterns(groups, injects) {
+  const $ = makeSimpleDollarProxy();
+  const declared = [];
+  for (const [key, value] of Object.entries(groups ?? {})) {
+    if (typeof value !== "function") continue;
+    if (key.startsWith("_")) {
+      throw new Error(
+        `groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); declare a hidden pattern under injects: instead`
+      );
+    }
+    declared.push(["groups", key, value]);
+  }
+  for (const [key, value] of Object.entries(injects ?? {})) {
+    if (typeof value === "function") declared.push(["injects", key, value]);
+  }
+  return declared.map(([section, key, value]) => {
+    let body;
+    try {
+      const result = value.call(void 0, $, void 0);
+      if (!result || typeof result !== "object" || typeof result.type !== "string") {
+        throw new Error(`${section}['${key}']: body fn did not return a rule object`);
+      }
+      body = result;
+    } catch (e) {
+      throw new Error(`${section}['${key}']: failed to evaluate body fn: ${e.message}`);
+    }
+    if (!isComplexBodyRt(body)) {
+      throw new Error(
+        `${section}['${key}']: body is not a complex structural pattern (need SEQ \u22652, CHOICE \u22652, or REPEAT with non-trivial content)`
+      );
+    }
+    return { section, key, value, body };
+  });
+}
+function adoptMintedGroups(baseArg, base2, groups) {
+  const adopted = /* @__PURE__ */ new Map();
+  const authored = declaredPatterns(groups, void 0);
+  if (authored.length === 0) return adopted;
+  const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
+  for (const minted of getEnrichVisibleGroupSources(base2)) {
+    const body = baseRules[minted];
+    if (body === void 0) continue;
+    const owner = authored.find((pattern) => patternBodyEqual(unwrapPrec(body), pattern.body));
+    if (owner === void 0) continue;
+    adopted.set(minted, owner.key);
+    delete baseRules[minted];
+  }
+  return adopted;
+}
 function makeSimpleDollarProxy() {
   return new Proxy({}, {
     get(_target, name) {
@@ -5562,7 +5628,7 @@ function replaceInBodyRt(rule, candidates, automatic) {
   if (!rule || typeof rule !== "object") return rule;
   const r = rule;
   for (const c of candidates) {
-    if (patternBodyEqual(rule, c.body)) {
+    if (patternBodyEqual(rule, c.body) || r.type === "SYMBOL" && c.adopts?.has(r.name ?? "") === true) {
       const site = c.aliasAs === void 0 ? { type: "SYMBOL", name: c.name } : { type: "ALIAS", content: { type: "SYMBOL", name: c.name }, named: true, value: c.aliasAs };
       return relabelledArm(site, rule, automatic());
     }
@@ -5679,38 +5745,11 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context, 
     if (!isComplexBodyRt(body)) continue;
     candidates.push({ name, body });
   }
-  const declared = [];
-  for (const [key, value] of Object.entries(groups ?? {})) {
-    if (typeof value !== "function") continue;
-    if (key.startsWith("_")) {
-      throw new Error(
-        `groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); declare a hidden pattern under injects: instead`
-      );
-    }
-    declared.push(["groups", key, value]);
-  }
-  for (const [key, value] of Object.entries(injects ?? {})) {
-    if (typeof value === "function") declared.push(["injects", key, value]);
-  }
-  for (const [section, key, value] of declared) {
+  for (const { section, key, value, body } of declaredPatterns(groups, injects)) {
     const hiddenName = declaredGroupMintName(key);
     const hidden = hiddenName === key;
-    let body;
-    try {
-      const result = value.call(void 0, $, void 0);
-      if (!result || typeof result !== "object" || typeof result.type !== "string") {
-        throw new Error(`${section}['${key}']: body fn did not return a rule object`);
-      }
-      body = result;
-    } catch (e) {
-      throw new Error(`${section}['${key}']: failed to evaluate body fn: ${e.message}`);
-    }
-    if (!isComplexBodyRt(body)) {
-      throw new Error(
-        `${section}['${key}']: body is not a complex structural pattern (need SEQ \u22652, CHOICE \u22652, or REPEAT with non-trivial content)`
-      );
-    }
-    candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
+    const adopts = new Set([...context.adoptedGroups].filter(([, owner]) => owner === key).map(([minted]) => minted));
+    candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key, adopts });
     const registered = wrapOneRuleFn(hiddenName, value, context);
     rules[hiddenName] = section === "groups" ? stampHoistedFn(registered) : registered;
   }

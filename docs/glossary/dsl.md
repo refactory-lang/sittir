@@ -797,6 +797,18 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 #### body
 
 ```text
+// A repeat whose element, after recursion, is a multi-slot seq
+// (isMultiSlotRepeatElement) is lifted into a visible group, the same mint
+// as the inline-unsafe optional(seq) path. Without it the builders push the
+// repeat's multiplicity onto each slot and splice the seq into the parent,
+// leaving parallel arrays that lose which slots came from one repetition.
+// An authored groups: pattern covering the element's whole body takes the
+// mint over in wire (adoptMintedGroups).
+```
+
+#### body
+
+```text
 // Descend into field content (a field-wrapped optional(seq) is also a target).
 ```
 
@@ -1234,6 +1246,14 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 		   (existing test-only call sites pass none) — omitting it preserves
 		   the permissive counting that ignores this distinction. */
 ```
+
+### `packages/codegen/src/dsl/rule-patterns.ts::isMultiSlotRepeatElement`
+
+Whether a repeat's element, prec peeled, is a seq that needs its own group:
+two or more slots (`collectSlots`, the same slot notion `isInlineSafe` uses)
+and not a separated-list body (`separatorOf` is null), because a separator
+plus element is one slot and link lifts it into a list. Link-phase
+`diagnoseRepeatedSeqGrouping` reports the same shape when it survives to link.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::unwrapPrec`
 

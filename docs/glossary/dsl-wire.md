@@ -1727,6 +1727,49 @@ argument disables inference for the parameters after it; the grammars pass
 // `cfg = config as unknown as WireConfig<any>` above).
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::adoptMintedGroups`
+
+An authored `groups:` pattern takes over an enrich-minted visible group whose
+whole body it matches, the same way enrich's automatic facts give way to an
+authored declaration elsewhere (automatic arm labels vs `variant()`). The
+minted groups come only from enrich's own record
+(`getEnrichVisibleGroupSources`), never a name pattern. The minted body is
+compared with `unwrapPrec` applied, since enrich re-registers the ambient prec
+on it, using `patternBodyEqual`, the predicate the replacement itself uses. An
+adopted group is deleted from the enriched base's rule map, which wire runs
+before `grammar()` copies it in both pipelines. Its references are rewritten to
+the authored alias by `replaceInBodyRt` through the candidate's `adopts` set.
+Adopted names are skipped when wire registers enrich's visible groups for
+inline removal and conflicts. A partial match adopts nothing: the pattern is
+replaced inside the minted group as usual.
+
+This is a bridge until enrich sees the authored config directly (a combined
+`sittirGrammar(base, cfg)` entry point); enrich then declines the mint instead
+of wire undoing it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::DeclaredPattern`
+
+One evaluated `groups:` or `injects:` body-pattern entry: its section, key,
+body function and the evaluated body.
+
+### `packages/codegen/src/dsl/wire/wire.ts::declaredPatterns`
+
+Evaluates the body-pattern entries of `groups:` and `injects:` once, with the
+validation both consumers share: a `groups:` key must be visible, the body fn
+must return a rule, and the body must be a complex structural pattern
+(`isComplexBodyRt`). Used by `applyWirePatternReplacement` and
+`adoptMintedGroups`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.adoptedGroups`
+
+Minted visible-group name → the authored `groups:` key that adopted it
+(`adoptMintedGroups`). Empty without an enriched base.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WirePatternCandidate.adopts`
+
+Minted group names this authored candidate adopted. `replaceInBodyRt` treats a
+reference to one of them as a match of the candidate's body.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::patternBodyEqual`
 
 #### body

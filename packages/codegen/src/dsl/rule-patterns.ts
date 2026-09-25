@@ -223,6 +223,13 @@ function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): u
 	return slots;
 }
 
+export function isMultiSlotRepeatElement(content: unknown, symbols: ParserSymbolCtx): boolean {
+	const core = unwrapPrec(content) as RuntimeRule | undefined;
+	if (!core || typeof core !== 'object' || !isSeqType(core.type)) return false;
+	if (separatorOf(core, symbols) !== null) return false;
+	return collectSlots((core as unknown as { members: unknown[] }).members, symbols.rules).length >= 2;
+}
+
 export function unwrapPrec(rule: unknown): unknown {
 	let cur = rule;
 	while (cur && typeof cur === 'object') {

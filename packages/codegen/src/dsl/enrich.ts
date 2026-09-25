@@ -31,6 +31,7 @@ import {
 	separatorOf,
 	ruleMatchesEmpty,
 	isInlineSafe,
+	isMultiSlotRepeatElement,
 	isSupertypeLike,
 	isPermutationChoice,
 	isEnumChoiceRule,
@@ -1770,6 +1771,14 @@ function applyClauseHoist(
 		if (!content) return rule;
 		const innerAmbientPrec = isPrecWrapper(rule as { type: string }) ? rule : ambientPrec;
 		const newContent = applyClauseHoist(parentKind, content, ctx, counter, innerAmbientPrec, enclosingFieldName);
+		if (isRepeatType(rule.type) && isMultiSlotRepeatElement(newContent, ctx.sourceSymbols)) {
+			const name = visibleGroupSynthName(newContent, parentKind, ctx, counter, ambientPrec, enclosingFieldName);
+			if (name !== null) {
+				visibleGroupSources.add(name);
+				if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+				return withContent(rule, makeGroupLiftSymbol(newContent, name));
+			}
+		}
 		if (newContent === content) return rule;
 		return withContent(rule, newContent);
 	}
