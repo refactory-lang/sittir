@@ -5782,35 +5782,6 @@ field labels instead of taking the minted `element` field.
 // the shapes the mints will see.
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::separatedListNameCounts`
-
-```text
-/** Grammar-global separated-list name counts for the CURRENT enrich() call —
- *  set between loop 1 (field-wrap) and loop 2 (hoist), cleared after. Module
- *  state rather than a threaded parameter, matching the `setGroupLiftRuleMap`
- *  precedent; null outside enrich() (standalone hoist tests keep ordinal
- *  naming). */
-```
-
-### `packages/codegen/src/dsl/enrich.ts::hiddenListPromotionNames`
-
-```text
-/** Per-enrich() cache of hidden-list-rule promotions: hidden rule name →
- *  the visible kind name every bare reference aliases to. Same lifecycle as
- *  {@link separatedListNameCounts}. */
-```
-
-### `packages/codegen/src/dsl/enrich.ts::hoistKwRules`
-
-```text
-// Loop-2 (clause-hoist) access to the enrich() call's keyword bag and word
-// matcher, for the permutation-choice decline + marker normalization: a
-// keyword already `_kw_*`-promoted in one arm must key identically to its
-// raw string spelling in a sibling arm, and only word-shaped literals are
-// modifier candidates. Same set/reset-in-try/finally pattern as the
-// separated-list state above.
-```
-
 ### `packages/codegen/src/dsl/enrich.ts::promoteHiddenListRef`
 
 ```text
@@ -6317,3 +6288,26 @@ model see the same kinds.
 ```text
 The content under a chain of named aliases.
 ```
+
+### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx`
+
+The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes and word matcher, and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `visibleGroupSources`, `clauseGroupOwners`). Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
+
+`hoist` is present only on the view `enrich()` hands to the clause-hoist loop (`withHoist`). Helpers that are also reached before that loop — `visibleGroupSynthName` from the token-form hoist — read it to tell the two apart: without it they fall back to ordinal naming and skip hidden-list promotion.
+
+### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx.create`
+
+Builds the ctx for one `enrich()` call from the grammar-level inputs, with empty mint registries and no hoist state.
+
+### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx.withHoist`
+
+The clause-hoist view: the same ctx — the registries are shared, not copied, so mints made through the view are the call's mints — with `hoist` set.
+
+### `packages/codegen/src/dsl/enrich-ctx.ts::ClauseHoistState`
+
+State that exists only while the clause hoist runs. `separatedListNameCounts` is the grammar-global count of each proposed separated-list name, computed after the field-wrap and token-form passes and read by every list mint so a name is taken bare only when globally unique. `hiddenListPromotionNames` caches, per hidden rule whose whole body is a flank-carrying separated list, the visible kind every bare reference to it aliases to, so all references agree.
+
+### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtxInit`
+
+The grammar-level inputs of an `enrich()` call: the base rules, the supertype names and the compiled word matcher.
+
