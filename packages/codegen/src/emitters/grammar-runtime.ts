@@ -1,3 +1,5 @@
+import { NATIVE_RENDER_TRANSPORT_ABI } from './native-crate.ts';
+
 export interface EmitGrammarRuntimeConfig {
 	grammar: string;
 }
@@ -26,7 +28,7 @@ import type {
 } from '@sittir/common/engine';
 import { RENDER_MODULE_HASH } from './hash.js';
 
-const NATIVE_RENDER_TRANSPORT_ABI = 2;
+const NATIVE_RENDER_TRANSPORT_ABI = ${NATIVE_RENDER_TRANSPORT_ABI};
 
 /** Which backend is currently serving render/read/splice. */
 export type BackendName = 'native' | 'js';

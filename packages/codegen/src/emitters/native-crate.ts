@@ -1,5 +1,7 @@
 import { grammarDisplayName, type GrammarName } from '../grammars.ts';
 
+export const NATIVE_RENDER_TRANSPORT_ABI = 2;
+
 export interface NativeCrateFile {
 	readonly path: string;
 	readonly contents: string;
@@ -151,7 +153,7 @@ use sittir_core::engine::EngineGrammar;
 use render::{render_transport_parts, RenderRoot, RENDER_MODULE_HASH};
 
 #[cfg(feature = "napi-bindings")]
-const NATIVE_RENDER_TRANSPORT_ABI: u32 = 2;
+const NATIVE_RENDER_TRANSPORT_ABI: u32 = ${NATIVE_RENDER_TRANSPORT_ABI};
 
 #[derive(Clone, Copy, Default)]
 pub struct ${v.Name}Grammar;

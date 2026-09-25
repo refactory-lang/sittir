@@ -16701,3 +16701,7 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 `boundary.ts`: the default-engine `render` / `toEdit` / `applyEdits` entry points the factories reach through `utils`, each timed with `recordFfi('<name>', …)` so FFI cost is attributed per grammar.
 
+### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
+
+The version of the JS → native render transport shape — the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into the scaffolded crate's `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. Bump it when the transport shape changes; crates are scaffolded once, so a test pins every existing crate's `lib.rs` to it and names the crates to update.
+
