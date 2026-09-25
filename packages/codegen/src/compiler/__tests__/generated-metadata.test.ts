@@ -167,7 +167,7 @@ static const char * const ts_field_names[] = {
 			'parser.c'
 		);
 		const entries = collectGeneratedKindEntries(tables);
-		expect(entries.find((entry) => entry.id === 10)?.kind).toBe('if_keyword');
+		expect(entries.find((entry) => entry.id === 10)).toMatchObject({ kind: 'if_keyword', literalText: 'if', keyword: true });
 	});
 
 	it('leaves a symbolic (non-keyword-shaped) anonymous token under its plain derived name', async () => {
@@ -192,6 +192,7 @@ static const char * const ts_field_names[] = {
 		);
 		const entries = collectGeneratedKindEntries(tables);
 		expect(entries.find((entry) => entry.id === 11)?.kind).toBe('comma');
+		expect(entries.find((entry) => entry.id === 11)?.keyword).toBeUndefined();
 	});
 
 	it("names the underscore token 'underscore', not a keyword — it has no non-underscore character", async () => {

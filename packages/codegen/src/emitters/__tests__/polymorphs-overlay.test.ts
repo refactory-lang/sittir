@@ -463,13 +463,13 @@ describe('a list takes its rest parameter by cardinality and options', () => {
 	});
 });
 
-describe('a literal arm named through its token kind', () => {
+describe('a keyword literal arm named by its text', () => {
 	const keyword = (id: number, kind: string, text: string): GeneratedIdEntry => ({
 		id,
-		parser: { cSymbol: `anon_sym_${id}`, parserName: kind, symbolName: kind, literalText: text, anon: true, aux: false, alias: false, hidden: false }
+		parser: { cSymbol: `anon_sym_${id}`, parserName: kind, symbolName: kind, literalText: text, anon: true, aux: false, alias: false, hidden: false, keyword: true }
 	});
 
-	it('mounts each literal of an unfielded choice under the name its kind gives it', () => {
+	it('mounts each keyword literal of an unfielded choice under its source text', () => {
 		const nodeMap = buildNodeMap(
 			{
 				junction: {
@@ -485,7 +485,30 @@ describe('a literal arm named through its token kind', () => {
 			{ kindIds: { and_keyword: keyword(3, 'and_keyword', 'and'), or_keyword: keyword(4, 'or_keyword', 'or') }, sourceArtifact: 'test' }
 		);
 		const out = emitPolymorphsOverlay({ nodeMap });
-		expect(out).toContain("andKeyword: { strict: junction$andKeyword(F.buildJunction, 'and')");
-		expect(out).toContain("orKeyword: { strict: junction$orKeyword(F.buildJunction, 'or')");
+		expect(out).toContain("and: { strict: junction$and(F.buildJunction, 'and')");
+		expect(out).toContain("or: { strict: junction$or(F.buildJunction, 'or')");
+	});
+
+	it('reports a keyword arm whose text names a node arm of the same owner as ambiguous', () => {
+		const nodeMap = buildNodeMap(
+			{
+				junction: {
+					type: SEQ,
+					members: [
+						{ type: FIELD, name: 'left', content: { type: SYMBOL, name: 'word' } },
+						{ type: CHOICE, members: [{ type: STRING, value: 'and' }, { type: SYMBOL, name: 'and' }] },
+						{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'word' } }
+					]
+				},
+				and: { type: SEQ, members: [{ type: STRING, value: '&' }, { type: STRING, value: '&' }] },
+				word: { type: PATTERN, value: '[a-z]+' }
+			},
+			{ kindIds: { and_keyword: keyword(3, 'and_keyword', 'and') }, sourceArtifact: 'test' }
+		);
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		const out = emitPolymorphsOverlay({ nodeMap });
+		expect(warn).toHaveBeenCalledWith(expect.stringMatching(/^\[codegen\] junction: sub-factory and skipped \(ambiguous\)/));
+		expect(out).not.toContain('junction$and');
+		warn.mockRestore();
 	});
 });

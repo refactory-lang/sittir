@@ -4307,8 +4307,8 @@ describe('constraint', () => {
 });
 
 describe('constraint sub-factories', () => {
-	it('extendsKeyword builds the parent', () => {
-		const node = ir.constraint.extendsKeyword({
+	it('extends builds the parent', () => {
+		const node = ir.constraint.extends({
 			type: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.Constraint);

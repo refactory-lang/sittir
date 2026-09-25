@@ -328,12 +328,24 @@ generated enum and the enum's own variants cannot disagree.
  */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::literalArmDisplayOf`
+
+The display a literal arm is named from. A keyword kind (its catalog row
+carries `keyword`, stamped where the `<text>_keyword` name is minted) is
+displayed by its source text, so `choice('and', 'or')` gives arms `and` and
+`or`, not `andKeyword`/`orKeyword`: the suffix is there for the parser's name
+space, not as a name. Every other literal kind is displayed by its own kind
+address (`undisplayedKindAddress(resolvedKind)`), so `'||'` stays
+`pipe_pipe`. The text is read from the stamped row, never recovered by
+stripping `_keyword` from the name. A keyword arm whose text equals another
+arm's name reaches the same ambiguous-name diagnostic as any other clash.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::armFactsOf`
 
 The per-arm annotations a slot value carries: the declared `variant`/`variantOf`
 pair, `default`, and `spliced`. A `variantOf`-only literal arm has no display of
 its own, so it is named from the resolved catalog kind it carries
-(`resolvedKind`): `armNameOf(variantOf, undisplayedKindAddress(resolvedKind),
+(`resolvedKind`): `armNameOf(variantOf, literalArmDisplayOf(resolvedKind, ctx),
 <owner is a SUPERTYPE>)`, where the owner's classification is read from the
 derive context's simplified rules, so a literal arm of a supertype owner is
 named by the supertype member rule like the owner's other arms. With no owner

@@ -31,6 +31,7 @@ export interface GeneratedKindEntry {
 	readonly literalRule?: boolean;
 	readonly alias?: boolean;
 	readonly hidden?: boolean;
+	readonly keyword?: boolean;
 }
 
 export interface TreeSitterLanguageMetadata {
@@ -206,7 +207,8 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 			anon: entry.parser?.anon || undefined,
 			literalRule: entry.parser?.literalRule || undefined,
 			alias: entry.parser?.alias || undefined,
-			hidden: entry.parser?.hidden || undefined
+			hidden: entry.parser?.hidden || undefined,
+			keyword: entry.parser?.keyword || undefined
 		}));
 }
 
@@ -430,7 +432,8 @@ function createParserMetadata(
 		anon: entry.cName.startsWith('anon_sym_'),
 		aux: entry.cName.startsWith('aux_sym_'),
 		alias: entry.cName.startsWith('alias_sym_'),
-		hidden: parserName.startsWith('_')
+		hidden: parserName.startsWith('_'),
+		...(keywordTextOf(entry.cName, symbolTextFacts) === undefined ? {} : { keyword: true as const })
 	};
 }
 
@@ -439,14 +442,19 @@ function shouldReplaceSymbol(existingCName: string | undefined, nextCName: strin
 	return existingCName.startsWith('anon_sym_') && !nextCName.startsWith('anon_sym_');
 }
 
+function keywordTextOf(cName: string, symbolTextFacts: ReadonlyMap<string, SymbolTextFacts> | undefined): string | undefined {
+	const text = symbolTextFacts?.get(cName)?.literalText;
+	return text !== undefined && cName === `anon_sym_${text}` && /[^_]/.test(text) ? text : undefined;
+}
+
 function deriveSymbolRuntimeName(symbolTextFacts: ReadonlyMap<string, SymbolTextFacts>): (cName: string) => string {
 	return (cName) => {
 		if (cName.startsWith('sym_')) return cName.slice('sym_'.length);
 		if (cName.startsWith('anon_sym_')) {
 			const base = cName.slice('anon_sym_'.length).toLowerCase();
+			if (keywordTextOf(cName, symbolTextFacts) !== undefined) return `${base}_keyword`;
 			const text = symbolTextFacts.get(cName)?.literalText;
 			if (text === undefined || cName !== `anon_sym_${text}`) return base;
-			if (/[^_]/.test(text)) return `${base}_keyword`;
 			return text.length <= 1 ? 'underscore' : `underscore${text.length}`;
 		}
 		if (cName.startsWith('aux_sym_')) return cName.slice('aux_sym_'.length);

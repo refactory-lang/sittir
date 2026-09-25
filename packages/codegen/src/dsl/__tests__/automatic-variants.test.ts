@@ -139,7 +139,14 @@ describe('automatic variants', () => {
 
 	it('names a literal arm from its resolved token kind, by the supertype member rule under a supertype owner', () => {
 		expect(armFactsOf({ annotations: { variantOf: 'logic' }, resolvedKind: 'logic_and' }, undefined)).toEqual({ variant: 'and', variantOf: 'logic' });
-		expect(armFactsOf({ annotations: { variantOf: 'logic' }, resolvedKind: 'or_keyword' }, undefined)).toEqual({ variant: 'or_keyword', variantOf: 'logic' });
+		const tokens = {
+			kindEntries: [
+				{ kind: 'or_keyword', id: 1, literalText: 'or', anon: true, keyword: true },
+				{ kind: 'pipe_pipe', id: 2, literalText: '||', anon: true }
+			]
+		} as never;
+		expect(armFactsOf({ annotations: { variantOf: 'logic' }, resolvedKind: 'or_keyword' }, tokens)).toEqual({ variant: 'or', variantOf: 'logic' });
+		expect(armFactsOf({ annotations: { variantOf: 'logic' }, resolvedKind: 'pipe_pipe' }, tokens)).toEqual({ variant: 'pipe_pipe', variantOf: 'logic' });
 		const supertypeOwner = { simplifiedRules: { _literal: { type: SUPERTYPE } } } as never;
 		expect(armFactsOf({ annotations: { variantOf: '_literal' }, resolvedKind: 'true_literal' }, supertypeOwner)).toEqual({ variant: 'true', variantOf: '_literal' });
 	});

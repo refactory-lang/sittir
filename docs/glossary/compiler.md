@@ -6640,6 +6640,13 @@ collector parameter.
  */
 ```
 
+`keyword` is set on a kind sittir minted as `<text>_keyword` (see
+`generated-metadata.ts::keywordTextOf`). The suffix exists so a keyword
+token cannot collide with a kind of the same name; the fact lets a consumer
+that wants the keyword's own text (a literal arm's name) read `literalText`
+instead of stripping the suffix from the name. `collectGeneratedKindEntries`
+carries it onto `GeneratedKindEntry.keyword`.
+
 ### `packages/codegen/src/compiler/types.ts::presence`
 
 ```text
@@ -9755,6 +9762,15 @@ the `TSKindId` member, the kind string, factories, and the nested option key
 `nestedKey` derives all follow from it. If a suffixed name still collides
 with an existing key, `joinIdNames` throws naming both symbols — there is no
 second, id-suffixed fallback.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::keywordTextOf`
+
+The keyword predicate described under `deriveSymbolRuntimeName`, in one
+place: the literal text of an anonymous symbol whose C name is `anon_sym_`
+followed by that text verbatim and which is not made only of underscores,
+else `undefined`. `deriveSymbolRuntimeName` suffixes `_keyword` exactly when
+it returns text, and `createParserMetadata` stamps `keyword: true` on the
+same kinds, so the name and the fact cannot disagree.
 
 #### body
 

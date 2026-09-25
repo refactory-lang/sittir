@@ -66,6 +66,7 @@ export interface KindParserMetadata {
 	readonly aux: boolean;
 	readonly alias: boolean;
 	readonly hidden: boolean;
+	readonly keyword?: true;
 }
 
 export interface GeneratedMetadata {

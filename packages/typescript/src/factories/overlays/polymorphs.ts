@@ -1919,7 +1919,7 @@ export const templateType: typeof B.templateType & {
 	}
 };
 
-const constraint$extendsKeyword =
+const constraint$extends =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
@@ -1928,7 +1928,7 @@ const constraint$colon =
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
 export const constraint: typeof B.constraint & {
-	extendsKeyword: {
+	extends: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildConstraint>[0], 'content'>,
 			options?: OptionsArg<typeof F.buildConstraint>
@@ -1950,9 +1950,9 @@ export const constraint: typeof B.constraint & {
 	};
 } = {
 	...B.constraint,
-	extendsKeyword: {
-		strict: constraint$extendsKeyword(F.buildConstraint, TSKindId.ExtendsKeyword),
-		coerce: constraint$extendsKeyword(C.coerceToConstraint, TSKindId.ExtendsKeyword)
+	extends: {
+		strict: constraint$extends(F.buildConstraint, TSKindId.ExtendsKeyword),
+		coerce: constraint$extends(C.coerceToConstraint, TSKindId.ExtendsKeyword)
 	},
 	colon: {
 		strict: constraint$colon(F.buildConstraint, TSKindId.Colon),

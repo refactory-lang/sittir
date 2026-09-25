@@ -888,12 +888,12 @@ Facts:
 
 The user's ruling: a literal arm whose token is one of sittir's keyword mints (`<text>_keyword`) is named by its source text, so `junction.andKeyword` becomes `junction.and`. The `_keyword` suffix exists for parser disambiguation, not as a name. This narrows the rule that literal arms take their token kind's name: every non-keyword literal keeps its kind name. Run it right after the push of Task 7c, before retiring the alias-shape hand-written rules.
 
-- [ ] The keyword mint records a fact on the kind it mints: its source text (or that it is a keyword mint). No emitter strips `_keyword` from a name.
-- [ ] `armFactsOf` names a literal arm whose resolved kind carries that fact by the fact's text, through `armNameOf`.
-- [ ] A clash with a node arm of the same name goes through the existing ambiguous-name diagnostic.
-- [ ] Test: a keyword literal arm is named by its text; a non-keyword literal keeps its kind name.
-- [ ] The commit lists every renamed ir path per grammar.
-- [ ] Gates as Task 7.
+- [x] The keyword mint records a fact on the kind it mints: its source text (or that it is a keyword mint). No emitter strips `_keyword` from a name.
+- [x] `armFactsOf` names a literal arm whose resolved kind carries that fact by the fact's text, through `armNameOf`.
+- [x] A clash with a node arm of the same name goes through the existing ambiguous-name diagnostic.
+- [x] Test: a keyword literal arm is named by its text; a non-keyword literal keeps its kind name.
+- [x] The commit lists every renamed ir path per grammar.
+- [x] Gates as Task 7.
 
 ### Task 7d: The identifier leaf guard rejects a reserved word the slot does not admit
 

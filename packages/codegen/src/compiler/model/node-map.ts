@@ -704,13 +704,18 @@ export interface ArmFacts {
 	readonly spliced?: true;
 }
 
+function literalArmDisplayOf(resolvedKind: string, ctx: DeriveCtx | undefined): string {
+	const entry = ctx?.kindEntries === undefined ? undefined : findOwnKindEntry(ctx.kindEntries, resolvedKind);
+	return entry?.keyword === true && entry.literalText !== undefined ? entry.literalText : undisplayedKindAddress(resolvedKind);
+}
+
 export function armFactsOf(arm: { readonly annotations?: RuleAnnotations; readonly resolvedKind?: string }, ctx: DeriveCtx | undefined): ArmFacts {
 	const { annotations, resolvedKind } = arm;
 	if (annotations === undefined) return {};
 	const literalName =
 		annotations.variantOf === undefined || resolvedKind === undefined
 			? undefined
-			: armNameOf(annotations.variantOf, undisplayedKindAddress(resolvedKind), ctx?.simplifiedRules?.[annotations.variantOf]?.type === SUPERTYPE);
+			: armNameOf(annotations.variantOf, literalArmDisplayOf(resolvedKind, ctx), ctx?.simplifiedRules?.[annotations.variantOf]?.type === SUPERTYPE);
 	const variant = annotations.variant ?? literalName;
 	return {
 		...(variant === undefined ? {} : { variant, variantOf: annotations.variantOf }),
