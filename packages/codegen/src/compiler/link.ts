@@ -1510,7 +1510,6 @@ function resolveSymbolRoleOrPass(rule: SymbolRule<'link'>, ctx: LinkCtx): Rule<'
 interface ClassifyResult {
 	readonly rule: Rule<'link'>;
 	readonly classification?: 'enum' | 'supertype';
-	readonly classifiedBy?: 'grammar' | 'link';
 }
 
 function classifyHiddenRule(
@@ -1573,14 +1572,9 @@ function classifyHiddenChoiceRule(
 		const allStrings = enumMembers.every((m): m is StringRule<'link'> => m.type === STRING);
 		return {
 			rule: allStrings
-				? normalizeEnumMembers(enumMembers as StringRule<'link'>[], { classifiedBy: 'link' })
-				: ({
-						type: CHOICE,
-						members: enumMembers,
-						metadata: makeRuleMetadata({ classifiedBy: 'link' })
-					} as ChoiceRule<'link'>),
-			classification: 'enum',
-			classifiedBy: 'link'
+				? normalizeEnumMembers(enumMembers as StringRule<'link'>[])
+				: ({ type: CHOICE, members: enumMembers } as ChoiceRule<'link'>),
+			classification: 'enum'
 		};
 	}
 
@@ -1588,7 +1582,6 @@ function classifyHiddenChoiceRule(
 		const flatMembers = flattenNestedChoiceMembers(rule.members);
 		const subtypes = collectSubtypeRefs(rule, ctx);
 		if (subtypes.length > 0) {
-			const classifiedBy = supertypes.has(name) ? 'grammar' : 'link';
 			const variantArms = flatMembers
 				.map((m): string | null => {
 					const core = m;
@@ -1607,8 +1600,7 @@ function classifyHiddenChoiceRule(
 					subtypes,
 					...(variantArms.length > 0 ? { variantArms } : {})
 				} satisfies SupertypeRule<'link'>,
-				classification: 'supertype',
-				classifiedBy
+				classification: 'supertype'
 			};
 		}
 	}

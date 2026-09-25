@@ -53,7 +53,6 @@
           "type": "SYMBOL",
           "name": "export_statement_default",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -65,7 +64,6 @@
           "type": "SYMBOL",
           "name": "export_statement_type_export",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -77,7 +75,6 @@
           "type": "SYMBOL",
           "name": "export_statement_equals_export",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -89,7 +86,6 @@
           "type": "SYMBOL",
           "name": "export_statement_namespace_export",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -130,7 +126,6 @@
               "type": "SYMBOL",
               "name": "export_specifiers",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -194,7 +189,6 @@
                   "type": "SYMBOL",
                   "name": "_export_specifier_optional1",
                   "metadata": {
-                    "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
@@ -406,7 +400,6 @@
                 "type": "SYMBOL",
                 "name": "import_statement_clause_from",
                 "metadata": {
-                  "author": "enrich",
                   "symbolSource": "group-lift"
                 },
                 "annotations": {
@@ -496,7 +489,6 @@
           "type": "SYMBOL",
           "name": "import_clause_default_import",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -561,7 +553,6 @@
               "type": "SYMBOL",
               "name": "import_specifiers",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -954,7 +945,6 @@
           "type": "SYMBOL",
           "name": "variable_declarator_plain",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -969,7 +959,6 @@
             "type": "SYMBOL",
             "name": "variable_declarator_definite",
             "metadata": {
-              "author": "enrich",
               "symbolSource": "group-lift"
             },
             "annotations": {
@@ -2005,7 +1994,6 @@
               "type": "SYMBOL",
               "name": "catch_clause_group",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -4624,7 +4612,6 @@
               "type": "SYMBOL",
               "name": "_jsx_attribute_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -4973,7 +4960,6 @@
           "type": "SYMBOL",
           "name": "class_heritage_extends_clause",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -5415,7 +5401,6 @@
             "type": "SYMBOL",
             "name": "call_expression_call",
             "metadata": {
-              "author": "enrich",
               "symbolSource": "group-lift"
             },
             "annotations": {
@@ -5431,7 +5416,6 @@
             "type": "SYMBOL",
             "name": "call_expression_template_call",
             "metadata": {
-              "author": "enrich",
               "symbolSource": "group-lift"
             },
             "annotations": {
@@ -5447,7 +5431,6 @@
             "type": "SYMBOL",
             "name": "call_expression_member",
             "metadata": {
-              "author": "enrich",
               "symbolSource": "group-lift"
             },
             "annotations": {
@@ -5982,7 +5965,6 @@
                   "named": true,
                   "value": "lhs_expression",
                   "metadata": {
-                    "author": "enrich",
                     "aliasSource": "visible-group"
                   }
                 }
@@ -7342,7 +7324,6 @@
             "type": "SYMBOL",
             "name": "binary_expression_in",
             "metadata": {
-              "author": "enrich",
               "symbolSource": "group-lift"
             },
             "annotations": {
@@ -7417,7 +7398,6 @@
             "type": "SYMBOL",
             "name": "update_expression_postfix",
             "metadata": {
-              "author": "enrich",
               "symbolSource": "group-lift"
             },
             "annotations": {
@@ -7429,7 +7409,6 @@
             "type": "SYMBOL",
             "name": "update_expression_prefix",
             "metadata": {
-              "author": "enrich",
               "symbolSource": "group-lift"
             },
             "annotations": {
@@ -7574,7 +7553,6 @@
           "type": "SYMBOL",
           "name": "comment_line",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7587,7 +7565,6 @@
           "type": "SYMBOL",
           "name": "comment_block",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7800,7 +7777,6 @@
           "type": "SYMBOL",
           "name": "number_hex",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7812,7 +7788,6 @@
           "type": "SYMBOL",
           "name": "number_float_point",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7824,7 +7799,6 @@
           "type": "SYMBOL",
           "name": "number_float_leading_point",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7836,7 +7810,6 @@
           "type": "SYMBOL",
           "name": "number_float_scientific",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7848,7 +7821,6 @@
           "type": "SYMBOL",
           "name": "number_decimal",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7861,7 +7833,6 @@
           "type": "SYMBOL",
           "name": "number_binary",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7873,7 +7844,6 @@
           "type": "SYMBOL",
           "name": "number_octal",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7885,7 +7855,6 @@
           "type": "SYMBOL",
           "name": "number_bigint",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7965,7 +7934,6 @@
           "type": "SYMBOL",
           "name": "meta_property_new_target",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7977,7 +7945,6 @@
           "type": "SYMBOL",
           "name": "meta_property_import_meta",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -8255,7 +8222,6 @@
                   "type": "SYMBOL",
                   "name": "class_body_method_sig",
                   "metadata": {
-                    "author": "enrich",
                     "symbolSource": "group-lift"
                   },
                   "annotations": {
@@ -8271,7 +8237,6 @@
                   "type": "SYMBOL",
                   "name": "class_body_member",
                   "metadata": {
-                    "author": "enrich",
                     "symbolSource": "group-lift"
                   },
                   "annotations": {
@@ -8370,7 +8335,6 @@
               "type": "SYMBOL",
               "name": "formal_parameters_elements",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -8438,7 +8402,6 @@
             "named": true,
             "value": "lhs_expression",
             "metadata": {
-              "author": "enrich",
               "aliasSource": "visible-group"
             }
           },
@@ -9376,7 +9339,6 @@
               "type": "SYMBOL",
               "name": "__jsx_start_opening_element_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
@@ -10148,7 +10110,6 @@
               "type": "SYMBOL",
               "name": "ambient_declaration_module",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
@@ -10595,7 +10556,6 @@
               "type": "SYMBOL",
               "name": "enum_body_elements",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
@@ -11663,7 +11623,6 @@
                 "type": "SYMBOL",
                 "name": "_infer_type_optional1",
                 "metadata": {
-                  "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
@@ -12248,7 +12207,6 @@
               "type": "SYMBOL",
               "name": "_mapped_type_clause_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -12513,7 +12471,6 @@
           "type": "SYMBOL",
           "name": "types",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           }
         },
@@ -12726,7 +12683,6 @@
           "type": "SYMBOL",
           "name": "type_parameters_elements",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           }
         },
@@ -12982,7 +12938,6 @@
               "type": "SYMBOL",
               "name": "tuple_type_members",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -13906,7 +13861,6 @@
               "type": "SYMBOL",
               "name": "export_statement_default_from_ns_from",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
@@ -13983,7 +13937,6 @@
               "type": "SYMBOL",
               "name": "export_statement_default_declaration_default_kw_value",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
@@ -14002,7 +13955,6 @@
           "type": "SYMBOL",
           "name": "export_statement_arm2",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -14043,7 +13995,6 @@
                   "type": "SYMBOL",
                   "name": "export_statement_arm4",
                   "metadata": {
-                    "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 }
@@ -15467,7 +15418,6 @@
               "type": "SYMBOL",
               "name": "import_clause_group",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
@@ -16026,10 +15976,7 @@
               "variantOf": "_kind"
             }
           }
-        ],
-        "metadata": {
-          "author": "enrich"
-        }
+        ]
       },
       "value": -1
     },
@@ -16052,10 +15999,7 @@
               "variantOf": "__for_header_operator"
             }
           }
-        ],
-        "metadata": {
-          "author": "enrich"
-        }
+        ]
       },
       "value": -1
     },
@@ -16357,7 +16301,6 @@
           "type": "SYMBOL",
           "name": "export_statement_default_from",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -17363,7 +17306,6 @@
               "type": "SYMBOL",
               "name": "_index_signature_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -17669,7 +17611,6 @@
               "type": "SYMBOL",
               "name": "_index_signature_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -18516,7 +18457,6 @@
               "type": "SYMBOL",
               "name": "import_clause_group",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
@@ -18556,7 +18496,6 @@
               "type": "SYMBOL",
               "name": "export_statement_default_from_ns_from",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
@@ -18624,7 +18563,6 @@
               "type": "SYMBOL",
               "name": "export_statement_default_declaration_default_kw",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
@@ -18712,7 +18650,6 @@
               "type": "SYMBOL",
               "name": "export_statement_default_declaration_default_kw_value",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
@@ -18894,7 +18831,6 @@
                 "named": true,
                 "value": "lhs_expression",
                 "metadata": {
-                  "author": "enrich",
                   "aliasSource": "visible-group"
                 }
               },

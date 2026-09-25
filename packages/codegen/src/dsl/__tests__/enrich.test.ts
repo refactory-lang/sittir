@@ -871,8 +871,7 @@ describe('enrich()', () => {
 						type: 'STRING',
 						value,
 						annotations: { variantOf: '_binary_expression_operator' }
-					})),
-					metadata: { author: 'enrich' }
+					}))
 				},
 				value: -1
 			});

@@ -99,9 +99,7 @@ True when `rule` is an enrich-synthesized group-lift symbol: a SYMBOL whose
 metadata records `symbolSource: 'group-lift'`, the construction-time fact
 `makeGroupLiftSymbol` stamps. Enrich hoists `optional(seq)` / `repeat(seq)`
 into such a symbol and keeps the original seq body reachable so path descent
-can travel through it (see `descendThroughGroupLiftSymbol`). `author` is a
-label on many enrich-built rules, including labelled choice arms, and never
-decides this.
+can travel through it (see `descendThroughGroupLiftSymbol`).
 
 #### body
 
@@ -1429,9 +1427,9 @@ Every body a variant deposits is stamped `hoisted`, including the single hidden 
 Stamps an arm's declared variant name and declaring kind onto the rule, so
 the name reaches the emitters as data instead of being reconstructed later
 from the minted kind name. Writes through `automatic-variants.ts`'s
-`withAuthoredLabel`, so the stamp also merges `author: 'override'` into the
-rule's own metadata (an override-declared variant, never mistaken for one
-of enrich's automatic labels) and — for an ALIAS — lands on the CONTENT,
+`withAuthoredLabel`, which claims the site in the automatic-variant record
+(so the label is never mistaken for one of enrich's automatic labels) and —
+for an ALIAS — lands on the CONTENT,
 never the wrapper (`withAnnotations`'s ALIAS transparency): the alias
 attribute builder rebuilds the rule as `{ ...content, aliasedTo }`, so
 anything left on the wrapper would be dropped the moment the alias

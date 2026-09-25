@@ -3955,13 +3955,12 @@ under construction, and the named-arm fact from
 declared-supertype override:
 - `'enum'` and not a declared supertype: the members become an enum rule
   (`normalizeEnumMembers` when all are strings, else a choice of literal
-  symbols), `classifiedBy: 'link'`. A declared supertype (`_whitespace`, a
+  symbols). A declared supertype (`_whitespace`, a
   choice over fixed-text tokens) stays a supertype.
 - `'named-arms'` and not a declared supertype: the rule unchanged.
 - `'supertype'`, or a declared supertype: a `SupertypeRule` when at least one
   subtype ref resolves (`collectSubtypeRefs`), with `variantArms` for the
-  members `isAliasMintedRef` marks as mints; `classifiedBy` is `'grammar'`
-  for a declared supertype, else `'link'`.
+  members `isAliasMintedRef` marks as mints.
 - Otherwise the rule unchanged; assemble classifies it by shape. A hidden
   choice of structural members (seqs, fields) is a real alternative, not an
   abstract kind union.
@@ -6504,7 +6503,7 @@ collector parameter.
  * stamp off the rule to decide whether to log a derivation + mutate the rule
  * map. Per decision 3's corollary, that "stamp then re-inspect the rule"
  * pattern must become direct return-value dataflow: the classifier now
- * returns its classification/classifiedBy ALONGSIDE the rule, and the caller
+ * returns its classification ALONGSIDE the rule, and the caller
  * reads ONLY the return value — never re-reads a tag off `rule`.
  */
 ```
@@ -6519,18 +6518,6 @@ collector parameter.
 
 ```text
 /** Set only when `rule` was newly classified this call (enum or supertype). */
-```
-
-### `packages/codegen/src/compiler/link.ts::classifiedBy`
-
-```text
-/**
-	 * Whether this classification was declared in the grammar (`'grammar'`,
-	 * e.g. present in `grammar.supertypes`) or inferred by this structural
-	 * classifier (`'link'`). For the derivation log (diagnostics only) — NOT
-	 * an authorship fact (decision 6: `'promoted'` is not an `author` value;
-	 * it lives on its own `classifiedBy` axis in `RuleMetadataShape`).
-	 */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::fieldName`
@@ -6600,34 +6587,17 @@ collector parameter.
 
 ### `packages/codegen/src/compiler/types.ts::RuleProvenance`
 
-```text
-/**
- * (debt: source-homonym resolution, decision 6 — STOP, NOT migrated) Decision
- * 6 asks for `RuleProvenance`'s three values to fold into `RuleMetadataShape`'s
- * unified `author` field ('grammar-authored'→'grammar',
- * 'override-authored-or-replaced'→'override', 'evaluate-synthesized'→
- * 'evaluate'). That migration is NOT done here: `compiler/generate.ts`'s
- * `collectEvaluateSynthesizedKinds` reads
- * `RuleCatalogEntry.provenance === 'evaluate-synthesized'` and BRANCHES ON IT
- * to decide which kinds get factory/wrap emission skipped
- * (`emitters/shared.ts`'s `synthesizedKinds?.has(kind)` skip-gate) — a
- * genuine compiler-behavior read. `generate.ts` is not a sanctioned reader of
- * the opaque `RuleMetadata` bag (sanctioned set: dsl/enrich, dsl/wire incl.
- * transform machinery, diagnostics-emission code — see
- * `dsl/rule-metadata.ts`'s header). Moving this fact into `metadata.author`
- * would force that read through the restricted `readRuleMetadata` from a
- * non-sanctioned compiler file, which is exactly the doctrine violation
- * decision 3 forbids. Per decision 6's own instruction ("if a compiler-side
- * consumer BRANCHES ON IT for behavior, STOP and report"): `RuleProvenance`
- * stays a separate, already-well-layered, non-opaque, structurally-typed
- * field on `RuleCatalogEntry` (set once at rule-catalog construction time,
- * never stamped-then-reread) — it is a DIFFERENT, correctly-single-sourced
- * mechanism from the `metadata.source` / `FieldRule.source` / `SymbolRule.
- * source` homonym family decision 6 actually targets (see this research
- * doc's §1b table, which already marks "Rule catalog/provenance" as
- * "single" — not one of §5.4's five broken homonyms).
- */
-```
+Where a rule in the catalog came from: the base grammar
+(`'grammar-authored'`), a grammar.sittir.ts override that authored or replaced
+it (`'override-authored-or-replaced'`), or evaluate's own synthesis
+(`'evaluate-synthesized'`). Set once when the rule catalog is built.
+`compiler/generate.ts`'s `collectEvaluateSynthesizedKinds` reads it to skip
+factory and wrap emission for evaluate-synthesized kinds. It is a catalog
+field, not rule metadata, so compiler code reads it directly. For a grammar
+extension (`grammar.sittir.ts`), `evaluateRuleFunctions` gives every rule the
+callback returns `'override-authored-or-replaced'` — base rules, enrich's
+mints and overridden rules alike — so in practice the value only separates
+evaluate's synthesized kinds from the rest.
 
 ### `packages/codegen/src/compiler/types.ts::KindParserMetadata`
 

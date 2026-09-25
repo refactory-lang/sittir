@@ -135,13 +135,9 @@ function makeRuleMetadata(shape) {
 function readRuleMetadata(meta) {
   return meta;
 }
-function normalizeEnumMembers(members, provenance) {
+function normalizeEnumMembers(members) {
   if (members.length === 1) return members[0];
-  return {
-    type: CHOICE,
-    members,
-    ...provenance !== void 0 ? { metadata: makeRuleMetadata(provenance) } : {}
-  };
+  return { type: CHOICE, members };
 }
 
 // packages/codegen/src/dsl/transform/transform-path.ts
@@ -2886,7 +2882,7 @@ function makeField(name, content) {
 function distributeExclusiveFieldChoices(rule2, rulesBag) {
   const seqFn = nativeRuleFn("seq");
   const choiceFn = nativeRuleFn("choice");
-  const collapse = (alts) => alts.length === 1 ? alts[0] : { ...choiceFn(...alts), metadata: makeRuleMetadata({ author: "enrich" }) };
+  const collapse = (alts) => alts.length === 1 ? alts[0] : choiceFn(...alts);
   const expand = (node) => {
     if (!node || typeof node !== "object") return [node];
     let out = node;
@@ -4031,13 +4027,13 @@ function makeGroupLiftSymbol(_referenceRule, name) {
   const base2 = symbol(name);
   return {
     ...base2,
-    metadata: makeRuleMetadata({ author: "enrich", symbolSource: "group-lift" })
+    metadata: makeRuleMetadata({ symbolSource: "group-lift" })
   };
 }
 function makeVisibleGroupAlias(symbolRef2, name) {
   const aliasFn = nativeRuleFn("alias");
   const symbol = nativeRuleFn("symbol", "sym");
-  return { ...aliasFn(symbolRef2, symbol(name)), metadata: makeRuleMetadata({ author: "enrich", aliasSource: "visible-group" }) };
+  return { ...aliasFn(symbolRef2, symbol(name)), metadata: makeRuleMetadata({ aliasSource: "visible-group" }) };
 }
 function synthesizeFieldEnumRules(rules) {
   const fieldOccurrences = collectFieldEnumOccurrences(rules);
@@ -4260,7 +4256,7 @@ function tryExtractFieldEnum(content, rules, memberKeyToCanonicalName) {
   if (enumKindName === void 0) return null;
   const synthesizedRule = {
     type: "PREC",
-    content: normalizeEnumMembers(members, { author: "enrich" }),
+    content: normalizeEnumMembers(members),
     value: -1
   };
   if (innerContent.type === "SYMBOL" && innerContent.name === enumKindName) {

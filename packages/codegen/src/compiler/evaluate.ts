@@ -87,7 +87,7 @@ function choice(...members: Input[]): Rule<'evaluate'> {
 	}
 
 	if (normalized.length > 0 && normalized.every((m) => m.type === STRING)) {
-		return normalizeEnumMembers(normalized as StringRule<'evaluate'>[], { author: 'grammar' });
+		return normalizeEnumMembers(normalized as StringRule<'evaluate'>[]);
 	}
 
 	return structuralBuilder.choice(...normalized);

@@ -1853,25 +1853,10 @@ rebuild goes through here.
 
 ### `packages/codegen/src/dsl/rule-metadata.ts::normalizeEnumMembers`
 
-```text
-/**
- * Normalize a closed literal set to the canonical rule shape.
- *
- * It lives in dsl/ because it constructs the `metadata` bag via
- * `makeRuleMetadata`, which `types/` cannot import.
- *
- * Multi-member sets remain a ChoiceRule (enum-shaped). A single literal
- * collapses to that StringRule so downstream phases classify it as the
- * corresponding keyword/token instead of carrying a degenerate enum shape.
- *
- * Callers pass EITHER
- * `author` (evaluate's grammar-authored-literal-set callers) OR
- * `classifiedBy` (link's enum-promotion classifier) — never both; they are
- * different facts (who wrote the text vs. whether the ENUM classification
- * was declared or inferred), so they are separate optional fields rather
- * than one overloaded `source` value.
- */
-```
+Normalizes a closed literal set to its canonical rule shape. A single literal
+collapses to that StringRule, so downstream phases classify it as the
+corresponding keyword or token instead of carrying a degenerate enum; two or
+more members stay a ChoiceRule (enum-shaped). No metadata is attached.
 
 ### `packages/codegen/src/dsl/rule-transforms.ts::combineMultiplicity`
 
@@ -2356,48 +2341,11 @@ rebuild goes through here.
 
 ### `packages/codegen/src/dsl/rule-metadata.ts::RuleMetadataShape`
 
-```text
-/**
- * The real provenance shape: separate per-fact keys, because the facts are
- * different value sets.
- *   - `author`: WHO wrote the rule's text — grammar authoring, a
- *     grammar.sittir.ts patch, dsl-side enrich synthesis, or evaluate
- *     synthesis.
- *   - `classifiedBy`: WHETHER an ENUM/SUPERTYPE classification was DECLARED
- *     (grammar-authored, e.g. `grammar.supertypes`) or INFERRED by link's
- *     structural classifier. It is NOT an authorship fact: the rule's text
- *     is grammar-authored either way.
- *   - `fieldSource`, `symbolSource`, `aliasSource`: how a FIELD, a SYMBOL
- *     reference or an ALIAS arose.
- */
-```
-
-### `packages/codegen/src/dsl/rule-metadata.ts::author`
-
-```text
-/**
-	 * WHO wrote this rule's text. `'grammar'` — authored directly in the
-	 * grammar. `'override'` — authored or replaced by an grammar.sittir.ts patch.
-	 * `'enrich'` — dsl-side enrich synthesized this position. `'evaluate'` —
-	 * evaluate synthesized this rule (mirrors `RuleProvenance`'s
-	 * `'evaluate-synthesized'`). An authorship record only: path-descent keys
-	 * on `symbolSource`/`aliasSource`, and whether an arm label is automatic
-	 * is read from the automatic-variant record, not from `author`.
-	 */
-```
-
-### `packages/codegen/src/dsl/rule-metadata.ts::classifiedBy`
-
-```text
-/**
-	 * WHETHER a rule's ENUM/SUPERTYPE classification was declared in the
-	 * grammar (`'grammar'`, e.g. present in `grammar.supertypes`) or inferred
-	 * by link's structural classifier (`'link'`, the former `source:
-	 * 'promoted'` value). Diagnostics-only (the `promotedRules` derivation
-	 * log) — never an
-	 * authorship fact.
-	 */
-```
+The facts the opaque metadata bag carries, one key per fact because their
+value sets differ: `fieldSource`, `symbolSource` and `aliasSource` record how
+a FIELD, a SYMBOL reference or an ALIAS arose. Every key is read only in the
+DSL phase (enrich, transform); no compiler or model phase branches on
+metadata.
 
 ### `packages/codegen/src/dsl/rule-metadata.ts::fieldSource`
 

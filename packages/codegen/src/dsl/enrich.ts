@@ -889,7 +889,7 @@ function distributeExclusiveFieldChoices(rule: Rule, rulesBag: Record<string, Ru
 	const choiceFn = nativeRuleFn<(...args: unknown[]) => Rule>('choice');
 
 	const collapse = (alts: readonly Rule[]): Rule =>
-		alts.length === 1 ? alts[0]! : ({ ...choiceFn(...alts), metadata: makeRuleMetadata({ author: 'enrich' }) } as Rule);
+		alts.length === 1 ? alts[0]! : (choiceFn(...alts) as Rule);
 
 	const expand = (node: Rule): readonly Rule[] => {
 		if (!node || typeof node !== 'object') return [node];
@@ -2239,14 +2239,14 @@ function makeGroupLiftSymbol(_referenceRule: Rule, name: string): Rule {
 	const base = symbol(name);
 	return {
 		...base,
-		metadata: makeRuleMetadata({ author: 'enrich', symbolSource: 'group-lift' })
+		metadata: makeRuleMetadata({ symbolSource: 'group-lift' })
 	} as unknown as Rule;
 }
 
 function makeVisibleGroupAlias(symbolRef: Rule, name: string): Rule {
 	const aliasFn = nativeRuleFn<(r: unknown, v: unknown) => Rule>('alias');
 	const symbol = nativeRuleFn<(n: string) => Rule>('symbol', 'sym');
-	return { ...aliasFn(symbolRef, symbol(name)), metadata: makeRuleMetadata({ author: 'enrich', aliasSource: 'visible-group' }) };
+	return { ...aliasFn(symbolRef, symbol(name)), metadata: makeRuleMetadata({ aliasSource: 'visible-group' }) };
 }
 
 function synthesizeFieldEnumRules(rules: Record<string, Rule>): void {
@@ -2535,7 +2535,7 @@ function tryExtractFieldEnum(
 
 	const synthesizedRule = {
 		type: 'PREC',
-		content: normalizeEnumMembers(members, { author: 'enrich' }),
+		content: normalizeEnumMembers(members),
 		value: -1
 	} as unknown as Rule;
 

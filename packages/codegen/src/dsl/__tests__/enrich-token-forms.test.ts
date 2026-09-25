@@ -48,7 +48,7 @@ describe('enrich: token forms', () => {
 	it('mints the arms as enrich group lifts, so a variant() on the parent renames them', () => {
 		const out = enrich(grammarWith({ number: token(numberBody()) }));
 		const arm = rulesOf(out).number.members[0];
-		expect(arm.metadata).toMatchObject({ author: 'enrich', symbolSource: 'group-lift' });
+		expect(arm.metadata).toMatchObject({ symbolSource: 'group-lift' });
 	});
 
 	it('leaves the grammar word rule alone: keyword extraction needs one token', () => {
