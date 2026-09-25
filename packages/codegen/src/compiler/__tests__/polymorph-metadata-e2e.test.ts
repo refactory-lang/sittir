@@ -23,9 +23,9 @@ describe('polymorph metadata — structural e2e', () => {
 		const structural = deriveVariantChildren(linked.rules);
 		const assignmentVariants = structural.get('assignment');
 		expect(assignmentVariants).toEqual([
-			{ kind: polymorphVisibleName('assignment', 'eq'), name: 'eq' },
-			{ kind: polymorphVisibleName('assignment', 'type'), name: 'type' },
-			{ kind: polymorphVisibleName('assignment', 'typed'), name: 'typed' }
+			{ kind: polymorphVisibleName('assignment', 'eq'), name: 'eq', definedBy: 'override' },
+			{ kind: polymorphVisibleName('assignment', 'type'), name: 'type', definedBy: 'override' },
+			{ kind: polymorphVisibleName('assignment', 'typed'), name: 'typed', definedBy: 'override' }
 		]);
 	});
 
@@ -36,13 +36,13 @@ describe('polymorph metadata — structural e2e', () => {
 
 		const closureVariants = structural.get('closure_expression');
 		expect(closureVariants).toEqual([
-			{ kind: polymorphVisibleName('closure_expression', 'block'), name: 'block' },
-			{ kind: polymorphVisibleName('closure_expression', 'expr'), name: 'expr' }
+			{ kind: polymorphVisibleName('closure_expression', 'block'), name: 'block', definedBy: 'override' },
+			{ kind: polymorphVisibleName('closure_expression', 'expr'), name: 'expr', definedBy: 'override' }
 		]);
 		const orPatternVariants = structural.get('or_pattern');
 		expect(orPatternVariants).toEqual([
-			{ kind: polymorphVisibleName('or_pattern', 'binary'), name: 'binary' },
-			{ kind: polymorphVisibleName('or_pattern', 'prefix'), name: 'prefix' }
+			{ kind: polymorphVisibleName('or_pattern', 'binary'), name: 'binary', definedBy: 'override' },
+			{ kind: polymorphVisibleName('or_pattern', 'prefix'), name: 'prefix', definedBy: 'override' }
 		]);
 	});
 });

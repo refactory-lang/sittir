@@ -93,25 +93,30 @@ elsewhere. It is what a literal segment matches against.
  */
 ```
 
+### `packages/codegen/src/dsl/transform/transform-path.ts::isEnrichAuthored`
+
+The sanctioned read of whether a rule's metadata names enrich as its
+author (`readRuleMetadata(rule.metadata)?.author === 'enrich'`) — the one
+place that test runs, so every caller that needs to tell an enrich-stamped
+rule from an author-declared one (`compiler/variant-structural.ts`'s
+`definedByOf`, among others) shares the same check rather than re-reading
+`author` inline.
+
 ### `packages/codegen/src/dsl/transform/transform-path.ts::isEnrichGroupLiftSymbol`
 
-```text
-/**
- * True when `rule` is an enrich-synthesized group-lift symbol — a SYMBOL ref
- * tagged `metadata.author === 'enrich'` (debt: source-homonym resolution,
- * decision 6 — was `metadata.source === 'enrich'`). enrich hoists
- * `optional(seq)` / `repeat(seq)` into such a symbol and carries the original
- * seq body inline on `content` so path-descent can travel THROUGH it (see
- * `descendThroughGroupLiftSymbol`). The tag is the canonical provenance
- * marker (the legacy top-level `source: 'group-lift'` field is retired).
- */
-```
+True when `rule` is an enrich-synthesized group-lift symbol: a SYMBOL whose
+metadata records `symbolSource: 'group-lift'`, the construction-time fact
+`makeGroupLiftSymbol` stamps. Enrich hoists `optional(seq)` / `repeat(seq)`
+into such a symbol and keeps the original seq body reachable so path descent
+can travel through it (see `descendThroughGroupLiftSymbol`). `author` is a
+label on many enrich-built rules, including labelled choice arms, and never
+decides this.
 
 #### body
 
 ```text
 // MUST be a SYMBOL — an enrich content-alias (`alias(<content>, $.<name>)`)
-// also carries `metadata.author === 'enrich'` but is handled separately by
+// is handled separately by
 // `isEnrichContentAlias` / `descendThroughEnrichContentAlias`. Without the
 // type guard, an alias would match here and `descendThroughGroupLiftSymbol`
 // would throw "group-lift symbol has no name" (an alias has no `.name`).
@@ -1057,6 +1062,13 @@ content is minted like any other `alias()` target instead: the terminal
 becomes the hidden leaf rule `_<name>` (no `hoisted`, since it lexes as one
 token) and the arm becomes `alias($._<name>, $.<name>)`.
 
+Every branch's result — the lift rename, the inline mint, and the
+already-named-symbol upsert — passes through `relabelledArm` against
+`originalMember` before it is returned: when the arm being replaced carried
+a `variantOf`, the new shape gets the same owner and a `variant` name
+recomputed for its own display, so the resolved site keeps standing in for
+the arm it replaced instead of losing its label.
+
 ### `packages/codegen/src/dsl/transform/transform.ts::hoistedUnlessToken`
 
 The annotation a minted body carries: `hoisted` (a group whose slots seat on
@@ -1395,17 +1407,16 @@ Every body a variant deposits is stamped `hoisted`, including the single hidden 
 
 ### `packages/codegen/src/dsl/transform/transform.ts::withVariantAnnotation`
 
-```text
-/** Stamp an arm's declared variant name and declaring kind onto the rule, so
- *  the name reaches the emitters as data instead of being reconstructed
- *  later from the minted kind name.
- *
- *  For an ALIAS the stamp goes on the CONTENT, never the wrapper: the alias
- *  attribute builder rebuilds the rule as `{ ...content, aliasedTo }`, so
- *  anything left on the wrapper is dropped the moment the alias collapses to
- *  a symbol. Stamping the content instead carries the annotation through that
- *  collapse without any phase having to forward it. */
-```
+Stamps an arm's declared variant name and declaring kind onto the rule, so
+the name reaches the emitters as data instead of being reconstructed later
+from the minted kind name. Writes through `automatic-variants.ts`'s
+`withAuthoredLabel`, so the stamp also merges `author: 'override'` into the
+rule's own metadata (an override-declared variant, never mistaken for one
+of enrich's automatic labels) and — for an ALIAS — lands on the CONTENT,
+never the wrapper (`withAnnotations`'s ALIAS transparency): the alias
+attribute builder rebuilds the rule as `{ ...content, aliasedTo }`, so
+anything left on the wrapper would be dropped the moment the alias
+collapses to a symbol.
 
 `withVariantAnnotation`'s fourth argument is the choice member the variant
 was hoisted from, before the arm was mint-wrapped. `isDefaultArm` reads that
@@ -1591,6 +1602,16 @@ Only a HIDDEN group lift (`isHiddenKind`) is looked through. A visible lift is a
 // existing 'expression1'/'expression2'/'pattern') is the intended
 // override-trumps-existing behavior — silent by design.
 ```
+
+#### body
+
+Strips any automatically-stamped variant label out of the content before
+handing it to the native `field()` builder (`withoutAutomaticVariants`,
+against `wireAutomaticVariants()`): once content sits under a field it is
+addressed by that field's name, so an enrich-stamped arm label underneath
+would be a second, unused address for the same content. An override-declared
+label is untouched — only a key `wireAutomaticVariants()` actually holds is
+stripped.
 
 #### body
 

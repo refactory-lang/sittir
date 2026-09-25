@@ -8,7 +8,6 @@ import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import {
 	armConfigKeys,
-	choiceSlotOf,
 	elementsSeatOf,
 	spliceSeatOf,
 	subFactoriesOf,
@@ -22,116 +21,58 @@ function nodeArmOf(entries: readonly SubFactory[], name: string): NodeArm {
 	return entry.arm;
 }
 
-// ---------------------------------------------------------------------------
-// Synthetic grammars.
-//
-// `comment: choice(comment_doc, comment_plain)` — `doc_comment`/`plain_comment`
-// as sketched in the spec don't share the `comment_` prefix `armName` keys
-// off of, so the arms are renamed `comment_doc`/`comment_plain` to exercise
-// the intended `<parent>_<suffix>` naming convention. `logic` is declared
-// first in each grammar's rule map because `link` only keeps rules reachable
-// from the first-declared rule.
-// ---------------------------------------------------------------------------
+const label = (variantOf: string, variant: string) => ({ annotations: { variant, variantOf } });
 
 function commentNodeMap(): NodeMap {
-	const rules: Record<string, Rule<'evaluate'>> = {
+	return buildNodeMap({
 		comment: {
 			type: CHOICE,
 			members: [
-				{ type: SYMBOL, name: 'comment_doc' },
-				{ type: SYMBOL, name: 'comment_plain' }
+				{ type: SYMBOL, name: 'comment_doc', ...label('comment', 'doc') },
+				{ type: SYMBOL, name: 'comment_plain', ...label('comment', 'plain') }
 			]
 		},
-		comment_doc: {
-			type: SEQ,
-			members: [
-				{ type: STRING, value: '///' },
-				{ type: FIELD, name: 'text', content: { type: PATTERN, value: '.*' } }
-			]
-		},
-		comment_plain: {
-			type: SEQ,
-			members: [
-				{ type: STRING, value: '//' },
-				{ type: FIELD, name: 'text', content: { type: PATTERN, value: '.*' } }
-			]
-		}
-	};
-	return buildNodeMap(rules);
+		comment_doc: { type: SEQ, members: [{ type: STRING, value: '///' }, { type: FIELD, name: 'text', content: { type: PATTERN, value: '.*' } }] },
+		comment_plain: { type: SEQ, members: [{ type: STRING, value: '//' }, { type: FIELD, name: 'text', content: { type: PATTERN, value: '.*' } }] }
+	});
 }
 
-function logicNodeMap(): NodeMap {
-	const rules: Record<string, Rule<'evaluate'>> = {
+function logicNodeMap(labelled: boolean): NodeMap {
+	const op = (value: string): Rule<'evaluate'> => ({ type: STRING, value, ...(labelled ? label('logic', value) : {}) });
+	return buildNodeMap({
 		logic: {
 			type: SEQ,
 			members: [
 				{ type: FIELD, name: 'left', content: { type: SYMBOL, name: 'identifier' } },
-				{
-					type: FIELD,
-					name: 'op',
-					content: {
-						type: CHOICE,
-						members: [
-							{ type: STRING, value: 'and' },
-							{ type: STRING, value: 'or' }
-						]
-					}
-				},
+				{ type: CHOICE, members: [op('and'), op('or')] },
 				{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'identifier' } }
 			]
 		},
 		identifier: { type: PATTERN, value: '[a-z]+' }
-	};
-	return buildNodeMap(rules);
+	});
 }
 
-function pairNodeMap(): NodeMap {
-	const rules: Record<string, Rule<'evaluate'>> = {
-		pair: {
-			type: SEQ,
-			members: [
-				{
-					type: FIELD,
-					name: 'a',
-					content: {
-						type: CHOICE,
-						members: [
-							{ type: STRING, value: 'x' },
-							{ type: STRING, value: 'y' }
-						]
-					}
-				},
-				{
-					type: FIELD,
-					name: 'b',
-					content: {
-						type: CHOICE,
-						members: [
-							{ type: STRING, value: 'm' },
-							{ type: STRING, value: 'n' }
-						]
-					}
-				}
-			]
-		}
-	};
-	return buildNodeMap(rules);
-}
-
-function flattenNodeMap(): NodeMap {
-	const rules: Record<string, Rule<'evaluate'>> = {
+function nestingNodeMap(): NodeMap {
+	return buildNodeMap({
 		grandparent: {
 			type: CHOICE,
 			members: [
-				{ type: SYMBOL, name: 'parent' },
-				{ type: SYMBOL, name: 'leaf_a' }
+				{ type: SYMBOL, name: 'parent', ...label('grandparent', 'parent') },
+				{ type: SYMBOL, name: 'leaf_a', ...label('grandparent', 'leaf_a') }
 			]
 		},
 		parent: {
-			type: CHOICE,
+			type: SEQ,
 			members: [
-				{ type: SYMBOL, name: 'leaf_a' },
-				{ type: SYMBOL, name: 'leaf_b' }
+				{ type: STRING, value: '(' },
+				{
+					type: CHOICE,
+					members: [
+						{ type: SYMBOL, name: 'leaf_a', ...label('parent', 'leaf_a') },
+						{ type: SYMBOL, name: 'leaf_b', ...label('parent', 'leaf_b') }
+					]
+				},
+				{ type: STRING, value: ')' }
 			]
 		},
 		leaf_a: { type: PATTERN, value: '[a-z]+' },
@@ -143,133 +84,35 @@ function flattenNodeMap(): NodeMap {
 			]
 		},
 		identifier: { type: PATTERN, value: '[0-9]+' }
-	};
-	return buildNodeMap(rules);
+	});
 }
 
 function ambiguousNodeMap(): NodeMap {
-	const rules: Record<string, Rule<'evaluate'>> = {
-		grandparent_b: {
+	return buildNodeMap({
+		twice: {
 			type: CHOICE,
 			members: [
-				{ type: SYMBOL, name: 'parent_x' },
-				{ type: SYMBOL, name: 'parent_y' }
+				{ type: SYMBOL, name: 'first', ...label('twice', 'same') },
+				{ type: SYMBOL, name: 'second', ...label('twice', 'same') }
 			]
 		},
-		parent_x: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'shared_leaf' },
-				{ type: SYMBOL, name: 'other_x' }
-			]
-		},
-		parent_y: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'shared_leaf' },
-				{ type: SYMBOL, name: 'other_y' }
-			]
-		},
-		shared_leaf: { type: PATTERN, value: '[a-z]+' },
-		other_x: { type: PATTERN, value: '[0-9]+' },
-		other_y: { type: PATTERN, value: '[0-9]+' }
-	};
-	return buildNodeMap(rules);
-}
-
-function sameHostNodeMap(): NodeMap {
-	const rules: Record<string, Rule<'evaluate'>> = {
-		grandparent_c: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'parent_c' },
-				{ type: SYMBOL, name: 'leaf_c' }
-			]
-		},
-		parent_c: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'twin_a' },
-				{ type: SYMBOL, name: 'twin_b' }
-			]
-		},
-		twin_a: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'twin' },
-				{ type: SYMBOL, name: 'leaf_c' }
-			]
-		},
-		twin_b: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'twin' },
-				{ type: SYMBOL, name: 'other_c' }
-			]
-		},
-		twin: { type: PATTERN, value: '[a-z]+' },
-		leaf_c: { type: PATTERN, value: '[0-9]+' },
-		other_c: { type: PATTERN, value: '[A-Z]+' }
-	};
-	return buildNodeMap(rules);
-}
-
-function depthNodeMap(): NodeMap {
-	const rules: Record<string, Rule<'evaluate'>> = {
-		grandparent_d: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'parent_d' },
-				{ type: SYMBOL, name: 'leaf_d' }
-			]
-		},
-		parent_d: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'member_d' },
-				{ type: SYMBOL, name: 'other_d' }
-			]
-		},
-		member_d: {
-			type: SEQ,
-			members: [
-				{ type: FIELD, name: 'object', content: { type: SYMBOL, name: 'leaf_d' } },
-				{
-					type: FIELD,
-					name: 'separator',
-					content: {
-						type: CHOICE,
-						members: [
-							{ type: STRING, value: 'and' },
-							{ type: STRING, value: 'or' }
-						]
-					}
-				},
-				{ type: FIELD, name: 'property', content: { type: SYMBOL, name: 'leaf_d' } }
-			]
-		},
-		other_d: { type: PATTERN, value: '[0-9]+' },
-		leaf_d: { type: PATTERN, value: '[a-z]+' }
-	};
-	return buildNodeMap(rules);
+		first: { type: PATTERN, value: '[a-z]+' },
+		second: { type: PATTERN, value: '[0-9]+' }
+	});
 }
 
 function collideNodeMap(): NodeMap {
-	const rules: Record<string, Rule<'evaluate'>> = {
+	return buildNodeMap({
 		collide_parent: {
 			type: SEQ,
 			members: [
 				{ type: FIELD, name: 'shared', content: { type: SYMBOL, name: 'identifier' } },
 				{
-					type: FIELD,
-					name: 'picked',
-					content: {
-						type: CHOICE,
-						members: [
-							{ type: SYMBOL, name: 'shape_a' },
-							{ type: SYMBOL, name: 'shape_b' }
-						]
-					}
+					type: CHOICE,
+					members: [
+						{ type: SYMBOL, name: 'shape_a', ...label('collide_parent', 'shape_a') },
+						{ type: SYMBOL, name: 'shape_b', ...label('collide_parent', 'shape_b') }
+					]
 				}
 			]
 		},
@@ -282,20 +125,72 @@ function collideNodeMap(): NodeMap {
 		},
 		shape_b: { type: PATTERN, value: '[0-9]+' },
 		identifier: { type: PATTERN, value: '[a-z]+' }
-	};
-	return buildNodeMap(rules);
+	});
 }
 
-function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
+function supertypeNodeMap(): NodeMap {
+	return buildNodeMap(
+		{
+			root: { type: SEQ, members: [{ type: SYMBOL, name: 'holder' }, { type: SYMBOL, name: 'fielded' }] },
+			holder: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: 'hold' },
+					{
+						type: CHOICE,
+						members: [
+							{ type: SYMBOL, name: '_shape', ...label('holder', 'shape') },
+							{ type: SYMBOL, name: 'other', ...label('holder', 'other') }
+						]
+					}
+				]
+			},
+			fielded: { type: SEQ, members: [{ type: STRING, value: 'f' }, { type: FIELD, name: 'value', content: { type: SYMBOL, name: '_shape' } }] },
+			_shape: {
+				type: CHOICE,
+				members: [
+					{ type: SYMBOL, name: 'circle', ...label('_shape', 'circle') },
+					{ type: SYMBOL, name: 'square', ...label('_shape', 'square') }
+				]
+			},
+			circle: { type: SEQ, members: [{ type: STRING, value: 'o' }, { type: FIELD, name: 'r', content: { type: PATTERN, value: '[0-9]+' } }] },
+			square: { type: SEQ, members: [{ type: STRING, value: '#' }, { type: FIELD, name: 'side', content: { type: PATTERN, value: '[0-9]+' } }] },
+			other: { type: PATTERN, value: '[a-z]+' }
+		},
+		{ supertypes: ['_shape'] }
+	);
+}
+
+function inlineNodeMap(): NodeMap {
+	const inlinedEnd = (): Rule<'evaluate'> => ({
+		type: CHOICE,
+		members: [
+			{ type: SYMBOL, name: 'semi', ...label('_end', 'semi') },
+			{ type: SYMBOL, name: 'newline', ...label('_end', 'newline') }
+		]
+	});
+	return buildNodeMap({
+		root: { type: SEQ, members: [{ type: SYMBOL, name: 'statement' }, { type: SYMBOL, name: 'bare' }] },
+		statement: { type: SEQ, members: [{ type: STRING, value: 'go' }, { type: FIELD, name: 'terminator', content: inlinedEnd() }] },
+		bare: { type: SEQ, members: [{ type: STRING, value: 'stop' }, inlinedEnd()] },
+		semi: { type: PATTERN, value: ';+' },
+		newline: { type: PATTERN, value: '\\n+' }
+	});
+}
+
+function buildNodeMap(
+	rules: Record<string, Rule<'evaluate'>>,
+	lists: { readonly supertypes?: readonly string[]; readonly inline?: readonly string[] } = {}
+): NodeMap {
 	const raw: RawGrammar = {
 		name: 'synth',
 		rules,
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],
 		externals: [],
-		supertypes: [],
+		supertypes: [...(lists.supertypes ?? [])],
 		factoryInline: [],
-		inline: [],
+		inline: [...(lists.inline ?? [])],
 		conflicts: [],
 		precedences: [],
 		word: null,
@@ -307,7 +202,7 @@ function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
 }
 
 describe('sub-factories — subFactoriesOf', () => {
-	it('envelope with a kind-choice sole slot yields one kind arm per child', () => {
+	it('a labelled choice yields one arm per label, named by the label', () => {
 		const nodeMap = commentNodeMap();
 		const set = subFactoriesOf(nodeMap.nodes.get('comment')!, nodeMap);
 		expect(set.entries.map((e) => e.name).sort()).toEqual(['doc', 'plain']);
@@ -315,57 +210,41 @@ describe('sub-factories — subFactoriesOf', () => {
 		expect(set.diagnostics).toEqual([]);
 	});
 
-	it('branch with an enum slot yields literal arms with the residual', () => {
-		const nodeMap = logicNodeMap();
+	it('labelled literals are value arms carrying the residual slots', () => {
+		const nodeMap = logicNodeMap(true);
 		const set = subFactoriesOf(nodeMap.nodes.get('logic')!, nodeMap);
-		expect(set.entries.map((e) => e.name).sort()).toEqual(['and', 'or']);
+		expect(set.entries.map((e) => [e.name, e.arm.via])).toEqual([
+			['and', 'value'],
+			['or', 'value']
+		]);
 		expect(set.entries[0]!.residual.map((f) => f.name).sort()).toEqual(['left', 'right']);
 		expect(armConfigKeys(set.entries[0]!, nodeMap)).toEqual([]);
 	});
 
-	it('a kind with two choice slots is not eligible', () => {
-		const nodeMap = pairNodeMap();
-		expect(choiceSlotOf(nodeMap.nodes.get('pair')!)).toBeUndefined();
+	it('an unlabelled choice yields no arms', () => {
+		const nodeMap = logicNodeMap(false);
+		expect(subFactoriesOf(nodeMap.nodes.get('logic')!, nodeMap).entries).toEqual([]);
 	});
 
-	it('a grand-arm flattens onto the grandparent, and a direct arm wins over a flattened one of the same name', () => {
-		const nodeMap = flattenNodeMap();
+	it("a child's own arms nest under its host and never flatten onto the parent", () => {
+		const nodeMap = nestingNodeMap();
 		const set = subFactoriesOf(nodeMap.nodes.get('grandparent')!, nodeMap);
-		expect(set.entries.map((e) => e.name).sort()).toEqual(['leafA', 'leafB', 'parent']);
-		expect(set.diagnostics).toEqual([]);
-
-		const leafA = nodeArmOf(set.entries, 'leafA');
-		expect(leafA.path).toEqual([]);
-		expect(leafA.child.kind).toBe('leaf_a');
-
-		const leafB = nodeArmOf(set.entries, 'leafB');
-		expect(leafB.path).toEqual(['leafB']);
-		expect(leafB.child.kind).toBe('parent');
-		expect(armConfigKeys(set.entries.find((e) => e.name === 'leafB')!, nodeMap)).toEqual(['x', 'y']);
-	});
-
-	it('two flattened claimants for the same name hosted by different direct arms are both kept, named by their host', () => {
-		const nodeMap = ambiguousNodeMap();
-		const set = subFactoriesOf(nodeMap.nodes.get('grandparent_b')!, nodeMap);
-		expect(set.diagnostics).toEqual([]);
-		expect(set.entries.some((e) => e.name === 'sharedLeaf')).toBe(false);
-		expect(nodeArmOf(set.entries, 'parentXSharedLeaf')).toMatchObject({ path: ['sharedLeaf'] });
-		expect(nodeArmOf(set.entries, 'parentXSharedLeaf').child.kind).toBe('parent_x');
-		expect(nodeArmOf(set.entries, 'parentYSharedLeaf').child.kind).toBe('parent_y');
-	});
-
-	it('two flattened claimants for the same name reached through one child stay ambiguous', () => {
-		const nodeMap = sameHostNodeMap();
-		const set = subFactoriesOf(nodeMap.nodes.get('grandparent_c')!, nodeMap);
-		expect(set.entries.some((e) => e.name === 'twin')).toBe(false);
-		expect(set.diagnostics).toEqual([
-			{
-				parent: 'grandparent_c',
-				name: 'twin',
-				reason: 'ambiguous',
-				claimants: ['parent_c.twinATwin', 'parent_c.twinBTwin']
-			}
+		expect(set.entries.map((e) => [e.name, e.depth])).toEqual([
+			['parent', 0],
+			['leafA', 0],
+			['parent$leafA', 1],
+			['parent$leafB', 1]
 		]);
+		expect(nodeArmOf(set.entries, 'parent$leafB')).toMatchObject({ path: ['leafB'] });
+		expect(nodeArmOf(set.entries, 'parent$leafB').child.kind).toBe('parent');
+		expect(set.diagnostics).toEqual([]);
+	});
+
+	it('two arms with one label are ambiguous and neither is kept', () => {
+		const nodeMap = ambiguousNodeMap();
+		const set = subFactoriesOf(nodeMap.nodes.get('twice')!, nodeMap);
+		expect(set.entries).toEqual([]);
+		expect(set.diagnostics).toEqual([{ parent: 'twice', name: 'same', reason: 'ambiguous', claimants: ['first', 'second'] }]);
 	});
 
 	it('a config-shaped arm whose key is also a residual slot is seated as a tuple, with the shared key reported', () => {
@@ -378,31 +257,25 @@ describe('sub-factories — subFactoriesOf', () => {
 		expect(set.diagnostics).toEqual([
 			{ parent: 'collide_parent', name: 'shapeA', reason: 'shared-key', claimants: ['shape_a'], keys: ['shared'] }
 		]);
-		expect(armConfigKeys(set.entries.find((e) => e.name === 'shapeA')!, nodeMap)).toEqual([]);
 	});
 
 	it('a config-shaped arm with no shared key merges its keys into the parent config', () => {
-		const nodeMap = flattenNodeMap();
-		const set = subFactoriesOf(nodeMap.nodes.get('grandparent')!, nodeMap);
+		const nodeMap = nestingNodeMap();
+		const set = subFactoriesOf(nodeMap.nodes.get('parent')!, nodeMap);
 		expect(set.entries.find((e) => e.name === 'leafB')!.merges).toBe(true);
 	});
 
-	it('the claimant nearest the parent wins a flat name over one reached through a deeper flattening', () => {
-		const nodeMap = depthNodeMap();
-		const parent = subFactoriesOf(nodeMap.nodes.get('parent_d')!, nodeMap);
-		expect(parent.entries.map((e) => [e.name, e.depth])).toEqual([
-			['memberD', 0],
-			['and', 1],
-			['or', 1],
-			['otherD', 0]
-		]);
+	it("a labelled supertype value mounts its labelled members; an inlined member is never the parent's arm", () => {
+		const nodeMap = supertypeNodeMap();
+		const held = subFactoriesOf(nodeMap.nodes.get('holder')!, nodeMap);
+		expect(held.entries.map((e) => e.name).sort()).toEqual(['circle', 'other', 'square']);
+		expect(subFactoriesOf(nodeMap.nodes.get('fielded')!, nodeMap).entries).toEqual([]);
+	});
 
-		const set = subFactoriesOf(nodeMap.nodes.get('grandparent_d')!, nodeMap);
-		expect(set.diagnostics).toEqual([]);
-		const memberD = set.entries.find((e) => e.name === 'memberD')!;
-		expect(memberD.depth).toBe(1);
-		expect(nodeArmOf(set.entries, 'memberD').path).toEqual(['memberD']);
-		expect(set.entries.filter((e) => e.name === 'memberD')).toHaveLength(1);
+	it("an inline rule's labels are arms only in the host's unnamed slot", () => {
+		const nodeMap = inlineNodeMap();
+		expect(subFactoriesOf(nodeMap.nodes.get('statement')!, nodeMap).entries).toEqual([]);
+		expect(subFactoriesOf(nodeMap.nodes.get('bare')!, nodeMap).entries.map((e) => e.name).sort()).toEqual(['newline', 'semi']);
 	});
 });
 
@@ -457,7 +330,6 @@ describe('hoisted arms in a parent with two choice slots', () => {
 	it('mounts every hoisted arm under its variant name, seated on its own slot', () => {
 		const nodeMap = twoChoiceSlotsNodeMap();
 		const header = nodeMap.nodes.get('header')!;
-		expect(choiceSlotOf(header)).toBeUndefined();
 		const set = subFactoriesOf(header, nodeMap);
 		const names = set.entries.map((e) => e.name);
 		expect(names).toContain('lhs');
@@ -607,7 +479,13 @@ describe('a hoisted token the factories do not emit mounts as a value arm', () =
 					{
 						type: FIELD,
 						name: 'content',
-						content: { type: CHOICE, members: [{ type: SYMBOL, name: '_pointer_const' }, { type: SYMBOL, name: 'mutable' }] }
+						content: {
+							type: CHOICE,
+							members: [
+								{ type: SYMBOL, name: '_pointer_const', annotations: { variant: 'const', variantOf: 'pointer' } },
+								{ type: SYMBOL, name: 'mutable', annotations: { variant: 'mutable', variantOf: 'pointer' } }
+							]
+						}
 					},
 					{ type: FIELD, name: 'type', content: { type: PATTERN, value: '[a-z]+' } }
 				]

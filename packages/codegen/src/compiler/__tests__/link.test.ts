@@ -1283,8 +1283,8 @@ describe('link — variantChildren is stamped on the linked grammar', () => {
 		const linked = link(raw);
 		expect(linked.variantChildren).toBeDefined();
 		expect(linked.variantChildren?.get('array_expression')).toEqual([
-			{ kind: 'array_expression_semi', name: 'semi' },
-			{ kind: 'array_expression_list', name: 'list' }
+			{ kind: 'array_expression_semi', name: 'semi', definedBy: 'override' },
+			{ kind: 'array_expression_list', name: 'list', definedBy: 'override' }
 		]);
 	});
 });

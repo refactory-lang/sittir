@@ -4833,6 +4833,10 @@
           "named": true
         },
         {
+          "type": "literal_type_negative_number",
+          "named": true
+        },
+        {
           "type": "null",
           "named": true
         },
@@ -4849,14 +4853,40 @@
           "named": true
         },
         {
-          "type": "unary_expression_number",
-          "named": true
-        },
-        {
           "type": "undefined",
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "literal_type_negative_number",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "+",
+            "named": false
+          },
+          {
+            "type": "-",
+            "named": false
+          }
+        ]
+      }
     }
   },
   {
@@ -7526,36 +7556,6 @@
           },
           {
             "type": "~",
-            "named": false
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "unary_expression_number",
-    "named": true,
-    "fields": {
-      "argument": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "number",
-            "named": true
-          }
-        ]
-      },
-      "operator": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "+",
-            "named": false
-          },
-          {
-            "type": "-",
             "named": false
           }
         ]

@@ -842,12 +842,6 @@ export interface MatchBlockBlockTransport {
   _alternative_separator_space?: number
 }
 
-export interface MatchBlockTransport {
-  '$_trivia'?: TransportTrivia
-  '$_edges'?: Edges
-  _content: SlotValue<MatchBlockContentTransportSlot>
-}
-
 export interface MatchStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges

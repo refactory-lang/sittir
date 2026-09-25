@@ -342,7 +342,7 @@ export default grammar(
 					1: variant('paren')
 				},
 
-				_match_block: { 0: variant('block'), 1: variant('empty') },
+				_match_block: { 0: variant('block', { default: true }), 1: variant('empty') },
 
 				// See docs/python-grammar-sittir-glossary.md::_suite
 				_suite: { 0: variant('inline'), 1: variant('block'), 2: variant('empty') }

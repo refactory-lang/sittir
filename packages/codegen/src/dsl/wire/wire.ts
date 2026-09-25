@@ -25,6 +25,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
+import { getEnrichAutomaticVariants, relabelledArm, unlabelled } from '../automatic-variants.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
 
@@ -53,6 +54,7 @@ export interface WireContext {
 	readonly precedenceRankedNames: ReadonlySet<string>;
 	readonly flattenedParents: Set<string>;
 	readonly aliasTargets: Set<string>;
+	readonly automaticVariants: ReadonlySet<string>;
 }
 
 export interface RefineForm {
@@ -68,7 +70,7 @@ export function getCurrentWireContext(): WireContext | null {
 
 export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): boolean {
 	if (!currentContext) return false;
-	currentContext.deposits.set(name, content);
+	currentContext.deposits.set(name, unlabelled(content) as RuntimeRule);
 	return true;
 }
 
@@ -134,13 +136,18 @@ export function wireGetCurrentRuleKind(): string | null {
 	return currentContext?.currentRuleKind ?? null;
 }
 
+export function wireAutomaticVariants(): ReadonlySet<string> {
+	return currentContext?.automaticVariants ?? new Set();
+}
+
 export function wireIsExtraRule(name: string): boolean {
 	return currentContext?.extraRuleNames.has(name) ?? false;
 }
 
 export function withWireContext<T>(
 	ruleKind: string | null,
-	fn: (ctx: WireContext) => T
+	fn: (ctx: WireContext) => T,
+	base?: unknown
 ): { result: T; ctx: WireContext } {
 	const ctx: WireContext = {
 		deposits: new Map(),
@@ -159,7 +166,8 @@ export function withWireContext<T>(
 		extraRuleNames: new Set(),
 		precedenceRankedNames: new Set(),
 		flattenedParents: new Set(),
-		aliasTargets: new Set()
+		aliasTargets: new Set(),
+		automaticVariants: getEnrichAutomaticVariants(base)
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -333,7 +341,8 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		extraRuleNames: extraRuleNames(cfg, baseArg),
 		precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
 		flattenedParents: new Set(),
-		aliasTargets: new Set()
+		aliasTargets: new Set(),
+		automaticVariants: getEnrichAutomaticVariants(base)
 	};
 
 	const patches = cfg.patches ?? {};
@@ -887,15 +896,11 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 	const r = rule as { type: string; members?: unknown[]; content?: unknown };
 	for (const c of candidates) {
 		if (patternBodyEqual(rule, c.body)) {
-			if (c.aliasAs !== undefined) {
-				return {
-					type: 'ALIAS',
-					content: { type: 'SYMBOL', name: c.name },
-					named: true,
-					value: c.aliasAs
-				};
-			}
-			return { type: 'SYMBOL', name: c.name };
+			const site =
+				c.aliasAs === undefined
+					? { type: 'SYMBOL', name: c.name }
+					: { type: 'ALIAS', content: { type: 'SYMBOL', name: c.name }, named: true, value: c.aliasAs };
+			return relabelledArm(site, rule);
 		}
 	}
 	const t = r.type;

@@ -793,7 +793,7 @@ describe('enrich()', () => {
 	});
 
 	describe('non-seq rules', () => {
-		it('passes through choice rules unchanged', () => {
+		it('labels the arms of a choice rule and changes nothing else', () => {
 			const input = mkGrammar({
 				expr: {
 					type: CHOICE,
@@ -804,7 +804,14 @@ describe('enrich()', () => {
 				}
 			});
 			const out = runEnrich(input);
-			expect(out.grammar.rules.expr).toEqual(input.grammar.rules.expr);
+			const label = (variant: string) => ({ annotations: { variant, variantOf: 'expr' }, metadata: { author: 'enrich' } });
+			expect(out.grammar.rules.expr).toEqual({
+				type: CHOICE,
+				members: [
+					{ type: SYMBOL, name: 'a', ...label('a') },
+					{ type: SYMBOL, name: 'b', ...label('b') }
+				]
+			});
 		});
 
 		it('passes through bare symbol rules unchanged', () => {
@@ -860,12 +867,12 @@ describe('enrich()', () => {
 				type: 'PREC',
 				content: {
 					type: 'CHOICE',
-					members: [
-						{ type: 'STRING', value: '+' },
-						{ type: 'STRING', value: '-' },
-						{ type: 'STRING', value: '*' },
-						{ type: 'STRING', value: '/' }
-					],
+					members: ['+', '-', '*', '/'].map((value) => ({
+						type: 'STRING',
+						value,
+						annotations: { variantOf: '_binary_expression_operator' },
+						metadata: { author: 'enrich' }
+					})),
 					metadata: { author: 'enrich' }
 				},
 				value: -1

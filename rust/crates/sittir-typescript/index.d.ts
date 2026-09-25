@@ -1003,6 +1003,13 @@ export interface LexicalDeclarationTransport {
   _declarators_separator_space_after?: number
 }
 
+export interface LiteralTypeNegativeNumberTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _operator: SlotValue<NumberOperatorEnum>
+  _argument: SlotValue<NumberTransport>
+}
+
 export interface LiteralTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
@@ -1171,13 +1178,6 @@ export interface NumberOctalTransport {
   '$_edges'?: Edges
   _prefix: string
   _content: string
-}
-
-export interface NumberTransport {
-  '$_trivia'?: TransportTrivia
-  '$_edges'?: Edges
-  _operator: SlotValue<NumberOperatorEnum>
-  _argument: SlotValue<NumberTransport>
 }
 
 export interface ObjectAssignmentPatternTransport {

@@ -394,9 +394,9 @@ export enum TSKindId {
 	EscapeSequenceHex = 148,
 	RawKeyword = 149,
 	StringOpen = 150,
-	LineCommentRegularDslashToken1 = 151,
-	LineCommentRegularDslashToken2 = 152,
-	LineCommentContent = 153,
+	LineCommentExtraSlashesToken1 = 151,
+	LineCommentExtraSlashesToken2 = 152,
+	LineCommentRegular = 153,
 	MacroRulesBang = 154,
 	StringContent = 155,
 	RawStringLiteralStart = 156,
@@ -602,32 +602,32 @@ export enum TSKindId {
 	Patterns = 356,
 	StructPatternElements = 357,
 	UseWildcardGroup = 358,
-	VisibilityModifierGroup = 359,
-	KwAsync = 360,
-	KwDefault = 361,
-	KwConst = 362,
-	KwUnsafe = 363,
-	TupleTypeElements = 364,
-	TupleExpressionElements = 365,
-	TokenTreePunctuation = 366,
-	TokenKeywords = 367,
-	RangeExpressionBare = 368,
-	ImplItemUnsafeMarker = 369,
-	ArrayExpressionSemi = 370,
-	ArrayExpressionList = 371,
-	AttributeInput = 372,
-	ClosureExpressionBlock = 373,
-	ClosureExpressionExpr = 374,
-	ReferenceExpressionRawConst = 375,
-	ReferenceExpressionRawMut = 376,
-	ReferenceExpressionMut = 377,
-	ReferenceExpressionBare = 378,
-	ImplItemPositiveClause = 379,
-	ImplItemNegativeClause = 380,
-	ImplItemBody = 381,
-	ImplItemSemi = 382,
-	VisibilityModifierPub = 383,
-	VisibilityModifierPubInPath = 384,
+	KwAsync = 359,
+	KwDefault = 360,
+	KwConst = 361,
+	KwUnsafe = 362,
+	TupleTypeElements = 363,
+	TupleExpressionElements = 364,
+	TokenTreePunctuation = 365,
+	TokenKeywords = 366,
+	RangeExpressionBare = 367,
+	ImplItemUnsafeMarker = 368,
+	ArrayExpressionSemi = 369,
+	ArrayExpressionList = 370,
+	AttributeInput = 371,
+	ClosureExpressionBlock = 372,
+	ClosureExpressionExpr = 373,
+	ReferenceExpressionRawConst = 374,
+	ReferenceExpressionRawMut = 375,
+	ReferenceExpressionMut = 376,
+	ReferenceExpressionBare = 377,
+	ImplItemPositiveClause = 378,
+	ImplItemNegativeClause = 379,
+	ImplItemBody = 380,
+	ImplItemSemi = 381,
+	VisibilityModifierPubScopeInPath = 382,
+	VisibilityModifierPubScope = 383,
+	VisibilityModifierPub = 384,
 	FunctionTypeTraitForm = 385,
 	FunctionTypeFnForm = 386,
 	ModItemExternal = 387,
@@ -644,7 +644,7 @@ export enum TSKindId {
 	ForeignModItemBody = 398,
 	MatchArmWithComma = 399,
 	MatchArmBlockEnding = 400,
-	LineCommentRegularDslash = 401,
+	LineCommentExtraSlashes = 401,
 	LineCommentDocOuter = 402,
 	LineCommentDocInner = 403,
 	BlockCommentDocOuter = 404,
@@ -865,9 +865,9 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[148, 'escape_sequence_hex'],
 	[149, 'raw_keyword'],
 	[150, '_string_open'],
-	[151, 'line_comment_regular_dslash_token1'],
-	[152, 'line_comment_regular_dslash_token2'],
-	[153, 'line_comment_content'],
+	[151, 'line_comment_extra_slashes_token1'],
+	[152, 'line_comment_extra_slashes_token2'],
+	[153, 'line_comment_regular'],
 	[154, 'macro_rules_bang'],
 	[155, 'string_content'],
 	[156, '_raw_string_literal_start'],
@@ -1074,32 +1074,32 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[356, 'patterns'],
 	[357, 'struct_pattern_elements'],
 	[358, 'use_wildcard_group'],
-	[359, 'visibility_modifier_group'],
-	[360, '_kw_async'],
-	[361, '_kw_default'],
-	[362, '_kw_const'],
-	[363, '_kw_unsafe'],
-	[364, '_tuple_type_elements'],
-	[365, '_tuple_expression_elements'],
-	[366, '_token_tree_punctuation'],
-	[367, '_token_keywords'],
-	[368, '_range_expression_bare'],
-	[369, '_impl_item_unsafe_marker'],
-	[370, 'array_expression_semi'],
-	[371, 'array_expression_list'],
-	[372, 'attribute_input'],
-	[373, 'closure_expression_block'],
-	[374, 'closure_expression_expr'],
-	[375, 'reference_expression_raw_const'],
-	[376, 'reference_expression_raw_mut'],
-	[377, 'reference_expression_mut'],
-	[378, 'reference_expression_bare'],
-	[379, 'impl_item_positive_clause'],
-	[380, 'impl_item_negative_clause'],
-	[381, 'impl_item_body'],
-	[382, 'impl_item_semi'],
-	[383, 'visibility_modifier_pub'],
-	[384, 'visibility_modifier_pub_in_path'],
+	[359, '_kw_async'],
+	[360, '_kw_default'],
+	[361, '_kw_const'],
+	[362, '_kw_unsafe'],
+	[363, '_tuple_type_elements'],
+	[364, '_tuple_expression_elements'],
+	[365, '_token_tree_punctuation'],
+	[366, '_token_keywords'],
+	[367, '_range_expression_bare'],
+	[368, '_impl_item_unsafe_marker'],
+	[369, 'array_expression_semi'],
+	[370, 'array_expression_list'],
+	[371, 'attribute_input'],
+	[372, 'closure_expression_block'],
+	[373, 'closure_expression_expr'],
+	[374, 'reference_expression_raw_const'],
+	[375, 'reference_expression_raw_mut'],
+	[376, 'reference_expression_mut'],
+	[377, 'reference_expression_bare'],
+	[378, 'impl_item_positive_clause'],
+	[379, 'impl_item_negative_clause'],
+	[380, 'impl_item_body'],
+	[381, 'impl_item_semi'],
+	[382, 'visibility_modifier_pub_scope_in_path'],
+	[383, 'visibility_modifier_pub_scope'],
+	[384, 'visibility_modifier_pub'],
 	[385, 'function_type_trait_form'],
 	[386, 'function_type_fn_form'],
 	[387, 'mod_item_external'],
@@ -1116,7 +1116,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[398, 'foreign_mod_item_body'],
 	[399, 'match_arm_with_comma'],
 	[400, 'match_arm_block_ending'],
-	[401, 'line_comment_regular_dslash'],
+	[401, 'line_comment_extra_slashes'],
 	[402, 'line_comment_doc_outer'],
 	[403, 'line_comment_doc_inner'],
 	[404, 'block_comment_doc_outer'],
@@ -1338,9 +1338,9 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[148, 'escape_sequence_hex'],
 	[149, 'raw'],
 	[150, 'string_open'],
-	[151, 'line_comment_regular_dslash_token1'],
-	[152, 'line_comment_regular_dslash_token2'],
-	[153, 'line_comment_content'],
+	[151, 'line_comment_extra_slashes_token1'],
+	[152, 'line_comment_extra_slashes_token2'],
+	[153, 'line_comment_regular'],
 	[154, 'macro_rules!'],
 	[155, 'string_content'],
 	[156, 'raw_string_literal_start'],
@@ -1547,32 +1547,32 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[356, 'patterns'],
 	[357, 'struct_pattern_elements'],
 	[358, 'use_wildcard_group'],
-	[359, 'visibility_modifier_group'],
-	[360, '_kw_async'],
-	[361, '_kw_default'],
-	[362, '_kw_const'],
-	[363, '_kw_unsafe'],
-	[364, 'tuple_type_elements'],
-	[365, 'tuple_expression_elements'],
-	[366, 'token_tree_punctuation'],
-	[367, '_token_keywords'],
-	[368, 'range_expression_bare'],
-	[369, '_impl_item_unsafe_marker'],
-	[370, 'array_expression_semi'],
-	[371, 'array_expression_list'],
-	[372, 'attribute_input'],
-	[373, 'closure_expression_block'],
-	[374, 'closure_expression_expr'],
-	[375, 'reference_expression_raw_const'],
-	[376, 'reference_expression_raw_mut'],
-	[377, 'reference_expression_mut'],
-	[378, 'reference_expression_bare'],
-	[379, 'impl_item_positive_clause'],
-	[380, 'impl_item_negative_clause'],
-	[381, 'impl_item_body'],
-	[382, 'impl_item_semi'],
-	[383, 'visibility_modifier_pub'],
-	[384, 'visibility_modifier_pub_in_path'],
+	[359, '_kw_async'],
+	[360, '_kw_default'],
+	[361, '_kw_const'],
+	[362, '_kw_unsafe'],
+	[363, 'tuple_type_elements'],
+	[364, 'tuple_expression_elements'],
+	[365, 'token_tree_punctuation'],
+	[366, '_token_keywords'],
+	[367, 'range_expression_bare'],
+	[368, '_impl_item_unsafe_marker'],
+	[369, 'array_expression_semi'],
+	[370, 'array_expression_list'],
+	[371, 'attribute_input'],
+	[372, 'closure_expression_block'],
+	[373, 'closure_expression_expr'],
+	[374, 'reference_expression_raw_const'],
+	[375, 'reference_expression_raw_mut'],
+	[376, 'reference_expression_mut'],
+	[377, 'reference_expression_bare'],
+	[378, 'impl_item_positive_clause'],
+	[379, 'impl_item_negative_clause'],
+	[380, 'impl_item_body'],
+	[381, 'impl_item_semi'],
+	[382, 'visibility_modifier_pub_scope_in_path'],
+	[383, 'visibility_modifier_pub_scope'],
+	[384, 'visibility_modifier_pub'],
 	[385, 'function_type_trait_form'],
 	[386, 'function_type_fn_form'],
 	[387, 'mod_item_external'],
@@ -1589,7 +1589,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[398, 'foreign_mod_item_body'],
 	[399, 'match_arm_with_comma'],
 	[400, 'match_arm_block_ending'],
-	[401, 'line_comment_regular_dslash'],
+	[401, 'line_comment_extra_slashes'],
 	[402, 'line_comment_doc_outer'],
 	[403, 'line_comment_doc_inner'],
 	[404, 'block_comment_doc_outer'],
@@ -1964,12 +1964,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.RawKeyword;
 		case '_string_open':
 			return TSKindId.StringOpen;
-		case 'line_comment_regular_dslash_token1':
-			return TSKindId.LineCommentRegularDslashToken1;
-		case 'line_comment_regular_dslash_token2':
-			return TSKindId.LineCommentRegularDslashToken2;
-		case 'line_comment_content':
-			return TSKindId.LineCommentContent;
+		case 'line_comment_extra_slashes_token1':
+			return TSKindId.LineCommentExtraSlashesToken1;
+		case 'line_comment_extra_slashes_token2':
+			return TSKindId.LineCommentExtraSlashesToken2;
+		case 'line_comment_regular':
+			return TSKindId.LineCommentRegular;
 		case 'macro_rules_bang':
 			return TSKindId.MacroRulesBang;
 		case 'string_content':
@@ -2380,8 +2380,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StructPatternElements;
 		case 'use_wildcard_group':
 			return TSKindId.UseWildcardGroup;
-		case 'visibility_modifier_group':
-			return TSKindId.VisibilityModifierGroup;
 		case '_kw_async':
 			return TSKindId.KwAsync;
 		case '_kw_default':
@@ -2428,10 +2426,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ImplItemBody;
 		case 'impl_item_semi':
 			return TSKindId.ImplItemSemi;
+		case 'visibility_modifier_pub_scope_in_path':
+			return TSKindId.VisibilityModifierPubScopeInPath;
+		case 'visibility_modifier_pub_scope':
+			return TSKindId.VisibilityModifierPubScope;
 		case 'visibility_modifier_pub':
 			return TSKindId.VisibilityModifierPub;
-		case 'visibility_modifier_pub_in_path':
-			return TSKindId.VisibilityModifierPubInPath;
 		case 'function_type_trait_form':
 			return TSKindId.FunctionTypeTraitForm;
 		case 'function_type_fn_form':
@@ -2464,8 +2464,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.MatchArmWithComma;
 		case 'match_arm_block_ending':
 			return TSKindId.MatchArmBlockEnding;
-		case 'line_comment_regular_dslash':
-			return TSKindId.LineCommentRegularDslash;
+		case 'line_comment_extra_slashes':
+			return TSKindId.LineCommentExtraSlashes;
 		case 'line_comment_doc_outer':
 			return TSKindId.LineCommentDocOuter;
 		case 'line_comment_doc_inner':
@@ -7790,8 +7790,8 @@ export interface RawStringLiteral {
 
 export interface LineComment {
 	readonly $type: TSKindId.LineComment;
-	readonly _content: LineCommentRegularDslash | LineCommentDocOuter | LineCommentDocInner | LineCommentContent;
-	content(): LineCommentRegularDslash | LineCommentDocOuter | LineCommentDocInner | LineCommentContent;
+	readonly _content: LineCommentExtraSlashes | LineCommentDocOuter | LineCommentDocInner | LineCommentRegular;
+	content(): LineCommentExtraSlashes | LineCommentDocOuter | LineCommentDocInner | LineCommentRegular;
 }
 
 export interface BlockComment {
@@ -8114,17 +8114,6 @@ export interface UseWildcardGroup {
 		| TSKindId.UnionKeyword
 		| TSKindId.GenKeyword
 		| undefined;
-}
-
-export interface VisibilityModifierGroup {
-	readonly $type: TSKindId.VisibilityModifierGroup;
-	readonly _content: TSKindId.Self | TSKindId.Super | TSKindId.Crate | VisibilityModifierPubInPath;
-	readonly __inputHints__?: {
-		readonly content:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| VisibilityModifierPubInPath;
-	};
-	content(): TSKindId.Self | TSKindId.Super | TSKindId.Crate | VisibilityModifierPubInPath;
 }
 
 export interface TupleTypeElements {
@@ -8656,22 +8645,8 @@ export interface ImplItemSemi {
 	whereClause(): WhereClause | undefined;
 }
 
-export interface VisibilityModifierPub {
-	readonly $type: TSKindId.VisibilityModifierPub;
-	readonly _visibility_modifier_group?: VisibilityModifierGroup;
-	readonly __looseHints__?: {
-		readonly visibility_modifier_group?:
-			| VisibilityModifierGroup
-			| 'self'
-			| 'super'
-			| 'crate'
-			| readonly ('self' | 'super' | 'crate' | VisibilityModifierPubInPath)[];
-	};
-	visibilityModifierGroup(): VisibilityModifierGroup | undefined;
-}
-
-export interface VisibilityModifierPubInPath {
-	readonly $type: TSKindId.VisibilityModifierPubInPath;
+export interface VisibilityModifierPubScopeInPath {
+	readonly $type: TSKindId.VisibilityModifierPubScopeInPath;
 	readonly _path:
 		| TSKindId.Self
 		| TSKindId.U8Keyword
@@ -8780,6 +8755,31 @@ export interface VisibilityModifierPubInPath {
 		| TSKindId.DefaultKeyword
 		| TSKindId.UnionKeyword
 		| TSKindId.GenKeyword;
+}
+
+export interface VisibilityModifierPubScope {
+	readonly $type: TSKindId.VisibilityModifierPubScope;
+	readonly _content: TSKindId.Self | TSKindId.Super | TSKindId.Crate | VisibilityModifierPubScopeInPath;
+	readonly __inputHints__?: {
+		readonly content:
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
+			| VisibilityModifierPubScopeInPath;
+	};
+	content(): TSKindId.Self | TSKindId.Super | TSKindId.Crate | VisibilityModifierPubScopeInPath;
+}
+
+export interface VisibilityModifierPub {
+	readonly $type: TSKindId.VisibilityModifierPub;
+	readonly _visibility_modifier_pub_scope?: VisibilityModifierPubScope;
+	readonly __looseHints__?: {
+		readonly visibility_modifier_pub_scope?:
+			| VisibilityModifierPubScope
+			| 'self'
+			| 'super'
+			| 'crate'
+			| readonly ('self' | 'super' | 'crate' | VisibilityModifierPubScopeInPath)[];
+	};
+	visibilityModifierPubScope(): VisibilityModifierPubScope | undefined;
 }
 
 export interface FunctionTypeTraitForm {
@@ -11945,8 +11945,8 @@ export type TokenKeywords =
 export type ImplItemUnsafeMarker = TSKindId.ImplItemUnsafeMarker;
 export type CharLiteralEmpty = Terminal<TSKindId.CharLiteralEmpty, string>;
 export type StringOpen = HiddenLeaf<Terminal<TSKindId.StringOpen, string>>;
-export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
-export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
+export type LineCommentExtraSlashes = Terminal<TSKindId.LineCommentExtraSlashes, string>;
+export type LineCommentRegular = Terminal<TSKindId.LineCommentRegular, string>;
 export type RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
 export type WildcardPattern = TSKindId.WildcardPattern;
 export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
@@ -12124,7 +12124,6 @@ export interface TuplePatternElementsTree extends TreeNode<'tuple_pattern_elemen
 export interface PatternsTree extends TreeNode<'patterns'> {}
 export interface StructPatternElementsTree extends TreeNode<'struct_pattern_elements'> {}
 export interface UseWildcardGroupTree extends TreeNode<'use_wildcard_group'> {}
-export interface VisibilityModifierGroupTree extends TreeNode<'visibility_modifier_group'> {}
 export interface TupleTypeElementsTree extends AnyTreeNode {
 	readonly type: '_tuple_type_elements';
 }
@@ -12154,8 +12153,9 @@ export interface ImplItemPositiveClauseTree extends TreeNode<'impl_item_positive
 export interface ImplItemNegativeClauseTree extends TreeNode<'impl_item_negative_clause'> {}
 export interface ImplItemBodyTree extends TreeNode<'impl_item_body'> {}
 export interface ImplItemSemiTree extends TreeNode<'impl_item_semi'> {}
+export interface VisibilityModifierPubScopeInPathTree extends TreeNode<'visibility_modifier_pub_scope_in_path'> {}
+export interface VisibilityModifierPubScopeTree extends TreeNode<'visibility_modifier_pub_scope'> {}
 export interface VisibilityModifierPubTree extends TreeNode<'visibility_modifier_pub'> {}
-export interface VisibilityModifierPubInPathTree extends TreeNode<'visibility_modifier_pub_in_path'> {}
 export interface FunctionTypeTraitFormTree extends TreeNode<'function_type_trait_form'> {}
 export interface FunctionTypeFnFormTree extends TreeNode<'function_type_fn_form'> {}
 export interface ModItemExternalTree extends TreeNode<'mod_item_external'> {}
@@ -12299,8 +12299,8 @@ export interface CharLiteralEmptyTree extends TreeNode<'char_literal_empty'> {}
 export interface StringOpenTree extends AnyTreeNode {
 	readonly type: '_string_open';
 }
-export interface LineCommentRegularDslashTree extends TreeNode<'line_comment_regular_dslash'> {}
-export interface LineCommentContentTree extends TreeNode<'line_comment_content'> {}
+export interface LineCommentExtraSlashesTree extends TreeNode<'line_comment_extra_slashes'> {}
+export interface LineCommentRegularTree extends TreeNode<'line_comment_regular'> {}
 export interface RangePatternWithLeftBareTree extends AnyTreeNode {
 	readonly type: 'range_pattern_with_left_bare';
 }
@@ -13949,7 +13949,6 @@ export type RustNode =
 	| Patterns
 	| StructPatternElements
 	| UseWildcardGroup
-	| VisibilityModifierGroup
 	| TupleTypeElements
 	| TupleExpressionElements
 	| IntegerLiteralDecimal
@@ -13975,8 +13974,9 @@ export type RustNode =
 	| ImplItemNegativeClause
 	| ImplItemBody
 	| ImplItemSemi
+	| VisibilityModifierPubScopeInPath
+	| VisibilityModifierPubScope
 	| VisibilityModifierPub
-	| VisibilityModifierPubInPath
 	| FunctionTypeTraitForm
 	| FunctionTypeFnForm
 	| ModItemExternal
@@ -14168,7 +14168,6 @@ export interface OptionsHintMap {
 	patterns: Patterns.Hints;
 	structPatternElements: StructPatternElements.Hints;
 	useWildcardGroup: UseWildcardGroup.Hints;
-	visibilityModifierGroup: VisibilityModifierGroup.Hints;
 	tupleTypeElements: TupleTypeElements.Hints;
 	tupleExpressionElements: TupleExpressionElements.Hints;
 	arrayExpressionSemi: ArrayExpressionSemi.Hints;
@@ -14184,8 +14183,9 @@ export interface OptionsHintMap {
 	implItemNegativeClause: ImplItemNegativeClause.Hints;
 	implItemBody: ImplItemBody.Hints;
 	implItemSemi: ImplItemSemi.Hints;
+	visibilityModifierPubScopeInPath: VisibilityModifierPubScopeInPath.Hints;
+	visibilityModifierPubScope: VisibilityModifierPubScope.Hints;
 	visibilityModifierPub: VisibilityModifierPub.Hints;
-	visibilityModifierPubInPath: VisibilityModifierPubInPath.Hints;
 	functionTypeFnForm: FunctionTypeFnForm.Hints;
 	modItemExternal: ModItemExternal.Hints;
 	modItemInline: ModItemInline.Hints;
@@ -16068,17 +16068,6 @@ export namespace UseWildcardGroup {
 	}
 }
 
-export namespace VisibilityModifierGroup {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: WhitespaceArm;
-			readonly before?: WhitespaceArm;
-			readonly lparen?: { readonly after?: WhitespaceArm };
-			readonly rparen?: { readonly before?: WhitespaceArm };
-		};
-	}
-}
-
 export namespace TupleTypeElements {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -16320,22 +16309,33 @@ export namespace ImplItemSemi {
 	}
 }
 
+export namespace VisibilityModifierPubScopeInPath {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly inKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace VisibilityModifierPubScope {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
 export namespace VisibilityModifierPub {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
 			readonly pubKeyword?: { readonly after?: WhitespaceArm };
-		};
-	}
-}
-
-export namespace VisibilityModifierPubInPath {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: WhitespaceArm;
-			readonly before?: WhitespaceArm;
-			readonly inKeyword?: { readonly after?: WhitespaceArm };
 		};
 	}
 }
@@ -18660,17 +18660,6 @@ export interface UseWildcardGroupNs extends NodeNs<
 	'path',
 	'use_wildcard_group'
 > {}
-export interface VisibilityModifierGroupNs extends NodeNs<
-	VisibilityModifierGroup,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	VisibilityModifierGroup.Built,
-	VisibilityModifierGroup.BuildArgs,
-	VisibilityModifierGroup.LooseArgs,
-	'content',
-	'visibility_modifier_group'
-> {}
 export interface TupleTypeElementsNs extends NodeNs<
 	TupleTypeElements,
 	LeafScalarMap,
@@ -18946,6 +18935,28 @@ export interface ImplItemSemiNs extends NodeNs<
 	never,
 	'impl_item_semi'
 > {}
+export interface VisibilityModifierPubScopeInPathNs extends NodeNs<
+	VisibilityModifierPubScopeInPath,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	VisibilityModifierPubScopeInPath.Built,
+	VisibilityModifierPubScopeInPath.BuildArgs,
+	VisibilityModifierPubScopeInPath.LooseArgs,
+	'path',
+	'visibility_modifier_pub_scope_in_path'
+> {}
+export interface VisibilityModifierPubScopeNs extends NodeNs<
+	VisibilityModifierPubScope,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	VisibilityModifierPubScope.Built,
+	VisibilityModifierPubScope.BuildArgs,
+	VisibilityModifierPubScope.LooseArgs,
+	'content',
+	'visibility_modifier_pub_scope'
+> {}
 export interface VisibilityModifierPubNs extends NodeNs<
 	VisibilityModifierPub,
 	LeafScalarMap,
@@ -18954,19 +18965,8 @@ export interface VisibilityModifierPubNs extends NodeNs<
 	VisibilityModifierPub.Built,
 	VisibilityModifierPub.BuildArgs,
 	VisibilityModifierPub.LooseArgs,
-	'visibility_modifier_group',
+	'visibility_modifier_pub_scope',
 	'visibility_modifier_pub'
-> {}
-export interface VisibilityModifierPubInPathNs extends NodeNs<
-	VisibilityModifierPubInPath,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	VisibilityModifierPubInPath.Built,
-	VisibilityModifierPubInPath.BuildArgs,
-	VisibilityModifierPubInPath.LooseArgs,
-	'path',
-	'visibility_modifier_pub_in_path'
 > {}
 export interface FunctionTypeTraitFormNs extends NodeNs<
 	FunctionTypeTraitForm,
@@ -19634,19 +19634,19 @@ export interface CharLiteralEmptyNs extends LeafNs<
 	'char_literal_empty'
 > {}
 export interface StringOpenNs extends LeafNs<StringOpen, string, StringOpen.Built, StringOpenTree, '_string_open'> {}
-export interface LineCommentRegularDslashNs extends LeafNs<
-	LineCommentRegularDslash,
+export interface LineCommentExtraSlashesNs extends LeafNs<
+	LineCommentExtraSlashes,
 	string,
-	LineCommentRegularDslash.Built,
-	LineCommentRegularDslashTree,
-	'line_comment_regular_dslash'
+	LineCommentExtraSlashes.Built,
+	LineCommentExtraSlashesTree,
+	'line_comment_extra_slashes'
 > {}
-export interface LineCommentContentNs extends LeafNs<
-	LineCommentContent,
+export interface LineCommentRegularNs extends LeafNs<
+	LineCommentRegular,
 	string,
-	LineCommentContent.Built,
-	LineCommentContentTree,
-	'line_comment_content'
+	LineCommentRegular.Built,
+	LineCommentRegularTree,
+	'line_comment_regular'
 > {}
 export interface FloatLiteralNs extends LeafNs<
 	FloatLiteral,
@@ -19849,7 +19849,6 @@ export interface NamespaceMap {
 	[TSKindId.Patterns]: PatternsNs;
 	[TSKindId.StructPatternElements]: StructPatternElementsNs;
 	[TSKindId.UseWildcardGroup]: UseWildcardGroupNs;
-	[TSKindId.VisibilityModifierGroup]: VisibilityModifierGroupNs;
 	[TSKindId.TupleTypeElements]: TupleTypeElementsNs;
 	[TSKindId.TupleExpressionElements]: TupleExpressionElementsNs;
 	[TSKindId.IntegerLiteralDecimal]: IntegerLiteralDecimalNs;
@@ -19875,8 +19874,9 @@ export interface NamespaceMap {
 	[TSKindId.ImplItemNegativeClause]: ImplItemNegativeClauseNs;
 	[TSKindId.ImplItemBody]: ImplItemBodyNs;
 	[TSKindId.ImplItemSemi]: ImplItemSemiNs;
+	[TSKindId.VisibilityModifierPubScopeInPath]: VisibilityModifierPubScopeInPathNs;
+	[TSKindId.VisibilityModifierPubScope]: VisibilityModifierPubScopeNs;
 	[TSKindId.VisibilityModifierPub]: VisibilityModifierPubNs;
-	[TSKindId.VisibilityModifierPubInPath]: VisibilityModifierPubInPathNs;
 	[TSKindId.FunctionTypeTraitForm]: FunctionTypeTraitFormNs;
 	[TSKindId.FunctionTypeFnForm]: FunctionTypeFnFormNs;
 	[TSKindId.ModItemExternal]: ModItemExternalNs;
@@ -19972,8 +19972,8 @@ export interface NamespaceMap {
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.CharLiteralEmpty]: CharLiteralEmptyNs;
 	[TSKindId.StringOpen]: StringOpenNs;
-	[TSKindId.LineCommentRegularDslash]: LineCommentRegularDslashNs;
-	[TSKindId.LineCommentContent]: LineCommentContentNs;
+	[TSKindId.LineCommentExtraSlashes]: LineCommentExtraSlashesNs;
+	[TSKindId.LineCommentRegular]: LineCommentRegularNs;
 	[TSKindId.FloatLiteral]: FloatLiteralNs;
 	[TSKindId.StringContent]: StringContentNs;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContentNs;
@@ -22456,18 +22456,18 @@ export namespace LineComment {
 		readonly $named: true;
 		readonly $with: {
 			content(
-				value: T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent
+				value: T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular
 			): T.LineComment.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.LineComment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LineComment>;
 	export type BuildArgs = [
-		value: T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent
+		value: T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular
 	];
 	export type LooseArgs = [
 		value: LooseValue<
-			T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent,
+			T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -23306,31 +23306,6 @@ export namespace UseWildcardGroup {
 	export type Tree = TreeFor<TSKindId.UseWildcardGroup>;
 	export type Kind = 'use_wildcard_group';
 }
-export namespace VisibilityModifierGroup {
-	export type Config = ConfigFor<TSKindId.VisibilityModifierGroup>;
-	export interface Built extends T.VisibilityModifierGroup, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(
-				value: NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath>
-			): T.VisibilityModifierGroup.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.VisibilityModifierGroup>;
-	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierGroup>;
-	export type BuildArgs = [value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath];
-	export type LooseArgs = [
-		value: LooseValue<
-			TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
-	export type Tree = TreeFor<TSKindId.VisibilityModifierGroup>;
-	export type Kind = 'visibility_modifier_group';
-}
 export namespace TupleTypeElements {
 	export type Config = ConfigFor<TSKindId.TupleTypeElements>;
 	export interface Built extends T.TupleTypeElements, NodeMethodsOf {
@@ -23921,27 +23896,9 @@ export namespace ImplItemSemi {
 	export type Tree = TreeFor<TSKindId.ImplItemSemi>;
 	export type Kind = 'impl_item_semi';
 }
-export namespace VisibilityModifierPub {
-	export type Config = ConfigFor<TSKindId.VisibilityModifierPub>;
-	export interface Built extends T.VisibilityModifierPub, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			visibilityModifierGroup(value?: T.VisibilityModifierGroup): T.VisibilityModifierPub.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.VisibilityModifierPub>;
-	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPub>;
-	export type BuildArgs = [value?: T.VisibilityModifierGroup];
-	export type LooseArgs = [
-		value?: LooseValue<T.VisibilityModifierGroup, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
-	export type Tree = TreeFor<TSKindId.VisibilityModifierPub>;
-	export type Kind = 'visibility_modifier_pub';
-}
-export namespace VisibilityModifierPubInPath {
-	export type Config = ConfigFor<TSKindId.VisibilityModifierPubInPath>;
-	export interface Built extends T.VisibilityModifierPubInPath, NodeMethodsOf {
+export namespace VisibilityModifierPubScopeInPath {
+	export type Config = ConfigFor<TSKindId.VisibilityModifierPubScopeInPath>;
+	export interface Built extends T.VisibilityModifierPubScopeInPath, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
@@ -23974,11 +23931,11 @@ export namespace VisibilityModifierPubInPath {
 					| TSKindId.UnionKeyword
 					| TSKindId.GenKeyword
 				>
-			): T.VisibilityModifierPubInPath.Built;
+			): T.VisibilityModifierPubScopeInPath.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.VisibilityModifierPubInPath>;
-	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPubInPath>;
+	export type Loose = LooseFor<TSKindId.VisibilityModifierPubScopeInPath>;
+	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPubScopeInPath>;
 	export type BuildArgs = [
 		value:
 			| TSKindId.Self
@@ -24041,8 +23998,51 @@ export namespace VisibilityModifierPubInPath {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.VisibilityModifierPubInPath>;
-	export type Kind = 'visibility_modifier_pub_in_path';
+	export type Tree = TreeFor<TSKindId.VisibilityModifierPubScopeInPath>;
+	export type Kind = 'visibility_modifier_pub_scope_in_path';
+}
+export namespace VisibilityModifierPubScope {
+	export type Config = ConfigFor<TSKindId.VisibilityModifierPubScope>;
+	export interface Built extends T.VisibilityModifierPubScope, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(
+				value: NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
+			): T.VisibilityModifierPubScope.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.VisibilityModifierPubScope>;
+	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPubScope>;
+	export type BuildArgs = [value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath];
+	export type LooseArgs = [
+		value: LooseValue<
+			TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
+	export type Tree = TreeFor<TSKindId.VisibilityModifierPubScope>;
+	export type Kind = 'visibility_modifier_pub_scope';
+}
+export namespace VisibilityModifierPub {
+	export type Config = ConfigFor<TSKindId.VisibilityModifierPub>;
+	export interface Built extends T.VisibilityModifierPub, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			visibilityModifierPubScope(value?: T.VisibilityModifierPubScope): T.VisibilityModifierPub.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.VisibilityModifierPub>;
+	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPub>;
+	export type BuildArgs = [value?: T.VisibilityModifierPubScope];
+	export type LooseArgs = [
+		value?: LooseValue<T.VisibilityModifierPubScope, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
+	export type Tree = TreeFor<TSKindId.VisibilityModifierPub>;
+	export type Kind = 'visibility_modifier_pub';
 }
 export namespace FunctionTypeTraitForm {
 	export type Config = ConfigFor<TSKindId.FunctionTypeTraitForm>;
@@ -25602,35 +25602,35 @@ export namespace StringOpen {
 	export type Tree = StringOpenNs['Tree'];
 	export type Kind = '_string_open';
 }
-export namespace LineCommentRegularDslash {
-	export type Config = LineCommentRegularDslashNs['Config'];
+export namespace LineCommentExtraSlashes {
+	export type Config = LineCommentExtraSlashesNs['Config'];
 	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.LineCommentRegularDslash;
+		readonly $type: TSKindId.LineCommentExtraSlashes;
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export type Loose = LineCommentRegularDslashNs['Loose'];
-	export type LooseConfig = LineCommentRegularDslashNs['LooseConfig'];
-	export type BuildArgs = LineCommentRegularDslashNs['BuildArgs'];
-	export type LooseArgs = LineCommentRegularDslashNs['LooseArgs'];
-	export type Tree = LineCommentRegularDslashNs['Tree'];
-	export type Kind = 'line_comment_regular_dslash';
+	export type Loose = LineCommentExtraSlashesNs['Loose'];
+	export type LooseConfig = LineCommentExtraSlashesNs['LooseConfig'];
+	export type BuildArgs = LineCommentExtraSlashesNs['BuildArgs'];
+	export type LooseArgs = LineCommentExtraSlashesNs['LooseArgs'];
+	export type Tree = LineCommentExtraSlashesNs['Tree'];
+	export type Kind = 'line_comment_extra_slashes';
 }
-export namespace LineCommentContent {
-	export type Config = LineCommentContentNs['Config'];
+export namespace LineCommentRegular {
+	export type Config = LineCommentRegularNs['Config'];
 	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.LineCommentContent;
+		readonly $type: TSKindId.LineCommentRegular;
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export type Loose = LineCommentContentNs['Loose'];
-	export type LooseConfig = LineCommentContentNs['LooseConfig'];
-	export type BuildArgs = LineCommentContentNs['BuildArgs'];
-	export type LooseArgs = LineCommentContentNs['LooseArgs'];
-	export type Tree = LineCommentContentNs['Tree'];
-	export type Kind = 'line_comment_content';
+	export type Loose = LineCommentRegularNs['Loose'];
+	export type LooseConfig = LineCommentRegularNs['LooseConfig'];
+	export type BuildArgs = LineCommentRegularNs['BuildArgs'];
+	export type LooseArgs = LineCommentRegularNs['LooseArgs'];
+	export type Tree = LineCommentRegularNs['Tree'];
+	export type Kind = 'line_comment_regular';
 }
 export namespace FloatLiteral {
 	export type Config = FloatLiteralNs['Config'];

@@ -12005,8 +12005,8 @@ export function wrapMappedTypeClause(data: T.MappedTypeClause, tree: TreeHandle)
 
 export function wrapLiteralType(
 	data: T.LiteralType & {
-		readonly _unary_expression_number?:
-			| T._Number
+		readonly _literal_type_negative_number?:
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12014,7 +12014,7 @@ export function wrapLiteralType(
 			| TSKindId.Null
 			| TSKindId.Undefined;
 		readonly _number_hex?:
-			| T._Number
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12022,7 +12022,7 @@ export function wrapLiteralType(
 			| TSKindId.Null
 			| TSKindId.Undefined;
 		readonly _number_float_point?:
-			| T._Number
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12030,7 +12030,7 @@ export function wrapLiteralType(
 			| TSKindId.Null
 			| TSKindId.Undefined;
 		readonly _number_float_leading_point?:
-			| T._Number
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12038,7 +12038,7 @@ export function wrapLiteralType(
 			| TSKindId.Null
 			| TSKindId.Undefined;
 		readonly _number_float_scientific?:
-			| T._Number
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12046,7 +12046,7 @@ export function wrapLiteralType(
 			| TSKindId.Null
 			| TSKindId.Undefined;
 		readonly _number_decimal?:
-			| T._Number
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12054,7 +12054,7 @@ export function wrapLiteralType(
 			| TSKindId.Null
 			| TSKindId.Undefined;
 		readonly _number_binary?:
-			| T._Number
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12062,7 +12062,7 @@ export function wrapLiteralType(
 			| TSKindId.Null
 			| TSKindId.Undefined;
 		readonly _number_octal?:
-			| T._Number
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12070,7 +12070,7 @@ export function wrapLiteralType(
 			| TSKindId.Null
 			| TSKindId.Undefined;
 		readonly _number_bigint?:
-			| T._Number
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12078,7 +12078,7 @@ export function wrapLiteralType(
 			| TSKindId.Null
 			| TSKindId.Undefined;
 		readonly _string_double?:
-			| T._Number
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12086,7 +12086,7 @@ export function wrapLiteralType(
 			| TSKindId.Null
 			| TSKindId.Undefined;
 		readonly _string_single?:
-			| T._Number
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12094,7 +12094,7 @@ export function wrapLiteralType(
 			| TSKindId.Null
 			| TSKindId.Undefined;
 		readonly _true?:
-			| T._Number
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12102,7 +12102,7 @@ export function wrapLiteralType(
 			| TSKindId.Null
 			| TSKindId.Undefined;
 		readonly _false?:
-			| T._Number
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12110,7 +12110,7 @@ export function wrapLiteralType(
 			| TSKindId.Null
 			| TSKindId.Undefined;
 		readonly _null?:
-			| T._Number
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12118,7 +12118,7 @@ export function wrapLiteralType(
 			| TSKindId.Null
 			| TSKindId.Undefined;
 		readonly _undefined?:
-			| T._Number
+			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
@@ -12130,7 +12130,7 @@ export function wrapLiteralType(
 ) {
 	data = _keepModelledSlots(data, [
 		'_content',
-		'_unary_expression_number',
+		'_literal_type_negative_number',
 		'_number_hex',
 		'_number_float_point',
 		'_number_float_leading_point',
@@ -12151,6 +12151,7 @@ export function wrapLiteralType(
 		{
 			..._omitWrapKeys(data, [
 				'_false',
+				'_literal_type_negative_number',
 				'_null',
 				'_number_bigint',
 				'_number_binary',
@@ -12163,14 +12164,13 @@ export function wrapLiteralType(
 				'_string_double',
 				'_string_single',
 				'_true',
-				'_unary_expression_number',
 				'_undefined'
 			]),
 			$type: TSKindId.LiteralType as const,
 			_content: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
 					data._content ??
-						data._unary_expression_number ??
+						data._literal_type_negative_number ??
 						data._number_hex ??
 						data._number_float_point ??
 						data._number_float_leading_point ??
@@ -12195,51 +12195,17 @@ export function wrapLiteralType(
 
 			content() {
 				return drillIn<
-					T._Number | T.Number | T.String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined
+					| T.LiteralTypeNegativeNumber
+					| T.Number
+					| T.String
+					| TSKindId.True
+					| TSKindId.False
+					| TSKindId.Null
+					| TSKindId.Undefined
 				>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.LiteralType['_content']>) => wrapLiteralType({ ...$edited(data), _content: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
-export function wrap_Number(data: T._Number, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_operator', '_argument']);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId._Number as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId._Number as const,
-			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.Dash, TSKindId.Plus]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
-				{ '-': 91, '+': 90 }
-			),
-			_argument: normalizeSingularWrapSlot(data._argument, 'argument', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'argument',
-				span: (data as _NodeData).$span
-			}),
-
-			operator() {
-				return this._operator;
-			},
-			argument() {
-				return drillIn<T.Number>(this._argument, tree);
-			},
-			$with: {
-				operator: (v: NonNullable<T._Number['_operator']>) => wrap_Number({ ...$edited(data), _operator: v }, tree),
-				argument: (v: NonNullable<T._Number['_argument']>) => wrap_Number({ ...$edited(data), _argument: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -14557,6 +14523,49 @@ export function wrapCommentBlock(data: T.CommentBlock, tree: TreeHandle) {
 			$with: {
 				content: (v: NonNullable<T.CommentBlock['_content']>) =>
 					wrapCommentBlock({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapLiteralTypeNegativeNumber(data: T.LiteralTypeNegativeNumber, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_operator', '_argument']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.LiteralTypeNegativeNumber as const }, _treeEngine(tree));
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.LiteralTypeNegativeNumber as const,
+			_operator: projectKindEnumStorage(
+				normalizeSingularWrapSlot(
+					data._operator ?? readTerminalFromOther(data, [TSKindId.Dash, TSKindId.Plus]),
+					'operator',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
+				),
+				{ '-': 91, '+': 90 }
+			),
+			_argument: normalizeSingularWrapSlot(data._argument, 'argument', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'argument',
+				span: (data as _NodeData).$span
+			}),
+
+			operator() {
+				return this._operator;
+			},
+			argument() {
+				return drillIn<T.Number>(this._argument, tree);
+			},
+			$with: {
+				operator: (v: NonNullable<T.LiteralTypeNegativeNumber['_operator']>) =>
+					wrapLiteralTypeNegativeNumber({ ...$edited(data), _operator: v }, tree),
+				argument: (v: NonNullable<T.LiteralTypeNegativeNumber['_argument']>) =>
+					wrapLiteralTypeNegativeNumber({ ...$edited(data), _argument: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -17551,7 +17560,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.LookupType]: (d, t) => wrapLookupType(d as unknown as T.LookupType, t),
 	[TSKindId.MappedTypeClause]: (d, t) => wrapMappedTypeClause(d as unknown as T.MappedTypeClause, t),
 	[TSKindId.LiteralType]: (d, t) => wrapLiteralType(d as unknown as T.LiteralType, t),
-	[TSKindId._Number]: (d, t) => wrap_Number(d as unknown as T._Number, t),
 	[TSKindId.ExistentialType]: (d) => ({ ...d, $type: TSKindId.ExistentialType as const }),
 	[TSKindId.FlowMaybeType]: (d, t) => wrapFlowMaybeType(d as unknown as T.FlowMaybeType, t),
 	[TSKindId.ParenthesizedType]: (d, t) => wrapParenthesizedType(d as unknown as T.ParenthesizedType, t),
@@ -17606,6 +17614,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 		wrapExportStatementEqualsExport(d as unknown as T.ExportStatementEqualsExport, t),
 	[TSKindId.CommentLine]: (d, t) => wrapCommentLine(d as unknown as T.CommentLine, t),
 	[TSKindId.CommentBlock]: (d, t) => wrapCommentBlock(d as unknown as T.CommentBlock, t),
+	[TSKindId.LiteralTypeNegativeNumber]: (d, t) =>
+		wrapLiteralTypeNegativeNumber(d as unknown as T.LiteralTypeNegativeNumber, t),
 	[TSKindId.NumberHex]: (d, t) => wrapNumberHex(d as unknown as T.NumberHex, t),
 	[TSKindId.NumberFloatPoint]: (d, t) => wrapNumberFloatPoint(d as unknown as T.NumberFloatPoint, t),
 	[TSKindId.NumberFloatLeadingPoint]: (d, t) =>
@@ -17900,7 +17910,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.LookupType]: ReturnType<typeof wrapLookupType>;
 	[TSKindId.MappedTypeClause]: ReturnType<typeof wrapMappedTypeClause>;
 	[TSKindId.LiteralType]: ReturnType<typeof wrapLiteralType>;
-	[TSKindId._Number]: ReturnType<typeof wrap_Number>;
 	[TSKindId.ExistentialType]: _NodeData & { readonly $type: TSKindId.ExistentialType };
 	[TSKindId.FlowMaybeType]: ReturnType<typeof wrapFlowMaybeType>;
 	[TSKindId.ParenthesizedType]: ReturnType<typeof wrapParenthesizedType>;
@@ -17949,6 +17958,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.ExportStatementEqualsExport]: ReturnType<typeof wrapExportStatementEqualsExport>;
 	[TSKindId.CommentLine]: ReturnType<typeof wrapCommentLine>;
 	[TSKindId.CommentBlock]: ReturnType<typeof wrapCommentBlock>;
+	[TSKindId.LiteralTypeNegativeNumber]: ReturnType<typeof wrapLiteralTypeNegativeNumber>;
 	[TSKindId.NumberHex]: ReturnType<typeof wrapNumberHex>;
 	[TSKindId.NumberFloatPoint]: ReturnType<typeof wrapNumberFloatPoint>;
 	[TSKindId.NumberFloatLeadingPoint]: ReturnType<typeof wrapNumberFloatLeadingPoint>;

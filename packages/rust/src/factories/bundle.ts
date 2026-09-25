@@ -163,6 +163,5 @@ export const tuplePatternElements = bundle(F.buildTuplePatternElements, C.coerce
 export const patterns = bundle(F.buildPatterns, C.coerceToPatterns);
 export const structPatternElements = bundle(F.buildStructPatternElements, C.coerceToStructPatternElements);
 export const useWildcardGroup = bundle(F.buildUseWildcardGroup, C.coerceToUseWildcardGroup);
-export const visibilityModifierGroup = bundle(F.buildVisibilityModifierGroup, C.coerceToVisibilityModifierGroup);
 export const tupleTypeElements = bundle(F.buildTupleTypeElements, C.coerceToTupleTypeElements);
 export const tupleExpressionElements = bundle(F.buildTupleExpressionElements, C.coerceToTupleExpressionElements);

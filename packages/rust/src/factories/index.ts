@@ -157,7 +157,6 @@ export const tuplePatternElements: Hoisted<typeof O.tuplePatternElements> = hois
 export const patterns: Hoisted<typeof O.patterns> = hoist(O.patterns);
 export const structPatternElements: Hoisted<typeof O.structPatternElements> = hoist(O.structPatternElements);
 export const useWildcardGroup: Hoisted<typeof O.useWildcardGroup> = hoist(O.useWildcardGroup);
-export const visibilityModifierGroup: Hoisted<typeof O.visibilityModifierGroup> = hoist(O.visibilityModifierGroup);
 export const tupleTypeElements: Hoisted<typeof O.tupleTypeElements> = hoist(O.tupleTypeElements);
 export const tupleExpressionElements: Hoisted<typeof O.tupleExpressionElements> = hoist(O.tupleExpressionElements);
 export const macroDefinition: Hoisted<typeof O.macroDefinition> = hoistRoutes(O.macroDefinition);
@@ -168,6 +167,9 @@ export const foreignModItem: Hoisted<typeof O.foreignModItem> = hoistRoutes(O.fo
 export const structItem: Hoisted<typeof O.structItem> = hoistRoutes(O.structItem);
 export const implItem: Hoisted<typeof O.implItem> = hoistRoutes(O.implItem);
 export const pointerType: Hoisted<typeof O.pointerType> = hoistRoutes(O.pointerType);
+export const expressionEndingWithBlock: Hoisted<typeof O.expressionEndingWithBlock> = hoistRoutes(
+	O.expressionEndingWithBlock
+);
 export const delimTokenTree: Hoisted<typeof O.delimTokenTree> = hoistRoutes(O.delimTokenTree);
 export const referenceExpression: Hoisted<typeof O.referenceExpression> = hoistRoutes(O.referenceExpression);
 export const arrayExpression: Hoisted<typeof O.arrayExpression> = hoistRoutes(O.arrayExpression);
@@ -179,3 +181,4 @@ export const orPattern: Hoisted<typeof O.orPattern> = hoistRoutes(O.orPattern);
 export const integerLiteral: Hoisted<typeof O.integerLiteral> = hoistRoutes(O.integerLiteral);
 export const charLiteral: Hoisted<typeof O.charLiteral> = hoistRoutes(O.charLiteral);
 export const escapeSequence: Hoisted<typeof O.escapeSequence> = hoistRoutes(O.escapeSequence);
+export const declarationStatement: Hoisted<typeof O.declarationStatement> = hoistRoutes(O.declarationStatement);

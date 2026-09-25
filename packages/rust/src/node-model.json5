@@ -79,6 +79,13 @@
         "visibility_modifier_pub": "pub"
       }
     },
+    "bracketed_type": {
+      "definedBy": "enrich",
+      "childKind": {
+        "_type": "type",
+        "qualified_type": "qualified_type"
+      }
+    },
     "function_type": {
       "definedBy": "override",
       "childKind": {
@@ -95,20 +102,35 @@
         "range_expression_bare": "bare"
       }
     },
+    "else_clause": {
+      "definedBy": "enrich",
+      "childKind": {
+        "block": "block",
+        "if_expression": "if_expression"
+      }
+    },
+    "generic_pattern": {
+      "definedBy": "enrich",
+      "childKind": {
+        "identifier": "identifier",
+        "scoped_identifier": "scoped_identifier"
+      }
+    },
     "line_comment": {
       "definedBy": "override",
       "childKind": {
-        "line_comment_regular_dslash": "regular_dslash",
+        "line_comment_extra_slashes": "extra_slashes",
         "line_comment_doc_outer": "doc_outer",
         "line_comment_doc_inner": "doc_inner",
-        "line_comment_content": "content"
+        "line_comment_regular": "regular"
       }
     },
     "block_comment": {
       "definedBy": "override",
       "childKind": {
         "block_comment_doc_outer": "doc_outer",
-        "block_comment_doc_inner": "doc_inner"
+        "block_comment_doc_inner": "doc_inner",
+        "_block_comment_content": "regular"
       }
     }
   },
@@ -2487,10 +2509,10 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_line_comment_regular_dslash",
+          "_line_comment_extra_slashes",
           "_line_comment_doc_outer",
           "_line_comment_doc_inner",
-          "_line_comment_content"
+          "_line_comment_regular"
         ]
       }
     },
@@ -2677,21 +2699,6 @@
         "required": false,
         "multiple": false,
         "nonEmpty": false
-      }
-    },
-    "visibility_modifier_group": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_self",
-          "_super",
-          "_crate",
-          "_visibility_modifier_pub_in_path"
-        ]
       }
     },
     "_tuple_type_elements": {
@@ -3115,16 +3122,7 @@
         "nonEmpty": false
       }
     },
-    "visibility_modifier_pub": {
-      "visibility_modifier_group": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "visibility_modifier_pub_in_path": {
+    "visibility_modifier_pub_scope_in_path": {
       "path": {
         "unnamed": false,
         "slotCount": 1,
@@ -3159,6 +3157,30 @@
           "_union_keyword",
           "_gen_keyword"
         ]
+      }
+    },
+    "visibility_modifier_pub_scope": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false,
+        "wireKeys": [
+          "_self",
+          "_super",
+          "_crate",
+          "_visibility_modifier_pub_scope_in_path"
+        ]
+      }
+    },
+    "visibility_modifier_pub": {
+      "visibility_modifier_pub_scope": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "function_type_trait_form": {
@@ -7694,7 +7716,8 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_block_comment_content",
-              "parseKind": "_block_comment_content"
+              "parseKind": "_block_comment_content",
+              "default": true
             }
           ]
         }
@@ -15176,21 +15199,21 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "line_comment_regular_dslash",
+            "line_comment_extra_slashes",
             "line_comment_doc_outer",
             "line_comment_doc_inner",
-            "line_comment_content"
+            "line_comment_regular"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "line_comment_regular_dslash",
-              "parseKind": "line_comment_regular_dslash",
+              "name": "line_comment_extra_slashes",
+              "parseKind": "line_comment_extra_slashes",
               "seat": {
-                "kind": "line_comment_regular_dslash",
+                "kind": "line_comment_extra_slashes",
                 "shape": "arm",
-                "mount": "regularDslash"
+                "mount": "extraSlashes"
               }
             },
             {
@@ -15220,8 +15243,9 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "line_comment_content",
-              "parseKind": "line_comment_content"
+              "name": "line_comment_regular",
+              "parseKind": "line_comment_regular",
+              "default": true
             }
           ]
         }
@@ -15232,22 +15256,11 @@
       ],
       "bareAccepts": [
         "_line_doc_content",
-        "line_comment_content",
         "line_comment_doc_inner",
         "line_comment_doc_outer",
-        "line_comment_regular_dslash"
+        "line_comment_extra_slashes",
+        "line_comment_regular"
       ]
-    },
-    {
-      "kind": "line_comment_content",
-      "modelType": "pattern",
-      "typeName": "LineCommentContent",
-      "factoryName": "lineCommentContent",
-      "irKey": "lineCommentContent",
-      "hidden": false,
-      "pattern": ".*",
-      "leafPattern": "/^(?:(?:.*))$/u",
-      "factoryShape": "text"
     },
     {
       "kind": "line_comment_doc_inner",
@@ -15334,16 +15347,27 @@
       ]
     },
     {
-      "kind": "line_comment_regular_dslash",
+      "kind": "line_comment_extra_slashes",
       "modelType": "pattern",
-      "typeName": "LineCommentRegularDslash",
-      "factoryName": "lineCommentRegularDslash",
-      "irKey": "lineCommentRegularDslash",
+      "typeName": "LineCommentExtraSlashes",
+      "factoryName": "lineCommentExtraSlashes",
+      "irKey": "lineCommentExtraSlashes",
       "hidden": false,
       "annotations": {
         "hoisted": true
       },
       "leafPattern": "/^(?:(?:\\/\\/)(?:.*))$/u",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "line_comment_regular",
+      "modelType": "pattern",
+      "typeName": "LineCommentRegular",
+      "factoryName": "lineCommentRegular",
+      "irKey": "lineCommentRegular",
+      "hidden": false,
+      "pattern": ".*",
+      "leafPattern": "/^(?:(?:.*))$/u",
       "factoryShape": "text"
     },
     {
@@ -25717,18 +25741,76 @@
         "scoped_identifier",
         "self",
         "super",
-        "visibility_modifier_group",
         "visibility_modifier_pub",
-        "visibility_modifier_pub_in_path"
+        "visibility_modifier_pub_scope",
+        "visibility_modifier_pub_scope_in_path"
       ]
     },
     {
-      "kind": "visibility_modifier_group",
-      "modelType": "polymorph",
-      "typeName": "VisibilityModifierGroup",
-      "factoryName": "visibilityModifierGroup",
-      "irKey": "visibilityModifierGroup",
+      "kind": "visibility_modifier_pub",
+      "modelType": "envelope",
+      "typeName": "VisibilityModifierPub",
+      "factoryName": "visibilityModifierPub",
+      "irKey": "visibilityModifierPub",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "visibility_modifier_pub_scope",
+          "propertyName": "visibilityModifierPubScope",
+          "paramName": "visibilityModifierPubScope",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "visibility_modifier_pub_scope"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier_pub_scope",
+              "parseKind": "visibility_modifier_pub_scope",
+              "seat": {
+                "kind": "visibility_modifier_pub_scope",
+                "shape": "arm",
+                "mount": "scope",
+                "seated": true
+              }
+            }
+          ]
+        }
+      ],
+      "name": "visibility_modifier_pub",
+      "factoryShape": "forwarded",
+      "forwardsTo": "visibility_modifier_pub_scope",
+      "factoryFields": [
+        "visibility_modifier_pub_scope"
+      ],
+      "bareAccepts": [
+        "crate",
+        "identifier",
+        "metavariable",
+        "scoped_identifier",
+        "self",
+        "super",
+        "visibility_modifier_pub_scope",
+        "visibility_modifier_pub_scope_in_path"
+      ]
+    },
+    {
+      "kind": "visibility_modifier_pub_scope",
+      "modelType": "polymorph",
+      "typeName": "VisibilityModifierPubScope",
+      "factoryName": "visibilityModifierPubScope",
+      "irKey": "visibilityModifierPubScope",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "content",
@@ -25742,7 +25824,7 @@
             "self",
             "super",
             "crate",
-            "visibility_modifier_pub_in_path"
+            "visibility_modifier_pub_scope_in_path"
           ],
           "values": [
             {
@@ -25766,10 +25848,10 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "visibility_modifier_pub_in_path",
-              "parseKind": "visibility_modifier_pub_in_path",
+              "name": "visibility_modifier_pub_scope_in_path",
+              "parseKind": "visibility_modifier_pub_scope_in_path",
               "seat": {
-                "kind": "visibility_modifier_pub_in_path",
+                "kind": "visibility_modifier_pub_scope_in_path",
                 "shape": "arm",
                 "mount": "inPath",
                 "seated": true
@@ -25778,6 +25860,7 @@
           ]
         }
       ],
+      "name": "visibility_modifier_pub_scope",
       "factoryShape": "direct",
       "factoryFields": [
         "content"
@@ -25789,64 +25872,15 @@
         "scoped_identifier",
         "self",
         "super",
-        "visibility_modifier_pub_in_path"
+        "visibility_modifier_pub_scope_in_path"
       ]
     },
     {
-      "kind": "visibility_modifier_pub",
-      "modelType": "envelope",
-      "typeName": "VisibilityModifierPub",
-      "factoryName": "visibilityModifierPub",
-      "irKey": "visibilityModifierPub",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "visibility_modifier_group",
-          "propertyName": "visibilityModifierGroup",
-          "paramName": "visibilityModifierGroup",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "visibility_modifier_group"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "visibility_modifier_group",
-              "parseKind": "visibility_modifier_group"
-            }
-          ]
-        }
-      ],
-      "name": "visibility_modifier_pub",
-      "factoryShape": "forwarded",
-      "forwardsTo": "visibility_modifier_group",
-      "factoryFields": [
-        "visibility_modifier_group"
-      ],
-      "bareAccepts": [
-        "crate",
-        "identifier",
-        "metavariable",
-        "scoped_identifier",
-        "self",
-        "super",
-        "visibility_modifier_group",
-        "visibility_modifier_pub_in_path"
-      ]
-    },
-    {
-      "kind": "visibility_modifier_pub_in_path",
+      "kind": "visibility_modifier_pub_scope_in_path",
       "modelType": "polymorph",
-      "typeName": "VisibilityModifierPubInPath",
-      "factoryName": "visibilityModifierPubInPath",
-      "irKey": "visibilityModifierPubInPath",
+      "typeName": "VisibilityModifierPubScopeInPath",
+      "factoryName": "visibilityModifierPubScopeInPath",
+      "irKey": "visibilityModifierPubScopeInPath",
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -26028,7 +26062,7 @@
           ]
         }
       ],
-      "name": "visibility_modifier_pub_in_path",
+      "name": "visibility_modifier_pub_scope_in_path",
       "factoryShape": "direct",
       "factoryFields": [
         "path"

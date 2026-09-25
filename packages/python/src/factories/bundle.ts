@@ -25,7 +25,6 @@ export const ifStatement = bundle(F.buildIfStatement, C.coerceToIfStatement);
 export const elifClause = bundle(F.buildElifClause, C.coerceToElifClause);
 export const elseClause = bundle(F.buildElseClause, C.coerceToElseClause);
 export const matchStatement = bundle(F.buildMatchStatement, C.coerceToMatchStatement);
-export const matchBlock = bundle(F.buildMatchBlock, C.coerceToMatchBlock);
 export const caseClause = bundle(F.buildCaseClause, C.coerceToCaseClause);
 export const forStatement = bundle(F.buildForStatement, C.coerceToForStatement);
 export const whileStatement = bundle(F.buildWhileStatement, C.coerceToWhileStatement);

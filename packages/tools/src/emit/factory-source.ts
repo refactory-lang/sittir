@@ -643,33 +643,48 @@ export function printingIrSurface(
 	const entries: Record<string, IrEntry> = {};
 	for (const [kind, strict] of Object.entries(map)) {
 		const entry: Record<string, unknown> = { strict };
-		const path = ctx.irPathOfKind(kind);
-		const id = kindIdOfName(kind) ?? kind;
-		for (const table of Object.values(ctx.seats?.[kind] ?? {})) {
-			for (const seat of Object.values(table)) {
-				if (seat.shape !== 'arm' || seat.mount === undefined || seat.mount in entry) continue;
-				entry[seat.mount] = { strict: mountPrinter(path, seat, kind, id, ctx) };
-			}
-		}
+		mountArmPrinters(entry, ctx.irPathOfKind(kind), kind, kind, kindIdOfName(kind) ?? kind, ctx, new Set([kind]));
 		entries[kind] = entry as IrEntry;
 	}
 	return { entries, seats: ctx.seats ?? {}, modelTypes };
 }
 
+function mountArmPrinters(
+	entry: Record<string, unknown>,
+	path: string,
+	hostKind: string,
+	builtKind: string,
+	id: number | string,
+	ctx: PrintContext,
+	visiting: ReadonlySet<string>
+): void {
+	for (const table of Object.values(ctx.seats?.[hostKind] ?? {})) {
+		for (const seat of Object.values(table)) {
+			if (seat.shape !== 'arm' || seat.mount === undefined || seat.mount in entry) continue;
+			const mounted: Record<string, unknown> = { strict: mountPrinter(path, seat, hostKind, builtKind, id, ctx) };
+			entry[seat.mount] = mounted;
+			if (!visiting.has(seat.kind)) {
+				mountArmPrinters(mounted, `${path}.${seat.mount}`, seat.kind, builtKind, id, ctx, new Set([...visiting, seat.kind]));
+			}
+		}
+	}
+}
+
 function mountPrinter(
 	path: string,
 	seat: Seat,
-	parentKind: string,
+	hostKind: string,
+	builtKind: string,
 	id: number | string,
 	ctx: PrintContext
 ): (...args: unknown[]) => Printed | string {
 	return (...args: unknown[]): Printed => {
 		const given = args.slice(0, args.findLastIndex((a) => a !== undefined) + 1);
 		const printed = given.map((a) =>
-			printValue(isPlainObject(a) ? wrapSeatedConfig(parentKind, a, ctx) : wrapDirectArg(seat.kind, a, ctx), ctx, 0)
+			printValue(isPlainObject(a) ? wrapSeatedConfig(hostKind, a, ctx) : wrapDirectArg(seat.kind, a, ctx), ctx, 0)
 		);
 		const argSource = printed.join(', ');
-		return new Printed(id, `${callSpelling(`${path}.${seat.mount!}`, ctx)}(${argSource})`, parentKind, argSource);
+		return new Printed(id, `${callSpelling(`${path}.${seat.mount!}`, ctx)}(${argSource})`, builtKind, argSource);
 	};
 }
 

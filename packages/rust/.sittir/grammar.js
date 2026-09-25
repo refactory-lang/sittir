@@ -248,6 +248,22 @@ var RuleWalker = class {
   }
 };
 
+// packages/codegen/src/dsl/rule-metadata.ts
+function makeRuleMetadata(shape) {
+  return shape;
+}
+function readRuleMetadata(meta) {
+  return meta;
+}
+function normalizeEnumMembers(members, provenance) {
+  if (members.length === 1) return members[0];
+  return {
+    type: CHOICE,
+    members,
+    ...provenance !== void 0 ? { metadata: makeRuleMetadata(provenance) } : {}
+  };
+}
+
 // packages/codegen/src/dsl/transform/transform-path.ts
 function dsl() {
   return globalThis;
@@ -373,8 +389,8 @@ function descendThroughPrecWrapper(rule, segments, patch, precStack) {
 function isEnrichGroupLiftSymbol(rule) {
   const t = rule.type;
   if (t !== "SYMBOL") return false;
-  const meta = rule.metadata;
-  return meta?.author === "enrich";
+  const meta = readRuleMetadata(rule.metadata);
+  return meta?.symbolSource === "group-lift";
 }
 var groupLiftRuleMap;
 function setGroupLiftRuleMap(map) {
@@ -874,19 +890,6 @@ function isRegexPlaceholder(v) {
 }
 function regex(pattern) {
   return { __sittirPlaceholder: "regex", source: pattern.source };
-}
-
-// packages/codegen/src/dsl/rule-metadata.ts
-function makeRuleMetadata(shape) {
-  return shape;
-}
-function normalizeEnumMembers(members, provenance) {
-  if (members.length === 1) return members[0];
-  return {
-    type: CHOICE,
-    members,
-    ...provenance !== void 0 ? { metadata: makeRuleMetadata(provenance) } : {}
-  };
 }
 
 // packages/codegen/src/util/word-matcher.ts
@@ -1684,7 +1687,7 @@ function innermostNamedAliasContent(rule) {
   return current;
 }
 function distributeInlineAliasChoices(rule, ctx) {
-  const walker = new RuleWalker();
+  const walker2 = new RuleWalker();
   const distributed = /* @__PURE__ */ new WeakSet();
   const inlineChoiceOf = (content) => {
     if (content.type !== SYMBOL) return void 0;
@@ -1711,10 +1714,10 @@ function distributeInlineAliasChoices(rule, ctx) {
     distributed.add(split);
     return split;
   };
-  return visit(walker.map(rule, visit));
+  return visit(walker2.map(rule, visit));
 }
 function mintInlineLiteralAliasStorage(rules) {
-  const walker = new RuleWalker();
+  const walker2 = new RuleWalker();
   const literalAliasOf = (r) => {
     const alias3 = r;
     if (alias3.type !== ALIAS || alias3.named !== true || !alias3.value || Object.hasOwn(rules, alias3.value)) return void 0;
@@ -1726,7 +1729,7 @@ function mintInlineLiteralAliasStorage(rules) {
   };
   const byDisplay = /* @__PURE__ */ new Map();
   for (const rule of Object.values(rules)) {
-    walker.fold(rule, byDisplay, (acc, r) => {
+    walker2.fold(rule, byDisplay, (acc, r) => {
       const site = literalAliasOf(r);
       if (site === void 0) return acc;
       const entry = acc.get(site.display);
@@ -1749,7 +1752,7 @@ function mintInlineLiteralAliasStorage(rules) {
     return { type: ALIAS, named: true, value: site.display, content: { type: SYMBOL, name: minted.name } };
   };
   const out = {};
-  for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker.map(rule, visit));
+  for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker2.map(rule, visit));
   for (const { name, body } of storage.values()) out[name] = body;
   return out;
 }
@@ -1766,7 +1769,7 @@ function liftAliasedHiddenRuleBodies(rules) {
     const name = r.type === SYMBOL ? r.name : void 0;
     return name !== void 0 && displayByRule.has(name) ? name : void 0;
   };
-  const walker = new RuleWalker();
+  const walker2 = new RuleWalker();
   const visit = (r) => {
     const name = lifted(r);
     if (name !== void 0) return { ...displayByRule.get(name), content: r };
@@ -1779,12 +1782,12 @@ function liftAliasedHiddenRuleBodies(rules) {
   const out = {};
   for (const [name, rule] of Object.entries(rules)) {
     const body = displayByRule.get(name)?.content ?? rule;
-    out[name] = visit(walker.map(body, visit));
+    out[name] = visit(walker2.map(body, visit));
   }
   return out;
 }
 function unaliasOverloadedDisplays(rules, ctx) {
-  const walker = new RuleWalker();
+  const walker2 = new RuleWalker();
   const siteOf = (r) => {
     const alias3 = r;
     return alias3.type === ALIAS && alias3.named === true && alias3.value ? alias3 : void 0;
@@ -1797,7 +1800,7 @@ function unaliasOverloadedDisplays(rules, ctx) {
   };
   const storagesByDisplay = /* @__PURE__ */ new Map();
   for (const rule of Object.values(rules)) {
-    walker.fold(rule, storagesByDisplay, (acc, r) => {
+    walker2.fold(rule, storagesByDisplay, (acc, r) => {
       const site = siteOf(r);
       if (site === void 0) return acc;
       const storage = storageOf(site.content);
@@ -1859,11 +1862,192 @@ function unaliasOverloadedDisplays(rules, ctx) {
     return action.kind === "drop" ? site.content : { ...site, value: action.display };
   };
   const out = {};
-  for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker.map(rule, visit));
+  for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker2.map(rule, visit));
   return out;
 }
 var flagWalker = new RuleWalker();
 var fuseHeadRepeatListsWalker = new RuleWalker();
+
+// packages/codegen/src/compiler/variant-structural.ts
+function prefixNamedSuffix(parentKind, targetName) {
+  const bareTarget = targetName.startsWith("_") ? targetName.slice(1) : targetName;
+  const prefix = `${polymorphVisibleName(parentKind, "")}`;
+  if (!bareTarget.startsWith(prefix)) return null;
+  const suffix = bareTarget.slice(prefix.length);
+  return suffix.length > 0 ? suffix : null;
+}
+var GROUP_TOKEN_SYNONYMS = {
+  item: "statement",
+  stmt: "statement",
+  expr: "expression",
+  decl: "declaration",
+  impl: "implementation"
+};
+var CATEGORY_TOKENS = /* @__PURE__ */ new Set([
+  "expression",
+  "statement",
+  "literal",
+  "declaration",
+  "definition",
+  "operator",
+  "pattern",
+  "type"
+]);
+function normalizeGroupToken(token2) {
+  return GROUP_TOKEN_SYNONYMS[token2] ?? token2;
+}
+function tokensOf(name) {
+  return name.split("_").filter((t) => t.length > 0);
+}
+function supertypeMemberName(memberKind, supertypeKind) {
+  const parts = tokensOf(memberKind);
+  const bareMember = parts.join("_");
+  const groupTokens = new Set(tokensOf(supertypeKind).map(normalizeGroupToken));
+  let kept = parts.filter((t) => !groupTokens.has(normalizeGroupToken(t)));
+  if (kept.length === parts.length && parts.length >= 2) {
+    const tail = normalizeGroupToken(parts[parts.length - 1]);
+    if (CATEGORY_TOKENS.has(tail)) kept = parts.slice(0, -1);
+  }
+  if (kept.length === 0 || kept.join("_") === tokensOf(supertypeKind).join("_")) return bareMember;
+  return kept.join("_");
+}
+var walker = new RuleWalker();
+
+// packages/codegen/src/dsl/automatic-variants.ts
+var ENRICH_AUTOMATIC_VARIANTS_KEY = "__enrichedAutomaticVariants__";
+var SLOT_BOUNDARIES = /* @__PURE__ */ new Set(["FIELD", "TOKEN", "IMMEDIATE_TOKEN", "ALIAS", "PATTERN", "STRING", "SYMBOL", "BLANK"]);
+function armDisplayOf(arm2) {
+  if (arm2.type === "SYMBOL" && typeof arm2.name === "string") return arm2.name.replace(/^_+/, "");
+  if (arm2.type === "ALIAS" && arm2.named === true && typeof arm2.value === "string" && arm2.content?.type === "SYMBOL") return arm2.value;
+  return void 0;
+}
+function isDisplayedLiteral(arm2) {
+  return arm2.type === "ALIAS" && arm2.named === true && arm2.content?.type === "STRING";
+}
+function annotationsOf(arm2) {
+  return arm2.type === "ALIAS" ? arm2.content?.annotations : arm2.annotations;
+}
+function refOf(arm2) {
+  if (arm2.type === "ALIAS") return `${String(arm2.value)}\0${arm2.content?.name ?? ""}`;
+  if (arm2.type === "SYMBOL") return String(arm2.name);
+  return JSON.stringify(arm2.value);
+}
+function automaticVariantKey(arm2) {
+  const shape = arm2;
+  const annotations = annotationsOf(shape);
+  if (annotations?.variantOf === void 0) return void 0;
+  return `${annotations.variantOf}\0${annotations.variant ?? ""}\0${refOf(shape)}`;
+}
+function holdsChoice(node) {
+  if (node === void 0) return false;
+  if (node.type === "CHOICE") return (node.members ?? []).filter((m) => m.type !== "BLANK").length >= 2 || (node.members ?? []).some(holdsChoice);
+  if (node.type !== void 0 && SLOT_BOUNDARIES.has(node.type)) return false;
+  return (node.members ?? []).some(holdsChoice) || node.content !== void 0 && holdsChoice(node.content);
+}
+function isHoistedChoiceGroup(rule) {
+  return rule?.annotations?.hoisted === true && holdsChoice(rule);
+}
+function stampRuleVariants(owner, rule, ruleOf, stamped, isSupertype) {
+  const nameOf = (display) => isSupertype ? supertypeMemberName(display, owner) : prefixNamedSuffix(owner, display) ?? display;
+  const label = (member) => {
+    const display = armDisplayOf(member);
+    const annotations = display === void 0 ? { variantOf: owner } : { variant: nameOf(display), variantOf: owner };
+    const annotated = withAnnotations(member, annotations);
+    const out = { ...annotated, metadata: makeRuleMetadata({ ...annotated.metadata, author: "enrich" }) };
+    stamped.add(automaticVariantKey(out));
+    return out;
+  };
+  const stamp = (member) => {
+    if (annotationsOf(member)?.variantOf !== void 0 || isDisplayedLiteral(member)) return member;
+    return member.type === "CHOICE" ? visit(member) : label(member);
+  };
+  const visit = (node) => {
+    if (node.type === "CHOICE" && node.members !== void 0) {
+      const choosable = node.members.filter((m) => m.type !== "BLANK").length >= 2;
+      const members = node.members.map((member) => choosable && member.type !== "BLANK" ? stamp(member) : visit(member));
+      return members.some((m, i) => m !== node.members[i]) ? { ...node, members } : node;
+    }
+    if (node.type === "SYMBOL" && typeof node.name === "string" && annotationsOf(node)?.variantOf === void 0) {
+      return isHoistedChoiceGroup(ruleOf(node.name)) ? label(node) : node;
+    }
+    if (node.type !== void 0 && SLOT_BOUNDARIES.has(node.type)) return node;
+    if (node.members !== void 0) {
+      const members = node.members.map(visit);
+      return members.some((m, i) => m !== node.members[i]) ? { ...node, members } : node;
+    }
+    if (node.content !== void 0 && typeof node.content === "object") {
+      const content = visit(node.content);
+      return content === node.content ? node : { ...node, content };
+    }
+    return node;
+  };
+  return visit(rule);
+}
+function stampAutomaticVariants(rules, supertypeNames, inlineNames) {
+  const stamped = /* @__PURE__ */ new Set();
+  for (const owner of Object.keys(rules)) {
+    const rule = rules[owner];
+    if (rule === void 0) continue;
+    const isSupertype = supertypeNames.has(owner) || isParserHiddenName(owner) && !inlineNames.has(owner) && isSupertypeLike(rule);
+    rules[owner] = stampRuleVariants(owner, rule, (name) => rules[name], stamped, isSupertype);
+  }
+  return stamped;
+}
+function getEnrichAutomaticVariants(grammar2) {
+  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Set();
+  const value = grammar2[ENRICH_AUTOMATIC_VARIANTS_KEY];
+  return value instanceof Set ? value : /* @__PURE__ */ new Set();
+}
+function withoutAutomaticVariants(rule, automatic) {
+  if (automatic.size === 0) return rule;
+  const strip = (node) => {
+    if (node.type === "CHOICE" && node.members !== void 0) {
+      const members = node.members.map((member) => {
+        const key = automaticVariantKey(member);
+        if (key !== void 0 && automatic.has(key)) return withoutLabel(member);
+        return strip(member);
+      });
+      return members.some((m, i) => m !== node.members[i]) ? { ...node, members } : node;
+    }
+    if (node.type !== void 0 && SLOT_BOUNDARIES.has(node.type)) return node;
+    if (node.members !== void 0) {
+      const members = node.members.map(strip);
+      return members.some((m, i) => m !== node.members[i]) ? { ...node, members } : node;
+    }
+    if (node.content !== void 0 && typeof node.content === "object") {
+      const content = strip(node.content);
+      return content === node.content ? node : { ...node, content };
+    }
+    return node;
+  };
+  return strip(rule);
+}
+function withoutLabel(arm2) {
+  const drop = (annotations) => {
+    if (annotations === void 0) return void 0;
+    const { variant: _variant, variantOf: _variantOf, ...rest } = annotations;
+    return Object.keys(rest).length === 0 ? void 0 : rest;
+  };
+  const rebuild = (node) => {
+    const annotations = drop(node.annotations);
+    const { annotations: _annotations, ...bare } = node;
+    return annotations === void 0 ? bare : { ...bare, annotations };
+  };
+  return arm2.type === "ALIAS" && arm2.content !== void 0 ? { ...arm2, content: rebuild(arm2.content) } : rebuild(arm2);
+}
+function withAuthoredLabel(site, label) {
+  const annotated = withAnnotations(site, label);
+  return { ...annotated, metadata: makeRuleMetadata({ ...annotated.metadata, author: "override" }) };
+}
+function relabelledArm(site, original) {
+  const owner = annotationsOf(original)?.variantOf;
+  if (owner === void 0) return site;
+  const display = armDisplayOf(site);
+  return withAuthoredLabel(site, display === void 0 ? { variantOf: owner } : { variant: prefixNamedSuffix(owner, display) ?? display, variantOf: owner });
+}
+function unlabelled(rule) {
+  return withoutLabel(rule);
+}
 
 // packages/codegen/src/dsl/enrich.ts
 function withContent(node, content) {
@@ -1977,6 +2161,7 @@ function enrich(baseInput) {
     if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
   }
   synthesizeFieldEnumRules(mergedRules);
+  const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
   setGroupLiftRuleMap({
     get: (n) => mergedRules[n],
     set: (n, b) => {
@@ -1998,6 +2183,14 @@ function enrich(baseInput) {
   if (clauseGroupOwners.size > 0) {
     Object.defineProperty(result, ENRICH_CLAUSE_GROUP_OWNERS_KEY, {
       value: clauseGroupOwners,
+      enumerable: false,
+      writable: false,
+      configurable: true
+    });
+  }
+  if (automaticVariants.size > 0) {
+    Object.defineProperty(result, ENRICH_AUTOMATIC_VARIANTS_KEY, {
+      value: automaticVariants,
       enumerable: false,
       writable: false,
       configurable: true
@@ -3999,7 +4192,7 @@ function resolveToEnumMembersOneLevelDeep(target) {
 
 // packages/codegen/src/dsl/transform/transform.ts
 function withVariantAnnotation(rule, variantName, parentKind, arm2) {
-  return withAnnotations(rule, { variant: variantName, variantOf: parentKind, ...isDefaultArm(arm2) ? { default: true } : {} });
+  return withAuthoredLabel(rule, { variant: variantName, variantOf: parentKind, ...isDefaultArm(arm2) ? { default: true } : {} });
 }
 function isDefaultArm(arm2) {
   const node = arm2;
@@ -4670,6 +4863,7 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   if (maybeSymbolized !== content) {
     content = maybeSymbolized;
   }
+  content = withoutAutomaticVariants(content, wireAutomaticVariants());
   const native = globalThis.field;
   if (typeof native !== "function") {
     throw new Error(
@@ -4680,16 +4874,17 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   return { ...result, metadata: makeRuleMetadata({ fieldSource: "override" }) };
 }
 function resolveAliasPlaceholder(patch, originalMember, precStack) {
+  const labelled = (site) => relabelledArm(site, originalMember);
   const ruleName = "_" + patch.name;
   const lift = enrichLiftArmOf(originalMember);
-  if (lift !== null) return renameEnrichLift(originalMember, lift, ruleName, patch.name);
+  if (lift !== null) return labelled(renameEnrichLift(originalMember, lift, ruleName, patch.name));
   const mint = (body) => registerAliasedVariant(ruleName, patch.name, body, (b) => wrapInPrec(b, precStack));
   if (originalMember.type === "ALIAS") {
     const content = contentOf3(originalMember);
-    if (!isSymbolType(content.type)) return mint(content);
-    return { ...originalMember, named: true, value: patch.name };
+    if (!isSymbolType(content.type)) return labelled(mint(content));
+    return labelled({ ...originalMember, named: true, value: patch.name });
   }
-  return mint(originalMember);
+  return labelled(mint(originalMember));
 }
 function registerAliasedVariant(ruleName, nodeName, originalMember, bodyWrapper) {
   const single = originalMember;
@@ -4842,7 +5037,7 @@ function renameNameList(value, renames) {
 var currentContext = null;
 function wireRegisterSyntheticRule(name, content) {
   if (!currentContext) return false;
-  currentContext.deposits.set(name, content);
+  currentContext.deposits.set(name, unlabelled(content));
   return true;
 }
 function wireDeclareRuleBody(name, text, site) {
@@ -4892,6 +5087,9 @@ function wireHasAuthoredRule(name) {
 function wireGetCurrentRuleKind() {
   return currentContext?.currentRuleKind ?? null;
 }
+function wireAutomaticVariants() {
+  return currentContext?.automaticVariants ?? /* @__PURE__ */ new Set();
+}
 function wireIsExtraRule(name) {
   return currentContext?.extraRuleNames.has(name) ?? false;
 }
@@ -4919,7 +5117,8 @@ function wire(config, base2) {
     extraRuleNames: extraRuleNames(cfg, baseArg),
     precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
     flattenedParents: /* @__PURE__ */ new Set(),
-    aliasTargets: /* @__PURE__ */ new Set()
+    aliasTargets: /* @__PURE__ */ new Set(),
+    automaticVariants: getEnrichAutomaticVariants(base2)
   };
   const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
@@ -5202,11 +5401,11 @@ function wrapSupertypesCallback(userSupertypes, context) {
   };
 }
 function recordAliasTargets(rules, context) {
-  const walker = new RuleWalker();
+  const walker2 = new RuleWalker();
   for (const [name, fn] of Object.entries(rules)) {
     rules[name] = function aliasRecordingRuleFn($, previous) {
       const rule = fn.call(this, $, previous);
-      walker.fold(rule, context.aliasTargets, (targets, node) => {
+      walker2.fold(rule, context.aliasTargets, (targets, node) => {
         const alias3 = node;
         if (alias3.type === "ALIAS" && alias3.named !== false && typeof alias3.value === "string") targets.add(alias3.value);
         return targets;
@@ -5354,15 +5553,8 @@ function replaceInBodyRt(rule, candidates) {
   const r = rule;
   for (const c of candidates) {
     if (patternBodyEqual(rule, c.body)) {
-      if (c.aliasAs !== void 0) {
-        return {
-          type: "ALIAS",
-          content: { type: "SYMBOL", name: c.name },
-          named: true,
-          value: c.aliasAs
-        };
-      }
-      return { type: "SYMBOL", name: c.name };
+      const site = c.aliasAs === void 0 ? { type: "SYMBOL", name: c.name } : { type: "ALIAS", content: { type: "SYMBOL", name: c.name }, named: true, value: c.aliasAs };
+      return relabelledArm(site, rule);
     }
   }
   const t = r.type;
@@ -5886,11 +6078,9 @@ var grammar_sittir_default = grammar(
         },
         visibility_modifier: [
           { "1/1/0/1/3/0": field2("in") },
-          {
-            "1/1/0/1/3": variant("in_path"),
-            "0": variant("crate"),
-            "1": variant("pub")
-          }
+          { "1/1/0/1/3": variant("in_path") },
+          { "1/1/0": variant("scope") },
+          { "0": variant("crate"), "1": variant("pub") }
         ],
         function_type: { "1/0/0": variant("trait_form"), "1/0/1": variant("fn_form") },
         gen_block: {
@@ -6013,17 +6203,17 @@ var grammar_sittir_default = grammar(
         // distributes over the doc sequence rather than fusing onto one
         // kind as two independent optional markers.
         line_comment: {
-          "1/0": variant("regular_dslash"),
+          "1/0": variant("extra_slashes"),
           "1/1": variant("doc_outer"),
           "1/2": variant("doc_inner"),
-          "1/3": variant("content")
+          "1/3": variant("regular", { default: true })
         },
-        // `/**` and `/*!`, the block spelling of the same split. Only
-        // the two distributed arms are named; the third is already a
-        // reference to a named content rule.
+        // `/**` and `/*!`, the block spelling of the same split; the
+        // plain `/* … */` arm is the default.
         block_comment: {
           "1/0/0": variant("doc_outer"),
-          "1/0/1": variant("doc_inner")
+          "1/0/1": variant("doc_inner"),
+          "1/0/2": variant("regular", { default: true })
         },
         // The token-tree repeats' element fields (`field('delim_tokens',
         // repeat($._delim_tokens))` and siblings) come from enrich's

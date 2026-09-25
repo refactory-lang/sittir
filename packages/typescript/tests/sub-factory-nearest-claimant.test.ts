@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { ir } from '../src/ir.js';
 
-describe('sub-factory flattening follows the slot', () => {
-	it('mounts no grand arm through a fielded slot: tuple_parameter `name` keeps only its direct arms', () => {
-		expect(typeof ir.tupleParameter.restPattern).toBe('function');
-		expect((ir.tupleParameter.restPattern as unknown as Record<string, unknown>).memberExpression).toBeUndefined();
+describe('arms follow the slot', () => {
+	it('a fielded slot mounts no automatic arm: tuple_parameter `name` has none', () => {
+		expect((ir.tupleParameter as unknown as Record<string, unknown>).restPattern).toBeUndefined();
 	});
 
 	it("mounts the default export's from form on the export statement", () => {

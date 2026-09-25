@@ -1706,13 +1706,21 @@ export type TypescriptGrammar = {
 			required: true;
 			types: [
 				{ type: 'false'; named: true },
+				{ type: 'literal_type_negative_number'; named: true },
 				{ type: 'null'; named: true },
 				{ type: 'number'; named: true },
 				{ type: 'string'; named: true },
 				{ type: 'true'; named: true },
-				{ type: 'unary_expression_number'; named: true },
 				{ type: 'undefined'; named: true }
 			];
+		};
+	};
+	readonly literal_type_negative_number: {
+		type: 'literal_type_negative_number';
+		named: true;
+		fields: {
+			argument: { multiple: false; required: true; types: [{ type: 'number'; named: true }] };
+			operator: { multiple: false; required: true; types: [{ type: '+'; named: false }, { type: '-'; named: false }] };
 		};
 	};
 	readonly lookup_type: {
@@ -2686,14 +2694,6 @@ export type TypescriptGrammar = {
 					{ type: '~'; named: false }
 				];
 			};
-		};
-	};
-	readonly unary_expression_number: {
-		type: 'unary_expression_number';
-		named: true;
-		fields: {
-			argument: { multiple: false; required: true; types: [{ type: 'number'; named: true }] };
-			operator: { multiple: false; required: true; types: [{ type: '+'; named: false }, { type: '-'; named: false }] };
 		};
 	};
 	readonly union_type: {

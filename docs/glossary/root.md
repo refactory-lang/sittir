@@ -532,6 +532,12 @@ didn't happen.
  */
 ```
 
+`'enrich'` when every arm of the descriptor's kind came from enrich's
+automatic variant stamping, with no `variant()` override touching any of
+them; `'override'` otherwise. `factory-map.ts`'s `collectVariantAdoptedBranches`
+computes it by ANDing every one of the kind's `VariantChild.definedBy`
+values.
+
 ```text
 /**
  * Descriptor telling validators how to stamp `$variant` on a derived

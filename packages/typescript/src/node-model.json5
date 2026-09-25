@@ -87,6 +87,15 @@
         "binary_expression_in": "in"
       }
     },
+    "decorator": {
+      "definedBy": "enrich",
+      "childKind": {
+        "identifier": "identifier",
+        "decorator_member_expression": "member_expression",
+        "decorator_call_expression": "call_expression",
+        "decorator_parenthesized_expression": "parenthesized_expression"
+      }
+    },
     "class_body": {
       "definedBy": "override",
       "childKind": {
@@ -95,12 +104,64 @@
         "class_body_member": "member"
       }
     },
+    "decorator_parenthesized_expression": {
+      "definedBy": "enrich",
+      "childKind": {
+        "identifier": "identifier",
+        "decorator_member_expression": "decorator_member_expression",
+        "decorator_call_expression": "decorator_call_expression"
+      }
+    },
     "ambient_declaration": {
       "definedBy": "override",
       "childKind": {
         "declaration": "declaration",
         "ambient_declaration_global": "global",
         "ambient_declaration_module": "module"
+      }
+    },
+    "enum_body": {
+      "definedBy": "enrich",
+      "childKind": {
+        "enum_body_elements": "elements"
+      }
+    },
+    "asserts": {
+      "definedBy": "enrich",
+      "childKind": {
+        "type_predicate": "type_predicate",
+        "identifier": "identifier",
+        "this": "this"
+      }
+    },
+    "type_query": {
+      "definedBy": "enrich",
+      "childKind": {
+        "type_query_subscript_expression": "subscript_expression",
+        "type_query_member_expression": "member_expression",
+        "type_query_call_expression": "call_expression",
+        "type_query_instantiation_expression": "instantiation_expression",
+        "identifier": "identifier",
+        "this": "this"
+      }
+    },
+    "literal_type": {
+      "definedBy": "override",
+      "childKind": {
+        "literal_type_negative_number": "negative_number",
+        "number": "number",
+        "string": "string",
+        "true": "true",
+        "false": "false",
+        "null": "null",
+        "undefined": "undefined"
+      }
+    },
+    "import_clause_group": {
+      "definedBy": "enrich",
+      "childKind": {
+        "namespace_import": "namespace_import",
+        "named_imports": "named_imports"
       }
     }
   },
@@ -2896,7 +2957,7 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_unary_expression_number",
+          "_literal_type_negative_number",
           "_number_hex",
           "_number_float_point",
           "_number_float_leading_point",
@@ -2912,22 +2973,6 @@
           "_null",
           "_undefined"
         ]
-      }
-    },
-    "_number": {
-      "operator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "argument": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
       }
     },
     "flow_maybe_type": {
@@ -3467,6 +3512,22 @@
     },
     "comment_block": {
       "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "literal_type_negative_number": {
+      "operator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "argument": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -4854,61 +4915,6 @@
       "text": "\n"
     },
     {
-      "kind": "_number",
-      "modelType": "branch",
-      "typeName": "_Number",
-      "factoryName": "_number",
-      "irKey": "_number",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "operator",
-          "propertyName": "operator",
-          "paramName": "operator",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [
-            "__number_operator"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "__number_operator",
-              "parseKind": "__number_operator"
-            }
-          ]
-        },
-        {
-          "name": "argument",
-          "propertyName": "argument",
-          "paramName": "argument",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "number"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "number",
-              "parseKind": "number"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "operator",
-        "argument"
-      ]
-    },
-    {
       "kind": "_operator",
       "modelType": "enum",
       "typeName": "Operator",
@@ -6077,7 +6083,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -6099,6 +6104,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -6533,7 +6539,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -6555,6 +6560,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -8393,8 +8399,7 @@
               "parseKind": "catch_clause_group",
               "seat": {
                 "kind": "catch_clause_group",
-                "shape": "arm",
-                "mount": "group"
+                "shape": "splice"
               }
             }
           ]
@@ -10371,7 +10376,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -10393,6 +10397,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -10993,7 +10998,12 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "enum_body_elements",
-              "parseKind": "enum_body_elements"
+              "parseKind": "enum_body_elements",
+              "seat": {
+                "kind": "enum_body_elements",
+                "shape": "arm",
+                "mount": "elements"
+              }
             }
           ]
         }
@@ -12841,7 +12851,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -12863,6 +12872,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -16104,7 +16114,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -16126,6 +16135,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -16926,7 +16936,7 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_number",
+            "literal_type_negative_number",
             "number",
             "string",
             "true",
@@ -16938,8 +16948,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_number",
-              "parseKind": "unary_expression_number"
+              "name": "literal_type_negative_number",
+              "parseKind": "literal_type_negative_number",
+              "seat": {
+                "kind": "literal_type_negative_number",
+                "shape": "arm",
+                "mount": "negativeNumber"
+              }
             },
             {
               "kind": "node-ref",
@@ -16985,8 +17000,8 @@
         "content"
       ],
       "bareAccepts": [
-        "_number",
         "false",
+        "literal_type_negative_number",
         "null",
         "number_bigint",
         "number_binary",
@@ -17000,6 +17015,65 @@
         "string_single",
         "true",
         "undefined"
+      ]
+    },
+    {
+      "kind": "literal_type_negative_number",
+      "modelType": "branch",
+      "typeName": "LiteralTypeNegativeNumber",
+      "factoryName": "literalTypeNegativeNumber",
+      "irKey": "literalTypeNegativeNumber",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "operator",
+          "propertyName": "operator",
+          "paramName": "operator",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [
+            "__number_operator"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "__number_operator",
+              "parseKind": "__number_operator"
+            }
+          ]
+        },
+        {
+          "name": "argument",
+          "propertyName": "argument",
+          "paramName": "argument",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "number"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "number",
+              "parseKind": "number"
+            }
+          ]
+        }
+      ],
+      "name": "literal_type_negative_number",
+      "factoryShape": "config",
+      "factoryFields": [
+        "operator",
+        "argument"
       ]
     },
     {
@@ -20419,7 +20493,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -20441,6 +20514,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -20515,7 +20589,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -20537,6 +20610,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -20843,7 +20917,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -20865,6 +20938,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -21512,7 +21586,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -21534,6 +21607,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -22993,7 +23067,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -23015,6 +23088,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -23626,7 +23700,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -23648,6 +23721,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -25472,7 +25546,6 @@
         "content"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -25494,6 +25567,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -25981,7 +26055,6 @@
         "tuple_type_members"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -26003,6 +26076,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -26070,7 +26144,6 @@
         "tuple_type_member"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -26092,6 +26165,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -26285,7 +26359,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -26307,6 +26380,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -26382,7 +26456,6 @@
         "types"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -26404,6 +26477,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -26932,7 +27006,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
         "_type_query_call_expression",
         "_type_query_call_expression_in_type_annotation",
         "_type_query_instantiation_expression",
@@ -26954,6 +27027,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",

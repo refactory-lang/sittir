@@ -2087,6 +2087,11 @@ export enum CompoundStatementKind {
 	MatchStatement = 'match_statement'
 }
 
+export enum MatchBlockKind {
+	MatchBlockBlock = 'match_block_block',
+	Newline = '_newline'
+}
+
 export enum WithClauseKind {
 	WithClauseBare = 'with_clause_bare',
 	WithClauseParen = 'with_clause_paren'
@@ -2489,19 +2494,9 @@ export interface MatchStatement {
 	readonly _body: MatchBlock;
 	readonly __looseHints__?: {
 		readonly subjects: readonly Expression[];
-		readonly body: readonly (MatchBlockBlock | '\n')[];
 	};
 	subjects(): Subjects;
 	body(): MatchBlock;
-}
-
-export interface MatchBlock {
-	readonly $type: TSKindId.MatchBlock;
-	readonly _content: MatchBlockBlock | TSKindId.Newline;
-	readonly __inputHints__?: {
-		readonly content: KindEnum<'\n', TSKindId.Newline> | MatchBlockBlock;
-	};
-	content(): MatchBlockBlock | TSKindId.Newline;
 }
 
 export interface CaseClause {
@@ -4413,9 +4408,6 @@ export interface IfStatementTree extends TreeNode<'if_statement'> {}
 export interface ElifClauseTree extends TreeNode<'elif_clause'> {}
 export interface ElseClauseTree extends TreeNode<'else_clause'> {}
 export interface MatchStatementTree extends TreeNode<'match_statement'> {}
-export interface MatchBlockTree extends AnyTreeNode {
-	readonly type: '_match_block';
-}
 export interface CaseClauseTree extends TreeNode<'case_clause'> {}
 export interface ForStatementTree extends TreeNode<'for_statement'> {}
 export interface WhileStatementTree extends TreeNode<'while_statement'> {}
@@ -4866,6 +4858,10 @@ export type CompoundStatementTree =
 	| DecoratedDefinitionTree
 	| MatchStatementTree;
 
+export type MatchBlock = MatchBlockBlock | Newline;
+
+export type MatchBlockTree = MatchBlockBlockTree;
+
 export type WithClause = WithClauseBare | WithClauseParen;
 
 export type WithClauseTree = WithClauseBareTree | WithClauseParenTree;
@@ -5118,6 +5114,11 @@ export namespace CompoundStatement {
 	export type Tree = CompoundStatementTree;
 }
 
+export namespace MatchBlock {
+	export type Kind = '_match_block';
+	export type Tree = MatchBlockTree;
+}
+
 export namespace WithClause {
 	export type Kind = 'with_clause';
 	export type Tree = WithClauseTree;
@@ -5249,7 +5250,6 @@ export type PythonNode =
 	| ElifClause
 	| ElseClause
 	| MatchStatement
-	| MatchBlock
 	| CaseClause
 	| ForStatement
 	| WhileStatement
@@ -7665,17 +7665,6 @@ export interface MatchStatementNs extends NodeNs<
 	never,
 	'match_statement'
 > {}
-export interface MatchBlockNs extends NodeNs<
-	MatchBlock,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	MatchBlock.Built,
-	MatchBlock.BuildArgs,
-	MatchBlock.LooseArgs,
-	'content',
-	'_match_block'
-> {}
 export interface CaseClauseNs extends NodeNs<
 	CaseClause,
 	LeafScalarMap,
@@ -9344,7 +9333,6 @@ export interface NamespaceMap {
 	[TSKindId.ElifClause]: ElifClauseNs;
 	[TSKindId.ElseClause]: ElseClauseNs;
 	[TSKindId.MatchStatement]: MatchStatementNs;
-	[TSKindId.MatchBlock]: MatchBlockNs;
 	[TSKindId.CaseClause]: CaseClauseNs;
 	[TSKindId.ForStatement]: ForStatementNs;
 	[TSKindId.WhileStatement]: WhileStatementNs;
@@ -9905,24 +9893,6 @@ export namespace MatchStatement {
 	];
 	export type Tree = TreeFor<TSKindId.MatchStatement>;
 	export type Kind = 'match_statement';
-}
-export namespace MatchBlock {
-	export type Config = ConfigFor<TSKindId.MatchBlock>;
-	export interface Built extends T.MatchBlock, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: NonNullable<T.MatchBlockBlock | TSKindId.Newline>): T.MatchBlock.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.MatchBlock>;
-	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlock>;
-	export type BuildArgs = [value: T.MatchBlockBlock | TSKindId.Newline];
-	export type LooseArgs = [
-		value: LooseValue<T.MatchBlockBlock | TSKindId.Newline, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
-	export type Tree = TreeFor<TSKindId.MatchBlock>;
-	export type Kind = '_match_block';
 }
 export namespace CaseClause {
 	export type Config = ConfigFor<TSKindId.CaseClause>;

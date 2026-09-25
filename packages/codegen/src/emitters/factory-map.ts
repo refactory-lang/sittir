@@ -88,7 +88,7 @@ function collectVariantAdoptedBranches(
 		if (!isAuthoredCompound(node) || node.variantChildKinds.length === 0) continue;
 		if (node.parserHidden && !aliasSet.has(kind)) continue;
 		polymorphVariants[kind] = {
-			definedBy: 'override',
+			definedBy: node.variantChildKinds.every((child) => child.definedBy === 'enrich') ? 'enrich' : 'override',
 			childKind: mapVariantChildKindsToNames(node.variantChildKinds)
 		};
 	}

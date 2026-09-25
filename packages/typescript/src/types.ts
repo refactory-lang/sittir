@@ -566,73 +566,74 @@ export enum TSKindId {
 	ExportStatementNamespaceExport = 394,
 	ExportStatementTypeExport = 395,
 	ExportStatementEqualsExport = 396,
-	BinaryExpressionIn = 397,
-	ClassBodyMethod = 398,
-	ClassBodyMethodSig = 399,
-	ClassBodyMember = 400,
-	IndexSignatureColon = 401,
-	IndexSignatureMappedTypeClause = 402,
-	ImportStatementClauseFrom = 403,
-	ImportSpecifierName = 404,
-	ImportSpecifierAs = 405,
-	ParenthesizedExpressionTyped = 406,
-	ParenthesizedExpressionSequence = 407,
-	CallExpressionCall = 408,
-	CallExpressionTemplateCall = 409,
-	CallExpressionMember = 410,
-	StringDouble = 411,
-	StringSingle = 412,
-	UpdateExpressionPostfix = 413,
-	UpdateExpressionPrefix = 414,
-	ArrowFunctionParameter = 415,
-	ClassHeritageExtendsClause = 416,
-	ImportClauseDefaultImport = 417,
-	ExportStatementDefaultFrom = 418,
-	ExportStatementDefaultDeclaration = 419,
-	ExportStatementDefaultFromStarFrom = 420,
-	ExportStatementDefaultFromNsFrom = 421,
-	ExportStatementDefaultFromClauseFrom = 422,
-	ExportStatementDefaultDeclarationDefaultKw = 423,
-	ExportStatementDefaultDeclarationDefaultKwValue = 424,
-	VariableDeclaratorPlain = 425,
-	VariableDeclaratorDefinite = 426,
-	MetaPropertyNewTarget = 427,
-	MetaPropertyImportMeta = 428,
-	ForHeaderLhs = 429,
-	ForHeaderVarKind = 430,
-	ForHeaderLetConstKind = 431,
-	ProgramRepeat1 = 432,
-	VariableDeclarationRepeat1 = 433,
-	SwitchBodyRepeat1 = 434,
-	ObjectRepeat1 = 435,
-	ObjectPatternRepeat1 = 436,
-	ArrayRepeat1 = 437,
-	ArrayPatternRepeat1 = 438,
-	ClassRepeat1 = 439,
-	SequenceExpressionRepeat1 = 440,
-	TemplateStringRepeat1 = 441,
-	ClassBodyRepeat1 = 442,
-	ExtendsClauseRepeat1 = 443,
-	ImplementsClauseRepeat1 = 444,
-	ExtendsTypeClauseRepeat1 = 445,
-	TemplateLiteralTypeRepeat1 = 446,
-	ExportSpecifiersRepeat1 = 447,
-	ImportSpecifiersRepeat1 = 448,
-	FormalParametersElementsRepeat1 = 449,
-	EnumBodyElementsRepeat1 = 450,
-	TypeParametersElementsRepeat1 = 451,
-	TupleTypeMembersRepeat1 = 452,
-	ObjectTypeContentRepeat1 = 453,
-	StringDoubleRepeat1 = 454,
-	StringSingleRepeat1 = 455,
-	_InterfaceBody = 456,
-	_PropertyIdentifier = 458,
-	_Semicolon = 459,
-	_ShorthandPropertyIdentifier = 460,
-	_ShorthandPropertyIdentifierPattern = 461,
-	_StatementIdentifier = 462,
-	_ThisType = 463,
-	_TypeIdentifier = 464
+	LiteralTypeNegativeNumber = 397,
+	BinaryExpressionIn = 398,
+	ClassBodyMethod = 399,
+	ClassBodyMethodSig = 400,
+	ClassBodyMember = 401,
+	IndexSignatureColon = 402,
+	IndexSignatureMappedTypeClause = 403,
+	ImportStatementClauseFrom = 404,
+	ImportSpecifierName = 405,
+	ImportSpecifierAs = 406,
+	ParenthesizedExpressionTyped = 407,
+	ParenthesizedExpressionSequence = 408,
+	CallExpressionCall = 409,
+	CallExpressionTemplateCall = 410,
+	CallExpressionMember = 411,
+	StringDouble = 412,
+	StringSingle = 413,
+	UpdateExpressionPostfix = 414,
+	UpdateExpressionPrefix = 415,
+	ArrowFunctionParameter = 416,
+	ClassHeritageExtendsClause = 417,
+	ImportClauseDefaultImport = 418,
+	ExportStatementDefaultFrom = 419,
+	ExportStatementDefaultDeclaration = 420,
+	ExportStatementDefaultFromStarFrom = 421,
+	ExportStatementDefaultFromNsFrom = 422,
+	ExportStatementDefaultFromClauseFrom = 423,
+	ExportStatementDefaultDeclarationDefaultKw = 424,
+	ExportStatementDefaultDeclarationDefaultKwValue = 425,
+	VariableDeclaratorPlain = 426,
+	VariableDeclaratorDefinite = 427,
+	MetaPropertyNewTarget = 428,
+	MetaPropertyImportMeta = 429,
+	ForHeaderLhs = 430,
+	ForHeaderVarKind = 431,
+	ForHeaderLetConstKind = 432,
+	ProgramRepeat1 = 433,
+	VariableDeclarationRepeat1 = 434,
+	SwitchBodyRepeat1 = 435,
+	ObjectRepeat1 = 436,
+	ObjectPatternRepeat1 = 437,
+	ArrayRepeat1 = 438,
+	ArrayPatternRepeat1 = 439,
+	ClassRepeat1 = 440,
+	SequenceExpressionRepeat1 = 441,
+	TemplateStringRepeat1 = 442,
+	ClassBodyRepeat1 = 443,
+	ExtendsClauseRepeat1 = 444,
+	ImplementsClauseRepeat1 = 445,
+	ExtendsTypeClauseRepeat1 = 446,
+	TemplateLiteralTypeRepeat1 = 447,
+	ExportSpecifiersRepeat1 = 448,
+	ImportSpecifiersRepeat1 = 449,
+	FormalParametersElementsRepeat1 = 450,
+	EnumBodyElementsRepeat1 = 451,
+	TypeParametersElementsRepeat1 = 452,
+	TupleTypeMembersRepeat1 = 453,
+	ObjectTypeContentRepeat1 = 454,
+	StringDoubleRepeat1 = 455,
+	StringSingleRepeat1 = 456,
+	_InterfaceBody = 457,
+	_PropertyIdentifier = 459,
+	_Semicolon = 460,
+	_ShorthandPropertyIdentifier = 461,
+	_ShorthandPropertyIdentifierPattern = 462,
+	_StatementIdentifier = 463,
+	_ThisType = 464,
+	_TypeIdentifier = 465
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -889,7 +890,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[251, 'member_expression'],
 	[252, 'subscript_expression'],
 	[253, '_lhs_expression'],
-	[457, '_lhs_expression'],
+	[458, '_lhs_expression'],
 	[254, 'assignment_expression'],
 	[255, '_augmented_assignment_lhs'],
 	[256, 'augmented_assignment_expression'],
@@ -1033,73 +1034,74 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[394, 'export_statement_namespace_export'],
 	[395, 'export_statement_type_export'],
 	[396, 'export_statement_equals_export'],
-	[397, 'binary_expression_in'],
-	[398, 'class_body_method'],
-	[399, 'class_body_method_sig'],
-	[400, 'class_body_member'],
-	[401, 'index_signature_colon'],
-	[402, 'index_signature_mapped_type_clause'],
-	[403, 'import_statement_clause_from'],
-	[404, 'import_specifier_name'],
-	[405, 'import_specifier_as'],
-	[406, 'parenthesized_expression_typed'],
-	[407, 'parenthesized_expression_sequence'],
-	[408, 'call_expression_call'],
-	[409, 'call_expression_template_call'],
-	[410, 'call_expression_member'],
-	[411, 'string_double'],
-	[412, 'string_single'],
-	[413, 'update_expression_postfix'],
-	[414, 'update_expression_prefix'],
-	[415, 'arrow_function_parameter'],
-	[416, 'class_heritage_extends_clause'],
-	[417, 'import_clause_default_import'],
-	[418, 'export_statement_default_from'],
-	[419, 'export_statement_default_declaration'],
-	[420, 'export_statement_default_from_star_from'],
-	[421, 'export_statement_default_from_ns_from'],
-	[422, 'export_statement_default_from_clause_from'],
-	[423, 'export_statement_default_declaration_default_kw'],
-	[424, 'export_statement_default_declaration_default_kw_value'],
-	[425, 'variable_declarator_plain'],
-	[426, 'variable_declarator_definite'],
-	[427, 'meta_property_new_target'],
-	[428, 'meta_property_import_meta'],
-	[429, 'for_header_lhs'],
-	[430, 'for_header_var_kind'],
-	[431, 'for_header_let_const_kind'],
-	[432, 'program_repeat1'],
-	[433, 'variable_declaration_repeat1'],
-	[434, 'switch_body_repeat1'],
-	[435, 'object_repeat1'],
-	[436, 'object_pattern_repeat1'],
-	[437, 'array_repeat1'],
-	[438, 'array_pattern_repeat1'],
-	[439, 'class_repeat1'],
-	[440, 'sequence_expression_repeat1'],
-	[441, 'template_string_repeat1'],
-	[442, 'class_body_repeat1'],
-	[443, 'extends_clause_repeat1'],
-	[444, 'implements_clause_repeat1'],
-	[445, 'extends_type_clause_repeat1'],
-	[446, 'template_literal_type_repeat1'],
-	[447, 'export_specifiers_repeat1'],
-	[448, 'import_specifiers_repeat1'],
-	[449, 'formal_parameters_elements_repeat1'],
-	[450, 'enum_body_elements_repeat1'],
-	[451, 'type_parameters_elements_repeat1'],
-	[452, 'tuple_type_members_repeat1'],
-	[453, 'object_type_content_repeat1'],
-	[454, 'string_double_repeat1'],
-	[455, 'string_single_repeat1'],
-	[456, 'interface_body'],
-	[458, 'property_identifier'],
-	[459, 'semicolon'],
-	[460, 'shorthand_property_identifier'],
-	[461, 'shorthand_property_identifier_pattern'],
-	[462, 'statement_identifier'],
-	[463, 'this_type'],
-	[464, 'type_identifier']
+	[397, 'literal_type_negative_number'],
+	[398, 'binary_expression_in'],
+	[399, 'class_body_method'],
+	[400, 'class_body_method_sig'],
+	[401, 'class_body_member'],
+	[402, 'index_signature_colon'],
+	[403, 'index_signature_mapped_type_clause'],
+	[404, 'import_statement_clause_from'],
+	[405, 'import_specifier_name'],
+	[406, 'import_specifier_as'],
+	[407, 'parenthesized_expression_typed'],
+	[408, 'parenthesized_expression_sequence'],
+	[409, 'call_expression_call'],
+	[410, 'call_expression_template_call'],
+	[411, 'call_expression_member'],
+	[412, 'string_double'],
+	[413, 'string_single'],
+	[414, 'update_expression_postfix'],
+	[415, 'update_expression_prefix'],
+	[416, 'arrow_function_parameter'],
+	[417, 'class_heritage_extends_clause'],
+	[418, 'import_clause_default_import'],
+	[419, 'export_statement_default_from'],
+	[420, 'export_statement_default_declaration'],
+	[421, 'export_statement_default_from_star_from'],
+	[422, 'export_statement_default_from_ns_from'],
+	[423, 'export_statement_default_from_clause_from'],
+	[424, 'export_statement_default_declaration_default_kw'],
+	[425, 'export_statement_default_declaration_default_kw_value'],
+	[426, 'variable_declarator_plain'],
+	[427, 'variable_declarator_definite'],
+	[428, 'meta_property_new_target'],
+	[429, 'meta_property_import_meta'],
+	[430, 'for_header_lhs'],
+	[431, 'for_header_var_kind'],
+	[432, 'for_header_let_const_kind'],
+	[433, 'program_repeat1'],
+	[434, 'variable_declaration_repeat1'],
+	[435, 'switch_body_repeat1'],
+	[436, 'object_repeat1'],
+	[437, 'object_pattern_repeat1'],
+	[438, 'array_repeat1'],
+	[439, 'array_pattern_repeat1'],
+	[440, 'class_repeat1'],
+	[441, 'sequence_expression_repeat1'],
+	[442, 'template_string_repeat1'],
+	[443, 'class_body_repeat1'],
+	[444, 'extends_clause_repeat1'],
+	[445, 'implements_clause_repeat1'],
+	[446, 'extends_type_clause_repeat1'],
+	[447, 'template_literal_type_repeat1'],
+	[448, 'export_specifiers_repeat1'],
+	[449, 'import_specifiers_repeat1'],
+	[450, 'formal_parameters_elements_repeat1'],
+	[451, 'enum_body_elements_repeat1'],
+	[452, 'type_parameters_elements_repeat1'],
+	[453, 'tuple_type_members_repeat1'],
+	[454, 'object_type_content_repeat1'],
+	[455, 'string_double_repeat1'],
+	[456, 'string_single_repeat1'],
+	[457, 'interface_body'],
+	[459, 'property_identifier'],
+	[460, 'semicolon'],
+	[461, 'shorthand_property_identifier'],
+	[462, 'shorthand_property_identifier_pattern'],
+	[463, 'statement_identifier'],
+	[464, 'this_type'],
+	[465, 'type_identifier']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1357,7 +1359,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[251, 'member_expression'],
 	[252, 'subscript_expression'],
 	[253, 'lhs_expression'],
-	[457, 'lhs_expression'],
+	[458, 'lhs_expression'],
 	[254, 'assignment_expression'],
 	[255, '_augmented_assignment_lhs'],
 	[256, 'augmented_assignment_expression'],
@@ -1454,7 +1456,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[347, 'lookup_type'],
 	[348, 'mapped_type_clause'],
 	[349, 'literal_type'],
-	[350, 'unary_expression_number'],
+	[350, '_number'],
 	[351, 'existential_type'],
 	[352, 'flow_maybe_type'],
 	[353, 'parenthesized_type'],
@@ -1501,73 +1503,74 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[394, 'export_statement_namespace_export'],
 	[395, 'export_statement_type_export'],
 	[396, 'export_statement_equals_export'],
-	[397, 'binary_expression_in'],
-	[398, 'class_body_method'],
-	[399, 'class_body_method_sig'],
-	[400, 'class_body_member'],
-	[401, 'index_signature_colon'],
-	[402, 'index_signature_mapped_type_clause'],
-	[403, 'import_statement_clause_from'],
-	[404, 'import_specifier_name'],
-	[405, 'import_specifier_as'],
-	[406, 'parenthesized_expression_typed'],
-	[407, 'parenthesized_expression_sequence'],
-	[408, 'call_expression_call'],
-	[409, 'call_expression_template_call'],
-	[410, 'call_expression_member'],
-	[411, 'string_double'],
-	[412, 'string_single'],
-	[413, 'update_expression_postfix'],
-	[414, 'update_expression_prefix'],
-	[415, 'arrow_function_parameter'],
-	[416, 'class_heritage_extends_clause'],
-	[417, 'import_clause_default_import'],
-	[418, 'export_statement_default_from'],
-	[419, 'export_statement_default_declaration'],
-	[420, 'export_statement_default_from_star_from'],
-	[421, 'export_statement_default_from_ns_from'],
-	[422, 'export_statement_default_from_clause_from'],
-	[423, 'export_statement_default_declaration_default_kw'],
-	[424, 'export_statement_default_declaration_default_kw_value'],
-	[425, 'variable_declarator_plain'],
-	[426, 'variable_declarator_definite'],
-	[427, 'meta_property_new_target'],
-	[428, 'meta_property_import_meta'],
-	[429, 'for_header_lhs'],
-	[430, 'for_header_var_kind'],
-	[431, 'for_header_let_const_kind'],
-	[432, 'program_repeat1'],
-	[433, 'variable_declaration_repeat1'],
-	[434, 'switch_body_repeat1'],
-	[435, 'object_repeat1'],
-	[436, 'object_pattern_repeat1'],
-	[437, 'array_repeat1'],
-	[438, 'array_pattern_repeat1'],
-	[439, 'class_repeat1'],
-	[440, 'sequence_expression_repeat1'],
-	[441, 'template_string_repeat1'],
-	[442, 'class_body_repeat1'],
-	[443, 'extends_clause_repeat1'],
-	[444, 'implements_clause_repeat1'],
-	[445, 'extends_type_clause_repeat1'],
-	[446, 'template_literal_type_repeat1'],
-	[447, 'export_specifiers_repeat1'],
-	[448, 'import_specifiers_repeat1'],
-	[449, 'formal_parameters_elements_repeat1'],
-	[450, 'enum_body_elements_repeat1'],
-	[451, 'type_parameters_elements_repeat1'],
-	[452, 'tuple_type_members_repeat1'],
-	[453, 'object_type_content_repeat1'],
-	[454, 'string_double_repeat1'],
-	[455, 'string_single_repeat1'],
-	[456, 'interface_body'],
-	[458, 'property_identifier'],
-	[459, 'semicolon'],
-	[460, 'shorthand_property_identifier'],
-	[461, 'shorthand_property_identifier_pattern'],
-	[462, 'statement_identifier'],
-	[463, 'this_type'],
-	[464, 'type_identifier']
+	[397, 'literal_type_negative_number'],
+	[398, 'binary_expression_in'],
+	[399, 'class_body_method'],
+	[400, 'class_body_method_sig'],
+	[401, 'class_body_member'],
+	[402, 'index_signature_colon'],
+	[403, 'index_signature_mapped_type_clause'],
+	[404, 'import_statement_clause_from'],
+	[405, 'import_specifier_name'],
+	[406, 'import_specifier_as'],
+	[407, 'parenthesized_expression_typed'],
+	[408, 'parenthesized_expression_sequence'],
+	[409, 'call_expression_call'],
+	[410, 'call_expression_template_call'],
+	[411, 'call_expression_member'],
+	[412, 'string_double'],
+	[413, 'string_single'],
+	[414, 'update_expression_postfix'],
+	[415, 'update_expression_prefix'],
+	[416, 'arrow_function_parameter'],
+	[417, 'class_heritage_extends_clause'],
+	[418, 'import_clause_default_import'],
+	[419, 'export_statement_default_from'],
+	[420, 'export_statement_default_declaration'],
+	[421, 'export_statement_default_from_star_from'],
+	[422, 'export_statement_default_from_ns_from'],
+	[423, 'export_statement_default_from_clause_from'],
+	[424, 'export_statement_default_declaration_default_kw'],
+	[425, 'export_statement_default_declaration_default_kw_value'],
+	[426, 'variable_declarator_plain'],
+	[427, 'variable_declarator_definite'],
+	[428, 'meta_property_new_target'],
+	[429, 'meta_property_import_meta'],
+	[430, 'for_header_lhs'],
+	[431, 'for_header_var_kind'],
+	[432, 'for_header_let_const_kind'],
+	[433, 'program_repeat1'],
+	[434, 'variable_declaration_repeat1'],
+	[435, 'switch_body_repeat1'],
+	[436, 'object_repeat1'],
+	[437, 'object_pattern_repeat1'],
+	[438, 'array_repeat1'],
+	[439, 'array_pattern_repeat1'],
+	[440, 'class_repeat1'],
+	[441, 'sequence_expression_repeat1'],
+	[442, 'template_string_repeat1'],
+	[443, 'class_body_repeat1'],
+	[444, 'extends_clause_repeat1'],
+	[445, 'implements_clause_repeat1'],
+	[446, 'extends_type_clause_repeat1'],
+	[447, 'template_literal_type_repeat1'],
+	[448, 'export_specifiers_repeat1'],
+	[449, 'import_specifiers_repeat1'],
+	[450, 'formal_parameters_elements_repeat1'],
+	[451, 'enum_body_elements_repeat1'],
+	[452, 'type_parameters_elements_repeat1'],
+	[453, 'tuple_type_members_repeat1'],
+	[454, 'object_type_content_repeat1'],
+	[455, 'string_double_repeat1'],
+	[456, 'string_single_repeat1'],
+	[457, 'interface_body'],
+	[459, 'property_identifier'],
+	[460, 'semicolon'],
+	[461, 'shorthand_property_identifier'],
+	[462, 'shorthand_property_identifier_pattern'],
+	[463, 'statement_identifier'],
+	[464, 'this_type'],
+	[465, 'type_identifier']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -2370,6 +2373,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExportStatementTypeExport;
 		case 'export_statement_equals_export':
 			return TSKindId.ExportStatementEqualsExport;
+		case 'literal_type_negative_number':
+			return TSKindId.LiteralTypeNegativeNumber;
 		case 'binary_expression_in':
 			return TSKindId.BinaryExpressionIn;
 		case 'class_body_method':
@@ -2792,8 +2797,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TypeQueryCallExpression;
 		case 'type_query_instantiation_expression':
 			return TSKindId.TypeQueryInstantiationExpression;
-		case 'unary_expression_number':
-			return TSKindId._Number;
 		default:
 			throw new TypeError(`unknown kind name ${kindName}`);
 	}
@@ -7850,29 +7853,32 @@ export interface MappedTypeClause {
 
 export interface LiteralType {
 	readonly $type: TSKindId.LiteralType;
-	readonly _content: _Number | Number | String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined;
+	readonly _content:
+		| LiteralTypeNegativeNumber
+		| Number
+		| String
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.Null
+		| TSKindId.Undefined;
 	readonly __inputHints__?: {
 		readonly content:
 			| KindEnum<
 					'true' | 'false' | 'null' | 'undefined',
 					TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined
 			  >
-			| _Number
+			| LiteralTypeNegativeNumber
 			| Number
 			| String;
 	};
-	content(): _Number | Number | String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined;
-}
-
-export interface _Number {
-	readonly $type: TSKindId._Number;
-	readonly _operator: number;
-	readonly _argument: Number;
-	readonly __inputHints__?: {
-		readonly operator: KindEnum<'-' | '+', TSKindId.Dash | TSKindId.Plus>;
-	};
-	operator(): number;
-	argument(): Number;
+	content():
+		| LiteralTypeNegativeNumber
+		| Number
+		| String
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.Null
+		| TSKindId.Undefined;
 }
 
 export interface FlowMaybeType {
@@ -8764,6 +8770,17 @@ export interface CommentBlock {
 	readonly $type: TSKindId.CommentBlock;
 	readonly _content: string;
 	content(): string;
+}
+
+export interface LiteralTypeNegativeNumber {
+	readonly $type: TSKindId.LiteralTypeNegativeNumber;
+	readonly _operator: number;
+	readonly _argument: Number;
+	readonly __inputHints__?: {
+		readonly operator: KindEnum<'-' | '+', TSKindId.Dash | TSKindId.Plus>;
+	};
+	operator(): number;
+	argument(): Number;
 }
 
 export interface NumberHex {
@@ -10224,9 +10241,6 @@ export interface IndexTypeQueryTree extends TreeNode<'index_type_query'> {}
 export interface LookupTypeTree extends TreeNode<'lookup_type'> {}
 export interface MappedTypeClauseTree extends TreeNode<'mapped_type_clause'> {}
 export interface LiteralTypeTree extends TreeNode<'literal_type'> {}
-export interface _NumberTree extends AnyTreeNode {
-	readonly type: '_number';
-}
 export interface FlowMaybeTypeTree extends TreeNode<'flow_maybe_type'> {}
 export interface ParenthesizedTypeTree extends TreeNode<'parenthesized_type'> {}
 export interface TypeArgumentsTree extends TreeNode<'type_arguments'> {}
@@ -10261,6 +10275,7 @@ export interface ExportStatementTypeExportTree extends TreeNode<'export_statemen
 export interface ExportStatementEqualsExportTree extends TreeNode<'export_statement_equals_export'> {}
 export interface CommentLineTree extends TreeNode<'comment_line'> {}
 export interface CommentBlockTree extends TreeNode<'comment_block'> {}
+export interface LiteralTypeNegativeNumberTree extends TreeNode<'literal_type_negative_number'> {}
 export interface NumberHexTree extends TreeNode<'number_hex'> {}
 export interface NumberFloatPointTree extends TreeNode<'number_float_point'> {}
 export interface NumberFloatLeadingPointTree extends TreeNode<'number_float_leading_point'> {}
@@ -11510,7 +11525,6 @@ export type TypescriptNode =
 	| LookupType
 	| MappedTypeClause
 	| LiteralType
-	| _Number
 	| FlowMaybeType
 	| ParenthesizedType
 	| TypeArguments
@@ -11545,6 +11559,7 @@ export type TypescriptNode =
 	| ExportStatementEqualsExport
 	| CommentLine
 	| CommentBlock
+	| LiteralTypeNegativeNumber
 	| NumberHex
 	| NumberFloatPoint
 	| NumberFloatLeadingPoint
@@ -11723,7 +11738,6 @@ export interface OptionsHintMap {
 	indexTypeQuery: IndexTypeQuery.Hints;
 	lookupType: LookupType.Hints;
 	mappedTypeClause: MappedTypeClause.Hints;
-	unaryExpressionNumber: _Number.Hints;
 	flowMaybeType: FlowMaybeType.Hints;
 	parenthesizedType: ParenthesizedType.Hints;
 	typeArguments: TypeArguments.Hints;
@@ -11756,6 +11770,7 @@ export interface OptionsHintMap {
 	exportStatementNamespaceExport: ExportStatementNamespaceExport.Hints;
 	exportStatementTypeExport: ExportStatementTypeExport.Hints;
 	exportStatementEqualsExport: ExportStatementEqualsExport.Hints;
+	literalTypeNegativeNumber: LiteralTypeNegativeNumber.Hints;
 	binaryExpressionIn: BinaryExpressionIn.Hints;
 	classBodyMethod: ClassBodyMethod.Hints;
 	classBodyMethodSig: ClassBodyMethodSig.Hints;
@@ -13086,6 +13101,7 @@ export namespace ImplementsClause {
 				readonly indexTypeQuery?: { readonly after?: WhitespaceArm };
 				readonly inferType?: { readonly after?: WhitespaceArm };
 				readonly intersectionType?: { readonly after?: WhitespaceArm };
+				readonly literalTypeNegativeNumber?: { readonly after?: WhitespaceArm };
 				readonly lookupType?: { readonly after?: WhitespaceArm };
 				readonly nestedTypeIdentifier?: { readonly after?: WhitespaceArm };
 				readonly objectType?: { readonly after?: WhitespaceArm };
@@ -13100,7 +13116,6 @@ export namespace ImplementsClause {
 				readonly typeQuery?: { readonly after?: WhitespaceArm };
 				readonly typeQueryCallExpressionInTypeAnnotation?: { readonly after?: WhitespaceArm };
 				readonly typeQueryMemberExpressionInTypeAnnotation?: { readonly after?: WhitespaceArm };
-				readonly unaryExpressionNumber?: { readonly after?: WhitespaceArm };
 				readonly unionType?: { readonly after?: WhitespaceArm };
 			};
 		};
@@ -13549,12 +13564,6 @@ export namespace MappedTypeClause {
 	}
 }
 
-export namespace _Number {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-	}
-}
-
 export namespace FlowMaybeType {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -13819,6 +13828,7 @@ export namespace Types {
 				readonly indexTypeQuery?: { readonly after?: WhitespaceArm };
 				readonly inferType?: { readonly after?: WhitespaceArm };
 				readonly intersectionType?: { readonly after?: WhitespaceArm };
+				readonly literalTypeNegativeNumber?: { readonly after?: WhitespaceArm };
 				readonly lookupType?: { readonly after?: WhitespaceArm };
 				readonly nestedTypeIdentifier?: { readonly after?: WhitespaceArm };
 				readonly objectType?: { readonly after?: WhitespaceArm };
@@ -13833,7 +13843,6 @@ export namespace Types {
 				readonly typeQuery?: { readonly after?: WhitespaceArm };
 				readonly typeQueryCallExpressionInTypeAnnotation?: { readonly after?: WhitespaceArm };
 				readonly typeQueryMemberExpressionInTypeAnnotation?: { readonly after?: WhitespaceArm };
-				readonly unaryExpressionNumber?: { readonly after?: WhitespaceArm };
 				readonly unionType?: { readonly after?: WhitespaceArm };
 			};
 		};
@@ -13873,6 +13882,7 @@ export namespace TupleTypeMembers {
 				readonly indexTypeQuery?: { readonly after?: WhitespaceArm };
 				readonly inferType?: { readonly after?: WhitespaceArm };
 				readonly intersectionType?: { readonly after?: WhitespaceArm };
+				readonly literalTypeNegativeNumber?: { readonly after?: WhitespaceArm };
 				readonly lookupType?: { readonly after?: WhitespaceArm };
 				readonly nestedTypeIdentifier?: { readonly after?: WhitespaceArm };
 				readonly objectType?: { readonly after?: WhitespaceArm };
@@ -13891,7 +13901,6 @@ export namespace TupleTypeMembers {
 				readonly typeQuery?: { readonly after?: WhitespaceArm };
 				readonly typeQueryCallExpressionInTypeAnnotation?: { readonly after?: WhitespaceArm };
 				readonly typeQueryMemberExpressionInTypeAnnotation?: { readonly after?: WhitespaceArm };
-				readonly unaryExpressionNumber?: { readonly after?: WhitespaceArm };
 				readonly unionType?: { readonly after?: WhitespaceArm };
 			};
 		};
@@ -14011,6 +14020,12 @@ export namespace ExportStatementEqualsExport {
 			readonly semi?: { readonly before?: WhitespaceArm };
 			readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
 		};
+	}
+}
+
+export namespace LiteralTypeNegativeNumber {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 	}
 }
 
@@ -15933,17 +15948,6 @@ export interface LiteralTypeNs extends NodeNs<
 	'content',
 	'literal_type'
 > {}
-export interface _NumberNs extends NodeNs<
-	_Number,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	_Number.Built,
-	_Number.BuildArgs,
-	_Number.LooseArgs,
-	never,
-	'_number'
-> {}
 export interface FlowMaybeTypeNs extends NodeNs<
 	FlowMaybeType,
 	LeafScalarMap,
@@ -16317,6 +16321,17 @@ export interface CommentBlockNs extends NodeNs<
 	CommentBlock.LooseArgs,
 	'content',
 	'comment_block'
+> {}
+export interface LiteralTypeNegativeNumberNs extends NodeNs<
+	LiteralTypeNegativeNumber,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	LiteralTypeNegativeNumber.Built,
+	LiteralTypeNegativeNumber.BuildArgs,
+	LiteralTypeNegativeNumber.LooseArgs,
+	never,
+	'literal_type_negative_number'
 > {}
 export interface NumberHexNs extends NodeNs<
 	NumberHex,
@@ -17214,7 +17229,6 @@ export interface NamespaceMap {
 	[TSKindId.LookupType]: LookupTypeNs;
 	[TSKindId.MappedTypeClause]: MappedTypeClauseNs;
 	[TSKindId.LiteralType]: LiteralTypeNs;
-	[TSKindId._Number]: _NumberNs;
 	[TSKindId.FlowMaybeType]: FlowMaybeTypeNs;
 	[TSKindId.ParenthesizedType]: ParenthesizedTypeNs;
 	[TSKindId.TypeArguments]: TypeArgumentsNs;
@@ -17249,6 +17263,7 @@ export interface NamespaceMap {
 	[TSKindId.ExportStatementEqualsExport]: ExportStatementEqualsExportNs;
 	[TSKindId.CommentLine]: CommentLineNs;
 	[TSKindId.CommentBlock]: CommentBlockNs;
+	[TSKindId.LiteralTypeNegativeNumber]: LiteralTypeNegativeNumberNs;
 	[TSKindId.NumberHex]: NumberHexNs;
 	[TSKindId.NumberFloatPoint]: NumberFloatPointNs;
 	[TSKindId.NumberFloatLeadingPoint]: NumberFloatLeadingPointNs;
@@ -20534,7 +20549,13 @@ export namespace LiteralType {
 		readonly $with: {
 			content(
 				value: NonNullable<
-					T._Number | T.Number | T.String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined
+					| T.LiteralTypeNegativeNumber
+					| T.Number
+					| T.String
+					| TSKindId.True
+					| TSKindId.False
+					| TSKindId.Null
+					| TSKindId.Undefined
 				>
 			): T.LiteralType.Built;
 		};
@@ -20542,11 +20563,24 @@ export namespace LiteralType {
 	export type Loose = LooseFor<TSKindId.LiteralType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LiteralType>;
 	export type BuildArgs = [
-		value: T._Number | T.Number | T.String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined
+		value:
+			| T.LiteralTypeNegativeNumber
+			| T.Number
+			| T.String
+			| TSKindId.True
+			| TSKindId.False
+			| TSKindId.Null
+			| TSKindId.Undefined
 	];
 	export type LooseArgs = [
 		value: LooseValue<
-			T._Number | T.Number | T.String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined,
+			| T.LiteralTypeNegativeNumber
+			| T.Number
+			| T.String
+			| TSKindId.True
+			| TSKindId.False
+			| TSKindId.Null
+			| TSKindId.Undefined,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -20554,25 +20588,6 @@ export namespace LiteralType {
 	];
 	export type Tree = TreeFor<TSKindId.LiteralType>;
 	export type Kind = 'literal_type';
-}
-export namespace _Number {
-	export type Config = ConfigFor<TSKindId._Number>;
-	export interface Built extends T._Number, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			operator(value: NonNullable<T._Number.Config>['operator']): T._Number.Built;
-			argument(value: T.Number): T._Number.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId._Number>;
-	export type LooseConfig = LooseConfigFor<TSKindId._Number>;
-	export type BuildArgs = [config: ConfigOf<T._Number>];
-	export type LooseArgs = [
-		config: LooseConfigOf<T._Number, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T._Number
-	];
-	export type Tree = TreeFor<TSKindId._Number>;
-	export type Kind = '_number';
 }
 export namespace FlowMaybeType {
 	export type Config = ConfigFor<TSKindId.FlowMaybeType>;
@@ -21560,6 +21575,27 @@ export namespace CommentBlock {
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.CommentBlock>;
 	export type Kind = 'comment_block';
+}
+export namespace LiteralTypeNegativeNumber {
+	export type Config = ConfigFor<TSKindId.LiteralTypeNegativeNumber>;
+	export interface Built extends T.LiteralTypeNegativeNumber, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			operator(value: NonNullable<T.LiteralTypeNegativeNumber.Config>['operator']): T.LiteralTypeNegativeNumber.Built;
+			argument(value: T.Number): T.LiteralTypeNegativeNumber.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.LiteralTypeNegativeNumber>;
+	export type LooseConfig = LooseConfigFor<TSKindId.LiteralTypeNegativeNumber>;
+	export type BuildArgs = [config: ConfigOf<T.LiteralTypeNegativeNumber>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.LiteralTypeNegativeNumber, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.LiteralTypeNegativeNumber
+	];
+	export type Tree = TreeFor<TSKindId.LiteralTypeNegativeNumber>;
+	export type Kind = 'literal_type_negative_number';
 }
 export namespace NumberHex {
 	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.NumberHex>, 'prefix'>, 'content'>;

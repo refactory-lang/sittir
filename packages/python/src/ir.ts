@@ -75,42 +75,6 @@ export const statement: {
 	match: F.matchStatement
 };
 
-export const simpleStatement: {
-	readonly futureImport: typeof F.futureImportStatement;
-	readonly import: typeof F.importStatement;
-	readonly importFrom: typeof F.importFromStatement;
-	readonly print: typeof F.printStatement;
-	readonly assert: typeof F.assertStatement;
-	readonly expression: typeof F.expressionStatement;
-	readonly return: typeof F.returnStatement;
-	readonly delete: typeof F.deleteStatement;
-	readonly raise: typeof F.raiseStatement;
-	readonly pass: typeof F.buildPassStatement;
-	readonly break: typeof F.buildBreakStatement;
-	readonly continue: typeof F.buildContinueStatement;
-	readonly global: typeof F.globalStatement;
-	readonly nonlocal: typeof F.nonlocalStatement;
-	readonly exec: typeof F.execStatement;
-	readonly typeAlias: typeof F.typeAliasStatement;
-} = {
-	futureImport: F.futureImportStatement,
-	import: F.importStatement,
-	importFrom: F.importFromStatement,
-	print: F.printStatement,
-	assert: F.assertStatement,
-	expression: F.expressionStatement,
-	return: F.returnStatement,
-	delete: F.deleteStatement,
-	raise: F.raiseStatement,
-	pass: F.buildPassStatement,
-	break: F.buildBreakStatement,
-	continue: F.buildContinueStatement,
-	global: F.globalStatement,
-	nonlocal: F.nonlocalStatement,
-	exec: F.execStatement,
-	typeAlias: F.typeAliasStatement
-};
-
 export const namedExpressionLhs: {
 	readonly identifier: typeof F.buildIdentifier;
 } = {
@@ -121,28 +85,6 @@ export const expressions: {
 	readonly expressionList: typeof F.expressionList;
 } = {
 	expressionList: F.expressionList
-};
-
-export const compoundStatement: {
-	readonly if: typeof F.ifStatement;
-	readonly for: typeof F.forStatement;
-	readonly while: typeof F.whileStatement;
-	readonly try: typeof F.tryStatement;
-	readonly with: typeof F.withStatement;
-	readonly function: typeof F.functionDefinition;
-	readonly class: typeof F.classDefinition;
-	readonly decorated: typeof F.decoratedDefinition;
-	readonly match: typeof F.matchStatement;
-} = {
-	if: F.ifStatement,
-	for: F.forStatement,
-	while: F.whileStatement,
-	try: F.tryStatement,
-	with: F.withStatement,
-	function: F.functionDefinition,
-	class: F.classDefinition,
-	decorated: F.decoratedDefinition,
-	match: F.matchStatement
 };
 
 export const simplePattern: {
@@ -173,28 +115,6 @@ export const simplePattern: {
 	none: F.buildNone,
 	complex: F.complexPattern,
 	dottedName: F.dottedName
-};
-
-export const parameter: {
-	readonly identifier: typeof F.buildIdentifier;
-	readonly typed: typeof F.typedParameter;
-	readonly default: typeof F.defaultParameter;
-	readonly typedDefault: typeof F.typedDefaultParameter;
-	readonly listSplat: typeof F.listSplatPattern;
-	readonly tuple: typeof F.tuplePattern;
-	readonly keywordSeparator: typeof F.buildKeywordSeparator;
-	readonly positionalSeparator: typeof F.buildPositionalSeparator;
-	readonly dictionarySplat: typeof F.dictionarySplatPattern;
-} = {
-	identifier: F.buildIdentifier,
-	typed: F.typedParameter,
-	default: F.defaultParameter,
-	typedDefault: F.typedDefaultParameter,
-	listSplat: F.listSplatPattern,
-	tuple: F.tuplePattern,
-	keywordSeparator: F.buildKeywordSeparator,
-	positionalSeparator: F.buildPositionalSeparator,
-	dictionarySplat: F.dictionarySplatPattern
 };
 
 export const pattern: {
@@ -321,6 +241,14 @@ export const fExpression: {
 	yield: F.yield_
 };
 
+export const simpleStatement: typeof F.simpleStatement = F.simpleStatement;
+
+export const compoundStatement: typeof F.compoundStatement = F.compoundStatement;
+
+export const matchBlock: typeof F.matchBlock = F.matchBlock;
+
+export const parameter: typeof F.parameter = F.parameter;
+
 export const ir: {
 	readonly module: typeof F.module;
 	readonly simpleStatements: typeof F.simpleStatements;
@@ -342,7 +270,6 @@ export const ir: {
 	readonly elifClause: typeof F.elifClause;
 	readonly elseClause: typeof F.elseClause;
 	readonly matchStatement: typeof F.matchStatement;
-	readonly matchBlock: typeof F.matchBlock;
 	readonly caseClause: typeof F.caseClause;
 	readonly forStatement: typeof F.forStatement;
 	readonly whileStatement: typeof F.whileStatement;
@@ -521,12 +448,9 @@ export const ir: {
 	readonly while: typeof F.whileStatement;
 	readonly with: typeof F.withStatement;
 	readonly statement: typeof statement;
-	readonly simpleStatement: typeof simpleStatement;
 	readonly namedExpressionLhs: typeof namedExpressionLhs;
 	readonly expressions: typeof expressions;
-	readonly compoundStatement: typeof compoundStatement;
 	readonly simplePattern: typeof simplePattern;
-	readonly parameter: typeof parameter;
 	readonly pattern: typeof pattern;
 	readonly expressionWithinForInClause: typeof expressionWithinForInClause;
 	readonly expression: typeof expression;
@@ -534,6 +458,10 @@ export const ir: {
 	readonly leftHandSide: typeof leftHandSide;
 	readonly rightHandSide: typeof rightHandSide;
 	readonly fExpression: typeof fExpression;
+	readonly simpleStatement: typeof simpleStatement;
+	readonly compoundStatement: typeof compoundStatement;
+	readonly matchBlock: typeof matchBlock;
+	readonly parameter: typeof parameter;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
@@ -557,7 +485,6 @@ export const ir: {
 	elifClause: F.elifClause,
 	elseClause: F.elseClause,
 	matchStatement: F.matchStatement,
-	matchBlock: F.matchBlock,
 	caseClause: F.caseClause,
 	forStatement: F.forStatement,
 	whileStatement: F.whileStatement,
@@ -744,12 +671,9 @@ export const ir: {
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	statement,
-	simpleStatement,
 	namedExpressionLhs,
 	expressions,
-	compoundStatement,
 	simplePattern,
-	parameter,
 	pattern,
 	expressionWithinForInClause,
 	expression,
@@ -757,5 +681,9 @@ export const ir: {
 	leftHandSide,
 	rightHandSide,
 	fExpression,
+	simpleStatement,
+	compoundStatement,
+	matchBlock,
+	parameter,
 	synonym
 };

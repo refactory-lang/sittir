@@ -181,7 +181,7 @@ export function rebuildKeywordOpenersRustGenerated() {
 				}),
 			}),
 		}), ir.functionItem.strict({
-			visibilityModifier: ir.visibilityModifier.pub.strict(ir.visibilityModifierGroup.strict(TSKindId.Crate)),
+			visibilityModifier: ir.visibilityModifier.pub.scope.strict(TSKindId.Crate),
 			name: ir.identifier("g"),
 			parameters: ir.parameters.strict(),
 			body: ir.block.strict({}),
@@ -191,10 +191,10 @@ export function rebuildKeywordOpenersRustGenerated() {
 			parameters: ir.parameters.strict(),
 			body: ir.block.strict({}),
 		}), ir.structItem.unit.strict({
-			visibilityModifier: ir.visibilityModifier.pub.strict(ir.visibilityModifierGroup.inPath.strict(ir.scopedIdentifier.strict({
+			visibilityModifier: ir.visibilityModifier.pub.scope.inPath.strict(ir.scopedIdentifier.strict({
 				path: TSKindId.Crate,
 				name: ir.identifier("x"),
-			}))),
+			})),
 			name: ir.identifier("S"),
 		})],
 	});

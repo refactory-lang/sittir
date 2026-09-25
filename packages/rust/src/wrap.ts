@@ -2646,7 +2646,7 @@ export function wrapTokenRepetitionPattern(data: T.TokenRepetitionPattern, tree:
 					while: 105
 				},
 				undefined,
-				[331, 336, 366, 367]
+				[331, 336, 365, 366]
 			),
 			_separator: normalizeSingularWrapSlot(data._separator, 'separator', false, data.$type, {
 				tree,
@@ -2844,7 +2844,7 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle) {
 					while: 105
 				},
 				undefined,
-				[331, 336, 366, 367]
+				[331, 336, 365, 366]
 			),
 			_separator: normalizeSingularWrapSlot(data._separator, 'separator', false, data.$type, {
 				tree,
@@ -4255,7 +4255,7 @@ export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandl
 					span: (data as _NodeData).$span
 				}),
 				{ async: 113, default: 52, const: 36, unsafe: 112 },
-				{ 360: 113, 361: 52, 362: 36, 363: 112 }
+				{ 359: 113, 360: 52, 361: 36, 362: 112 }
 			),
 
 			modifiers() {
@@ -8067,8 +8067,8 @@ export function wrapRangeExpression(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '..': 368 },
-				{ 101: 368 }
+				{ '..': 367 },
+				{ 101: 367 }
 			),
 
 			content() {
@@ -11613,51 +11613,51 @@ export function wrapEscapeSequence(
 
 export function wrapLineComment(
 	data: T.LineComment & {
-		readonly _line_comment_regular_dslash?:
-			| T.LineCommentRegularDslash
+		readonly _line_comment_extra_slashes?:
+			| T.LineCommentExtraSlashes
 			| T.LineCommentDocOuter
 			| T.LineCommentDocInner
-			| T.LineCommentContent;
+			| T.LineCommentRegular;
 		readonly _line_comment_doc_outer?:
-			| T.LineCommentRegularDslash
+			| T.LineCommentExtraSlashes
 			| T.LineCommentDocOuter
 			| T.LineCommentDocInner
-			| T.LineCommentContent;
+			| T.LineCommentRegular;
 		readonly _line_comment_doc_inner?:
-			| T.LineCommentRegularDslash
+			| T.LineCommentExtraSlashes
 			| T.LineCommentDocOuter
 			| T.LineCommentDocInner
-			| T.LineCommentContent;
-		readonly _line_comment_content?:
-			| T.LineCommentRegularDslash
+			| T.LineCommentRegular;
+		readonly _line_comment_regular?:
+			| T.LineCommentExtraSlashes
 			| T.LineCommentDocOuter
 			| T.LineCommentDocInner
-			| T.LineCommentContent;
+			| T.LineCommentRegular;
 	},
 	tree: TreeHandle
 ) {
 	data = _keepModelledSlots(data, [
 		'_content',
-		'_line_comment_regular_dslash',
+		'_line_comment_extra_slashes',
 		'_line_comment_doc_outer',
 		'_line_comment_doc_inner',
-		'_line_comment_content'
+		'_line_comment_regular'
 	]);
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'_line_comment_content',
 				'_line_comment_doc_inner',
 				'_line_comment_doc_outer',
-				'_line_comment_regular_dslash'
+				'_line_comment_extra_slashes',
+				'_line_comment_regular'
 			]),
 			$type: TSKindId.LineComment as const,
 			_content: normalizeSingularWrapSlot(
 				data._content ??
-					data._line_comment_regular_dslash ??
+					data._line_comment_extra_slashes ??
 					data._line_comment_doc_outer ??
 					data._line_comment_doc_inner ??
-					data._line_comment_content,
+					data._line_comment_regular,
 				'content',
 				true,
 				data.$type,
@@ -11666,7 +11666,7 @@ export function wrapLineComment(
 
 			content() {
 				return drillIn<
-					T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent
+					T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular
 				>(this._content, tree);
 			},
 			$with: {
@@ -12441,53 +12441,6 @@ export function wrapUseWildcardGroup(data: T.UseWildcardGroup, tree: TreeHandle)
 			$with: {
 				path: (v: NonNullable<T.UseWildcardGroup['_path']>) =>
 					wrapUseWildcardGroup({ ...$edited(data), _path: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
-export function wrapVisibilityModifierGroup(
-	data: T.VisibilityModifierGroup & {
-		readonly _self?: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath;
-		readonly _super?: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath;
-		readonly _crate?: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath;
-		readonly _visibility_modifier_pub_in_path?:
-			| TSKindId.Self
-			| TSKindId.Super
-			| TSKindId.Crate
-			| T.VisibilityModifierPubInPath;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_self', '_super', '_crate', '_visibility_modifier_pub_in_path']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.VisibilityModifierGroup as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			..._omitWrapKeys(data, ['_crate', '_self', '_super', '_visibility_modifier_pub_in_path']),
-			$type: TSKindId.VisibilityModifierGroup as const,
-			_content: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(
-					data._content ?? data._self ?? data._super ?? data._crate ?? data._visibility_modifier_pub_in_path,
-					'content',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
-				{ self: 126, super: 127, crate: 128 }
-			),
-
-			content() {
-				return drillIn<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath>(
-					this._content,
-					tree
-				);
-			},
-			$with: {
-				content: (v: NonNullable<T.VisibilityModifierGroup['_content']>) =>
-					wrapVisibilityModifierGroup({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -13700,35 +13653,8 @@ export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapVisibilityModifierPub(data: T.VisibilityModifierPub, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_visibility_modifier_group']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.VisibilityModifierPub as const,
-			_visibility_modifier_group: normalizeSingularWrapSlot(
-				data._visibility_modifier_group,
-				'visibility_modifier_group',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'visibility_modifier_group', span: (data as _NodeData).$span }
-			),
-
-			visibilityModifierGroup() {
-				return drillIn<T.VisibilityModifierGroup | undefined>(this._visibility_modifier_group, tree);
-			},
-			$with: {
-				visibilityModifierGroup: (v: NonNullable<T.VisibilityModifierPub['_visibility_modifier_group']>) =>
-					wrapVisibilityModifierPub({ ...$edited(data), _visibility_modifier_group: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
-export function wrapVisibilityModifierPubInPath(
-	data: T.VisibilityModifierPubInPath & {
+export function wrapVisibilityModifierPubScopeInPath(
+	data: T.VisibilityModifierPubScopeInPath & {
 		readonly _self?:
 			| TSKindId.Self
 			| TSKindId.U8Keyword
@@ -14464,7 +14390,7 @@ export function wrapVisibilityModifierPubInPath(
 		'_gen_keyword'
 	]);
 	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.VisibilityModifierPubInPath as const }, _treeEngine(tree));
+		return withMethods({ ...data, $type: TSKindId.VisibilityModifierPubScopeInPath as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
@@ -14495,7 +14421,7 @@ export function wrapVisibilityModifierPubInPath(
 				'_union_keyword',
 				'_usize_keyword'
 			]),
-			$type: TSKindId.VisibilityModifierPubInPath as const,
+			$type: TSKindId.VisibilityModifierPubScopeInPath as const,
 			_path: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
 					data._path ??
@@ -14588,8 +14514,82 @@ export function wrapVisibilityModifierPubInPath(
 				>(this._path, tree);
 			},
 			$with: {
-				path: (v: NonNullable<T.VisibilityModifierPubInPath['_path']>) =>
-					wrapVisibilityModifierPubInPath({ ...$edited(data), _path: v }, tree)
+				path: (v: NonNullable<T.VisibilityModifierPubScopeInPath['_path']>) =>
+					wrapVisibilityModifierPubScopeInPath({ ...$edited(data), _path: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapVisibilityModifierPubScope(
+	data: T.VisibilityModifierPubScope & {
+		readonly _self?: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath;
+		readonly _super?: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath;
+		readonly _crate?: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath;
+		readonly _visibility_modifier_pub_scope_in_path?:
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.VisibilityModifierPubScopeInPath;
+	},
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, ['_content', '_self', '_super', '_crate', '_visibility_modifier_pub_scope_in_path']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.VisibilityModifierPubScope as const }, _treeEngine(tree));
+	const _node = withMethods(
+		{
+			..._omitWrapKeys(data, ['_crate', '_self', '_super', '_visibility_modifier_pub_scope_in_path']),
+			$type: TSKindId.VisibilityModifierPubScope as const,
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ?? data._self ?? data._super ?? data._crate ?? data._visibility_modifier_pub_scope_in_path,
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ self: 126, super: 127, crate: 128 }
+			),
+
+			content() {
+				return drillIn<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
+					this._content,
+					tree
+				);
+			},
+			$with: {
+				content: (v: NonNullable<T.VisibilityModifierPubScope['_content']>) =>
+					wrapVisibilityModifierPubScope({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapVisibilityModifierPub(data: T.VisibilityModifierPub, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_visibility_modifier_pub_scope']);
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.VisibilityModifierPub as const,
+			_visibility_modifier_pub_scope: normalizeSingularWrapSlot(
+				data._visibility_modifier_pub_scope,
+				'visibility_modifier_pub_scope',
+				false,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'visibility_modifier_pub_scope', span: (data as _NodeData).$span }
+			),
+
+			visibilityModifierPubScope() {
+				return drillIn<T.VisibilityModifierPubScope | undefined>(this._visibility_modifier_pub_scope, tree);
+			},
+			$with: {
+				visibilityModifierPubScope: (v: NonNullable<T.VisibilityModifierPub['_visibility_modifier_pub_scope']>) =>
+					wrapVisibilityModifierPub({ ...$edited(data), _visibility_modifier_pub_scope: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -15489,7 +15489,7 @@ export function wrapTokenTreePatternParen(data: T.TokenTreePatternParen, tree: T
 					while: 105
 				},
 				undefined,
-				[331, 336, 366, 367]
+				[331, 336, 365, 366]
 			),
 
 			tokenPatterns() {
@@ -15630,7 +15630,7 @@ export function wrapTokenTreePatternBracket(data: T.TokenTreePatternBracket, tre
 					while: 105
 				},
 				undefined,
-				[331, 336, 366, 367]
+				[331, 336, 365, 366]
 			),
 
 			tokenPatterns() {
@@ -15771,7 +15771,7 @@ export function wrapTokenTreePatternBrace(data: T.TokenTreePatternBrace, tree: T
 					while: 105
 				},
 				undefined,
-				[331, 336, 366, 367]
+				[331, 336, 365, 366]
 			),
 
 			tokenPatterns() {
@@ -15912,7 +15912,7 @@ export function wrapTokenTreeParen(data: T.TokenTreeParen, tree: TreeHandle) {
 					while: 105
 				},
 				undefined,
-				[331, 336, 366, 367]
+				[331, 336, 365, 366]
 			),
 
 			tokens() {
@@ -16043,7 +16043,7 @@ export function wrapTokenTreeBracket(data: T.TokenTreeBracket, tree: TreeHandle)
 					while: 105
 				},
 				undefined,
-				[331, 336, 366, 367]
+				[331, 336, 365, 366]
 			),
 
 			tokens() {
@@ -16174,7 +16174,7 @@ export function wrapTokenTreeBrace(data: T.TokenTreeBrace, tree: TreeHandle) {
 					while: 105
 				},
 				undefined,
-				[331, 336, 366, 367]
+				[331, 336, 365, 366]
 			),
 
 			tokens() {
@@ -16308,7 +16308,7 @@ export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeH
 					$: 5
 				},
 				undefined,
-				[331, 336, 366, 367]
+				[331, 336, 365, 366]
 			),
 
 			delimTokens() {
@@ -16442,7 +16442,7 @@ export function wrapDelimTokenTreeBracket(data: T.DelimTokenTreeBracket, tree: T
 					$: 5
 				},
 				undefined,
-				[331, 336, 366, 367]
+				[331, 336, 365, 366]
 			),
 
 			delimTokens() {
@@ -16576,7 +16576,7 @@ export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeH
 					$: 5
 				},
 				undefined,
-				[331, 336, 366, 367]
+				[331, 336, 365, 366]
 			),
 
 			delimTokens() {
@@ -18628,8 +18628,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.Patterns]: (d, t) => wrapPatterns(d as unknown as T.Patterns, t),
 	[TSKindId.StructPatternElements]: (d, t) => wrapStructPatternElements(d as unknown as T.StructPatternElements, t),
 	[TSKindId.UseWildcardGroup]: (d, t) => wrapUseWildcardGroup(d as unknown as T.UseWildcardGroup, t),
-	[TSKindId.VisibilityModifierGroup]: (d, t) =>
-		wrapVisibilityModifierGroup(d as unknown as T.VisibilityModifierGroup, t),
 	[TSKindId.KwAsync]: (d) => ({ ...d, $type: TSKindId.KwAsync as const }),
 	[TSKindId.KwDefault]: (d) => ({ ...d, $type: TSKindId.KwDefault as const }),
 	[TSKindId.KwConst]: (d) => ({ ...d, $type: TSKindId.KwConst as const }),
@@ -18669,9 +18667,11 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ImplItemNegativeClause]: (d, t) => wrapImplItemNegativeClause(d as unknown as T.ImplItemNegativeClause, t),
 	[TSKindId.ImplItemBody]: (d, t) => wrapImplItemBody(d as unknown as T.ImplItemBody, t),
 	[TSKindId.ImplItemSemi]: (d, t) => wrapImplItemSemi(d as unknown as T.ImplItemSemi, t),
+	[TSKindId.VisibilityModifierPubScopeInPath]: (d, t) =>
+		wrapVisibilityModifierPubScopeInPath(d as unknown as T.VisibilityModifierPubScopeInPath, t),
+	[TSKindId.VisibilityModifierPubScope]: (d, t) =>
+		wrapVisibilityModifierPubScope(d as unknown as T.VisibilityModifierPubScope, t),
 	[TSKindId.VisibilityModifierPub]: (d, t) => wrapVisibilityModifierPub(d as unknown as T.VisibilityModifierPub, t),
-	[TSKindId.VisibilityModifierPubInPath]: (d, t) =>
-		wrapVisibilityModifierPubInPath(d as unknown as T.VisibilityModifierPubInPath, t),
 	[TSKindId.FunctionTypeTraitForm]: (d, t) => wrapFunctionTypeTraitForm(d as unknown as T.FunctionTypeTraitForm, t),
 	[TSKindId.FunctionTypeFnForm]: (d, t) => wrapFunctionTypeFnForm(d as unknown as T.FunctionTypeFnForm, t),
 	[TSKindId.ModItemExternal]: (d, t) => wrapModItemExternal(d as unknown as T.ModItemExternal, t),
@@ -18690,10 +18690,10 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ForeignModItemBody]: (d, t) => wrapForeignModItemBody(d as unknown as T.ForeignModItemBody, t),
 	[TSKindId.MatchArmWithComma]: (d, t) => wrapMatchArmWithComma(d as unknown as T.MatchArmWithComma, t),
 	[TSKindId.MatchArmBlockEnding]: (d, t) => wrapMatchArmBlockEnding(d as unknown as T.MatchArmBlockEnding, t),
-	[TSKindId.LineCommentRegularDslash]: (d) => ({ ...d, $type: TSKindId.LineCommentRegularDslash as const }),
+	[TSKindId.LineCommentExtraSlashes]: (d) => ({ ...d, $type: TSKindId.LineCommentExtraSlashes as const }),
 	[TSKindId.LineCommentDocOuter]: (d, t) => wrapLineCommentDocOuter(d as unknown as T.LineCommentDocOuter, t),
 	[TSKindId.LineCommentDocInner]: (d, t) => wrapLineCommentDocInner(d as unknown as T.LineCommentDocInner, t),
-	[TSKindId.LineCommentContent]: (d) => ({ ...d, $type: TSKindId.LineCommentContent as const }),
+	[TSKindId.LineCommentRegular]: (d) => ({ ...d, $type: TSKindId.LineCommentRegular as const }),
 	[TSKindId.BlockCommentDocOuter]: (d, t) => wrapBlockCommentDocOuter(d as unknown as T.BlockCommentDocOuter, t),
 	[TSKindId.BlockCommentDocInner]: (d, t) => wrapBlockCommentDocInner(d as unknown as T.BlockCommentDocInner, t),
 	[TSKindId.TokenTreePatternParen]: (d, t) => wrapTokenTreePatternParen(d as unknown as T.TokenTreePatternParen, t),
@@ -18971,7 +18971,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.Patterns]: ReturnType<typeof wrapPatterns>;
 	[TSKindId.StructPatternElements]: ReturnType<typeof wrapStructPatternElements>;
 	[TSKindId.UseWildcardGroup]: ReturnType<typeof wrapUseWildcardGroup>;
-	[TSKindId.VisibilityModifierGroup]: ReturnType<typeof wrapVisibilityModifierGroup>;
 	[TSKindId.KwAsync]: _NodeData & { readonly $type: TSKindId.KwAsync };
 	[TSKindId.KwDefault]: _NodeData & { readonly $type: TSKindId.KwDefault };
 	[TSKindId.KwConst]: _NodeData & { readonly $type: TSKindId.KwConst };
@@ -19005,8 +19004,9 @@ interface _WrapReturnByKindId {
 	[TSKindId.ImplItemNegativeClause]: ReturnType<typeof wrapImplItemNegativeClause>;
 	[TSKindId.ImplItemBody]: ReturnType<typeof wrapImplItemBody>;
 	[TSKindId.ImplItemSemi]: ReturnType<typeof wrapImplItemSemi>;
+	[TSKindId.VisibilityModifierPubScopeInPath]: ReturnType<typeof wrapVisibilityModifierPubScopeInPath>;
+	[TSKindId.VisibilityModifierPubScope]: ReturnType<typeof wrapVisibilityModifierPubScope>;
 	[TSKindId.VisibilityModifierPub]: ReturnType<typeof wrapVisibilityModifierPub>;
-	[TSKindId.VisibilityModifierPubInPath]: ReturnType<typeof wrapVisibilityModifierPubInPath>;
 	[TSKindId.FunctionTypeTraitForm]: ReturnType<typeof wrapFunctionTypeTraitForm>;
 	[TSKindId.FunctionTypeFnForm]: ReturnType<typeof wrapFunctionTypeFnForm>;
 	[TSKindId.ModItemExternal]: ReturnType<typeof wrapModItemExternal>;
@@ -19024,10 +19024,10 @@ interface _WrapReturnByKindId {
 	[TSKindId.ForeignModItemBody]: ReturnType<typeof wrapForeignModItemBody>;
 	[TSKindId.MatchArmWithComma]: ReturnType<typeof wrapMatchArmWithComma>;
 	[TSKindId.MatchArmBlockEnding]: ReturnType<typeof wrapMatchArmBlockEnding>;
-	[TSKindId.LineCommentRegularDslash]: _NodeData & { readonly $type: TSKindId.LineCommentRegularDslash };
+	[TSKindId.LineCommentExtraSlashes]: _NodeData & { readonly $type: TSKindId.LineCommentExtraSlashes };
 	[TSKindId.LineCommentDocOuter]: ReturnType<typeof wrapLineCommentDocOuter>;
 	[TSKindId.LineCommentDocInner]: ReturnType<typeof wrapLineCommentDocInner>;
-	[TSKindId.LineCommentContent]: _NodeData & { readonly $type: TSKindId.LineCommentContent };
+	[TSKindId.LineCommentRegular]: _NodeData & { readonly $type: TSKindId.LineCommentRegular };
 	[TSKindId.BlockCommentDocOuter]: ReturnType<typeof wrapBlockCommentDocOuter>;
 	[TSKindId.BlockCommentDocInner]: ReturnType<typeof wrapBlockCommentDocInner>;
 	[TSKindId.TokenTreePatternParen]: ReturnType<typeof wrapTokenTreePatternParen>;

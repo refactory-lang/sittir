@@ -3,15 +3,18 @@ import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledAlias,
+	AssembledEnum,
 	AssembledList,
 	AssembledSupertype,
 	FACTORY_NAME_RESERVED,
+	isKindIdStored,
 	isNodeRef,
 	storageKindOfRef,
 	type AssembledNode
 } from '../../compiler/model/node-map.ts';
 import { collectCatalogKinds, collectKindEntries, hasCatalogEntry } from '../kind-discriminant.ts';
 import { camelCase } from '../refine-emit.ts';
+import { polymorphVisibleName } from '../../compiler/variant-structural.ts';
 import { classifyFromEmission, isValidIdent } from '../shared.ts';
 
 export const OVERLAY_CHAIN = ['refines', 'polymorphs', 'supertypes'] as const;
@@ -84,6 +87,8 @@ export interface FlattenedVariantRoute {
 	readonly child: AssembledNode;
 	readonly nestedParentKey?: string;
 	readonly default?: true;
+	readonly minted?: true;
+	readonly leaf?: true;
 }
 
 export interface FlattenedVariantParent {
@@ -94,16 +99,41 @@ export interface FlattenedVariantParent {
 
 export function variantRoutePaths(parents: readonly FlattenedVariantParent[]): ReadonlyMap<string, string> {
 	const paths = new Map<string, string>();
+	const mintedPaths = new Map<string, string>();
 	for (const parent of [...parents].reverse()) {
-		const base = paths.get(parent.node.kind) ?? parent.key;
+		const base = mintedPaths.get(parent.node.kind) ?? parent.key;
 		for (const route of parent.variants) {
-			if (!paths.has(route.child.kind)) paths.set(route.child.kind, `${base}.${route.name}`);
+			if (route.minted !== true) continue;
+			const path = `${base}.${route.name}`;
+			if (!paths.has(route.child.kind)) paths.set(route.child.kind, path);
+			if (!mintedPaths.has(route.child.kind)) mintedPaths.set(route.child.kind, path);
 		}
 	}
 	return paths;
 }
 
+function referrersOf(nodeMap: NodeMap): ReadonlyMap<string, ReadonlySet<string>> {
+	const out = new Map<string, Set<string>>();
+	const add = (child: string, parent: string): void => {
+		const set = out.get(child) ?? new Set<string>();
+		set.add(parent);
+		out.set(child, set);
+	};
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node instanceof AssembledSupertype) for (const sub of node.subtypeNames) add(sub, kind);
+		if (node instanceof AbstractAssembledCompound) {
+			for (const slot of node.slots) for (const value of slot.values) if (isNodeRef(value)) add(storageKindOfRef(value.node), kind);
+		}
+	}
+	return out;
+}
+
 export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): FlattenedVariantParent[] {
+	const referrers = referrersOf(nodeMap);
+	const mintedBy = (parent: string, child: string, variant: string): boolean => {
+		const refs = referrers.get(child);
+		return child === polymorphVisibleName(parent, variant) && refs !== undefined && refs.size === 1 && refs.has(parent);
+	};
 	const taken = new Set(bundleEntries(nodeMap, generatedIdTables).map((entry) => entry.key));
 	const out: FlattenedVariantParent[] = [];
 	const keyByParent = new Map<string, string>();
@@ -118,12 +148,18 @@ export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: Ge
 			const child = nodeMap.nodes.get(childKind);
 			if (ref.variantOf !== kind || ref.variant === undefined || child === undefined) return null;
 			const nestedParentKey = keyByParent.get(childKind);
+			const facts = {
+				...(ref.default ? { default: true as const } : {}),
+				...(mintedBy(kind, childKind, ref.variant) ? { minted: true as const } : {})
+			};
 			if (nestedParentKey !== undefined) {
-				routes.push({ name: camelCase(ref.variant), child, nestedParentKey, ...(ref.default ? { default: true as const } : {}) });
+				routes.push({ name: camelCase(ref.variant), child, nestedParentKey, ...facts });
 			} else if (child.rawFactoryName !== undefined) {
-				routes.push({ name: camelCase(ref.variant), child, ...(ref.default ? { default: true as const } : {}) });
+				routes.push({ name: camelCase(ref.variant), child, ...facts });
 			} else if (child instanceof AssembledSupertype && pending.some(([k]) => k === childKind)) {
 				waiting = true;
+			} else if (isKindIdStored(child) && !(child instanceof AssembledEnum)) {
+				routes.push({ name: camelCase(ref.variant), child, leaf: true, ...facts });
 			} else {
 				return null;
 			}

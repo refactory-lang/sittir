@@ -1507,16 +1507,16 @@ pub const SITE_VARIADIC_PARAMETER_COLON_BEFORE: usize = 1498;
 pub const SITE_VARIADIC_PARAMETER_COLON_AFTER: usize = 1499;
 pub const SITE_VARIADIC_PARAMETER_VARIADIC_PARAMETER_BEFORE: usize = 1500;
 pub const SITE_VARIADIC_PARAMETER_VARIADIC_PARAMETER_AFTER: usize = 1501;
-pub const SITE_VISIBILITY_MODIFIER_GROUP_LPAREN_AFTER: usize = 1502;
-pub const SITE_VISIBILITY_MODIFIER_GROUP_RPAREN_BEFORE: usize = 1503;
-pub const SITE_VISIBILITY_MODIFIER_GROUP_VISIBILITY_MODIFIER_GROUP_BEFORE: usize = 1504;
-pub const SITE_VISIBILITY_MODIFIER_GROUP_VISIBILITY_MODIFIER_GROUP_AFTER: usize = 1505;
-pub const SITE_VISIBILITY_MODIFIER_PUB_PUB_KEYWORD_AFTER: usize = 1506;
-pub const SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_BEFORE: usize = 1507;
-pub const SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_AFTER: usize = 1508;
-pub const SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_IN_AFTER: usize = 1509;
-pub const SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_VISIBILITY_MODIFIER_PUB_IN_PATH_BEFORE: usize = 1510;
-pub const SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_VISIBILITY_MODIFIER_PUB_IN_PATH_AFTER: usize = 1511;
+pub const SITE_VISIBILITY_MODIFIER_PUB_PUB_KEYWORD_AFTER: usize = 1502;
+pub const SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_BEFORE: usize = 1503;
+pub const SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_AFTER: usize = 1504;
+pub const SITE_VISIBILITY_MODIFIER_PUB_SCOPE_LPAREN_AFTER: usize = 1505;
+pub const SITE_VISIBILITY_MODIFIER_PUB_SCOPE_RPAREN_BEFORE: usize = 1506;
+pub const SITE_VISIBILITY_MODIFIER_PUB_SCOPE_VISIBILITY_MODIFIER_PUB_SCOPE_BEFORE: usize = 1507;
+pub const SITE_VISIBILITY_MODIFIER_PUB_SCOPE_VISIBILITY_MODIFIER_PUB_SCOPE_AFTER: usize = 1508;
+pub const SITE_VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH_IN_AFTER: usize = 1509;
+pub const SITE_VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH_VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH_BEFORE: usize = 1510;
+pub const SITE_VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH_VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH_AFTER: usize = 1511;
 pub const SITE_WHERE_CLAUSE_WHERE_KEYWORD_AFTER: usize = 1512;
 pub const SITE_WHERE_CLAUSE_WHERE_CLAUSE_BEFORE: usize = 1513;
 pub const SITE_WHERE_CLAUSE_WHERE_CLAUSE_AFTER: usize = 1514;
@@ -3061,16 +3061,16 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("variadic_parameter", "colon_after", "colon_after", &[165, 166, 167, 168, 169, 170]),
     ("variadic_parameter", "variadic_parameter_before", "variadic_parameter_before", &[165, 166, 167, 168, 169, 170]),
     ("variadic_parameter", "variadic_parameter_after", "variadic_parameter_after", &[165, 166, 167, 168, 169, 170]),
-    ("visibility_modifier_group", "lparen_after", "lparen_after", &[165, 166, 167, 168, 169, 170]),
-    ("visibility_modifier_group", "rparen_before", "rparen_before", &[165, 166, 167, 168, 169, 170]),
-    ("visibility_modifier_group", "visibility_modifier_group_before", "visibility_modifier_group_before", &[165, 166, 167, 168, 169, 170]),
-    ("visibility_modifier_group", "visibility_modifier_group_after", "visibility_modifier_group_after", &[165, 166, 167, 168, 169, 170]),
     ("visibility_modifier_pub", "pub_keyword_after", "pub_keyword_after", &[165, 166, 167, 168, 169, 170]),
     ("visibility_modifier_pub", "visibility_modifier_pub_before", "visibility_modifier_pub_before", &[165, 166, 167, 168, 169, 170]),
     ("visibility_modifier_pub", "visibility_modifier_pub_after", "visibility_modifier_pub_after", &[165, 166, 167, 168, 169, 170]),
-    ("visibility_modifier_pub_in_path", "in_after", "in_after", &[165, 166, 167, 168, 169, 170]),
-    ("visibility_modifier_pub_in_path", "visibility_modifier_pub_in_path_before", "visibility_modifier_pub_in_path_before", &[165, 166, 167, 168, 169, 170]),
-    ("visibility_modifier_pub_in_path", "visibility_modifier_pub_in_path_after", "visibility_modifier_pub_in_path_after", &[165, 166, 167, 168, 169, 170]),
+    ("visibility_modifier_pub_scope", "lparen_after", "lparen_after", &[165, 166, 167, 168, 169, 170]),
+    ("visibility_modifier_pub_scope", "rparen_before", "rparen_before", &[165, 166, 167, 168, 169, 170]),
+    ("visibility_modifier_pub_scope", "visibility_modifier_pub_scope_before", "visibility_modifier_pub_scope_before", &[165, 166, 167, 168, 169, 170]),
+    ("visibility_modifier_pub_scope", "visibility_modifier_pub_scope_after", "visibility_modifier_pub_scope_after", &[165, 166, 167, 168, 169, 170]),
+    ("visibility_modifier_pub_scope_in_path", "in_after", "in_after", &[165, 166, 167, 168, 169, 170]),
+    ("visibility_modifier_pub_scope_in_path", "visibility_modifier_pub_scope_in_path_before", "visibility_modifier_pub_scope_in_path_before", &[165, 166, 167, 168, 169, 170]),
+    ("visibility_modifier_pub_scope_in_path", "visibility_modifier_pub_scope_in_path_after", "visibility_modifier_pub_scope_in_path_after", &[165, 166, 167, 168, 169, 170]),
     ("where_clause", "where_keyword_after", "where_keyword_after", &[165, 166, 167, 168, 169, 170]),
     ("where_clause", "where_clause_before", "where_clause_before", &[165, 166, 167, 168, 169, 170]),
     ("where_clause", "where_clause_after", "where_clause_after", &[165, 166, 167, 168, 169, 170]),
@@ -3233,7 +3233,6 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: 783, after: 784 },
     ::sittir_core::options::EdgeSite { before: 976, after: 977 },
     ::sittir_core::options::EdgeSite { before: 1494, after: 1495 },
-    ::sittir_core::options::EdgeSite { before: 1504, after: 1505 },
     ::sittir_core::options::EdgeSite { before: 1394, after: 1395 },
     ::sittir_core::options::EdgeSite { before: 1335, after: 1336 },
     ::sittir_core::options::EdgeSite { before: 32, after: 33 },
@@ -3248,8 +3247,9 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: 508, after: 509 },
     ::sittir_core::options::EdgeSite { before: 504, after: 505 },
     ::sittir_core::options::EdgeSite { before: 517, after: 518 },
-    ::sittir_core::options::EdgeSite { before: 1507, after: 1508 },
     ::sittir_core::options::EdgeSite { before: 1510, after: 1511 },
+    ::sittir_core::options::EdgeSite { before: 1507, after: 1508 },
+    ::sittir_core::options::EdgeSite { before: 1503, after: 1504 },
     ::sittir_core::options::EdgeSite { before: 474, after: 475 },
     ::sittir_core::options::EdgeSite { before: 710, after: 711 },
     ::sittir_core::options::EdgeSite { before: 714, after: 715 },
@@ -3323,8 +3323,8 @@ pub static EDGE_ROWS: &[u16] = &[
     101, 102, 103, 104, 105, NO_SITE, 106, 107, 108, 109, 110, NO_SITE, NO_SITE, 111, NO_SITE, 112,
     113, 114, NO_SITE, NO_SITE, NO_SITE, 115, NO_SITE, 116, 117, NO_SITE, NO_SITE, NO_SITE, 118, NO_SITE, NO_SITE, 119,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129,
-    130, 131, 132, 133, 134, 135, 136, 137, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 138, 139, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, 140, 141, NO_SITE, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152,
+    130, 131, 132, 133, 134, 135, 136, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 137, 138, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, 139, 140, NO_SITE, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152,
     153, NO_SITE, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167,
     168, NO_SITE, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182,
     183, 184, 185, 186, 187, 188, NO_SITE, 189, 190, 191, 192, NO_SITE, 193, 194, 195, 196,
@@ -3559,9 +3559,9 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("use_wildcard", &[1491, 1490, 1492]),
     ("use_wildcard_group", &[1494, 1493, 1495]),
     ("variadic_parameter", &[1500, 1496, 1498, 1499, 1497, 1501]),
-    ("visibility_modifier_group", &[1504, 1502, 1503, 1505]),
-    ("visibility_modifier_pub", &[1507, 1506, 1508]),
-    ("visibility_modifier_pub_in_path", &[1510, 1509, 1511]),
+    ("visibility_modifier_pub", &[1503, 1502, 1504]),
+    ("visibility_modifier_pub_scope", &[1507, 1505, 1506, 1508]),
+    ("visibility_modifier_pub_scope_in_path", &[1510, 1509, 1511]),
     ("where_clause", &[1513, 1512, 1514]),
     ("where_predicate", &[1515, 1516]),
     ("where_predicates", &[1522, 1519, 1518, 1523, 1517]),
@@ -5092,11 +5092,11 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 166, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 165, strength: 1 },
     ::sittir_core::options::SiteSpec { default_arm: 165, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 166, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 166, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 165, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 165, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 165, strength: 1 },
-    ::sittir_core::options::SiteSpec { default_arm: 166, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 165, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 166, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 166, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 166, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 166, strength: 0 },
@@ -5293,7 +5293,7 @@ pub static SEATS_BLOCK_STATEMENTS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 123, 124, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 123, 124, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, 133, 134, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 114, 118, 117, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, 130, 129, 128, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 136, 137, 138,
@@ -5355,7 +5355,7 @@ pub static SEATS_DECLARATION_LIST_DECLARATIONS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 278, 279, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 278, 279, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, 286, 287, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 275, 274, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, 284, 283, 282, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 289, 290, 291,
@@ -5611,7 +5611,7 @@ pub static SEATS_LET_CHAIN_RIGHT: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 580, 573, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, 546, 545, NO_SITE, 554, 555, 576, 577, 575, 574, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, 546, 545, NO_SITE, 554, 555, 576, 577, 575, 574, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 570, 571, 572,
 ];
 
@@ -5847,7 +5847,7 @@ pub static SEATS_SOURCE_FILE_STATEMENTS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 906, 907, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 906, 907, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, 916, 917, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 897, 901, 900, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, 913, 912, 911, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 919, 920, 921,
@@ -6194,7 +6194,7 @@ pub static SEATS_TUPLE_EXPRESSION_ELEMENTS_ELEMENT: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1321, 1314, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, 1288, 1287, NO_SITE, 1296, 1297, 1317, 1318, 1316, 1315, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, 1288, 1287, NO_SITE, 1296, 1297, 1317, 1318, 1316, 1315, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1311, 1312, 1313,
 ];
 
@@ -6223,7 +6223,7 @@ pub static SEATS_TUPLE_PATTERN_ELEMENTS_ELEMENT: &[u16] = &[
     1341, 1355, NO_SITE, NO_SITE, NO_SITE, 1348, NO_SITE, 1358, 1353, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1342, 1343, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1342, 1343, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1349, 1350, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1351, NO_SITE, NO_SITE, 1352,
@@ -10014,16 +10014,6 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VARIADIC_PARAMETER_MUTABLE_SPECIFIER_AFTER, path: "(variadic_parameter)/mutable_specifier:/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "visibilityModifierGroup", path: "(visibility_modifier_group)", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_GROUP_VISIBILITY_MODIFIER_GROUP_AFTER, path: "(visibility_modifier_group)/after" }] },
-        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_GROUP_VISIBILITY_MODIFIER_GROUP_BEFORE, path: "(visibility_modifier_group)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(visibility_modifier_group)/\"(\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_GROUP_LPAREN_AFTER, path: "(visibility_modifier_group)/\"(\"/after" }] },
-        ] },
-        ::sittir_core::options::AddressNode::Branch { key: "rparen", path: "(visibility_modifier_group)/\")\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_GROUP_RPAREN_BEFORE, path: "(visibility_modifier_group)/\")\"/before" }] },
-        ] },
-    ] },
     ::sittir_core::options::AddressNode::Branch { key: "visibilityModifierPub", path: "(visibility_modifier_pub)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_AFTER, path: "(visibility_modifier_pub)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_BEFORE, path: "(visibility_modifier_pub)/before" }] },
@@ -10031,11 +10021,21 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_PUB_KEYWORD_AFTER, path: "(visibility_modifier_pub)/\"pub\"/after" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "visibilityModifierPubInPath", path: "(visibility_modifier_pub_in_path)", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_VISIBILITY_MODIFIER_PUB_IN_PATH_AFTER, path: "(visibility_modifier_pub_in_path)/after" }] },
-        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_VISIBILITY_MODIFIER_PUB_IN_PATH_BEFORE, path: "(visibility_modifier_pub_in_path)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "inKeyword", path: "(visibility_modifier_pub_in_path)/\"in\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_IN_AFTER, path: "(visibility_modifier_pub_in_path)/\"in\"/after" }] },
+    ::sittir_core::options::AddressNode::Branch { key: "visibilityModifierPubScope", path: "(visibility_modifier_pub_scope)", children: &[
+        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_SCOPE_VISIBILITY_MODIFIER_PUB_SCOPE_AFTER, path: "(visibility_modifier_pub_scope)/after" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_SCOPE_VISIBILITY_MODIFIER_PUB_SCOPE_BEFORE, path: "(visibility_modifier_pub_scope)/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(visibility_modifier_pub_scope)/\"(\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_SCOPE_LPAREN_AFTER, path: "(visibility_modifier_pub_scope)/\"(\"/after" }] },
+        ] },
+        ::sittir_core::options::AddressNode::Branch { key: "rparen", path: "(visibility_modifier_pub_scope)/\")\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_SCOPE_RPAREN_BEFORE, path: "(visibility_modifier_pub_scope)/\")\"/before" }] },
+        ] },
+    ] },
+    ::sittir_core::options::AddressNode::Branch { key: "visibilityModifierPubScopeInPath", path: "(visibility_modifier_pub_scope_in_path)", children: &[
+        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH_VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH_AFTER, path: "(visibility_modifier_pub_scope_in_path)/after" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH_VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH_BEFORE, path: "(visibility_modifier_pub_scope_in_path)/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "inKeyword", path: "(visibility_modifier_pub_scope_in_path)/\"in\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH_IN_AFTER, path: "(visibility_modifier_pub_scope_in_path)/\"in\"/after" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "whereClause", path: "(where_clause)", children: &[

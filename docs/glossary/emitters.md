@@ -2516,45 +2516,11 @@ Emits the role-named getters on `synonym` (`function`, `class`, `method`, `modul
 
 ### `packages/codegen/src/emitters/ir.ts::memberKeyFor`
 
-```text
-/**
- * Member kind → short key within its supertype group.
- * Strip the last underscored segment (e.g. `_expression`, `_item`, `_pattern`).
- * If that collides with a JS reserved word, suffix with `_` per FR-029.
- *
- * Falls back to the full camelCased kind if stripping would leave nothing.
- */
-```
-
-#### body
-
-```text
-// Drop what the GROUP already says, wherever it sits — not the last token
-// positionally. `expression_statement` under `statement` keeps
-// `expression`, and `statement_block` keeps `block` instead of stuttering.
-```
-
-#### body
-
-```text
-// The group's name says nothing about these members — many groups are
-// structural unions (`condition`, `non_delim_token`) whose name never
-// appears in a member. Drop a trailing CATEGORY token instead, so
-// `array_expression` still reduces to `array`.
-```
-
-#### body
-
-```text
-// camelCase runs LAST, on the surviving snake tokens, so the group's own
-// capitalization never has to be matched.
-```
-
-#### body
-
-```text
-// A member that reduces to the group's own name would read as a stutter.
-```
+`memberKind`'s short key within `supertypeKind`'s group namespace:
+`compiler/variant-structural.ts`'s `supertypeMemberName`, camelCased. A
+member that reduces to the empty string or to the supertype's own name
+falls back to the bare kind before camelCasing, so no member key is ever
+empty or a stutter of its group's name.
 
 ### `packages/codegen/src/emitters/ir.ts::resolveRoleNodes`
 
@@ -8031,23 +7997,17 @@ two agree. The delimiter is stamped the same way, `Delimiter.None` included.
 
 ### `packages/codegen/src/emitters/factory-map.ts::polymorphVariants`
 
-```text
-/**
-	 * Polymorph variant discriminators. For each polymorph parent kind a
-	 * descriptor telling `nodeToConfig` how to stamp `$variant` on the
-	 * derived config.
-	 *
-	 *   source='override' — variant inferred from the first named child's
-	 *     kind. The `childKind` map is `<parent_childKind>: <variantName>`.
-	 *   source='promoted' — variant inferred from field-presence. The
-	 *     `fields` map is `<variantName>: [<fieldPropertyName>...]`
-	 *     (match if every listed field is present on the config).
-	 *
-	 * The dispatcher's switch on `config.$variant` expects the tag to be
-	 * present; validators and legacy readNode→factory paths use this map
-	 * to derive it from the parsed tree.
-	 */
-```
+Polymorph variant discriminators, one `PolymorphVariantDescriptor` per
+polymorph parent kind, read by `nodeToConfig` to stamp `$variant` on a
+derived config the caller didn't supply one for.
+`collectVariantAdoptedBranches` builds it: every authored compound
+(`isAuthoredCompound`) with at least one variant child, kept even when
+parser-hidden if it aliases into a visible kind. `childKind` maps each
+child kind to its variant name (`mapVariantChildKindsToNames`, reading the
+name variant-structural derivation already resolved). `definedBy` is
+`'enrich'` only when every one of the kind's variant children was itself
+enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
+`variant()` override) makes the whole kind `'override'`.
 
 ### `packages/codegen/src/emitters/from.ts::generatedIdTables`
 
@@ -8680,6 +8640,20 @@ name on the wire, `rustName` the Rust struct field, `rustType` its type.
 	 * masking regressions in other kinds.
 	 */
 ```
+
+A key of the form `<kind>.<arm path>` skips one sub-factory test instead of
+the kind: the arm path is the arm's spelled ir path under the kind
+(`export_statement_default_declaration.defaultKw.value`), the same spelling
+the test calls.
+
+### `packages/codegen/src/emitters/test.ts::childBareCallArgs`
+
+The arguments a generated sub-factory test passes to an arm's child: the
+child's own factory call arguments. With `withOptions`, a child whose
+required slots are registered options also gets its options argument, so an
+arm that forwards the child's whole argument list (no residual parent slots)
+builds the child the same way the child's own generated test does. Arms that
+seat the child into a config or tuple take the value arguments only.
 
 ### `packages/codegen/src/emitters/transport-common.ts::SlotClass`
 
@@ -12813,23 +12787,17 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 
 A flattened parent's namespace is its variant routes. The supertype-group namespaces (`ir.expression.binary`) skip flattened parents — a group would name members by subtype suffix and shadow the routes — and a flattened parent that is a member of another supertype's group appears there as its route object (`ir.statement.impl` is `ir.implItem`).
 
-### `packages/codegen/src/emitters/ir.ts::GROUP_TOKEN_SYNONYMS`
-
-```text
-/** Kind-name tokens that mean the same thing as a token in a group's name.
- *  A grammar spells the category one way in the group and another in the
- *  kinds themselves — rust groups `declaration_statement` over members named
- *  `function_item`, `struct_item`. */
-```
-
-### `packages/codegen/src/emitters/ir.ts::CATEGORY_TOKENS`
-
-```text
-/** Tokens naming a syntactic CATEGORY rather than the construct itself.
- *  Only these may be dropped from a member's tail, and only when the group's
- *  own name did not already account for a token. `line_comment` keeps
- *  `comment` because a comment is the construct, not a category. */
-```
+A flattened parent not already claimed as a group name gets one of three
+treatments, by whether every one of its routes is `minted` (§
+`overlays/module.ts::flattenedVariantParents`). All-minted: the parent's key
+is only recorded (`variantParentKeys`) and later placed straight into `ir`'s
+body as `<key>: F.<key>` — no standalone top-level export, since every
+variant is reachable only through this parent anyway. Any non-minted
+member: the parent gets a standalone top-level export like a grouped
+namespace, so a route to a shared kind stays reachable without going
+through `ir`. If that export's key collides with a flat leaf/keyword
+factory's own `ir` key, the parent's route object is attached onto that
+leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
 
 ### `packages/codegen/src/emitters/ir.ts::emitSynonymBoolean`
 
@@ -14917,24 +14885,56 @@ One bundled kind: `key` is the ir property key (irKey, falling back to camelCase
 
 The single derivation of which kinds get bundles and under what names — consumed by the bundle module, the overlays, the index hoisting, and `ir.ts`. A kind qualifies with both a raw factory and a coercer, compound or list class, not factoryInline, and a catalog entry. A hoisted non-list compound is excluded here rather than at `classifyFromEmission`: a form has a coercer and belongs on its parent's wire, but never gets a top-level `ir` key of its own. Lists are exempt because a hoisted separated list owns a public surface. An AssembledAlias is excluded: it is a transparent wrapper, so every position that holds one takes its content and builds the alias through its raw factory (`aliasContentAdmission`).
 
+### `packages/codegen/src/emitters/overlays/module.ts::referrersOf`
+
+Every node's referrers, purely structurally: for a supertype, the supertype
+itself against each of its subtype names; for a slot-bearing compound, the
+compound itself against the storage kind of each node-ref slot value. No
+variant facts enter this walk — it answers "who can reach this kind at
+all", the question `flattenedVariantParents` asks to decide whether a child
+is reachable ONLY through one parent's variant arm.
+
 ### `packages/codegen/src/emitters/overlays/module.ts::flattenedVariantParents`
 
-The supertypes that stand in for a flattened polymorph parent, each with its variant routes, so `ir.<parent>.<variant>` survives the parent losing its own node. A supertype qualifies when it has at least two subtypes, every subtype ref carries the `variant` / `variantOf` arm facts naming this supertype, and its ir key is a valid identifier not already taken. Each subtype must resolve to a kind with a raw factory or to another qualifying flattened parent — a nested parent routes to that parent's own route object (`ir.exportStatement.default.from`). Parents are accepted in rounds until nothing changes, so a nested parent is always listed, and emitted, before the parent that routes to it. The route name is the stamped `variant`, never a suffix recovered from the subtype's name. A route also carries `default` when the arm was declared with `arm.default` — at most one per parent, checked here (a second throws). A nested parent's default only propagates when the nested parent itself resolved a default; an undeclared default at any hop in the chain simply leaves the outer parent with none.
+The supertypes that stand in for a flattened polymorph parent, each with its variant routes, so `ir.<parent>.<variant>` survives the parent losing its own node. A supertype qualifies when it has at least two subtypes, every subtype ref carries the `variant` / `variantOf` arm facts naming this supertype, and its ir key is a valid identifier not already taken. Each subtype must resolve to a kind with a raw factory, to another qualifying flattened parent (a nested parent routes to that parent's own route object, `ir.exportStatement.default.from`), or — when it has no factory at all — to a kind-id-stored leaf (a keyword/punctuation kind, not an enum), which gets `leaf: true` instead of a `child`-factory route. A subtype that resolves to none of these (and isn't a pending flattened parent) disqualifies the whole parent. Parents are accepted in rounds until nothing changes, so a nested parent is always listed, and emitted, before the parent that routes to it. The route name is the stamped `variant`, never a suffix recovered from the subtype's name. A route also carries `default` when the arm was declared with `arm.default` — at most one per parent, checked here (a second throws). A nested parent's default only propagates when the nested parent itself resolved a default; an undeclared default at any hop in the chain simply leaves the outer parent with none.
+
+A route also carries `minted` when the child kind is exactly the name
+`polymorphVisibleName(parent, variant)` would mint for this variant AND
+`referrersOf` finds exactly one referrer of that child kind — this parent
+itself. Name-matching alone isn't enough: the child must be reachable from
+nowhere else (no other supertype's subtype list, no other compound's slot)
+for its route to be the child's only public address. `variantRoutePaths`
+nests one parent's routes under another parent's path only through a
+`minted` relationship, never through a parent that merely happens to route
+to the same kind elsewhere.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::variantRoutePaths`
 
-The public path of every variant a flattened parent routes to, keyed by the
-variant kind (`assignment_eq` → `assignment.eq`). A nested parent's variants
-compose through the parent that routes to it (`exportStatement.default.from`).
-Codegen's single derivation of these paths: the test emitter addresses
-sub-factory tests through it, and `node-model.json5`'s `variantRoutes`
-publishes it for tools (the hoisted census, the factory-source printer).
+The public path of every `minted` variant a flattened parent routes to,
+keyed by the variant kind (`assignment_eq` → `assignment.eq`) — a
+non-minted route (the child is reachable some other way too) gets no entry
+here. Parents are walked in reverse, and a parent's own base path is
+whatever path a shallower parent already recorded for it as a `minted`
+route (`mintedPaths`), falling back to the parent's own bundle key when
+nothing minted it — so a nested parent's variants compose through the
+parent that actually minted it as a variant (`exportStatement.default.from`),
+never through a parent that merely routes to the same kind some other way.
+Each child kind's path is recorded once, and — again only for a `minted`
+route — recorded a second time as that child's own base path for whichever
+parent is walked next. Codegen's single derivation of these paths: the test
+emitter addresses sub-factory tests through it, and `node-model.json5`'s
+`variantRoutes` publishes it for tools (the hoisted census, the
+factory-source printer).
 
 ### `packages/codegen/src/emitters/overlays/module.ts::FlattenedVariantRoute`
 
 One variant route of a flattened parent: its name, the child kind, whether it
-is `arm.default`, and — when the child is itself a flattened parent — that
-parent's route key.
+is `arm.default`, whether it is `minted` (the child is reachable only through
+this parent's arm — `referrersOf` finds no other referrer — and is named
+exactly what this variant would mint), whether it is `leaf` (the child has
+no factory of its own; `emitPolymorphsOverlay` spells the route as the
+child's kind-id expression instead of a factory reference), and — when the
+child is itself a flattened parent — that parent's route key.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::emitBundleModule`
 
@@ -15101,7 +15101,7 @@ A form wire with no seat: the child kind is a complete alternative of the parent
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::variantAliasWires`
 
-Whole-rule alternative arms. A parent's `variantChildKinds` can name arms that are complete alternatives of the parent's rule rather than values in any slot (`binary_expression = choice(seq(left, op, right), _binary_expression_in)`); `choiceSlotOf` never sees those, because they are not in a slot. Each resolves to its node (visible key, else `_`-prefixed), takes the name the variant child already carries, and wires as the child's own factory pair — the form IS its own node kind in the CST, so there is nothing to seat. Arms already claimed by a sub-factory (same child kind or same name) are skipped: when the arms sit in a real choice slot (rust `token_tree`), the seated path owns them.
+Whole-rule alternative arms. A parent's `variantChildKinds` can name arms that are complete alternatives of the parent's rule rather than values in any slot (`binary_expression = choice(seq(left, op, right), _binary_expression_in)`); `derive`'s per-slot walk (`armValuesOf`) never sees those, because they are not in a slot at all — nothing to label. Each resolves to its node (visible key, else `_`-prefixed), takes the name the variant child already carries, and wires as the child's own factory pair — the form IS its own node kind in the CST, so there is nothing to seat. Arms already claimed by a sub-factory (same child kind or same name) are skipped: when the arms sit in a real choice slot (rust `token_tree`), the seated path owns them.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::methodName`
 
@@ -15157,54 +15157,47 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::NodeArm`
 
-```text
-/** A sub-factory arm backed by a child kind reachable through the parent's
- *  seat slot (a choice slot, or a forwarding hop's sole slot). `child` is
- *  always the *direct* child under that slot, even for a flattened entry
- *  reached through the child's own sub-factories; `path` is empty for a
- *  direct arm and otherwise holds exactly one name — the property on the
- *  child's own wire const that already encapsulates every deeper hop.
- *  `leaf` is the deepest kind the entry ultimately builds (undefined when
- *  `child` is the leaf); outer levels name their flattened entries from
- *  it, so `visibility_modifier` calls the in-path form `inPath` even
- *  though the arm's direct child is the pub hop. */
-```
+A sub-factory arm backed by a child kind reachable through one of the
+parent's own non-multiple slots. `child` is always the *direct* child under
+that slot, even for a nested entry reached through the child's own arms;
+`path` is empty for a direct arm and otherwise holds exactly one name — the
+child's own sub-factory entry the arm forwards to (`nestedArmsOf`), itself
+nested when the arm reaches more than one hop down.
+`leaf` is the deepest kind the entry ultimately builds (undefined when
+`child` is the leaf); outer levels name their nested entries from it, so
+`visibility_modifier` calls the in-path form `inPath` even though the arm's
+direct child is the pub hop.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::SubFactory`
 
-```text
-/** One named narrowing of a parent's factory: `subfactory = parent slots −
- *  choice slot ∪ arm slots` — `residual` is every parent field except the
- *  chosen `slot`, and the arm (`literal` or `kind`) supplies whatever the
- *  narrowing itself fixes. `slot` is the parent's own choice slot, kept on
- *  every entry (direct and flattened alike) so a caller can tell which
- *  field the sub-factory narrows without re-deriving it via `choiceSlotOf`.
- *  `depth` is how many sub-factory hops sit between the parent and the arm
- *  the entry ultimately seats: 0 for a value arm or a direct kind arm, one
- *  more than the nested entry's own depth for a flattened one. Flat names
- *  are leaf-relative, so two entries can claim one name from different
- *  depths (`rest_pattern`'s direct `member_expression` arm and its
- *  flattened `member_expression.dot` both surface on `tuple_parameter` as
- *  `memberExpression`); the depth is the fact `resolveCandidates` settles
- *  that claim by. `merges` is whether the arm's wrapper merges its child's
- *  config keys into the parent's config: stamped once by `resolveCandidates`
- *  (`sharedKeysOf`), read by `armConfigKeys`, the polymorphs overlay's
- *  wrapper shape, the test emitter's call spelling and `seatOf`, so the
- *  keys a caller may pass, the wrapper that partitions them and the
- *  validator's spelling cannot disagree. */
-```
+One named narrowing of a parent's factory: `residual` is every parent field
+except the chosen `slot` — the slot whose labelled value (`armValuesOf`)
+the arm narrows, kept on every entry (direct and nested alike) so a caller
+can tell which field the sub-factory narrows without re-deriving it. `depth`
+is `DIRECT` (0) for a value arm or a direct kind arm straight off a slot's
+labelled value, and one more than the inner entry's depth for an arm
+reached through a direct arm's child (`nestedArmsOf`); a name clash is checked only among `DIRECT`
+arms (`settle`), since a nested arm's `<host>$<inner>` name is already
+namespaced under the host it nests within. `merges` is whether the arm's
+wrapper merges its child's config keys into the parent's config: stamped
+once by `settle` (`sharedKeysOf`), read by `armConfigKeys`, the polymorphs
+overlay's wrapper shape, the test emitter's call spelling and `seatOf`, so
+the keys a caller may pass, the wrapper that partitions them and the
+validator's spelling cannot disagree.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::SubFactoryDiagnostic`
 
 ```text
 /** What the derivation could not settle silently. `ambiguous` is recorded
- *  instead of an entry: two or more claimants land on the same name at the
- *  same nearest depth. `shared-key` is recorded beside an entry that is
- *  kept: a config-shaped arm whose merged keys (`keys`) are also slots of
- *  the parent, so its wrapper takes the child's config whole under the slot
- *  key instead of merging — the regen log names every such arm. `claimants`
- *  lists what the diagnostic is about — `'<literal>'` for a value arm,
- *  `<kind>` for a direct node arm, `<child>.<path>` for a flattened one. */
+ *  instead of an entry: two or more DIRECT arms of one parent land on the
+ *  same name — a name clash among NESTED arms cannot happen, since a
+ *  nested arm's name is namespaced under the host arm it nests within.
+ *  `shared-key` is recorded beside an entry that is kept: a config-shaped
+ *  arm whose merged keys (`keys`) are also slots of the parent, so its
+ *  wrapper takes the child's config whole under the slot key instead of
+ *  merging — the regen log names every such arm. `claimants` lists what
+ *  the diagnostic is about — `'<literal>'` for a value arm, `<kind>` for a
+ *  direct node arm, `<child>.<path>` for a nested one. */
 ```
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::SubFactorySet`
@@ -15214,100 +15207,85 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
  *  survivors in `entries`, everything dropped (and why) in `diagnostics`. */
 ```
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::choiceSlotOf`
-
-```text
-/** The parent's eligible choice slot, or `undefined` when there isn't
- *  exactly one. A slot qualifies when it holds two or more values
- *  (`values.length >= 2`) and isn't a multi/array slot (`!isMultiple`) —
- *  a single value has nothing to choose between, and an array slot picks
- *  a set of children rather than one arm. A node with zero or more than
- *  one such slot has no unambiguous narrowing target, so it isn't
- *  eligible for sub-factories at all. */
-```
-
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::derive`
 
-The per-kind derivation behind `subFactoriesOf`. Three seat modes feed one
-resolution tail (`resolveCandidates`): the lone choice slot (`choiceSlotOf`)
-yields one arm per value — literal arms, node arms, and the child's own
-sub-factories flattened up under leaf-relative names; a forwarding hop
-(`forwardedTargetKind`) passes the target's sub-factories through re-seated
-in the hop's slot; and a lone kind-enum slot yields literal arms. On top of
-whichever mode applies, `authoredArmCandidatesOf` adds a direct arm for every
-hoisted kind seated in any OTHER non-multiple choice slot, and is the only
-source when the parent has no lone slot at all (`for_header` with a kind
-slot and a left-hand slot, `export_statement` with its default arms): a
-hoisted kind has no flat `ir` entry, so its parent's sub-factory is the one
-way to build it, whatever else the parent holds. Visible kinds in a second
-choice slot are not mounted — they are reachable on `ir` already.
+The per-kind derivation behind `subFactoriesOf`. Walks every one of the
+parent's non-multiple slots — not one chosen slot — and, within each,
+every labelled value (`armValuesOf`, the values carrying a stamped
+`variant`): a node-backed value whose child has its own emitted factory
+becomes a direct `DIRECT` node arm; anything else — a node-backed value
+with no emitted factory, or a literal — becomes a value arm when it
+carries text storage, otherwise is skipped. Each direct node arm then
+contributes every arm of its child's own set, nested ones included
+(`nestedArmsOf`), and `settle` resolves the collected direct and nested
+arms into the final wire set. A node with no labelled value in any slot
+derives nothing: a sub-factory arm exists exactly where a variant label
+sits at the end of wire, nowhere else.
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::grandArmCandidates`
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::armValuesOf`
 
-The arms a child contributes under the parent arm that reaches it: one
-candidate per entry of the child's own sub-factory set, with the path being
-that entry's name. A node entry is named for its leaf kind; a value entry
-(a token arm such as rust `range_pattern_with_left_with_right`'s `..=`) keeps
-its own name. `emittedArmPath` nests every one of them under the host arm,
-so `rangePattern.withLeft.withRight.dotDotEq` exists. The forwarding
-(lone-slot) path, the choice-slot walk and `authoredArmCandidatesOf` all derive
-grand-arms here. If one of them skipped value entries, the child's token arms
-would be emitted with nothing referencing them.
+The values `derive` walks for one slot. A value mounts one of two ways: a
+labelled value (`isLabelled`) mounts unless it is itself a member of the
+supertype its label names (`isInlinedMember` — an inlined supertype member
+is that supertype's own arm, not a second arm of the slot holding the
+reference to it) or fails `seatsInlinedLabel` (a label minted by an inline
+rule only seats through an unnamed slot; a fielded slot already addresses
+inline content by its field name); an UNlabelled value mounts only when its
+child is a supertype (`AssembledSupertype.variantSubtypes`) and the slot is
+unnamed — a named slot with no label of its own names nothing to walk. A
+mounted value whose child is a supertype expands into that supertype's own
+labelled subtypes, each carrying the slot value's multiplicity, in place of
+the original value — so a flattened parent's variants surface as ordinary
+arms of whatever slot holds it; a mounted labelled value with no such child
+is pushed as itself.
 
-A grand arm flattens only through an unfielded slot (`isUnnamed`, the
-`_content` of a choice). A fielded slot is already addressed by its field,
-so through it the parent mounts the child's direct arm and the child's own
-forms are chosen inside it (`abstractType.genericType(...)`, not
-`abstractType.genericTypeIdentifier`), the same way a fielded slot needs no
-automatic variant name.
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::isLabelled`
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::authoredArmCandidatesOf`
+Whether a value carries a stamped `variant` name at all — the one
+predicate that decides whether a slot value is a sub-factory arm.
 
-The arms of a node with more than one choice slot, where `derive` has no
-single slot to walk: one candidate per arm the grammar author made, meaning a
-hoisted compound (`AbstractAssembledCompound` with `hoisted`, the shape-1
-seat) or a variant arm (`value.variant`), in every non-multiple slot with two
-or more values, except the slot `derive` already walks. Each candidate
-carries its own residual (the parent's other slots), which is why
-`resolveCandidates` reads the residual off the entry. A single-valued slot
-is not a choice; a hoisted kind there is a splice seat (shape 2), not an
-arm.
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::kindOfValue`
 
-An authored variant arm (`value.variant`) mounts whether or not it is
-hoisted: a variant whose body lexes as one token is a leaf subtype, not a
-group (`transform.ts::hoistedUnlessToken`), yet it is an arm the author named
-and keeps its surface (rust `rangePatternWithLeft.bare`), the way an enum's
-arms do.
+The kind a value resolves to for identity comparisons: a node ref's
+storage kind, or a terminal's `resolvedKind`.
 
-A hoisted or variant LEAF in such a slot mounts the way the lone-slot loop
-mounts leaves: a keyword or token with no factory, or one the factories do not
-emit (a parameterless token such as rust `_pointer_type_const`), becomes a
-value arm carrying its kind-id storage, a pattern becomes a node arm on its
-text factory. The seat
-passes the leaf's value through the parent's builder; the leaf keeps its
-shape and builder.
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::isInlinedMember`
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::slotValuesOf`
+Whether a labelled value is one of the very supertype's own subtypes that
+its label names (`owner = nodeMap.nodes.get(value.variantOf)`, matched by
+`kindOfValue` against `owner.subtypes`). `armValuesOf` skips such a value:
+it is the supertype's own arm, surfaced when the supertype itself is
+walked, not a second arm of the parent slot holding the reference to it.
 
-A slot's values as sub-factory derivation sees them: a value whose kind is a
-supertype with arm subtypes (`AssembledSupertype.armSubtypes`) expands into
-those subtypes, each carrying its stamped arm facts and the slot value's
-multiplicity. That covers a flattened parent's variant subtypes and an
-undeclared supertype reached through an alias site. Displayed literals then
-fold into their display (`foldDisplayedLiterals`).
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::seatsInlinedLabel`
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::foldDisplayedLiterals`
+Whether a labelled value minted by an inline rule (no model node for its
+`variantOf` owner) still seats at this slot: only when the slot is unnamed
+(`isUnnamed`) — a fielded slot already addresses inline content by its
+field name, so the label adds nothing there. A labelled value whose owner
+DOES have a node (a real, named rule) always seats, since there the label
+means an actual arm that rule declares.
 
-A contextual keyword shown as another kind is that kind (a literal token
-under a terminal display: the parser reuses the display's symbol), so it has
-no sub-factory of its own. Each such value becomes a reference to its display
-node (`displayedLiteralTarget`), and values are deduplicated by storage, so
-the display arm exists once whether or not the slot also names the display
-kind directly: `assignmentExpression.identifier('async')` covers every
-keyword the slot admits. A parent whose slot holds a flattened parent
-therefore mounts the variants as ordinary arms (`functionDefinition.block`
-for `_suite`'s `block` variant), exactly as it mounted the polymorph's forms
-before the polymorph was flattened.
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::nestedArmsOf`
+
+The arms a direct node arm's child contributes under it: every entry of
+the child's own sub-factory set (`subFactoriesInternal`), direct and nested
+alike, renamed `<host>$<inner>` and nested under the host's own
+`slot`/`residual`, with `path` naming the child's entry and `depth` one
+more than the inner entry's. The child's nested entries carry its own
+children's arms, so nesting reaches every depth with no cap: each arm's
+child carries its own arms under it. The only stop is the kind-keyed
+cycle guard — a child already on the derivation path contributes nothing,
+which cuts a kind arming itself (`ambient_declaration`,
+`parenthesized_list_splat`). `leaf` is the deepest kind the entry builds
+(`leafOf`). `settle` keeps a host's nested arms only when the host itself
+made it into the parent's final entries.
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::leafOf`
+
+The `leaf` a nested entry records for an inner entry: the inner arm's own
+`leaf` when it is itself nested, its child when it is a direct node arm,
+nothing for a value arm.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::tupleSeatOf`
 
@@ -15345,13 +15323,15 @@ serve: a raw factory with a bare-text overload lists that overload last, and
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::nestingArmOf`
 
-The arm a flattened grand-arm nests under: the direct arm reaching the same
-child. A variant minted inside another variant's rule is spelled inside it,
-`ir.visibilityModifier.pub.inPath`, never a flat `inPath` that reads as its
-sibling. The nested key is the child's own arm name, since the flattened
-name's prefix is exactly the arm it now sits under. A grand-arm whose child no
-parent arm reaches stays flat, and a clash on the short key falls back to the
-flattened one.
+Where a nested arm sits: under the direct arm reaching the same child, at
+the keys the child spells for the entry it forwards to. A variant minted
+inside another variant's rule is spelled inside it,
+`ir.visibilityModifier.pub.scope.inPath`, never a flat `inPath` that reads
+as its sibling. When the child's entry is itself nested, the keys are the
+child's emitted path to it (`emittedArmPath`), so the parent's namespace
+mirrors the child's at every depth; otherwise the key is the child's own
+arm name. A nested arm whose child no parent arm reaches stays flat, and a
+clash on the short key falls back to the flattened name.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emittedArmPath`
 
@@ -15399,23 +15379,17 @@ arms span two slots emits any of this.
 
 Each chain it builds is recorded by the outer arm's name, so a parent that mounts this kind's arms can mount the chains too (`childChains`).
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::isChoiceGroup`
-
-Whether a slot's value is a group that is ITSELF a choice. Such a group has
-arms a caller must name, so it mounts as an arm and its own arms nest under
-it: `ir.exceptClause.exception.as`, `…exception.list`. Splicing it would
-flatten its one key onto the parent and leave the choice with no spelling at
-all, which is what made a nested arm unreachable. A group with nothing to
-choose between still splices — one variant is not a choice, and rust's
-`attribute.input` reads better spliced than routed.
-
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::spliceSeatOf`
 
 The shape-2 seat: the parent's one non-multiple slot whose value set is
-exactly one hoisted, config-shaped kind. Such a group is not an arm (there is
-nothing to choose between) and has no name a caller would type; its keys are
-spliced onto the parent's `strict` by the overlay (`emitSplice`), present as
-a whole or absent as a whole. A parent with two such seats gets none and the
+exactly one hoisted, config-shaped kind — excluding a labelled value
+(`value.variant !== undefined`), since a labelled value already mounts as
+an arm elsewhere (`ir.exceptClause.exception.as`, `…exception.list`);
+splicing it too would flatten its one key onto the parent and leave the
+arm with no spelling to reach it by. Such an (unlabelled) group is not an
+arm — there is nothing to choose between — and has no name a caller would
+type; its keys are spliced onto the parent's `strict` by the overlay
+(`emitSplice`), present as a whole or absent as a whole. A parent with two such seats gets none and the
 census reports it. A group whose keys collide with one of the parent's own
 slots is not a seat either: the splice could not tell the parent's `left`
 from the group's (typescript `_binary_expression_in`), so the group stays
@@ -15478,56 +15452,6 @@ no seat names.
 
 The gate that a seated child be hoisted reads `isHoistedAt`, so a visible wrapper whose reference is stamped `spliced` gets its `splice` seat recorded in the node model like a hidden group.
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::loneEnumChoiceSlot`
-
-The fallback choice slot when `choiceSlotOf` finds the count ambiguous and the
-forwarding branch yields no forms: a lone slot whose storage is a pure
-`kindEnum`, every value a literal with no factory, is determined punctuation
-(`return_statement.semicolon` beside a wide `expression` union), and gets its
-`semi` / `automaticSemicolon` forms. Two limits keep it from over-reaching:
-it fires only on the empty path, because firing unconditionally replaced
-`impl_item`'s alias-wire `body` form with a seated sub-factory returning the
-parent; and it admits `kindEnum` only, never `mixedEnum` (`impl_item.content`
-is `ImplItemBody | ';'`), which would reintroduce the same regression. A kind
-with two pure literal enum slots (`import_statement`: the `type` modifier and
-`semicolon`) is genuinely ambiguous and correctly gets no form.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::armName`
-
-```text
-/** The DERIVED sub-factory name a choice-slot value contributes, or
- *  `undefined` when the value can't be named (the arm is then skipped, not
- *  defaulted). This is the fallback half of the naming pair — `armNaming`
- *  layers an arm's declared name over it. A node-backed value always names
- *  successfully: a hoisted compound whose `parentKind` matches
- *  `parent.kind` contributes its own `name` (the variant name enrich
- *  minted it under); every other node-backed value contributes the suffix
- *  `prefixNamedSuffix(parent.kind, display)` strips off the parent's
- *  kind prefix, or — when the display doesn't carry that prefix — the
- *  display itself, where the display is the one the parser shows at this
- *  site (`displayNameOfValue`), never the storage kind. That derivation is
- *  parent-relative, so it yields distinct names for two arms that share a
- *  declared name; this is what makes it a sound deconfliction fallback. A
- *  literal value names itself when it's already a valid identifier;
- *  otherwise it falls back to the literal's resolved token kind
- *  (`resolvedKind`, never re-derived from the literal text), and skips
- *  entirely when neither is available. */
-```
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::armNaming`
-
-```text
-/** The name an arm claims, the name it falls back to, and whether this
- *  parent is the one that declared it. `name` prefers the arm's declared
- *  variant annotation and falls back to the derived `armName`; `fallback`
- *  always holds the derived name; `declaring` is true when the consuming
- *  parent is the kind the annotation was declared under. One child kind is
- *  reachable from many parents, so a declared name belongs to the
- *  parent-to-arm edge rather than to the child — `resolveCandidates` reads
- *  `declaring` to settle which arm keeps the declared name when two claim
- *  it. */
-```
-
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::textStorageOf`
 
 ```text
@@ -15540,46 +15464,43 @@ with two pure literal enum slots (`import_statement`: the `type` modifier and
  *  skipped by the caller's own test. */
 ```
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::resolveCandidates`
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::settle`
 
-```text
-/** Group same-named candidates and settle each winner by depth.
- *
- *  Names are deconflicted before grouping. Two arms can legitimately claim
- *  one declared name when a slot holds variants declared by two different
- *  kinds: a token tree's content slot carries both the `paren` arm it
- *  declared itself and the `paren` arm its delimited form declared, spliced
- *  in. On such a clash the declaring parent keeps the declared name and
- *  every other claimant falls back to its derived name, which is
- *  parent-relative and therefore already distinct. Only a genuine clash
- *  triggers that fallback — an arm whose declared name nothing else claims
- *  keeps it whichever parent consumes it.
- *
- *  What survives deconfliction is grouped by name: the claimant nearest
- *  the parent (the smallest `depth`) wins when it is alone at that depth —
- *  a direct arm over a flattened one, a child's own arm over one reached
- *  through the child's flattening. A tie at the nearest depth among
- *  flattened claimants reached through DIFFERENT children, each hosted by
- *  a direct arm on that child, keeps every one of them (`hostedApart`):
- *  they mount under their hosts, so their spellings never meet. Any other
- *  tie is reported as a diagnostic and dropped. */
-```
+Resolves a parent's collected direct and nested arms into its wire set.
+Ambiguity is checked only among the `DIRECT` arms: entries sharing a name
+are grouped, and a name two or more direct arms claim becomes an
+`ambiguous` diagnostic instead of an entry — no declared/derived
+fallback-name tie-break survives it, since each labelled value's `variant`
+is already its final, owner-relative name (stamped once, at the point it
+was labelled), not something `settle` re-derives per consuming parent. A
+surviving direct node arm is checked for config-shape key sharing
+(`sharedKeysOf`) and, when its child is config-shaped and shares no key
+with the parent, marked `merges`; its child is recorded as a `host`. Every
+nested (`NESTED`) arm is kept once its host node made it into the settled
+direct entries — unconditionally, with no name-clash check of its own,
+since a `<host>$<inner>` name is already namespaced by the host it nests
+under.
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::hostedApart`
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::subFactoriesInternal`
 
-The one way a nearest-depth tie survives: every tied claimant is a flattened
-arm, no two reach the parent through the same child, and each child has a
-direct arm among the candidates to host it. Each survivor takes the flat
-name `<host><Leaf>` (`genericTypeWithTurbofishScopedIdentifier`) so the
-wire set holds no duplicate name, and the overlay nests it under its host as
-`host.leaf` (`ir.structExpression.genericTypeWithTurbofish.scopedIdentifier`),
-the spelling `emittedArmPath` derives. A tie with two claimants through one
-child, or with a claimant no direct arm hosts, has no such home and stays
-ambiguous.
+The cached derivation behind `subFactoriesOf` and every internal re-entry
+(`nestedArmsOf`, `armIsConfigShaped`, `mergedKeysOf`, `armConfigKeys`):
+looks up a cached `SubFactorySet` per (nodeMap, `isEmitted` predicate,
+kind), but ONLY for a top-level call (an empty `visiting` set) — a nested
+derivation always recomputes, since ambiguity and nesting are
+context-sensitive (the same kind derived through two different ancestor
+chains can settle its arms differently), and a context-free result cached
+from one caller must never leak into another's context. A per-(nodeMap,
+predicate) in-progress set breaks a true cycle by returning `EMPTY` for a
+kind already being derived on the current call stack, rather than caching
+that empty result.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::subFactoriesOf`
 
-Top-level entry: derives the sub-factory set for a kind with an empty visiting context and caches per (nodeMap, predicate, kind). The cache is read ONLY for top-level queries — a nested derivation (non-empty visiting set) always recomputes, because ambiguity and flattening are context-sensitive: a cached context-free result served into a cyclic context (or vice versa) yields order-dependent wire sets. True cycles short-circuit to the empty set through a per-derivation in-progress guard. A kind with no choice slot but a forwarding hop (`forwardedTargetKind`: sole slot seating exactly one emitted child kind) passes the child's sub-factories through — each entry re-seated in the hop's own slot under a leaf-relative name, its wire referencing the child const's matching property. Both the choice-slot and forwarding branches feed one shared resolution tail (`resolveCandidates`: name-ambiguity settled by depth), so the two seat modes cannot diverge in how claims are settled.
+Top-level entry: derives the sub-factory set for a kind with an empty
+visiting context (`subFactoriesInternal`), so every nested derivation
+reached transitively starts its own ancestor-chain tracking fresh from
+this call.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::sharedKeysOf`
 
@@ -15592,7 +15513,7 @@ non-empty one means the wrapper takes the child's config whole under the
 slot key instead
 (`ir.callExpression.macroInvocation({ function: { macro, arguments }, arguments })`),
 since a merged config could not say which of the two owners a shared key
-fills. `resolveCandidates` stamps the answer on the entry as `merges` and
+fills. `settle` stamps the answer on the entry as `merges` and
 records the non-empty case as a `shared-key` diagnostic.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::mergedKeysOf`
@@ -15602,6 +15523,13 @@ direct arm's child config keys, or for a flattened arm the nested entry's
 residual keys unioned with what the nested step contributes
 (`armConfigKeys` recursed). Computed without asking whether the arm merges,
 so `sharedKeysOf` can test those keys against the residual.
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::armIsConfigShaped`
+
+Whether an arm's call takes a config object. It does for a direct node arm
+whose child is `config`-shaped. For a nested arm, the answer is the answer
+for the child's entry it forwards to, recursed to whatever depth that entry
+reaches. A value arm never does.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::armConfigKeys`
 
@@ -15628,7 +15556,10 @@ so `sharedKeysOf` can test those keys against the residual.
  *  sub-factory calls its own child wholesale (`C(k)` / `C(...k)`, never
  *  destructured), so the merged config needs the nested arm's own slot
  *  key as one explicit prop instead (empty contribution for a value arm,
- *  which needs nothing beyond its residual). `visiting` guards this
+ *  which needs nothing beyond its residual). When that sub-factory is
+ *  itself nested (non-empty `path`), its own keys (`armConfigKeys`
+ *  recursed) are appended, so a deeper arm accepts every key along its
+ *  path. `visiting` guards this
  *  recursion against the mutual cycle `derive → armConfigKeys →
  *  subFactoriesOf → derive → …` can otherwise walk into: a flattened
  *  step's own `subFactoriesOf` call always starts a fresh (empty)
@@ -15663,7 +15594,7 @@ through it (post-order).
 `NoneOf<T>` (every key of `T` forbidden) and `_built` (the `$type` probe)
 ride in the erased-helper block for the splice methods.
 
-Flattened parents emit last as plain route objects (`export const <parent> = { <variant>: … }`). A variant route (`variantRouteOf`, shared by flattened routes and alias wires) is, in order of preference: a nested flattened parent's route object; a bundle entry (`B.<key>`) when the kind is bundled and has no overlay entry; the kind's overlay entry itself when that entry already carries `strict`/`coerce` (a seated entry, or a non-hoisted one spread from its bundle); otherwise `{ strict, coerce, ...entry }`, the raw pair merged with the hoisted kind's own sub-factory object. `variantRouteOf` also returns the bare `strict`/`coerce` refs it used to build `.value`, not just the rendered strings, because a route declared `arm.default` (`FlattenedVariantRoute.default`) hoists those refs onto the PARENT's own object (`{ strict: <default's strict>, coerce: <default's coerce>, <variant>: … }`) — so `hoistRoutes` sees a flavor pair at the top of the route object and makes the parent itself callable (`ir.arrayExpression(...)` builds the `list` variant, the default, while `.semi` and `.list` stay reachable). A default nested through another flattened parent only carries through when that inner parent resolved a default of its own.
+Flattened parents emit last as plain route objects (`export const <parent> = { <variant>: … }`). A `leaf` route (`FlattenedVariantRoute.leaf`, a child with no factory of its own) skips `variantRouteOf` entirely and is emitted as the child's own kind-id expression (`empty: TSKindId.Newline`), never seated in `defaultRoutes` and never itself a nested-parent target. Every other route (`variantRouteOf`, shared by flattened routes and alias wires) is, in order of preference: a nested flattened parent's route object; a bundle entry (`B.<key>`) when the kind is bundled and has no overlay entry; the kind's overlay entry itself when that entry already carries `strict`/`coerce` (a seated entry, or a non-hoisted one spread from its bundle); otherwise `{ strict, coerce, ...entry }`, the raw pair merged with the hoisted kind's own sub-factory object. `variantRouteOf` also returns the bare `strict`/`coerce` refs it used to build `.value`, not just the rendered strings, because a route declared `arm.default` (`FlattenedVariantRoute.default`) hoists those refs onto the PARENT's own object (`{ strict: <default's strict>, coerce: <default's coerce>, <variant>: … }`) — so `hoistRoutes` sees a flavor pair at the top of the route object and makes the parent itself callable (`ir.arrayExpression(...)` builds the `list` variant, the default, while `.semi` and `.list` stay reachable). A default nested through another flattened parent only carries through when that inner parent resolved a default of its own.
 
 ### `packages/codegen/src/emitters/options.ts::kindIdArmType`
 

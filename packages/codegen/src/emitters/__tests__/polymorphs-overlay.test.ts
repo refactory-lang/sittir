@@ -6,6 +6,7 @@ import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
+import { prefixNamedSuffix } from '../../compiler/variant-structural.ts';
 import { emitPolymorphsOverlay } from '../overlays/polymorphs.ts';
 import { listRestParamType } from '../shared.ts';
 
@@ -18,10 +19,26 @@ import { listRestParamType } from '../shared.ts';
 // (`link` only keeps rules reachable from it).
 // ---------------------------------------------------------------------------
 
+function labelArms(rules: Record<string, Rule<'evaluate'>>): Record<string, Rule<'evaluate'>> {
+	const label = (owner: string, arm: Rule<'evaluate'>): Rule<'evaluate'> => {
+		const display = arm.type === SYMBOL ? arm.name.replace(/^_+/, '') : arm.type === STRING ? arm.value : undefined;
+		const variant = display === undefined ? undefined : (prefixNamedSuffix(owner, display) ?? display);
+		return variant === undefined || arm.annotations?.variant !== undefined ? arm : ({ ...arm, annotations: { ...arm.annotations, variant, variantOf: owner } } as Rule<'evaluate'>);
+	};
+	const visit = (owner: string, rule: Rule<'evaluate'>): Rule<'evaluate'> => {
+		const r = rule as { members?: Rule<'evaluate'>[]; content?: Rule<'evaluate'> };
+		if (rule.type === CHOICE && r.members !== undefined && r.members.length >= 2) return { ...rule, members: r.members.map((m) => (m.type === CHOICE ? visit(owner, m) : label(owner, m))) } as Rule<'evaluate'>;
+		if (r.members !== undefined) return { ...rule, members: r.members.map((m) => visit(owner, m)) } as Rule<'evaluate'>;
+		if (r.content !== undefined) return { ...rule, content: visit(owner, r.content) } as Rule<'evaluate'>;
+		return rule;
+	};
+	return Object.fromEntries(Object.entries(rules).map(([owner, rule]) => [owner, visit(owner, rule)]));
+}
+
 function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
 	const raw: RawGrammar = {
 		name: 'synth',
-		rules,
+		rules: labelArms(rules),
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],
 		externals: [],
@@ -142,37 +159,15 @@ function parameterlessArmNodeMap(): NodeMap {
 
 function ambiguousNodeMap(): NodeMap {
 	return buildNodeMap({
-		grandparent_c: {
+		twice: {
 			type: CHOICE,
 			members: [
-				{ type: SYMBOL, name: 'parent_c' },
-				{ type: SYMBOL, name: 'leaf_c' }
+				{ type: SYMBOL, name: 'first', annotations: { variant: 'same', variantOf: 'twice' } },
+				{ type: SYMBOL, name: 'second', annotations: { variant: 'same', variantOf: 'twice' } }
 			]
 		},
-		parent_c: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'twin_a' },
-				{ type: SYMBOL, name: 'twin_b' }
-			]
-		},
-		twin_a: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'twin' },
-				{ type: SYMBOL, name: 'leaf_c' }
-			]
-		},
-		twin_b: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'twin' },
-				{ type: SYMBOL, name: 'other_c' }
-			]
-		},
-		twin: { type: PATTERN, value: '[a-z]+' },
-		leaf_c: { type: PATTERN, value: '[0-9]+' },
-		other_c: { type: PATTERN, value: '[A-Z]+' }
+		first: { type: PATTERN, value: '[a-z]+' },
+		second: { type: PATTERN, value: '[0-9]+' }
 	});
 }
 
@@ -228,7 +223,7 @@ describe('emitPolymorphsOverlay', () => {
 		emitPolymorphsOverlay({ nodeMap });
 
 		expect(warn).toHaveBeenCalledWith(
-			'[codegen] grandparent_c: sub-factory twin skipped (ambiguous): parent_c.twinATwin, parent_c.twinBTwin'
+			'[codegen] twice: sub-factory same skipped (ambiguous): first, second'
 		);
 	});
 });
@@ -262,7 +257,7 @@ function hoistedMiddleNodeMap(): NodeMap {
 	});
 }
 
-describe('a hoisted kind in the middle of a flattened arm', () => {
+describe('a hoisted kind in the middle of a nested arm', () => {
 	it('gets a private wire set the grandparent routes through, and no export', () => {
 		const nodeMap = hoistedMiddleNodeMap();
 		const parent = nodeMap.nodes.get('_parent')!;
@@ -271,7 +266,7 @@ describe('a hoisted kind in the middle of a flattened arm', () => {
 		const text = emitPolymorphsOverlay({ nodeMap });
 		expect(text).toContain(`const ${key}: {`);
 		expect(text).not.toContain(`export const ${key}`);
-		expect(text).toContain(`grandparent$leafB(F.buildGrandparent, ${key}.leafB.strict)`);
+		expect(text).toContain(`leafB: { strict: grandparent$parent$leafB(F.buildGrandparent, ${key}.leafB.strict)`);
 		expect(text.indexOf(`const ${key}: {`)).toBeLessThan(text.indexOf('export const grandparent'));
 	});
 });

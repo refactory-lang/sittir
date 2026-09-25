@@ -1359,10 +1359,10 @@ export type RustGrammar = {
 			multiple: false;
 			required: true;
 			types: [
-				{ type: 'line_comment_content'; named: true },
 				{ type: 'line_comment_doc_inner'; named: true },
 				{ type: 'line_comment_doc_outer'; named: true },
-				{ type: 'line_comment_regular_dslash'; named: true }
+				{ type: 'line_comment_extra_slashes'; named: true },
+				{ type: 'line_comment_regular'; named: true }
 			];
 		};
 	};
@@ -1382,7 +1382,7 @@ export type RustGrammar = {
 			outer: { multiple: false; required: true; types: [{ type: 'outer_line_doc_comment_marker'; named: true }] };
 		};
 	};
-	readonly line_comment_regular_dslash: { type: 'line_comment_regular_dslash'; named: true; fields: {} };
+	readonly line_comment_extra_slashes: { type: 'line_comment_extra_slashes'; named: true; fields: {} };
 	readonly loop_expression: {
 		type: 'loop_expression';
 		named: true;
@@ -2534,8 +2534,14 @@ export type RustGrammar = {
 			types: [{ type: 'crate'; named: true }, { type: 'visibility_modifier_pub'; named: true }];
 		};
 	};
-	readonly visibility_modifier_group: {
-		type: 'visibility_modifier_group';
+	readonly visibility_modifier_pub: {
+		type: 'visibility_modifier_pub';
+		named: true;
+		fields: {};
+		children: { multiple: false; required: false; types: [{ type: 'visibility_modifier_pub_scope'; named: true }] };
+	};
+	readonly visibility_modifier_pub_scope: {
+		type: 'visibility_modifier_pub_scope';
 		named: true;
 		fields: {};
 		children: {
@@ -2545,18 +2551,12 @@ export type RustGrammar = {
 				{ type: 'crate'; named: true },
 				{ type: 'self'; named: true },
 				{ type: 'super'; named: true },
-				{ type: 'visibility_modifier_pub_in_path'; named: true }
+				{ type: 'visibility_modifier_pub_scope_in_path'; named: true }
 			];
 		};
 	};
-	readonly visibility_modifier_pub: {
-		type: 'visibility_modifier_pub';
-		named: true;
-		fields: {};
-		children: { multiple: false; required: false; types: [{ type: 'visibility_modifier_group'; named: true }] };
-	};
-	readonly visibility_modifier_pub_in_path: {
-		type: 'visibility_modifier_pub_in_path';
+	readonly visibility_modifier_pub_scope_in_path: {
+		type: 'visibility_modifier_pub_scope_in_path';
 		named: true;
 		fields: { in: { multiple: false; required: true; types: [{ type: 'in'; named: false }] } };
 		children: {
@@ -2732,7 +2732,7 @@ export type RustGrammar = {
 	readonly _anonymous_item: { type: 'item'; named: false };
 	readonly _anonymous_let: { type: 'let'; named: false };
 	readonly _anonymous_lifetime: { type: 'lifetime'; named: false };
-	readonly line_comment_content: { type: 'line_comment_content'; named: true };
+	readonly line_comment_regular: { type: 'line_comment_regular'; named: true };
 	readonly _anonymous_literal: { type: 'literal'; named: false };
 	readonly _anonymous_loop: { type: 'loop'; named: false };
 	readonly '_anonymous_macro_rules!': { type: 'macro_rules!'; named: false };

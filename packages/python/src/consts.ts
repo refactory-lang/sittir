@@ -6,7 +6,6 @@ const NODE_KINDS = [
 	'_collection_elements',
 	'_import_list',
 	'_key_value_pattern',
-	'_match_block',
 	'_parameters',
 	'_parenthesized_import_list',
 	'_patterns',

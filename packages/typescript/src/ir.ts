@@ -66,88 +66,6 @@ export const synonym = {
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
-export const moduleExportName: {
-	readonly identifier: typeof F.buildIdentifier;
-	readonly string: typeof F.string;
-} = {
-	identifier: F.buildIdentifier,
-	string: F.string
-};
-
-export const declaration: {
-	readonly function: typeof F.functionDeclaration;
-	readonly generatorFunction: typeof F.generatorFunctionDeclaration;
-	readonly class: typeof F.classDeclaration;
-	readonly lexical: typeof F.lexicalDeclaration;
-	readonly variable: typeof F.variableDeclaration;
-	readonly functionSignature: typeof F.functionSignature;
-	readonly abstractClass: typeof F.abstractClassDeclaration;
-	readonly module: typeof F.module;
-	readonly internalModule: typeof F.internalModule;
-	readonly typeAlias: typeof F.typeAliasDeclaration;
-	readonly enum: typeof F.enumDeclaration;
-	readonly interface: typeof F.interfaceDeclaration;
-	readonly importAlias: typeof F.importAlias;
-	readonly ambient: typeof F.ambientDeclaration;
-} = {
-	function: F.functionDeclaration,
-	generatorFunction: F.generatorFunctionDeclaration,
-	class: F.classDeclaration,
-	lexical: F.lexicalDeclaration,
-	variable: F.variableDeclaration,
-	functionSignature: F.functionSignature,
-	abstractClass: F.abstractClassDeclaration,
-	module: F.module,
-	internalModule: F.internalModule,
-	typeAlias: F.typeAliasDeclaration,
-	enum: F.enumDeclaration,
-	interface: F.interfaceDeclaration,
-	importAlias: F.importAlias,
-	ambient: F.ambientDeclaration
-};
-
-export const statement: {
-	readonly export: typeof F.exportStatement;
-	readonly import: typeof F.importStatement;
-	readonly debugger: typeof F.debuggerStatement;
-	readonly expression: typeof F.expressionStatement;
-	readonly block: typeof F.statementBlock;
-	readonly if: typeof F.ifStatement;
-	readonly switch: typeof F.switchStatement;
-	readonly for: typeof F.forStatement;
-	readonly forIn: typeof F.forInStatement;
-	readonly while: typeof F.whileStatement;
-	readonly do: typeof F.doStatement;
-	readonly try: typeof F.tryStatement;
-	readonly with: typeof F.withStatement;
-	readonly break: typeof F.breakStatement;
-	readonly continue: typeof F.continueStatement;
-	readonly return: typeof F.returnStatement;
-	readonly throw: typeof F.throwStatement;
-	readonly empty: typeof F.buildEmptyStatement;
-	readonly labeled: typeof F.labeledStatement;
-} = {
-	export: F.exportStatement,
-	import: F.importStatement,
-	debugger: F.debuggerStatement,
-	expression: F.expressionStatement,
-	block: F.statementBlock,
-	if: F.ifStatement,
-	switch: F.switchStatement,
-	for: F.forStatement,
-	forIn: F.forInStatement,
-	while: F.whileStatement,
-	do: F.doStatement,
-	try: F.tryStatement,
-	with: F.withStatement,
-	break: F.breakStatement,
-	continue: F.continueStatement,
-	return: F.returnStatement,
-	throw: F.throwStatement,
-	empty: F.buildEmptyStatement,
-	labeled: F.labeledStatement
-};
-
 export const expressions: {
 	readonly sequence: typeof F.sequenceExpression;
 } = {
@@ -236,14 +154,6 @@ export const primaryExpression: {
 	nonNull: F.nonNullExpression
 };
 
-export const formalParameter: {
-	readonly required: typeof F.requiredParameter;
-	readonly optional: typeof F.optionalParameter;
-} = {
-	required: F.requiredParameter,
-	optional: F.optionalParameter
-};
-
 export const lhsExpression: {
 	readonly member: typeof F.memberExpression;
 	readonly subscript: typeof F.subscriptExpression;
@@ -276,22 +186,6 @@ export const augmentedAssignmentLhs: {
 	nonNull: F.nonNullExpression
 };
 
-export const destructuringPattern: {
-	readonly object: typeof F.objectPattern;
-	readonly array: typeof F.arrayPattern;
-} = {
-	object: F.objectPattern,
-	array: F.arrayPattern
-};
-
-export const identifier: typeof F.buildIdentifier & {
-	readonly undefined: typeof F.buildUndefined;
-	readonly identifier: typeof F.buildIdentifier;
-} = attachProps(F.buildIdentifier, {
-	undefined: F.buildUndefined,
-	identifier: F.buildIdentifier
-});
-
 export const pattern: {
 	readonly member: typeof F.memberExpression;
 	readonly subscript: typeof F.subscriptExpression;
@@ -310,18 +204,6 @@ export const pattern: {
 	array: F.arrayPattern,
 	nonNull: F.nonNullExpression,
 	rest: F.restPattern
-};
-
-export const propertyName: {
-	readonly privateIdentifier: typeof F.privatePropertyIdentifier;
-	readonly string: typeof F.string;
-	readonly number: typeof F.number;
-	readonly computed: typeof F.computedPropertyName;
-} = {
-	privateIdentifier: F.privatePropertyIdentifier,
-	string: F.string,
-	number: F.number,
-	computed: F.computedPropertyName
 };
 
 export const importIdentifier: {
@@ -391,6 +273,20 @@ export const primaryType: {
 	intersection: F.intersectionType,
 	union: F.unionType
 };
+
+export const declaration: typeof F.declaration = F.declaration;
+
+export const formalParameter: typeof F.formalParameter = F.formalParameter;
+
+export const destructuringPattern: typeof F.destructuringPattern = F.destructuringPattern;
+
+export const identifier: typeof F.buildIdentifier & typeof F.identifier = attachProps(F.buildIdentifier, F.identifier);
+
+export const propertyName: typeof F.propertyName = F.propertyName;
+
+export const moduleExportName: typeof F.moduleExportName = F.moduleExportName;
+
+export const statement: typeof F.statement = F.statement;
 
 export const ir: {
 	readonly program: typeof F.program;
@@ -528,7 +424,6 @@ export const ir: {
 	readonly lookupType: typeof F.lookupType;
 	readonly mappedTypeClause: typeof F.mappedTypeClause;
 	readonly literalType: typeof F.literalType;
-	readonly _number: typeof F._number;
 	readonly flowMaybeType: typeof F.flowMaybeType;
 	readonly parenthesizedType: typeof F.parenthesizedType;
 	readonly typeArguments: typeof F.typeArguments;
@@ -656,23 +551,23 @@ export const ir: {
 	readonly while: typeof F.whileStatement;
 	readonly with: typeof F.withStatement;
 	readonly yield: typeof F.yieldExpression;
-	readonly moduleExportName: typeof moduleExportName;
-	readonly declaration: typeof declaration;
-	readonly statement: typeof statement;
 	readonly expressions: typeof expressions;
 	readonly expression: typeof expression;
 	readonly primaryExpression: typeof primaryExpression;
-	readonly formalParameter: typeof formalParameter;
 	readonly lhsExpression: typeof lhsExpression;
 	readonly augmentedAssignmentLhs: typeof augmentedAssignmentLhs;
-	readonly destructuringPattern: typeof destructuringPattern;
-	readonly identifier: typeof identifier;
 	readonly pattern: typeof pattern;
-	readonly propertyName: typeof propertyName;
 	readonly importIdentifier: typeof importIdentifier;
 	readonly type: typeof type;
 	readonly tupleTypeMember: typeof tupleTypeMember;
 	readonly primaryType: typeof primaryType;
+	readonly declaration: typeof declaration;
+	readonly formalParameter: typeof formalParameter;
+	readonly destructuringPattern: typeof destructuringPattern;
+	readonly identifier: typeof identifier;
+	readonly propertyName: typeof propertyName;
+	readonly moduleExportName: typeof moduleExportName;
+	readonly statement: typeof statement;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
@@ -811,7 +706,6 @@ export const ir: {
 	lookupType: F.lookupType,
 	mappedTypeClause: F.mappedTypeClause,
 	literalType: F.literalType,
-	_number: F._number,
 	flowMaybeType: F.flowMaybeType,
 	parenthesizedType: F.parenthesizedType,
 	typeArguments: F.typeArguments,
@@ -947,22 +841,22 @@ export const ir: {
 	yield: F.yieldExpression,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
-	moduleExportName,
-	declaration,
-	statement,
 	expressions,
 	expression,
 	primaryExpression,
-	formalParameter,
 	lhsExpression,
 	augmentedAssignmentLhs,
-	destructuringPattern,
-	identifier,
 	pattern,
-	propertyName,
 	importIdentifier,
 	type,
 	tupleTypeMember,
 	primaryType,
+	declaration,
+	formalParameter,
+	destructuringPattern,
+	identifier,
+	propertyName,
+	moduleExportName,
+	statement,
 	synonym
 };

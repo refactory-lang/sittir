@@ -343,25 +343,6 @@
     "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
-    "ownerKind": "_number",
-    "message": "[assemble] typeName collision: kind '_number' renamed 'Number' → '_Number' (visible sibling(s): 'number')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Number",
-      "newType": "_Number",
-      "visibleKinds": [
-        "number"
-      ]
-    },
-    "location": "_number"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
     "ownerKind": "_identifier",
     "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')",
     "canProceed": true,
@@ -2542,7 +2523,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "visibility_modifier_group",
+    "kind": "visibility_modifier_pub_scope",
     "count": 4,
     "entries": [
       "Visibility modifiers"
@@ -2551,13 +2532,13 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "visibility_modifier_group"
+    "label": "visibility_modifier_pub_scope"
   },
   {
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "visibility_modifier_pub_in_path",
+    "kind": "visibility_modifier_pub_scope_in_path",
     "count": 1,
     "entries": [
       "Visibility modifiers"
@@ -2566,7 +2547,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "visibility_modifier_pub_in_path"
+    "label": "visibility_modifier_pub_scope_in_path"
   },
   {
     "source": "validator",
@@ -4578,7 +4559,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "visibility_modifier_group",
+    "kind": "visibility_modifier_pub_scope",
     "count": 4,
     "entries": [
       "Visibility modifiers"
@@ -4587,13 +4568,13 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "visibility_modifier_group"
+    "label": "visibility_modifier_pub_scope"
   },
   {
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "visibility_modifier_pub_in_path",
+    "kind": "visibility_modifier_pub_scope_in_path",
     "count": 1,
     "entries": [
       "Visibility modifiers"
@@ -4602,7 +4583,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "visibility_modifier_pub_in_path"
+    "label": "visibility_modifier_pub_scope_in_path"
   },
   {
     "source": "validator",
@@ -5212,21 +5193,6 @@
     "severity": "info",
     "message": "parse-error",
     "label": "parse-error"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "unary_expression_number",
-    "count": 1,
-    "entries": [
-      "Literal types"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "unary_expression_number"
   },
   {
     "source": "validator",
@@ -6521,7 +6487,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "_number",
+    "kind": "literal_type_negative_number",
     "count": 2,
     "entries": [
       "Literal types"
@@ -6530,7 +6496,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_number"
+    "label": "literal_type_negative_number"
   },
   {
     "source": "validator",
@@ -7954,7 +7920,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "_number",
+    "kind": "literal_type_negative_number",
     "count": 2,
     "entries": [
       "Literal types"
@@ -7963,7 +7929,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_number"
+    "label": "literal_type_negative_number"
   },
   {
     "source": "validator",
@@ -8243,21 +8209,6 @@
     "severity": "info",
     "message": "no-rule",
     "label": "_lhs_expression"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "_unary_expression_number",
-    "count": 1,
-    "entries": [
-      "unary_expression_number"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_unary_expression_number"
   },
   {
     "source": "validator",
@@ -10011,39 +9962,6 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_match_block",
-    "count": 19,
-    "entries": [
-      "Adding a wild card",
-      "As patterns",
-      "Builtin classes",
-      "Case terminating in comma",
-      "Comma separated cases",
-      "Complex case patterns on classes",
-      "Complex case patterns on complex numbers",
-      "Constants and enums",
-      "Dict mappings",
-      "If guards",
-      "Literals",
-      "Match match, case case",
-      "Matching multiple values",
-      "Matching objects",
-      "Matching specific values",
-      "Maybe sequence pattern right hand side precedence validation",
-      "Multiple match patterns",
-      "Or patterns",
-      "Positional arguments"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "_match_block"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
     "kind": "match_block_block",
     "count": 19,
     "entries": [
@@ -12436,39 +12354,6 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_match_block",
-    "count": 19,
-    "entries": [
-      "Adding a wild card",
-      "As patterns",
-      "Builtin classes",
-      "Case terminating in comma",
-      "Comma separated cases",
-      "Complex case patterns on classes",
-      "Complex case patterns on complex numbers",
-      "Constants and enums",
-      "Dict mappings",
-      "If guards",
-      "Literals",
-      "Match match, case case",
-      "Matching multiple values",
-      "Matching objects",
-      "Matching specific values",
-      "Maybe sequence pattern right hand side precedence validation",
-      "Multiple match patterns",
-      "Or patterns",
-      "Positional arguments"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "_match_block"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
     "kind": "match_block_block",
     "count": 19,
     "entries": [
@@ -13450,6 +13335,21 @@
     "severity": "info",
     "message": "no-rule",
     "label": "_case_as_pattern"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "_match_block",
+    "count": 1,
+    "entries": [
+      "match_block"
+    ],
+    "stage": "coverage-excluded",
+    "code": "coverage-excluded",
+    "severity": "info",
+    "message": "no-rule",
+    "label": "_match_block"
   },
   {
     "source": "validator",

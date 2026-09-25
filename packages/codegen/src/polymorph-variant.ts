@@ -1,5 +1,5 @@
 export interface PolymorphVariantDescriptor {
-	readonly definedBy: 'override';
+	readonly definedBy: 'enrich' | 'override';
 	readonly childKind: Readonly<Record<string, string>>;
 	readonly helperKind?: Readonly<Record<string, string>>;
 	readonly helperChildKind?: Readonly<Record<string, readonly string[]>>;

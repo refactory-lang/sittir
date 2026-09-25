@@ -128,6 +128,22 @@ function matchesEmpty(rule2) {
   return false;
 }
 
+// packages/codegen/src/dsl/rule-metadata.ts
+function makeRuleMetadata(shape) {
+  return shape;
+}
+function readRuleMetadata(meta) {
+  return meta;
+}
+function normalizeEnumMembers(members, provenance) {
+  if (members.length === 1) return members[0];
+  return {
+    type: CHOICE,
+    members,
+    ...provenance !== void 0 ? { metadata: makeRuleMetadata(provenance) } : {}
+  };
+}
+
 // packages/codegen/src/dsl/transform/transform-path.ts
 function dsl() {
   return globalThis;
@@ -253,8 +269,8 @@ function descendThroughPrecWrapper(rule2, segments, patch, precStack) {
 function isEnrichGroupLiftSymbol(rule2) {
   const t = rule2.type;
   if (t !== "SYMBOL") return false;
-  const meta = rule2.metadata;
-  return meta?.author === "enrich";
+  const meta = readRuleMetadata(rule2.metadata);
+  return meta?.symbolSource === "group-lift";
 }
 var groupLiftRuleMap;
 function setGroupLiftRuleMap(map) {
@@ -1606,7 +1622,7 @@ function innermostNamedAliasContent(rule2) {
   return current;
 }
 function distributeInlineAliasChoices(rule2, ctx) {
-  const walker = new RuleWalker();
+  const walker2 = new RuleWalker();
   const distributed = /* @__PURE__ */ new WeakSet();
   const inlineChoiceOf = (content) => {
     if (content.type !== SYMBOL) return void 0;
@@ -1633,10 +1649,10 @@ function distributeInlineAliasChoices(rule2, ctx) {
     distributed.add(split);
     return split;
   };
-  return visit(walker.map(rule2, visit));
+  return visit(walker2.map(rule2, visit));
 }
 function mintInlineLiteralAliasStorage(rules) {
-  const walker = new RuleWalker();
+  const walker2 = new RuleWalker();
   const literalAliasOf = (r) => {
     const alias2 = r;
     if (alias2.type !== ALIAS || alias2.named !== true || !alias2.value || Object.hasOwn(rules, alias2.value)) return void 0;
@@ -1648,7 +1664,7 @@ function mintInlineLiteralAliasStorage(rules) {
   };
   const byDisplay = /* @__PURE__ */ new Map();
   for (const rule2 of Object.values(rules)) {
-    walker.fold(rule2, byDisplay, (acc, r) => {
+    walker2.fold(rule2, byDisplay, (acc, r) => {
       const site = literalAliasOf(r);
       if (site === void 0) return acc;
       const entry = acc.get(site.display);
@@ -1671,7 +1687,7 @@ function mintInlineLiteralAliasStorage(rules) {
     return { type: ALIAS, named: true, value: site.display, content: { type: SYMBOL, name: minted.name } };
   };
   const out = {};
-  for (const [name, rule2] of Object.entries(rules)) out[name] = visit(walker.map(rule2, visit));
+  for (const [name, rule2] of Object.entries(rules)) out[name] = visit(walker2.map(rule2, visit));
   for (const { name, body } of storage.values()) out[name] = body;
   return out;
 }
@@ -1688,7 +1704,7 @@ function liftAliasedHiddenRuleBodies(rules) {
     const name = r.type === SYMBOL ? r.name : void 0;
     return name !== void 0 && displayByRule.has(name) ? name : void 0;
   };
-  const walker = new RuleWalker();
+  const walker2 = new RuleWalker();
   const visit = (r) => {
     const name = lifted(r);
     if (name !== void 0) return { ...displayByRule.get(name), content: r };
@@ -1701,12 +1717,12 @@ function liftAliasedHiddenRuleBodies(rules) {
   const out = {};
   for (const [name, rule2] of Object.entries(rules)) {
     const body = displayByRule.get(name)?.content ?? rule2;
-    out[name] = visit(walker.map(body, visit));
+    out[name] = visit(walker2.map(body, visit));
   }
   return out;
 }
 function unaliasOverloadedDisplays(rules, ctx) {
-  const walker = new RuleWalker();
+  const walker2 = new RuleWalker();
   const siteOf = (r) => {
     const alias2 = r;
     return alias2.type === ALIAS && alias2.named === true && alias2.value ? alias2 : void 0;
@@ -1719,7 +1735,7 @@ function unaliasOverloadedDisplays(rules, ctx) {
   };
   const storagesByDisplay = /* @__PURE__ */ new Map();
   for (const rule2 of Object.values(rules)) {
-    walker.fold(rule2, storagesByDisplay, (acc, r) => {
+    walker2.fold(rule2, storagesByDisplay, (acc, r) => {
       const site = siteOf(r);
       if (site === void 0) return acc;
       const storage = storageOf(site.content);
@@ -1781,24 +1797,11 @@ function unaliasOverloadedDisplays(rules, ctx) {
     return action.kind === "drop" ? site.content : { ...site, value: action.display };
   };
   const out = {};
-  for (const [name, rule2] of Object.entries(rules)) out[name] = visit(walker.map(rule2, visit));
+  for (const [name, rule2] of Object.entries(rules)) out[name] = visit(walker2.map(rule2, visit));
   return out;
 }
 var flagWalker = new RuleWalker();
 var fuseHeadRepeatListsWalker = new RuleWalker();
-
-// packages/codegen/src/dsl/rule-metadata.ts
-function makeRuleMetadata(shape) {
-  return shape;
-}
-function normalizeEnumMembers(members, provenance) {
-  if (members.length === 1) return members[0];
-  return {
-    type: CHOICE,
-    members,
-    ...provenance !== void 0 ? { metadata: makeRuleMetadata(provenance) } : {}
-  };
-}
 
 // packages/codegen/src/dsl/transform/token-forms.ts
 var typeOf = (rule2) => rule2.type ?? "";
@@ -1900,6 +1903,187 @@ function distributeTokenForms(rule2, kind) {
   };
   for (let i = precStack.length - 1; i >= 0; i--) out = { ...precStack[i], content: out };
   return out;
+}
+
+// packages/codegen/src/compiler/variant-structural.ts
+function prefixNamedSuffix(parentKind, targetName) {
+  const bareTarget = targetName.startsWith("_") ? targetName.slice(1) : targetName;
+  const prefix = `${polymorphVisibleName(parentKind, "")}`;
+  if (!bareTarget.startsWith(prefix)) return null;
+  const suffix = bareTarget.slice(prefix.length);
+  return suffix.length > 0 ? suffix : null;
+}
+var GROUP_TOKEN_SYNONYMS = {
+  item: "statement",
+  stmt: "statement",
+  expr: "expression",
+  decl: "declaration",
+  impl: "implementation"
+};
+var CATEGORY_TOKENS = /* @__PURE__ */ new Set([
+  "expression",
+  "statement",
+  "literal",
+  "declaration",
+  "definition",
+  "operator",
+  "pattern",
+  "type"
+]);
+function normalizeGroupToken(token2) {
+  return GROUP_TOKEN_SYNONYMS[token2] ?? token2;
+}
+function tokensOf(name) {
+  return name.split("_").filter((t) => t.length > 0);
+}
+function supertypeMemberName(memberKind, supertypeKind) {
+  const parts = tokensOf(memberKind);
+  const bareMember = parts.join("_");
+  const groupTokens = new Set(tokensOf(supertypeKind).map(normalizeGroupToken));
+  let kept = parts.filter((t) => !groupTokens.has(normalizeGroupToken(t)));
+  if (kept.length === parts.length && parts.length >= 2) {
+    const tail = normalizeGroupToken(parts[parts.length - 1]);
+    if (CATEGORY_TOKENS.has(tail)) kept = parts.slice(0, -1);
+  }
+  if (kept.length === 0 || kept.join("_") === tokensOf(supertypeKind).join("_")) return bareMember;
+  return kept.join("_");
+}
+var walker = new RuleWalker();
+
+// packages/codegen/src/dsl/automatic-variants.ts
+var ENRICH_AUTOMATIC_VARIANTS_KEY = "__enrichedAutomaticVariants__";
+var SLOT_BOUNDARIES = /* @__PURE__ */ new Set(["FIELD", "TOKEN", "IMMEDIATE_TOKEN", "ALIAS", "PATTERN", "STRING", "SYMBOL", "BLANK"]);
+function armDisplayOf(arm2) {
+  if (arm2.type === "SYMBOL" && typeof arm2.name === "string") return arm2.name.replace(/^_+/, "");
+  if (arm2.type === "ALIAS" && arm2.named === true && typeof arm2.value === "string" && arm2.content?.type === "SYMBOL") return arm2.value;
+  return void 0;
+}
+function isDisplayedLiteral(arm2) {
+  return arm2.type === "ALIAS" && arm2.named === true && arm2.content?.type === "STRING";
+}
+function annotationsOf(arm2) {
+  return arm2.type === "ALIAS" ? arm2.content?.annotations : arm2.annotations;
+}
+function refOf(arm2) {
+  if (arm2.type === "ALIAS") return `${String(arm2.value)}\0${arm2.content?.name ?? ""}`;
+  if (arm2.type === "SYMBOL") return String(arm2.name);
+  return JSON.stringify(arm2.value);
+}
+function automaticVariantKey(arm2) {
+  const shape = arm2;
+  const annotations = annotationsOf(shape);
+  if (annotations?.variantOf === void 0) return void 0;
+  return `${annotations.variantOf}\0${annotations.variant ?? ""}\0${refOf(shape)}`;
+}
+function holdsChoice(node) {
+  if (node === void 0) return false;
+  if (node.type === "CHOICE") return (node.members ?? []).filter((m) => m.type !== "BLANK").length >= 2 || (node.members ?? []).some(holdsChoice);
+  if (node.type !== void 0 && SLOT_BOUNDARIES.has(node.type)) return false;
+  return (node.members ?? []).some(holdsChoice) || node.content !== void 0 && holdsChoice(node.content);
+}
+function isHoistedChoiceGroup(rule2) {
+  return rule2?.annotations?.hoisted === true && holdsChoice(rule2);
+}
+function stampRuleVariants(owner, rule2, ruleOf, stamped, isSupertype) {
+  const nameOf = (display) => isSupertype ? supertypeMemberName(display, owner) : prefixNamedSuffix(owner, display) ?? display;
+  const label = (member) => {
+    const display = armDisplayOf(member);
+    const annotations = display === void 0 ? { variantOf: owner } : { variant: nameOf(display), variantOf: owner };
+    const annotated = withAnnotations(member, annotations);
+    const out = { ...annotated, metadata: makeRuleMetadata({ ...annotated.metadata, author: "enrich" }) };
+    stamped.add(automaticVariantKey(out));
+    return out;
+  };
+  const stamp = (member) => {
+    if (annotationsOf(member)?.variantOf !== void 0 || isDisplayedLiteral(member)) return member;
+    return member.type === "CHOICE" ? visit(member) : label(member);
+  };
+  const visit = (node) => {
+    if (node.type === "CHOICE" && node.members !== void 0) {
+      const choosable = node.members.filter((m) => m.type !== "BLANK").length >= 2;
+      const members = node.members.map((member) => choosable && member.type !== "BLANK" ? stamp(member) : visit(member));
+      return members.some((m, i) => m !== node.members[i]) ? { ...node, members } : node;
+    }
+    if (node.type === "SYMBOL" && typeof node.name === "string" && annotationsOf(node)?.variantOf === void 0) {
+      return isHoistedChoiceGroup(ruleOf(node.name)) ? label(node) : node;
+    }
+    if (node.type !== void 0 && SLOT_BOUNDARIES.has(node.type)) return node;
+    if (node.members !== void 0) {
+      const members = node.members.map(visit);
+      return members.some((m, i) => m !== node.members[i]) ? { ...node, members } : node;
+    }
+    if (node.content !== void 0 && typeof node.content === "object") {
+      const content = visit(node.content);
+      return content === node.content ? node : { ...node, content };
+    }
+    return node;
+  };
+  return visit(rule2);
+}
+function stampAutomaticVariants(rules, supertypeNames, inlineNames) {
+  const stamped = /* @__PURE__ */ new Set();
+  for (const owner of Object.keys(rules)) {
+    const rule2 = rules[owner];
+    if (rule2 === void 0) continue;
+    const isSupertype = supertypeNames.has(owner) || isParserHiddenName(owner) && !inlineNames.has(owner) && isSupertypeLike(rule2);
+    rules[owner] = stampRuleVariants(owner, rule2, (name) => rules[name], stamped, isSupertype);
+  }
+  return stamped;
+}
+function getEnrichAutomaticVariants(grammar2) {
+  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Set();
+  const value = grammar2[ENRICH_AUTOMATIC_VARIANTS_KEY];
+  return value instanceof Set ? value : /* @__PURE__ */ new Set();
+}
+function withoutAutomaticVariants(rule2, automatic) {
+  if (automatic.size === 0) return rule2;
+  const strip = (node) => {
+    if (node.type === "CHOICE" && node.members !== void 0) {
+      const members = node.members.map((member) => {
+        const key = automaticVariantKey(member);
+        if (key !== void 0 && automatic.has(key)) return withoutLabel(member);
+        return strip(member);
+      });
+      return members.some((m, i) => m !== node.members[i]) ? { ...node, members } : node;
+    }
+    if (node.type !== void 0 && SLOT_BOUNDARIES.has(node.type)) return node;
+    if (node.members !== void 0) {
+      const members = node.members.map(strip);
+      return members.some((m, i) => m !== node.members[i]) ? { ...node, members } : node;
+    }
+    if (node.content !== void 0 && typeof node.content === "object") {
+      const content = strip(node.content);
+      return content === node.content ? node : { ...node, content };
+    }
+    return node;
+  };
+  return strip(rule2);
+}
+function withoutLabel(arm2) {
+  const drop = (annotations) => {
+    if (annotations === void 0) return void 0;
+    const { variant: _variant, variantOf: _variantOf, ...rest } = annotations;
+    return Object.keys(rest).length === 0 ? void 0 : rest;
+  };
+  const rebuild = (node) => {
+    const annotations = drop(node.annotations);
+    const { annotations: _annotations, ...bare } = node;
+    return annotations === void 0 ? bare : { ...bare, annotations };
+  };
+  return arm2.type === "ALIAS" && arm2.content !== void 0 ? { ...arm2, content: rebuild(arm2.content) } : rebuild(arm2);
+}
+function withAuthoredLabel(site, label) {
+  const annotated = withAnnotations(site, label);
+  return { ...annotated, metadata: makeRuleMetadata({ ...annotated.metadata, author: "override" }) };
+}
+function relabelledArm(site, original) {
+  const owner = annotationsOf(original)?.variantOf;
+  if (owner === void 0) return site;
+  const display = armDisplayOf(site);
+  return withAuthoredLabel(site, display === void 0 ? { variantOf: owner } : { variant: prefixNamedSuffix(owner, display) ?? display, variantOf: owner });
+}
+function unlabelled(rule2) {
+  return withoutLabel(rule2);
 }
 
 // packages/codegen/src/dsl/enrich.ts
@@ -2014,6 +2198,7 @@ function enrich(baseInput) {
     if (rule2) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule2, mergedRules, supertypeNames);
   }
   synthesizeFieldEnumRules(mergedRules);
+  const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
   setGroupLiftRuleMap({
     get: (n) => mergedRules[n],
     set: (n, b) => {
@@ -2035,6 +2220,14 @@ function enrich(baseInput) {
   if (clauseGroupOwners.size > 0) {
     Object.defineProperty(result, ENRICH_CLAUSE_GROUP_OWNERS_KEY, {
       value: clauseGroupOwners,
+      enumerable: false,
+      writable: false,
+      configurable: true
+    });
+  }
+  if (automaticVariants.size > 0) {
+    Object.defineProperty(result, ENRICH_AUTOMATIC_VARIANTS_KEY, {
+      value: automaticVariants,
       enumerable: false,
       writable: false,
       configurable: true
@@ -4038,7 +4231,7 @@ function resolveToEnumMembersOneLevelDeep(target) {
 var currentContext = null;
 function wireRegisterSyntheticRule(name, content) {
   if (!currentContext) return false;
-  currentContext.deposits.set(name, content);
+  currentContext.deposits.set(name, unlabelled(content));
   return true;
 }
 function wireDeclareRuleBody(name, text, site) {
@@ -4093,6 +4286,9 @@ function wireRegisterRefineForms(kind, forms) {
 function wireGetCurrentRuleKind() {
   return currentContext?.currentRuleKind ?? null;
 }
+function wireAutomaticVariants() {
+  return currentContext?.automaticVariants ?? /* @__PURE__ */ new Set();
+}
 function wireIsExtraRule(name) {
   return currentContext?.extraRuleNames.has(name) ?? false;
 }
@@ -4120,7 +4316,8 @@ function wire(config, base2) {
     extraRuleNames: extraRuleNames(cfg, baseArg),
     precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
     flattenedParents: /* @__PURE__ */ new Set(),
-    aliasTargets: /* @__PURE__ */ new Set()
+    aliasTargets: /* @__PURE__ */ new Set(),
+    automaticVariants: getEnrichAutomaticVariants(base2)
   };
   const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
@@ -4403,11 +4600,11 @@ function wrapSupertypesCallback(userSupertypes, context) {
   };
 }
 function recordAliasTargets(rules, context) {
-  const walker = new RuleWalker();
+  const walker2 = new RuleWalker();
   for (const [name, fn] of Object.entries(rules)) {
     rules[name] = function aliasRecordingRuleFn($, previous) {
       const rule2 = fn.call(this, $, previous);
-      walker.fold(rule2, context.aliasTargets, (targets, node) => {
+      walker2.fold(rule2, context.aliasTargets, (targets, node) => {
         const alias2 = node;
         if (alias2.type === "ALIAS" && alias2.named !== false && typeof alias2.value === "string") targets.add(alias2.value);
         return targets;
@@ -4555,15 +4752,8 @@ function replaceInBodyRt(rule2, candidates) {
   const r = rule2;
   for (const c of candidates) {
     if (patternBodyEqual(rule2, c.body)) {
-      if (c.aliasAs !== void 0) {
-        return {
-          type: "ALIAS",
-          content: { type: "SYMBOL", name: c.name },
-          named: true,
-          value: c.aliasAs
-        };
-      }
-      return { type: "SYMBOL", name: c.name };
+      const site = c.aliasAs === void 0 ? { type: "SYMBOL", name: c.name } : { type: "ALIAS", content: { type: "SYMBOL", name: c.name }, named: true, value: c.aliasAs };
+      return relabelledArm(site, rule2);
     }
   }
   const t = r.type;
@@ -4836,7 +5026,7 @@ function regex(pattern) {
 
 // packages/codegen/src/dsl/transform/transform.ts
 function withVariantAnnotation(rule2, variantName, parentKind, arm2) {
-  return withAnnotations(rule2, { variant: variantName, variantOf: parentKind, ...isDefaultArm(arm2) ? { default: true } : {} });
+  return withAuthoredLabel(rule2, { variant: variantName, variantOf: parentKind, ...isDefaultArm(arm2) ? { default: true } : {} });
 }
 function isDefaultArm(arm2) {
   const node = arm2;
@@ -5507,6 +5697,7 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   if (maybeSymbolized !== content) {
     content = maybeSymbolized;
   }
+  content = withoutAutomaticVariants(content, wireAutomaticVariants());
   const native = globalThis.field;
   if (typeof native !== "function") {
     throw new Error(
@@ -5517,16 +5708,17 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   return { ...result, metadata: makeRuleMetadata({ fieldSource: "override" }) };
 }
 function resolveAliasPlaceholder(patch, originalMember, precStack) {
+  const labelled = (site) => relabelledArm(site, originalMember);
   const ruleName = "_" + patch.name;
   const lift = enrichLiftArmOf(originalMember);
-  if (lift !== null) return renameEnrichLift(originalMember, lift, ruleName, patch.name);
+  if (lift !== null) return labelled(renameEnrichLift(originalMember, lift, ruleName, patch.name));
   const mint = (body) => registerAliasedVariant(ruleName, patch.name, body, (b) => wrapInPrec(b, precStack));
   if (originalMember.type === "ALIAS") {
     const content = contentOf3(originalMember);
-    if (!isSymbolType(content.type)) return mint(content);
-    return { ...originalMember, named: true, value: patch.name };
+    if (!isSymbolType(content.type)) return labelled(mint(content));
+    return labelled({ ...originalMember, named: true, value: patch.name });
   }
-  return mint(originalMember);
+  return labelled(mint(originalMember));
 }
 function registerAliasedVariant(ruleName, nodeName, originalMember, bodyWrapper) {
   const single = originalMember;
@@ -5631,6 +5823,7 @@ function immediateClosingDelimiter(original) {
   return { ...original, members: [...seqMembers.slice(0, -1), token.immediate(last.value)] };
 }
 var enrichedBase = enrich(import_grammar.default);
+var UNFILLED_OPTION_DEFAULT = "an absent registered choice option (terminator) has no render-time default: the transport field is required and prepare never fills it from the site's default arm";
 var grammar_sittir_default = grammar(
   enrichedBase,
   wire(
@@ -5921,6 +6114,7 @@ var grammar_sittir_default = grammar(
           0: variant("line"),
           1: variant("block")
         },
+        literal_type: { 0: variant("negative_number") },
         number: {
           "1/0/0": field("integer"),
           "1/0/2": field("fraction"),
@@ -6261,7 +6455,12 @@ var grammar_sittir_default = grammar(
         import_require_clause: "#170 \u2014 Missing field _content on ImportRequireClauseTransport._source",
         object_type_content: "#170 (#172-adjacent) \u2014 Missing field _content through export-arm transport",
         string: "#170 \u2014 StringContentTransportSlot rejects stub ($type property missing)",
-        "export_statement_default_declaration.defaultKwValue": "a required registered slot on an intermediate child (defaultKw) reached through a nested (multi-level) sub-factory chain has no home in the generated test: .$with only reaches the outer node's own slots, and the recursive subFactoryCallArgs builder produces a nested config expression, not a statement a .$with chain could attach to"
+        "export_statement_default_declaration.defaultKw.value": "a required registered slot on an intermediate child (defaultKw) reached through a nested (multi-level) sub-factory chain has no home in the generated test: .$with only reaches the outer node's own slots, and the recursive subFactoryCallArgs builder produces a nested config expression, not a statement a .$with chain could attach to; " + UNFILLED_OPTION_DEFAULT,
+        "export_statement_default_declaration.lexical": UNFILLED_OPTION_DEFAULT,
+        "export_statement_default_declaration.variable": UNFILLED_OPTION_DEFAULT,
+        "export_statement_default_declaration.functionSignature": UNFILLED_OPTION_DEFAULT,
+        "export_statement_default_declaration.typeAlias": UNFILLED_OPTION_DEFAULT,
+        "export_statement_default_declaration.importAlias": UNFILLED_OPTION_DEFAULT
       },
       rules: {
         _whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),

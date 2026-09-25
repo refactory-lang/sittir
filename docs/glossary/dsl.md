@@ -2425,6 +2425,185 @@ rebuild goes through here.
  */
 ```
 
+### `packages/codegen/src/dsl/automatic-variants.ts::module`
+
+Stamps `variant`/`variantOf` annotations on every arm that needs one, once,
+in `enrich`, right after `synthesizeFieldEnumRules` — so a sub-factory arm
+exists exactly where a variant label sits at the end of wire, and nothing
+downstream re-derives arm-ness from a choice's shape. `wire`'s
+`resolveFieldPlaceholder`, `resolveAliasPlaceholder`, and `replaceInBodyRt`
+(`dsl/wire/wire.ts`) read the stamped set back through
+`WireContext.automaticVariants` to strip a label a patch consumed
+(`withoutAutomaticVariants`) or restamp a label at a rewritten site
+(`relabelledArm`), so overrides and group body-pattern substitutions keep
+the invariant intact instead of losing or duplicating a label.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::ENRICH_AUTOMATIC_VARIANTS_KEY`
+
+Well-known non-enumerable key attached by `enrich()` to the grammar result:
+the set of `variantOf\0variant\0ref` stamp keys (`automaticVariantKey`)
+every automatically-labelled arm carries. `withWireContext`/`wire()` read it
+(`getEnrichAutomaticVariants`) into `WireContext.automaticVariants`, the set
+`withoutAutomaticVariants` strips a label against.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::SLOT_BOUNDARIES`
+
+The rule types `visit`/`holdsChoice` never recurse past: FIELD, TOKEN,
+IMMEDIATE_TOKEN, ALIAS, PATTERN, STRING, SYMBOL, BLANK. A FIELD already
+addresses whatever choice it wraps by name, so nothing inside needs an arm
+label; TOKEN/IMMEDIATE_TOKEN/ALIAS/PATTERN/STRING/BLANK are leaves or
+lexical wrappers with no further choice structure to label. SYMBOL is here
+for `holdsChoice`'s sake (a bare reference has no body of its own to walk
+into); `visit` special-cases SYMBOL itself, ahead of this boundary, to
+decide whether the rule it names is a hoisted choice worth labelling.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::armDisplayOf`
+
+The display name an arm would be labelled with, if any: a SYMBOL's own name
+with any leading underscores stripped, or a named ALIAS-of-SYMBOL's
+`value`. `undefined` for anything else — a literal, an unnamed alias, a
+seq — which is exactly what makes the arm `variantOf`-only.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::isDisplayedLiteral`
+
+Whether an arm is a named alias over a STRING: a literal shown under
+another kind's display. Such an arm is never labelled — `stamp` skips it
+outright, since the display it stands under already has its own arm.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::annotationsOf`
+
+The annotation payload a rule shape carries its `variant`/`variantOf` stamp
+on: an ALIAS keeps them on its `content`, everything else on itself.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::refOf`
+
+The identity half of an arm's stamp key: an ALIAS keys by its `value` and
+its content's `name` (so re-pointing a mint at a new target changes the
+key), a SYMBOL keys by its own `name`, anything else by its
+JSON-stringified `value` (a literal keys by its own text).
+
+### `packages/codegen/src/dsl/automatic-variants.ts::automaticVariantKey`
+
+The full stamp key for an arm that already carries a `variantOf`
+annotation: `variantOf\0variant\0ref` — `undefined` for an arm with no
+`variantOf` at all. The set `stampAutomaticVariants` returns and
+`withoutAutomaticVariants`/`getEnrichAutomaticVariants` consume is built
+and read through this one key shape, so a label added and a label stripped
+can never disagree on identity.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::holdsChoice`
+
+Whether a rule body holds a qualifying choice (two or more non-blank arms)
+anywhere beneath it: descends into every member and wrapper, but a
+`SLOT_BOUNDARIES` type stops the walk, since a labellable choice can't sit
+inside one. Used only to answer whether a hoisted group is itself a
+choice-holding one (`isHoistedChoiceGroup`); `visit`/`stamp` find and label
+a choice directly, on their own walk, when they reach one.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::isHoistedChoiceGroup`
+
+Whether a referenced rule is a hoisted group (`annotations.hoisted`) that
+itself holds a choice (`holdsChoice`) — the condition under which a plain
+SYMBOL reference to it gets labelled (`visit`'s SYMBOL case): the reference
+stands in for a choice one hop away, so it needs the label that choice's
+own arms would get if inlined.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::stampRuleVariants`
+
+Labels one rule's choice arms, called from `stampAutomaticVariants`'s
+per-owner loop with that owner's `isSupertype` fact. `visit` walks the
+rule; at a CHOICE with two or more non-blank members (`choosable`), each
+non-blank member goes through `stamp` — labelled directly (`label`) unless
+it already carries a `variantOf` (an override-declared arm) or is a
+displayed literal, or is itself a nested CHOICE, in which case `visit`
+recurses into it instead so only the innermost arms of a nested choice ever
+carry a label. A choice with fewer than two non-blank members (an
+optional-shaped one) is walked but not labelled. `visit`'s other branches:
+a bare SYMBOL naming a hoisted choice-holding rule gets labelled as a
+stand-in for that choice (`isHoistedChoiceGroup`); `SLOT_BOUNDARIES` stops
+the walk; everything else recurses into `members`/`content`. `label` stamps
+`variantOf: owner` (plus a `variant` name when the arm has a display:
+`compiler/variant-structural.ts`'s `supertypeMemberName(display, owner)`
+for a supertype owner, `prefixNamedSuffix(owner, display) ?? display`
+otherwise — a supertype names its members by what's left after its own
+name's tokens, a non-supertype owner by suffix), merges `author: 'enrich'`
+into the arm's own rule metadata (`makeRuleMetadata({ ...existing, author:
+'enrich' })`, so any metadata the arm already carried survives), and
+records its stamp key into the caller's `stamped` set.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::stampAutomaticVariants`
+
+Labels every eligible choice arm across the whole grammar: for each rule,
+`stampRuleVariants(owner, rule, ruleOf, stamped, isSupertype)` with the
+rule's own name as `owner`, a lookup back into `rules` for
+`isHoistedChoiceGroup`'s SYMBOL case, and `isSupertype` — true when `owner`
+is in the declared `supertypeNames` set, or when it is a hidden parser
+name not in `inlineNames` whose body is supertype-like
+(`dsl/rule-patterns.ts`'s `isSupertypeLike`) — replacing the rule in place.
+A supertype owner's members are named by `supertypeMemberName`
+(stripped-of-category short names, e.g. `ir.expression.binary`); any other
+owner's by `prefixNamedSuffix` (owner-prefix suffix names). Called once
+from `enrich`, after `synthesizeFieldEnumRules` (labelling has to see the
+synthesized field-enum choices too). Returns the accumulated stamp-key set,
+which `enrich` attaches to the grammar result as
+`ENRICH_AUTOMATIC_VARIANTS_KEY` when non-empty.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::getEnrichAutomaticVariants`
+
+The stamped set off a grammar result, or an empty set for anything that
+isn't one — a grammar with no automatically-labelled arms never got the
+key attached at all.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::withoutAutomaticVariants`
+
+Strips every automatically-stamped label (never an override-declared one —
+only a key present in `automatic`) from a rule tree, without touching
+anything else: a CHOICE's members are checked by `automaticVariantKey` and
+de-labelled (`withoutLabel`) when their key is in `automatic`, otherwise
+walked; every other node type just recurses into `members`/`content`. Used
+by `resolveFieldPlaceholder` so a patch that pulls a labelled arm under a
+`field()` doesn't leave the enrich label sitting underneath the field's
+own address.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::withoutLabel`
+
+Removes `variant`/`variantOf` from a rule's own annotations (or, for an
+ALIAS, its `content`'s), dropping the `annotations` key entirely once both
+are gone rather than leaving an empty object behind.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::withAuthoredLabel`
+
+Writes an authored label onto `site`: `withAnnotations(site, label)`, then
+merges `author: 'override'` into the result's own rule metadata
+(`makeRuleMetadata({ ...existing, author: 'override' })`, over whatever
+metadata `site` already carried). The one site that stamps a label as
+author-declared rather than enrich-automatic — `relabelledArm` and
+`transform/transform.ts`'s `withVariantAnnotation` both route their label
+writes through it, so `isEnrichAuthored` never mistakes an override's arm
+for one of enrich's own.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::relabelledArm`
+
+Re-stamps a label at a rewritten site: when `original` carried a
+`variantOf` (its arm was labelled, by enrich or by an override), `site` —
+the new rule the rewrite produced — gets `variantOf: <that owner>` and, if
+`site` itself has a display (`armDisplayOf`), a freshly-computed `variant`
+name relative to that owner, written through `withAuthoredLabel` (so the
+relabelled site is stamped `author: 'override'`, never left as enrich's).
+`original` with no label leaves `site` untouched. Used wherever wire
+resolution replaces one rule shape with another in place of the arm it
+started from — `resolveAliasPlaceholder`'s lift/mint/rename branches, and
+`replaceInBodyRt`'s group body-pattern substitution — so the label follows
+the arm to its new shape instead of vanishing or staying pinned to the old
+shape's name.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::unlabelled`
+
+`withoutLabel`, exposed for a caller with no `automatic` set to check
+against — `wireRegisterSyntheticRule` uses it to store a minted body with
+no label of its own, since a mint's label belongs on the reference site
+that names it, not on the body it points to.
+
 ### `packages/codegen/src/dsl/rule-transforms.ts::structuralBuilder`
 
 ```text

@@ -448,9 +448,6 @@ export interface IsGuards {
 	literalType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LiteralType };
-	Number<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId._Number };
 	flowMaybeType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FlowMaybeType };
@@ -814,7 +811,6 @@ export interface AssertGuards {
 	lookupType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.LookupType };
 	mappedTypeClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.MappedTypeClause };
 	literalType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.LiteralType };
-	Number(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId._Number };
 	flowMaybeType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.FlowMaybeType };
 	parenthesizedType(
 		v: { readonly $type: number } | number
@@ -914,13 +910,13 @@ const _supertype_moduleExportName_ids = new Set<number>([1]);
 const _supertype_declaration_ids = new Set<number>([
 	241, 243, 238, 201, 200, 290, 301, 302, 303, 312, 309, 307, 305, 300
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([404, 405]);
+const _supertype_importSpecifier_ids = new Set<number>([405, 406]);
 const _supertype_statement_ids = new Set<number>([
 	191, 216, 199, 203, 205, 206, 207, 208, 210, 211, 212, 213, 214, 215, 217, 218, 219, 220
 ]);
-const _supertype_variableDeclarator_ids = new Set<number>([425, 426]);
-const _supertype_forHeader_ids = new Set<number>([429, 430, 431]);
-const _supertype_parenthesizedExpression_ids = new Set<number>([406, 407]);
+const _supertype_variableDeclarator_ids = new Set<number>([426, 427]);
+const _supertype_forHeader_ids = new Set<number>([430, 431, 432]);
+const _supertype_parenthesizedExpression_ids = new Set<number>([407, 408]);
 const _supertype_expressions_ids = new Set<number>([264]);
 const _supertype_expression_ids = new Set<number>([293, 294, 295, 303, 292, 254, 256, 250, 262, 261, 260, 249, 229]);
 const _supertype_primaryExpression_ids = new Set<number>([
@@ -928,7 +924,7 @@ const _supertype_primaryExpression_ids = new Set<number>([
 	266, 268, 121, 122, 123, 230, 234, 240, 244, 242, 237, 287
 ]);
 const _supertype_formalParameter_ids = new Set<number>([315, 316]);
-const _supertype_callExpression_ids = new Set<number>([408, 409, 410]);
+const _supertype_callExpression_ids = new Set<number>([409, 410, 411]);
 const _supertype_lhsExpression_ids = new Set<number>([
 	251, 252, 124, 1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 231, 235, 287
 ]);
@@ -936,12 +932,12 @@ const _supertype_augmentedAssignmentLhs_ids = new Set<number>([
 	251, 252, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 287
 ]);
 const _supertype_destructuringPattern_ids = new Set<number>([231, 235]);
-const _supertype_updateExpression_ids = new Set<number>([413, 414]);
-const _supertype_string_ids = new Set<number>([411, 412]);
+const _supertype_updateExpression_ids = new Set<number>([414, 415]);
+const _supertype_string_ids = new Set<number>([412, 413]);
 const _supertype_comment_ids = new Set<number>([152, 153]);
 const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160, 161]);
 const _supertype_identifier_ids = new Set<number>([124, 1]);
-const _supertype_metaProperty_ids = new Set<number>([427, 428]);
+const _supertype_metaProperty_ids = new Set<number>([428, 429]);
 const _supertype_pattern_ids = new Set<number>([
 	251, 252, 124, 1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 231, 235,
 	287, 279
@@ -953,8 +949,8 @@ const _supertype_tupleTypeMember_ids = new Set<number>([327, 328, 329, 330]);
 const _supertype_primaryType_ids = new Set<number>([
 	353, 354, 306, 338, 356, 365, 366, 352, 345, 346, 119, 351, 349, 347, 337, 335, 369, 368
 ]);
-const _supertype_indexSignature_ids = new Set<number>([401, 402]);
-const _supertype_exportStatementDefault_ids = new Set<number>([418, 419]);
+const _supertype_indexSignature_ids = new Set<number>([402, 403]);
+const _supertype_exportStatementDefault_ids = new Set<number>([419, 420]);
 
 export const is = {
 	program: _g(TSKindId.Program),
@@ -1092,7 +1088,6 @@ export const is = {
 	lookupType: _g(TSKindId.LookupType),
 	mappedTypeClause: _g(TSKindId.MappedTypeClause),
 	literalType: _g(TSKindId.LiteralType),
-	Number: _g(TSKindId._Number),
 	flowMaybeType: _g(TSKindId.FlowMaybeType),
 	parenthesizedType: _g(TSKindId.ParenthesizedType),
 	typeArguments: _g(TSKindId.TypeArguments),
@@ -1336,7 +1331,6 @@ export const assert = {
 	lookupType: _makeAssert('lookupType', is.lookupType as _AnyGuard),
 	mappedTypeClause: _makeAssert('mappedTypeClause', is.mappedTypeClause as _AnyGuard),
 	literalType: _makeAssert('literalType', is.literalType as _AnyGuard),
-	Number: _makeAssert('Number', is.Number as _AnyGuard),
 	flowMaybeType: _makeAssert('flowMaybeType', is.flowMaybeType as _AnyGuard),
 	parenthesizedType: _makeAssert('parenthesizedType', is.parenthesizedType as _AnyGuard),
 	typeArguments: _makeAssert('typeArguments', is.typeArguments as _AnyGuard),

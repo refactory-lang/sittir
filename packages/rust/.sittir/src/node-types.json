@@ -3976,10 +3976,6 @@
       "required": true,
       "types": [
         {
-          "type": "line_comment_content",
-          "named": true
-        },
-        {
           "type": "line_comment_doc_inner",
           "named": true
         },
@@ -3988,7 +3984,11 @@
           "named": true
         },
         {
-          "type": "line_comment_regular_dslash",
+          "type": "line_comment_extra_slashes",
+          "named": true
+        },
+        {
+          "type": "line_comment_regular",
           "named": true
         }
       ]
@@ -4047,7 +4047,7 @@
     }
   },
   {
-    "type": "line_comment_regular_dslash",
+    "type": "line_comment_extra_slashes",
     "named": true,
     "fields": {}
   },
@@ -7286,7 +7286,22 @@
     }
   },
   {
-    "type": "visibility_modifier_group",
+    "type": "visibility_modifier_pub",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "visibility_modifier_pub_scope",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "visibility_modifier_pub_scope",
     "named": true,
     "fields": {},
     "children": {
@@ -7306,29 +7321,14 @@
           "named": true
         },
         {
-          "type": "visibility_modifier_pub_in_path",
+          "type": "visibility_modifier_pub_scope_in_path",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "visibility_modifier_pub",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "visibility_modifier_group",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "visibility_modifier_pub_in_path",
+    "type": "visibility_modifier_pub_scope_in_path",
     "named": true,
     "fields": {
       "in": {
@@ -7944,7 +7944,7 @@
     "named": false
   },
   {
-    "type": "line_comment_content",
+    "type": "line_comment_regular",
     "named": true
   },
   {

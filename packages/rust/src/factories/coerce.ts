@@ -165,7 +165,6 @@ export const _fromMap = {
 	patterns: coerceToPatterns,
 	struct_pattern_elements: coerceToStructPatternElements,
 	use_wildcard_group: coerceToUseWildcardGroup,
-	visibility_modifier_group: coerceToVisibilityModifierGroup,
 	_tuple_type_elements: coerceToTupleTypeElements,
 	_tuple_expression_elements: coerceToTupleExpressionElements,
 	integer_literal_decimal: coerceToIntegerLiteralDecimal,
@@ -192,8 +191,9 @@ export const _fromMap = {
 	impl_item_negative_clause: coerceToImplItemNegativeClause,
 	impl_item_body: coerceToImplItemBody,
 	impl_item_semi: coerceToImplItemSemi,
+	visibility_modifier_pub_scope_in_path: coerceToVisibilityModifierPubScopeInPath,
+	visibility_modifier_pub_scope: coerceToVisibilityModifierPubScope,
 	visibility_modifier_pub: coerceToVisibilityModifierPub,
-	visibility_modifier_pub_in_path: coerceToVisibilityModifierPubInPath,
 	function_type_trait_form: coerceToFunctionTypeTraitForm,
 	function_type_fn_form: coerceToFunctionTypeFnForm,
 	mod_item_external: coerceToModItemExternal,
@@ -211,10 +211,10 @@ export const _fromMap = {
 	foreign_mod_item_body: coerceToForeignModItemBody,
 	match_arm_with_comma: coerceToMatchArmWithComma,
 	match_arm_block_ending: coerceToMatchArmBlockEnding,
-	line_comment_regular_dslash: coerceToLineCommentRegularDslash,
+	line_comment_extra_slashes: coerceToLineCommentExtraSlashes,
 	line_comment_doc_outer: coerceToLineCommentDocOuter,
 	line_comment_doc_inner: coerceToLineCommentDocInner,
-	line_comment_content: coerceToLineCommentContent,
+	line_comment_regular: coerceToLineCommentRegular,
 	block_comment_doc_outer: coerceToBlockCommentDocOuter,
 	block_comment_doc_inner: coerceToBlockCommentDocInner,
 	token_tree_pattern_paren: coerceToTokenTreePatternParen,
@@ -317,8 +317,8 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		factory: (content: string) => _resolveByKind('escape_sequence_unicode_braced', content)
 	},
 	escape_sequence_hex: { factory: (content: string) => _resolveByKind('escape_sequence_hex', content) },
-	line_comment_regular_dslash: { pattern: /^(?:(?:\/\/)(?:.*))$/u, factory: F.buildLineCommentRegularDslash },
-	line_comment_content: { pattern: /^(?:(?:.*))$/u, factory: F.buildLineCommentContent },
+	line_comment_extra_slashes: { pattern: /^(?:(?:\/\/)(?:.*))$/u, factory: F.buildLineCommentExtraSlashes },
+	line_comment_regular: { pattern: /^(?:(?:.*))$/u, factory: F.buildLineCommentRegular },
 	range_pattern_with_left_bare: { values: ['..'], factory: () => F.buildRangePatternWithLeftBare() },
 	float_literal: {
 		pattern: /^(?:(?:[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u,
@@ -421,8 +421,8 @@ const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undef
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'visibility_modifier',
 	'use_wildcard_group',
-	'visibility_modifier_group',
-	'visibility_modifier_pub_in_path',
+	'visibility_modifier_pub_scope_in_path',
+	'visibility_modifier_pub_scope',
 	'lifetime',
 	'for_lifetimes',
 	'label',
@@ -438,15 +438,15 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92,
 	93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117,
 	118, 119, 120, 123, 124, 126, 127, 128, 130, 131, 132, 133, 134, 135, 136, 137, 149, 154, 160, 161, 165, 166, 167,
-	168, 169, 170, 173, 181, 239, 249, 276, 316, 331, 333, 334, 336, 337, 338, 339, 340, 341, 360, 361, 362, 363, 366,
-	367, 368, 369, 422, 427
+	168, 169, 170, 173, 181, 239, 249, 276, 316, 331, 333, 334, 336, 337, 338, 339, 340, 341, 359, 360, 361, 362, 365,
+	366, 367, 368, 422, 427
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	expression_statement: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395, 396
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395, 396
 	]),
 	attribute_item: new Set([187]),
 	inner_attribute_item: new Set([187]),
@@ -454,89 +454,89 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	field_declaration_list: new Set([197, 344, 428]),
 	ordered_field_declaration_list: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 212, 213, 235, 237, 238, 239, 241, 243,
-		247, 249, 250, 251, 254, 260, 336, 345, 364, 391, 392, 433, 469
+		247, 249, 250, 251, 254, 260, 336, 345, 363, 391, 392, 433, 469
 	]),
 	where_clause: new Set([207, 346]),
 	removed_trait_bound: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 212, 213, 235, 237, 238, 239, 241, 243,
-		247, 249, 250, 251, 254, 260, 336, 364, 391, 392, 469
+		247, 249, 250, 251, 254, 260, 336, 363, 391, 392, 469
 	]),
 	type_parameters: new Set([129, 215, 216, 217, 347, 431]),
 	use_list: new Set([1, 126, 127, 128, 129, 221, 222, 223, 224, 258, 348, 358]),
 	use_wildcard: new Set([1, 126, 127, 128, 129, 258, 358]),
 	parameters: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 212, 213, 226, 227, 228, 235, 237, 238,
-		239, 241, 243, 247, 249, 250, 251, 254, 260, 336, 349, 364, 391, 392, 430, 469
+		239, 241, 243, 247, 249, 250, 251, 254, 260, 336, 349, 363, 391, 392, 430, 469
 	]),
 	extern_modifier: new Set([327]),
-	visibility_modifier: new Set([1, 126, 127, 128, 129, 258, 359, 383, 384]),
+	visibility_modifier: new Set([1, 126, 127, 128, 129, 258, 382, 383, 384]),
 	bracketed_type: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 212, 213, 233, 235, 237, 238, 239, 241,
-		243, 247, 249, 250, 251, 254, 260, 336, 364, 391, 392, 469
+		243, 247, 249, 250, 251, 254, 260, 336, 363, 391, 392, 469
 	]),
 	lifetime: new Set([1]),
 	for_lifetimes: new Set([1, 234, 350]),
 	tuple_type: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 212, 213, 235, 237, 238, 239, 241, 243,
-		247, 249, 250, 251, 254, 260, 336, 364, 391, 392, 469
+		247, 249, 250, 251, 254, 260, 336, 363, 391, 392, 469
 	]),
 	use_bounds: new Set([1, 234, 351, 469]),
 	type_arguments: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 129, 138, 139, 140, 141, 142, 143,
 		144, 159, 212, 213, 234, 235, 237, 238, 239, 241, 243, 246, 247, 249, 250, 251, 254, 260, 308, 327, 328, 331, 336,
-		352, 364, 391, 392, 434, 469
+		352, 363, 391, 392, 434, 469
 	]),
 	dynamic_type: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 212, 213, 235, 237, 238, 239, 241, 243,
-		247, 249, 250, 251, 254, 260, 336, 364, 391, 392, 469
+		247, 249, 250, 251, 254, 260, 336, 363, 391, 392, 469
 	]),
 	range_expression: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	try_expression: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	return_expression: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	yield_expression: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	arguments: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 353, 368, 370,
-		371, 373, 374, 375, 376, 377, 378, 393, 394, 395, 432
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 353, 367, 369,
+		370, 372, 373, 374, 375, 376, 377, 393, 394, 395, 432
 	]),
 	parenthesized_expression: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	field_initializer_list: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
 		279, 280, 281, 282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331,
-		354, 368, 370, 371, 373, 374, 375, 376, 377, 378, 393, 394, 395
+		354, 367, 369, 370, 372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	base_field_initializer: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	else_clause: new Set([282, 308]),
 	match_block: new Set([435]),
@@ -546,30 +546,30 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	await_expression: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	unsafe_block: new Set([308]),
 	try_block: new Set([308]),
 	tuple_pattern: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 138, 139, 140, 141,
 		142, 143, 144, 159, 254, 258, 295, 308, 310, 311, 312, 313, 314, 316, 317, 319, 320, 321, 325, 327, 328, 331, 355,
-		356, 373, 374, 389, 390, 420, 423, 427
+		356, 372, 373, 389, 390, 420, 423, 427
 	]),
 	slice_pattern: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 138, 139, 140, 141,
 		142, 143, 144, 159, 254, 258, 295, 308, 310, 311, 312, 313, 314, 316, 317, 319, 320, 321, 325, 327, 328, 331, 355,
-		356, 373, 374, 389, 390, 420, 423, 427
+		356, 372, 373, 389, 390, 420, 423, 427
 	]),
 	mut_pattern: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 138, 139, 140, 141,
 		142, 143, 144, 159, 254, 258, 295, 308, 310, 311, 312, 313, 314, 316, 317, 319, 320, 321, 325, 327, 328, 331, 355,
-		356, 373, 374, 389, 390, 420, 423, 427
+		356, 372, 373, 389, 390, 420, 423, 427
 	]),
 	ref_pattern: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 138, 139, 140, 141,
 		142, 143, 144, 159, 254, 258, 295, 308, 310, 311, 312, 313, 314, 316, 317, 319, 320, 321, 325, 327, 328, 331, 355,
-		356, 373, 374, 389, 390, 420, 423, 427
+		356, 372, 373, 389, 390, 420, 423, 427
 	]),
 	negative_literal: new Set([138, 139, 140, 141, 159]),
 	line_comment: new Set([153, 163, 401, 402, 403]),
@@ -579,117 +579,117 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	field_declaration_list_elements: new Set([197, 428]),
 	ordered_field_declaration_list_elements: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 212, 213, 235, 237, 238, 239, 241, 243,
-		247, 249, 250, 251, 254, 260, 336, 364, 391, 392, 433, 469
+		247, 249, 250, 251, 254, 260, 336, 363, 391, 392, 433, 469
 	]),
 	where_predicates: new Set([207]),
 	type_parameters_elements: new Set([129, 215, 216, 217, 431]),
 	use_clauses: new Set([1, 126, 127, 128, 129, 221, 222, 223, 224, 258, 348, 358]),
 	parameters_elements: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 212, 213, 226, 227, 228, 235, 237, 238,
-		239, 241, 243, 247, 249, 250, 251, 254, 260, 336, 364, 391, 392, 430, 469
+		239, 241, 243, 247, 249, 250, 251, 254, 260, 336, 363, 391, 392, 430, 469
 	]),
 	lifetimes: new Set([1, 234]),
 	use_bounds_elements: new Set([1, 234, 469]),
 	type_arguments_elements: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 129, 138, 139, 140, 141, 142, 143,
 		144, 159, 212, 213, 234, 235, 237, 238, 239, 241, 243, 246, 247, 249, 250, 251, 254, 260, 308, 327, 328, 331, 336,
-		364, 391, 392, 434, 469
+		363, 391, 392, 434, 469
 	]),
 	arguments_elements: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395, 432
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395, 432
 	]),
 	field_initializer_list_elements: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
 		279, 280, 281, 282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331,
-		368, 370, 371, 373, 374, 375, 376, 377, 378, 393, 394, 395
+		367, 369, 370, 372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	tuple_pattern_elements: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 138, 139, 140, 141,
 		142, 143, 144, 159, 254, 258, 295, 308, 310, 311, 312, 313, 314, 316, 317, 319, 320, 321, 325, 327, 328, 331, 355,
-		356, 373, 374, 389, 390, 420, 423, 427
+		356, 372, 373, 389, 390, 420, 423, 427
 	]),
 	patterns: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 138, 139, 140, 141,
 		142, 143, 144, 159, 254, 258, 295, 308, 310, 311, 312, 313, 314, 316, 317, 319, 320, 321, 325, 327, 328, 331, 355,
-		356, 373, 374, 389, 390, 420, 423, 427
+		356, 372, 373, 389, 390, 420, 423, 427
 	]),
 	struct_pattern_elements: new Set([316, 415, 416]),
 	use_wildcard_group: new Set([1, 126, 127, 128, 129, 258]),
-	visibility_modifier_group: new Set([1, 126, 127, 128, 129, 258, 384]),
 	_tuple_type_elements: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 212, 213, 235, 237, 238, 239, 241, 243,
-		247, 249, 250, 251, 254, 260, 336, 364, 391, 392, 469
+		247, 249, 250, 251, 254, 260, 336, 363, 391, 392, 469
 	]),
 	_tuple_expression_elements: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	reference_expression_raw_const: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	reference_expression_raw_mut: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	reference_expression_mut: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	reference_expression_bare: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	impl_item_positive_clause: new Set([1, 241, 260, 469]),
 	impl_item_negative_clause: new Set([1, 241, 260, 469]),
-	visibility_modifier_pub: new Set([1, 126, 127, 128, 129, 258, 359, 384]),
-	visibility_modifier_pub_in_path: new Set([1, 126, 127, 128, 129, 258]),
+	visibility_modifier_pub_scope_in_path: new Set([1, 126, 127, 128, 129, 258]),
+	visibility_modifier_pub_scope: new Set([1, 126, 127, 128, 129, 258, 382]),
+	visibility_modifier_pub: new Set([1, 126, 127, 128, 129, 258, 382, 383]),
 	function_type_trait_form: new Set([1, 260, 469]),
 	function_type_fn_form: new Set([205]),
 	or_pattern_prefix: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 138, 139, 140, 141,
 		142, 143, 144, 159, 254, 258, 295, 308, 310, 311, 312, 313, 314, 316, 317, 319, 320, 321, 325, 327, 328, 331, 355,
-		356, 373, 374, 389, 390, 420, 423, 427
+		356, 372, 373, 389, 390, 420, 423, 427
 	]),
 	pointer_type_const: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 212, 213, 235, 237, 238, 239, 241, 243,
-		247, 249, 250, 251, 254, 260, 336, 364, 391, 392, 469
+		247, 249, 250, 251, 254, 260, 336, 363, 391, 392, 469
 	]),
 	pointer_type_mut: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 212, 213, 235, 237, 238, 239, 241, 243,
-		247, 249, 250, 251, 254, 260, 336, 364, 391, 392, 469
+		247, 249, 250, 251, 254, 260, 336, 363, 391, 392, 469
 	]),
 	range_expression_postfix: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	range_expression_prefix: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	expression_statement_with_semi: new Set([
 		1, 33, 52, 53, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 118, 119, 126, 129, 138, 139,
 		140, 141, 142, 143, 144, 159, 240, 254, 258, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 274, 275, 276, 277,
-		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 368, 370, 371,
-		373, 374, 375, 376, 377, 378, 393, 394, 395
+		282, 287, 292, 293, 294, 295, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 327, 328, 331, 367, 369, 370,
+		372, 373, 374, 375, 376, 377, 393, 394, 395
 	]),
 	line_comment_doc_outer: new Set([163]),
 	line_comment_doc_inner: new Set([163]),
@@ -1028,7 +1028,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	patterns: TSKindId.Patterns,
 	struct_pattern_elements: TSKindId.StructPatternElements,
 	use_wildcard_group: TSKindId.UseWildcardGroup,
-	visibility_modifier_group: TSKindId.VisibilityModifierGroup,
 	_tuple_type_elements: TSKindId.TupleTypeElements,
 	_tuple_expression_elements: TSKindId.TupleExpressionElements,
 	reference_expression_raw_const: TSKindId.ReferenceExpressionRawConst,
@@ -1037,8 +1036,9 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	reference_expression_bare: TSKindId.ReferenceExpressionBare,
 	impl_item_positive_clause: TSKindId.ImplItemPositiveClause,
 	impl_item_negative_clause: TSKindId.ImplItemNegativeClause,
+	visibility_modifier_pub_scope_in_path: TSKindId.VisibilityModifierPubScopeInPath,
+	visibility_modifier_pub_scope: TSKindId.VisibilityModifierPubScope,
 	visibility_modifier_pub: TSKindId.VisibilityModifierPub,
-	visibility_modifier_pub_in_path: TSKindId.VisibilityModifierPubInPath,
 	function_type_trait_form: TSKindId.FunctionTypeTraitForm,
 	function_type_fn_form: TSKindId.FunctionTypeFnForm,
 	or_pattern_prefix: TSKindId.OrPatternPrefix,
@@ -1116,14 +1116,14 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	arguments_elements: '_attributed_argument',
 	patterns: '_pattern',
 	struct_pattern_elements: 'field_pattern',
-	visibility_modifier_group: 'visibility_modifier_pub_in_path',
 	_tuple_type_elements: '_type',
 	_tuple_expression_elements: '_expression',
 	reference_expression_raw_const: '_expression',
 	reference_expression_raw_mut: '_expression',
 	reference_expression_mut: '_expression',
 	reference_expression_bare: '_expression',
-	visibility_modifier_pub: 'visibility_modifier_group',
+	visibility_modifier_pub_scope: 'visibility_modifier_pub_scope_in_path',
+	visibility_modifier_pub: 'visibility_modifier_pub_scope',
 	function_type_fn_form: 'function_modifiers',
 	or_pattern_prefix: '_pattern',
 	pointer_type_const: '_type',
@@ -1186,15 +1186,15 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'line_comment',
 	'block_comment',
 	'use_wildcard_group',
-	'visibility_modifier_group',
 	'reference_expression_raw_const',
 	'reference_expression_raw_mut',
 	'reference_expression_mut',
 	'reference_expression_bare',
 	'impl_item_positive_clause',
 	'impl_item_negative_clause',
+	'visibility_modifier_pub_scope_in_path',
+	'visibility_modifier_pub_scope',
 	'visibility_modifier_pub',
-	'visibility_modifier_pub_in_path',
 	'function_type_trait_form',
 	'function_type_fn_form',
 	'or_pattern_prefix',
@@ -1372,8 +1372,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToStructPatternElements as (...args: unknown[]) => unknown)(...children);
 		case 'use_wildcard_group':
 			return F.buildUseWildcardGroup(children[0] as Parameters<typeof F.buildUseWildcardGroup>[0]);
-		case 'visibility_modifier_group':
-			return F.buildVisibilityModifierGroup(children[0] as Parameters<typeof F.buildVisibilityModifierGroup>[0]);
 		case '_tuple_type_elements':
 			return (coerceToTupleTypeElements as (...args: unknown[]) => unknown)(...children);
 		case '_tuple_expression_elements':
@@ -1392,12 +1390,14 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildImplItemPositiveClause(children[0] as Parameters<typeof F.buildImplItemPositiveClause>[0]);
 		case 'impl_item_negative_clause':
 			return F.buildImplItemNegativeClause(children[0] as Parameters<typeof F.buildImplItemNegativeClause>[0]);
+		case 'visibility_modifier_pub_scope_in_path':
+			return F.buildVisibilityModifierPubScopeInPath(
+				children[0] as Parameters<typeof F.buildVisibilityModifierPubScopeInPath>[0]
+			);
+		case 'visibility_modifier_pub_scope':
+			return F.buildVisibilityModifierPubScope(children[0] as Parameters<typeof F.buildVisibilityModifierPubScope>[0]);
 		case 'visibility_modifier_pub':
 			return F.buildVisibilityModifierPub(children[0] as Parameters<typeof F.buildVisibilityModifierPub>[0]);
-		case 'visibility_modifier_pub_in_path':
-			return F.buildVisibilityModifierPubInPath(
-				children[0] as Parameters<typeof F.buildVisibilityModifierPubInPath>[0]
-			);
 		case 'function_type_trait_form':
 			return F.buildFunctionTypeTraitForm(children[0] as Parameters<typeof F.buildFunctionTypeTraitForm>[0]);
 		case 'function_type_fn_form':
@@ -2341,7 +2341,7 @@ const _K52: readonly string[] = [
 const _K53: readonly string[] = ['scoped_identifier', 'generic_type_with_turbofish'];
 const _K54: readonly string[] = ['float_literal'];
 const _K55: readonly string[] = ['string_content'];
-const _K56: readonly string[] = ['line_comment_regular_dslash', 'line_comment_content'];
+const _K56: readonly string[] = ['line_comment_extra_slashes', 'line_comment_regular'];
 const _K57: readonly string[] = ['line_comment_doc_outer', 'line_comment_doc_inner'];
 const _K58: readonly string[] = ['_block_comment_content'];
 const _K59: readonly string[] = ['block_comment_doc_outer', 'block_comment_doc_inner'];
@@ -2434,10 +2434,10 @@ const _K65: readonly string[] = [
 	'closure_expression_expr'
 ];
 const _K66: readonly string[] = ['remaining_field_pattern'];
-const _K67: readonly string[] = ['self', 'super', 'crate'];
-const _K68: readonly string[] = ['visibility_modifier_pub_in_path'];
-const _K69: readonly string[] = ['type_identifier', 'scoped_type_identifier', 'generic_type'];
-const _K70: readonly string[] = ['impl_item_positive_clause', 'impl_item_negative_clause'];
+const _K67: readonly string[] = ['type_identifier', 'scoped_type_identifier', 'generic_type'];
+const _K68: readonly string[] = ['impl_item_positive_clause', 'impl_item_negative_clause'];
+const _K69: readonly string[] = ['self', 'super', 'crate'];
+const _K70: readonly string[] = ['visibility_modifier_pub_scope_in_path'];
 const _K71: readonly string[] = [
 	'string_literal',
 	'raw_string_literal',
@@ -6573,10 +6573,11 @@ export function coerceToRawStringLiteral(input: T.RawStringLiteral.Loose): Retur
 }
 
 export function resolveLineComment_content(value: T.LineComment.LooseConfig['content']): T.LineComment['_content'] {
-	return _resolveOne<T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent>(
+	return _resolveOne<T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular>(
 		value,
 		_K56,
-		_K57
+		_K57,
+		'line_comment_regular'
 	);
 }
 
@@ -6587,17 +6588,23 @@ export function coerceToLineComment(input: T.LineComment.Loose): ReturnType<type
 		_requireField(
 			'line_comment',
 			'content',
-			_resolveOne<T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent>(
+			_resolveOne<T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K56,
-				_K57
+				_K57,
+				'line_comment_regular'
 			)
 		)
 	);
 }
 
 export function resolveBlockComment_content(value: T.BlockComment.LooseConfig['content']): T.BlockComment['_content'] {
-	return _resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent>(value, _K58, _K59);
+	return _resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent>(
+		value,
+		_K58,
+		_K59,
+		'_block_comment_content'
+	);
 }
 
 export function coerceToBlockComment(input?: T.BlockComment.Loose): ReturnType<typeof F.buildBlockComment> {
@@ -6607,7 +6614,8 @@ export function coerceToBlockComment(input?: T.BlockComment.Loose): ReturnType<t
 		_resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 			_K58,
-			_K59
+			_K59,
+			'_block_comment_content'
 		)
 	);
 }
@@ -7887,46 +7895,6 @@ export function coerceToUseWildcardGroup(input?: T.UseWildcardGroup.Loose): Retu
 	);
 }
 
-export function resolveVisibilityModifierGroup_content(
-	value: T.VisibilityModifierGroup.LooseConfig['content']
-): T.VisibilityModifierGroup['_content'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveOne<'self' | 'super' | 'crate' | T.VisibilityModifierPubInPath>(value, _K67, _K68)
-		),
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
-	);
-}
-
-export function coerceToVisibilityModifierGroup(
-	input: T.VisibilityModifierGroup.Loose
-): ReturnType<typeof F.buildVisibilityModifierGroup> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.VisibilityModifierGroup)
-		return input as unknown as ReturnType<typeof F.buildVisibilityModifierGroup>;
-	return F.buildVisibilityModifierGroup(
-		_requireField(
-			'visibility_modifier_group',
-			'content',
-			coerceMixedEnumStorage(
-				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-						? input.content
-						: input,
-					() =>
-						_resolveOne<'self' | 'super' | 'crate' | T.VisibilityModifierPubInPath>(
-							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-								? input.content
-								: input,
-							_K67,
-							_K68
-						)
-				),
-				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
-			)
-		)
-	);
-}
-
 export function coerceToTupleTypeElements(
 	...input:
 		| [
@@ -8603,7 +8571,7 @@ export function coerceToReferenceExpressionBare(
 export function resolveImplItemPositiveClause_trait(
 	value: T.ImplItemPositiveClause.LooseConfig['trait']
 ): T.ImplItemPositiveClause['_trait'] {
-	return _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K2, _K69);
+	return _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K2, _K67);
 }
 
 export function coerceToImplItemPositiveClause(
@@ -8618,7 +8586,7 @@ export function coerceToImplItemPositiveClause(
 			_resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'trait' in input ? input.trait : input,
 				_K2,
-				_K69
+				_K67
 			)
 		)
 	);
@@ -8627,7 +8595,7 @@ export function coerceToImplItemPositiveClause(
 export function resolveImplItemNegativeClause_trait(
 	value: T.ImplItemNegativeClause.LooseConfig['trait']
 ): T.ImplItemNegativeClause['_trait'] {
-	return _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K2, _K69);
+	return _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K2, _K67);
 }
 
 export function coerceToImplItemNegativeClause(
@@ -8642,7 +8610,7 @@ export function coerceToImplItemNegativeClause(
 			_resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'trait' in input ? input.trait : input,
 				_K2,
-				_K69
+				_K67
 			)
 		)
 	);
@@ -8666,7 +8634,7 @@ export function resolveImplItemBody_traitClause(
 	return _resolveOne<T.ImplItemPositiveClause | T.ImplItemNegativeClause>(
 		value,
 		_K2,
-		_K70,
+		_K68,
 		'impl_item_positive_clause'
 	);
 }
@@ -8721,7 +8689,7 @@ export function resolveImplItemSemi_traitClause(
 	return _resolveOne<T.ImplItemPositiveClause | T.ImplItemNegativeClause>(
 		value,
 		_K2,
-		_K70,
+		_K68,
 		'impl_item_positive_clause'
 	);
 }
@@ -8751,32 +8719,9 @@ export function coerceToImplItemSemi(input: T.ImplItemSemi.Loose): ReturnType<ty
 	});
 }
 
-export function resolveVisibilityModifierPub_visibilityModifierGroup(
-	value: T.VisibilityModifierPub.LooseConfig['visibilityModifierGroup']
-): T.VisibilityModifierPub['_visibility_modifier_group'] {
-	return _resolveOneBranch<T.VisibilityModifierGroup>(value, 'visibility_modifier_group', undefined, true);
-}
-
-export function coerceToVisibilityModifierPub(
-	input?: T.VisibilityModifierPub.Loose
-): ReturnType<typeof F.buildVisibilityModifierPub> {
-	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.VisibilityModifierPub)
-		return input as unknown as ReturnType<typeof F.buildVisibilityModifierPub>;
-	return F.buildVisibilityModifierPub(
-		_resolveOneBranch<T.VisibilityModifierGroup>(
-			input !== null && typeof input === 'object' && !isNodeData(input) && 'visibilityModifierGroup' in input
-				? input.visibilityModifierGroup
-				: input,
-			'visibility_modifier_group',
-			undefined,
-			true
-		)
-	);
-}
-
-export function resolveVisibilityModifierPubInPath_path(
-	value: T.VisibilityModifierPubInPath.LooseConfig['path']
-): T.VisibilityModifierPubInPath['_path'] {
+export function resolveVisibilityModifierPubScopeInPath_path(
+	value: T.VisibilityModifierPubScopeInPath.LooseConfig['path']
+): T.VisibilityModifierPubScopeInPath['_path'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<
@@ -8836,14 +8781,14 @@ export function resolveVisibilityModifierPubInPath_path(
 	);
 }
 
-export function coerceToVisibilityModifierPubInPath(
-	input: T.VisibilityModifierPubInPath.Loose
-): ReturnType<typeof F.buildVisibilityModifierPubInPath> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.VisibilityModifierPubInPath)
-		return input as unknown as ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-	return F.buildVisibilityModifierPubInPath(
+export function coerceToVisibilityModifierPubScopeInPath(
+	input: T.VisibilityModifierPubScopeInPath.Loose
+): ReturnType<typeof F.buildVisibilityModifierPubScopeInPath> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.VisibilityModifierPubScopeInPath)
+		return input as unknown as ReturnType<typeof F.buildVisibilityModifierPubScopeInPath>;
+	return F.buildVisibilityModifierPubScopeInPath(
 		_requireField(
-			'visibility_modifier_pub_in_path',
+			'visibility_modifier_pub_scope_in_path',
 			'path',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
@@ -8908,6 +8853,69 @@ export function coerceToVisibilityModifierPubInPath(
 					['gen', TSKindId.GenKeyword] as const
 				]
 			)
+		)
+	);
+}
+
+export function resolveVisibilityModifierPubScope_content(
+	value: T.VisibilityModifierPubScope.LooseConfig['content']
+): T.VisibilityModifierPubScope['_content'] {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOne<'self' | 'super' | 'crate' | T.VisibilityModifierPubScopeInPath>(value, _K69, _K70)
+		),
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+	);
+}
+
+export function coerceToVisibilityModifierPubScope(
+	input: T.VisibilityModifierPubScope.Loose
+): ReturnType<typeof F.buildVisibilityModifierPubScope> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.VisibilityModifierPubScope)
+		return input as unknown as ReturnType<typeof F.buildVisibilityModifierPubScope>;
+	return F.buildVisibilityModifierPubScope(
+		_requireField(
+			'visibility_modifier_pub_scope',
+			'content',
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+						? input.content
+						: input,
+					() =>
+						_resolveOne<'self' | 'super' | 'crate' | T.VisibilityModifierPubScopeInPath>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+								? input.content
+								: input,
+							_K69,
+							_K70
+						)
+				),
+				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+			)
+		)
+	);
+}
+
+export function resolveVisibilityModifierPub_visibilityModifierPubScope(
+	value: T.VisibilityModifierPub.LooseConfig['visibilityModifierPubScope']
+): T.VisibilityModifierPub['_visibility_modifier_pub_scope'] {
+	return _resolveOneBranch<T.VisibilityModifierPubScope>(value, 'visibility_modifier_pub_scope', undefined, true);
+}
+
+export function coerceToVisibilityModifierPub(
+	input?: T.VisibilityModifierPub.Loose
+): ReturnType<typeof F.buildVisibilityModifierPub> {
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.VisibilityModifierPub)
+		return input as unknown as ReturnType<typeof F.buildVisibilityModifierPub>;
+	return F.buildVisibilityModifierPub(
+		_resolveOneBranch<T.VisibilityModifierPubScope>(
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'visibilityModifierPubScope' in input
+				? input.visibilityModifierPubScope
+				: input,
+			'visibility_modifier_pub_scope',
+			undefined,
+			true
 		)
 	);
 }
@@ -9407,11 +9415,11 @@ export function coerceToMatchArmBlockEnding(
 	});
 }
 
-export function coerceToLineCommentRegularDslash(
-	input: T.LineCommentRegularDslash.Loose
-): ReturnType<typeof F.buildLineCommentRegularDslash> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildLineCommentRegularDslash>;
-	return F.buildLineCommentRegularDslash(input as Parameters<typeof F.buildLineCommentRegularDslash>[0]);
+export function coerceToLineCommentExtraSlashes(
+	input: T.LineCommentExtraSlashes.Loose
+): ReturnType<typeof F.buildLineCommentExtraSlashes> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildLineCommentExtraSlashes>;
+	return F.buildLineCommentExtraSlashes(input as Parameters<typeof F.buildLineCommentExtraSlashes>[0]);
 }
 
 export function resolveLineCommentDocOuter_doc(
@@ -9460,11 +9468,11 @@ export function coerceToLineCommentDocInner(
 	);
 }
 
-export function coerceToLineCommentContent(
-	input: T.LineCommentContent.Loose
-): ReturnType<typeof F.buildLineCommentContent> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildLineCommentContent>;
-	return F.buildLineCommentContent(input as Parameters<typeof F.buildLineCommentContent>[0]);
+export function coerceToLineCommentRegular(
+	input: T.LineCommentRegular.Loose
+): ReturnType<typeof F.buildLineCommentRegular> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildLineCommentRegular>;
+	return F.buildLineCommentRegular(input as Parameters<typeof F.buildLineCommentRegular>[0]);
 }
 
 export function resolveBlockCommentDocOuter_doc(

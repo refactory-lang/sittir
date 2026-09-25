@@ -93,12 +93,6 @@
 			"field": "key_value_pattern_after"
 		}
 	],
-	"_match_block": [
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
 	"_parameters": [
 		{
 			"kind": "slot",
@@ -3019,9 +3013,6 @@
 		{
 			"kind": "text",
 			"text": ":"
-		},
-		{
-			"kind": "adjacent"
 		},
 		{
 			"kind": "seam",

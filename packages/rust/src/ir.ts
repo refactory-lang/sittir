@@ -99,52 +99,6 @@ export const statement: {
 	static: F.staticItem
 };
 
-export const declarationStatement: {
-	readonly const: typeof F.constItem;
-	readonly macroInvocation: typeof F.macroInvocation;
-	readonly macro: typeof F.macroDefinition;
-	readonly empty: typeof F.buildEmptyStatement;
-	readonly attribute: typeof F.attributeItem;
-	readonly innerAttribute: typeof F.innerAttributeItem;
-	readonly mod: typeof F.modItem;
-	readonly foreignMod: typeof F.foreignModItem;
-	readonly struct: typeof F.structItem;
-	readonly union: typeof F.unionItem;
-	readonly enum: typeof F.enumItem;
-	readonly type: typeof F.typeItem;
-	readonly function: typeof F.functionItem;
-	readonly functionSignature: typeof F.functionSignatureItem;
-	readonly impl: typeof F.implItem;
-	readonly trait: typeof F.traitItem;
-	readonly associated: typeof F.associatedType;
-	readonly let: typeof F.letDeclaration;
-	readonly use: typeof F.useDeclaration;
-	readonly externCrate: typeof F.externCrateDeclaration;
-	readonly static: typeof F.staticItem;
-} = {
-	const: F.constItem,
-	macroInvocation: F.macroInvocation,
-	macro: F.macroDefinition,
-	empty: F.buildEmptyStatement,
-	attribute: F.attributeItem,
-	innerAttribute: F.innerAttributeItem,
-	mod: F.modItem,
-	foreignMod: F.foreignModItem,
-	struct: F.structItem,
-	union: F.unionItem,
-	enum: F.enumItem,
-	type: F.typeItem,
-	function: F.functionItem,
-	functionSignature: F.functionSignatureItem,
-	impl: F.implItem,
-	trait: F.traitItem,
-	associated: F.associatedType,
-	let: F.letDeclaration,
-	use: F.useDeclaration,
-	externCrate: F.externCrateDeclaration,
-	static: F.staticItem
-};
-
 export const tokenPattern: {
 	readonly tree: typeof F.tokenTreePattern;
 	readonly repetition: typeof F.tokenRepetitionPattern;
@@ -471,32 +425,6 @@ export const expression: {
 	range: F.rangeExpression
 };
 
-export const expressionEndingWithBlock: {
-	readonly unsafe: typeof F.unsafeBlock;
-	readonly async: typeof F.asyncBlock;
-	readonly gen: typeof F.genBlock;
-	readonly try: typeof F.tryBlock;
-	readonly block: typeof F.block;
-	readonly if: typeof F.ifExpression;
-	readonly match: typeof F.matchExpression;
-	readonly while: typeof F.whileExpression;
-	readonly loop: typeof F.loopExpression;
-	readonly for: typeof F.forExpression;
-	readonly const: typeof F.constBlock;
-} = {
-	unsafe: F.unsafeBlock,
-	async: F.asyncBlock,
-	gen: F.genBlock,
-	try: F.tryBlock,
-	block: F.block,
-	if: F.ifExpression,
-	match: F.matchExpression,
-	while: F.whileExpression,
-	loop: F.loopExpression,
-	for: F.forExpression,
-	const: F.constBlock
-};
-
 export const delimTokens: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
@@ -735,6 +663,10 @@ export const path: {
 	scopedIdentifier: F.scopedIdentifier
 };
 
+export const expressionEndingWithBlock: typeof F.expressionEndingWithBlock = F.expressionEndingWithBlock;
+
+export const declarationStatement: typeof F.declarationStatement = F.declarationStatement;
+
 export const ir: {
 	readonly sourceFile: typeof F.sourceFile;
 	readonly expressionStatement: typeof F.expressionStatement;
@@ -879,7 +811,6 @@ export const ir: {
 	readonly patterns: typeof F.patterns;
 	readonly structPatternElements: typeof F.structPatternElements;
 	readonly useWildcardGroup: typeof F.useWildcardGroup;
-	readonly visibilityModifierGroup: typeof F.visibilityModifierGroup;
 	readonly tupleTypeElements: typeof F.tupleTypeElements;
 	readonly tupleExpressionElements: typeof F.tupleExpressionElements;
 	readonly macroDefinition: typeof F.macroDefinition;
@@ -913,8 +844,8 @@ export const ir: {
 	readonly rangePatternWithLeftBare: typeof F.buildRangePatternWithLeftBare;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly stringOpen: typeof F.buildStringOpen;
-	readonly lineCommentRegularDslash: typeof F.buildLineCommentRegularDslash;
-	readonly lineCommentContent: typeof F.buildLineCommentContent;
+	readonly lineCommentExtraSlashes: typeof F.buildLineCommentExtraSlashes;
+	readonly lineCommentRegular: typeof F.buildLineCommentRegular;
 	readonly floatLiteral: typeof F.buildFloatLiteral;
 	readonly stringContent: typeof F.buildStringContent;
 	readonly rawStringLiteralContent: typeof F.buildRawStringLiteralContent;
@@ -986,7 +917,6 @@ export const ir: {
 	readonly wildcard: typeof F.useWildcard;
 	readonly yield: typeof F.yieldExpression;
 	readonly statement: typeof statement;
-	readonly declarationStatement: typeof declarationStatement;
 	readonly tokenPattern: typeof tokenPattern;
 	readonly tokens: typeof tokens;
 	readonly nonSpecialToken: typeof nonSpecialToken;
@@ -994,7 +924,6 @@ export const ir: {
 	readonly type: typeof type;
 	readonly expressionExceptRange: typeof expressionExceptRange;
 	readonly expression: typeof expression;
-	readonly expressionEndingWithBlock: typeof expressionEndingWithBlock;
 	readonly delimTokens: typeof delimTokens;
 	readonly nonDelimToken: typeof nonDelimToken;
 	readonly condition: typeof condition;
@@ -1002,6 +931,8 @@ export const ir: {
 	readonly literal: typeof literal;
 	readonly literalPattern: typeof literalPattern;
 	readonly path: typeof path;
+	readonly expressionEndingWithBlock: typeof expressionEndingWithBlock;
+	readonly declarationStatement: typeof declarationStatement;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
@@ -1148,7 +1079,6 @@ export const ir: {
 	patterns: F.patterns,
 	structPatternElements: F.structPatternElements,
 	useWildcardGroup: F.useWildcardGroup,
-	visibilityModifierGroup: F.visibilityModifierGroup,
 	tupleTypeElements: F.tupleTypeElements,
 	tupleExpressionElements: F.tupleExpressionElements,
 	macroDefinition: F.macroDefinition,
@@ -1186,8 +1116,8 @@ export const ir: {
 	// Leaf node factories
 	identifier: F.buildIdentifier,
 	stringOpen: F.buildStringOpen,
-	lineCommentRegularDslash: F.buildLineCommentRegularDslash,
-	lineCommentContent: F.buildLineCommentContent,
+	lineCommentExtraSlashes: F.buildLineCommentExtraSlashes,
+	lineCommentRegular: F.buildLineCommentRegular,
 	floatLiteral: F.buildFloatLiteral,
 	stringContent: F.buildStringContent,
 	rawStringLiteralContent: F.buildRawStringLiteralContent,
@@ -1263,7 +1193,6 @@ export const ir: {
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	statement,
-	declarationStatement,
 	tokenPattern,
 	tokens,
 	nonSpecialToken,
@@ -1271,7 +1200,6 @@ export const ir: {
 	type,
 	expressionExceptRange,
 	expression,
-	expressionEndingWithBlock,
 	delimTokens,
 	nonDelimToken,
 	condition,
@@ -1279,5 +1207,7 @@ export const ir: {
 	literal,
 	literalPattern,
 	path,
+	expressionEndingWithBlock,
+	declarationStatement,
 	synonym
 };

@@ -8009,10 +8009,42 @@
 			"name": "content"
 		}
 	],
-	"visibility_modifier_group": [
+	"visibility_modifier_pub": [
 		{
 			"kind": "seam",
-			"field": "visibility_modifier_group_before"
+			"field": "visibility_modifier_pub_before"
+		},
+		{
+			"kind": "text",
+			"text": "pub"
+		},
+		{
+			"kind": "seam",
+			"field": "pub_keyword_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "visibility_modifier_pub_scope",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "visibility_modifier_pub_scope"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "visibility_modifier_pub_after"
+		}
+	],
+	"visibility_modifier_pub_scope": [
+		{
+			"kind": "seam",
+			"field": "visibility_modifier_pub_scope_before"
 		},
 		{
 			"kind": "text",
@@ -8039,45 +8071,13 @@
 		},
 		{
 			"kind": "seam",
-			"field": "visibility_modifier_group_after"
+			"field": "visibility_modifier_pub_scope_after"
 		}
 	],
-	"visibility_modifier_pub": [
+	"visibility_modifier_pub_scope_in_path": [
 		{
 			"kind": "seam",
-			"field": "visibility_modifier_pub_before"
-		},
-		{
-			"kind": "text",
-			"text": "pub"
-		},
-		{
-			"kind": "seam",
-			"field": "pub_keyword_after"
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "visibility_modifier_group",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "visibility_modifier_group"
-						}
-					]
-				}
-			]
-		},
-		{
-			"kind": "seam",
-			"field": "visibility_modifier_pub_after"
-		}
-	],
-	"visibility_modifier_pub_in_path": [
-		{
-			"kind": "seam",
-			"field": "visibility_modifier_pub_in_path_before"
+			"field": "visibility_modifier_pub_scope_in_path_before"
 		},
 		{
 			"kind": "text",
@@ -8093,7 +8093,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "visibility_modifier_pub_in_path_after"
+			"field": "visibility_modifier_pub_scope_in_path_after"
 		}
 	],
 	"where_clause": [

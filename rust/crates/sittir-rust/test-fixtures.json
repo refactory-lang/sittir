@@ -3376,7 +3376,7 @@
             }
           },
           "_value": {
-            "$type": 374,
+            "$type": 373,
             "$source": 0,
             "$named": true,
             "_async_marker": true,
@@ -3472,7 +3472,7 @@
         }
       },
       "_value": {
-        "$type": 374,
+        "$type": 373,
         "$source": 0,
         "$named": true,
         "_async_marker": true,
@@ -3553,7 +3553,7 @@
     "grammar": "rust",
     "pattern": "closure_expression_expr",
     "input": {
-      "$type": 374,
+      "$type": 373,
       "$source": 0,
       "$named": true,
       "_async_marker": true,
@@ -3616,7 +3616,7 @@
             }
           },
           "_value": {
-            "$type": 374,
+            "$type": 373,
             "$source": 0,
             "$named": true,
             "_async_marker": true,
@@ -3733,7 +3733,7 @@
         }
       },
       "_value": {
-        "$type": 374,
+        "$type": 373,
         "$source": 0,
         "$named": true,
         "_async_marker": true,
@@ -3834,7 +3834,7 @@
     "grammar": "rust",
     "pattern": "closure_expression_expr",
     "input": {
-      "$type": 374,
+      "$type": 373,
       "$source": 0,
       "$named": true,
       "_async_marker": true,
@@ -5322,7 +5322,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -5450,7 +5450,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -5831,7 +5831,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -5974,7 +5974,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -6186,7 +6186,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -6255,7 +6255,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -6742,7 +6742,7 @@
                 "$source": 0,
                 "$named": true,
                 "_expression": {
-                  "$type": 371,
+                  "$type": 370,
                   "$source": 0,
                   "$named": true,
                   "_arguments_elements": {
@@ -6948,7 +6948,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_type_elements": {
-          "$type": 364,
+          "$type": 363,
           "$source": 0,
           "$named": true,
           "_type": [
@@ -7032,7 +7032,7 @@
                   "$source": 0,
                   "$named": true,
                   "_tuple_expression_elements": {
-                    "$type": 365,
+                    "$type": 364,
                     "$source": 0,
                     "$named": true,
                     "_element": [
@@ -10049,7 +10049,7 @@
               "$source": 0,
               "$named": true,
               "_expression": {
-                "$type": 371,
+                "$type": 370,
                 "$source": 0,
                 "$named": true,
                 "_arguments_elements": {
@@ -10220,7 +10220,7 @@
                 "$source": 0,
                 "$named": true,
                 "_tuple_expression_elements": {
-                  "$type": 365,
+                  "$type": 364,
                   "$source": 0,
                   "$named": true,
                   "_element": [
@@ -11482,7 +11482,7 @@
       "$source": 0,
       "$named": true,
       "_expression": {
-        "$type": 371,
+        "$type": 370,
         "$source": 0,
         "$named": true,
         "_arguments_elements": {
@@ -11602,7 +11602,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_expression_elements": {
-          "$type": 365,
+          "$type": 364,
           "$source": 0,
           "$named": true,
           "_element": [
@@ -12099,7 +12099,7 @@
     "grammar": "rust",
     "pattern": "array_expression_list",
     "input": {
-      "$type": 371,
+      "$type": 370,
       "$source": 0,
       "$named": true,
       "_arguments_elements": {
@@ -12202,7 +12202,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 364,
+        "$type": 363,
         "$source": 0,
         "$named": true,
         "_type": [
@@ -12286,7 +12286,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_expression_elements": {
-        "$type": 365,
+        "$type": 364,
         "$source": 0,
         "$named": true,
         "_element": [
@@ -14627,7 +14627,7 @@
                           "$source": 0,
                           "$named": true,
                           "_tuple_type_elements": {
-                            "$type": 364,
+                            "$type": 363,
                             "$source": 0,
                             "$named": true,
                             "_type": [
@@ -14960,7 +14960,7 @@
                       "$source": 0,
                       "$named": true,
                       "_tuple_type_elements": {
-                        "$type": 364,
+                        "$type": 363,
                         "$source": 0,
                         "$named": true,
                         "_type": [
@@ -15423,7 +15423,7 @@
                     "$source": 0,
                     "$named": true,
                     "_tuple_type_elements": {
-                      "$type": 364,
+                      "$type": 363,
                       "$source": 0,
                       "$named": true,
                       "_type": [
@@ -15694,7 +15694,7 @@
                   "$source": 0,
                   "$named": true,
                   "_tuple_type_elements": {
-                    "$type": 364,
+                    "$type": 363,
                     "$source": 0,
                     "$named": true,
                     "_type": [
@@ -15805,7 +15805,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 364,
+        "$type": 363,
         "$source": 0,
         "$named": true,
         "_type": [
@@ -20068,7 +20068,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe\nextern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
-    "expectedReparseTree": "(source_file statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (pointer_type_const type: (type_identifier))) element: (attributed_parameter (variadic_parameter)))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_content)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_content)))))",
+    "expectedReparseTree": "(source_file statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (pointer_type_const type: (type_identifier))) element: (attributed_parameter (variadic_parameter)))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular)))))",
     "wrappedText": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe\nextern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
     "wrappedOffset": 0
   },
@@ -20452,7 +20452,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "pub unsafe\nextern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
-    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_content)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_content))))",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular))))",
     "wrappedText": "pub unsafe\nextern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
     "wrappedOffset": 0
   },
@@ -21025,7 +21025,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
-    "expectedReparseTree": "(block (line_comment (line_comment_content)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_content)))",
+    "expectedReparseTree": "(block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular)))",
     "wrappedText": "fn _f() { let _ = {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}; }",
     "wrappedOffset": 18
   },
@@ -21174,7 +21174,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -22190,7 +22190,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -23802,7 +23802,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -30213,7 +30213,7 @@
                   "$source": 0,
                   "$named": true,
                   "_content": {
-                    "$type": 383,
+                    "$type": 384,
                     "$source": 0,
                     "$named": true,
                     "$span": {
@@ -30285,7 +30285,7 @@
                   "$source": 0,
                   "$named": true,
                   "_content": {
-                    "$type": 383,
+                    "$type": 384,
                     "$source": 0,
                     "$named": true,
                     "$span": {
@@ -30660,7 +30660,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -30691,7 +30691,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -30722,7 +30722,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -30753,7 +30753,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -30885,7 +30885,7 @@
                 "$source": 0,
                 "$named": true,
                 "_content": {
-                  "$type": 383,
+                  "$type": 384,
                   "$source": 0,
                   "$named": true,
                   "$span": {
@@ -31137,7 +31137,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -31183,7 +31183,7 @@
                       "$source": 0,
                       "$named": true,
                       "_content": {
-                        "$type": 383,
+                        "$type": 384,
                         "$source": 0,
                         "$named": true,
                         "$span": {
@@ -31308,7 +31308,7 @@
                       "$source": 0,
                       "$named": true,
                       "_content": {
-                        "$type": 383,
+                        "$type": 384,
                         "$source": 0,
                         "$named": true,
                         "$span": {
@@ -31433,7 +31433,7 @@
                       "$source": 0,
                       "$named": true,
                       "_content": {
-                        "$type": 383,
+                        "$type": 384,
                         "$source": 0,
                         "$named": true,
                         "$span": {
@@ -31755,7 +31755,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -31801,7 +31801,7 @@
                   "$source": 0,
                   "$named": true,
                   "_content": {
-                    "$type": 383,
+                    "$type": 384,
                     "$source": 0,
                     "$named": true,
                     "$span": {
@@ -31926,7 +31926,7 @@
                   "$source": 0,
                   "$named": true,
                   "_content": {
-                    "$type": 383,
+                    "$type": 384,
                     "$source": 0,
                     "$named": true,
                     "$span": {
@@ -32051,7 +32051,7 @@
                   "$source": 0,
                   "$named": true,
                   "_content": {
-                    "$type": 383,
+                    "$type": 384,
                     "$source": 0,
                     "$named": true,
                     "$span": {
@@ -32367,7 +32367,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -32398,7 +32398,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -32429,7 +32429,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -32460,7 +32460,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -35501,7 +35501,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -35773,7 +35773,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -36517,7 +36517,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -36806,7 +36806,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -37544,7 +37544,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -37575,7 +37575,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -38635,7 +38635,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -38848,7 +38848,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -39055,7 +39055,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -39183,7 +39183,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -39626,7 +39626,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -39868,7 +39868,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -40328,7 +40328,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -40564,7 +40564,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -40595,7 +40595,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -42899,7 +42899,7 @@
                       "$source": 0,
                       "$named": true,
                       "_tuple_type_elements": {
-                        "$type": 364,
+                        "$type": 363,
                         "$source": 0,
                         "$named": true,
                         "_type": [
@@ -43572,7 +43572,7 @@
                   "$source": 0,
                   "$named": true,
                   "_tuple_type_elements": {
-                    "$type": 364,
+                    "$type": 363,
                     "$source": 0,
                     "$named": true,
                     "_type": [
@@ -44153,7 +44153,7 @@
                 "$source": 0,
                 "$named": true,
                 "_tuple_type_elements": {
-                  "$type": 364,
+                  "$type": 363,
                   "$source": 0,
                   "$named": true,
                   "_type": [
@@ -44617,7 +44617,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_type_elements": {
-          "$type": 364,
+          "$type": 363,
           "$source": 0,
           "$named": true,
           "_type": [
@@ -45252,7 +45252,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 364,
+        "$type": 363,
         "$source": 0,
         "$named": true,
         "_type": [
@@ -48229,7 +48229,7 @@
                     "$source": 0,
                     "$named": true,
                     "_tuple_type_elements": {
-                      "$type": 364,
+                      "$type": 363,
                       "$source": 0,
                       "$named": true,
                       "_type": [
@@ -48818,7 +48818,7 @@
                 "$source": 0,
                 "$named": true,
                 "_tuple_type_elements": {
-                  "$type": 364,
+                  "$type": 363,
                   "$source": 0,
                   "$named": true,
                   "_type": [
@@ -49661,7 +49661,7 @@
               "$source": 0,
               "$named": true,
               "_tuple_type_elements": {
-                "$type": 364,
+                "$type": 363,
                 "$source": 0,
                 "$named": true,
                 "_type": [
@@ -49900,7 +49900,7 @@
             "$source": 0,
             "$named": true,
             "_tuple_type_elements": {
-              "$type": 364,
+              "$type": 363,
               "$source": 0,
               "$named": true,
               "_type": [
@@ -50103,7 +50103,7 @@
           "$source": 0,
           "$named": true,
           "_tuple_type_elements": {
-            "$type": 364,
+            "$type": 363,
             "$source": 0,
             "$named": true,
             "_type": [
@@ -50270,7 +50270,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_type_elements": {
-          "$type": 364,
+          "$type": 363,
           "$source": 0,
           "$named": true,
           "_type": [
@@ -50401,7 +50401,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 364,
+        "$type": 363,
         "$source": 0,
         "$named": true,
         "_type": [
@@ -52205,7 +52205,7 @@
           }
         },
         "_input": {
-          "$type": 372,
+          "$type": 371,
           "$source": 0,
           "$named": true,
           "_arguments": {
@@ -52333,7 +52333,7 @@
           }
         },
         "_input": {
-          "$type": 372,
+          "$type": 371,
           "$source": 0,
           "$named": true,
           "_arguments": {
@@ -52352,7 +52352,7 @@
                 }
               },
               {
-                "$type": 366,
+                "$type": 365,
                 "$source": 0,
                 "$named": true,
                 "$text": "=",
@@ -52534,7 +52534,7 @@
           ]
         },
         "_input": {
-          "$type": 372,
+          "$type": 371,
           "$source": 0,
           "$named": true,
           "_value": {
@@ -52844,7 +52844,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "=",
@@ -52953,7 +52953,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "::",
@@ -53388,7 +53388,7 @@
           }
         },
         "_input": {
-          "$type": 372,
+          "$type": 371,
           "$source": 0,
           "$named": true,
           "_arguments": {
@@ -53407,7 +53407,7 @@
                 }
               },
               {
-                "$type": 366,
+                "$type": 365,
                 "$source": 0,
                 "$named": true,
                 "$text": "::",
@@ -53623,7 +53623,7 @@
                 }
               },
               "_input": {
-                "$type": 372,
+                "$type": 371,
                 "$source": 0,
                 "$named": true,
                 "_arguments": {
@@ -53642,7 +53642,7 @@
                       }
                     },
                     {
-                      "$type": 366,
+                      "$type": 365,
                       "$source": 0,
                       "$named": true,
                       "$text": "=",
@@ -53844,7 +53844,7 @@
           }
         },
         "_input": {
-          "$type": 372,
+          "$type": 371,
           "$source": 0,
           "$named": true,
           "_arguments": {
@@ -53863,7 +53863,7 @@
                 }
               },
               {
-                "$type": 366,
+                "$type": 365,
                 "$source": 0,
                 "$named": true,
                 "$text": "=",
@@ -54032,7 +54032,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "=",
@@ -54615,7 +54615,7 @@
               "$named": true,
               "_attribute_item": [],
               "_expression": {
-                "$type": 378,
+                "$type": 377,
                 "$source": 0,
                 "$named": true,
                 "_value": {
@@ -54858,7 +54858,7 @@
             "$named": true,
             "_attribute_item": [],
             "_expression": {
-              "$type": 378,
+              "$type": 377,
               "$source": 0,
               "$named": true,
               "_value": {
@@ -54965,7 +54965,7 @@
     "grammar": "rust",
     "pattern": "reference_expression_bare",
     "input": {
-      "$type": 378,
+      "$type": 377,
       "$source": 0,
       "$named": true,
       "_value": {
@@ -55068,7 +55068,7 @@
               }
             },
             "_input": {
-              "$type": 372,
+              "$type": 371,
               "$source": 0,
               "$named": true,
               "_value": {
@@ -55291,7 +55291,7 @@
               }
             },
             "_input": {
-              "$type": 372,
+              "$type": 371,
               "$source": 0,
               "$named": true,
               "_value": {
@@ -55471,7 +55471,7 @@
           }
         },
         "_input": {
-          "$type": 372,
+          "$type": 371,
           "$source": 0,
           "$named": true,
           "_value": {
@@ -55664,7 +55664,7 @@
           }
         },
         "_input": {
-          "$type": 372,
+          "$type": 371,
           "$source": 0,
           "$named": true,
           "_value": {
@@ -56387,7 +56387,7 @@
                       }
                     },
                     "_input": {
-                      "$type": 372,
+                      "$type": 371,
                       "$source": 0,
                       "$named": true,
                       "_arguments": {
@@ -56396,7 +56396,7 @@
                         "$named": true,
                         "_delim_tokens": [
                           {
-                            "$type": 366,
+                            "$type": 365,
                             "$source": 0,
                             "$named": true,
                             "$text": "=>",
@@ -56426,7 +56426,7 @@
                             }
                           },
                           {
-                            "$type": 366,
+                            "$type": 365,
                             "$source": 0,
                             "$named": true,
                             "$text": "<=",
@@ -56634,7 +56634,7 @@
                     }
                   },
                   "_input": {
-                    "$type": 372,
+                    "$type": 371,
                     "$source": 0,
                     "$named": true,
                     "_arguments": {
@@ -56643,7 +56643,7 @@
                       "$named": true,
                       "_delim_tokens": [
                         {
-                          "$type": 366,
+                          "$type": 365,
                           "$source": 0,
                           "$named": true,
                           "$text": "=>",
@@ -56673,7 +56673,7 @@
                           }
                         },
                         {
-                          "$type": 366,
+                          "$type": 365,
                           "$source": 0,
                           "$named": true,
                           "$text": "<=",
@@ -56862,7 +56862,7 @@
           }
         },
         "_input": {
-          "$type": 372,
+          "$type": 371,
           "$source": 0,
           "$named": true,
           "_arguments": {
@@ -56871,7 +56871,7 @@
             "$named": true,
             "_delim_tokens": [
               {
-                "$type": 366,
+                "$type": 365,
                 "$source": 0,
                 "$named": true,
                 "$text": "=>",
@@ -56901,7 +56901,7 @@
                 }
               },
               {
-                "$type": 366,
+                "$type": 365,
                 "$source": 0,
                 "$named": true,
                 "$text": "<=",
@@ -57007,7 +57007,7 @@
       "$named": true,
       "_delim_tokens": [
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "=>",
@@ -57037,7 +57037,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "<=",
@@ -57147,7 +57147,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;\n\n#[derive(Error,Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\" , first_char (.0))] WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)] OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}",
-    "expectedReparseTree": "(source_file (line_comment (line_comment_content)) statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
+    "expectedReparseTree": "(source_file (line_comment (line_comment_regular)) statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) statements: (enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant_list_elements element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (delim_token_tree_paren delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (integer_literal_decimal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements element: (attributed_ordered_field type: (type_identifier)))))) element: (attributed_enum_variant (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration_list_elements element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (primitive_type))) element: (attributed_field_declaration (field_declaration name: (field_identifier) type: (type_identifier)))))))))))",
     "wrappedText": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md\nuse thiserror::Error;\n\n#[derive(Error,Debug)]\npub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\" , first_char (.0))] WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\",.limits.lo,.limits.hi)] OutOfBounds {\n        idx: usize,\n        limits: Limits\n    },\n}",
     "wrappedOffset": 0
   },
@@ -57265,7 +57265,7 @@
           }
         },
         "_input": {
-          "$type": 372,
+          "$type": 371,
           "$source": 0,
           "$named": true,
           "_arguments": {
@@ -57317,7 +57317,7 @@
                 ]
               },
               {
-                "$type": 366,
+                "$type": 365,
                 "$source": 0,
                 "$named": true,
                 "$text": ",",
@@ -57327,7 +57327,7 @@
                 }
               },
               {
-                "$type": 366,
+                "$type": 365,
                 "$source": 0,
                 "$named": true,
                 "$text": ".",
@@ -57347,7 +57347,7 @@
                 }
               },
               {
-                "$type": 366,
+                "$type": 365,
                 "$source": 0,
                 "$named": true,
                 "$text": ".",
@@ -57367,7 +57367,7 @@
                 }
               },
               {
-                "$type": 366,
+                "$type": 365,
                 "$source": 0,
                 "$named": true,
                 "$text": ",",
@@ -57377,7 +57377,7 @@
                 }
               },
               {
-                "$type": 366,
+                "$type": 365,
                 "$source": 0,
                 "$named": true,
                 "$text": ".",
@@ -57397,7 +57397,7 @@
                 }
               },
               {
-                "$type": 366,
+                "$type": 365,
                 "$source": 0,
                 "$named": true,
                 "$text": ".",
@@ -57524,7 +57524,7 @@
       "$named": true,
       "_delim_tokens": [
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": ".",
@@ -57634,7 +57634,7 @@
           ]
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": ",",
@@ -57644,7 +57644,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": ".",
@@ -57664,7 +57664,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": ".",
@@ -57684,7 +57684,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": ",",
@@ -57694,7 +57694,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": ".",
@@ -57714,7 +57714,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": ".",
@@ -57790,7 +57790,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -58164,7 +58164,7 @@
                                     }
                                   },
                                   "_input": {
-                                    "$type": 372,
+                                    "$type": 371,
                                     "$source": 0,
                                     "$named": true,
                                     "_arguments": {
@@ -58183,7 +58183,7 @@
                                           }
                                         },
                                         {
-                                          "$type": 366,
+                                          "$type": 365,
                                           "$source": 0,
                                           "$named": true,
                                           "$text": "=",
@@ -58386,7 +58386,7 @@
                   }
                 },
                 "_value": {
-                  "$type": 371,
+                  "$type": 370,
                   "$source": 0,
                   "$named": true,
                   "_attributes": [
@@ -58661,7 +58661,7 @@
                     }
                   ],
                   "_tuple_expression_elements": {
-                    "$type": 365,
+                    "$type": 364,
                     "$source": 0,
                     "$named": true,
                     "_element": [
@@ -58947,7 +58947,7 @@
                                 }
                               },
                               "_input": {
-                                "$type": 372,
+                                "$type": 371,
                                 "$source": 0,
                                 "$named": true,
                                 "_arguments": {
@@ -58966,7 +58966,7 @@
                                       }
                                     },
                                     {
-                                      "$type": 366,
+                                      "$type": 365,
                                       "$source": 0,
                                       "$named": true,
                                       "$text": "=",
@@ -59169,7 +59169,7 @@
               }
             },
             "_value": {
-              "$type": 371,
+              "$type": 370,
               "$source": 0,
               "$named": true,
               "_attributes": [
@@ -59444,7 +59444,7 @@
                 }
               ],
               "_tuple_expression_elements": {
-                "$type": 365,
+                "$type": 364,
                 "$source": 0,
                 "$named": true,
                 "_element": [
@@ -59731,7 +59731,7 @@
                               }
                             },
                             "_input": {
-                              "$type": 372,
+                              "$type": 371,
                               "$source": 0,
                               "$named": true,
                               "_arguments": {
@@ -59750,7 +59750,7 @@
                                     }
                                   },
                                   {
-                                    "$type": 366,
+                                    "$type": 365,
                                     "$source": 0,
                                     "$named": true,
                                     "$text": "=",
@@ -59953,7 +59953,7 @@
             }
           },
           "_value": {
-            "$type": 371,
+            "$type": 370,
             "$source": 0,
             "$named": true,
             "_attributes": [
@@ -60228,7 +60228,7 @@
               }
             ],
             "_tuple_expression_elements": {
-              "$type": 365,
+              "$type": 364,
               "$source": 0,
               "$named": true,
               "_element": [
@@ -60458,7 +60458,7 @@
                       }
                     },
                     "_input": {
-                      "$type": 372,
+                      "$type": 371,
                       "$source": 0,
                       "$named": true,
                       "_arguments": {
@@ -60477,7 +60477,7 @@
                             }
                           },
                           {
-                            "$type": 366,
+                            "$type": 365,
                             "$source": 0,
                             "$named": true,
                             "$text": "=",
@@ -60717,7 +60717,7 @@
                     }
                   },
                   "_input": {
-                    "$type": 372,
+                    "$type": 371,
                     "$source": 0,
                     "$named": true,
                     "_arguments": {
@@ -60736,7 +60736,7 @@
                           }
                         },
                         {
-                          "$type": 366,
+                          "$type": 365,
                           "$source": 0,
                           "$named": true,
                           "$text": "=",
@@ -60941,7 +60941,7 @@
           }
         },
         "_input": {
-          "$type": 372,
+          "$type": 371,
           "$source": 0,
           "$named": true,
           "_arguments": {
@@ -60960,7 +60960,7 @@
                 }
               },
               {
-                "$type": 366,
+                "$type": 365,
                 "$source": 0,
                 "$named": true,
                 "$text": "=",
@@ -61246,7 +61246,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "=",
@@ -61414,7 +61414,7 @@
         }
       },
       "_value": {
-        "$type": 371,
+        "$type": 370,
         "$source": 0,
         "$named": true,
         "_attributes": [
@@ -61706,7 +61706,7 @@
           }
         ],
         "_tuple_expression_elements": {
-          "$type": 365,
+          "$type": 364,
           "$source": 0,
           "$named": true,
           "_element": [
@@ -61850,7 +61850,7 @@
     "grammar": "rust",
     "pattern": "array_expression_list",
     "input": {
-      "$type": 371,
+      "$type": 370,
       "$source": 0,
       "$named": true,
       "_attributes": [
@@ -62259,7 +62259,7 @@
         }
       ],
       "_tuple_expression_elements": {
-        "$type": 365,
+        "$type": 364,
         "$source": 0,
         "$named": true,
         "_element": [
@@ -62371,7 +62371,7 @@
       "$named": true,
       "_statements": [
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_type": {
@@ -62891,7 +62891,7 @@
           ]
         },
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_type": {
@@ -63070,7 +63070,7 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_type": {
@@ -63607,7 +63607,7 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_type": {
@@ -65104,7 +65104,7 @@
       "$named": true,
       "_statements": [
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_type_parameters": {
@@ -65181,7 +65181,7 @@
             ]
           },
           "_trait_clause": {
-            "$type": 379,
+            "$type": 378,
             "$source": 0,
             "$named": true,
             "_trait": {
@@ -65391,11 +65391,11 @@
           ]
         },
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_trait_clause": {
-            "$type": 379,
+            "$type": 378,
             "$source": 0,
             "$named": true,
             "_trait": {
@@ -65699,7 +65699,7 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_type_parameters": {
@@ -65776,7 +65776,7 @@
         ]
       },
       "_trait_clause": {
-        "$type": 379,
+        "$type": 378,
         "$source": 0,
         "$named": true,
         "_trait": {
@@ -66003,11 +66003,11 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_trait_clause": {
-        "$type": 379,
+        "$type": 378,
         "$source": 0,
         "$named": true,
         "_trait": {
@@ -67242,7 +67242,7 @@
       "$named": true,
       "_statements": [
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_unsafe_marker": true,
@@ -67305,7 +67305,7 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_unsafe_marker": true,
@@ -67403,11 +67403,11 @@
       "$named": true,
       "_statements": [
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_trait_clause": {
-            "$type": 380,
+            "$type": 379,
             "$source": 0,
             "$named": true,
             "_trait": {
@@ -67507,11 +67507,11 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_trait_clause": {
-        "$type": 380,
+        "$type": 379,
         "$source": 0,
         "$named": true,
         "_trait": {
@@ -67686,7 +67686,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -67737,12 +67737,12 @@
           ]
         },
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_unsafe_marker": true,
           "_trait_clause": {
-            "$type": 379,
+            "$type": 378,
             "$source": 0,
             "$named": true,
             "_trait": {
@@ -67786,7 +67786,7 @@
                 "$source": 0,
                 "$named": true,
                 "_tuple_type_elements": {
-                  "$type": 364,
+                  "$type": 363,
                   "$source": 0,
                   "$named": true,
                   "_type": [
@@ -68008,7 +68008,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -68080,7 +68080,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -68235,12 +68235,12 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_unsafe_marker": true,
       "_trait_clause": {
-        "$type": 379,
+        "$type": 378,
         "$source": 0,
         "$named": true,
         "_trait": {
@@ -68284,7 +68284,7 @@
             "$source": 0,
             "$named": true,
             "_tuple_type_elements": {
-              "$type": 364,
+              "$type": 363,
               "$source": 0,
               "$named": true,
               "_type": [
@@ -68508,7 +68508,7 @@
           "$source": 0,
           "$named": true,
           "_tuple_type_elements": {
-            "$type": 364,
+            "$type": 363,
             "$source": 0,
             "$named": true,
             "_type": [
@@ -68703,7 +68703,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_type_elements": {
-          "$type": 364,
+          "$type": 363,
           "$source": 0,
           "$named": true,
           "_type": [
@@ -68862,7 +68862,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 364,
+        "$type": 363,
         "$source": 0,
         "$named": true,
         "_type": [
@@ -69239,7 +69239,7 @@
       "$named": true,
       "_statements": [
         {
-          "$type": 382,
+          "$type": 381,
           "$source": 0,
           "$named": true,
           "_type_parameters": {
@@ -69367,7 +69367,7 @@
             ]
           },
           "_trait_clause": {
-            "$type": 379,
+            "$type": 378,
             "$source": 0,
             "$named": true,
             "_trait": {
@@ -69506,7 +69506,7 @@
           ]
         },
         {
-          "$type": 382,
+          "$type": 381,
           "$source": 0,
           "$named": true,
           "_type_parameters": {
@@ -69634,7 +69634,7 @@
             ]
           },
           "_trait_clause": {
-            "$type": 379,
+            "$type": 378,
             "$source": 0,
             "$named": true,
             "_trait": {
@@ -69792,7 +69792,7 @@
     "grammar": "rust",
     "pattern": "impl_item_semi",
     "input": {
-      "$type": 382,
+      "$type": 381,
       "$source": 0,
       "$named": true,
       "_type_parameters": {
@@ -69920,7 +69920,7 @@
         ]
       },
       "_trait_clause": {
-        "$type": 379,
+        "$type": 378,
         "$source": 0,
         "$named": true,
         "_trait": {
@@ -70076,7 +70076,7 @@
     "grammar": "rust",
     "pattern": "impl_item_semi",
     "input": {
-      "$type": 382,
+      "$type": 381,
       "$source": 0,
       "$named": true,
       "_type_parameters": {
@@ -70204,7 +70204,7 @@
         ]
       },
       "_trait_clause": {
-        "$type": 379,
+        "$type": 378,
         "$source": 0,
         "$named": true,
         "_trait": {
@@ -71420,7 +71420,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "impl Foo {\n    const\n    default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}",
-    "expectedReparseTree": "(source_file statements: (impl_item_body type: (type_identifier) (declaration_list declarations: (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (line_comment (line_comment_content)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))))))",
+    "expectedReparseTree": "(source_file statements: (impl_item_body type: (type_identifier) (declaration_list declarations: (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))))))",
     "wrappedText": "impl Foo {\n    const\n    default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}",
     "wrappedOffset": 0
   },
@@ -71431,7 +71431,7 @@
     "pattern": "impl_item_body",
     "edits": [],
     "expectedSourceOut": "impl Foo {\n    const\n    default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}",
-    "expectedReparseTree": "(impl_item_body type: (type_identifier) (declaration_list declarations: (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (line_comment (line_comment_content)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))))",
+    "expectedReparseTree": "(impl_item_body type: (type_identifier) (declaration_list declarations: (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))))",
     "wrappedText": "impl Foo {\n    const\n    default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}",
     "wrappedOffset": 0
   },
@@ -71474,7 +71474,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "const\ndefault fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n}",
-    "expectedReparseTree": "(function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (line_comment (line_comment_content)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))",
+    "expectedReparseTree": "(function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))",
     "wrappedText": "const\ndefault fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n}",
     "wrappedOffset": 0
   },
@@ -71511,7 +71511,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{\n    // Make 'default' still works as an identifier\n    default.bar();\n}",
-    "expectedReparseTree": "(block (line_comment (line_comment_content)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))",
+    "expectedReparseTree": "(block (line_comment (line_comment_regular)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))",
     "wrappedText": "fn _f() { let _ = {\n    // Make 'default' still works as an identifier\n    default.bar();\n}; }",
     "wrappedOffset": 18
   },
@@ -71703,7 +71703,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -72110,7 +72110,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -72528,7 +72528,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -75191,7 +75191,7 @@
                         "$source": 0,
                         "$named": true,
                         "_tuple_type_elements": {
-                          "$type": 364,
+                          "$type": 363,
                           "$source": 0,
                           "$named": true,
                           "_type": [
@@ -76310,7 +76310,7 @@
                     "$source": 0,
                     "$named": true,
                     "_tuple_type_elements": {
-                      "$type": 364,
+                      "$type": 363,
                       "$source": 0,
                       "$named": true,
                       "_type": [
@@ -76673,7 +76673,7 @@
                   "$source": 0,
                   "$named": true,
                   "_tuple_type_elements": {
-                    "$type": 364,
+                    "$type": 363,
                     "$source": 0,
                     "$named": true,
                     "_type": [
@@ -77011,7 +77011,7 @@
           "$source": 0,
           "$named": true,
           "_tuple_type_elements": {
-            "$type": 364,
+            "$type": 363,
             "$source": 0,
             "$named": true,
             "_type": [
@@ -77265,7 +77265,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_type_elements": {
-          "$type": 364,
+          "$type": 363,
           "$source": 0,
           "$named": true,
           "_type": [
@@ -77530,7 +77530,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 364,
+        "$type": 363,
         "$source": 0,
         "$named": true,
         "_type": [
@@ -77793,7 +77793,7 @@
       "$named": true,
       "_statements": [
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_type_parameters": {
@@ -77998,7 +77998,7 @@
             ]
           },
           "_trait_clause": {
-            "$type": 379,
+            "$type": 378,
             "$source": 0,
             "$named": true,
             "_trait": {
@@ -78089,7 +78089,7 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_type_parameters": {
@@ -78294,7 +78294,7 @@
         ]
       },
       "_trait_clause": {
-        "$type": 379,
+        "$type": 378,
         "$source": 0,
         "$named": true,
         "_trait": {
@@ -79117,7 +79117,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -79429,7 +79429,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -79735,7 +79735,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -80155,7 +80155,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -80407,7 +80407,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -80653,7 +80653,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -81063,11 +81063,11 @@
       "$named": true,
       "_statements": [
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_trait_clause": {
-            "$type": 379,
+            "$type": 378,
             "$source": 0,
             "$named": true,
             "_trait": {
@@ -81359,11 +81359,11 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_trait_clause": {
-        "$type": 379,
+        "$type": 378,
         "$source": 0,
         "$named": true,
         "_trait": {
@@ -81990,7 +81990,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -82391,11 +82391,11 @@
           ]
         },
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_trait_clause": {
-            "$type": 379,
+            "$type": 378,
             "$source": 0,
             "$named": true,
             "_trait": {
@@ -83559,7 +83559,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -83981,7 +83981,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -86862,11 +86862,11 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_trait_clause": {
-        "$type": 379,
+        "$type": 378,
         "$source": 0,
         "$named": true,
         "_trait": {
@@ -91589,7 +91589,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -91651,11 +91651,11 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
-              "_visibility_modifier_group": {
-                "$type": 359,
+              "_visibility_modifier_pub_scope": {
+                "$type": 383,
                 "$source": 0,
                 "$named": true,
                 "$other": [
@@ -91749,11 +91749,11 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
-              "_visibility_modifier_group": {
-                "$type": 359,
+              "_visibility_modifier_pub_scope": {
+                "$type": 383,
                 "$source": 0,
                 "$named": true,
                 "$other": [
@@ -91847,11 +91847,11 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
-              "_visibility_modifier_group": {
-                "$type": 359,
+              "_visibility_modifier_pub_scope": {
+                "$type": 383,
                 "$source": 0,
                 "$named": true,
                 "$other": [
@@ -91945,11 +91945,11 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
-              "_visibility_modifier_group": {
-                "$type": 359,
+              "_visibility_modifier_pub_scope": {
+                "$type": 383,
                 "$source": 0,
                 "$named": true,
                 "$other": [
@@ -91975,7 +91975,7 @@
                   }
                 ],
                 "_content": {
-                  "$type": 384,
+                  "$type": 382,
                   "$source": 0,
                   "$named": true,
                   "$slotOrder": [
@@ -92085,7 +92085,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "pub fn a() {}\n\npub(super) fn b() {}\n\npub(self) fn c() {}\n\npub(crate) fn c() {}\n\npub(in crate::d) fn e() {}",
-    "expectedReparseTree": "(source_file statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (super)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (self)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (crate)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (visibility_modifier_pub_in_path (scoped_identifier path: (crate) name: (identifier)))))) name: (identifier) parameters: (parameters) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (super)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (visibility_modifier_pub_scope_in_path (scoped_identifier path: (crate) name: (identifier)))))) name: (identifier) parameters: (parameters) body: (block)))",
     "wrappedText": "pub fn a() {}\n\npub(super) fn b() {}\n\npub(self) fn c() {}\n\npub(crate) fn c() {}\n\npub(in crate::d) fn e() {}",
     "wrappedOffset": 0
   },
@@ -92102,7 +92102,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -92181,11 +92181,11 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
-          "_visibility_modifier_group": {
-            "$type": 359,
+          "_visibility_modifier_pub_scope": {
+            "$type": 383,
             "$source": 0,
             "$named": true,
             "$other": [
@@ -92279,7 +92279,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "pub(super) fn b() {}",
-    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (super)))) name: (identifier) parameters: (parameters) body: (block))",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (super)))) name: (identifier) parameters: (parameters) body: (block))",
     "wrappedText": "pub(super) fn b() {}",
     "wrappedOffset": 0
   },
@@ -92296,11 +92296,11 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
-          "_visibility_modifier_group": {
-            "$type": 359,
+          "_visibility_modifier_pub_scope": {
+            "$type": 383,
             "$source": 0,
             "$named": true,
             "$other": [
@@ -92394,7 +92394,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "pub(self) fn c() {}",
-    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (self)))) name: (identifier) parameters: (parameters) body: (block))",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self)))) name: (identifier) parameters: (parameters) body: (block))",
     "wrappedText": "pub(self) fn c() {}",
     "wrappedOffset": 0
   },
@@ -92411,11 +92411,11 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
-          "_visibility_modifier_group": {
-            "$type": 359,
+          "_visibility_modifier_pub_scope": {
+            "$type": 383,
             "$source": 0,
             "$named": true,
             "$other": [
@@ -92509,7 +92509,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "pub(crate) fn c() {}",
-    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (crate)))) name: (identifier) parameters: (parameters) body: (block))",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate)))) name: (identifier) parameters: (parameters) body: (block))",
     "wrappedText": "pub(crate) fn c() {}",
     "wrappedOffset": 0
   },
@@ -92526,11 +92526,11 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
-          "_visibility_modifier_group": {
-            "$type": 359,
+          "_visibility_modifier_pub_scope": {
+            "$type": 383,
             "$source": 0,
             "$named": true,
             "$other": [
@@ -92556,7 +92556,7 @@
               }
             ],
             "_content": {
-              "$type": 384,
+              "$type": 382,
               "$source": 0,
               "$named": true,
               "$slotOrder": [
@@ -92664,7 +92664,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "pub(in crate::d) fn e() {}",
-    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_group (visibility_modifier_pub_in_path (scoped_identifier path: (crate) name: (identifier)))))) name: (identifier) parameters: (parameters) body: (block))",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (visibility_modifier_pub_scope_in_path (scoped_identifier path: (crate) name: (identifier)))))) name: (identifier) parameters: (parameters) body: (block))",
     "wrappedText": "pub(in crate::d) fn e() {}",
     "wrappedOffset": 0
   },
@@ -92677,7 +92677,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -92708,11 +92708,11 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
-        "_visibility_modifier_group": {
-          "$type": 359,
+        "_visibility_modifier_pub_scope": {
+          "$type": 383,
           "$source": 0,
           "$named": true,
           "$other": [
@@ -92762,7 +92762,7 @@
     "pattern": "visibility_modifier",
     "edits": [],
     "expectedSourceOut": "pub(super)",
-    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub (visibility_modifier_group (super))))",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (super))))",
     "wrappedText": "pub(super) fn _f() {}",
     "wrappedOffset": 0
   },
@@ -92775,11 +92775,11 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
-        "_visibility_modifier_group": {
-          "$type": 359,
+        "_visibility_modifier_pub_scope": {
+          "$type": 383,
           "$source": 0,
           "$named": true,
           "$other": [
@@ -92829,7 +92829,7 @@
     "pattern": "visibility_modifier",
     "edits": [],
     "expectedSourceOut": "pub(self)",
-    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub (visibility_modifier_group (self))))",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))",
     "wrappedText": "pub(self) fn _f() {}",
     "wrappedOffset": 0
   },
@@ -92842,11 +92842,11 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
-        "_visibility_modifier_group": {
-          "$type": 359,
+        "_visibility_modifier_pub_scope": {
+          "$type": 383,
           "$source": 0,
           "$named": true,
           "$other": [
@@ -92896,7 +92896,7 @@
     "pattern": "visibility_modifier",
     "edits": [],
     "expectedSourceOut": "pub(crate)",
-    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub (visibility_modifier_group (crate))))",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))",
     "wrappedText": "pub(crate) fn _f() {}",
     "wrappedOffset": 0
   },
@@ -92909,11 +92909,11 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
-        "_visibility_modifier_group": {
-          "$type": 359,
+        "_visibility_modifier_pub_scope": {
+          "$type": 383,
           "$source": 0,
           "$named": true,
           "$other": [
@@ -92939,7 +92939,7 @@
             }
           ],
           "_content": {
-            "$type": 384,
+            "$type": 382,
             "$source": 0,
             "$named": true,
             "$slotOrder": [
@@ -93003,7 +93003,7 @@
     "pattern": "visibility_modifier",
     "edits": [],
     "expectedSourceOut": "pub(in crate::d)",
-    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub (visibility_modifier_group (visibility_modifier_pub_in_path (scoped_identifier path: (crate) name: (identifier))))))",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (visibility_modifier_pub_scope_in_path (scoped_identifier path: (crate) name: (identifier))))))",
     "wrappedText": "pub(in crate::d) fn _f() {}",
     "wrappedOffset": 0
   },
@@ -94857,7 +94857,7 @@
           ]
         },
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_type_parameters": {
@@ -95047,7 +95047,7 @@
             ]
           },
           "_trait_clause": {
-            "$type": 379,
+            "$type": 378,
             "$source": 0,
             "$named": true,
             "_trait": {
@@ -95323,7 +95323,7 @@
           ]
         },
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_type_parameters": {
@@ -95388,7 +95388,7 @@
             ]
           },
           "_trait_clause": {
-            "$type": 379,
+            "$type": 378,
             "$source": 0,
             "$named": true,
             "_trait": {
@@ -95856,7 +95856,7 @@
           ]
         },
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_type_parameters": {
@@ -96154,7 +96154,7 @@
           ]
         },
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_type_parameters": {
@@ -96219,7 +96219,7 @@
             ]
           },
           "_trait_clause": {
-            "$type": 379,
+            "$type": 378,
             "$source": 0,
             "$named": true,
             "_trait": {
@@ -96347,7 +96347,7 @@
                     "$source": 0,
                     "$named": true,
                     "_tuple_type_elements": {
-                      "$type": 364,
+                      "$type": 363,
                       "$source": 0,
                       "$named": true,
                       "_type": [
@@ -96538,7 +96538,7 @@
           ]
         },
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_type_parameters": {
@@ -96603,7 +96603,7 @@
             ]
           },
           "_trait_clause": {
-            "$type": 379,
+            "$type": 378,
             "$source": 0,
             "$named": true,
             "_trait": {
@@ -97077,7 +97077,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -97672,7 +97672,7 @@
           ]
         },
         {
-          "$type": 381,
+          "$type": 380,
           "$source": 0,
           "$named": true,
           "_type_parameters": {
@@ -97737,7 +97737,7 @@
             ]
           },
           "_trait_clause": {
-            "$type": 379,
+            "$type": 378,
             "$source": 0,
             "$named": true,
             "_trait": {
@@ -102838,7 +102838,7 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_type_parameters": {
@@ -103028,7 +103028,7 @@
         ]
       },
       "_trait_clause": {
-        "$type": 379,
+        "$type": 378,
         "$source": 0,
         "$named": true,
         "_trait": {
@@ -103321,7 +103321,7 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_type_parameters": {
@@ -103386,7 +103386,7 @@
         ]
       },
       "_trait_clause": {
-        "$type": 379,
+        "$type": 378,
         "$source": 0,
         "$named": true,
         "_trait": {
@@ -103871,7 +103871,7 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_type_parameters": {
@@ -104186,7 +104186,7 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_type_parameters": {
@@ -104251,7 +104251,7 @@
         ]
       },
       "_trait_clause": {
-        "$type": 379,
+        "$type": 378,
         "$source": 0,
         "$named": true,
         "_trait": {
@@ -104379,7 +104379,7 @@
                 "$source": 0,
                 "$named": true,
                 "_tuple_type_elements": {
-                  "$type": 364,
+                  "$type": 363,
                   "$source": 0,
                   "$named": true,
                   "_type": [
@@ -104587,7 +104587,7 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_type_parameters": {
@@ -104652,7 +104652,7 @@
         ]
       },
       "_trait_clause": {
-        "$type": 379,
+        "$type": 378,
         "$source": 0,
         "$named": true,
         "_trait": {
@@ -105135,7 +105135,7 @@
     "grammar": "rust",
     "pattern": "impl_item_body",
     "input": {
-      "$type": 381,
+      "$type": 380,
       "$source": 0,
       "$named": true,
       "_type_parameters": {
@@ -105200,7 +105200,7 @@
         ]
       },
       "_trait_clause": {
-        "$type": 379,
+        "$type": 378,
         "$source": 0,
         "$named": true,
         "_trait": {
@@ -106489,7 +106489,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 364,
+        "$type": 363,
         "$source": 0,
         "$named": true,
         "_type": [
@@ -106612,7 +106612,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -106840,7 +106840,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -110163,7 +110163,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 383,
+              "$type": 384,
               "$source": 0,
               "$named": true,
               "$span": {
@@ -110532,7 +110532,7 @@
         "$source": 0,
         "$named": true,
         "_content": {
-          "$type": 383,
+          "$type": 384,
           "$source": 0,
           "$named": true,
           "$span": {
@@ -110895,7 +110895,7 @@
       "$source": 0,
       "$named": true,
       "_content": {
-        "$type": 383,
+        "$type": 384,
         "$source": 0,
         "$named": true,
         "$span": {
@@ -113208,7 +113208,7 @@
             "$source": 0,
             "$named": true,
             "_expression": {
-              "$type": 378,
+              "$type": 377,
               "$source": 0,
               "$named": true,
               "_value": {
@@ -113257,7 +113257,7 @@
             "$source": 0,
             "$named": true,
             "_expression": {
-              "$type": 377,
+              "$type": 376,
               "$source": 0,
               "$named": true,
               "_value": {
@@ -113337,7 +113337,7 @@
             "$source": 0,
             "$named": true,
             "_expression": {
-              "$type": 375,
+              "$type": 374,
               "$source": 0,
               "$named": true,
               "_value": {
@@ -113406,7 +113406,7 @@
             "$source": 0,
             "$named": true,
             "_expression": {
-              "$type": 376,
+              "$type": 375,
               "$source": 0,
               "$named": true,
               "_value": {
@@ -113507,7 +113507,7 @@
     "grammar": "rust",
     "pattern": "reference_expression_bare",
     "input": {
-      "$type": 378,
+      "$type": 377,
       "$source": 0,
       "$named": true,
       "_value": {
@@ -113551,7 +113551,7 @@
     "grammar": "rust",
     "pattern": "reference_expression_mut",
     "input": {
-      "$type": 377,
+      "$type": 376,
       "$source": 0,
       "$named": true,
       "_value": {
@@ -113734,7 +113734,7 @@
     "grammar": "rust",
     "pattern": "reference_expression_raw_const",
     "input": {
-      "$type": 375,
+      "$type": 374,
       "$source": 0,
       "$named": true,
       "_value": {
@@ -113798,7 +113798,7 @@
     "grammar": "rust",
     "pattern": "reference_expression_raw_mut",
     "input": {
-      "$type": 376,
+      "$type": 375,
       "$source": 0,
       "$named": true,
       "_value": {
@@ -113999,7 +113999,7 @@
             "$source": 0,
             "$named": true,
             "_expression": {
-              "$type": 378,
+              "$type": 377,
               "$source": 0,
               "$named": true,
               "_value": {
@@ -114388,7 +114388,7 @@
     "grammar": "rust",
     "pattern": "reference_expression_bare",
     "input": {
-      "$type": 378,
+      "$type": 377,
       "$source": 0,
       "$named": true,
       "_value": {
@@ -116387,7 +116387,7 @@
               "$type": 261,
               "$source": 0,
               "$named": true,
-              "_content": 368
+              "_content": 367
             },
             "$other": [
               {
@@ -117136,7 +117136,7 @@
       "$type": 261,
       "$source": 0,
       "$named": true,
-      "_content": 368
+      "_content": 367
     },
     "expectedOutput": ".."
   },
@@ -121325,7 +121325,7 @@
             "$source": 0,
             "$named": true,
             "_expression": {
-              "$type": 371,
+              "$type": 370,
               "$source": 0,
               "$named": true,
               "_attributes": []
@@ -121353,7 +121353,7 @@
             "$source": 0,
             "$named": true,
             "_expression": {
-              "$type": 371,
+              "$type": 370,
               "$source": 0,
               "$named": true,
               "_arguments_elements": {
@@ -121484,7 +121484,7 @@
             "$source": 0,
             "$named": true,
             "_expression": {
-              "$type": 371,
+              "$type": 370,
               "$source": 0,
               "$named": true,
               "_arguments_elements": {
@@ -121711,7 +121711,7 @@
             "$source": 0,
             "$named": true,
             "_expression": {
-              "$type": 370,
+              "$type": 369,
               "$source": 0,
               "$named": true,
               "_element": {
@@ -121797,7 +121797,7 @@
             "$source": 0,
             "$named": true,
             "_expression": {
-              "$type": 371,
+              "$type": 370,
               "$source": 0,
               "$named": true,
               "_attributes": [
@@ -121820,7 +121820,7 @@
                       }
                     },
                     "_input": {
-                      "$type": 372,
+                      "$type": 371,
                       "$source": 0,
                       "$named": true,
                       "_arguments": {
@@ -121980,7 +121980,7 @@
                             }
                           },
                           "_input": {
-                            "$type": 372,
+                            "$type": 371,
                             "$source": 0,
                             "$named": true,
                             "_arguments": {
@@ -122196,7 +122196,7 @@
     "grammar": "rust",
     "pattern": "array_expression_list",
     "input": {
-      "$type": 371,
+      "$type": 370,
       "$source": 0,
       "$named": true,
       "_attributes": []
@@ -122219,7 +122219,7 @@
     "grammar": "rust",
     "pattern": "array_expression_list",
     "input": {
-      "$type": 371,
+      "$type": 370,
       "$source": 0,
       "$named": true,
       "_arguments_elements": {
@@ -122345,7 +122345,7 @@
     "grammar": "rust",
     "pattern": "array_expression_list",
     "input": {
-      "$type": 371,
+      "$type": 370,
       "$source": 0,
       "$named": true,
       "_arguments_elements": {
@@ -122567,7 +122567,7 @@
     "grammar": "rust",
     "pattern": "array_expression_list",
     "input": {
-      "$type": 371,
+      "$type": 370,
       "$source": 0,
       "$named": true,
       "_attributes": [
@@ -122590,7 +122590,7 @@
               }
             },
             "_input": {
-              "$type": 372,
+              "$type": 371,
               "$source": 0,
               "$named": true,
               "_arguments": {
@@ -122750,7 +122750,7 @@
                     }
                   },
                   "_input": {
-                    "$type": 372,
+                    "$type": 371,
                     "$source": 0,
                     "$named": true,
                     "_arguments": {
@@ -123390,7 +123390,7 @@
     "grammar": "rust",
     "pattern": "array_expression_semi",
     "input": {
-      "$type": 370,
+      "$type": 369,
       "$source": 0,
       "$named": true,
       "_element": {
@@ -123489,7 +123489,7 @@
           }
         },
         "_input": {
-          "$type": 372,
+          "$type": 371,
           "$source": 0,
           "$named": true,
           "_arguments": {
@@ -123606,7 +123606,7 @@
           }
         },
         "_input": {
-          "$type": 372,
+          "$type": 371,
           "$source": 0,
           "$named": true,
           "_arguments": {
@@ -123866,7 +123866,7 @@
               "$source": 0,
               "$named": true,
               "_tuple_expression_elements": {
-                "$type": 365,
+                "$type": 364,
                 "$source": 0,
                 "$named": true,
                 "_element": [
@@ -124030,7 +124030,7 @@
             "$source": 0,
             "$named": true,
             "_tuple_expression_elements": {
-              "$type": 365,
+              "$type": 364,
               "$source": 0,
               "$named": true,
               "_element": [
@@ -124177,7 +124177,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_expression_elements": {
-        "$type": 365,
+        "$type": 364,
         "$source": 0,
         "$named": true,
         "_element": [
@@ -124253,7 +124253,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_expression_elements": {
-        "$type": 365,
+        "$type": 364,
         "$source": 0,
         "$named": true,
         "_element": [
@@ -124564,7 +124564,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_expression_elements": {
-          "$type": 365,
+          "$type": 364,
           "$source": 0,
           "$named": true,
           "_element": [
@@ -131197,7 +131197,7 @@
                     }
                   },
                   "_value": {
-                    "$type": 374,
+                    "$type": 373,
                     "$source": 0,
                     "$named": true,
                     "_parameters": {
@@ -131349,7 +131349,7 @@
                     }
                   },
                   "_value": {
-                    "$type": 374,
+                    "$type": 373,
                     "$source": 0,
                     "$named": true,
                     "_parameters": {
@@ -132042,7 +132042,7 @@
               }
             },
             "_value": {
-              "$type": 374,
+              "$type": 373,
               "$source": 0,
               "$named": true,
               "_parameters": {
@@ -132206,7 +132206,7 @@
               }
             },
             "_value": {
-              "$type": 374,
+              "$type": 373,
               "$source": 0,
               "$named": true,
               "_parameters": {
@@ -132880,7 +132880,7 @@
     "grammar": "rust",
     "pattern": "closure_expression_expr",
     "input": {
-      "$type": 374,
+      "$type": 373,
       "$source": 0,
       "$named": true,
       "_parameters": {
@@ -132943,7 +132943,7 @@
     "grammar": "rust",
     "pattern": "closure_expression_expr",
     "input": {
-      "$type": 374,
+      "$type": 373,
       "$source": 0,
       "$named": true,
       "_parameters": {
@@ -149593,7 +149593,7 @@
                 "$source": 0,
                 "$named": true,
                 "_expression": {
-                  "$type": 371,
+                  "$type": 370,
                   "$source": 0,
                   "$named": true,
                   "_arguments_elements": {
@@ -149978,7 +149978,7 @@
         "$source": 0,
         "$named": true,
         "_expression": {
-          "$type": 371,
+          "$type": 370,
           "$source": 0,
           "$named": true,
           "_arguments_elements": {
@@ -150333,7 +150333,7 @@
       "$source": 0,
       "$named": true,
       "_expression": {
-        "$type": 371,
+        "$type": 370,
         "$source": 0,
         "$named": true,
         "_arguments_elements": {
@@ -150509,7 +150509,7 @@
     "grammar": "rust",
     "pattern": "array_expression_list",
     "input": {
-      "$type": 371,
+      "$type": 370,
       "$source": 0,
       "$named": true,
       "_arguments_elements": {
@@ -154771,7 +154771,7 @@
                       "$named": true,
                       "_attribute_item": [],
                       "_expression": {
-                        "$type": 374,
+                        "$type": 373,
                         "$source": 0,
                         "$named": true,
                         "_parameters": {
@@ -155100,7 +155100,7 @@
                       "$named": true,
                       "_attribute_item": [],
                       "_expression": {
-                        "$type": 374,
+                        "$type": 373,
                         "$source": 0,
                         "$named": true,
                         "_move_marker": true,
@@ -155436,7 +155436,7 @@
                       "$named": true,
                       "_attribute_item": [],
                       "_expression": {
-                        "$type": 373,
+                        "$type": 372,
                         "$source": 0,
                         "$named": true,
                         "_parameters": {
@@ -155646,7 +155646,7 @@
               "$named": true,
               "_attribute_item": [],
               "_expression": {
-                "$type": 374,
+                "$type": 373,
                 "$source": 0,
                 "$named": true,
                 "_parameters": {
@@ -156093,7 +156093,7 @@
               "$named": true,
               "_attribute_item": [],
               "_expression": {
-                "$type": 374,
+                "$type": 373,
                 "$source": 0,
                 "$named": true,
                 "_move_marker": true,
@@ -156598,7 +156598,7 @@
               "$named": true,
               "_attribute_item": [],
               "_expression": {
-                "$type": 373,
+                "$type": 372,
                 "$source": 0,
                 "$named": true,
                 "_parameters": {
@@ -156931,7 +156931,7 @@
             "$named": true,
             "_attribute_item": [],
             "_expression": {
-              "$type": 374,
+              "$type": 373,
               "$source": 0,
               "$named": true,
               "_parameters": {
@@ -157268,7 +157268,7 @@
             "$named": true,
             "_attribute_item": [],
             "_expression": {
-              "$type": 374,
+              "$type": 373,
               "$source": 0,
               "$named": true,
               "_move_marker": true,
@@ -157716,7 +157716,7 @@
             "$named": true,
             "_attribute_item": [],
             "_expression": {
-              "$type": 373,
+              "$type": 372,
               "$source": 0,
               "$named": true,
               "_parameters": {
@@ -157841,7 +157841,7 @@
     "grammar": "rust",
     "pattern": "closure_expression_expr",
     "input": {
-      "$type": 374,
+      "$type": 373,
       "$source": 0,
       "$named": true,
       "_parameters": {
@@ -158069,7 +158069,7 @@
     "grammar": "rust",
     "pattern": "closure_expression_expr",
     "input": {
-      "$type": 374,
+      "$type": 373,
       "$source": 0,
       "$named": true,
       "_move_marker": true,
@@ -158727,7 +158727,7 @@
     "grammar": "rust",
     "pattern": "closure_expression_block",
     "input": {
-      "$type": 373,
+      "$type": 372,
       "$source": 0,
       "$named": true,
       "_parameters": {
@@ -158934,7 +158934,7 @@
                       "$named": true,
                       "_attribute_item": [],
                       "_expression": {
-                        "$type": 374,
+                        "$type": 373,
                         "$source": 0,
                         "$named": true,
                         "_parameters": {
@@ -159239,7 +159239,7 @@
               "$named": true,
               "_attribute_item": [],
               "_expression": {
-                "$type": 374,
+                "$type": 373,
                 "$source": 0,
                 "$named": true,
                 "_parameters": {
@@ -159727,7 +159727,7 @@
             "$named": true,
             "_attribute_item": [],
             "_expression": {
-              "$type": 374,
+              "$type": 373,
               "$source": 0,
               "$named": true,
               "_parameters": {
@@ -160015,7 +160015,7 @@
     "grammar": "rust",
     "pattern": "closure_expression_expr",
     "input": {
-      "$type": 374,
+      "$type": 373,
       "$source": 0,
       "$named": true,
       "_parameters": {
@@ -160270,7 +160270,7 @@
             "$source": 0,
             "$named": true,
             "_expression": {
-              "$type": 374,
+              "$type": 373,
               "$source": 0,
               "$named": true,
               "_move_marker": true,
@@ -160569,7 +160569,7 @@
     "grammar": "rust",
     "pattern": "closure_expression_expr",
     "input": {
-      "$type": 374,
+      "$type": 373,
       "$source": 0,
       "$named": true,
       "_move_marker": true,
@@ -162426,7 +162426,7 @@
                       "$source": 0,
                       "$named": true,
                       "_trailing_expression": {
-                        "$type": 378,
+                        "$type": 377,
                         "$source": 0,
                         "$named": true,
                         "_value": {
@@ -162702,7 +162702,7 @@
             }
           },
           "_value": {
-            "$type": 370,
+            "$type": 369,
             "$source": 0,
             "$named": true,
             "_element": {
@@ -163078,7 +163078,7 @@
         "$source": 0,
         "$named": true,
         "_trailing_expression": {
-          "$type": 378,
+          "$type": 377,
           "$source": 0,
           "$named": true,
           "_value": {
@@ -163534,7 +163534,7 @@
               "$source": 0,
               "$named": true,
               "_trailing_expression": {
-                "$type": 378,
+                "$type": 377,
                 "$source": 0,
                 "$named": true,
                 "_value": {
@@ -163743,7 +163743,7 @@
       "$source": 0,
       "$named": true,
       "_trailing_expression": {
-        "$type": 378,
+        "$type": 377,
         "$source": 0,
         "$named": true,
         "_value": {
@@ -164526,7 +164526,7 @@
                 "$source": 0,
                 "$named": true,
                 "_trailing_expression": {
-                  "$type": 378,
+                  "$type": 377,
                   "$source": 0,
                   "$named": true,
                   "_value": {
@@ -164841,7 +164841,7 @@
     "grammar": "rust",
     "pattern": "reference_expression_bare",
     "input": {
-      "$type": 378,
+      "$type": 377,
       "$source": 0,
       "$named": true,
       "_value": {
@@ -165538,7 +165538,7 @@
         }
       },
       "_value": {
-        "$type": 370,
+        "$type": 369,
         "$source": 0,
         "$named": true,
         "_element": {
@@ -165809,7 +165809,7 @@
     "grammar": "rust",
     "pattern": "array_expression_semi",
     "input": {
-      "$type": 370,
+      "$type": 369,
       "$source": 0,
       "$named": true,
       "_element": {
@@ -171319,7 +171319,7 @@
         "$named": true,
         "_delim_tokens": [
           {
-            "$type": 366,
+            "$type": 365,
             "$source": 0,
             "$named": true,
             "$text": "*",
@@ -171339,7 +171339,7 @@
             }
           },
           {
-            "$type": 366,
+            "$type": 365,
             "$source": 0,
             "$named": true,
             "$text": "*",
@@ -171437,7 +171437,7 @@
         "$named": true,
         "_delim_tokens": [
           {
-            "$type": 366,
+            "$type": 365,
             "$source": 0,
             "$named": true,
             "$text": "-",
@@ -171457,7 +171457,7 @@
             }
           },
           {
-            "$type": 366,
+            "$type": 365,
             "$source": 0,
             "$named": true,
             "$text": "-",
@@ -171554,7 +171554,7 @@
             }
           },
           {
-            "$type": 366,
+            "$type": 365,
             "$source": 0,
             "$named": true,
             "$text": "+",
@@ -171574,7 +171574,7 @@
             }
           },
           {
-            "$type": 366,
+            "$type": 365,
             "$source": 0,
             "$named": true,
             "$text": "+",
@@ -171584,7 +171584,7 @@
             }
           },
           {
-            "$type": 366,
+            "$type": 365,
             "$source": 0,
             "$named": true,
             "$text": "+",
@@ -171682,7 +171682,7 @@
             "_content": "a"
           },
           {
-            "$type": 366,
+            "$type": 365,
             "$source": 0,
             "$named": true,
             "$text": "..=",
@@ -171791,7 +171791,7 @@
             "_content": "\\u{0}"
           },
           {
-            "$type": 366,
+            "$type": 365,
             "$source": 0,
             "$named": true,
             "$text": "..=",
@@ -172480,7 +172480,7 @@
       "$named": true,
       "_delim_tokens": [
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "*",
@@ -172500,7 +172500,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "*",
@@ -172567,7 +172567,7 @@
       "$named": true,
       "_delim_tokens": [
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "-",
@@ -172587,7 +172587,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "-",
@@ -172653,7 +172653,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "+",
@@ -172673,7 +172673,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "+",
@@ -172683,7 +172683,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "+",
@@ -172750,7 +172750,7 @@
           "_content": "a"
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "..=",
@@ -172828,7 +172828,7 @@
           "_content": "\\u{0}"
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "..=",
@@ -173968,7 +173968,7 @@
                   }
                 },
                 {
-                  "$type": 366,
+                  "$type": 365,
                   "$source": 0,
                   "$named": true,
                   "$text": "!",
@@ -174050,7 +174050,7 @@
                   ]
                 },
                 {
-                  "$type": 366,
+                  "$type": 365,
                   "$source": 0,
                   "$named": true,
                   "$text": ";",
@@ -174203,7 +174203,7 @@
                   "_content": "1"
                 },
                 {
-                  "$type": 366,
+                  "$type": 365,
                   "$source": 0,
                   "$named": true,
                   "$text": "+",
@@ -174670,7 +174670,7 @@
           }
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "!",
@@ -174752,7 +174752,7 @@
           ]
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": ";",
@@ -175132,7 +175132,7 @@
           "_content": "1"
         },
         {
-          "$type": 366,
+          "$type": 365,
           "$source": 0,
           "$named": true,
           "$text": "+",
@@ -178240,7 +178240,7 @@
                     "$source": 0,
                     "$named": true,
                     "_tuple_expression_elements": {
-                      "$type": 365,
+                      "$type": 364,
                       "$source": 0,
                       "$named": true,
                       "_element": [
@@ -178529,7 +178529,7 @@
                       "$source": 0,
                       "$named": true,
                       "_tuple_expression_elements": {
-                        "$type": 365,
+                        "$type": 364,
                         "$source": 0,
                         "$named": true,
                         "_element": [
@@ -179336,7 +179336,7 @@
               "$source": 0,
               "$named": true,
               "_tuple_expression_elements": {
-                "$type": 365,
+                "$type": 364,
                 "$source": 0,
                 "$named": true,
                 "_element": [
@@ -179625,7 +179625,7 @@
                 "$source": 0,
                 "$named": true,
                 "_tuple_expression_elements": {
-                  "$type": 365,
+                  "$type": 364,
                   "$source": 0,
                   "$named": true,
                   "_element": [
@@ -180646,7 +180646,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_expression_elements": {
-        "$type": 365,
+        "$type": 364,
         "$source": 0,
         "$named": true,
         "_element": [
@@ -180764,7 +180764,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_expression_elements": {
-        "$type": 365,
+        "$type": 364,
         "$source": 0,
         "$named": true,
         "_element": [
@@ -189273,7 +189273,7 @@
                     "$named": true,
                     "_attribute_item": [],
                     "_expression": {
-                      "$type": 378,
+                      "$type": 377,
                       "$source": 0,
                       "$named": true,
                       "_value": {
@@ -189863,7 +189863,7 @@
             "$source": 0,
             "$named": true,
             "_expression": {
-              "$type": 374,
+              "$type": 373,
               "$source": 0,
               "$named": true,
               "_parameters": {
@@ -194003,7 +194003,7 @@
               "$named": true,
               "_attribute_item": [],
               "_expression": {
-                "$type": 378,
+                "$type": 377,
                 "$source": 0,
                 "$named": true,
                 "_value": {
@@ -194361,7 +194361,7 @@
             "$named": true,
             "_attribute_item": [],
             "_expression": {
-              "$type": 378,
+              "$type": 377,
               "$source": 0,
               "$named": true,
               "_value": {
@@ -195072,7 +195072,7 @@
                 "$named": true,
                 "_attribute_item": [],
                 "_expression": {
-                  "$type": 378,
+                  "$type": 377,
                   "$source": 0,
                   "$named": true,
                   "_value": {
@@ -195723,7 +195723,7 @@
     "grammar": "rust",
     "pattern": "reference_expression_bare",
     "input": {
-      "$type": 378,
+      "$type": 377,
       "$source": 0,
       "$named": true,
       "_value": {
@@ -196252,7 +196252,7 @@
     "grammar": "rust",
     "pattern": "closure_expression_expr",
     "input": {
-      "$type": 374,
+      "$type": 373,
       "$source": 0,
       "$named": true,
       "_parameters": {
@@ -204965,7 +204965,7 @@
             "$source": 0,
             "$named": true,
             "_tuple_type_elements": {
-              "$type": 364,
+              "$type": 363,
               "$source": 0,
               "$named": true,
               "_type": [
@@ -205112,7 +205112,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_type_elements": {
-          "$type": 364,
+          "$type": 363,
           "$source": 0,
           "$named": true,
           "_type": [
@@ -205302,7 +205302,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 364,
+        "$type": 363,
         "$source": 0,
         "$named": true,
         "_type": [

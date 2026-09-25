@@ -232,7 +232,7 @@ function armKind(v: NodeOrTerminal, config: SitePreferencesConfig): string | und
 }
 
 function armValue(v: NodeOrTerminal, kind: string | undefined): string | undefined {
-	return v.variant ?? (isTerminalValue(v) ? v.value : undefined) ?? kind;
+	return isTerminalValue(v) ? v.value : (v.variant ?? kind);
 }
 
 function armsOf(values: readonly NodeOrTerminal[], config: SitePreferencesConfig): PreferenceArm[] | undefined {

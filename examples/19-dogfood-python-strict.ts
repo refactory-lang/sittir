@@ -53,10 +53,10 @@ export function callStatementStrict() {
 
 /** `def main():` with an indented suite. */
 export function mainDefStrict() {
-	return ir.functionDefinition.block.strict({
+	return ir.functionDefinition.strict({
 		name: id('main'),
 		parameters: ir.parameters.strict(),
-		body: [callStatementStrict()],
+		body: ir.suite.block.strict(callStatementStrict()),
 	});
 }
 

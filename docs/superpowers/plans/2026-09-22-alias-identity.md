@@ -816,14 +816,14 @@ git commit -m "refactor(rust,python): four hand-written rules retire into alias(
 
 The user's rule: a sub-factory arm exists exactly where a variant label (`variant`/`variantOf` annotation) exists at the end of wire. Nothing else makes an arm. The field rule lives where variants are made: a fielded slot gets no automatic variant.
 
-**Stamp (enrich).** Enrich stamps `variant: <name>, variantOf: <owner>` on each arm of every unfielded (`_content`) choice. The name is computed once, at stamp time, with today's arm naming: `prefixNamedSuffix(owner, display) ?? display`, where display = the alias target, else the storage name without its leading `_`. A literal arm is named by its token kind. Enrich records every label it stamps in its non-enumerable sidecar.
+**Stamp (enrich).** Enrich stamps `variant: <name>, variantOf: <owner>` on each arm of every unfielded (`_content`) choice. The name is computed once, at stamp time, with today's arm naming: `prefixNamedSuffix(owner, display) ?? display`, where display = the alias target, else the storage name without its leading `_`. A literal arm is named by its token kind, the same rule as every other arm (keyword kinds are `<text>_keyword`); no text-derived names. Enrich records every label it stamps in its non-enumerable sidecar.
 - A displayed literal (an anonymous literal shown under another kind's display, e.g. `alias('async', $.identifier)`) gets no variant: it is its display.
 - A supertype's own members are stamped with the supertype as `variantOf`; the existing variant-subtype path mounts them wherever the supertype sits.
 - The clash-fallback rename in `unaliasOverloadedDisplays` (`_number` → `unary_expression_number`) stamps the arm with its own name (`number`) through the same stamp.
 
 **Strip (wire).** When a patch fields a slot after enrich, wire removes the automatic variants on that slot, using the sidecar. `alias(name)` on a site writes that site's label (`variant` = the name's arm label, `variantOf` = the owning rule), overwriting an automatic one. Authored `variant()` stays.
 
-**Overlay.** The arm set is exactly the variant-labelled members. Nesting is a child's own variants under its arm (the ir paths are unchanged). Deleted: display-derived arm naming (`armName`, `kindArmName`, `displayNameOfValue` for arms, `armNaming`'s fallback), grand-arm lifting (`grandArmCandidates`, `flattened`, `hostedApart`, claim counting and deconfliction), `armSubtypes`/`declaredSupertype`, `foldDisplayedLiterals`/`displayedLiteralTarget`, and the unlabelled hoisted-group path.
+**Overlay.** The arm set is exactly the variant-labelled members. Nesting is a child's own variants under its arm. Nothing is lifted: the flattened grand-arm copies (rust 80, ts 73, py 58, each also reachable nested) are removed ir paths, accepted by the user. Deleted: display-derived arm naming (`armName`, `kindArmName`, `displayNameOfValue` for arms, `armNaming`'s fallback), grand-arm lifting (`grandArmCandidates`, `flattened`, `hostedApart`, claim counting and deconfliction), `armSubtypes`/`declaredSupertype`, `foldDisplayedLiterals`/`displayedLiteralTarget`, and the unlabelled hoisted-group path.
 
 **Provenance.** A node-model childKind descriptor built from enrich-stamped labels reads `definedBy: 'enrich'` (from `author: 'enrich'` on the stamp), `'override'` otherwise; the descriptor's value is `'enrich'` only when every labelled arm of the kind is enrich-authored. It is a label; nothing branches on it.
 
@@ -831,8 +831,16 @@ The user's rule: a sub-factory arm exists exactly where a variant label (`varian
 - [ ] Wire strip on field(); alias() writes the label.
 - [ ] Overlay arm set = variant-labelled members; deletions above.
 - [ ] definedBy 'enrich'.
+- [ ] Test: an upstream-fielded choice gets no automatic stamp.
+- [ ] Test: a patch-added field() strips enrich's automatic variants on that slot, while an authored variant() on it survives.
 - [ ] Gates: rows identical; options addresses unmoved; types.ts, factory signatures and transport unmoved; storage gate unchanged; lint 0 (by count); suite; cargo. Node-model may move only by new polymorphVariants childKind entries (report the count per grammar); any modelType change or factorySlots/shape/field move stops.
 - [ ] Report the arm diff per grammar before committing, with every ir-path change named.
+- [ ] Nested arms recurse: each arm's child carries its own arms under it, with no depth cap; only a kind-keyed cycle guard stops it. The tools' printing surface mounts arm printers at every depth too.
+- [ ] rust: `variant('scope')` on pub's group reference; the in_path patches apply before it and `crate`/`pub` after. Target: `ir.visibilityModifier.pub.scope.inPath`, used by examples/01.
+
+**Follow-up:** a patch path should reach through a mint that `variant()` renamed. Today rust `visibility_modifier` works only because of patch order: the `in`/`in_path` patches apply first, then `'1/1/0': variant('scope')`, then `crate`/`pub`. With the scope patch first, the `in_path` path descends into the renamed group-lift symbol, which the lift map does not know. With it last, `'1'` is already minted as `pub`, so `'1/1/0'` cannot descend.
+
+**Follow-up:** generated arm tests for a parameterless leaf arm (e.g. rust `pub.scope.crate builds the parent`) pass a hand-built node cast `as any`. `ir.visibilityModifier.pub.scope.crate()` with no arguments type-checks and renders `pub(crate)`, so the test generator should call such an arm with no arguments and drop the cast.
 
 ### Task 7b: A built node carries the alias envelope its read shows
 
@@ -844,7 +852,27 @@ Instances: python `_simple_pattern` at case_pattern (alias `simple_pattern`); ty
 - [ ] Pinned test: built python `casePattern.classPattern` and typescript `assignmentExpression` left equal their read shape (text-stripped).
 - [ ] Gates as Task 7.
 
-### Task 7c: The identifier leaf guard rejects a reserved word the slot does not admit
+### Task 7c: An absent registered choice option renders its default
+
+Run this right after Task 7a. A registered choice option (`terminator`, `quotes:style`, and the statement kinds that carry one) left unset by the caller must render with the default its option chain resolves. Today it fails before render runs.
+
+Facts:
+- Factory: `registeredSlotSource`'s `registeredOption === 'choice'` branch emits `options?.<key>` with no default. This is deliberate: the render-time chain is meant to own resolution.
+- Transport: the slot's field is a required `SlotValue<…TransportSlot>` (for example `LexicalDeclarationTransport.terminator`). The napi decode rejects an absent value with "Missing field `_terminator`".
+- Prepare: the kind's `Prepare` impl fills only spacing seams from `ctx.options.spacing[SITE_…]`. It never fills the registered slot.
+- Render: `render_<kind>` renders the slot as given.
+- The site exists (`SITE_LEXICAL_DECLARATION_TERMINATOR`, its option row with admitted kind ids, and a `sites[]` default arm), but nothing in transport or render reads it.
+- Reproduces with `ir.returnStatement.strict(id('r')).$render()`. The same factory and transport shapes are at HEAD, where a `.semi`-style arm form filling the slot hid the defect.
+
+- [ ] Transport emitter: a registered-choice slot's field is `Option<SlotValue<…>>`.
+- [ ] Prepare: an absent registered-choice slot is filled from the option chain (per-tree, then engine, then the grammar default), i.e. the site's resolved arm.
+- [ ] A kind-id → slot constructor is generated for each registered-choice slot enum. Prepare uses it to build the value from the resolved arm.
+- [ ] Render reads the filled value; no other change.
+- [ ] Test: a node built with the option omitted renders under two different engine option sets to two different results. The same node with the option set explicitly renders the same under both.
+- [ ] Remove the workarounds: the typescript `expectTestFailures` entries citing the unfilled option default, and examples/18's explicit `terminator`.
+- [ ] Gates as Task 7.
+
+### Task 7d: The identifier leaf guard rejects a reserved word the slot does not admit
 
 A contextual keyword displayed as `identifier` is an identifier only where the parser admits it: each slot lists the keywords it admits (the per-slot admitted keyword sets). Today the identifier leaf guard is the identifier pattern alone, so `ir.identifier('if')` is accepted anywhere.
 

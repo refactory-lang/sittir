@@ -42,8 +42,8 @@ describe('variantChildrenOf — variants come from the variant annotation only',
 	it('reads a symbol arm annotated as a variant of the parent', () => {
 		const rule = choice(sym('assignment_eq', variantOf('assignment', 'eq')), sym('assignment_type', variantOf('assignment', 'type')));
 		expect(variantChildrenOf('assignment', rule)).toEqual([
-			{ kind: 'assignment_eq', name: 'eq' },
-			{ kind: 'assignment_type', name: 'type' }
+			{ kind: 'assignment_eq', name: 'eq', definedBy: 'override' },
+			{ kind: 'assignment_type', name: 'type', definedBy: 'override' }
 		]);
 	});
 
@@ -54,7 +54,7 @@ describe('variantChildrenOf — variants come from the variant annotation only',
 
 	it('ignores an arm annotated as a variant of a different parent', () => {
 		const rule = choice(sym('other_x', variantOf('other', 'x')), sym('parent_y', variantOf('parent', 'y')));
-		expect(variantChildrenOf('parent', rule)).toEqual([{ kind: 'parent_y', name: 'y' }]);
+		expect(variantChildrenOf('parent', rule)).toEqual([{ kind: 'parent_y', name: 'y', definedBy: 'override' }]);
 	});
 
 	it('names an aliased arm by its visible value, with the annotation on the alias or its content', () => {
@@ -63,14 +63,14 @@ describe('variantChildrenOf — variants come from the variant annotation only',
 			alias('visibility_modifier_pub', sym('_pub', variantOf('visibility_modifier', 'pub')))
 		);
 		expect(variantChildrenOf('visibility_modifier', rule)).toEqual([
-			{ kind: 'crate', name: 'crate' },
-			{ kind: 'visibility_modifier_pub', name: 'pub' }
+			{ kind: 'crate', name: 'crate', definedBy: 'override' },
+			{ kind: 'visibility_modifier_pub', name: 'pub', definedBy: 'override' }
 		]);
 	});
 
 	it('finds variants nested under fields and sequences', () => {
 		const rule = seq(str('impl'), field('trait_clause', choice(sym('impl_item_positive_clause', variantOf('impl_item', 'positive_clause')))));
-		expect(variantChildrenOf('impl_item', rule)).toEqual([{ kind: 'impl_item_positive_clause', name: 'positive_clause' }]);
+		expect(variantChildrenOf('impl_item', rule)).toEqual([{ kind: 'impl_item_positive_clause', name: 'positive_clause', definedBy: 'override' }]);
 	});
 
 	it('walks a flattened parent\'s supertype subtypes', () => {
@@ -80,14 +80,14 @@ describe('variantChildrenOf — variants come from the variant annotation only',
 			sym('reference_expression_bare', variantOf('reference_expression', 'bare'))
 		);
 		expect(variantChildrenOf('reference_expression', rule)).toEqual([
-			{ kind: 'reference_expression_raw_const', name: 'raw_const' },
-			{ kind: 'reference_expression_bare', name: 'bare' }
+			{ kind: 'reference_expression_raw_const', name: 'raw_const', definedBy: 'override' },
+			{ kind: 'reference_expression_bare', name: 'bare', definedBy: 'override' }
 		]);
 	});
 
 	it('lists a variant reached from several arms once', () => {
 		const eq = sym('assignment_eq', variantOf('assignment', 'eq'));
-		expect(variantChildrenOf('assignment', choice(seq(str('='), eq), seq(str(':='), eq)))).toEqual([{ kind: 'assignment_eq', name: 'eq' }]);
+		expect(variantChildrenOf('assignment', choice(seq(str('='), eq), seq(str(':='), eq)))).toEqual([{ kind: 'assignment_eq', name: 'eq', definedBy: 'override' }]);
 	});
 });
 
@@ -100,8 +100,8 @@ describe('deriveVariantChildren', () => {
 		const map = deriveVariantChildren(rules);
 		expect([...map.keys()]).toEqual(['string']);
 		expect(map.get('string')).toEqual([
-			{ kind: 'string_double', name: 'double' },
-			{ kind: 'string_single', name: 'single' }
+			{ kind: 'string_double', name: 'double', definedBy: 'override' },
+			{ kind: 'string_single', name: 'single', definedBy: 'override' }
 		]);
 	});
 });

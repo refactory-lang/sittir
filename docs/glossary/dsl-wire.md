@@ -29,13 +29,11 @@ exist.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSyntheticRule`
 
-```text
-/**
- * Register a hidden-rule body against the active wire context. Returns
- * `true` when the context absorbed the call, `false` when there is no
- * active context (caller falls back to the legacy accumulator).
- */
-```
+Register a hidden-rule body against the active wire context. Returns
+`true` when the context absorbed the call, `false` when there is no
+active context (caller falls back to the legacy accumulator). Stores the
+body unlabelled (`unlabelled`): a minted rule's own label, if any, belongs
+on the reference site that names it, not on the body the mint deposits.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireDeclareRuleBody`
 
@@ -117,6 +115,12 @@ exists only for the agreement check.
 /** Current rule kind on the active wire context, or null when inactive. */
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::wireAutomaticVariants`
+
+The active wire context's automatic-variant stamp set, or an empty set
+outside a wire context. `resolveFieldPlaceholder` reads it to strip an
+enrich-stamped label from content a patch pulls under a `field()`.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::withWireContext`
 
 ```text
@@ -130,6 +134,10 @@ exists only for the agreement check.
  * composition. Production callers should use `wire()`.
  */
 ```
+
+An optional `base` grammar seeds the new context's `automaticVariants`
+(`getEnrichAutomaticVariants`), so a test exercising DSL helpers against an
+already-enriched grammar sees the same labels `wire()` itself would.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::polymorphVisibleName`
 
@@ -599,6 +607,11 @@ patched a reference to it in.
  */
 ```
 
+A replaced sub-tree is re-labelled (`relabelledArm`, against the matched
+rule) rather than left bare: a candidate's own site may be an automatically
+or author-labelled arm, and the SYMBOL (or, for an `aliasAs` candidate, the
+ALIAS) it collapses to needs the same label to keep standing in for it.
+
 #### body
 
 ```text
@@ -854,6 +867,11 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
 
 `ruleBodies` holds, per `rule()` name, the canonical text of its declared
 body and the first site that declared it (`wireDeclareRuleBody`).
+`automaticVariants` holds the base grammar's automatic-variant stamp set
+(`getEnrichAutomaticVariants`), seeded once when the context is built —
+`resolveFieldPlaceholder`, `resolveAliasPlaceholder`, and `replaceInBodyRt`
+read it to keep an arm's label consistent across a patch or a group
+body-pattern substitution.
 
 ```text
 /**

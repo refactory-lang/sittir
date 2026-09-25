@@ -80,7 +80,7 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 				const g = globalThis as any;
 				const liftArm = {
 					type: 'ALIAS',
-					content: { type: 'SYMBOL', name: '_lifted_arm', metadata: { author: 'enrich' } },
+					content: { type: 'SYMBOL', name: '_lifted_arm', metadata: { author: 'enrich', symbolSource: 'group-lift' } },
 					named: true,
 					value: 'lifted_arm'
 				};

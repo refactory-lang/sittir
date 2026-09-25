@@ -10,6 +10,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import { isValidIdent, irNamespacesChildFactory, compareOrdinal, lexedContentSlot } from './shared.ts';
 import { isHiddenKind } from '../dsl/rule-patterns.ts';
+import { supertypeMemberName } from '../compiler/variant-structural.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry,
 } from './kind-discriminant.ts';
 import { bundleEntries, flattenedVariantParents } from './overlays/module.ts';
@@ -144,8 +145,24 @@ export function emitIr(config: EmitIrConfig): string {
 		}
 		groupBlocks.push('');
 	}
-	if (needsAttachProps) lines.splice(lines.indexOf("import * as F from './factories/index.js';") + 1, 0, "import { attachProps } from './utils.js';");
 
+	const variantParentKeys: string[] = [];
+	for (const { key, variants } of flattenedParents) {
+		if (usedGroupNames.has(key)) continue;
+		if (variants.every((route) => route.minted === true)) {
+			variantParentKeys.push(key);
+			continue;
+		}
+		usedGroupNames.add(key);
+		groupNames.push(key);
+		const sameNamedKind = flatRefByKey.get(key);
+		if (sameNamedKind === undefined) {
+			groupBlocks.push(`export const ${key}: typeof F.${key} = F.${key};`, '');
+			continue;
+		}
+		needsAttachProps = true;
+		groupBlocks.push(`export const ${key}: typeof ${sameNamedKind} & typeof F.${key} = attachProps(${sameNamedKind}, F.${key});`, '');
+	}
 	if (groupBlocks.length > 0) {
 		body.push('// Supertype-grouped sub-namespaces — tree-shakeable top-level consts.');
 		body.push('// Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).');
@@ -202,11 +219,11 @@ export function emitIr(config: EmitIrConfig): string {
 		irValueLines.push(`  ${key}: ${ref},`);
 		irTypeMembers.push(`  readonly ${key}: typeof ${ref};`);
 	}
-	for (const { key } of flattenedParents) {
-		if (usedGroupNames.has(key)) continue;
+	for (const key of variantParentKeys) {
 		irValueLines.push(`  ${key}: F.${key},`);
 		irTypeMembers.push(`  readonly ${key}: typeof F.${key};`);
 	}
+
 	irValueLines.push('');
 
 	irValueLines.push('  // Keyword factories');
@@ -246,6 +263,7 @@ export function emitIr(config: EmitIrConfig): string {
 			irTypeMembers.push('  readonly synonym: typeof synonym;');
 		}
 	}
+	if (needsAttachProps) lines.splice(lines.indexOf("import * as F from './factories/index.js';") + 1, 0, "import { attachProps } from './utils.js';");
 	body.push('export const ir: {');
 	body.push(...irTypeMembers);
 	body.push('} = {');
@@ -271,48 +289,8 @@ function groupNameFor(supertypeKind: string): string {
 	return toCamel(bare);
 }
 
-const GROUP_TOKEN_SYNONYMS: Readonly<Record<string, string>> = {
-	item: 'statement',
-	stmt: 'statement',
-	expr: 'expression',
-	decl: 'declaration',
-	impl: 'implementation'
-};
-
-const CATEGORY_TOKENS: ReadonlySet<string> = new Set([
-	'expression',
-	'statement',
-	'literal',
-	'declaration',
-	'definition',
-	'operator',
-	'pattern',
-	'type'
-]);
-
-function normalizeGroupToken(token: string): string {
-	return GROUP_TOKEN_SYNONYMS[token] ?? token;
-}
-
 function memberKeyFor(memberKind: string, supertypeKind: string): string {
-	const bareMember = memberKind.replace(/^_+/, '');
-	const parts = bareMember.split('_').filter((t) => t.length > 0);
-	const groupTokens = new Set(
-		supertypeKind
-			.replace(/^_+/, '')
-			.split('_')
-			.filter((t) => t.length > 0)
-			.map(normalizeGroupToken)
-	);
-	let kept = parts.filter((t) => !groupTokens.has(normalizeGroupToken(t)));
-	if (kept.length === parts.length && parts.length >= 2) {
-		const tail = normalizeGroupToken(parts[parts.length - 1]!);
-		if (CATEGORY_TOKENS.has(tail)) kept = parts.slice(0, -1);
-	}
-	if (kept.length === 0) return toCamel(bareMember);
-	const camel = toCamel(kept.join('_'));
-	if (camel === groupNameFor(supertypeKind)) return toCamel(bareMember);
-	return camel;
+	return toCamel(supertypeMemberName(memberKind, supertypeKind));
 }
 
 function toCamel(snake: string): string {

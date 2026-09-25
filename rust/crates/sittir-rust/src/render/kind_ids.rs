@@ -158,9 +158,9 @@ pub const ESCAPE_SEQUENCE_UNICODE_BRACED: KindId = KindId(147);
 pub const ESCAPE_SEQUENCE_HEX: KindId = KindId(148);
 pub const RAW_KEYWORD: KindId = KindId(149);
 pub const _STRING_OPEN: KindId = KindId(150);
-pub const LINE_COMMENT_REGULAR_DSLASH_TOKEN1: KindId = KindId(151);
-pub const LINE_COMMENT_REGULAR_DSLASH_TOKEN2: KindId = KindId(152);
-pub const LINE_COMMENT_CONTENT: KindId = KindId(153);
+pub const LINE_COMMENT_EXTRA_SLASHES_TOKEN1: KindId = KindId(151);
+pub const LINE_COMMENT_EXTRA_SLASHES_TOKEN2: KindId = KindId(152);
+pub const LINE_COMMENT_REGULAR: KindId = KindId(153);
 pub const MACRO_RULES_BANG: KindId = KindId(154);
 pub const STRING_CONTENT: KindId = KindId(155);
 pub const _RAW_STRING_LITERAL_START: KindId = KindId(156);
@@ -366,32 +366,32 @@ pub const TUPLE_PATTERN_ELEMENTS: KindId = KindId(355);
 pub const PATTERNS: KindId = KindId(356);
 pub const STRUCT_PATTERN_ELEMENTS: KindId = KindId(357);
 pub const USE_WILDCARD_GROUP: KindId = KindId(358);
-pub const VISIBILITY_MODIFIER_GROUP: KindId = KindId(359);
-pub const _KW_ASYNC: KindId = KindId(360);
-pub const _KW_DEFAULT: KindId = KindId(361);
-pub const _KW_CONST: KindId = KindId(362);
-pub const _KW_UNSAFE: KindId = KindId(363);
-pub const _TUPLE_TYPE_ELEMENTS: KindId = KindId(364);
-pub const _TUPLE_EXPRESSION_ELEMENTS: KindId = KindId(365);
-pub const _TOKEN_TREE_PUNCTUATION: KindId = KindId(366);
-pub const _TOKEN_KEYWORDS: KindId = KindId(367);
-pub const _RANGE_EXPRESSION_BARE: KindId = KindId(368);
-pub const _IMPL_ITEM_UNSAFE_MARKER: KindId = KindId(369);
-pub const ARRAY_EXPRESSION_SEMI: KindId = KindId(370);
-pub const ARRAY_EXPRESSION_LIST: KindId = KindId(371);
-pub const ATTRIBUTE_INPUT: KindId = KindId(372);
-pub const CLOSURE_EXPRESSION_BLOCK: KindId = KindId(373);
-pub const CLOSURE_EXPRESSION_EXPR: KindId = KindId(374);
-pub const REFERENCE_EXPRESSION_RAW_CONST: KindId = KindId(375);
-pub const REFERENCE_EXPRESSION_RAW_MUT: KindId = KindId(376);
-pub const REFERENCE_EXPRESSION_MUT: KindId = KindId(377);
-pub const REFERENCE_EXPRESSION_BARE: KindId = KindId(378);
-pub const IMPL_ITEM_POSITIVE_CLAUSE: KindId = KindId(379);
-pub const IMPL_ITEM_NEGATIVE_CLAUSE: KindId = KindId(380);
-pub const IMPL_ITEM_BODY: KindId = KindId(381);
-pub const IMPL_ITEM_SEMI: KindId = KindId(382);
-pub const VISIBILITY_MODIFIER_PUB: KindId = KindId(383);
-pub const VISIBILITY_MODIFIER_PUB_IN_PATH: KindId = KindId(384);
+pub const _KW_ASYNC: KindId = KindId(359);
+pub const _KW_DEFAULT: KindId = KindId(360);
+pub const _KW_CONST: KindId = KindId(361);
+pub const _KW_UNSAFE: KindId = KindId(362);
+pub const _TUPLE_TYPE_ELEMENTS: KindId = KindId(363);
+pub const _TUPLE_EXPRESSION_ELEMENTS: KindId = KindId(364);
+pub const _TOKEN_TREE_PUNCTUATION: KindId = KindId(365);
+pub const _TOKEN_KEYWORDS: KindId = KindId(366);
+pub const _RANGE_EXPRESSION_BARE: KindId = KindId(367);
+pub const _IMPL_ITEM_UNSAFE_MARKER: KindId = KindId(368);
+pub const ARRAY_EXPRESSION_SEMI: KindId = KindId(369);
+pub const ARRAY_EXPRESSION_LIST: KindId = KindId(370);
+pub const ATTRIBUTE_INPUT: KindId = KindId(371);
+pub const CLOSURE_EXPRESSION_BLOCK: KindId = KindId(372);
+pub const CLOSURE_EXPRESSION_EXPR: KindId = KindId(373);
+pub const REFERENCE_EXPRESSION_RAW_CONST: KindId = KindId(374);
+pub const REFERENCE_EXPRESSION_RAW_MUT: KindId = KindId(375);
+pub const REFERENCE_EXPRESSION_MUT: KindId = KindId(376);
+pub const REFERENCE_EXPRESSION_BARE: KindId = KindId(377);
+pub const IMPL_ITEM_POSITIVE_CLAUSE: KindId = KindId(378);
+pub const IMPL_ITEM_NEGATIVE_CLAUSE: KindId = KindId(379);
+pub const IMPL_ITEM_BODY: KindId = KindId(380);
+pub const IMPL_ITEM_SEMI: KindId = KindId(381);
+pub const VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH: KindId = KindId(382);
+pub const VISIBILITY_MODIFIER_PUB_SCOPE: KindId = KindId(383);
+pub const VISIBILITY_MODIFIER_PUB: KindId = KindId(384);
 pub const FUNCTION_TYPE_TRAIT_FORM: KindId = KindId(385);
 pub const FUNCTION_TYPE_FN_FORM: KindId = KindId(386);
 pub const MOD_ITEM_EXTERNAL: KindId = KindId(387);
@@ -408,7 +408,7 @@ pub const FOREIGN_MOD_ITEM_SEMI: KindId = KindId(397);
 pub const FOREIGN_MOD_ITEM_BODY: KindId = KindId(398);
 pub const MATCH_ARM_WITH_COMMA: KindId = KindId(399);
 pub const MATCH_ARM_BLOCK_ENDING: KindId = KindId(400);
-pub const LINE_COMMENT_REGULAR_DSLASH: KindId = KindId(401);
+pub const LINE_COMMENT_EXTRA_SLASHES: KindId = KindId(401);
 pub const LINE_COMMENT_DOC_OUTER: KindId = KindId(402);
 pub const LINE_COMMENT_DOC_INNER: KindId = KindId(403);
 pub const BLOCK_COMMENT_DOC_OUTER: KindId = KindId(404);
@@ -631,9 +631,9 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         148 => "escape_sequence_hex", // "escape_sequence_hex"
         149 => "raw", // "raw_keyword"
         150 => "string_open", // "_string_open"
-        151 => "line_comment_regular_dslash_token1", // "line_comment_regular_dslash_token1"
-        152 => "line_comment_regular_dslash_token2", // "line_comment_regular_dslash_token2"
-        153 => "line_comment_content", // "line_comment_content"
+        151 => "line_comment_extra_slashes_token1", // "line_comment_extra_slashes_token1"
+        152 => "line_comment_extra_slashes_token2", // "line_comment_extra_slashes_token2"
+        153 => "line_comment_regular", // "line_comment_regular"
         154 => "macro_rules!", // "macro_rules_bang"
         155 => "string_content", // "string_content"
         156 => "raw_string_literal_start", // "_raw_string_literal_start"
@@ -839,32 +839,32 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         356 => "patterns", // "patterns"
         357 => "struct_pattern_elements", // "struct_pattern_elements"
         358 => "use_wildcard_group", // "use_wildcard_group"
-        359 => "visibility_modifier_group", // "visibility_modifier_group"
-        360 => "_kw_async", // "_kw_async"
-        361 => "_kw_default", // "_kw_default"
-        362 => "_kw_const", // "_kw_const"
-        363 => "_kw_unsafe", // "_kw_unsafe"
-        364 => "tuple_type_elements", // "_tuple_type_elements"
-        365 => "tuple_expression_elements", // "_tuple_expression_elements"
-        366 => "token_tree_punctuation", // "_token_tree_punctuation"
-        367 => "_token_keywords", // "_token_keywords"
-        368 => "range_expression_bare", // "_range_expression_bare"
-        369 => "_impl_item_unsafe_marker", // "_impl_item_unsafe_marker"
-        370 => "array_expression_semi", // "array_expression_semi"
-        371 => "array_expression_list", // "array_expression_list"
-        372 => "attribute_input", // "attribute_input"
-        373 => "closure_expression_block", // "closure_expression_block"
-        374 => "closure_expression_expr", // "closure_expression_expr"
-        375 => "reference_expression_raw_const", // "reference_expression_raw_const"
-        376 => "reference_expression_raw_mut", // "reference_expression_raw_mut"
-        377 => "reference_expression_mut", // "reference_expression_mut"
-        378 => "reference_expression_bare", // "reference_expression_bare"
-        379 => "impl_item_positive_clause", // "impl_item_positive_clause"
-        380 => "impl_item_negative_clause", // "impl_item_negative_clause"
-        381 => "impl_item_body", // "impl_item_body"
-        382 => "impl_item_semi", // "impl_item_semi"
-        383 => "visibility_modifier_pub", // "visibility_modifier_pub"
-        384 => "visibility_modifier_pub_in_path", // "visibility_modifier_pub_in_path"
+        359 => "_kw_async", // "_kw_async"
+        360 => "_kw_default", // "_kw_default"
+        361 => "_kw_const", // "_kw_const"
+        362 => "_kw_unsafe", // "_kw_unsafe"
+        363 => "tuple_type_elements", // "_tuple_type_elements"
+        364 => "tuple_expression_elements", // "_tuple_expression_elements"
+        365 => "token_tree_punctuation", // "_token_tree_punctuation"
+        366 => "_token_keywords", // "_token_keywords"
+        367 => "range_expression_bare", // "_range_expression_bare"
+        368 => "_impl_item_unsafe_marker", // "_impl_item_unsafe_marker"
+        369 => "array_expression_semi", // "array_expression_semi"
+        370 => "array_expression_list", // "array_expression_list"
+        371 => "attribute_input", // "attribute_input"
+        372 => "closure_expression_block", // "closure_expression_block"
+        373 => "closure_expression_expr", // "closure_expression_expr"
+        374 => "reference_expression_raw_const", // "reference_expression_raw_const"
+        375 => "reference_expression_raw_mut", // "reference_expression_raw_mut"
+        376 => "reference_expression_mut", // "reference_expression_mut"
+        377 => "reference_expression_bare", // "reference_expression_bare"
+        378 => "impl_item_positive_clause", // "impl_item_positive_clause"
+        379 => "impl_item_negative_clause", // "impl_item_negative_clause"
+        380 => "impl_item_body", // "impl_item_body"
+        381 => "impl_item_semi", // "impl_item_semi"
+        382 => "visibility_modifier_pub_scope_in_path", // "visibility_modifier_pub_scope_in_path"
+        383 => "visibility_modifier_pub_scope", // "visibility_modifier_pub_scope"
+        384 => "visibility_modifier_pub", // "visibility_modifier_pub"
         385 => "function_type_trait_form", // "function_type_trait_form"
         386 => "function_type_fn_form", // "function_type_fn_form"
         387 => "mod_item_external", // "mod_item_external"
@@ -881,7 +881,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         398 => "foreign_mod_item_body", // "foreign_mod_item_body"
         399 => "match_arm_with_comma", // "match_arm_with_comma"
         400 => "match_arm_block_ending", // "match_arm_block_ending"
-        401 => "line_comment_regular_dslash", // "line_comment_regular_dslash"
+        401 => "line_comment_extra_slashes", // "line_comment_extra_slashes"
         402 => "line_comment_doc_outer", // "line_comment_doc_outer"
         403 => "line_comment_doc_inner", // "line_comment_doc_inner"
         404 => "block_comment_doc_outer", // "block_comment_doc_outer"
@@ -957,7 +957,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
 /// template renders from that text, so the text is the node's content —
 /// free text for a pattern kind, the literal it holds for an enum kind.
 pub fn is_text_kind(kind: KindId) -> bool {
-    matches!(kind.0, 1 | 125 | 129 | 138 | 139 | 140 | 141 | 142 | 143 | 144 | 145 | 146 | 147 | 148 | 150 | 153 | 155 | 156 | 157 | 158 | 159 | 162 | 163 | 164 | 181 | 331 | 336 | 366 | 367 | 401)
+    matches!(kind.0, 1 | 125 | 129 | 138 | 139 | 140 | 141 | 142 | 143 | 144 | 145 | 146 | 147 | 148 | 150 | 153 | 155 | 156 | 157 | 158 | 159 | 162 | 163 | 164 | 181 | 331 | 336 | 365 | 366 | 401)
 }
 
 /// Whether this parse kind id is an alias envelope: the reader stamps the
@@ -993,8 +993,8 @@ static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
     (355, "element", &[131]),
     (356, "pattern", &[131]),
     (357, "element", &[131]),
-    (364, "type", &[131]),
-    (365, "element", &[131]),
+    (363, "type", &[131]),
+    (364, "element", &[131]),
 ];
 
 pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {

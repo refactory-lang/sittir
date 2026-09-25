@@ -27,24 +27,6 @@
 			"field": "extends_clause_single_after"
 		}
 	],
-	"_number": [
-		{
-			"kind": "seam",
-			"field": "unary_expression_number_before"
-		},
-		{
-			"kind": "slot",
-			"name": "operator"
-		},
-		{
-			"kind": "slot",
-			"name": "argument"
-		},
-		{
-			"kind": "seam",
-			"field": "unary_expression_number_after"
-		}
-	],
 	"_type_query_call_expression": [
 		{
 			"kind": "seam",
@@ -4747,6 +4729,24 @@
 		{
 			"kind": "slot",
 			"name": "content"
+		}
+	],
+	"literal_type_negative_number": [
+		{
+			"kind": "seam",
+			"field": "literal_type_negative_number_before"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "slot",
+			"name": "argument"
+		},
+		{
+			"kind": "seam",
+			"field": "literal_type_negative_number_after"
 		}
 	],
 	"lookup_type": [

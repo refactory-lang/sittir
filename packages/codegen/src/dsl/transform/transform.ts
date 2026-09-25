@@ -39,6 +39,7 @@ import {
 	wireRegisterFlattenedParent,
 	wireHasDeposit,
 	wireDeclareRuleBody,
+	wireAutomaticVariants,
 	makeSimpleDollarProxy,
 	polymorphVisibleName
 } from '../wire/wire.ts';
@@ -58,9 +59,10 @@ import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
 import { isHiddenKind, lexesAsOneToken } from '../rule-patterns.ts';
 import { nativeRuleFn } from '../enrich.ts';
+import { relabelledArm, withAuthoredLabel, withoutAutomaticVariants } from '../automatic-variants.ts';
 
 function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string, arm?: unknown): RuntimeRule {
-	return withAnnotations(rule, { variant: variantName, variantOf: parentKind, ...(isDefaultArm(arm) ? { default: true } : {}) });
+	return withAuthoredLabel(rule, { variant: variantName, variantOf: parentKind, ...(isDefaultArm(arm) ? { default: true } : {}) }) as RuntimeRule;
 }
 
 function isDefaultArm(arm: unknown): boolean {
@@ -865,6 +867,7 @@ function resolveFieldPlaceholder(
 	if (maybeSymbolized !== content) {
 		content = maybeSymbolized;
 	}
+	content = withoutAutomaticVariants(content, wireAutomaticVariants());
 	const native = (globalThis as { field?: (n: string, c: unknown) => unknown }).field;
 	if (typeof native !== 'function') {
 		throw new Error(
@@ -880,16 +883,17 @@ function resolveAliasPlaceholder(
 	originalMember: RuntimeRule,
 	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
+	const labelled = (site: RuntimeRule): RuntimeRule => relabelledArm(site, originalMember) as RuntimeRule;
 	const ruleName = '_' + patch.name;
 	const lift = enrichLiftArmOf(originalMember);
-	if (lift !== null) return renameEnrichLift(originalMember, lift, ruleName, patch.name);
+	if (lift !== null) return labelled(renameEnrichLift(originalMember, lift, ruleName, patch.name));
 	const mint = (body: RuntimeRule): RuntimeRule => registerAliasedVariant(ruleName, patch.name, body, (b) => wrapInPrec(b, precStack));
 	if ((originalMember as { type?: string }).type === 'ALIAS') {
 		const content = contentOf(originalMember);
-		if (!isSymbolType(content.type)) return mint(content);
-		return { ...(originalMember as object), named: true, value: patch.name } as unknown as RuntimeRule;
+		if (!isSymbolType(content.type)) return labelled(mint(content));
+		return labelled({ ...(originalMember as object), named: true, value: patch.name } as unknown as RuntimeRule);
 	}
-	return mint(originalMember);
+	return labelled(mint(originalMember));
 }
 
 export function registerAliasedVariant(

@@ -37,7 +37,6 @@ export const _fromMap = {
 	elif_clause: coerceToElifClause,
 	else_clause: coerceToElseClause,
 	match_statement: coerceToMatchStatement,
-	_match_block: coerceToMatchBlock,
 	case_clause: coerceToCaseClause,
 	for_statement: coerceToForStatement,
 	while_statement: coerceToWhileStatement,
@@ -396,7 +395,6 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		209, 210, 213, 216, 217, 218, 220, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 242, 243, 244, 253, 257,
 		268, 274, 276, 277, 279, 284, 285, 286, 287, 291, 292, 293, 295
 	]),
-	_match_block: new Set([113, 290]),
 	finally_clause: new Set([
 		1, 22, 38, 39, 64, 68, 69, 70, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 113, 127, 130, 131, 132, 133, 135, 137, 138,
 		139, 141, 142, 143, 144, 145, 146, 164, 165, 166, 167, 168, 169, 172, 176, 177, 178, 197, 199, 203, 204, 205, 206,
@@ -804,7 +802,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	return_statement: TSKindId.ReturnStatement,
 	delete_statement: TSKindId.DeleteStatement,
 	else_clause: TSKindId.ElseClause,
-	_match_block: TSKindId.MatchBlock,
 	finally_clause: TSKindId.FinallyClause,
 	with_item: TSKindId.WithItem,
 	parameters: TSKindId.Parameters,
@@ -882,7 +879,6 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	chevron: 'expression',
 	assert_statement: 'expression',
 	else_clause: '_suite',
-	_match_block: 'match_block_block',
 	finally_clause: '_suite',
 	with_item: 'expression',
 	parameters: '_parameters',
@@ -946,7 +942,6 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'return_statement',
 	'delete_statement',
 	'else_clause',
-	'_match_block',
 	'finally_clause',
 	'with_item',
 	'parameters',
@@ -1030,8 +1025,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildDeleteStatement(children[0] as Parameters<typeof F.buildDeleteStatement>[0]);
 		case 'else_clause':
 			return F.buildElseClause(children[0] as Parameters<typeof F.buildElseClause>[0]);
-		case '_match_block':
-			return F.buildMatchBlock(children[0] as Parameters<typeof F.buildMatchBlock>[0]);
 		case 'finally_clause':
 			return F.buildFinallyClause(children[0] as Parameters<typeof F.buildFinallyClause>[0]);
 		case 'with_item':
@@ -2520,7 +2513,7 @@ export function resolveMatchStatement_subjects(
 }
 
 export function resolveMatchStatement_body(value: T.MatchStatement.LooseConfig['body']): T.MatchStatement['_body'] {
-	return _resolveOneBranch<T.MatchBlock>(value, '_match_block');
+	return _resolveOneBranch<T.MatchBlock>(value, 'match_block_block', [TSKindId.Newline]);
 }
 
 export function coerceToMatchStatement(input: T.MatchStatement.Loose): ReturnType<typeof F.buildMatchStatement> {
@@ -2530,42 +2523,6 @@ export function coerceToMatchStatement(input: T.MatchStatement.Loose): ReturnTyp
 		subjects: _requireField('match_statement', 'subjects', resolveMatchStatement_subjects(input.subjects)),
 		body: _requireField('match_statement', 'body', resolveMatchStatement_body(input.body))
 	});
-}
-
-export function resolveMatchBlock_content(value: T.MatchBlock.LooseConfig['content']): T.MatchBlock['_content'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveOneBranch<T.MatchBlockBlock | '\n'>(value, 'match_block_block', [TSKindId.Newline])
-		),
-		[['\n', TSKindId.Newline] as const]
-	);
-}
-
-export function coerceToMatchBlock(input: T.MatchBlock.Loose): ReturnType<typeof F.buildMatchBlock> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.MatchBlock)
-		return input as unknown as ReturnType<typeof F.buildMatchBlock>;
-	return F.buildMatchBlock(
-		_requireField(
-			'_match_block',
-			'content',
-			coerceMixedEnumStorage(
-				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-						? input.content
-						: input,
-					() =>
-						_resolveOneBranch<T.MatchBlockBlock | '\n'>(
-							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-								? input.content
-								: input,
-							'match_block_block',
-							[TSKindId.Newline]
-						)
-				),
-				[['\n', TSKindId.Newline] as const]
-			)
-		)
-	);
 }
 
 export function resolveCaseClause_casePatterns(

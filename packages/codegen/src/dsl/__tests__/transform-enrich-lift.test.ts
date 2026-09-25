@@ -24,7 +24,7 @@ describe('resolvePatch — ALIAS + enrich-lift', () => {
 				const g = globalThis as any;
 				const aliasMember = {
 					type: 'ALIAS',
-					content: { type: 'SYMBOL', name: '_lift1', metadata: { author: 'enrich' } },
+					content: { type: 'SYMBOL', name: '_lift1', metadata: { author: 'enrich', symbolSource: 'group-lift' } },
 					named: true,
 					value: '_lift1'
 				};
@@ -49,7 +49,7 @@ describe('resolvePatch — ALIAS + enrich-lift', () => {
 		setGroupLiftRuleMap({ get: (n: string) => bodies[n], set: () => {} });
 		try {
 			const { result: patched, ctx } = withWireContext('comment', () => {
-				const lift = (name: string) => ({ type: 'SYMBOL', name, metadata: { author: 'enrich' } });
+				const lift = (name: string) => ({ type: 'SYMBOL', name, metadata: { author: 'enrich', symbolSource: 'group-lift' } });
 				const original = { type: 'CHOICE', members: [lift('comment_arm1'), lift('comment_arm2')] } as any;
 				return transform(original, { 0: variant('line'), 1: variant('block') }) as any;
 			});

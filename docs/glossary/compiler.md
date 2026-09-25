@@ -3721,9 +3721,7 @@ An external is never inlined: a ref to an external keeps its symbol even when th
 ```text
 /**
  * Collect the set of hidden (`_`-prefixed) kind names whose OWN raw rule
- * body is a `choice` where **ALL** members are named arms: a named alias over
- * a symbol, or a symbol the grammar declared as a variant of this choice
- * (`annotations.variantOf`, the shape a visible variant rule takes).
+ * body is a `choice` where **ALL** members are named aliases over a symbol.
  *
  * These are dispatch choices where every arm names its own CST node. `resolveRule`
  * keeps a bare-symbol-content named alias as the ALIAS wrapper rather than
@@ -3736,8 +3734,13 @@ An external is never inlined: a ref to an external keeps its symbol even when th
  * make the transport expect transparent subtype dispatch, which fails at
  * decode when the reader sees the concrete kind ID.
  *
- * A choice with an arm that is neither (a bare, undeclared symbol) is
- * excluded: it may still need supertype treatment for that arm.
+ * A `variant`/`variantOf` annotation is NOT part of this test: enrich now
+ * stamps one on almost every unfielded choice arm, so it no longer tells a
+ * dispatch choice (every arm its own named node) apart from an ordinary
+ * union of bare symbols — only the structural named-alias shape still does.
+ * A choice with an arm that is neither a named alias over a symbol (a bare,
+ * undeclared symbol) is excluded: it may still need supertype treatment for
+ * that arm.
  *
  * Used in `classifyHiddenChoiceRule` to block unwanted supertype promotion.
  *
@@ -5758,9 +5761,14 @@ the text a SEQ collapses to is spaced by the grammar's word shape, not `\w`.
 
 ### `packages/codegen/src/compiler/variant-structural.ts::VariantChild`
 
-One variant of a parent: the kind the arm names and the variant name it is
-addressed by, both resolved once in the derivation and read unchanged by
-every consumer.
+One variant of a parent: the kind the arm names, the variant name it is
+addressed by, and `definedBy` — `'enrich'` when the arm's own rule was
+stamped by enrich's automatic variant labelling, `'override'` when a
+`variant()` patch (or other author-declared label) stamped it instead
+(`definedByOf`, delegating to `dsl/transform/transform-path.ts`'s
+`isEnrichAuthored` — the one place that reads a rule's `author` metadata).
+All three resolved once in the derivation and read unchanged by every
+consumer.
 
 ### `packages/codegen/src/compiler/variant-structural.ts::prefixNamedSuffix`
 
@@ -5768,6 +5776,48 @@ The suffix that turns `parentKind`'s visible name into `targetName`
 (`polymorphVisibleName(parentKind, suffix)`), or `null` when `targetName` is
 not so named or the suffix would be empty. Both names may carry a leading
 `_`. A naming helper only: it never decides whether an arm is a variant.
+
+### `packages/codegen/src/compiler/variant-structural.ts::GROUP_TOKEN_SYNONYMS`
+
+Token spellings that name the same syntactic category as one of
+`CATEGORY_TOKENS` under a different word than the category itself —
+`item`/`stmt` for `statement`, `expr` for `expression`, `decl` for
+`declaration`, `impl` for `implementation`. `normalizeGroupToken` maps a raw
+member/group token through this table before two names' tokens are compared,
+so `declaration_statement` and `function_item` agree they share a category
+token even though neither spells it `statement`.
+
+### `packages/codegen/src/compiler/variant-structural.ts::CATEGORY_TOKENS`
+
+The token vocabulary `supertypeMemberName` may drop from a member's trailing
+position when nothing else in the member's name already overlaps the
+supertype's own tokens: syntactic categories rather than constructs
+(`expression`, `statement`, `literal`, `declaration`, `definition`,
+`operator`, `pattern`, `type`). `line_comment` keeps `comment` because
+comment is the construct, not one of these categories.
+
+### `packages/codegen/src/compiler/variant-structural.ts::normalizeGroupToken`
+
+A token's canonical spelling for group-name comparison: itself, unless
+`GROUP_TOKEN_SYNONYMS` names a synonym.
+
+### `packages/codegen/src/compiler/variant-structural.ts::tokensOf`
+
+A kind name's underscore-separated tokens, with empty segments dropped.
+
+### `packages/codegen/src/compiler/variant-structural.ts::supertypeMemberName`
+
+The one derivation of a supertype member's short name: `memberKind`'s tokens
+with whatever `supertypeKind`'s own name already says (synonym-normalized via
+`normalizeGroupToken`) removed. When nothing overlapped and the member has
+more than one token, a trailing `CATEGORY_TOKENS` token is dropped instead.
+Falls back to the bare, unstripped member name when nothing was left to drop
+or the surviving tokens would just repeat the supertype's own name (a
+stutter). Used both by enrich's automatic-variant stamp
+(`dsl/automatic-variants.ts`'s `stampRuleVariants`) to name a supertype
+owner's arms, and by `emitters/ir.ts`'s `memberKeyFor` to key a member inside
+its supertype's grouped namespace — one derivation, so an arm's variant name
+and its ir group key never drift apart.
 
 ### `packages/codegen/src/compiler/variant-structural.ts::deriveVariantChildren`
 
@@ -5787,6 +5837,7 @@ The variant a node declares for `parentKind`: a symbol carrying the
 annotations (the child kind is the symbol's name), or a named alias whose own
 annotations — or its content symbol's — carry them (the child kind is the
 alias's visible value). Annotations for a different parent do not count.
+Also stamps `definedBy` from the arm's own rule metadata (`definedByOf`).
 
 ### `packages/codegen/src/compiler/variant-structural.ts::annotationsOf`
 
@@ -8077,12 +8128,15 @@ the stamp with the terminal default.
 ### `packages/codegen/src/compiler/variant-structural.ts::module`
 
 Which arms of a rule are its variants, read from the one fact that declares
-them: the `variant` / `variantOf` annotations a `variant()` patch stamps on
-the arm it resolves. Nothing here recognises a variant by name or by shape —
-a prefix-named sibling rule, a `groups:` entry or an upstream external that
-happens to share the parent's name is not a variant, and a hand-built hidden
-rule plus alias is not one either until the grammar declares it with
-`variant()`.
+them: the `variant` / `variantOf` annotations, stamped either by enrich's
+automatic arm labelling (`dsl/automatic-variants.ts`, every non-blank arm of
+a structural choice) or by a `variant()` patch resolving an override arm.
+Nothing here recognises a variant by name or by shape — a prefix-named
+sibling rule, a `groups:` entry, or an upstream external that happens to
+share the parent's name is not a variant unless one of those two paths
+stamped it. `VariantChild.definedBy` (`definedByOf`, reading the arm's own
+rule metadata) tells which path stamped a given arm, so a consumer can
+still single out an author-declared variant without re-deriving it.
 
 Link reads the derivation twice (`applyOverridePolymorphs`, and the final
 `LinkedGrammar.variantChildren` table that normalize and assemble consume),

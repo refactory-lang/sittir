@@ -161,7 +161,6 @@ export const indexTypeQuery = bundle(F.buildIndexTypeQuery, C.coerceToIndexTypeQ
 export const lookupType = bundle(F.buildLookupType, C.coerceToLookupType);
 export const mappedTypeClause = bundle(F.buildMappedTypeClause, C.coerceToMappedTypeClause);
 export const literalType = bundle(F.buildLiteralType, C.coerceToLiteralType);
-export const _number = bundle(F.build_Number, C.coerceTo_Number);
 export const flowMaybeType = bundle(F.buildFlowMaybeType, C.coerceToFlowMaybeType);
 export const parenthesizedType = bundle(F.buildParenthesizedType, C.coerceToParenthesizedType);
 export const typeArguments = bundle(F.buildTypeArguments, C.coerceToTypeArguments);

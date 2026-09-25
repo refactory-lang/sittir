@@ -31,229 +31,7 @@ type ListOptionsOf<P> = Extract<P, ListOptions>;
 // overload forbids every one of its keys.
 type NoneOf<T> = { [K in keyof T]?: never };
 
-const letChain$letChain =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { left: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(seated) } as never, options as never);
-	};
-const letChain$letCondition =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'pattern' || key === 'value') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) } as never, options as never);
-	};
-export const letChain: typeof B.letChain & {
-	letChain: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildLetChain>[0], 'left'> & { left: ArgsOf<typeof F.buildLetChain>[0] },
-			options?: OptionsArg<typeof F.buildLetChain>
-		) => ReturnType<typeof F.buildLetChain>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToLetChain>[0], 'left'> & { left: ArgsOf<typeof C.coerceToLetChain>[0] },
-			options?: OptionsArg<typeof C.coerceToLetChain>
-		) => ReturnType<typeof C.coerceToLetChain>;
-	};
-	letCondition: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildLetChain>[0], 'left'> & ArgsOf<typeof F.buildLetCondition>[0],
-			options?: OptionsArg<typeof F.buildLetChain>
-		) => ReturnType<typeof F.buildLetChain>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToLetChain>[0], 'left'> & ArgsOf<typeof C.coerceToLetCondition>[0],
-			options?: OptionsArg<typeof C.coerceToLetChain>
-		) => ReturnType<typeof C.coerceToLetChain>;
-	};
-} = {
-	...B.letChain,
-	letChain: {
-		strict: letChain$letChain(F.buildLetChain, F.buildLetChain),
-		coerce: letChain$letChain(C.coerceToLetChain, C.coerceToLetChain)
-	},
-	letCondition: {
-		strict: letChain$letCondition(F.buildLetChain, F.buildLetCondition),
-		coerce: letChain$letCondition(C.coerceToLetChain, C.coerceToLetCondition)
-	}
-};
-
-const ifExpression$letCondition =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'condition'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'pattern' || key === 'value') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, condition: _c(child)(inner) } as never, options as never);
-	};
-const ifExpression$letChain =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'condition'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'right') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, condition: _c(child)(inner) } as never, options as never);
-	};
-export const ifExpression: typeof B.ifExpression & {
-	letCondition: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIfExpression>[0], 'condition'> & ArgsOf<typeof F.buildLetCondition>[0],
-			options?: OptionsArg<typeof F.buildIfExpression>
-		) => ReturnType<typeof F.buildIfExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIfExpression>[0], 'condition'> &
-				ArgsOf<typeof C.coerceToLetCondition>[0],
-			options?: OptionsArg<typeof C.coerceToIfExpression>
-		) => ReturnType<typeof C.coerceToIfExpression>;
-	};
-	letChain: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIfExpression>[0], 'condition'> & ArgsOf<typeof F.buildLetChain>[0],
-			options?: OptionsArg<typeof F.buildIfExpression>
-		) => ReturnType<typeof F.buildIfExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIfExpression>[0], 'condition'> & ArgsOf<typeof C.coerceToLetChain>[0],
-			options?: OptionsArg<typeof C.coerceToIfExpression>
-		) => ReturnType<typeof C.coerceToIfExpression>;
-	};
-} = {
-	...B.ifExpression,
-	letCondition: {
-		strict: ifExpression$letCondition(F.buildIfExpression, F.buildLetCondition),
-		coerce: ifExpression$letCondition(C.coerceToIfExpression, C.coerceToLetCondition)
-	},
-	letChain: {
-		strict: ifExpression$letChain(F.buildIfExpression, F.buildLetChain),
-		coerce: ifExpression$letChain(C.coerceToIfExpression, C.coerceToLetChain)
-	}
-};
-
-const whileExpression$letCondition =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'condition'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'pattern' || key === 'value') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, condition: _c(child)(inner) } as never, options as never);
-	};
-const whileExpression$letChain =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'condition'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'right') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, condition: _c(child)(inner) } as never, options as never);
-	};
-export const whileExpression: typeof B.whileExpression & {
-	letCondition: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWhileExpression>[0], 'condition'> & ArgsOf<typeof F.buildLetCondition>[0],
-			options?: OptionsArg<typeof F.buildWhileExpression>
-		) => ReturnType<typeof F.buildWhileExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToWhileExpression>[0], 'condition'> &
-				ArgsOf<typeof C.coerceToLetCondition>[0],
-			options?: OptionsArg<typeof C.coerceToWhileExpression>
-		) => ReturnType<typeof C.coerceToWhileExpression>;
-	};
-	letChain: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWhileExpression>[0], 'condition'> & ArgsOf<typeof F.buildLetChain>[0],
-			options?: OptionsArg<typeof F.buildWhileExpression>
-		) => ReturnType<typeof F.buildWhileExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToWhileExpression>[0], 'condition'> & ArgsOf<typeof C.coerceToLetChain>[0],
-			options?: OptionsArg<typeof C.coerceToWhileExpression>
-		) => ReturnType<typeof C.coerceToWhileExpression>;
-	};
-} = {
-	...B.whileExpression,
-	letCondition: {
-		strict: whileExpression$letCondition(F.buildWhileExpression, F.buildLetCondition),
-		coerce: whileExpression$letCondition(C.coerceToWhileExpression, C.coerceToLetCondition)
-	},
-	letChain: {
-		strict: whileExpression$letChain(F.buildWhileExpression, F.buildLetChain),
-		coerce: whileExpression$letChain(C.coerceToWhileExpression, C.coerceToLetChain)
-	}
-};
-
 const expressionStatement$withSemi =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$unsafeBlock =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$asyncBlock =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$genBlock =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$tryBlock =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$block =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$ifExpression =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$ifExpressionLetCondition =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$whileExpressionLetCondition =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$ifExpressionLetChain =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$whileExpressionLetChain =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$matchExpression =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$whileExpression =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$loopExpression =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$forExpression =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const expressionStatement$constBlock =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -266,771 +44,14 @@ export const expressionStatement: typeof B.expressionStatement & {
 			...args: ArgsOf<typeof C.coerceToExpressionStatementWithSemi>
 		) => ReturnType<typeof F.buildExpressionStatement>;
 	};
-	unsafeBlock: {
-		strict: (...args: ArgsOf<typeof F.buildUnsafeBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToUnsafeBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-	};
-	asyncBlock: {
-		strict: (...args: ArgsOf<typeof F.buildAsyncBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToAsyncBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-	};
-	genBlock: {
-		strict: (...args: ArgsOf<typeof F.buildGenBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToGenBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-	};
-	tryBlock: {
-		strict: (...args: ArgsOf<typeof F.buildTryBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTryBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-	};
-	block: {
-		strict: (...args: ArgsOf<typeof F.buildBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-	};
-	ifExpression: {
-		strict: (...args: ArgsOf<typeof F.buildIfExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIfExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-		letCondition: {
-			strict: (
-				...args: ArgsOf<typeof ifExpression.letCondition.strict>
-			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof ifExpression.letCondition.coerce>
-			) => ReturnType<typeof F.buildExpressionStatement>;
-		};
-		letChain: {
-			strict: (...args: ArgsOf<typeof ifExpression.letChain.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (...args: ArgsOf<typeof ifExpression.letChain.coerce>) => ReturnType<typeof F.buildExpressionStatement>;
-		};
-	};
-	matchExpression: {
-		strict: (...args: ArgsOf<typeof F.buildMatchExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToMatchExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-	};
-	whileExpression: {
-		strict: (...args: ArgsOf<typeof F.buildWhileExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToWhileExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-		letCondition: {
-			strict: (
-				...args: ArgsOf<typeof whileExpression.letCondition.strict>
-			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof whileExpression.letCondition.coerce>
-			) => ReturnType<typeof F.buildExpressionStatement>;
-		};
-		letChain: {
-			strict: (
-				...args: ArgsOf<typeof whileExpression.letChain.strict>
-			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof whileExpression.letChain.coerce>
-			) => ReturnType<typeof F.buildExpressionStatement>;
-		};
-	};
-	loopExpression: {
-		strict: (...args: ArgsOf<typeof F.buildLoopExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLoopExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-	};
-	forExpression: {
-		strict: (...args: ArgsOf<typeof F.buildForExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToForExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-	};
-	constBlock: {
-		strict: (...args: ArgsOf<typeof F.buildConstBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToConstBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-	};
 } = {
 	...B.expressionStatement,
 	withSemi: {
 		strict: expressionStatement$withSemi(F.buildExpressionStatement, F.buildExpressionStatementWithSemi),
 		coerce: expressionStatement$withSemi(F.buildExpressionStatement, C.coerceToExpressionStatementWithSemi)
-	},
-	unsafeBlock: {
-		strict: expressionStatement$unsafeBlock(F.buildExpressionStatement, F.buildUnsafeBlock),
-		coerce: expressionStatement$unsafeBlock(F.buildExpressionStatement, C.coerceToUnsafeBlock)
-	},
-	asyncBlock: {
-		strict: expressionStatement$asyncBlock(F.buildExpressionStatement, F.buildAsyncBlock),
-		coerce: expressionStatement$asyncBlock(F.buildExpressionStatement, C.coerceToAsyncBlock)
-	},
-	genBlock: {
-		strict: expressionStatement$genBlock(F.buildExpressionStatement, F.buildGenBlock),
-		coerce: expressionStatement$genBlock(F.buildExpressionStatement, C.coerceToGenBlock)
-	},
-	tryBlock: {
-		strict: expressionStatement$tryBlock(F.buildExpressionStatement, F.buildTryBlock),
-		coerce: expressionStatement$tryBlock(F.buildExpressionStatement, C.coerceToTryBlock)
-	},
-	block: {
-		strict: expressionStatement$block(F.buildExpressionStatement, F.buildBlock),
-		coerce: expressionStatement$block(F.buildExpressionStatement, C.coerceToBlock)
-	},
-	ifExpression: {
-		strict: expressionStatement$ifExpression(F.buildExpressionStatement, F.buildIfExpression),
-		coerce: expressionStatement$ifExpression(F.buildExpressionStatement, C.coerceToIfExpression),
-		letCondition: {
-			strict: expressionStatement$ifExpressionLetCondition(
-				F.buildExpressionStatement,
-				ifExpression.letCondition.strict
-			),
-			coerce: expressionStatement$ifExpressionLetCondition(F.buildExpressionStatement, ifExpression.letCondition.coerce)
-		},
-		letChain: {
-			strict: expressionStatement$ifExpressionLetChain(F.buildExpressionStatement, ifExpression.letChain.strict),
-			coerce: expressionStatement$ifExpressionLetChain(F.buildExpressionStatement, ifExpression.letChain.coerce)
-		}
-	},
-	matchExpression: {
-		strict: expressionStatement$matchExpression(F.buildExpressionStatement, F.buildMatchExpression),
-		coerce: expressionStatement$matchExpression(F.buildExpressionStatement, C.coerceToMatchExpression)
-	},
-	whileExpression: {
-		strict: expressionStatement$whileExpression(F.buildExpressionStatement, F.buildWhileExpression),
-		coerce: expressionStatement$whileExpression(F.buildExpressionStatement, C.coerceToWhileExpression),
-		letCondition: {
-			strict: expressionStatement$whileExpressionLetCondition(
-				F.buildExpressionStatement,
-				whileExpression.letCondition.strict
-			),
-			coerce: expressionStatement$whileExpressionLetCondition(
-				F.buildExpressionStatement,
-				whileExpression.letCondition.coerce
-			)
-		},
-		letChain: {
-			strict: expressionStatement$whileExpressionLetChain(F.buildExpressionStatement, whileExpression.letChain.strict),
-			coerce: expressionStatement$whileExpressionLetChain(F.buildExpressionStatement, whileExpression.letChain.coerce)
-		}
-	},
-	loopExpression: {
-		strict: expressionStatement$loopExpression(F.buildExpressionStatement, F.buildLoopExpression),
-		coerce: expressionStatement$loopExpression(F.buildExpressionStatement, C.coerceToLoopExpression)
-	},
-	forExpression: {
-		strict: expressionStatement$forExpression(F.buildExpressionStatement, F.buildForExpression),
-		coerce: expressionStatement$forExpression(F.buildExpressionStatement, C.coerceToForExpression)
-	},
-	constBlock: {
-		strict: expressionStatement$constBlock(F.buildExpressionStatement, F.buildConstBlock),
-		coerce: expressionStatement$constBlock(F.buildExpressionStatement, C.coerceToConstBlock)
 	}
 };
 
-const macroRule$tokenTreePatternParen =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { left: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
-	};
-const macroRule$tokenTreePatternBracket =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { left: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
-	};
-const macroRule$tokenTreePatternBrace =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { left: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
-	};
-const macroRule$tokenTreeParen =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
-	};
-const macroRule$tokenTreeBracket =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
-	};
-const macroRule$tokenTreeBrace =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
-	};
-const macroRule$tokenTreePatternParen$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'left'> & { left: ArgsOf<typeof F.buildTokenTreePatternParen> },
-	options?: OptionsArg<typeof F.buildMacroRule>
-) => ReturnType<typeof F.buildMacroRule> = macroRule$tokenTreePatternParen(
-	F.buildMacroRule,
-	F.buildTokenTreePatternParen
-);
-const macroRule$tokenTreePatternParen$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'left'> & {
-		left: ArgsOf<typeof C.coerceToTokenTreePatternParen>;
-	},
-	options?: OptionsArg<typeof C.coerceToMacroRule>
-) => ReturnType<typeof C.coerceToMacroRule> = macroRule$tokenTreePatternParen(
-	C.coerceToMacroRule,
-	C.coerceToTokenTreePatternParen
-);
-const macroRule$tokenTreePatternParen$tokenTreeParen =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
-	};
-const macroRule$tokenTreePatternParen$tokenTreeBracket =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
-	};
-const macroRule$tokenTreePatternParen$tokenTreeBrace =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
-	};
-const macroRule$tokenTreePatternBracket$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'left'> & {
-		left: ArgsOf<typeof F.buildTokenTreePatternBracket>;
-	},
-	options?: OptionsArg<typeof F.buildMacroRule>
-) => ReturnType<typeof F.buildMacroRule> = macroRule$tokenTreePatternBracket(
-	F.buildMacroRule,
-	F.buildTokenTreePatternBracket
-);
-const macroRule$tokenTreePatternBracket$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'left'> & {
-		left: ArgsOf<typeof C.coerceToTokenTreePatternBracket>;
-	},
-	options?: OptionsArg<typeof C.coerceToMacroRule>
-) => ReturnType<typeof C.coerceToMacroRule> = macroRule$tokenTreePatternBracket(
-	C.coerceToMacroRule,
-	C.coerceToTokenTreePatternBracket
-);
-const macroRule$tokenTreePatternBracket$tokenTreeParen =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
-	};
-const macroRule$tokenTreePatternBracket$tokenTreeBracket =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
-	};
-const macroRule$tokenTreePatternBracket$tokenTreeBrace =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
-	};
-const macroRule$tokenTreePatternBrace$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'left'> & { left: ArgsOf<typeof F.buildTokenTreePatternBrace> },
-	options?: OptionsArg<typeof F.buildMacroRule>
-) => ReturnType<typeof F.buildMacroRule> = macroRule$tokenTreePatternBrace(
-	F.buildMacroRule,
-	F.buildTokenTreePatternBrace
-);
-const macroRule$tokenTreePatternBrace$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'left'> & {
-		left: ArgsOf<typeof C.coerceToTokenTreePatternBrace>;
-	},
-	options?: OptionsArg<typeof C.coerceToMacroRule>
-) => ReturnType<typeof C.coerceToMacroRule> = macroRule$tokenTreePatternBrace(
-	C.coerceToMacroRule,
-	C.coerceToTokenTreePatternBrace
-);
-const macroRule$tokenTreePatternBrace$tokenTreeParen =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
-	};
-const macroRule$tokenTreePatternBrace$tokenTreeBracket =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
-	};
-const macroRule$tokenTreePatternBrace$tokenTreeBrace =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { right: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) } as never, options as never);
-	};
-export const macroRule: typeof B.macroRule & {
-	tokenTreePatternParen: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'left'> & {
-				left: ArgsOf<typeof F.buildTokenTreePatternParen>;
-			},
-			options?: OptionsArg<typeof F.buildMacroRule>
-		) => ReturnType<typeof F.buildMacroRule>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'left'> & {
-				left: ArgsOf<typeof C.coerceToTokenTreePatternParen>;
-			},
-			options?: OptionsArg<typeof C.coerceToMacroRule>
-		) => ReturnType<typeof C.coerceToMacroRule>;
-		tokenTreeParen: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternParen$applied>[0], 'right'> & {
-					right: ArgsOf<typeof F.buildTokenTreeParen>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternParen$applied>
-			) => ReturnType<typeof macroRule$tokenTreePatternParen$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternParen$appliedCoerce>[0], 'right'> & {
-					right: ArgsOf<typeof C.coerceToTokenTreeParen>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternParen$appliedCoerce>
-			) => ReturnType<typeof macroRule$tokenTreePatternParen$appliedCoerce>;
-		};
-		tokenTreeBracket: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternParen$applied>[0], 'right'> & {
-					right: ArgsOf<typeof F.buildTokenTreeBracket>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternParen$applied>
-			) => ReturnType<typeof macroRule$tokenTreePatternParen$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternParen$appliedCoerce>[0], 'right'> & {
-					right: ArgsOf<typeof C.coerceToTokenTreeBracket>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternParen$appliedCoerce>
-			) => ReturnType<typeof macroRule$tokenTreePatternParen$appliedCoerce>;
-		};
-		tokenTreeBrace: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternParen$applied>[0], 'right'> & {
-					right: ArgsOf<typeof F.buildTokenTreeBrace>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternParen$applied>
-			) => ReturnType<typeof macroRule$tokenTreePatternParen$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternParen$appliedCoerce>[0], 'right'> & {
-					right: ArgsOf<typeof C.coerceToTokenTreeBrace>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternParen$appliedCoerce>
-			) => ReturnType<typeof macroRule$tokenTreePatternParen$appliedCoerce>;
-		};
-	};
-	tokenTreePatternBracket: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'left'> & {
-				left: ArgsOf<typeof F.buildTokenTreePatternBracket>;
-			},
-			options?: OptionsArg<typeof F.buildMacroRule>
-		) => ReturnType<typeof F.buildMacroRule>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'left'> & {
-				left: ArgsOf<typeof C.coerceToTokenTreePatternBracket>;
-			},
-			options?: OptionsArg<typeof C.coerceToMacroRule>
-		) => ReturnType<typeof C.coerceToMacroRule>;
-		tokenTreeParen: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBracket$applied>[0], 'right'> & {
-					right: ArgsOf<typeof F.buildTokenTreeParen>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternBracket$applied>
-			) => ReturnType<typeof macroRule$tokenTreePatternBracket$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBracket$appliedCoerce>[0], 'right'> & {
-					right: ArgsOf<typeof C.coerceToTokenTreeParen>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternBracket$appliedCoerce>
-			) => ReturnType<typeof macroRule$tokenTreePatternBracket$appliedCoerce>;
-		};
-		tokenTreeBracket: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBracket$applied>[0], 'right'> & {
-					right: ArgsOf<typeof F.buildTokenTreeBracket>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternBracket$applied>
-			) => ReturnType<typeof macroRule$tokenTreePatternBracket$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBracket$appliedCoerce>[0], 'right'> & {
-					right: ArgsOf<typeof C.coerceToTokenTreeBracket>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternBracket$appliedCoerce>
-			) => ReturnType<typeof macroRule$tokenTreePatternBracket$appliedCoerce>;
-		};
-		tokenTreeBrace: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBracket$applied>[0], 'right'> & {
-					right: ArgsOf<typeof F.buildTokenTreeBrace>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternBracket$applied>
-			) => ReturnType<typeof macroRule$tokenTreePatternBracket$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBracket$appliedCoerce>[0], 'right'> & {
-					right: ArgsOf<typeof C.coerceToTokenTreeBrace>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternBracket$appliedCoerce>
-			) => ReturnType<typeof macroRule$tokenTreePatternBracket$appliedCoerce>;
-		};
-	};
-	tokenTreePatternBrace: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'left'> & {
-				left: ArgsOf<typeof F.buildTokenTreePatternBrace>;
-			},
-			options?: OptionsArg<typeof F.buildMacroRule>
-		) => ReturnType<typeof F.buildMacroRule>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'left'> & {
-				left: ArgsOf<typeof C.coerceToTokenTreePatternBrace>;
-			},
-			options?: OptionsArg<typeof C.coerceToMacroRule>
-		) => ReturnType<typeof C.coerceToMacroRule>;
-		tokenTreeParen: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBrace$applied>[0], 'right'> & {
-					right: ArgsOf<typeof F.buildTokenTreeParen>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternBrace$applied>
-			) => ReturnType<typeof macroRule$tokenTreePatternBrace$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBrace$appliedCoerce>[0], 'right'> & {
-					right: ArgsOf<typeof C.coerceToTokenTreeParen>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternBrace$appliedCoerce>
-			) => ReturnType<typeof macroRule$tokenTreePatternBrace$appliedCoerce>;
-		};
-		tokenTreeBracket: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBrace$applied>[0], 'right'> & {
-					right: ArgsOf<typeof F.buildTokenTreeBracket>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternBrace$applied>
-			) => ReturnType<typeof macroRule$tokenTreePatternBrace$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBrace$appliedCoerce>[0], 'right'> & {
-					right: ArgsOf<typeof C.coerceToTokenTreeBracket>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternBrace$appliedCoerce>
-			) => ReturnType<typeof macroRule$tokenTreePatternBrace$appliedCoerce>;
-		};
-		tokenTreeBrace: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBrace$applied>[0], 'right'> & {
-					right: ArgsOf<typeof F.buildTokenTreeBrace>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternBrace$applied>
-			) => ReturnType<typeof macroRule$tokenTreePatternBrace$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroRule$tokenTreePatternBrace$appliedCoerce>[0], 'right'> & {
-					right: ArgsOf<typeof C.coerceToTokenTreeBrace>;
-				},
-				options?: OptionsArg<typeof macroRule$tokenTreePatternBrace$appliedCoerce>
-			) => ReturnType<typeof macroRule$tokenTreePatternBrace$appliedCoerce>;
-		};
-	};
-	tokenTreeParen: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'right'> & { right: ArgsOf<typeof F.buildTokenTreeParen> },
-			options?: OptionsArg<typeof F.buildMacroRule>
-		) => ReturnType<typeof F.buildMacroRule>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'right'> & {
-				right: ArgsOf<typeof C.coerceToTokenTreeParen>;
-			},
-			options?: OptionsArg<typeof C.coerceToMacroRule>
-		) => ReturnType<typeof C.coerceToMacroRule>;
-	};
-	tokenTreeBracket: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'right'> & { right: ArgsOf<typeof F.buildTokenTreeBracket> },
-			options?: OptionsArg<typeof F.buildMacroRule>
-		) => ReturnType<typeof F.buildMacroRule>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'right'> & {
-				right: ArgsOf<typeof C.coerceToTokenTreeBracket>;
-			},
-			options?: OptionsArg<typeof C.coerceToMacroRule>
-		) => ReturnType<typeof C.coerceToMacroRule>;
-	};
-	tokenTreeBrace: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMacroRule>[0], 'right'> & { right: ArgsOf<typeof F.buildTokenTreeBrace> },
-			options?: OptionsArg<typeof F.buildMacroRule>
-		) => ReturnType<typeof F.buildMacroRule>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMacroRule>[0], 'right'> & {
-				right: ArgsOf<typeof C.coerceToTokenTreeBrace>;
-			},
-			options?: OptionsArg<typeof C.coerceToMacroRule>
-		) => ReturnType<typeof C.coerceToMacroRule>;
-	};
-} = {
-	...B.macroRule,
-	tokenTreePatternParen: {
-		strict: macroRule$tokenTreePatternParen(F.buildMacroRule, F.buildTokenTreePatternParen),
-		coerce: macroRule$tokenTreePatternParen(C.coerceToMacroRule, C.coerceToTokenTreePatternParen),
-		tokenTreeParen: {
-			strict: macroRule$tokenTreePatternParen$tokenTreeParen(
-				macroRule$tokenTreePatternParen$applied,
-				F.buildTokenTreeParen
-			),
-			coerce: macroRule$tokenTreePatternParen$tokenTreeParen(
-				macroRule$tokenTreePatternParen$appliedCoerce,
-				C.coerceToTokenTreeParen
-			)
-		},
-		tokenTreeBracket: {
-			strict: macroRule$tokenTreePatternParen$tokenTreeBracket(
-				macroRule$tokenTreePatternParen$applied,
-				F.buildTokenTreeBracket
-			),
-			coerce: macroRule$tokenTreePatternParen$tokenTreeBracket(
-				macroRule$tokenTreePatternParen$appliedCoerce,
-				C.coerceToTokenTreeBracket
-			)
-		},
-		tokenTreeBrace: {
-			strict: macroRule$tokenTreePatternParen$tokenTreeBrace(
-				macroRule$tokenTreePatternParen$applied,
-				F.buildTokenTreeBrace
-			),
-			coerce: macroRule$tokenTreePatternParen$tokenTreeBrace(
-				macroRule$tokenTreePatternParen$appliedCoerce,
-				C.coerceToTokenTreeBrace
-			)
-		}
-	},
-	tokenTreePatternBracket: {
-		strict: macroRule$tokenTreePatternBracket(F.buildMacroRule, F.buildTokenTreePatternBracket),
-		coerce: macroRule$tokenTreePatternBracket(C.coerceToMacroRule, C.coerceToTokenTreePatternBracket),
-		tokenTreeParen: {
-			strict: macroRule$tokenTreePatternBracket$tokenTreeParen(
-				macroRule$tokenTreePatternBracket$applied,
-				F.buildTokenTreeParen
-			),
-			coerce: macroRule$tokenTreePatternBracket$tokenTreeParen(
-				macroRule$tokenTreePatternBracket$appliedCoerce,
-				C.coerceToTokenTreeParen
-			)
-		},
-		tokenTreeBracket: {
-			strict: macroRule$tokenTreePatternBracket$tokenTreeBracket(
-				macroRule$tokenTreePatternBracket$applied,
-				F.buildTokenTreeBracket
-			),
-			coerce: macroRule$tokenTreePatternBracket$tokenTreeBracket(
-				macroRule$tokenTreePatternBracket$appliedCoerce,
-				C.coerceToTokenTreeBracket
-			)
-		},
-		tokenTreeBrace: {
-			strict: macroRule$tokenTreePatternBracket$tokenTreeBrace(
-				macroRule$tokenTreePatternBracket$applied,
-				F.buildTokenTreeBrace
-			),
-			coerce: macroRule$tokenTreePatternBracket$tokenTreeBrace(
-				macroRule$tokenTreePatternBracket$appliedCoerce,
-				C.coerceToTokenTreeBrace
-			)
-		}
-	},
-	tokenTreePatternBrace: {
-		strict: macroRule$tokenTreePatternBrace(F.buildMacroRule, F.buildTokenTreePatternBrace),
-		coerce: macroRule$tokenTreePatternBrace(C.coerceToMacroRule, C.coerceToTokenTreePatternBrace),
-		tokenTreeParen: {
-			strict: macroRule$tokenTreePatternBrace$tokenTreeParen(
-				macroRule$tokenTreePatternBrace$applied,
-				F.buildTokenTreeParen
-			),
-			coerce: macroRule$tokenTreePatternBrace$tokenTreeParen(
-				macroRule$tokenTreePatternBrace$appliedCoerce,
-				C.coerceToTokenTreeParen
-			)
-		},
-		tokenTreeBracket: {
-			strict: macroRule$tokenTreePatternBrace$tokenTreeBracket(
-				macroRule$tokenTreePatternBrace$applied,
-				F.buildTokenTreeBracket
-			),
-			coerce: macroRule$tokenTreePatternBrace$tokenTreeBracket(
-				macroRule$tokenTreePatternBrace$appliedCoerce,
-				C.coerceToTokenTreeBracket
-			)
-		},
-		tokenTreeBrace: {
-			strict: macroRule$tokenTreePatternBrace$tokenTreeBrace(
-				macroRule$tokenTreePatternBrace$applied,
-				F.buildTokenTreeBrace
-			),
-			coerce: macroRule$tokenTreePatternBrace$tokenTreeBrace(
-				macroRule$tokenTreePatternBrace$appliedCoerce,
-				C.coerceToTokenTreeBrace
-			)
-		}
-	},
-	tokenTreeParen: {
-		strict: macroRule$tokenTreeParen(F.buildMacroRule, F.buildTokenTreeParen),
-		coerce: macroRule$tokenTreeParen(C.coerceToMacroRule, C.coerceToTokenTreeParen)
-	},
-	tokenTreeBracket: {
-		strict: macroRule$tokenTreeBracket(F.buildMacroRule, F.buildTokenTreeBracket),
-		coerce: macroRule$tokenTreeBracket(C.coerceToMacroRule, C.coerceToTokenTreeBracket)
-	},
-	tokenTreeBrace: {
-		strict: macroRule$tokenTreeBrace(F.buildMacroRule, F.buildTokenTreeBrace),
-		coerce: macroRule$tokenTreeBrace(C.coerceToMacroRule, C.coerceToTokenTreeBrace)
-	}
-};
-
-const tokenRepetitionPattern$plus =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const tokenRepetitionPattern$star =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const tokenRepetitionPattern$qmark =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-export const tokenRepetitionPattern: typeof B.tokenRepetitionPattern & {
-	plus: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTokenRepetitionPattern>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildTokenRepetitionPattern>
-		) => ReturnType<typeof F.buildTokenRepetitionPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTokenRepetitionPattern>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToTokenRepetitionPattern>
-		) => ReturnType<typeof C.coerceToTokenRepetitionPattern>;
-	};
-	star: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTokenRepetitionPattern>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildTokenRepetitionPattern>
-		) => ReturnType<typeof F.buildTokenRepetitionPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTokenRepetitionPattern>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToTokenRepetitionPattern>
-		) => ReturnType<typeof C.coerceToTokenRepetitionPattern>;
-	};
-	qmark: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTokenRepetitionPattern>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildTokenRepetitionPattern>
-		) => ReturnType<typeof F.buildTokenRepetitionPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTokenRepetitionPattern>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToTokenRepetitionPattern>
-		) => ReturnType<typeof C.coerceToTokenRepetitionPattern>;
-	};
-} = {
-	...B.tokenRepetitionPattern,
-	plus: {
-		strict: tokenRepetitionPattern$plus(F.buildTokenRepetitionPattern, TSKindId.Plus),
-		coerce: tokenRepetitionPattern$plus(C.coerceToTokenRepetitionPattern, TSKindId.Plus)
-	},
-	star: {
-		strict: tokenRepetitionPattern$star(F.buildTokenRepetitionPattern, TSKindId.Star),
-		coerce: tokenRepetitionPattern$star(C.coerceToTokenRepetitionPattern, TSKindId.Star)
-	},
-	qmark: {
-		strict: tokenRepetitionPattern$qmark(F.buildTokenRepetitionPattern, TSKindId.Qmark),
-		coerce: tokenRepetitionPattern$qmark(C.coerceToTokenRepetitionPattern, TSKindId.Qmark)
-	}
-};
-
-const tokenRepetition$plus =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const tokenRepetition$star =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const tokenRepetition$qmark =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-export const tokenRepetition: typeof B.tokenRepetition & {
-	plus: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTokenRepetition>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildTokenRepetition>
-		) => ReturnType<typeof F.buildTokenRepetition>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTokenRepetition>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToTokenRepetition>
-		) => ReturnType<typeof C.coerceToTokenRepetition>;
-	};
-	star: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTokenRepetition>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildTokenRepetition>
-		) => ReturnType<typeof F.buildTokenRepetition>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTokenRepetition>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToTokenRepetition>
-		) => ReturnType<typeof C.coerceToTokenRepetition>;
-	};
-	qmark: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTokenRepetition>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildTokenRepetition>
-		) => ReturnType<typeof F.buildTokenRepetition>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTokenRepetition>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToTokenRepetition>
-		) => ReturnType<typeof C.coerceToTokenRepetition>;
-	};
-} = {
-	...B.tokenRepetition,
-	plus: {
-		strict: tokenRepetition$plus(F.buildTokenRepetition, TSKindId.Plus),
-		coerce: tokenRepetition$plus(C.coerceToTokenRepetition, TSKindId.Plus)
-	},
-	star: {
-		strict: tokenRepetition$star(F.buildTokenRepetition, TSKindId.Star),
-		coerce: tokenRepetition$star(C.coerceToTokenRepetition, TSKindId.Star)
-	},
-	qmark: {
-		strict: tokenRepetition$qmark(F.buildTokenRepetition, TSKindId.Qmark),
-		coerce: tokenRepetition$qmark(C.coerceToTokenRepetition, TSKindId.Qmark)
-	}
-};
-
-const attribute$self =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const attribute$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
-	};
-const attribute$metavariable =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
-	};
-const attribute$super =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const attribute$crate =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const attribute$scopedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'name') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) } as never, options as never);
-	};
 const attribute$input =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -1042,255 +63,7 @@ const attribute$input =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
 	};
-const attribute$self$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
-	options?: OptionsArg<typeof F.buildAttribute>
-) => ReturnType<typeof F.buildAttribute> = attribute$self(F.buildAttribute, F.buildSelf);
-const attribute$self$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
-	options?: OptionsArg<typeof C.coerceToAttribute>
-) => ReturnType<typeof C.coerceToAttribute> = attribute$self(C.coerceToAttribute, C.coerceToSelf);
-const attribute$self$input =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'value' || key === 'arguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
-	};
-const attribute$identifier$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'> & { path: ArgsOf<typeof F.buildIdentifier> },
-	options?: OptionsArg<typeof F.buildAttribute>
-) => ReturnType<typeof F.buildAttribute> = attribute$identifier(F.buildAttribute, F.buildIdentifier);
-const attribute$identifier$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'> & { path: ArgsOf<typeof C.coerceToIdentifier> },
-	options?: OptionsArg<typeof C.coerceToAttribute>
-) => ReturnType<typeof C.coerceToAttribute> = attribute$identifier(C.coerceToAttribute, C.coerceToIdentifier);
-const attribute$identifier$input =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'value' || key === 'arguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
-	};
-const attribute$metavariable$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'> & { path: ArgsOf<typeof F.buildMetavariable>[0] },
-	options?: OptionsArg<typeof F.buildAttribute>
-) => ReturnType<typeof F.buildAttribute> = attribute$metavariable(F.buildAttribute, F.buildMetavariable);
-const attribute$metavariable$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'> & { path: ArgsOf<typeof C.coerceToMetavariable>[0] },
-	options?: OptionsArg<typeof C.coerceToAttribute>
-) => ReturnType<typeof C.coerceToAttribute> = attribute$metavariable(C.coerceToAttribute, C.coerceToMetavariable);
-const attribute$metavariable$input =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'value' || key === 'arguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
-	};
-const attribute$super$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
-	options?: OptionsArg<typeof F.buildAttribute>
-) => ReturnType<typeof F.buildAttribute> = attribute$super(F.buildAttribute, F.buildSuper);
-const attribute$super$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
-	options?: OptionsArg<typeof C.coerceToAttribute>
-) => ReturnType<typeof C.coerceToAttribute> = attribute$super(C.coerceToAttribute, C.coerceToSuper);
-const attribute$super$input =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'value' || key === 'arguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
-	};
-const attribute$crate$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
-	options?: OptionsArg<typeof F.buildAttribute>
-) => ReturnType<typeof F.buildAttribute> = attribute$crate(F.buildAttribute, F.buildCrate);
-const attribute$crate$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
-	options?: OptionsArg<typeof C.coerceToAttribute>
-) => ReturnType<typeof C.coerceToAttribute> = attribute$crate(C.coerceToAttribute, C.coerceToCrate);
-const attribute$crate$input =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'value' || key === 'arguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
-	};
-const attribute$scopedIdentifier$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'> & ArgsOf<typeof F.buildScopedIdentifier>[0],
-	options?: OptionsArg<typeof F.buildAttribute>
-) => ReturnType<typeof F.buildAttribute> = attribute$scopedIdentifier(F.buildAttribute, F.buildScopedIdentifier);
-const attribute$scopedIdentifier$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'> & ArgsOf<typeof C.coerceToScopedIdentifier>[0],
-	options?: OptionsArg<typeof C.coerceToAttribute>
-) => ReturnType<typeof C.coerceToAttribute> = attribute$scopedIdentifier(
-	C.coerceToAttribute,
-	C.coerceToScopedIdentifier
-);
-const attribute$scopedIdentifier$input =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'value' || key === 'arguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
-	};
 export const attribute: typeof B.attribute & {
-	self: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildAttribute>
-		) => ReturnType<typeof F.buildAttribute>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToAttribute>
-		) => ReturnType<typeof C.coerceToAttribute>;
-		input: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof attribute$self$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$self$applied>
-			) => ReturnType<typeof attribute$self$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof attribute$self$appliedCoerce>[0], 'input'> &
-					ArgsOf<typeof C.coerceToAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$self$appliedCoerce>
-			) => ReturnType<typeof attribute$self$appliedCoerce>;
-		};
-	};
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'> & { path: ArgsOf<typeof F.buildIdentifier> },
-			options?: OptionsArg<typeof F.buildAttribute>
-		) => ReturnType<typeof F.buildAttribute>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'> & { path: ArgsOf<typeof C.coerceToIdentifier> },
-			options?: OptionsArg<typeof C.coerceToAttribute>
-		) => ReturnType<typeof C.coerceToAttribute>;
-		input: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof attribute$identifier$applied>[0], 'input'> &
-					ArgsOf<typeof F.buildAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$identifier$applied>
-			) => ReturnType<typeof attribute$identifier$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof attribute$identifier$appliedCoerce>[0], 'input'> &
-					ArgsOf<typeof C.coerceToAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$identifier$appliedCoerce>
-			) => ReturnType<typeof attribute$identifier$appliedCoerce>;
-		};
-	};
-	metavariable: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'> & { path: ArgsOf<typeof F.buildMetavariable>[0] },
-			options?: OptionsArg<typeof F.buildAttribute>
-		) => ReturnType<typeof F.buildAttribute>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToMetavariable>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToAttribute>
-		) => ReturnType<typeof C.coerceToAttribute>;
-		input: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof attribute$metavariable$applied>[0], 'input'> &
-					ArgsOf<typeof F.buildAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$metavariable$applied>
-			) => ReturnType<typeof attribute$metavariable$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof attribute$metavariable$appliedCoerce>[0], 'input'> &
-					ArgsOf<typeof C.coerceToAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$metavariable$appliedCoerce>
-			) => ReturnType<typeof attribute$metavariable$appliedCoerce>;
-		};
-	};
-	super: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildAttribute>
-		) => ReturnType<typeof F.buildAttribute>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToAttribute>
-		) => ReturnType<typeof C.coerceToAttribute>;
-		input: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof attribute$super$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$super$applied>
-			) => ReturnType<typeof attribute$super$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof attribute$super$appliedCoerce>[0], 'input'> &
-					ArgsOf<typeof C.coerceToAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$super$appliedCoerce>
-			) => ReturnType<typeof attribute$super$appliedCoerce>;
-		};
-	};
-	crate: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildAttribute>
-		) => ReturnType<typeof F.buildAttribute>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToAttribute>
-		) => ReturnType<typeof C.coerceToAttribute>;
-		input: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof attribute$crate$applied>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$crate$applied>
-			) => ReturnType<typeof attribute$crate$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof attribute$crate$appliedCoerce>[0], 'input'> &
-					ArgsOf<typeof C.coerceToAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$crate$appliedCoerce>
-			) => ReturnType<typeof attribute$crate$appliedCoerce>;
-		};
-	};
-	scopedIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'path'> & ArgsOf<typeof F.buildScopedIdentifier>[0],
-			options?: OptionsArg<typeof F.buildAttribute>
-		) => ReturnType<typeof F.buildAttribute>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'path'> & ArgsOf<typeof C.coerceToScopedIdentifier>[0],
-			options?: OptionsArg<typeof C.coerceToAttribute>
-		) => ReturnType<typeof C.coerceToAttribute>;
-		input: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof attribute$scopedIdentifier$applied>[0], 'input'> &
-					ArgsOf<typeof F.buildAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$scopedIdentifier$applied>
-			) => ReturnType<typeof attribute$scopedIdentifier$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof attribute$scopedIdentifier$appliedCoerce>[0], 'input'> &
-					ArgsOf<typeof C.coerceToAttributeInput>[0],
-				options?: OptionsArg<typeof attribute$scopedIdentifier$appliedCoerce>
-			) => ReturnType<typeof attribute$scopedIdentifier$appliedCoerce>;
-		};
-	};
 	input: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
@@ -1303,3645 +76,158 @@ export const attribute: typeof B.attribute & {
 	};
 } = {
 	...B.attribute,
-	self: {
-		strict: attribute$self(F.buildAttribute, F.buildSelf),
-		coerce: attribute$self(C.coerceToAttribute, C.coerceToSelf),
-		input: {
-			strict: attribute$self$input(attribute$self$applied, F.buildAttributeInput),
-			coerce: attribute$self$input(attribute$self$appliedCoerce, C.coerceToAttributeInput)
-		}
-	},
-	identifier: {
-		strict: attribute$identifier(F.buildAttribute, F.buildIdentifier),
-		coerce: attribute$identifier(C.coerceToAttribute, C.coerceToIdentifier),
-		input: {
-			strict: attribute$identifier$input(attribute$identifier$applied, F.buildAttributeInput),
-			coerce: attribute$identifier$input(attribute$identifier$appliedCoerce, C.coerceToAttributeInput)
-		}
-	},
-	metavariable: {
-		strict: attribute$metavariable(F.buildAttribute, F.buildMetavariable),
-		coerce: attribute$metavariable(C.coerceToAttribute, C.coerceToMetavariable),
-		input: {
-			strict: attribute$metavariable$input(attribute$metavariable$applied, F.buildAttributeInput),
-			coerce: attribute$metavariable$input(attribute$metavariable$appliedCoerce, C.coerceToAttributeInput)
-		}
-	},
-	super: {
-		strict: attribute$super(F.buildAttribute, F.buildSuper),
-		coerce: attribute$super(C.coerceToAttribute, C.coerceToSuper),
-		input: {
-			strict: attribute$super$input(attribute$super$applied, F.buildAttributeInput),
-			coerce: attribute$super$input(attribute$super$appliedCoerce, C.coerceToAttributeInput)
-		}
-	},
-	crate: {
-		strict: attribute$crate(F.buildAttribute, F.buildCrate),
-		coerce: attribute$crate(C.coerceToAttribute, C.coerceToCrate),
-		input: {
-			strict: attribute$crate$input(attribute$crate$applied, F.buildAttributeInput),
-			coerce: attribute$crate$input(attribute$crate$appliedCoerce, C.coerceToAttributeInput)
-		}
-	},
-	scopedIdentifier: {
-		strict: attribute$scopedIdentifier(F.buildAttribute, F.buildScopedIdentifier),
-		coerce: attribute$scopedIdentifier(C.coerceToAttribute, C.coerceToScopedIdentifier),
-		input: {
-			strict: attribute$scopedIdentifier$input(attribute$scopedIdentifier$applied, F.buildAttributeInput),
-			coerce: attribute$scopedIdentifier$input(attribute$scopedIdentifier$appliedCoerce, C.coerceToAttributeInput)
-		}
-	},
 	input: {
 		strict: attribute$input(F.buildAttribute, F.buildAttributeInput),
 		coerce: attribute$input(C.coerceToAttribute, C.coerceToAttributeInput)
 	}
 };
 
-const enumVariant$fieldDeclarationList =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { body: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) } as never, options as never);
-	};
-const enumVariant$orderedFieldDeclarationList =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { body: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) } as never, options as never);
-	};
-export const enumVariant: typeof B.enumVariant & {
-	fieldDeclarationList: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildEnumVariant>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildFieldDeclarationList>[0];
-			},
-			options?: OptionsArg<typeof F.buildEnumVariant>
-		) => ReturnType<typeof F.buildEnumVariant>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToEnumVariant>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToFieldDeclarationList>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToEnumVariant>
-		) => ReturnType<typeof C.coerceToEnumVariant>;
-	};
-	orderedFieldDeclarationList: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildEnumVariant>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildOrderedFieldDeclarationList>[0];
-			},
-			options?: OptionsArg<typeof F.buildEnumVariant>
-		) => ReturnType<typeof F.buildEnumVariant>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToEnumVariant>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToOrderedFieldDeclarationList>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToEnumVariant>
-		) => ReturnType<typeof C.coerceToEnumVariant>;
-	};
-} = {
-	...B.enumVariant,
-	fieldDeclarationList: {
-		strict: enumVariant$fieldDeclarationList(F.buildEnumVariant, F.buildFieldDeclarationList),
-		coerce: enumVariant$fieldDeclarationList(C.coerceToEnumVariant, C.coerceToFieldDeclarationList)
-	},
-	orderedFieldDeclarationList: {
-		strict: enumVariant$orderedFieldDeclarationList(F.buildEnumVariant, F.buildOrderedFieldDeclarationList),
-		coerce: enumVariant$orderedFieldDeclarationList(C.coerceToEnumVariant, C.coerceToOrderedFieldDeclarationList)
-	}
-};
-
-const functionItem$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
-	};
-const functionItem$metavariable =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) } as never, options as never);
-	};
-export const functionItem: typeof B.functionItem & {
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFunctionItem>[0], 'name'> & { name: ArgsOf<typeof F.buildIdentifier> },
-			options?: OptionsArg<typeof F.buildFunctionItem>
-		) => ReturnType<typeof F.buildFunctionItem>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFunctionItem>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof C.coerceToFunctionItem>
-		) => ReturnType<typeof C.coerceToFunctionItem>;
-	};
-	metavariable: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFunctionItem>[0], 'name'> & { name: ArgsOf<typeof F.buildMetavariable>[0] },
-			options?: OptionsArg<typeof F.buildFunctionItem>
-		) => ReturnType<typeof F.buildFunctionItem>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFunctionItem>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToMetavariable>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToFunctionItem>
-		) => ReturnType<typeof C.coerceToFunctionItem>;
-	};
-} = {
-	...B.functionItem,
-	identifier: {
-		strict: functionItem$identifier(F.buildFunctionItem, F.buildIdentifier),
-		coerce: functionItem$identifier(C.coerceToFunctionItem, C.coerceToIdentifier)
-	},
-	metavariable: {
-		strict: functionItem$metavariable(F.buildFunctionItem, F.buildMetavariable),
-		coerce: functionItem$metavariable(C.coerceToFunctionItem, C.coerceToMetavariable)
-	}
-};
-
-const functionSignatureItem$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
-	};
-const functionSignatureItem$metavariable =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) } as never, options as never);
-	};
-export const functionSignatureItem: typeof B.functionSignatureItem & {
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFunctionSignatureItem>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildIdentifier>;
-			},
-			options?: OptionsArg<typeof F.buildFunctionSignatureItem>
-		) => ReturnType<typeof F.buildFunctionSignatureItem>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFunctionSignatureItem>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof C.coerceToFunctionSignatureItem>
-		) => ReturnType<typeof C.coerceToFunctionSignatureItem>;
-	};
-	metavariable: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFunctionSignatureItem>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildMetavariable>[0];
-			},
-			options?: OptionsArg<typeof F.buildFunctionSignatureItem>
-		) => ReturnType<typeof F.buildFunctionSignatureItem>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFunctionSignatureItem>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToMetavariable>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToFunctionSignatureItem>
-		) => ReturnType<typeof C.coerceToFunctionSignatureItem>;
-	};
-} = {
-	...B.functionSignatureItem,
-	identifier: {
-		strict: functionSignatureItem$identifier(F.buildFunctionSignatureItem, F.buildIdentifier),
-		coerce: functionSignatureItem$identifier(C.coerceToFunctionSignatureItem, C.coerceToIdentifier)
-	},
-	metavariable: {
-		strict: functionSignatureItem$metavariable(F.buildFunctionSignatureItem, F.buildMetavariable),
-		coerce: functionSignatureItem$metavariable(C.coerceToFunctionSignatureItem, C.coerceToMetavariable)
-	}
-};
-
-const genericTypeWithTurbofish$typeIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { type: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(seated) } as never, options as never);
-	};
-const genericTypeWithTurbofish$scopedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'type'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'name') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(inner) } as never, options as never);
-	};
-export const genericTypeWithTurbofish: typeof B.genericTypeWithTurbofish & {
-	typeIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildGenericTypeWithTurbofish>[0], 'type'> & {
-				type: ArgsOf<typeof F.buildTypeIdentifier>[0];
-			},
-			options?: OptionsArg<typeof F.buildGenericTypeWithTurbofish>
-		) => ReturnType<typeof F.buildGenericTypeWithTurbofish>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToGenericTypeWithTurbofish>[0], 'type'> & {
-				type: ArgsOf<typeof C.coerceToTypeIdentifier>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToGenericTypeWithTurbofish>
-		) => ReturnType<typeof C.coerceToGenericTypeWithTurbofish>;
-	};
-	scopedIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildGenericTypeWithTurbofish>[0], 'type'> &
-				ArgsOf<typeof F.buildScopedIdentifier>[0],
-			options?: OptionsArg<typeof F.buildGenericTypeWithTurbofish>
-		) => ReturnType<typeof F.buildGenericTypeWithTurbofish>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToGenericTypeWithTurbofish>[0], 'type'> &
-				ArgsOf<typeof C.coerceToScopedIdentifier>[0],
-			options?: OptionsArg<typeof C.coerceToGenericTypeWithTurbofish>
-		) => ReturnType<typeof C.coerceToGenericTypeWithTurbofish>;
-	};
-} = {
-	...B.genericTypeWithTurbofish,
-	typeIdentifier: {
-		strict: genericTypeWithTurbofish$typeIdentifier(F.buildGenericTypeWithTurbofish, F.buildTypeIdentifier),
-		coerce: genericTypeWithTurbofish$typeIdentifier(C.coerceToGenericTypeWithTurbofish, C.coerceToTypeIdentifier)
-	},
-	scopedIdentifier: {
-		strict: genericTypeWithTurbofish$scopedIdentifier(F.buildGenericTypeWithTurbofish, F.buildScopedIdentifier),
-		coerce: genericTypeWithTurbofish$scopedIdentifier(C.coerceToGenericTypeWithTurbofish, C.coerceToScopedIdentifier)
-	}
-};
-
-const bracketedType$qualifiedType =
+const visibilityModifierPubScope$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const bracketedType: typeof B.bracketedType & {
-	qualifiedType: {
-		strict: (...args: ArgsOf<typeof F.buildQualifiedType>) => ReturnType<typeof F.buildBracketedType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToQualifiedType>) => ReturnType<typeof F.buildBracketedType>;
-	};
-} = {
-	...B.bracketedType,
-	qualifiedType: {
-		strict: bracketedType$qualifiedType(F.buildBracketedType, F.buildQualifiedType),
-		coerce: bracketedType$qualifiedType(F.buildBracketedType, C.coerceToQualifiedType)
-	}
-};
-
-const genericType$typeIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { type: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(seated) } as never, options as never);
-	};
-const genericType$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { type: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
-	};
-const genericType$scopedTypeIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'type'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'name') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(inner) } as never, options as never);
-	};
-export const genericType: typeof B.genericType & {
-	typeIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildGenericType>[0], 'type'> & {
-				type: ArgsOf<typeof F.buildTypeIdentifier>[0];
-			},
-			options?: OptionsArg<typeof F.buildGenericType>
-		) => ReturnType<typeof F.buildGenericType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToGenericType>[0], 'type'> & {
-				type: ArgsOf<typeof C.coerceToTypeIdentifier>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToGenericType>
-		) => ReturnType<typeof C.coerceToGenericType>;
-	};
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildGenericType>[0], 'type'> & { type: ArgsOf<typeof F.buildIdentifier> },
-			options?: OptionsArg<typeof F.buildGenericType>
-		) => ReturnType<typeof F.buildGenericType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToGenericType>[0], 'type'> & { type: ArgsOf<typeof C.coerceToIdentifier> },
-			options?: OptionsArg<typeof C.coerceToGenericType>
-		) => ReturnType<typeof C.coerceToGenericType>;
-	};
-	scopedTypeIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildGenericType>[0], 'type'> & ArgsOf<typeof F.buildScopedTypeIdentifier>[0],
-			options?: OptionsArg<typeof F.buildGenericType>
-		) => ReturnType<typeof F.buildGenericType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToGenericType>[0], 'type'> &
-				ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0],
-			options?: OptionsArg<typeof C.coerceToGenericType>
-		) => ReturnType<typeof C.coerceToGenericType>;
-	};
-} = {
-	...B.genericType,
-	typeIdentifier: {
-		strict: genericType$typeIdentifier(F.buildGenericType, F.buildTypeIdentifier),
-		coerce: genericType$typeIdentifier(C.coerceToGenericType, C.coerceToTypeIdentifier)
-	},
-	identifier: {
-		strict: genericType$identifier(F.buildGenericType, F.buildIdentifier),
-		coerce: genericType$identifier(C.coerceToGenericType, C.coerceToIdentifier)
-	},
-	scopedTypeIdentifier: {
-		strict: genericType$scopedTypeIdentifier(F.buildGenericType, F.buildScopedTypeIdentifier),
-		coerce: genericType$scopedTypeIdentifier(C.coerceToGenericType, C.coerceToScopedTypeIdentifier)
-	}
-};
-
-const scopedTypeIdentifier$self =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const scopedTypeIdentifier$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
-	};
-const scopedTypeIdentifier$metavariable =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
-	};
-const scopedTypeIdentifier$super =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const scopedTypeIdentifier$crate =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const scopedTypeIdentifier$scopedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
-	};
-const scopedTypeIdentifier$genericTypeWithTurbofish =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'type' || key === 'typeArguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) } as never, options as never);
-	};
-const scopedTypeIdentifier$bracketedType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
-	};
-const scopedTypeIdentifier$genericType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'type' || key === 'typeArguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) } as never, options as never);
-	};
-export const scopedTypeIdentifier: typeof B.scopedTypeIdentifier & {
+const visibilityModifierPubScope$super =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierPubScope$crate =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierPubScope$inPath =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierPubScope: {
 	self: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
-		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
-	};
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildIdentifier>;
-			},
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
-		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
-	};
-	metavariable: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildMetavariable>[0];
-			},
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
-		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToMetavariable>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+		strict: (...args: ArgsOf<typeof F.buildSelf>) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
 	};
 	super: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
-		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+		strict: (...args: ArgsOf<typeof F.buildSuper>) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSuper>) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
 	};
 	crate: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
-		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
+		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
 	};
-	scopedIdentifier: {
+	inPath: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildScopedIdentifier>[0];
-			},
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
-		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
+			...args: ArgsOf<typeof F.buildVisibilityModifierPubScopeInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToScopedIdentifier>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
-	};
-	genericTypeWithTurbofish: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'> &
-				ArgsOf<typeof F.buildGenericTypeWithTurbofish>[0],
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
-		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'> &
-				ArgsOf<typeof C.coerceToGenericTypeWithTurbofish>[0],
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
-	};
-	bracketedType: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildBracketedType>[0];
-			},
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
-		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToBracketedType>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
-	};
-	genericType: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifier>[0], 'path'> & ArgsOf<typeof F.buildGenericType>[0],
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifier>
-		) => ReturnType<typeof F.buildScopedTypeIdentifier>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0], 'path'> &
-				ArgsOf<typeof C.coerceToGenericType>[0],
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifier>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifier>;
+			...args: ArgsOf<typeof C.coerceToVisibilityModifierPubScopeInPath>
+		) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
 	};
 } = {
-	...B.scopedTypeIdentifier,
 	self: {
-		strict: scopedTypeIdentifier$self(F.buildScopedTypeIdentifier, F.buildSelf),
-		coerce: scopedTypeIdentifier$self(C.coerceToScopedTypeIdentifier, C.coerceToSelf)
-	},
-	identifier: {
-		strict: scopedTypeIdentifier$identifier(F.buildScopedTypeIdentifier, F.buildIdentifier),
-		coerce: scopedTypeIdentifier$identifier(C.coerceToScopedTypeIdentifier, C.coerceToIdentifier)
-	},
-	metavariable: {
-		strict: scopedTypeIdentifier$metavariable(F.buildScopedTypeIdentifier, F.buildMetavariable),
-		coerce: scopedTypeIdentifier$metavariable(C.coerceToScopedTypeIdentifier, C.coerceToMetavariable)
+		strict: visibilityModifierPubScope$self(F.buildVisibilityModifierPubScope, F.buildSelf),
+		coerce: visibilityModifierPubScope$self(F.buildVisibilityModifierPubScope, C.coerceToSelf)
 	},
 	super: {
-		strict: scopedTypeIdentifier$super(F.buildScopedTypeIdentifier, F.buildSuper),
-		coerce: scopedTypeIdentifier$super(C.coerceToScopedTypeIdentifier, C.coerceToSuper)
+		strict: visibilityModifierPubScope$super(F.buildVisibilityModifierPubScope, F.buildSuper),
+		coerce: visibilityModifierPubScope$super(F.buildVisibilityModifierPubScope, C.coerceToSuper)
 	},
 	crate: {
-		strict: scopedTypeIdentifier$crate(F.buildScopedTypeIdentifier, F.buildCrate),
-		coerce: scopedTypeIdentifier$crate(C.coerceToScopedTypeIdentifier, C.coerceToCrate)
+		strict: visibilityModifierPubScope$crate(F.buildVisibilityModifierPubScope, F.buildCrate),
+		coerce: visibilityModifierPubScope$crate(F.buildVisibilityModifierPubScope, C.coerceToCrate)
 	},
-	scopedIdentifier: {
-		strict: scopedTypeIdentifier$scopedIdentifier(F.buildScopedTypeIdentifier, F.buildScopedIdentifier),
-		coerce: scopedTypeIdentifier$scopedIdentifier(C.coerceToScopedTypeIdentifier, C.coerceToScopedIdentifier)
-	},
-	genericTypeWithTurbofish: {
-		strict: scopedTypeIdentifier$genericTypeWithTurbofish(F.buildScopedTypeIdentifier, F.buildGenericTypeWithTurbofish),
-		coerce: scopedTypeIdentifier$genericTypeWithTurbofish(
-			C.coerceToScopedTypeIdentifier,
-			C.coerceToGenericTypeWithTurbofish
+	inPath: {
+		strict: visibilityModifierPubScope$inPath(
+			F.buildVisibilityModifierPubScope,
+			F.buildVisibilityModifierPubScopeInPath
+		),
+		coerce: visibilityModifierPubScope$inPath(
+			F.buildVisibilityModifierPubScope,
+			C.coerceToVisibilityModifierPubScopeInPath
 		)
-	},
-	bracketedType: {
-		strict: scopedTypeIdentifier$bracketedType(F.buildScopedTypeIdentifier, F.buildBracketedType),
-		coerce: scopedTypeIdentifier$bracketedType(C.coerceToScopedTypeIdentifier, C.coerceToBracketedType)
-	},
-	genericType: {
-		strict: scopedTypeIdentifier$genericType(F.buildScopedTypeIdentifier, F.buildGenericType),
-		coerce: scopedTypeIdentifier$genericType(C.coerceToScopedTypeIdentifier, C.coerceToGenericType)
 	}
 };
 
-const wherePredicate$lifetime =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { left: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(seated) } as never, options as never);
-	};
-const wherePredicate$typeIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { left: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(seated) } as never, options as never);
-	};
-const wherePredicate$scopedTypeIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'name') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) } as never, options as never);
-	};
-const wherePredicate$genericType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'type' || key === 'typeArguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) } as never, options as never);
-	};
-const wherePredicate$referenceType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'lifetime' || key === 'mutableSpecifier' || key === 'type') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) } as never, options as never);
-	};
-const wherePredicate$const =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { left: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(seated) } as never, options as never);
-	};
-const wherePredicate$mut =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { left: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(seated) } as never, options as never);
-	};
-const wherePredicate$tupleType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { left: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(seated) } as never, options as never);
-	};
-const wherePredicate$arrayType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'element' || key === 'length') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) } as never, options as never);
-	};
-const wherePredicate$higherRankedTraitBound =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'typeParameters' || key === 'type') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) } as never, options as never);
-	};
-export const wherePredicate: typeof B.wherePredicate & {
-	lifetime: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & { left: ArgsOf<typeof F.buildLifetime>[0] },
-			options?: OptionsArg<typeof F.buildWherePredicate>
-		) => ReturnType<typeof F.buildWherePredicate>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
-				left: ArgsOf<typeof C.coerceToLifetime>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToWherePredicate>
-		) => ReturnType<typeof C.coerceToWherePredicate>;
-	};
-	typeIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
-				left: ArgsOf<typeof F.buildTypeIdentifier>[0];
-			},
-			options?: OptionsArg<typeof F.buildWherePredicate>
-		) => ReturnType<typeof F.buildWherePredicate>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
-				left: ArgsOf<typeof C.coerceToTypeIdentifier>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToWherePredicate>
-		) => ReturnType<typeof C.coerceToWherePredicate>;
-	};
-	scopedTypeIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & ArgsOf<typeof F.buildScopedTypeIdentifier>[0],
-			options?: OptionsArg<typeof F.buildWherePredicate>
-		) => ReturnType<typeof F.buildWherePredicate>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> &
-				ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0],
-			options?: OptionsArg<typeof C.coerceToWherePredicate>
-		) => ReturnType<typeof C.coerceToWherePredicate>;
-	};
-	genericType: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & ArgsOf<typeof F.buildGenericType>[0],
-			options?: OptionsArg<typeof F.buildWherePredicate>
-		) => ReturnType<typeof F.buildWherePredicate>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & ArgsOf<typeof C.coerceToGenericType>[0],
-			options?: OptionsArg<typeof C.coerceToWherePredicate>
-		) => ReturnType<typeof C.coerceToWherePredicate>;
-	};
-	referenceType: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & ArgsOf<typeof F.buildReferenceType>[0],
-			options?: OptionsArg<typeof F.buildWherePredicate>
-		) => ReturnType<typeof F.buildWherePredicate>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & ArgsOf<typeof C.coerceToReferenceType>[0],
-			options?: OptionsArg<typeof C.coerceToWherePredicate>
-		) => ReturnType<typeof C.coerceToWherePredicate>;
-	};
-	const: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
-				left: ArgsOf<typeof F.buildPointerTypeConst>[0];
-			},
-			options?: OptionsArg<typeof F.buildWherePredicate>
-		) => ReturnType<typeof F.buildWherePredicate>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
-				left: ArgsOf<typeof C.coerceToPointerTypeConst>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToWherePredicate>
-		) => ReturnType<typeof C.coerceToWherePredicate>;
-	};
-	mut: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & {
-				left: ArgsOf<typeof F.buildPointerTypeMut>[0];
-			},
-			options?: OptionsArg<typeof F.buildWherePredicate>
-		) => ReturnType<typeof F.buildWherePredicate>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
-				left: ArgsOf<typeof C.coerceToPointerTypeMut>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToWherePredicate>
-		) => ReturnType<typeof C.coerceToWherePredicate>;
-	};
-	tupleType: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & { left: ArgsOf<typeof F.buildTupleType>[0] },
-			options?: OptionsArg<typeof F.buildWherePredicate>
-		) => ReturnType<typeof F.buildWherePredicate>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & {
-				left: ArgsOf<typeof C.coerceToTupleType>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToWherePredicate>
-		) => ReturnType<typeof C.coerceToWherePredicate>;
-	};
-	arrayType: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> & ArgsOf<typeof F.buildArrayType>[0],
-			options?: OptionsArg<typeof F.buildWherePredicate>
-		) => ReturnType<typeof F.buildWherePredicate>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> & ArgsOf<typeof C.coerceToArrayType>[0],
-			options?: OptionsArg<typeof C.coerceToWherePredicate>
-		) => ReturnType<typeof C.coerceToWherePredicate>;
-	};
-	higherRankedTraitBound: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'> &
-				ArgsOf<typeof F.buildHigherRankedTraitBound>[0],
-			options?: OptionsArg<typeof F.buildWherePredicate>
-		) => ReturnType<typeof F.buildWherePredicate>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'> &
-				ArgsOf<typeof C.coerceToHigherRankedTraitBound>[0],
-			options?: OptionsArg<typeof C.coerceToWherePredicate>
-		) => ReturnType<typeof C.coerceToWherePredicate>;
-	};
-} = {
-	...B.wherePredicate,
-	lifetime: {
-		strict: wherePredicate$lifetime(F.buildWherePredicate, F.buildLifetime),
-		coerce: wherePredicate$lifetime(C.coerceToWherePredicate, C.coerceToLifetime)
-	},
-	typeIdentifier: {
-		strict: wherePredicate$typeIdentifier(F.buildWherePredicate, F.buildTypeIdentifier),
-		coerce: wherePredicate$typeIdentifier(C.coerceToWherePredicate, C.coerceToTypeIdentifier)
-	},
-	scopedTypeIdentifier: {
-		strict: wherePredicate$scopedTypeIdentifier(F.buildWherePredicate, F.buildScopedTypeIdentifier),
-		coerce: wherePredicate$scopedTypeIdentifier(C.coerceToWherePredicate, C.coerceToScopedTypeIdentifier)
-	},
-	genericType: {
-		strict: wherePredicate$genericType(F.buildWherePredicate, F.buildGenericType),
-		coerce: wherePredicate$genericType(C.coerceToWherePredicate, C.coerceToGenericType)
-	},
-	referenceType: {
-		strict: wherePredicate$referenceType(F.buildWherePredicate, F.buildReferenceType),
-		coerce: wherePredicate$referenceType(C.coerceToWherePredicate, C.coerceToReferenceType)
-	},
-	const: {
-		strict: wherePredicate$const(F.buildWherePredicate, F.buildPointerTypeConst),
-		coerce: wherePredicate$const(C.coerceToWherePredicate, C.coerceToPointerTypeConst)
-	},
-	mut: {
-		strict: wherePredicate$mut(F.buildWherePredicate, F.buildPointerTypeMut),
-		coerce: wherePredicate$mut(C.coerceToWherePredicate, C.coerceToPointerTypeMut)
-	},
-	tupleType: {
-		strict: wherePredicate$tupleType(F.buildWherePredicate, F.buildTupleType),
-		coerce: wherePredicate$tupleType(C.coerceToWherePredicate, C.coerceToTupleType)
-	},
-	arrayType: {
-		strict: wherePredicate$arrayType(F.buildWherePredicate, F.buildArrayType),
-		coerce: wherePredicate$arrayType(C.coerceToWherePredicate, C.coerceToArrayType)
-	},
-	higherRankedTraitBound: {
-		strict: wherePredicate$higherRankedTraitBound(F.buildWherePredicate, F.buildHigherRankedTraitBound),
-		coerce: wherePredicate$higherRankedTraitBound(C.coerceToWherePredicate, C.coerceToHigherRankedTraitBound)
-	}
-};
-
-const integerLiteralDecimal$u8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralDecimal$i8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralDecimal$u16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralDecimal$i16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralDecimal$u32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralDecimal$i32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralDecimal$u64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralDecimal$i64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralDecimal$u128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralDecimal$i128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralDecimal$isize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralDecimal$usize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralDecimal$f32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralDecimal$f64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralDecimal: {
-	u8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralDecimal>
-		) => ReturnType<typeof F.buildIntegerLiteralDecimal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralDecimal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralDecimal>;
-	};
-	i8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralDecimal>
-		) => ReturnType<typeof F.buildIntegerLiteralDecimal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralDecimal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralDecimal>;
-	};
-	u16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralDecimal>
-		) => ReturnType<typeof F.buildIntegerLiteralDecimal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralDecimal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralDecimal>;
-	};
-	i16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralDecimal>
-		) => ReturnType<typeof F.buildIntegerLiteralDecimal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralDecimal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralDecimal>;
-	};
-	u32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralDecimal>
-		) => ReturnType<typeof F.buildIntegerLiteralDecimal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralDecimal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralDecimal>;
-	};
-	i32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralDecimal>
-		) => ReturnType<typeof F.buildIntegerLiteralDecimal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralDecimal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralDecimal>;
-	};
-	u64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralDecimal>
-		) => ReturnType<typeof F.buildIntegerLiteralDecimal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralDecimal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralDecimal>;
-	};
-	i64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralDecimal>
-		) => ReturnType<typeof F.buildIntegerLiteralDecimal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralDecimal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralDecimal>;
-	};
-	u128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralDecimal>
-		) => ReturnType<typeof F.buildIntegerLiteralDecimal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralDecimal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralDecimal>;
-	};
-	i128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralDecimal>
-		) => ReturnType<typeof F.buildIntegerLiteralDecimal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralDecimal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralDecimal>;
-	};
-	isize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralDecimal>
-		) => ReturnType<typeof F.buildIntegerLiteralDecimal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralDecimal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralDecimal>;
-	};
-	usize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralDecimal>
-		) => ReturnType<typeof F.buildIntegerLiteralDecimal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralDecimal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralDecimal>;
-	};
-	f32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralDecimal>
-		) => ReturnType<typeof F.buildIntegerLiteralDecimal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralDecimal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralDecimal>;
-	};
-	f64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralDecimal>
-		) => ReturnType<typeof F.buildIntegerLiteralDecimal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralDecimal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralDecimal>;
-	};
-} = {
-	u8: {
-		strict: integerLiteralDecimal$u8(F.buildIntegerLiteralDecimal, 'u8'),
-		coerce: integerLiteralDecimal$u8(C.coerceToIntegerLiteralDecimal, 'u8')
-	},
-	i8: {
-		strict: integerLiteralDecimal$i8(F.buildIntegerLiteralDecimal, 'i8'),
-		coerce: integerLiteralDecimal$i8(C.coerceToIntegerLiteralDecimal, 'i8')
-	},
-	u16: {
-		strict: integerLiteralDecimal$u16(F.buildIntegerLiteralDecimal, 'u16'),
-		coerce: integerLiteralDecimal$u16(C.coerceToIntegerLiteralDecimal, 'u16')
-	},
-	i16: {
-		strict: integerLiteralDecimal$i16(F.buildIntegerLiteralDecimal, 'i16'),
-		coerce: integerLiteralDecimal$i16(C.coerceToIntegerLiteralDecimal, 'i16')
-	},
-	u32: {
-		strict: integerLiteralDecimal$u32(F.buildIntegerLiteralDecimal, 'u32'),
-		coerce: integerLiteralDecimal$u32(C.coerceToIntegerLiteralDecimal, 'u32')
-	},
-	i32: {
-		strict: integerLiteralDecimal$i32(F.buildIntegerLiteralDecimal, 'i32'),
-		coerce: integerLiteralDecimal$i32(C.coerceToIntegerLiteralDecimal, 'i32')
-	},
-	u64: {
-		strict: integerLiteralDecimal$u64(F.buildIntegerLiteralDecimal, 'u64'),
-		coerce: integerLiteralDecimal$u64(C.coerceToIntegerLiteralDecimal, 'u64')
-	},
-	i64: {
-		strict: integerLiteralDecimal$i64(F.buildIntegerLiteralDecimal, 'i64'),
-		coerce: integerLiteralDecimal$i64(C.coerceToIntegerLiteralDecimal, 'i64')
-	},
-	u128: {
-		strict: integerLiteralDecimal$u128(F.buildIntegerLiteralDecimal, 'u128'),
-		coerce: integerLiteralDecimal$u128(C.coerceToIntegerLiteralDecimal, 'u128')
-	},
-	i128: {
-		strict: integerLiteralDecimal$i128(F.buildIntegerLiteralDecimal, 'i128'),
-		coerce: integerLiteralDecimal$i128(C.coerceToIntegerLiteralDecimal, 'i128')
-	},
-	isize: {
-		strict: integerLiteralDecimal$isize(F.buildIntegerLiteralDecimal, 'isize'),
-		coerce: integerLiteralDecimal$isize(C.coerceToIntegerLiteralDecimal, 'isize')
-	},
-	usize: {
-		strict: integerLiteralDecimal$usize(F.buildIntegerLiteralDecimal, 'usize'),
-		coerce: integerLiteralDecimal$usize(C.coerceToIntegerLiteralDecimal, 'usize')
-	},
-	f32: {
-		strict: integerLiteralDecimal$f32(F.buildIntegerLiteralDecimal, 'f32'),
-		coerce: integerLiteralDecimal$f32(C.coerceToIntegerLiteralDecimal, 'f32')
-	},
-	f64: {
-		strict: integerLiteralDecimal$f64(F.buildIntegerLiteralDecimal, 'f64'),
-		coerce: integerLiteralDecimal$f64(C.coerceToIntegerLiteralDecimal, 'f64')
-	}
-};
-
-const integerLiteralHex$u8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralHex$i8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralHex$u16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralHex$i16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralHex$u32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralHex$i32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralHex$u64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralHex$i64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralHex$u128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralHex$i128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralHex$isize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralHex$usize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralHex$f32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralHex$f64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralHex: {
-	u8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralHex>
-		) => ReturnType<typeof F.buildIntegerLiteralHex>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralHex>
-		) => ReturnType<typeof C.coerceToIntegerLiteralHex>;
-	};
-	i8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralHex>
-		) => ReturnType<typeof F.buildIntegerLiteralHex>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralHex>
-		) => ReturnType<typeof C.coerceToIntegerLiteralHex>;
-	};
-	u16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralHex>
-		) => ReturnType<typeof F.buildIntegerLiteralHex>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralHex>
-		) => ReturnType<typeof C.coerceToIntegerLiteralHex>;
-	};
-	i16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralHex>
-		) => ReturnType<typeof F.buildIntegerLiteralHex>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralHex>
-		) => ReturnType<typeof C.coerceToIntegerLiteralHex>;
-	};
-	u32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralHex>
-		) => ReturnType<typeof F.buildIntegerLiteralHex>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralHex>
-		) => ReturnType<typeof C.coerceToIntegerLiteralHex>;
-	};
-	i32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralHex>
-		) => ReturnType<typeof F.buildIntegerLiteralHex>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralHex>
-		) => ReturnType<typeof C.coerceToIntegerLiteralHex>;
-	};
-	u64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralHex>
-		) => ReturnType<typeof F.buildIntegerLiteralHex>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralHex>
-		) => ReturnType<typeof C.coerceToIntegerLiteralHex>;
-	};
-	i64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralHex>
-		) => ReturnType<typeof F.buildIntegerLiteralHex>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralHex>
-		) => ReturnType<typeof C.coerceToIntegerLiteralHex>;
-	};
-	u128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralHex>
-		) => ReturnType<typeof F.buildIntegerLiteralHex>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralHex>
-		) => ReturnType<typeof C.coerceToIntegerLiteralHex>;
-	};
-	i128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralHex>
-		) => ReturnType<typeof F.buildIntegerLiteralHex>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralHex>
-		) => ReturnType<typeof C.coerceToIntegerLiteralHex>;
-	};
-	isize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralHex>
-		) => ReturnType<typeof F.buildIntegerLiteralHex>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralHex>
-		) => ReturnType<typeof C.coerceToIntegerLiteralHex>;
-	};
-	usize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralHex>
-		) => ReturnType<typeof F.buildIntegerLiteralHex>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralHex>
-		) => ReturnType<typeof C.coerceToIntegerLiteralHex>;
-	};
-	f32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralHex>
-		) => ReturnType<typeof F.buildIntegerLiteralHex>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralHex>
-		) => ReturnType<typeof C.coerceToIntegerLiteralHex>;
-	};
-	f64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralHex>
-		) => ReturnType<typeof F.buildIntegerLiteralHex>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralHex>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralHex>
-		) => ReturnType<typeof C.coerceToIntegerLiteralHex>;
-	};
-} = {
-	u8: {
-		strict: integerLiteralHex$u8(F.buildIntegerLiteralHex, 'u8'),
-		coerce: integerLiteralHex$u8(C.coerceToIntegerLiteralHex, 'u8')
-	},
-	i8: {
-		strict: integerLiteralHex$i8(F.buildIntegerLiteralHex, 'i8'),
-		coerce: integerLiteralHex$i8(C.coerceToIntegerLiteralHex, 'i8')
-	},
-	u16: {
-		strict: integerLiteralHex$u16(F.buildIntegerLiteralHex, 'u16'),
-		coerce: integerLiteralHex$u16(C.coerceToIntegerLiteralHex, 'u16')
-	},
-	i16: {
-		strict: integerLiteralHex$i16(F.buildIntegerLiteralHex, 'i16'),
-		coerce: integerLiteralHex$i16(C.coerceToIntegerLiteralHex, 'i16')
-	},
-	u32: {
-		strict: integerLiteralHex$u32(F.buildIntegerLiteralHex, 'u32'),
-		coerce: integerLiteralHex$u32(C.coerceToIntegerLiteralHex, 'u32')
-	},
-	i32: {
-		strict: integerLiteralHex$i32(F.buildIntegerLiteralHex, 'i32'),
-		coerce: integerLiteralHex$i32(C.coerceToIntegerLiteralHex, 'i32')
-	},
-	u64: {
-		strict: integerLiteralHex$u64(F.buildIntegerLiteralHex, 'u64'),
-		coerce: integerLiteralHex$u64(C.coerceToIntegerLiteralHex, 'u64')
-	},
-	i64: {
-		strict: integerLiteralHex$i64(F.buildIntegerLiteralHex, 'i64'),
-		coerce: integerLiteralHex$i64(C.coerceToIntegerLiteralHex, 'i64')
-	},
-	u128: {
-		strict: integerLiteralHex$u128(F.buildIntegerLiteralHex, 'u128'),
-		coerce: integerLiteralHex$u128(C.coerceToIntegerLiteralHex, 'u128')
-	},
-	i128: {
-		strict: integerLiteralHex$i128(F.buildIntegerLiteralHex, 'i128'),
-		coerce: integerLiteralHex$i128(C.coerceToIntegerLiteralHex, 'i128')
-	},
-	isize: {
-		strict: integerLiteralHex$isize(F.buildIntegerLiteralHex, 'isize'),
-		coerce: integerLiteralHex$isize(C.coerceToIntegerLiteralHex, 'isize')
-	},
-	usize: {
-		strict: integerLiteralHex$usize(F.buildIntegerLiteralHex, 'usize'),
-		coerce: integerLiteralHex$usize(C.coerceToIntegerLiteralHex, 'usize')
-	},
-	f32: {
-		strict: integerLiteralHex$f32(F.buildIntegerLiteralHex, 'f32'),
-		coerce: integerLiteralHex$f32(C.coerceToIntegerLiteralHex, 'f32')
-	},
-	f64: {
-		strict: integerLiteralHex$f64(F.buildIntegerLiteralHex, 'f64'),
-		coerce: integerLiteralHex$f64(C.coerceToIntegerLiteralHex, 'f64')
-	}
-};
-
-const integerLiteralBinary$u8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralBinary$i8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralBinary$u16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralBinary$i16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralBinary$u32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralBinary$i32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralBinary$u64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralBinary$i64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralBinary$u128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralBinary$i128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralBinary$isize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralBinary$usize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralBinary$f32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralBinary$f64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralBinary: {
-	u8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralBinary>
-		) => ReturnType<typeof F.buildIntegerLiteralBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralBinary>
-		) => ReturnType<typeof C.coerceToIntegerLiteralBinary>;
-	};
-	i8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralBinary>
-		) => ReturnType<typeof F.buildIntegerLiteralBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralBinary>
-		) => ReturnType<typeof C.coerceToIntegerLiteralBinary>;
-	};
-	u16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralBinary>
-		) => ReturnType<typeof F.buildIntegerLiteralBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralBinary>
-		) => ReturnType<typeof C.coerceToIntegerLiteralBinary>;
-	};
-	i16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralBinary>
-		) => ReturnType<typeof F.buildIntegerLiteralBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralBinary>
-		) => ReturnType<typeof C.coerceToIntegerLiteralBinary>;
-	};
-	u32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralBinary>
-		) => ReturnType<typeof F.buildIntegerLiteralBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralBinary>
-		) => ReturnType<typeof C.coerceToIntegerLiteralBinary>;
-	};
-	i32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralBinary>
-		) => ReturnType<typeof F.buildIntegerLiteralBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralBinary>
-		) => ReturnType<typeof C.coerceToIntegerLiteralBinary>;
-	};
-	u64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralBinary>
-		) => ReturnType<typeof F.buildIntegerLiteralBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralBinary>
-		) => ReturnType<typeof C.coerceToIntegerLiteralBinary>;
-	};
-	i64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralBinary>
-		) => ReturnType<typeof F.buildIntegerLiteralBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralBinary>
-		) => ReturnType<typeof C.coerceToIntegerLiteralBinary>;
-	};
-	u128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralBinary>
-		) => ReturnType<typeof F.buildIntegerLiteralBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralBinary>
-		) => ReturnType<typeof C.coerceToIntegerLiteralBinary>;
-	};
-	i128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralBinary>
-		) => ReturnType<typeof F.buildIntegerLiteralBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralBinary>
-		) => ReturnType<typeof C.coerceToIntegerLiteralBinary>;
-	};
-	isize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralBinary>
-		) => ReturnType<typeof F.buildIntegerLiteralBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralBinary>
-		) => ReturnType<typeof C.coerceToIntegerLiteralBinary>;
-	};
-	usize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralBinary>
-		) => ReturnType<typeof F.buildIntegerLiteralBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralBinary>
-		) => ReturnType<typeof C.coerceToIntegerLiteralBinary>;
-	};
-	f32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralBinary>
-		) => ReturnType<typeof F.buildIntegerLiteralBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralBinary>
-		) => ReturnType<typeof C.coerceToIntegerLiteralBinary>;
-	};
-	f64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralBinary>
-		) => ReturnType<typeof F.buildIntegerLiteralBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralBinary>
-		) => ReturnType<typeof C.coerceToIntegerLiteralBinary>;
-	};
-} = {
-	u8: {
-		strict: integerLiteralBinary$u8(F.buildIntegerLiteralBinary, 'u8'),
-		coerce: integerLiteralBinary$u8(C.coerceToIntegerLiteralBinary, 'u8')
-	},
-	i8: {
-		strict: integerLiteralBinary$i8(F.buildIntegerLiteralBinary, 'i8'),
-		coerce: integerLiteralBinary$i8(C.coerceToIntegerLiteralBinary, 'i8')
-	},
-	u16: {
-		strict: integerLiteralBinary$u16(F.buildIntegerLiteralBinary, 'u16'),
-		coerce: integerLiteralBinary$u16(C.coerceToIntegerLiteralBinary, 'u16')
-	},
-	i16: {
-		strict: integerLiteralBinary$i16(F.buildIntegerLiteralBinary, 'i16'),
-		coerce: integerLiteralBinary$i16(C.coerceToIntegerLiteralBinary, 'i16')
-	},
-	u32: {
-		strict: integerLiteralBinary$u32(F.buildIntegerLiteralBinary, 'u32'),
-		coerce: integerLiteralBinary$u32(C.coerceToIntegerLiteralBinary, 'u32')
-	},
-	i32: {
-		strict: integerLiteralBinary$i32(F.buildIntegerLiteralBinary, 'i32'),
-		coerce: integerLiteralBinary$i32(C.coerceToIntegerLiteralBinary, 'i32')
-	},
-	u64: {
-		strict: integerLiteralBinary$u64(F.buildIntegerLiteralBinary, 'u64'),
-		coerce: integerLiteralBinary$u64(C.coerceToIntegerLiteralBinary, 'u64')
-	},
-	i64: {
-		strict: integerLiteralBinary$i64(F.buildIntegerLiteralBinary, 'i64'),
-		coerce: integerLiteralBinary$i64(C.coerceToIntegerLiteralBinary, 'i64')
-	},
-	u128: {
-		strict: integerLiteralBinary$u128(F.buildIntegerLiteralBinary, 'u128'),
-		coerce: integerLiteralBinary$u128(C.coerceToIntegerLiteralBinary, 'u128')
-	},
-	i128: {
-		strict: integerLiteralBinary$i128(F.buildIntegerLiteralBinary, 'i128'),
-		coerce: integerLiteralBinary$i128(C.coerceToIntegerLiteralBinary, 'i128')
-	},
-	isize: {
-		strict: integerLiteralBinary$isize(F.buildIntegerLiteralBinary, 'isize'),
-		coerce: integerLiteralBinary$isize(C.coerceToIntegerLiteralBinary, 'isize')
-	},
-	usize: {
-		strict: integerLiteralBinary$usize(F.buildIntegerLiteralBinary, 'usize'),
-		coerce: integerLiteralBinary$usize(C.coerceToIntegerLiteralBinary, 'usize')
-	},
-	f32: {
-		strict: integerLiteralBinary$f32(F.buildIntegerLiteralBinary, 'f32'),
-		coerce: integerLiteralBinary$f32(C.coerceToIntegerLiteralBinary, 'f32')
-	},
-	f64: {
-		strict: integerLiteralBinary$f64(F.buildIntegerLiteralBinary, 'f64'),
-		coerce: integerLiteralBinary$f64(C.coerceToIntegerLiteralBinary, 'f64')
-	}
-};
-
-const integerLiteralOctal$u8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralOctal$i8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralOctal$u16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralOctal$i16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralOctal$u32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralOctal$i32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralOctal$u64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralOctal$i64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralOctal$u128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralOctal$i128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralOctal$isize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralOctal$usize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralOctal$f32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralOctal$f64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, suffix: value } as never, options as never);
-const integerLiteralOctal: {
-	u8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralOctal>
-		) => ReturnType<typeof F.buildIntegerLiteralOctal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralOctal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralOctal>;
-	};
-	i8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralOctal>
-		) => ReturnType<typeof F.buildIntegerLiteralOctal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralOctal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralOctal>;
-	};
-	u16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralOctal>
-		) => ReturnType<typeof F.buildIntegerLiteralOctal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralOctal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralOctal>;
-	};
-	i16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralOctal>
-		) => ReturnType<typeof F.buildIntegerLiteralOctal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralOctal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralOctal>;
-	};
-	u32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralOctal>
-		) => ReturnType<typeof F.buildIntegerLiteralOctal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralOctal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralOctal>;
-	};
-	i32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralOctal>
-		) => ReturnType<typeof F.buildIntegerLiteralOctal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralOctal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralOctal>;
-	};
-	u64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralOctal>
-		) => ReturnType<typeof F.buildIntegerLiteralOctal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralOctal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralOctal>;
-	};
-	i64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralOctal>
-		) => ReturnType<typeof F.buildIntegerLiteralOctal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralOctal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralOctal>;
-	};
-	u128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralOctal>
-		) => ReturnType<typeof F.buildIntegerLiteralOctal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralOctal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralOctal>;
-	};
-	i128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralOctal>
-		) => ReturnType<typeof F.buildIntegerLiteralOctal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralOctal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralOctal>;
-	};
-	isize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralOctal>
-		) => ReturnType<typeof F.buildIntegerLiteralOctal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralOctal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralOctal>;
-	};
-	usize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralOctal>
-		) => ReturnType<typeof F.buildIntegerLiteralOctal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralOctal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralOctal>;
-	};
-	f32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralOctal>
-		) => ReturnType<typeof F.buildIntegerLiteralOctal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralOctal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralOctal>;
-	};
-	f64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof F.buildIntegerLiteralOctal>
-		) => ReturnType<typeof F.buildIntegerLiteralOctal>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0], 'suffix'>,
-			options?: OptionsArg<typeof C.coerceToIntegerLiteralOctal>
-		) => ReturnType<typeof C.coerceToIntegerLiteralOctal>;
-	};
-} = {
-	u8: {
-		strict: integerLiteralOctal$u8(F.buildIntegerLiteralOctal, 'u8'),
-		coerce: integerLiteralOctal$u8(C.coerceToIntegerLiteralOctal, 'u8')
-	},
-	i8: {
-		strict: integerLiteralOctal$i8(F.buildIntegerLiteralOctal, 'i8'),
-		coerce: integerLiteralOctal$i8(C.coerceToIntegerLiteralOctal, 'i8')
-	},
-	u16: {
-		strict: integerLiteralOctal$u16(F.buildIntegerLiteralOctal, 'u16'),
-		coerce: integerLiteralOctal$u16(C.coerceToIntegerLiteralOctal, 'u16')
-	},
-	i16: {
-		strict: integerLiteralOctal$i16(F.buildIntegerLiteralOctal, 'i16'),
-		coerce: integerLiteralOctal$i16(C.coerceToIntegerLiteralOctal, 'i16')
-	},
-	u32: {
-		strict: integerLiteralOctal$u32(F.buildIntegerLiteralOctal, 'u32'),
-		coerce: integerLiteralOctal$u32(C.coerceToIntegerLiteralOctal, 'u32')
-	},
-	i32: {
-		strict: integerLiteralOctal$i32(F.buildIntegerLiteralOctal, 'i32'),
-		coerce: integerLiteralOctal$i32(C.coerceToIntegerLiteralOctal, 'i32')
-	},
-	u64: {
-		strict: integerLiteralOctal$u64(F.buildIntegerLiteralOctal, 'u64'),
-		coerce: integerLiteralOctal$u64(C.coerceToIntegerLiteralOctal, 'u64')
-	},
-	i64: {
-		strict: integerLiteralOctal$i64(F.buildIntegerLiteralOctal, 'i64'),
-		coerce: integerLiteralOctal$i64(C.coerceToIntegerLiteralOctal, 'i64')
-	},
-	u128: {
-		strict: integerLiteralOctal$u128(F.buildIntegerLiteralOctal, 'u128'),
-		coerce: integerLiteralOctal$u128(C.coerceToIntegerLiteralOctal, 'u128')
-	},
-	i128: {
-		strict: integerLiteralOctal$i128(F.buildIntegerLiteralOctal, 'i128'),
-		coerce: integerLiteralOctal$i128(C.coerceToIntegerLiteralOctal, 'i128')
-	},
-	isize: {
-		strict: integerLiteralOctal$isize(F.buildIntegerLiteralOctal, 'isize'),
-		coerce: integerLiteralOctal$isize(C.coerceToIntegerLiteralOctal, 'isize')
-	},
-	usize: {
-		strict: integerLiteralOctal$usize(F.buildIntegerLiteralOctal, 'usize'),
-		coerce: integerLiteralOctal$usize(C.coerceToIntegerLiteralOctal, 'usize')
-	},
-	f32: {
-		strict: integerLiteralOctal$f32(F.buildIntegerLiteralOctal, 'f32'),
-		coerce: integerLiteralOctal$f32(C.coerceToIntegerLiteralOctal, 'f32')
-	},
-	f64: {
-		strict: integerLiteralOctal$f64(F.buildIntegerLiteralOctal, 'f64'),
-		coerce: integerLiteralOctal$f64(C.coerceToIntegerLiteralOctal, 'f64')
-	}
-};
-
-const negativeLiteral$decimal =
+const visibilityModifierPub$scope =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const negativeLiteral$hex =
+const visibilityModifierPub$scope$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const negativeLiteral$binary =
+const visibilityModifierPub$scope$super =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const negativeLiteral$octal =
+const visibilityModifierPub$scope$crate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const negativeLiteral$floatLiteral =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const negativeLiteral: typeof B.negativeLiteral & {
-	decimal: {
-		strict: (...args: ArgsOf<typeof F.buildIntegerLiteralDecimal>) => ReturnType<typeof F.buildNegativeLiteral>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIntegerLiteralDecimal>) => ReturnType<typeof F.buildNegativeLiteral>;
-	};
-	hex: {
-		strict: (...args: ArgsOf<typeof F.buildIntegerLiteralHex>) => ReturnType<typeof F.buildNegativeLiteral>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIntegerLiteralHex>) => ReturnType<typeof F.buildNegativeLiteral>;
-	};
-	binary: {
-		strict: (...args: ArgsOf<typeof F.buildIntegerLiteralBinary>) => ReturnType<typeof F.buildNegativeLiteral>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIntegerLiteralBinary>) => ReturnType<typeof F.buildNegativeLiteral>;
-	};
-	octal: {
-		strict: (...args: ArgsOf<typeof F.buildIntegerLiteralOctal>) => ReturnType<typeof F.buildNegativeLiteral>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIntegerLiteralOctal>) => ReturnType<typeof F.buildNegativeLiteral>;
-	};
-	floatLiteral: {
-		strict: (...args: ArgsOf<typeof F.buildFloatLiteral>) => ReturnType<typeof F.buildNegativeLiteral>;
-		coerce: (...args: ArgsOf<typeof C.coerceToFloatLiteral>) => ReturnType<typeof F.buildNegativeLiteral>;
-	};
-} = {
-	...B.negativeLiteral,
-	decimal: {
-		strict: negativeLiteral$decimal(F.buildNegativeLiteral, F.buildIntegerLiteralDecimal),
-		coerce: negativeLiteral$decimal(F.buildNegativeLiteral, C.coerceToIntegerLiteralDecimal)
-	},
-	hex: {
-		strict: negativeLiteral$hex(F.buildNegativeLiteral, F.buildIntegerLiteralHex),
-		coerce: negativeLiteral$hex(F.buildNegativeLiteral, C.coerceToIntegerLiteralHex)
-	},
-	binary: {
-		strict: negativeLiteral$binary(F.buildNegativeLiteral, F.buildIntegerLiteralBinary),
-		coerce: negativeLiteral$binary(F.buildNegativeLiteral, C.coerceToIntegerLiteralBinary)
-	},
-	octal: {
-		strict: negativeLiteral$octal(F.buildNegativeLiteral, F.buildIntegerLiteralOctal),
-		coerce: negativeLiteral$octal(F.buildNegativeLiteral, C.coerceToIntegerLiteralOctal)
-	},
-	floatLiteral: {
-		strict: negativeLiteral$floatLiteral(F.buildNegativeLiteral, F.buildFloatLiteral),
-		coerce: negativeLiteral$floatLiteral(F.buildNegativeLiteral, C.coerceToFloatLiteral)
-	}
-};
-
-const constParameter$block =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'label' || key === 'statements' || key === 'trailingExpression') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
-	};
-const constParameter$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { value: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) } as never, options as never);
-	};
-const constParameter$negativeLiteral =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { value: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) } as never, options as never);
-	};
-export const constParameter: typeof B.constParameter & {
-	block: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildConstParameter>[0], 'value'> & ArgsOf<typeof F.buildBlock>[0],
-			options?: OptionsArg<typeof F.buildConstParameter>
-		) => ReturnType<typeof F.buildConstParameter>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToConstParameter>[0], 'value'> & ArgsOf<typeof C.coerceToBlock>[0],
-			options?: OptionsArg<typeof C.coerceToConstParameter>
-		) => ReturnType<typeof C.coerceToConstParameter>;
-	};
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildConstParameter>[0], 'value'> & { value: ArgsOf<typeof F.buildIdentifier> },
-			options?: OptionsArg<typeof F.buildConstParameter>
-		) => ReturnType<typeof F.buildConstParameter>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToConstParameter>[0], 'value'> & {
-				value: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof C.coerceToConstParameter>
-		) => ReturnType<typeof C.coerceToConstParameter>;
-	};
-	negativeLiteral: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildConstParameter>[0], 'value'> & {
-				value: ArgsOf<typeof F.buildNegativeLiteral>[0];
-			},
-			options?: OptionsArg<typeof F.buildConstParameter>
-		) => ReturnType<typeof F.buildConstParameter>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToConstParameter>[0], 'value'> & {
-				value: ArgsOf<typeof C.coerceToNegativeLiteral>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToConstParameter>
-		) => ReturnType<typeof C.coerceToConstParameter>;
-	};
-} = {
-	...B.constParameter,
-	block: {
-		strict: constParameter$block(F.buildConstParameter, F.buildBlock),
-		coerce: constParameter$block(C.coerceToConstParameter, C.coerceToBlock)
-	},
-	identifier: {
-		strict: constParameter$identifier(F.buildConstParameter, F.buildIdentifier),
-		coerce: constParameter$identifier(C.coerceToConstParameter, C.coerceToIdentifier)
-	},
-	negativeLiteral: {
-		strict: constParameter$negativeLiteral(F.buildConstParameter, F.buildNegativeLiteral),
-		coerce: constParameter$negativeLiteral(C.coerceToConstParameter, C.coerceToNegativeLiteral)
-	}
-};
-
-const useAsClause$self =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const useAsClause$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
-	};
-const useAsClause$metavariable =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
-	};
-const useAsClause$super =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const useAsClause$crate =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const useAsClause$scopedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'name') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) } as never, options as never);
-	};
-export const useAsClause: typeof B.useAsClause & {
-	self: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildUseAsClause>
-		) => ReturnType<typeof F.buildUseAsClause>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToUseAsClause>
-		) => ReturnType<typeof C.coerceToUseAsClause>;
-	};
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'> & { path: ArgsOf<typeof F.buildIdentifier> },
-			options?: OptionsArg<typeof F.buildUseAsClause>
-		) => ReturnType<typeof F.buildUseAsClause>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'> & { path: ArgsOf<typeof C.coerceToIdentifier> },
-			options?: OptionsArg<typeof C.coerceToUseAsClause>
-		) => ReturnType<typeof C.coerceToUseAsClause>;
-	};
-	metavariable: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'> & { path: ArgsOf<typeof F.buildMetavariable>[0] },
-			options?: OptionsArg<typeof F.buildUseAsClause>
-		) => ReturnType<typeof F.buildUseAsClause>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToMetavariable>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToUseAsClause>
-		) => ReturnType<typeof C.coerceToUseAsClause>;
-	};
-	super: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildUseAsClause>
-		) => ReturnType<typeof F.buildUseAsClause>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToUseAsClause>
-		) => ReturnType<typeof C.coerceToUseAsClause>;
-	};
-	crate: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildUseAsClause>
-		) => ReturnType<typeof F.buildUseAsClause>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToUseAsClause>
-		) => ReturnType<typeof C.coerceToUseAsClause>;
-	};
-	scopedIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseAsClause>[0], 'path'> & ArgsOf<typeof F.buildScopedIdentifier>[0],
-			options?: OptionsArg<typeof F.buildUseAsClause>
-		) => ReturnType<typeof F.buildUseAsClause>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseAsClause>[0], 'path'> & ArgsOf<typeof C.coerceToScopedIdentifier>[0],
-			options?: OptionsArg<typeof C.coerceToUseAsClause>
-		) => ReturnType<typeof C.coerceToUseAsClause>;
-	};
-} = {
-	...B.useAsClause,
-	self: {
-		strict: useAsClause$self(F.buildUseAsClause, F.buildSelf),
-		coerce: useAsClause$self(C.coerceToUseAsClause, C.coerceToSelf)
-	},
-	identifier: {
-		strict: useAsClause$identifier(F.buildUseAsClause, F.buildIdentifier),
-		coerce: useAsClause$identifier(C.coerceToUseAsClause, C.coerceToIdentifier)
-	},
-	metavariable: {
-		strict: useAsClause$metavariable(F.buildUseAsClause, F.buildMetavariable),
-		coerce: useAsClause$metavariable(C.coerceToUseAsClause, C.coerceToMetavariable)
-	},
-	super: {
-		strict: useAsClause$super(F.buildUseAsClause, F.buildSuper),
-		coerce: useAsClause$super(C.coerceToUseAsClause, C.coerceToSuper)
-	},
-	crate: {
-		strict: useAsClause$crate(F.buildUseAsClause, F.buildCrate),
-		coerce: useAsClause$crate(C.coerceToUseAsClause, C.coerceToCrate)
-	},
-	scopedIdentifier: {
-		strict: useAsClause$scopedIdentifier(F.buildUseAsClause, F.buildScopedIdentifier),
-		coerce: useAsClause$scopedIdentifier(C.coerceToUseAsClause, C.coerceToScopedIdentifier)
-	}
-};
-
-const scopedUseList$self =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const scopedUseList$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
-	};
-const scopedUseList$metavariable =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
-	};
-const scopedUseList$super =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const scopedUseList$crate =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const scopedUseList$scopedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'name') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) } as never, options as never);
-	};
-export const scopedUseList: typeof B.scopedUseList & {
-	self: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildScopedUseList>
-		) => ReturnType<typeof F.buildScopedUseList>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToScopedUseList>
-		) => ReturnType<typeof C.coerceToScopedUseList>;
-	};
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'> & { path: ArgsOf<typeof F.buildIdentifier> },
-			options?: OptionsArg<typeof F.buildScopedUseList>
-		) => ReturnType<typeof F.buildScopedUseList>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof C.coerceToScopedUseList>
-		) => ReturnType<typeof C.coerceToScopedUseList>;
-	};
-	metavariable: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildMetavariable>[0];
-			},
-			options?: OptionsArg<typeof F.buildScopedUseList>
-		) => ReturnType<typeof F.buildScopedUseList>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToMetavariable>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToScopedUseList>
-		) => ReturnType<typeof C.coerceToScopedUseList>;
-	};
-	super: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildScopedUseList>
-		) => ReturnType<typeof F.buildScopedUseList>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToScopedUseList>
-		) => ReturnType<typeof C.coerceToScopedUseList>;
-	};
-	crate: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildScopedUseList>
-		) => ReturnType<typeof F.buildScopedUseList>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToScopedUseList>
-		) => ReturnType<typeof C.coerceToScopedUseList>;
-	};
-	scopedIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedUseList>[0], 'path'> & ArgsOf<typeof F.buildScopedIdentifier>[0],
-			options?: OptionsArg<typeof F.buildScopedUseList>
-		) => ReturnType<typeof F.buildScopedUseList>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedUseList>[0], 'path'> &
-				ArgsOf<typeof C.coerceToScopedIdentifier>[0],
-			options?: OptionsArg<typeof C.coerceToScopedUseList>
-		) => ReturnType<typeof C.coerceToScopedUseList>;
-	};
-} = {
-	...B.scopedUseList,
-	self: {
-		strict: scopedUseList$self(F.buildScopedUseList, F.buildSelf),
-		coerce: scopedUseList$self(C.coerceToScopedUseList, C.coerceToSelf)
-	},
-	identifier: {
-		strict: scopedUseList$identifier(F.buildScopedUseList, F.buildIdentifier),
-		coerce: scopedUseList$identifier(C.coerceToScopedUseList, C.coerceToIdentifier)
-	},
-	metavariable: {
-		strict: scopedUseList$metavariable(F.buildScopedUseList, F.buildMetavariable),
-		coerce: scopedUseList$metavariable(C.coerceToScopedUseList, C.coerceToMetavariable)
-	},
-	super: {
-		strict: scopedUseList$super(F.buildScopedUseList, F.buildSuper),
-		coerce: scopedUseList$super(C.coerceToScopedUseList, C.coerceToSuper)
-	},
-	crate: {
-		strict: scopedUseList$crate(F.buildScopedUseList, F.buildCrate),
-		coerce: scopedUseList$crate(C.coerceToScopedUseList, C.coerceToCrate)
-	},
-	scopedIdentifier: {
-		strict: scopedUseList$scopedIdentifier(F.buildScopedUseList, F.buildScopedIdentifier),
-		coerce: scopedUseList$scopedIdentifier(C.coerceToScopedUseList, C.coerceToScopedIdentifier)
-	}
-};
-
-const useWildcardGroup$self =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const useWildcardGroup$identifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const useWildcardGroup$metavariable =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const useWildcardGroup$super =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const useWildcardGroup$crate =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const useWildcardGroup$scopedIdentifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const useWildcardGroup: typeof B.useWildcardGroup & {
-	self: {
-		strict: (...args: ArgsOf<typeof F.buildSelf>) => ReturnType<typeof F.buildUseWildcardGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof F.buildUseWildcardGroup>;
-	};
-	identifier: {
-		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
-	};
-	metavariable: {
-		strict: (...args: ArgsOf<typeof F.buildMetavariable>) => ReturnType<typeof F.buildUseWildcardGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToMetavariable>) => ReturnType<typeof F.buildUseWildcardGroup>;
-	};
-	super: {
-		strict: (...args: ArgsOf<typeof F.buildSuper>) => ReturnType<typeof F.buildUseWildcardGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSuper>) => ReturnType<typeof F.buildUseWildcardGroup>;
-	};
-	crate: {
-		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildUseWildcardGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof F.buildUseWildcardGroup>;
-	};
-	scopedIdentifier: {
-		strict: (...args: ArgsOf<typeof F.buildScopedIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToScopedIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
-	};
-} = {
-	...B.useWildcardGroup,
-	self: {
-		strict: useWildcardGroup$self(F.buildUseWildcardGroup, F.buildSelf),
-		coerce: useWildcardGroup$self(F.buildUseWildcardGroup, C.coerceToSelf)
-	},
-	identifier: {
-		strict: useWildcardGroup$identifier(F.buildUseWildcardGroup, F.buildIdentifier),
-		coerce: useWildcardGroup$identifier(F.buildUseWildcardGroup, C.coerceToIdentifier)
-	},
-	metavariable: {
-		strict: useWildcardGroup$metavariable(F.buildUseWildcardGroup, F.buildMetavariable),
-		coerce: useWildcardGroup$metavariable(F.buildUseWildcardGroup, C.coerceToMetavariable)
-	},
-	super: {
-		strict: useWildcardGroup$super(F.buildUseWildcardGroup, F.buildSuper),
-		coerce: useWildcardGroup$super(F.buildUseWildcardGroup, C.coerceToSuper)
-	},
-	crate: {
-		strict: useWildcardGroup$crate(F.buildUseWildcardGroup, F.buildCrate),
-		coerce: useWildcardGroup$crate(F.buildUseWildcardGroup, C.coerceToCrate)
-	},
-	scopedIdentifier: {
-		strict: useWildcardGroup$scopedIdentifier(F.buildUseWildcardGroup, F.buildScopedIdentifier),
-		coerce: useWildcardGroup$scopedIdentifier(F.buildUseWildcardGroup, C.coerceToScopedIdentifier)
-	}
-};
-
-const useWildcard$self =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const useWildcard$identifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const useWildcard$metavariable =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const useWildcard$super =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const useWildcard$crate =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const useWildcard$scopedIdentifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const useWildcard: typeof B.useWildcard & {
-	self: {
-		strict: (...args: ArgsOf<typeof useWildcardGroup.self.strict>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof useWildcardGroup.self.coerce>) => ReturnType<typeof F.buildUseWildcard>;
-	};
-	identifier: {
-		strict: (...args: ArgsOf<typeof useWildcardGroup.identifier.strict>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof useWildcardGroup.identifier.coerce>) => ReturnType<typeof F.buildUseWildcard>;
-	};
-	metavariable: {
-		strict: (...args: ArgsOf<typeof useWildcardGroup.metavariable.strict>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof useWildcardGroup.metavariable.coerce>) => ReturnType<typeof F.buildUseWildcard>;
-	};
-	super: {
-		strict: (...args: ArgsOf<typeof useWildcardGroup.super.strict>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof useWildcardGroup.super.coerce>) => ReturnType<typeof F.buildUseWildcard>;
-	};
-	crate: {
-		strict: (...args: ArgsOf<typeof useWildcardGroup.crate.strict>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof useWildcardGroup.crate.coerce>) => ReturnType<typeof F.buildUseWildcard>;
-	};
-	scopedIdentifier: {
-		strict: (...args: ArgsOf<typeof useWildcardGroup.scopedIdentifier.strict>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof useWildcardGroup.scopedIdentifier.coerce>) => ReturnType<typeof F.buildUseWildcard>;
-	};
-} = {
-	...B.useWildcard,
-	self: {
-		strict: useWildcard$self(F.buildUseWildcard, useWildcardGroup.self.strict),
-		coerce: useWildcard$self(F.buildUseWildcard, useWildcardGroup.self.coerce)
-	},
-	identifier: {
-		strict: useWildcard$identifier(F.buildUseWildcard, useWildcardGroup.identifier.strict),
-		coerce: useWildcard$identifier(F.buildUseWildcard, useWildcardGroup.identifier.coerce)
-	},
-	metavariable: {
-		strict: useWildcard$metavariable(F.buildUseWildcard, useWildcardGroup.metavariable.strict),
-		coerce: useWildcard$metavariable(F.buildUseWildcard, useWildcardGroup.metavariable.coerce)
-	},
-	super: {
-		strict: useWildcard$super(F.buildUseWildcard, useWildcardGroup.super.strict),
-		coerce: useWildcard$super(F.buildUseWildcard, useWildcardGroup.super.coerce)
-	},
-	crate: {
-		strict: useWildcard$crate(F.buildUseWildcard, useWildcardGroup.crate.strict),
-		coerce: useWildcard$crate(F.buildUseWildcard, useWildcardGroup.crate.coerce)
-	},
-	scopedIdentifier: {
-		strict: useWildcard$scopedIdentifier(F.buildUseWildcard, useWildcardGroup.scopedIdentifier.strict),
-		coerce: useWildcard$scopedIdentifier(F.buildUseWildcard, useWildcardGroup.scopedIdentifier.coerce)
-	}
-};
-
-const useDeclaration$self =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, argument: _c(child)() } as never, options as never);
-const useDeclaration$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { argument: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(...seated) } as never, options as never);
-	};
-const useDeclaration$metavariable =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { argument: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(seated) } as never, options as never);
-	};
-const useDeclaration$super =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, argument: _c(child)() } as never, options as never);
-const useDeclaration$crate =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'argument'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, argument: _c(child)() } as never, options as never);
-const useDeclaration$scopedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'name') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) } as never, options as never);
-	};
-const useDeclaration$useAsClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'alias') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) } as never, options as never);
-	};
-const useDeclaration$useList =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { argument: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(seated) } as never, options as never);
-	};
-const useDeclaration$scopedUseList =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'list') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) } as never, options as never);
-	};
-const useDeclaration$useWildcard =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { argument: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(seated) } as never, options as never);
-	};
-export const useDeclaration: typeof B.useDeclaration & {
-	self: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
-			options?: OptionsArg<typeof F.buildUseDeclaration>
-		) => ReturnType<typeof F.buildUseDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
-			options?: OptionsArg<typeof C.coerceToUseDeclaration>
-		) => ReturnType<typeof C.coerceToUseDeclaration>;
-	};
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'> & {
-				argument: ArgsOf<typeof F.buildIdentifier>;
-			},
-			options?: OptionsArg<typeof F.buildUseDeclaration>
-		) => ReturnType<typeof F.buildUseDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'> & {
-				argument: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof C.coerceToUseDeclaration>
-		) => ReturnType<typeof C.coerceToUseDeclaration>;
-	};
-	metavariable: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'> & {
-				argument: ArgsOf<typeof F.buildMetavariable>[0];
-			},
-			options?: OptionsArg<typeof F.buildUseDeclaration>
-		) => ReturnType<typeof F.buildUseDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'> & {
-				argument: ArgsOf<typeof C.coerceToMetavariable>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToUseDeclaration>
-		) => ReturnType<typeof C.coerceToUseDeclaration>;
-	};
-	super: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
-			options?: OptionsArg<typeof F.buildUseDeclaration>
-		) => ReturnType<typeof F.buildUseDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
-			options?: OptionsArg<typeof C.coerceToUseDeclaration>
-		) => ReturnType<typeof C.coerceToUseDeclaration>;
-	};
-	crate: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'>,
-			options?: OptionsArg<typeof F.buildUseDeclaration>
-		) => ReturnType<typeof F.buildUseDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'>,
-			options?: OptionsArg<typeof C.coerceToUseDeclaration>
-		) => ReturnType<typeof C.coerceToUseDeclaration>;
-	};
-	scopedIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'> & ArgsOf<typeof F.buildScopedIdentifier>[0],
-			options?: OptionsArg<typeof F.buildUseDeclaration>
-		) => ReturnType<typeof F.buildUseDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'> &
-				ArgsOf<typeof C.coerceToScopedIdentifier>[0],
-			options?: OptionsArg<typeof C.coerceToUseDeclaration>
-		) => ReturnType<typeof C.coerceToUseDeclaration>;
-	};
-	useAsClause: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'> & ArgsOf<typeof F.buildUseAsClause>[0],
-			options?: OptionsArg<typeof F.buildUseDeclaration>
-		) => ReturnType<typeof F.buildUseDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'> &
-				ArgsOf<typeof C.coerceToUseAsClause>[0],
-			options?: OptionsArg<typeof C.coerceToUseDeclaration>
-		) => ReturnType<typeof C.coerceToUseDeclaration>;
-	};
-	useList: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'> & {
-				argument: ArgsOf<typeof F.buildUseList>[0];
-			},
-			options?: OptionsArg<typeof F.buildUseDeclaration>
-		) => ReturnType<typeof F.buildUseDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'> & {
-				argument: ArgsOf<typeof C.coerceToUseList>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToUseDeclaration>
-		) => ReturnType<typeof C.coerceToUseDeclaration>;
-	};
-	scopedUseList: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'> & ArgsOf<typeof F.buildScopedUseList>[0],
-			options?: OptionsArg<typeof F.buildUseDeclaration>
-		) => ReturnType<typeof F.buildUseDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'> &
-				ArgsOf<typeof C.coerceToScopedUseList>[0],
-			options?: OptionsArg<typeof C.coerceToUseDeclaration>
-		) => ReturnType<typeof C.coerceToUseDeclaration>;
-	};
-	useWildcard: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUseDeclaration>[0], 'argument'> & {
-				argument: ArgsOf<typeof F.buildUseWildcard>[0];
-			},
-			options?: OptionsArg<typeof F.buildUseDeclaration>
-		) => ReturnType<typeof F.buildUseDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUseDeclaration>[0], 'argument'> & {
-				argument: ArgsOf<typeof C.coerceToUseWildcard>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToUseDeclaration>
-		) => ReturnType<typeof C.coerceToUseDeclaration>;
-	};
-} = {
-	...B.useDeclaration,
-	self: {
-		strict: useDeclaration$self(F.buildUseDeclaration, F.buildSelf),
-		coerce: useDeclaration$self(C.coerceToUseDeclaration, C.coerceToSelf)
-	},
-	identifier: {
-		strict: useDeclaration$identifier(F.buildUseDeclaration, F.buildIdentifier),
-		coerce: useDeclaration$identifier(C.coerceToUseDeclaration, C.coerceToIdentifier)
-	},
-	metavariable: {
-		strict: useDeclaration$metavariable(F.buildUseDeclaration, F.buildMetavariable),
-		coerce: useDeclaration$metavariable(C.coerceToUseDeclaration, C.coerceToMetavariable)
-	},
-	super: {
-		strict: useDeclaration$super(F.buildUseDeclaration, F.buildSuper),
-		coerce: useDeclaration$super(C.coerceToUseDeclaration, C.coerceToSuper)
-	},
-	crate: {
-		strict: useDeclaration$crate(F.buildUseDeclaration, F.buildCrate),
-		coerce: useDeclaration$crate(C.coerceToUseDeclaration, C.coerceToCrate)
-	},
-	scopedIdentifier: {
-		strict: useDeclaration$scopedIdentifier(F.buildUseDeclaration, F.buildScopedIdentifier),
-		coerce: useDeclaration$scopedIdentifier(C.coerceToUseDeclaration, C.coerceToScopedIdentifier)
-	},
-	useAsClause: {
-		strict: useDeclaration$useAsClause(F.buildUseDeclaration, F.buildUseAsClause),
-		coerce: useDeclaration$useAsClause(C.coerceToUseDeclaration, C.coerceToUseAsClause)
-	},
-	useList: {
-		strict: useDeclaration$useList(F.buildUseDeclaration, F.buildUseList),
-		coerce: useDeclaration$useList(C.coerceToUseDeclaration, C.coerceToUseList)
-	},
-	scopedUseList: {
-		strict: useDeclaration$scopedUseList(F.buildUseDeclaration, F.buildScopedUseList),
-		coerce: useDeclaration$scopedUseList(C.coerceToUseDeclaration, C.coerceToScopedUseList)
-	},
-	useWildcard: {
-		strict: useDeclaration$useWildcard(F.buildUseDeclaration, F.buildUseWildcard),
-		coerce: useDeclaration$useWildcard(C.coerceToUseDeclaration, C.coerceToUseWildcard)
-	}
-};
-
-const parameter$self =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, name: _c(child)() } as never, options as never);
-export const parameter: typeof B.parameter & {
-	self: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildParameter>[0], 'name'>,
-			options?: OptionsArg<typeof F.buildParameter>
-		) => ReturnType<typeof F.buildParameter>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToParameter>[0], 'name'>,
-			options?: OptionsArg<typeof C.coerceToParameter>
-		) => ReturnType<typeof C.coerceToParameter>;
-	};
-} = {
-	...B.parameter,
-	self: {
-		strict: parameter$self(F.buildParameter, F.buildSelf),
-		coerce: parameter$self(C.coerceToParameter, C.coerceToSelf)
-	}
-};
-
-const visibilityModifierPubInPath$self =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPubInPath$u8 =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$i8 =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$u16 =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$i16 =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$u32 =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$i32 =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$u64 =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$i64 =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$u128 =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$i128 =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$isize =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$usize =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$f32 =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$f64 =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$bool =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$str =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$char =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$metavariable =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPubInPath$super =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPubInPath$crate =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPubInPath$identifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPubInPath$scopedIdentifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPubInPath$default =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$union =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath$gen =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifierPubInPath: {
-	self: {
-		strict: (...args: ArgsOf<typeof F.buildSelf>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-	};
-	u8: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	i8: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	u16: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	i16: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	u32: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	i32: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	u64: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	i64: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	u128: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	i128: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	isize: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	usize: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	f32: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	f64: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	bool: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	str: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	char: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	metavariable: {
-		strict: (...args: ArgsOf<typeof F.buildMetavariable>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (...args: ArgsOf<typeof C.coerceToMetavariable>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-	};
-	super: {
-		strict: (...args: ArgsOf<typeof F.buildSuper>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSuper>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-	};
-	crate: {
-		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-	};
-	identifier: {
-		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-	};
-	scopedIdentifier: {
-		strict: (...args: ArgsOf<typeof F.buildScopedIdentifier>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToScopedIdentifier>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-	};
-	default: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	union: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-	gen: {
-		strict: (
-			options?: OptionsArg<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
-	};
-} = {
-	self: {
-		strict: visibilityModifierPubInPath$self(F.buildVisibilityModifierPubInPath, F.buildSelf),
-		coerce: visibilityModifierPubInPath$self(F.buildVisibilityModifierPubInPath, C.coerceToSelf)
-	},
-	u8: {
-		strict: visibilityModifierPubInPath$u8(F.buildVisibilityModifierPubInPath, TSKindId.U8Keyword),
-		coerce: visibilityModifierPubInPath$u8(C.coerceToVisibilityModifierPubInPath, TSKindId.U8Keyword)
-	},
-	i8: {
-		strict: visibilityModifierPubInPath$i8(F.buildVisibilityModifierPubInPath, TSKindId.I8Keyword),
-		coerce: visibilityModifierPubInPath$i8(C.coerceToVisibilityModifierPubInPath, TSKindId.I8Keyword)
-	},
-	u16: {
-		strict: visibilityModifierPubInPath$u16(F.buildVisibilityModifierPubInPath, TSKindId.U16Keyword),
-		coerce: visibilityModifierPubInPath$u16(C.coerceToVisibilityModifierPubInPath, TSKindId.U16Keyword)
-	},
-	i16: {
-		strict: visibilityModifierPubInPath$i16(F.buildVisibilityModifierPubInPath, TSKindId.I16Keyword),
-		coerce: visibilityModifierPubInPath$i16(C.coerceToVisibilityModifierPubInPath, TSKindId.I16Keyword)
-	},
-	u32: {
-		strict: visibilityModifierPubInPath$u32(F.buildVisibilityModifierPubInPath, TSKindId.U32Keyword),
-		coerce: visibilityModifierPubInPath$u32(C.coerceToVisibilityModifierPubInPath, TSKindId.U32Keyword)
-	},
-	i32: {
-		strict: visibilityModifierPubInPath$i32(F.buildVisibilityModifierPubInPath, TSKindId.I32Keyword),
-		coerce: visibilityModifierPubInPath$i32(C.coerceToVisibilityModifierPubInPath, TSKindId.I32Keyword)
-	},
-	u64: {
-		strict: visibilityModifierPubInPath$u64(F.buildVisibilityModifierPubInPath, TSKindId.U64Keyword),
-		coerce: visibilityModifierPubInPath$u64(C.coerceToVisibilityModifierPubInPath, TSKindId.U64Keyword)
-	},
-	i64: {
-		strict: visibilityModifierPubInPath$i64(F.buildVisibilityModifierPubInPath, TSKindId.I64Keyword),
-		coerce: visibilityModifierPubInPath$i64(C.coerceToVisibilityModifierPubInPath, TSKindId.I64Keyword)
-	},
-	u128: {
-		strict: visibilityModifierPubInPath$u128(F.buildVisibilityModifierPubInPath, TSKindId.U128Keyword),
-		coerce: visibilityModifierPubInPath$u128(C.coerceToVisibilityModifierPubInPath, TSKindId.U128Keyword)
-	},
-	i128: {
-		strict: visibilityModifierPubInPath$i128(F.buildVisibilityModifierPubInPath, TSKindId.I128Keyword),
-		coerce: visibilityModifierPubInPath$i128(C.coerceToVisibilityModifierPubInPath, TSKindId.I128Keyword)
-	},
-	isize: {
-		strict: visibilityModifierPubInPath$isize(F.buildVisibilityModifierPubInPath, TSKindId.IsizeKeyword),
-		coerce: visibilityModifierPubInPath$isize(C.coerceToVisibilityModifierPubInPath, TSKindId.IsizeKeyword)
-	},
-	usize: {
-		strict: visibilityModifierPubInPath$usize(F.buildVisibilityModifierPubInPath, TSKindId.UsizeKeyword),
-		coerce: visibilityModifierPubInPath$usize(C.coerceToVisibilityModifierPubInPath, TSKindId.UsizeKeyword)
-	},
-	f32: {
-		strict: visibilityModifierPubInPath$f32(F.buildVisibilityModifierPubInPath, TSKindId.F32Keyword),
-		coerce: visibilityModifierPubInPath$f32(C.coerceToVisibilityModifierPubInPath, TSKindId.F32Keyword)
-	},
-	f64: {
-		strict: visibilityModifierPubInPath$f64(F.buildVisibilityModifierPubInPath, TSKindId.F64Keyword),
-		coerce: visibilityModifierPubInPath$f64(C.coerceToVisibilityModifierPubInPath, TSKindId.F64Keyword)
-	},
-	bool: {
-		strict: visibilityModifierPubInPath$bool(F.buildVisibilityModifierPubInPath, TSKindId.BoolKeyword),
-		coerce: visibilityModifierPubInPath$bool(C.coerceToVisibilityModifierPubInPath, TSKindId.BoolKeyword)
-	},
-	str: {
-		strict: visibilityModifierPubInPath$str(F.buildVisibilityModifierPubInPath, TSKindId.StrKeyword),
-		coerce: visibilityModifierPubInPath$str(C.coerceToVisibilityModifierPubInPath, TSKindId.StrKeyword)
-	},
-	char: {
-		strict: visibilityModifierPubInPath$char(F.buildVisibilityModifierPubInPath, TSKindId.CharKeyword),
-		coerce: visibilityModifierPubInPath$char(C.coerceToVisibilityModifierPubInPath, TSKindId.CharKeyword)
-	},
-	metavariable: {
-		strict: visibilityModifierPubInPath$metavariable(F.buildVisibilityModifierPubInPath, F.buildMetavariable),
-		coerce: visibilityModifierPubInPath$metavariable(F.buildVisibilityModifierPubInPath, C.coerceToMetavariable)
-	},
-	super: {
-		strict: visibilityModifierPubInPath$super(F.buildVisibilityModifierPubInPath, F.buildSuper),
-		coerce: visibilityModifierPubInPath$super(F.buildVisibilityModifierPubInPath, C.coerceToSuper)
-	},
-	crate: {
-		strict: visibilityModifierPubInPath$crate(F.buildVisibilityModifierPubInPath, F.buildCrate),
-		coerce: visibilityModifierPubInPath$crate(F.buildVisibilityModifierPubInPath, C.coerceToCrate)
-	},
-	identifier: {
-		strict: visibilityModifierPubInPath$identifier(F.buildVisibilityModifierPubInPath, F.buildIdentifier),
-		coerce: visibilityModifierPubInPath$identifier(F.buildVisibilityModifierPubInPath, C.coerceToIdentifier)
-	},
-	scopedIdentifier: {
-		strict: visibilityModifierPubInPath$scopedIdentifier(F.buildVisibilityModifierPubInPath, F.buildScopedIdentifier),
-		coerce: visibilityModifierPubInPath$scopedIdentifier(F.buildVisibilityModifierPubInPath, C.coerceToScopedIdentifier)
-	},
-	default: {
-		strict: visibilityModifierPubInPath$default(F.buildVisibilityModifierPubInPath, TSKindId.DefaultKeyword),
-		coerce: visibilityModifierPubInPath$default(C.coerceToVisibilityModifierPubInPath, TSKindId.DefaultKeyword)
-	},
-	union: {
-		strict: visibilityModifierPubInPath$union(F.buildVisibilityModifierPubInPath, TSKindId.UnionKeyword),
-		coerce: visibilityModifierPubInPath$union(C.coerceToVisibilityModifierPubInPath, TSKindId.UnionKeyword)
-	},
-	gen: {
-		strict: visibilityModifierPubInPath$gen(F.buildVisibilityModifierPubInPath, TSKindId.GenKeyword),
-		coerce: visibilityModifierPubInPath$gen(C.coerceToVisibilityModifierPubInPath, TSKindId.GenKeyword)
-	}
-};
-
-const visibilityModifierGroup$self =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$super =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$crate =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$inPath =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$u8 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$i8 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$u16 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$i16 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$u32 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$i32 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$u64 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$i64 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$u128 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$i128 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$isize =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$usize =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$f32 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$f64 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$bool =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$str =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$char =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$metavariable =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$identifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$scopedIdentifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$default =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$union =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierGroup$gen =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
-	self: {
-		strict: (...args: ArgsOf<typeof F.buildSelf>) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-	};
-	super: {
-		strict: (...args: ArgsOf<typeof F.buildSuper>) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSuper>) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-	};
-	crate: {
-		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-	};
-	inPath: {
-		strict: (
-			...args: ArgsOf<typeof F.buildVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		u8: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.u8.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.u8.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		i8: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.i8.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.i8.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		u16: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.u16.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.u16.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		i16: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.i16.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.i16.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		u32: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.u32.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.u32.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		i32: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.i32.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.i32.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		u64: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.u64.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.u64.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		i64: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.i64.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.i64.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		u128: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.u128.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.u128.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		i128: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.i128.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.i128.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		isize: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.isize.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.isize.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		usize: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.usize.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.usize.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		f32: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.f32.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.f32.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		f64: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.f64.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.f64.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		bool: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.bool.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.bool.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		str: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.str.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.str.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		char: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.char.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.char.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		metavariable: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.metavariable.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.metavariable.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		identifier: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.identifier.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.identifier.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		scopedIdentifier: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.scopedIdentifier.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.scopedIdentifier.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		default: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.default.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.default.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		union: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.union.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.union.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-		gen: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.gen.strict>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubInPath.gen.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		};
-	};
-} = {
-	...B.visibilityModifierGroup,
-	self: {
-		strict: visibilityModifierGroup$self(F.buildVisibilityModifierGroup, F.buildSelf),
-		coerce: visibilityModifierGroup$self(F.buildVisibilityModifierGroup, C.coerceToSelf)
-	},
-	super: {
-		strict: visibilityModifierGroup$super(F.buildVisibilityModifierGroup, F.buildSuper),
-		coerce: visibilityModifierGroup$super(F.buildVisibilityModifierGroup, C.coerceToSuper)
-	},
-	crate: {
-		strict: visibilityModifierGroup$crate(F.buildVisibilityModifierGroup, F.buildCrate),
-		coerce: visibilityModifierGroup$crate(F.buildVisibilityModifierGroup, C.coerceToCrate)
-	},
-	inPath: {
-		strict: visibilityModifierGroup$inPath(F.buildVisibilityModifierGroup, F.buildVisibilityModifierPubInPath),
-		coerce: visibilityModifierGroup$inPath(F.buildVisibilityModifierGroup, C.coerceToVisibilityModifierPubInPath),
-		u8: {
-			strict: visibilityModifierGroup$u8(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u8.strict),
-			coerce: visibilityModifierGroup$u8(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u8.coerce)
-		},
-		i8: {
-			strict: visibilityModifierGroup$i8(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i8.strict),
-			coerce: visibilityModifierGroup$i8(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i8.coerce)
-		},
-		u16: {
-			strict: visibilityModifierGroup$u16(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u16.strict),
-			coerce: visibilityModifierGroup$u16(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u16.coerce)
-		},
-		i16: {
-			strict: visibilityModifierGroup$i16(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i16.strict),
-			coerce: visibilityModifierGroup$i16(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i16.coerce)
-		},
-		u32: {
-			strict: visibilityModifierGroup$u32(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u32.strict),
-			coerce: visibilityModifierGroup$u32(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u32.coerce)
-		},
-		i32: {
-			strict: visibilityModifierGroup$i32(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i32.strict),
-			coerce: visibilityModifierGroup$i32(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i32.coerce)
-		},
-		u64: {
-			strict: visibilityModifierGroup$u64(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u64.strict),
-			coerce: visibilityModifierGroup$u64(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u64.coerce)
-		},
-		i64: {
-			strict: visibilityModifierGroup$i64(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i64.strict),
-			coerce: visibilityModifierGroup$i64(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i64.coerce)
-		},
-		u128: {
-			strict: visibilityModifierGroup$u128(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u128.strict),
-			coerce: visibilityModifierGroup$u128(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.u128.coerce)
-		},
-		i128: {
-			strict: visibilityModifierGroup$i128(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i128.strict),
-			coerce: visibilityModifierGroup$i128(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.i128.coerce)
-		},
-		isize: {
-			strict: visibilityModifierGroup$isize(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.isize.strict),
-			coerce: visibilityModifierGroup$isize(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.isize.coerce)
-		},
-		usize: {
-			strict: visibilityModifierGroup$usize(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.usize.strict),
-			coerce: visibilityModifierGroup$usize(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.usize.coerce)
-		},
-		f32: {
-			strict: visibilityModifierGroup$f32(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.f32.strict),
-			coerce: visibilityModifierGroup$f32(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.f32.coerce)
-		},
-		f64: {
-			strict: visibilityModifierGroup$f64(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.f64.strict),
-			coerce: visibilityModifierGroup$f64(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.f64.coerce)
-		},
-		bool: {
-			strict: visibilityModifierGroup$bool(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.bool.strict),
-			coerce: visibilityModifierGroup$bool(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.bool.coerce)
-		},
-		str: {
-			strict: visibilityModifierGroup$str(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.str.strict),
-			coerce: visibilityModifierGroup$str(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.str.coerce)
-		},
-		char: {
-			strict: visibilityModifierGroup$char(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.char.strict),
-			coerce: visibilityModifierGroup$char(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.char.coerce)
-		},
-		metavariable: {
-			strict: visibilityModifierGroup$metavariable(
-				F.buildVisibilityModifierGroup,
-				visibilityModifierPubInPath.metavariable.strict
-			),
-			coerce: visibilityModifierGroup$metavariable(
-				F.buildVisibilityModifierGroup,
-				visibilityModifierPubInPath.metavariable.coerce
-			)
-		},
-		identifier: {
-			strict: visibilityModifierGroup$identifier(
-				F.buildVisibilityModifierGroup,
-				visibilityModifierPubInPath.identifier.strict
-			),
-			coerce: visibilityModifierGroup$identifier(
-				F.buildVisibilityModifierGroup,
-				visibilityModifierPubInPath.identifier.coerce
-			)
-		},
-		scopedIdentifier: {
-			strict: visibilityModifierGroup$scopedIdentifier(
-				F.buildVisibilityModifierGroup,
-				visibilityModifierPubInPath.scopedIdentifier.strict
-			),
-			coerce: visibilityModifierGroup$scopedIdentifier(
-				F.buildVisibilityModifierGroup,
-				visibilityModifierPubInPath.scopedIdentifier.coerce
-			)
-		},
-		default: {
-			strict: visibilityModifierGroup$default(
-				F.buildVisibilityModifierGroup,
-				visibilityModifierPubInPath.default.strict
-			),
-			coerce: visibilityModifierGroup$default(
-				F.buildVisibilityModifierGroup,
-				visibilityModifierPubInPath.default.coerce
-			)
-		},
-		union: {
-			strict: visibilityModifierGroup$union(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.union.strict),
-			coerce: visibilityModifierGroup$union(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.union.coerce)
-		},
-		gen: {
-			strict: visibilityModifierGroup$gen(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.gen.strict),
-			coerce: visibilityModifierGroup$gen(F.buildVisibilityModifierGroup, visibilityModifierPubInPath.gen.coerce)
-		}
-	}
-};
-
-const visibilityModifierPub$self =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPub$super =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPub$crate =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPub$inPath =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPub$metavariable =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPub$identifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifierPub$scopedIdentifier =
+const visibilityModifierPub$scope$inPath =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const visibilityModifierPub: {
-	self: {
+	scope: {
 		strict: (
-			...args: ArgsOf<typeof visibilityModifierGroup.self.strict>
+			...args: ArgsOf<typeof F.buildVisibilityModifierPubScope>
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		coerce: (
-			...args: ArgsOf<typeof visibilityModifierGroup.self.coerce>
+			...args: ArgsOf<typeof C.coerceToVisibilityModifierPubScope>
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-	};
-	super: {
-		strict: (
-			...args: ArgsOf<typeof visibilityModifierGroup.super.strict>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-		coerce: (
-			...args: ArgsOf<typeof visibilityModifierGroup.super.coerce>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-	};
-	crate: {
-		strict: (
-			...args: ArgsOf<typeof visibilityModifierGroup.crate.strict>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-		coerce: (
-			...args: ArgsOf<typeof visibilityModifierGroup.crate.coerce>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-	};
-	inPath: {
-		strict: (
-			...args: ArgsOf<typeof visibilityModifierGroup.inPath.strict>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-		coerce: (
-			...args: ArgsOf<typeof visibilityModifierGroup.inPath.coerce>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-	};
-	metavariable: {
-		strict: (
-			...args: ArgsOf<typeof visibilityModifierGroup.inPath.metavariable.strict>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-		coerce: (
-			...args: ArgsOf<typeof visibilityModifierGroup.inPath.metavariable.coerce>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-	};
-	identifier: {
-		strict: (
-			...args: ArgsOf<typeof visibilityModifierGroup.inPath.identifier.strict>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-		coerce: (
-			...args: ArgsOf<typeof visibilityModifierGroup.inPath.identifier.coerce>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-	};
-	scopedIdentifier: {
-		strict: (
-			...args: ArgsOf<typeof visibilityModifierGroup.inPath.scopedIdentifier.strict>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-		coerce: (
-			...args: ArgsOf<typeof visibilityModifierGroup.inPath.scopedIdentifier.coerce>
-		) => ReturnType<typeof F.buildVisibilityModifierPub>;
+		self: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubScope.self.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierPub>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubScope.self.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierPub>;
+		};
+		super: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubScope.super.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierPub>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubScope.super.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierPub>;
+		};
+		crate: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubScope.crate.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierPub>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubScope.crate.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierPub>;
+		};
+		inPath: {
+			strict: (
+				...args: ArgsOf<typeof visibilityModifierPubScope.inPath.strict>
+			) => ReturnType<typeof F.buildVisibilityModifierPub>;
+			coerce: (
+				...args: ArgsOf<typeof visibilityModifierPubScope.inPath.coerce>
+			) => ReturnType<typeof F.buildVisibilityModifierPub>;
+		};
 	};
 } = {
-	self: {
-		strict: visibilityModifierPub$self(F.buildVisibilityModifierPub, visibilityModifierGroup.self.strict),
-		coerce: visibilityModifierPub$self(F.buildVisibilityModifierPub, visibilityModifierGroup.self.coerce)
-	},
-	super: {
-		strict: visibilityModifierPub$super(F.buildVisibilityModifierPub, visibilityModifierGroup.super.strict),
-		coerce: visibilityModifierPub$super(F.buildVisibilityModifierPub, visibilityModifierGroup.super.coerce)
-	},
-	crate: {
-		strict: visibilityModifierPub$crate(F.buildVisibilityModifierPub, visibilityModifierGroup.crate.strict),
-		coerce: visibilityModifierPub$crate(F.buildVisibilityModifierPub, visibilityModifierGroup.crate.coerce)
-	},
-	inPath: {
-		strict: visibilityModifierPub$inPath(F.buildVisibilityModifierPub, visibilityModifierGroup.inPath.strict),
-		coerce: visibilityModifierPub$inPath(F.buildVisibilityModifierPub, visibilityModifierGroup.inPath.coerce)
-	},
-	metavariable: {
-		strict: visibilityModifierPub$metavariable(
-			F.buildVisibilityModifierPub,
-			visibilityModifierGroup.inPath.metavariable.strict
-		),
-		coerce: visibilityModifierPub$metavariable(
-			F.buildVisibilityModifierPub,
-			visibilityModifierGroup.inPath.metavariable.coerce
-		)
-	},
-	identifier: {
-		strict: visibilityModifierPub$identifier(
-			F.buildVisibilityModifierPub,
-			visibilityModifierGroup.inPath.identifier.strict
-		),
-		coerce: visibilityModifierPub$identifier(
-			F.buildVisibilityModifierPub,
-			visibilityModifierGroup.inPath.identifier.coerce
-		)
-	},
-	scopedIdentifier: {
-		strict: visibilityModifierPub$scopedIdentifier(
-			F.buildVisibilityModifierPub,
-			visibilityModifierGroup.inPath.scopedIdentifier.strict
-		),
-		coerce: visibilityModifierPub$scopedIdentifier(
-			F.buildVisibilityModifierPub,
-			visibilityModifierGroup.inPath.scopedIdentifier.coerce
-		)
+	scope: {
+		strict: visibilityModifierPub$scope(F.buildVisibilityModifierPub, F.buildVisibilityModifierPubScope),
+		coerce: visibilityModifierPub$scope(F.buildVisibilityModifierPub, C.coerceToVisibilityModifierPubScope),
+		self: {
+			strict: visibilityModifierPub$scope$self(F.buildVisibilityModifierPub, visibilityModifierPubScope.self.strict),
+			coerce: visibilityModifierPub$scope$self(F.buildVisibilityModifierPub, visibilityModifierPubScope.self.coerce)
+		},
+		super: {
+			strict: visibilityModifierPub$scope$super(F.buildVisibilityModifierPub, visibilityModifierPubScope.super.strict),
+			coerce: visibilityModifierPub$scope$super(F.buildVisibilityModifierPub, visibilityModifierPubScope.super.coerce)
+		},
+		crate: {
+			strict: visibilityModifierPub$scope$crate(F.buildVisibilityModifierPub, visibilityModifierPubScope.crate.strict),
+			coerce: visibilityModifierPub$scope$crate(F.buildVisibilityModifierPub, visibilityModifierPubScope.crate.coerce)
+		},
+		inPath: {
+			strict: visibilityModifierPub$scope$inPath(
+				F.buildVisibilityModifierPub,
+				visibilityModifierPubScope.inPath.strict
+			),
+			coerce: visibilityModifierPub$scope$inPath(F.buildVisibilityModifierPub, visibilityModifierPubScope.inPath.coerce)
+		}
 	}
 };
 
@@ -4953,27 +239,23 @@ const visibilityModifier$pub =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifier$self =
+const visibilityModifier$pub$scope =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifier$super =
+const visibilityModifier$pub$scope$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifier$pubInPath =
+const visibilityModifier$pub$scope$super =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifier$metavariable =
+const visibilityModifier$pub$scope$crate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifier$identifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const visibilityModifier$scopedIdentifier =
+const visibilityModifier$pub$scope$inPath =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -4985,53 +267,45 @@ export const visibilityModifier: typeof B.visibilityModifier & {
 	pub: {
 		strict: (...args: ArgsOf<typeof F.buildVisibilityModifierPub>) => ReturnType<typeof F.buildVisibilityModifier>;
 		coerce: (...args: ArgsOf<typeof C.coerceToVisibilityModifierPub>) => ReturnType<typeof F.buildVisibilityModifier>;
-		self: {
+		scope: {
 			strict: (
-				...args: ArgsOf<typeof visibilityModifierPub.self.strict>
+				...args: ArgsOf<typeof visibilityModifierPub.scope.strict>
 			) => ReturnType<typeof F.buildVisibilityModifier>;
 			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPub.self.coerce>
+				...args: ArgsOf<typeof visibilityModifierPub.scope.coerce>
 			) => ReturnType<typeof F.buildVisibilityModifier>;
-		};
-		super: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPub.super.strict>
-			) => ReturnType<typeof F.buildVisibilityModifier>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPub.super.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifier>;
-		};
-		inPath: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPub.inPath.strict>
-			) => ReturnType<typeof F.buildVisibilityModifier>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPub.inPath.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifier>;
-		};
-		metavariable: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPub.metavariable.strict>
-			) => ReturnType<typeof F.buildVisibilityModifier>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPub.metavariable.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifier>;
-		};
-		identifier: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPub.identifier.strict>
-			) => ReturnType<typeof F.buildVisibilityModifier>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPub.identifier.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifier>;
-		};
-		scopedIdentifier: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPub.scopedIdentifier.strict>
-			) => ReturnType<typeof F.buildVisibilityModifier>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPub.scopedIdentifier.coerce>
-			) => ReturnType<typeof F.buildVisibilityModifier>;
+			self: {
+				strict: (
+					...args: ArgsOf<typeof visibilityModifierPub.scope.self.strict>
+				) => ReturnType<typeof F.buildVisibilityModifier>;
+				coerce: (
+					...args: ArgsOf<typeof visibilityModifierPub.scope.self.coerce>
+				) => ReturnType<typeof F.buildVisibilityModifier>;
+			};
+			super: {
+				strict: (
+					...args: ArgsOf<typeof visibilityModifierPub.scope.super.strict>
+				) => ReturnType<typeof F.buildVisibilityModifier>;
+				coerce: (
+					...args: ArgsOf<typeof visibilityModifierPub.scope.super.coerce>
+				) => ReturnType<typeof F.buildVisibilityModifier>;
+			};
+			crate: {
+				strict: (
+					...args: ArgsOf<typeof visibilityModifierPub.scope.crate.strict>
+				) => ReturnType<typeof F.buildVisibilityModifier>;
+				coerce: (
+					...args: ArgsOf<typeof visibilityModifierPub.scope.crate.coerce>
+				) => ReturnType<typeof F.buildVisibilityModifier>;
+			};
+			inPath: {
+				strict: (
+					...args: ArgsOf<typeof visibilityModifierPub.scope.inPath.strict>
+				) => ReturnType<typeof F.buildVisibilityModifier>;
+				coerce: (
+					...args: ArgsOf<typeof visibilityModifierPub.scope.inPath.coerce>
+				) => ReturnType<typeof F.buildVisibilityModifier>;
+			};
 		};
 	};
 } = {
@@ -5043,64 +317,32 @@ export const visibilityModifier: typeof B.visibilityModifier & {
 	pub: {
 		strict: visibilityModifier$pub(F.buildVisibilityModifier, F.buildVisibilityModifierPub),
 		coerce: visibilityModifier$pub(F.buildVisibilityModifier, C.coerceToVisibilityModifierPub),
-		self: {
-			strict: visibilityModifier$self(F.buildVisibilityModifier, visibilityModifierPub.self.strict),
-			coerce: visibilityModifier$self(F.buildVisibilityModifier, visibilityModifierPub.self.coerce)
-		},
-		super: {
-			strict: visibilityModifier$super(F.buildVisibilityModifier, visibilityModifierPub.super.strict),
-			coerce: visibilityModifier$super(F.buildVisibilityModifier, visibilityModifierPub.super.coerce)
-		},
-		inPath: {
-			strict: visibilityModifier$pubInPath(F.buildVisibilityModifier, visibilityModifierPub.inPath.strict),
-			coerce: visibilityModifier$pubInPath(F.buildVisibilityModifier, visibilityModifierPub.inPath.coerce)
-		},
-		metavariable: {
-			strict: visibilityModifier$metavariable(F.buildVisibilityModifier, visibilityModifierPub.metavariable.strict),
-			coerce: visibilityModifier$metavariable(F.buildVisibilityModifier, visibilityModifierPub.metavariable.coerce)
-		},
-		identifier: {
-			strict: visibilityModifier$identifier(F.buildVisibilityModifier, visibilityModifierPub.identifier.strict),
-			coerce: visibilityModifier$identifier(F.buildVisibilityModifier, visibilityModifierPub.identifier.coerce)
-		},
-		scopedIdentifier: {
-			strict: visibilityModifier$scopedIdentifier(
-				F.buildVisibilityModifier,
-				visibilityModifierPub.scopedIdentifier.strict
-			),
-			coerce: visibilityModifier$scopedIdentifier(
-				F.buildVisibilityModifier,
-				visibilityModifierPub.scopedIdentifier.coerce
-			)
+		scope: {
+			strict: visibilityModifier$pub$scope(F.buildVisibilityModifier, visibilityModifierPub.scope.strict),
+			coerce: visibilityModifier$pub$scope(F.buildVisibilityModifier, visibilityModifierPub.scope.coerce),
+			self: {
+				strict: visibilityModifier$pub$scope$self(F.buildVisibilityModifier, visibilityModifierPub.scope.self.strict),
+				coerce: visibilityModifier$pub$scope$self(F.buildVisibilityModifier, visibilityModifierPub.scope.self.coerce)
+			},
+			super: {
+				strict: visibilityModifier$pub$scope$super(F.buildVisibilityModifier, visibilityModifierPub.scope.super.strict),
+				coerce: visibilityModifier$pub$scope$super(F.buildVisibilityModifier, visibilityModifierPub.scope.super.coerce)
+			},
+			crate: {
+				strict: visibilityModifier$pub$scope$crate(F.buildVisibilityModifier, visibilityModifierPub.scope.crate.strict),
+				coerce: visibilityModifier$pub$scope$crate(F.buildVisibilityModifier, visibilityModifierPub.scope.crate.coerce)
+			},
+			inPath: {
+				strict: visibilityModifier$pub$scope$inPath(
+					F.buildVisibilityModifier,
+					visibilityModifierPub.scope.inPath.strict
+				),
+				coerce: visibilityModifier$pub$scope$inPath(
+					F.buildVisibilityModifier,
+					visibilityModifierPub.scope.inPath.coerce
+				)
+			}
 		}
-	}
-};
-
-const functionTypeTraitForm$typeIdentifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const functionTypeTraitForm$scopedTypeIdentifier =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const functionTypeTraitForm: {
-	typeIdentifier: {
-		strict: (...args: ArgsOf<typeof F.buildTypeIdentifier>) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTypeIdentifier>) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
-	};
-	scopedTypeIdentifier: {
-		strict: (...args: ArgsOf<typeof F.buildScopedTypeIdentifier>) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
-		coerce: (...args: ArgsOf<typeof C.coerceToScopedTypeIdentifier>) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
-	};
-} = {
-	typeIdentifier: {
-		strict: functionTypeTraitForm$typeIdentifier(F.buildFunctionTypeTraitForm, F.buildTypeIdentifier),
-		coerce: functionTypeTraitForm$typeIdentifier(F.buildFunctionTypeTraitForm, C.coerceToTypeIdentifier)
-	},
-	scopedTypeIdentifier: {
-		strict: functionTypeTraitForm$scopedTypeIdentifier(F.buildFunctionTypeTraitForm, F.buildScopedTypeIdentifier),
-		coerce: functionTypeTraitForm$scopedTypeIdentifier(F.buildFunctionTypeTraitForm, C.coerceToScopedTypeIdentifier)
 	}
 };
 
@@ -5112,18 +354,6 @@ const functionType$traitForm =
 	): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
-	};
-const functionType$typeIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const functionType$scopedTypeIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
 const functionType$fnForm =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5145,34 +375,6 @@ export const functionType: typeof B.functionType & {
 			},
 			options?: OptionsArg<typeof C.coerceToFunctionType>
 		) => ReturnType<typeof C.coerceToFunctionType>;
-		typeIdentifier: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
-					content: ArgsOf<typeof functionTypeTraitForm.typeIdentifier.strict>;
-				},
-				options?: OptionsArg<typeof F.buildFunctionType>
-			) => ReturnType<typeof F.buildFunctionType>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
-					content: ArgsOf<typeof functionTypeTraitForm.typeIdentifier.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToFunctionType>
-			) => ReturnType<typeof C.coerceToFunctionType>;
-		};
-		scopedTypeIdentifier: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
-					content: ArgsOf<typeof functionTypeTraitForm.scopedTypeIdentifier.strict>;
-				},
-				options?: OptionsArg<typeof F.buildFunctionType>
-			) => ReturnType<typeof F.buildFunctionType>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
-					content: ArgsOf<typeof functionTypeTraitForm.scopedTypeIdentifier.coerce>;
-				},
-				options?: OptionsArg<typeof C.coerceToFunctionType>
-			) => ReturnType<typeof C.coerceToFunctionType>;
-		};
 	};
 	fnForm: {
 		strict: (
@@ -5192,18 +394,7 @@ export const functionType: typeof B.functionType & {
 	...B.functionType,
 	traitForm: {
 		strict: functionType$traitForm(F.buildFunctionType, F.buildFunctionTypeTraitForm),
-		coerce: functionType$traitForm(C.coerceToFunctionType, C.coerceToFunctionTypeTraitForm),
-		typeIdentifier: {
-			strict: functionType$typeIdentifier(F.buildFunctionType, functionTypeTraitForm.typeIdentifier.strict),
-			coerce: functionType$typeIdentifier(C.coerceToFunctionType, functionTypeTraitForm.typeIdentifier.coerce)
-		},
-		scopedTypeIdentifier: {
-			strict: functionType$scopedTypeIdentifier(F.buildFunctionType, functionTypeTraitForm.scopedTypeIdentifier.strict),
-			coerce: functionType$scopedTypeIdentifier(
-				C.coerceToFunctionType,
-				functionTypeTraitForm.scopedTypeIdentifier.coerce
-			)
-		}
+		coerce: functionType$traitForm(C.coerceToFunctionType, C.coerceToFunctionTypeTraitForm)
 	},
 	fnForm: {
 		strict: functionType$fnForm(F.buildFunctionType, F.buildFunctionTypeFnForm),
@@ -5211,1093 +402,228 @@ export const functionType: typeof B.functionType & {
 	}
 };
 
-const fieldExpression$fieldIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { field: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(seated) } as never, options as never);
-	};
-const fieldExpression$decimal =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'suffix') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) } as never, options as never);
-	};
-const fieldExpression$hex =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'suffix') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) } as never, options as never);
-	};
-const fieldExpression$binary =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'suffix') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) } as never, options as never);
-	};
-const fieldExpression$octal =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'suffix') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) } as never, options as never);
-	};
-export const fieldExpression: typeof B.fieldExpression & {
-	fieldIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
-				field: ArgsOf<typeof F.buildFieldIdentifier>[0];
-			},
-			options?: OptionsArg<typeof F.buildFieldExpression>
-		) => ReturnType<typeof F.buildFieldExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
-				field: ArgsOf<typeof C.coerceToFieldIdentifier>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToFieldExpression>
-		) => ReturnType<typeof C.coerceToFieldExpression>;
-	};
-	decimal: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> &
-				ArgsOf<typeof F.buildIntegerLiteralDecimal>[0],
-			options?: OptionsArg<typeof F.buildFieldExpression>
-		) => ReturnType<typeof F.buildFieldExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> &
-				ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0],
-			options?: OptionsArg<typeof C.coerceToFieldExpression>
-		) => ReturnType<typeof C.coerceToFieldExpression>;
-	};
-	hex: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & ArgsOf<typeof F.buildIntegerLiteralHex>[0],
-			options?: OptionsArg<typeof F.buildFieldExpression>
-		) => ReturnType<typeof F.buildFieldExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> &
-				ArgsOf<typeof C.coerceToIntegerLiteralHex>[0],
-			options?: OptionsArg<typeof C.coerceToFieldExpression>
-		) => ReturnType<typeof C.coerceToFieldExpression>;
-	};
-	binary: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> &
-				ArgsOf<typeof F.buildIntegerLiteralBinary>[0],
-			options?: OptionsArg<typeof F.buildFieldExpression>
-		) => ReturnType<typeof F.buildFieldExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> &
-				ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0],
-			options?: OptionsArg<typeof C.coerceToFieldExpression>
-		) => ReturnType<typeof C.coerceToFieldExpression>;
-	};
-	octal: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> &
-				ArgsOf<typeof F.buildIntegerLiteralOctal>[0],
-			options?: OptionsArg<typeof F.buildFieldExpression>
-		) => ReturnType<typeof F.buildFieldExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> &
-				ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0],
-			options?: OptionsArg<typeof C.coerceToFieldExpression>
-		) => ReturnType<typeof C.coerceToFieldExpression>;
-	};
-} = {
-	...B.fieldExpression,
-	fieldIdentifier: {
-		strict: fieldExpression$fieldIdentifier(F.buildFieldExpression, F.buildFieldIdentifier),
-		coerce: fieldExpression$fieldIdentifier(C.coerceToFieldExpression, C.coerceToFieldIdentifier)
-	},
-	decimal: {
-		strict: fieldExpression$decimal(F.buildFieldExpression, F.buildIntegerLiteralDecimal),
-		coerce: fieldExpression$decimal(C.coerceToFieldExpression, C.coerceToIntegerLiteralDecimal)
-	},
-	hex: {
-		strict: fieldExpression$hex(F.buildFieldExpression, F.buildIntegerLiteralHex),
-		coerce: fieldExpression$hex(C.coerceToFieldExpression, C.coerceToIntegerLiteralHex)
-	},
-	binary: {
-		strict: fieldExpression$binary(F.buildFieldExpression, F.buildIntegerLiteralBinary),
-		coerce: fieldExpression$binary(C.coerceToFieldExpression, C.coerceToIntegerLiteralBinary)
-	},
-	octal: {
-		strict: fieldExpression$octal(F.buildFieldExpression, F.buildIntegerLiteralOctal),
-		coerce: fieldExpression$octal(C.coerceToFieldExpression, C.coerceToIntegerLiteralOctal)
-	}
-};
-
-const genericFunction$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) } as never, options as never);
-	};
-const genericFunction$scopedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'name') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const genericFunction$fieldExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'value' || key === 'field') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-export const genericFunction: typeof B.genericFunction & {
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildGenericFunction>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildIdentifier>;
-			},
-			options?: OptionsArg<typeof F.buildGenericFunction>
-		) => ReturnType<typeof F.buildGenericFunction>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToGenericFunction>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof C.coerceToGenericFunction>
-		) => ReturnType<typeof C.coerceToGenericFunction>;
-	};
-	scopedIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildGenericFunction>[0], 'function'> &
-				ArgsOf<typeof F.buildScopedIdentifier>[0],
-			options?: OptionsArg<typeof F.buildGenericFunction>
-		) => ReturnType<typeof F.buildGenericFunction>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToGenericFunction>[0], 'function'> &
-				ArgsOf<typeof C.coerceToScopedIdentifier>[0],
-			options?: OptionsArg<typeof C.coerceToGenericFunction>
-		) => ReturnType<typeof C.coerceToGenericFunction>;
-	};
-	fieldExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildGenericFunction>[0], 'function'> & ArgsOf<typeof F.buildFieldExpression>[0],
-			options?: OptionsArg<typeof F.buildGenericFunction>
-		) => ReturnType<typeof F.buildGenericFunction>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToGenericFunction>[0], 'function'> &
-				ArgsOf<typeof C.coerceToFieldExpression>[0],
-			options?: OptionsArg<typeof C.coerceToGenericFunction>
-		) => ReturnType<typeof C.coerceToGenericFunction>;
-	};
-} = {
-	...B.genericFunction,
-	identifier: {
-		strict: genericFunction$identifier(F.buildGenericFunction, F.buildIdentifier),
-		coerce: genericFunction$identifier(C.coerceToGenericFunction, C.coerceToIdentifier)
-	},
-	scopedIdentifier: {
-		strict: genericFunction$scopedIdentifier(F.buildGenericFunction, F.buildScopedIdentifier),
-		coerce: genericFunction$scopedIdentifier(C.coerceToGenericFunction, C.coerceToScopedIdentifier)
-	},
-	fieldExpression: {
-		strict: genericFunction$fieldExpression(F.buildGenericFunction, F.buildFieldExpression),
-		coerce: genericFunction$fieldExpression(C.coerceToGenericFunction, C.coerceToFieldExpression)
-	}
-};
-
-const abstractType$typeIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { trait: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(seated) } as never, options as never);
-	};
-const abstractType$scopedTypeIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'name') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(inner) } as never, options as never);
-	};
-const abstractType$removedTraitBound =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { trait: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(seated) } as never, options as never);
-	};
-const abstractType$genericType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'type' || key === 'typeArguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(inner) } as never, options as never);
-	};
-const abstractType$functionType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'forLifetimes' || key === 'content' || key === 'parameters' || key === 'returnType')
-				inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(inner) } as never, options as never);
-	};
-const abstractType$tupleType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & { trait: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { trait: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(seated) } as never, options as never);
-	};
-const abstractType$boundedType =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'trait'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'right') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, trait: _c(child)(inner) } as never, options as never);
-	};
-export const abstractType: typeof B.abstractType & {
-	typeIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
-				trait: ArgsOf<typeof F.buildTypeIdentifier>[0];
-			},
-			options?: OptionsArg<typeof F.buildAbstractType>
-		) => ReturnType<typeof F.buildAbstractType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
-				trait: ArgsOf<typeof C.coerceToTypeIdentifier>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToAbstractType>
-		) => ReturnType<typeof C.coerceToAbstractType>;
-	};
-	scopedTypeIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & ArgsOf<typeof F.buildScopedTypeIdentifier>[0],
-			options?: OptionsArg<typeof F.buildAbstractType>
-		) => ReturnType<typeof F.buildAbstractType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> &
-				ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0],
-			options?: OptionsArg<typeof C.coerceToAbstractType>
-		) => ReturnType<typeof C.coerceToAbstractType>;
-	};
-	removedTraitBound: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & {
-				trait: ArgsOf<typeof F.buildRemovedTraitBound>[0];
-			},
-			options?: OptionsArg<typeof F.buildAbstractType>
-		) => ReturnType<typeof F.buildAbstractType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
-				trait: ArgsOf<typeof C.coerceToRemovedTraitBound>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToAbstractType>
-		) => ReturnType<typeof C.coerceToAbstractType>;
-	};
-	genericType: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & ArgsOf<typeof F.buildGenericType>[0],
-			options?: OptionsArg<typeof F.buildAbstractType>
-		) => ReturnType<typeof F.buildAbstractType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & ArgsOf<typeof C.coerceToGenericType>[0],
-			options?: OptionsArg<typeof C.coerceToAbstractType>
-		) => ReturnType<typeof C.coerceToAbstractType>;
-	};
-	functionType: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & ArgsOf<typeof F.buildFunctionType>[0],
-			options?: OptionsArg<typeof F.buildAbstractType>
-		) => ReturnType<typeof F.buildAbstractType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & ArgsOf<typeof C.coerceToFunctionType>[0],
-			options?: OptionsArg<typeof C.coerceToAbstractType>
-		) => ReturnType<typeof C.coerceToAbstractType>;
-	};
-	tupleType: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & { trait: ArgsOf<typeof F.buildTupleType>[0] },
-			options?: OptionsArg<typeof F.buildAbstractType>
-		) => ReturnType<typeof F.buildAbstractType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & {
-				trait: ArgsOf<typeof C.coerceToTupleType>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToAbstractType>
-		) => ReturnType<typeof C.coerceToAbstractType>;
-	};
-	boundedType: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAbstractType>[0], 'trait'> & ArgsOf<typeof F.buildBoundedType>[0],
-			options?: OptionsArg<typeof F.buildAbstractType>
-		) => ReturnType<typeof F.buildAbstractType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAbstractType>[0], 'trait'> & ArgsOf<typeof C.coerceToBoundedType>[0],
-			options?: OptionsArg<typeof C.coerceToAbstractType>
-		) => ReturnType<typeof C.coerceToAbstractType>;
-	};
-} = {
-	...B.abstractType,
-	typeIdentifier: {
-		strict: abstractType$typeIdentifier(F.buildAbstractType, F.buildTypeIdentifier),
-		coerce: abstractType$typeIdentifier(C.coerceToAbstractType, C.coerceToTypeIdentifier)
-	},
-	scopedTypeIdentifier: {
-		strict: abstractType$scopedTypeIdentifier(F.buildAbstractType, F.buildScopedTypeIdentifier),
-		coerce: abstractType$scopedTypeIdentifier(C.coerceToAbstractType, C.coerceToScopedTypeIdentifier)
-	},
-	removedTraitBound: {
-		strict: abstractType$removedTraitBound(F.buildAbstractType, F.buildRemovedTraitBound),
-		coerce: abstractType$removedTraitBound(C.coerceToAbstractType, C.coerceToRemovedTraitBound)
-	},
-	genericType: {
-		strict: abstractType$genericType(F.buildAbstractType, F.buildGenericType),
-		coerce: abstractType$genericType(C.coerceToAbstractType, C.coerceToGenericType)
-	},
-	functionType: {
-		strict: abstractType$functionType(F.buildAbstractType, F.buildFunctionType),
-		coerce: abstractType$functionType(C.coerceToAbstractType, C.coerceToFunctionType)
-	},
-	tupleType: {
-		strict: abstractType$tupleType(F.buildAbstractType, F.buildTupleType),
-		coerce: abstractType$tupleType(C.coerceToAbstractType, C.coerceToTupleType)
-	},
-	boundedType: {
-		strict: abstractType$boundedType(F.buildAbstractType, F.buildBoundedType),
-		coerce: abstractType$boundedType(C.coerceToAbstractType, C.coerceToBoundedType)
-	}
-};
-
-const dynamicType$higherRankedTraitBound =
+const bracketedType$abstract =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const dynamicType$typeIdentifier =
+const bracketedType$reference =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const dynamicType$scopedTypeIdentifier =
+const bracketedType$metavariable =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const dynamicType$genericType =
+const bracketedType$generic =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const dynamicType$functionType =
+const bracketedType$scopedIdentifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const dynamicType$tupleType =
+const bracketedType$tuple =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const dynamicType: typeof B.dynamicType & {
-	higherRankedTraitBound: {
-		strict: (...args: ArgsOf<typeof F.buildHigherRankedTraitBound>) => ReturnType<typeof F.buildDynamicType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToHigherRankedTraitBound>) => ReturnType<typeof F.buildDynamicType>;
+const bracketedType$unit =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const bracketedType$array =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const bracketedType$function =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const bracketedType$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const bracketedType$macroInvocation =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const bracketedType$never =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const bracketedType$dynamic =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const bracketedType$bounded =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const bracketedType$removedTraitBound =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const bracketedType$qualifiedType =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const bracketedType$function$traitForm =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const bracketedType$function$fnForm =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const bracketedType: typeof B.bracketedType & {
+	abstract: {
+		strict: (...args: ArgsOf<typeof F.buildAbstractType>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToAbstractType>) => ReturnType<typeof F.buildBracketedType>;
 	};
-	typeIdentifier: {
-		strict: (...args: ArgsOf<typeof F.buildTypeIdentifier>) => ReturnType<typeof F.buildDynamicType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTypeIdentifier>) => ReturnType<typeof F.buildDynamicType>;
-	};
-	scopedTypeIdentifier: {
-		strict: (...args: ArgsOf<typeof F.buildScopedTypeIdentifier>) => ReturnType<typeof F.buildDynamicType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToScopedTypeIdentifier>) => ReturnType<typeof F.buildDynamicType>;
-	};
-	genericType: {
-		strict: (...args: ArgsOf<typeof F.buildGenericType>) => ReturnType<typeof F.buildDynamicType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToGenericType>) => ReturnType<typeof F.buildDynamicType>;
-	};
-	functionType: {
-		strict: (...args: ArgsOf<typeof F.buildFunctionType>) => ReturnType<typeof F.buildDynamicType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToFunctionType>) => ReturnType<typeof F.buildDynamicType>;
-	};
-	tupleType: {
-		strict: (...args: ArgsOf<typeof F.buildTupleType>) => ReturnType<typeof F.buildDynamicType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTupleType>) => ReturnType<typeof F.buildDynamicType>;
-	};
-} = {
-	...B.dynamicType,
-	higherRankedTraitBound: {
-		strict: dynamicType$higherRankedTraitBound(F.buildDynamicType, F.buildHigherRankedTraitBound),
-		coerce: dynamicType$higherRankedTraitBound(F.buildDynamicType, C.coerceToHigherRankedTraitBound)
-	},
-	typeIdentifier: {
-		strict: dynamicType$typeIdentifier(F.buildDynamicType, F.buildTypeIdentifier),
-		coerce: dynamicType$typeIdentifier(F.buildDynamicType, C.coerceToTypeIdentifier)
-	},
-	scopedTypeIdentifier: {
-		strict: dynamicType$scopedTypeIdentifier(F.buildDynamicType, F.buildScopedTypeIdentifier),
-		coerce: dynamicType$scopedTypeIdentifier(F.buildDynamicType, C.coerceToScopedTypeIdentifier)
-	},
-	genericType: {
-		strict: dynamicType$genericType(F.buildDynamicType, F.buildGenericType),
-		coerce: dynamicType$genericType(F.buildDynamicType, C.coerceToGenericType)
-	},
-	functionType: {
-		strict: dynamicType$functionType(F.buildDynamicType, F.buildFunctionType),
-		coerce: dynamicType$functionType(F.buildDynamicType, C.coerceToFunctionType)
-	},
-	tupleType: {
-		strict: dynamicType$tupleType(F.buildDynamicType, F.buildTupleType),
-		coerce: dynamicType$tupleType(F.buildDynamicType, C.coerceToTupleType)
-	}
-};
-
-const macroInvocation$scopedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'macro'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'name') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, macro: _c(child)(inner) } as never, options as never);
-	};
-const macroInvocation$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'macro'> & { macro: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { macro: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, macro: _c(child)(...seated) } as never, options as never);
-	};
-const macroInvocation$paren =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { arguments: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
-	};
-const macroInvocation$bracket =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { arguments: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
-	};
-const macroInvocation$brace =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { arguments: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
-	};
-const macroInvocation$scopedIdentifier$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'macro'> & ArgsOf<typeof F.buildScopedIdentifier>[0],
-	options?: OptionsArg<typeof F.buildMacroInvocation>
-) => ReturnType<typeof F.buildMacroInvocation> = macroInvocation$scopedIdentifier(
-	F.buildMacroInvocation,
-	F.buildScopedIdentifier
-);
-const macroInvocation$scopedIdentifier$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'macro'> & ArgsOf<typeof C.coerceToScopedIdentifier>[0],
-	options?: OptionsArg<typeof C.coerceToMacroInvocation>
-) => ReturnType<typeof C.coerceToMacroInvocation> = macroInvocation$scopedIdentifier(
-	C.coerceToMacroInvocation,
-	C.coerceToScopedIdentifier
-);
-const macroInvocation$scopedIdentifier$paren =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { arguments: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
-	};
-const macroInvocation$scopedIdentifier$bracket =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { arguments: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
-	};
-const macroInvocation$scopedIdentifier$brace =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { arguments: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
-	};
-const macroInvocation$identifier$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'macro'> & { macro: ArgsOf<typeof F.buildIdentifier> },
-	options?: OptionsArg<typeof F.buildMacroInvocation>
-) => ReturnType<typeof F.buildMacroInvocation> = macroInvocation$identifier(F.buildMacroInvocation, F.buildIdentifier);
-const macroInvocation$identifier$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'macro'> & {
-		macro: ArgsOf<typeof C.coerceToIdentifier>;
-	},
-	options?: OptionsArg<typeof C.coerceToMacroInvocation>
-) => ReturnType<typeof C.coerceToMacroInvocation> = macroInvocation$identifier(
-	C.coerceToMacroInvocation,
-	C.coerceToIdentifier
-);
-const macroInvocation$identifier$paren =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { arguments: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
-	};
-const macroInvocation$identifier$bracket =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { arguments: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
-	};
-const macroInvocation$identifier$brace =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { arguments: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...seated) } as never, options as never);
-	};
-export const macroInvocation: typeof B.macroInvocation & {
-	scopedIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'macro'> & ArgsOf<typeof F.buildScopedIdentifier>[0],
-			options?: OptionsArg<typeof F.buildMacroInvocation>
-		) => ReturnType<typeof F.buildMacroInvocation>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'macro'> &
-				ArgsOf<typeof C.coerceToScopedIdentifier>[0],
-			options?: OptionsArg<typeof C.coerceToMacroInvocation>
-		) => ReturnType<typeof C.coerceToMacroInvocation>;
-		paren: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$scopedIdentifier$applied>[0], 'arguments'> & {
-					arguments: ArgsOf<typeof F.buildDelimTokenTreeParen>;
-				},
-				options?: OptionsArg<typeof macroInvocation$scopedIdentifier$applied>
-			) => ReturnType<typeof macroInvocation$scopedIdentifier$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$scopedIdentifier$appliedCoerce>[0], 'arguments'> & {
-					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeParen>;
-				},
-				options?: OptionsArg<typeof macroInvocation$scopedIdentifier$appliedCoerce>
-			) => ReturnType<typeof macroInvocation$scopedIdentifier$appliedCoerce>;
-		};
-		bracket: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$scopedIdentifier$applied>[0], 'arguments'> & {
-					arguments: ArgsOf<typeof F.buildDelimTokenTreeBracket>;
-				},
-				options?: OptionsArg<typeof macroInvocation$scopedIdentifier$applied>
-			) => ReturnType<typeof macroInvocation$scopedIdentifier$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$scopedIdentifier$appliedCoerce>[0], 'arguments'> & {
-					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeBracket>;
-				},
-				options?: OptionsArg<typeof macroInvocation$scopedIdentifier$appliedCoerce>
-			) => ReturnType<typeof macroInvocation$scopedIdentifier$appliedCoerce>;
-		};
-		brace: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$scopedIdentifier$applied>[0], 'arguments'> & {
-					arguments: ArgsOf<typeof F.buildDelimTokenTreeBrace>;
-				},
-				options?: OptionsArg<typeof macroInvocation$scopedIdentifier$applied>
-			) => ReturnType<typeof macroInvocation$scopedIdentifier$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$scopedIdentifier$appliedCoerce>[0], 'arguments'> & {
-					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeBrace>;
-				},
-				options?: OptionsArg<typeof macroInvocation$scopedIdentifier$appliedCoerce>
-			) => ReturnType<typeof macroInvocation$scopedIdentifier$appliedCoerce>;
-		};
-	};
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'macro'> & { macro: ArgsOf<typeof F.buildIdentifier> },
-			options?: OptionsArg<typeof F.buildMacroInvocation>
-		) => ReturnType<typeof F.buildMacroInvocation>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'macro'> & {
-				macro: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof C.coerceToMacroInvocation>
-		) => ReturnType<typeof C.coerceToMacroInvocation>;
-		paren: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$identifier$applied>[0], 'arguments'> & {
-					arguments: ArgsOf<typeof F.buildDelimTokenTreeParen>;
-				},
-				options?: OptionsArg<typeof macroInvocation$identifier$applied>
-			) => ReturnType<typeof macroInvocation$identifier$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$identifier$appliedCoerce>[0], 'arguments'> & {
-					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeParen>;
-				},
-				options?: OptionsArg<typeof macroInvocation$identifier$appliedCoerce>
-			) => ReturnType<typeof macroInvocation$identifier$appliedCoerce>;
-		};
-		bracket: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$identifier$applied>[0], 'arguments'> & {
-					arguments: ArgsOf<typeof F.buildDelimTokenTreeBracket>;
-				},
-				options?: OptionsArg<typeof macroInvocation$identifier$applied>
-			) => ReturnType<typeof macroInvocation$identifier$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$identifier$appliedCoerce>[0], 'arguments'> & {
-					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeBracket>;
-				},
-				options?: OptionsArg<typeof macroInvocation$identifier$appliedCoerce>
-			) => ReturnType<typeof macroInvocation$identifier$appliedCoerce>;
-		};
-		brace: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$identifier$applied>[0], 'arguments'> & {
-					arguments: ArgsOf<typeof F.buildDelimTokenTreeBrace>;
-				},
-				options?: OptionsArg<typeof macroInvocation$identifier$applied>
-			) => ReturnType<typeof macroInvocation$identifier$applied>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof macroInvocation$identifier$appliedCoerce>[0], 'arguments'> & {
-					arguments: ArgsOf<typeof C.coerceToDelimTokenTreeBrace>;
-				},
-				options?: OptionsArg<typeof macroInvocation$identifier$appliedCoerce>
-			) => ReturnType<typeof macroInvocation$identifier$appliedCoerce>;
-		};
-	};
-	paren: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'arguments'> & {
-				arguments: ArgsOf<typeof F.buildDelimTokenTreeParen>;
-			},
-			options?: OptionsArg<typeof F.buildMacroInvocation>
-		) => ReturnType<typeof F.buildMacroInvocation>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'arguments'> & {
-				arguments: ArgsOf<typeof C.coerceToDelimTokenTreeParen>;
-			},
-			options?: OptionsArg<typeof C.coerceToMacroInvocation>
-		) => ReturnType<typeof C.coerceToMacroInvocation>;
-	};
-	bracket: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'arguments'> & {
-				arguments: ArgsOf<typeof F.buildDelimTokenTreeBracket>;
-			},
-			options?: OptionsArg<typeof F.buildMacroInvocation>
-		) => ReturnType<typeof F.buildMacroInvocation>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'arguments'> & {
-				arguments: ArgsOf<typeof C.coerceToDelimTokenTreeBracket>;
-			},
-			options?: OptionsArg<typeof C.coerceToMacroInvocation>
-		) => ReturnType<typeof C.coerceToMacroInvocation>;
-	};
-	brace: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMacroInvocation>[0], 'arguments'> & {
-				arguments: ArgsOf<typeof F.buildDelimTokenTreeBrace>;
-			},
-			options?: OptionsArg<typeof F.buildMacroInvocation>
-		) => ReturnType<typeof F.buildMacroInvocation>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMacroInvocation>[0], 'arguments'> & {
-				arguments: ArgsOf<typeof C.coerceToDelimTokenTreeBrace>;
-			},
-			options?: OptionsArg<typeof C.coerceToMacroInvocation>
-		) => ReturnType<typeof C.coerceToMacroInvocation>;
-	};
-} = {
-	...B.macroInvocation,
-	scopedIdentifier: {
-		strict: macroInvocation$scopedIdentifier(F.buildMacroInvocation, F.buildScopedIdentifier),
-		coerce: macroInvocation$scopedIdentifier(C.coerceToMacroInvocation, C.coerceToScopedIdentifier),
-		paren: {
-			strict: macroInvocation$scopedIdentifier$paren(
-				macroInvocation$scopedIdentifier$applied,
-				F.buildDelimTokenTreeParen
-			),
-			coerce: macroInvocation$scopedIdentifier$paren(
-				macroInvocation$scopedIdentifier$appliedCoerce,
-				C.coerceToDelimTokenTreeParen
-			)
-		},
-		bracket: {
-			strict: macroInvocation$scopedIdentifier$bracket(
-				macroInvocation$scopedIdentifier$applied,
-				F.buildDelimTokenTreeBracket
-			),
-			coerce: macroInvocation$scopedIdentifier$bracket(
-				macroInvocation$scopedIdentifier$appliedCoerce,
-				C.coerceToDelimTokenTreeBracket
-			)
-		},
-		brace: {
-			strict: macroInvocation$scopedIdentifier$brace(
-				macroInvocation$scopedIdentifier$applied,
-				F.buildDelimTokenTreeBrace
-			),
-			coerce: macroInvocation$scopedIdentifier$brace(
-				macroInvocation$scopedIdentifier$appliedCoerce,
-				C.coerceToDelimTokenTreeBrace
-			)
-		}
-	},
-	identifier: {
-		strict: macroInvocation$identifier(F.buildMacroInvocation, F.buildIdentifier),
-		coerce: macroInvocation$identifier(C.coerceToMacroInvocation, C.coerceToIdentifier),
-		paren: {
-			strict: macroInvocation$identifier$paren(macroInvocation$identifier$applied, F.buildDelimTokenTreeParen),
-			coerce: macroInvocation$identifier$paren(macroInvocation$identifier$appliedCoerce, C.coerceToDelimTokenTreeParen)
-		},
-		bracket: {
-			strict: macroInvocation$identifier$bracket(macroInvocation$identifier$applied, F.buildDelimTokenTreeBracket),
-			coerce: macroInvocation$identifier$bracket(
-				macroInvocation$identifier$appliedCoerce,
-				C.coerceToDelimTokenTreeBracket
-			)
-		},
-		brace: {
-			strict: macroInvocation$identifier$brace(macroInvocation$identifier$applied, F.buildDelimTokenTreeBrace),
-			coerce: macroInvocation$identifier$brace(macroInvocation$identifier$appliedCoerce, C.coerceToDelimTokenTreeBrace)
-		}
-	},
-	paren: {
-		strict: macroInvocation$paren(F.buildMacroInvocation, F.buildDelimTokenTreeParen),
-		coerce: macroInvocation$paren(C.coerceToMacroInvocation, C.coerceToDelimTokenTreeParen)
-	},
-	bracket: {
-		strict: macroInvocation$bracket(F.buildMacroInvocation, F.buildDelimTokenTreeBracket),
-		coerce: macroInvocation$bracket(C.coerceToMacroInvocation, C.coerceToDelimTokenTreeBracket)
-	},
-	brace: {
-		strict: macroInvocation$brace(F.buildMacroInvocation, F.buildDelimTokenTreeBrace),
-		coerce: macroInvocation$brace(C.coerceToMacroInvocation, C.coerceToDelimTokenTreeBrace)
-	}
-};
-
-const scopedTypeIdentifierInExpressionPosition$self =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const scopedTypeIdentifierInExpressionPosition$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(...seated) } as never, options as never);
-	};
-const scopedTypeIdentifierInExpressionPosition$metavariable =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
-	};
-const scopedTypeIdentifierInExpressionPosition$super =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const scopedTypeIdentifierInExpressionPosition$crate =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, path: _c(child)() } as never, options as never);
-const scopedTypeIdentifierInExpressionPosition$scopedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & { path: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { path: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(seated) } as never, options as never);
-	};
-const scopedTypeIdentifierInExpressionPosition$genericTypeWithTurbofish =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'path'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'type' || key === 'typeArguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, path: _c(child)(inner) } as never, options as never);
-	};
-export const scopedTypeIdentifierInExpressionPosition: typeof B.scopedTypeIdentifierInExpressionPosition & {
-	self: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
-		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
-	};
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildIdentifier>;
-			},
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
-		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	reference: {
+		strict: (...args: ArgsOf<typeof F.buildReferenceType>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToReferenceType>) => ReturnType<typeof F.buildBracketedType>;
 	};
 	metavariable: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildMetavariable>[0];
-			},
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
-		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToMetavariable>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+		strict: (...args: ArgsOf<typeof F.buildMetavariable>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToMetavariable>) => ReturnType<typeof F.buildBracketedType>;
 	};
-	super: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
-		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
-	};
-	crate: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
-		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'>,
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	generic: {
+		strict: (...args: ArgsOf<typeof F.buildGenericType>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToGenericType>) => ReturnType<typeof F.buildBracketedType>;
 	};
 	scopedIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'> & {
-				path: ArgsOf<typeof F.buildScopedIdentifier>[0];
-			},
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
-		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'> & {
-				path: ArgsOf<typeof C.coerceToScopedIdentifier>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+		strict: (...args: ArgsOf<typeof F.buildScopedTypeIdentifier>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToScopedTypeIdentifier>) => ReturnType<typeof F.buildBracketedType>;
 	};
-	genericTypeWithTurbofish: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0], 'path'> &
-				ArgsOf<typeof F.buildGenericTypeWithTurbofish>[0],
-			options?: OptionsArg<typeof F.buildScopedTypeIdentifierInExpressionPosition>
-		) => ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0], 'path'> &
-				ArgsOf<typeof C.coerceToGenericTypeWithTurbofish>[0],
-			options?: OptionsArg<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>
-		) => ReturnType<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>;
+	tuple: {
+		strict: (...args: ArgsOf<typeof F.buildTupleType>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTupleType>) => ReturnType<typeof F.buildBracketedType>;
+	};
+	unit: {
+		strict: (...args: ArgsOf<typeof F.buildUnitType>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToUnitType>) => ReturnType<typeof F.buildBracketedType>;
+	};
+	array: {
+		strict: (...args: ArgsOf<typeof F.buildArrayType>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToArrayType>) => ReturnType<typeof F.buildBracketedType>;
+	};
+	function: {
+		strict: (...args: ArgsOf<typeof F.buildFunctionType>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToFunctionType>) => ReturnType<typeof F.buildBracketedType>;
+		traitForm: {
+			strict: (...args: ArgsOf<typeof functionType.traitForm.strict>) => ReturnType<typeof F.buildBracketedType>;
+			coerce: (...args: ArgsOf<typeof functionType.traitForm.coerce>) => ReturnType<typeof F.buildBracketedType>;
+		};
+		fnForm: {
+			strict: (...args: ArgsOf<typeof functionType.fnForm.strict>) => ReturnType<typeof F.buildBracketedType>;
+			coerce: (...args: ArgsOf<typeof functionType.fnForm.coerce>) => ReturnType<typeof F.buildBracketedType>;
+		};
+	};
+	identifier: {
+		strict: (...args: ArgsOf<typeof F.buildTypeIdentifier>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTypeIdentifier>) => ReturnType<typeof F.buildBracketedType>;
+	};
+	macroInvocation: {
+		strict: (...args: ArgsOf<typeof F.buildMacroInvocation>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToMacroInvocation>) => ReturnType<typeof F.buildBracketedType>;
+	};
+	never: {
+		strict: (...args: ArgsOf<typeof F.buildNeverType>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNeverType>) => ReturnType<typeof F.buildBracketedType>;
+	};
+	dynamic: {
+		strict: (...args: ArgsOf<typeof F.buildDynamicType>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToDynamicType>) => ReturnType<typeof F.buildBracketedType>;
+	};
+	bounded: {
+		strict: (...args: ArgsOf<typeof F.buildBoundedType>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBoundedType>) => ReturnType<typeof F.buildBracketedType>;
+	};
+	removedTraitBound: {
+		strict: (...args: ArgsOf<typeof F.buildRemovedTraitBound>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToRemovedTraitBound>) => ReturnType<typeof F.buildBracketedType>;
+	};
+	qualifiedType: {
+		strict: (...args: ArgsOf<typeof F.buildQualifiedType>) => ReturnType<typeof F.buildBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToQualifiedType>) => ReturnType<typeof F.buildBracketedType>;
 	};
 } = {
-	...B.scopedTypeIdentifierInExpressionPosition,
-	self: {
-		strict: scopedTypeIdentifierInExpressionPosition$self(F.buildScopedTypeIdentifierInExpressionPosition, F.buildSelf),
-		coerce: scopedTypeIdentifierInExpressionPosition$self(
-			C.coerceToScopedTypeIdentifierInExpressionPosition,
-			C.coerceToSelf
-		)
+	...B.bracketedType,
+	abstract: {
+		strict: bracketedType$abstract(F.buildBracketedType, F.buildAbstractType),
+		coerce: bracketedType$abstract(F.buildBracketedType, C.coerceToAbstractType)
 	},
-	identifier: {
-		strict: scopedTypeIdentifierInExpressionPosition$identifier(
-			F.buildScopedTypeIdentifierInExpressionPosition,
-			F.buildIdentifier
-		),
-		coerce: scopedTypeIdentifierInExpressionPosition$identifier(
-			C.coerceToScopedTypeIdentifierInExpressionPosition,
-			C.coerceToIdentifier
-		)
+	reference: {
+		strict: bracketedType$reference(F.buildBracketedType, F.buildReferenceType),
+		coerce: bracketedType$reference(F.buildBracketedType, C.coerceToReferenceType)
 	},
 	metavariable: {
-		strict: scopedTypeIdentifierInExpressionPosition$metavariable(
-			F.buildScopedTypeIdentifierInExpressionPosition,
-			F.buildMetavariable
-		),
-		coerce: scopedTypeIdentifierInExpressionPosition$metavariable(
-			C.coerceToScopedTypeIdentifierInExpressionPosition,
-			C.coerceToMetavariable
-		)
+		strict: bracketedType$metavariable(F.buildBracketedType, F.buildMetavariable),
+		coerce: bracketedType$metavariable(F.buildBracketedType, C.coerceToMetavariable)
 	},
-	super: {
-		strict: scopedTypeIdentifierInExpressionPosition$super(
-			F.buildScopedTypeIdentifierInExpressionPosition,
-			F.buildSuper
-		),
-		coerce: scopedTypeIdentifierInExpressionPosition$super(
-			C.coerceToScopedTypeIdentifierInExpressionPosition,
-			C.coerceToSuper
-		)
-	},
-	crate: {
-		strict: scopedTypeIdentifierInExpressionPosition$crate(
-			F.buildScopedTypeIdentifierInExpressionPosition,
-			F.buildCrate
-		),
-		coerce: scopedTypeIdentifierInExpressionPosition$crate(
-			C.coerceToScopedTypeIdentifierInExpressionPosition,
-			C.coerceToCrate
-		)
+	generic: {
+		strict: bracketedType$generic(F.buildBracketedType, F.buildGenericType),
+		coerce: bracketedType$generic(F.buildBracketedType, C.coerceToGenericType)
 	},
 	scopedIdentifier: {
-		strict: scopedTypeIdentifierInExpressionPosition$scopedIdentifier(
-			F.buildScopedTypeIdentifierInExpressionPosition,
-			F.buildScopedIdentifier
-		),
-		coerce: scopedTypeIdentifierInExpressionPosition$scopedIdentifier(
-			C.coerceToScopedTypeIdentifierInExpressionPosition,
-			C.coerceToScopedIdentifier
-		)
+		strict: bracketedType$scopedIdentifier(F.buildBracketedType, F.buildScopedTypeIdentifier),
+		coerce: bracketedType$scopedIdentifier(F.buildBracketedType, C.coerceToScopedTypeIdentifier)
 	},
-	genericTypeWithTurbofish: {
-		strict: scopedTypeIdentifierInExpressionPosition$genericTypeWithTurbofish(
-			F.buildScopedTypeIdentifierInExpressionPosition,
-			F.buildGenericTypeWithTurbofish
-		),
-		coerce: scopedTypeIdentifierInExpressionPosition$genericTypeWithTurbofish(
-			C.coerceToScopedTypeIdentifierInExpressionPosition,
-			C.coerceToGenericTypeWithTurbofish
-		)
-	}
-};
-
-const rangeExpressionBinary$dotDot =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const rangeExpressionBinary$dotDotDot =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const rangeExpressionBinary$dotDotEq =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const rangeExpressionBinary: {
-	dotDot: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildRangeExpressionBinary>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildRangeExpressionBinary>
-		) => ReturnType<typeof F.buildRangeExpressionBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToRangeExpressionBinary>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToRangeExpressionBinary>
-		) => ReturnType<typeof C.coerceToRangeExpressionBinary>;
-	};
-	dotDotDot: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildRangeExpressionBinary>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildRangeExpressionBinary>
-		) => ReturnType<typeof F.buildRangeExpressionBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToRangeExpressionBinary>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToRangeExpressionBinary>
-		) => ReturnType<typeof C.coerceToRangeExpressionBinary>;
-	};
-	dotDotEq: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildRangeExpressionBinary>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildRangeExpressionBinary>
-		) => ReturnType<typeof F.buildRangeExpressionBinary>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToRangeExpressionBinary>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToRangeExpressionBinary>
-		) => ReturnType<typeof C.coerceToRangeExpressionBinary>;
-	};
-} = {
-	dotDot: {
-		strict: rangeExpressionBinary$dotDot(F.buildRangeExpressionBinary, TSKindId.DotDot),
-		coerce: rangeExpressionBinary$dotDot(C.coerceToRangeExpressionBinary, TSKindId.DotDot)
+	tuple: {
+		strict: bracketedType$tuple(F.buildBracketedType, F.buildTupleType),
+		coerce: bracketedType$tuple(F.buildBracketedType, C.coerceToTupleType)
 	},
-	dotDotDot: {
-		strict: rangeExpressionBinary$dotDotDot(F.buildRangeExpressionBinary, TSKindId.DotDotDot),
-		coerce: rangeExpressionBinary$dotDotDot(C.coerceToRangeExpressionBinary, TSKindId.DotDotDot)
+	unit: {
+		strict: bracketedType$unit(F.buildBracketedType, F.buildUnitType),
+		coerce: bracketedType$unit(F.buildBracketedType, C.coerceToUnitType)
 	},
-	dotDotEq: {
-		strict: rangeExpressionBinary$dotDotEq(F.buildRangeExpressionBinary, TSKindId.DotDotEq),
-		coerce: rangeExpressionBinary$dotDotEq(C.coerceToRangeExpressionBinary, TSKindId.DotDotEq)
+	array: {
+		strict: bracketedType$array(F.buildBracketedType, F.buildArrayType),
+		coerce: bracketedType$array(F.buildBracketedType, C.coerceToArrayType)
+	},
+	function: {
+		strict: bracketedType$function(F.buildBracketedType, F.buildFunctionType),
+		coerce: bracketedType$function(F.buildBracketedType, C.coerceToFunctionType),
+		traitForm: {
+			strict: bracketedType$function$traitForm(F.buildBracketedType, functionType.traitForm.strict),
+			coerce: bracketedType$function$traitForm(F.buildBracketedType, functionType.traitForm.coerce)
+		},
+		fnForm: {
+			strict: bracketedType$function$fnForm(F.buildBracketedType, functionType.fnForm.strict),
+			coerce: bracketedType$function$fnForm(F.buildBracketedType, functionType.fnForm.coerce)
+		}
+	},
+	identifier: {
+		strict: bracketedType$identifier(F.buildBracketedType, F.buildTypeIdentifier),
+		coerce: bracketedType$identifier(F.buildBracketedType, C.coerceToTypeIdentifier)
+	},
+	macroInvocation: {
+		strict: bracketedType$macroInvocation(F.buildBracketedType, F.buildMacroInvocation),
+		coerce: bracketedType$macroInvocation(F.buildBracketedType, C.coerceToMacroInvocation)
+	},
+	never: {
+		strict: bracketedType$never(F.buildBracketedType, F.buildNeverType),
+		coerce: bracketedType$never(F.buildBracketedType, C.coerceToNeverType)
+	},
+	dynamic: {
+		strict: bracketedType$dynamic(F.buildBracketedType, F.buildDynamicType),
+		coerce: bracketedType$dynamic(F.buildBracketedType, C.coerceToDynamicType)
+	},
+	bounded: {
+		strict: bracketedType$bounded(F.buildBracketedType, F.buildBoundedType),
+		coerce: bracketedType$bounded(F.buildBracketedType, C.coerceToBoundedType)
+	},
+	removedTraitBound: {
+		strict: bracketedType$removedTraitBound(F.buildBracketedType, F.buildRemovedTraitBound),
+		coerce: bracketedType$removedTraitBound(F.buildBracketedType, C.coerceToRemovedTraitBound)
+	},
+	qualifiedType: {
+		strict: bracketedType$qualifiedType(F.buildBracketedType, F.buildQualifiedType),
+		coerce: bracketedType$qualifiedType(F.buildBracketedType, C.coerceToQualifiedType)
 	}
 };
 
 const rangeExpression$binary =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const rangeExpression$dotDot =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const rangeExpression$dotDotDot =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const rangeExpression$dotDotEq =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -6317,30 +643,6 @@ export const rangeExpression: typeof B.rangeExpression & {
 	binary: {
 		strict: (...args: ArgsOf<typeof F.buildRangeExpressionBinary>) => ReturnType<typeof F.buildRangeExpression>;
 		coerce: (...args: ArgsOf<typeof C.coerceToRangeExpressionBinary>) => ReturnType<typeof F.buildRangeExpression>;
-		dotDot: {
-			strict: (
-				...args: ArgsOf<typeof rangeExpressionBinary.dotDot.strict>
-			) => ReturnType<typeof F.buildRangeExpression>;
-			coerce: (
-				...args: ArgsOf<typeof rangeExpressionBinary.dotDot.coerce>
-			) => ReturnType<typeof F.buildRangeExpression>;
-		};
-		dotDotDot: {
-			strict: (
-				...args: ArgsOf<typeof rangeExpressionBinary.dotDotDot.strict>
-			) => ReturnType<typeof F.buildRangeExpression>;
-			coerce: (
-				...args: ArgsOf<typeof rangeExpressionBinary.dotDotDot.coerce>
-			) => ReturnType<typeof F.buildRangeExpression>;
-		};
-		dotDotEq: {
-			strict: (
-				...args: ArgsOf<typeof rangeExpressionBinary.dotDotEq.strict>
-			) => ReturnType<typeof F.buildRangeExpression>;
-			coerce: (
-				...args: ArgsOf<typeof rangeExpressionBinary.dotDotEq.coerce>
-			) => ReturnType<typeof F.buildRangeExpression>;
-		};
 	};
 	postfix: {
 		strict: (...args: ArgsOf<typeof F.buildRangeExpressionPostfix>) => ReturnType<typeof F.buildRangeExpression>;
@@ -6358,19 +660,7 @@ export const rangeExpression: typeof B.rangeExpression & {
 	...B.rangeExpression,
 	binary: {
 		strict: rangeExpression$binary(F.buildRangeExpression, F.buildRangeExpressionBinary),
-		coerce: rangeExpression$binary(F.buildRangeExpression, C.coerceToRangeExpressionBinary),
-		dotDot: {
-			strict: rangeExpression$dotDot(F.buildRangeExpression, rangeExpressionBinary.dotDot.strict),
-			coerce: rangeExpression$dotDot(F.buildRangeExpression, rangeExpressionBinary.dotDot.coerce)
-		},
-		dotDotDot: {
-			strict: rangeExpression$dotDotDot(F.buildRangeExpression, rangeExpressionBinary.dotDotDot.strict),
-			coerce: rangeExpression$dotDotDot(F.buildRangeExpression, rangeExpressionBinary.dotDotDot.coerce)
-		},
-		dotDotEq: {
-			strict: rangeExpression$dotDotEq(F.buildRangeExpression, rangeExpressionBinary.dotDotEq.strict),
-			coerce: rangeExpression$dotDotEq(F.buildRangeExpression, rangeExpressionBinary.dotDotEq.coerce)
-		}
+		coerce: rangeExpression$binary(F.buildRangeExpression, C.coerceToRangeExpressionBinary)
 	},
 	postfix: {
 		strict: rangeExpression$postfix(F.buildRangeExpression, F.buildRangeExpressionPostfix),
@@ -6386,1911 +676,11 @@ export const rangeExpression: typeof B.rangeExpression & {
 	}
 };
 
-const unaryExpression$dash =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const unaryExpression$star =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const unaryExpression$bang =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-export const unaryExpression: typeof B.unaryExpression & {
-	dash: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUnaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildUnaryExpression>
-		) => ReturnType<typeof F.buildUnaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUnaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToUnaryExpression>
-		) => ReturnType<typeof C.coerceToUnaryExpression>;
-	};
-	star: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUnaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildUnaryExpression>
-		) => ReturnType<typeof F.buildUnaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUnaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToUnaryExpression>
-		) => ReturnType<typeof C.coerceToUnaryExpression>;
-	};
-	bang: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUnaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildUnaryExpression>
-		) => ReturnType<typeof F.buildUnaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUnaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToUnaryExpression>
-		) => ReturnType<typeof C.coerceToUnaryExpression>;
-	};
-} = {
-	...B.unaryExpression,
-	dash: {
-		strict: unaryExpression$dash(F.buildUnaryExpression, TSKindId.Dash),
-		coerce: unaryExpression$dash(C.coerceToUnaryExpression, TSKindId.Dash)
-	},
-	star: {
-		strict: unaryExpression$star(F.buildUnaryExpression, TSKindId.Star),
-		coerce: unaryExpression$star(C.coerceToUnaryExpression, TSKindId.Star)
-	},
-	bang: {
-		strict: unaryExpression$bang(F.buildUnaryExpression, TSKindId.Bang),
-		coerce: unaryExpression$bang(C.coerceToUnaryExpression, TSKindId.Bang)
-	}
-};
-
-const binaryExpression$ampAmp =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$pipePipe =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$amp =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$pipe =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$caret =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$eqEq =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$bangEq =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$lt =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$ltEq =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$gt =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$gtEq =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$ltLt =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$gtGt =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$plus =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$dash =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$star =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$slash =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-const binaryExpression$percent =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
-export const binaryExpression: typeof B.binaryExpression & {
-	ampAmp: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	pipePipe: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	amp: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	pipe: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	caret: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	eqEq: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	bangEq: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	lt: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	ltEq: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	gt: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	gtEq: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	ltLt: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	gtGt: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	plus: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	dash: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	star: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	slash: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-	percent: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'operator'>,
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-} = {
-	...B.binaryExpression,
-	ampAmp: {
-		strict: binaryExpression$ampAmp(F.buildBinaryExpression, TSKindId.AmpAmp),
-		coerce: binaryExpression$ampAmp(C.coerceToBinaryExpression, TSKindId.AmpAmp)
-	},
-	pipePipe: {
-		strict: binaryExpression$pipePipe(F.buildBinaryExpression, TSKindId.PipePipe),
-		coerce: binaryExpression$pipePipe(C.coerceToBinaryExpression, TSKindId.PipePipe)
-	},
-	amp: {
-		strict: binaryExpression$amp(F.buildBinaryExpression, TSKindId.Amp),
-		coerce: binaryExpression$amp(C.coerceToBinaryExpression, TSKindId.Amp)
-	},
-	pipe: {
-		strict: binaryExpression$pipe(F.buildBinaryExpression, TSKindId.Pipe),
-		coerce: binaryExpression$pipe(C.coerceToBinaryExpression, TSKindId.Pipe)
-	},
-	caret: {
-		strict: binaryExpression$caret(F.buildBinaryExpression, TSKindId.Caret),
-		coerce: binaryExpression$caret(C.coerceToBinaryExpression, TSKindId.Caret)
-	},
-	eqEq: {
-		strict: binaryExpression$eqEq(F.buildBinaryExpression, TSKindId.EqEq),
-		coerce: binaryExpression$eqEq(C.coerceToBinaryExpression, TSKindId.EqEq)
-	},
-	bangEq: {
-		strict: binaryExpression$bangEq(F.buildBinaryExpression, TSKindId.BangEq),
-		coerce: binaryExpression$bangEq(C.coerceToBinaryExpression, TSKindId.BangEq)
-	},
-	lt: {
-		strict: binaryExpression$lt(F.buildBinaryExpression, TSKindId.Lt),
-		coerce: binaryExpression$lt(C.coerceToBinaryExpression, TSKindId.Lt)
-	},
-	ltEq: {
-		strict: binaryExpression$ltEq(F.buildBinaryExpression, TSKindId.LtEq),
-		coerce: binaryExpression$ltEq(C.coerceToBinaryExpression, TSKindId.LtEq)
-	},
-	gt: {
-		strict: binaryExpression$gt(F.buildBinaryExpression, TSKindId.Gt),
-		coerce: binaryExpression$gt(C.coerceToBinaryExpression, TSKindId.Gt)
-	},
-	gtEq: {
-		strict: binaryExpression$gtEq(F.buildBinaryExpression, TSKindId.GtEq),
-		coerce: binaryExpression$gtEq(C.coerceToBinaryExpression, TSKindId.GtEq)
-	},
-	ltLt: {
-		strict: binaryExpression$ltLt(F.buildBinaryExpression, TSKindId.LtLt),
-		coerce: binaryExpression$ltLt(C.coerceToBinaryExpression, TSKindId.LtLt)
-	},
-	gtGt: {
-		strict: binaryExpression$gtGt(F.buildBinaryExpression, TSKindId.GtGt),
-		coerce: binaryExpression$gtGt(C.coerceToBinaryExpression, TSKindId.GtGt)
-	},
-	plus: {
-		strict: binaryExpression$plus(F.buildBinaryExpression, TSKindId.Plus),
-		coerce: binaryExpression$plus(C.coerceToBinaryExpression, TSKindId.Plus)
-	},
-	dash: {
-		strict: binaryExpression$dash(F.buildBinaryExpression, TSKindId.Dash),
-		coerce: binaryExpression$dash(C.coerceToBinaryExpression, TSKindId.Dash)
-	},
-	star: {
-		strict: binaryExpression$star(F.buildBinaryExpression, TSKindId.Star),
-		coerce: binaryExpression$star(C.coerceToBinaryExpression, TSKindId.Star)
-	},
-	slash: {
-		strict: binaryExpression$slash(F.buildBinaryExpression, TSKindId.Slash),
-		coerce: binaryExpression$slash(C.coerceToBinaryExpression, TSKindId.Slash)
-	},
-	percent: {
-		strict: binaryExpression$percent(F.buildBinaryExpression, TSKindId.Percent),
-		coerce: binaryExpression$percent(C.coerceToBinaryExpression, TSKindId.Percent)
-	}
-};
-
-const argumentsElements$element = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
-	parent: PF,
-	child: CF
-) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'attributeItem' || key === 'expression');
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
-};
-const argumentsElements$seated: (
-	...args:
-		| [
-				first: ListElement<ElementsOf<typeof F.buildArgumentsElements>> | ArgsOf<typeof F.buildAttributedArgument>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildArgumentsElements>>
-					| ArgsOf<typeof F.buildAttributedArgument>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof F.buildArgumentsElements>>,
-				first: ListElement<ElementsOf<typeof F.buildArgumentsElements>> | ArgsOf<typeof F.buildAttributedArgument>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildArgumentsElements>>
-					| ArgsOf<typeof F.buildAttributedArgument>[0]
-				)[]
-		  ]
-) => ReturnType<typeof F.buildArgumentsElements> = argumentsElements$element(
-	F.buildArgumentsElements,
-	F.buildAttributedArgument
-);
-const argumentsElements$seatedCoerce: (
-	...args:
-		| [
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
-					| ArgsOf<typeof C.coerceToAttributedArgument>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
-					| ArgsOf<typeof C.coerceToAttributedArgument>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof C.coerceToArgumentsElements>>,
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
-					| ArgsOf<typeof C.coerceToAttributedArgument>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
-					| ArgsOf<typeof C.coerceToAttributedArgument>[0]
-				)[]
-		  ]
-) => ReturnType<typeof C.coerceToArgumentsElements> = argumentsElements$element(
-	C.coerceToArgumentsElements,
-	C.coerceToAttributedArgument
-);
-export const argumentsElements: typeof B.argumentsElements & {
-	strict: typeof argumentsElements$seated;
-	coerce: typeof argumentsElements$seatedCoerce;
-} = {
-	...B.argumentsElements,
-	strict: argumentsElements$seated,
-	coerce: argumentsElements$seatedCoerce
-};
-
-const arrayExpressionList$argumentsElements = <
-	PF extends (config: never) => unknown,
-	CF extends (...args: never[]) => unknown
->(
-	parent: PF,
-	child: CF
-) => {
-	return (
-		config:
-			| ArgsOf<PF>[0]
-			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'argumentsElements'> & { argumentsElements: ArgsOf<CF> }),
-		options?: unknown
-	): ReturnType<PF> => {
-		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const seat = _o(config)['argumentsElements'];
-		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
-		return _fwd<ReturnType<PF>>(parent, { ..._o(config), argumentsElements: _c(child)(...seat) }, options);
-	};
-};
-const arrayExpressionList$seated: (
-	config:
-		| ArgsOf<typeof F.buildArrayExpressionList>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof F.buildArrayExpressionList>[0]>, 'argumentsElements'> & {
-				argumentsElements: ArgsOf<typeof argumentsElements.strict>;
-		  })
-) => ReturnType<typeof F.buildArrayExpressionList> = arrayExpressionList$argumentsElements(
-	F.buildArrayExpressionList,
-	argumentsElements.strict
-);
-const arrayExpressionList$seatedCoerce: (
-	config:
-		| ArgsOf<typeof C.coerceToArrayExpressionList>[0]
-		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToArrayExpressionList>[0]>, 'argumentsElements'> & {
-				argumentsElements: ArgsOf<typeof argumentsElements.coerce>;
-		  })
-) => ReturnType<typeof C.coerceToArrayExpressionList> = arrayExpressionList$argumentsElements(
-	C.coerceToArrayExpressionList,
-	argumentsElements.coerce
-);
-const arrayExpressionList: {
-	strict: typeof arrayExpressionList$seated;
-	coerce: typeof arrayExpressionList$seatedCoerce;
-} = {
-	strict: arrayExpressionList$seated,
-	coerce: arrayExpressionList$seatedCoerce
-};
-
-const closureExpressionExpr$_ =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, body: value } as never, options as never);
-const closureExpressionExpr: {
-	_: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildClosureExpressionExpr>[0], 'body'>,
-			options?: OptionsArg<typeof F.buildClosureExpressionExpr>
-		) => ReturnType<typeof F.buildClosureExpressionExpr>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToClosureExpressionExpr>[0], 'body'>,
-			options?: OptionsArg<typeof C.coerceToClosureExpressionExpr>
-		) => ReturnType<typeof C.coerceToClosureExpressionExpr>;
-	};
-} = {
-	_: {
-		strict: closureExpressionExpr$_(F.buildClosureExpressionExpr, TSKindId.Underscore),
-		coerce: closureExpressionExpr$_(C.coerceToClosureExpressionExpr, TSKindId.Underscore)
-	}
-};
-
-const structExpression$typeIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) } as never, options as never);
-	};
-const structExpression$scopedTypeIdentifierInExpressionPosition =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'name') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) } as never, options as never);
-	};
-const structExpression$genericTypeWithTurbofish =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'type' || key === 'typeArguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) } as never, options as never);
-	};
-export const structExpression: typeof B.structExpression & {
-	typeIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildTypeIdentifier>[0];
-			},
-			options?: OptionsArg<typeof F.buildStructExpression>
-		) => ReturnType<typeof F.buildStructExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToTypeIdentifier>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToStructExpression>
-		) => ReturnType<typeof C.coerceToStructExpression>;
-	};
-	scopedTypeIdentifierInExpressionPosition: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> &
-				ArgsOf<typeof F.buildScopedTypeIdentifierInExpressionPosition>[0],
-			options?: OptionsArg<typeof F.buildStructExpression>
-		) => ReturnType<typeof F.buildStructExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> &
-				ArgsOf<typeof C.coerceToScopedTypeIdentifierInExpressionPosition>[0],
-			options?: OptionsArg<typeof C.coerceToStructExpression>
-		) => ReturnType<typeof C.coerceToStructExpression>;
-	};
-	genericTypeWithTurbofish: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildStructExpression>[0], 'name'> &
-				ArgsOf<typeof F.buildGenericTypeWithTurbofish>[0],
-			options?: OptionsArg<typeof F.buildStructExpression>
-		) => ReturnType<typeof F.buildStructExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToStructExpression>[0], 'name'> &
-				ArgsOf<typeof C.coerceToGenericTypeWithTurbofish>[0],
-			options?: OptionsArg<typeof C.coerceToStructExpression>
-		) => ReturnType<typeof C.coerceToStructExpression>;
-	};
-} = {
-	...B.structExpression,
-	typeIdentifier: {
-		strict: structExpression$typeIdentifier(F.buildStructExpression, F.buildTypeIdentifier),
-		coerce: structExpression$typeIdentifier(C.coerceToStructExpression, C.coerceToTypeIdentifier)
-	},
-	scopedTypeIdentifierInExpressionPosition: {
-		strict: structExpression$scopedTypeIdentifierInExpressionPosition(
-			F.buildStructExpression,
-			F.buildScopedTypeIdentifierInExpressionPosition
-		),
-		coerce: structExpression$scopedTypeIdentifierInExpressionPosition(
-			C.coerceToStructExpression,
-			C.coerceToScopedTypeIdentifierInExpressionPosition
-		)
-	},
-	genericTypeWithTurbofish: {
-		strict: structExpression$genericTypeWithTurbofish(F.buildStructExpression, F.buildGenericTypeWithTurbofish),
-		coerce: structExpression$genericTypeWithTurbofish(C.coerceToStructExpression, C.coerceToGenericTypeWithTurbofish)
-	}
-};
-
-const callExpression$unaryExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'operator' || key === 'operand') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$rawConst =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$rawMut =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$mut =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$bare =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$tryExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$binaryExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'operator' || key === 'right') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$assignmentExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'right') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$compoundAssignmentExpr =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'operator' || key === 'right') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$typeCastExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'value' || key === 'type') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$callExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$returnExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$yieldExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) } as never, options as never);
-	};
-const callExpression$self =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, function: _c(child)() } as never, options as never);
-const callExpression$scopedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'name') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$genericFunction =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'function' || key === 'typeArguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$awaitExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$fieldExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'value' || key === 'field') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$semi =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'attributes' || key === 'element' || key === 'length') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$list =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'attributes' || key === 'argumentsElements') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$tupleExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'attributes' || key === 'tupleExpressionElements') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$macroInvocation =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$unitExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, function: _c(child)() } as never, options as never);
-const callExpression$breakExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'label' || key === 'expression') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$continueExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$indexExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'object' || key === 'index') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$metavariable =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$closureExpressionBlock =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (
-				key === 'staticMarker' ||
-				key === 'asyncMarker' ||
-				key === 'moveMarker' ||
-				key === 'parameters' ||
-				key === 'returnType' ||
-				key === 'body'
-			)
-				inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$expr =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (
-				key === 'staticMarker' ||
-				key === 'asyncMarker' ||
-				key === 'moveMarker' ||
-				key === 'parameters' ||
-				key === 'body'
-			)
-				inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$parenthesizedExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$structExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'name' || key === 'body') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$unsafeBlock =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$asyncBlock =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'moveMarker' || key === 'body') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$genBlock =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'moveMarker' || key === 'body') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$tryBlock =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-const callExpression$block =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'label' || key === 'statements' || key === 'trailingExpression') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$ifExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'condition' || key === 'consequence' || key === 'alternative') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$matchExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'value' || key === 'body') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$whileExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'label' || key === 'condition' || key === 'body') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$loopExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'label' || key === 'body') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$forExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'label' || key === 'pattern' || key === 'value' || key === 'body') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) } as never, options as never);
-	};
-const callExpression$constBlock =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(seated) } as never, options as never);
-	};
-export const callExpression: typeof B.callExpression & {
-	unaryExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildUnaryExpression>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToUnaryExpression>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	rawConst: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildReferenceExpressionRawConst>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToReferenceExpressionRawConst>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	rawMut: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildReferenceExpressionRawMut>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToReferenceExpressionRawMut>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	mut: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildReferenceExpressionMut>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToReferenceExpressionMut>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	bare: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildReferenceExpressionBare>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToReferenceExpressionBare>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	tryExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildTryExpression>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToTryExpression>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	binaryExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildBinaryExpression>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToBinaryExpression>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	assignmentExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> &
-				ArgsOf<typeof F.buildAssignmentExpression>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToAssignmentExpression>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	compoundAssignmentExpr: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> &
-				ArgsOf<typeof F.buildCompoundAssignmentExpr>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToCompoundAssignmentExpr>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	typeCastExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> &
-				ArgsOf<typeof F.buildTypeCastExpression>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToTypeCastExpression>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	callExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildCallExpression>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToCallExpression>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	returnExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildReturnExpression>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToReturnExpression>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	yieldExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildYieldExpression>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToYieldExpression>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildIdentifier>;
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	self: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	scopedIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildScopedIdentifier>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToScopedIdentifier>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	genericFunction: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildGenericFunction>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToGenericFunction>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	awaitExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildAwaitExpression>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToAwaitExpression>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	fieldExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildFieldExpression>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToFieldExpression>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	semi: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> &
-				ArgsOf<typeof F.buildArrayExpressionSemi>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToArrayExpressionSemi>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	list: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> &
-				ArgsOf<typeof arrayExpressionList.strict>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof arrayExpressionList.coerce>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	tupleExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildTupleExpression>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToTupleExpression>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	macroInvocation: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildMacroInvocation>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToMacroInvocation>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	unitExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'>,
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'>,
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	breakExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildBreakExpression>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToBreakExpression>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	continueExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildContinueExpression>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToContinueExpression>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	indexExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildIndexExpression>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToIndexExpression>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	metavariable: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildMetavariable>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToMetavariable>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	closureExpressionBlock: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> &
-				ArgsOf<typeof F.buildClosureExpressionBlock>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToClosureExpressionBlock>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	expr: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> &
-				ArgsOf<typeof F.buildClosureExpressionExpr>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToClosureExpressionExpr>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	parenthesizedExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildParenthesizedExpression>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToParenthesizedExpression>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	structExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildStructExpression>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToStructExpression>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	unsafeBlock: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildUnsafeBlock>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToUnsafeBlock>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	asyncBlock: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildAsyncBlock>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & ArgsOf<typeof C.coerceToAsyncBlock>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	genBlock: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildGenBlock>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & ArgsOf<typeof C.coerceToGenBlock>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	tryBlock: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildTryBlock>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToTryBlock>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	block: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildBlock>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & ArgsOf<typeof C.coerceToBlock>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	ifExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildIfExpression>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToIfExpression>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	matchExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildMatchExpression>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToMatchExpression>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	whileExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildWhileExpression>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToWhileExpression>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	loopExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildLoopExpression>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToLoopExpression>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	forExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & ArgsOf<typeof F.buildForExpression>[0],
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
-				ArgsOf<typeof C.coerceToForExpression>[0],
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-	constBlock: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildConstBlock>[0];
-			},
-			options?: OptionsArg<typeof F.buildCallExpression>
-		) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToConstBlock>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToCallExpression>
-		) => ReturnType<typeof C.coerceToCallExpression>;
-	};
-} = {
-	...B.callExpression,
-	unaryExpression: {
-		strict: callExpression$unaryExpression(F.buildCallExpression, F.buildUnaryExpression),
-		coerce: callExpression$unaryExpression(C.coerceToCallExpression, C.coerceToUnaryExpression)
-	},
-	rawConst: {
-		strict: callExpression$rawConst(F.buildCallExpression, F.buildReferenceExpressionRawConst),
-		coerce: callExpression$rawConst(C.coerceToCallExpression, C.coerceToReferenceExpressionRawConst)
-	},
-	rawMut: {
-		strict: callExpression$rawMut(F.buildCallExpression, F.buildReferenceExpressionRawMut),
-		coerce: callExpression$rawMut(C.coerceToCallExpression, C.coerceToReferenceExpressionRawMut)
-	},
-	mut: {
-		strict: callExpression$mut(F.buildCallExpression, F.buildReferenceExpressionMut),
-		coerce: callExpression$mut(C.coerceToCallExpression, C.coerceToReferenceExpressionMut)
-	},
-	bare: {
-		strict: callExpression$bare(F.buildCallExpression, F.buildReferenceExpressionBare),
-		coerce: callExpression$bare(C.coerceToCallExpression, C.coerceToReferenceExpressionBare)
-	},
-	tryExpression: {
-		strict: callExpression$tryExpression(F.buildCallExpression, F.buildTryExpression),
-		coerce: callExpression$tryExpression(C.coerceToCallExpression, C.coerceToTryExpression)
-	},
-	binaryExpression: {
-		strict: callExpression$binaryExpression(F.buildCallExpression, F.buildBinaryExpression),
-		coerce: callExpression$binaryExpression(C.coerceToCallExpression, C.coerceToBinaryExpression)
-	},
-	assignmentExpression: {
-		strict: callExpression$assignmentExpression(F.buildCallExpression, F.buildAssignmentExpression),
-		coerce: callExpression$assignmentExpression(C.coerceToCallExpression, C.coerceToAssignmentExpression)
-	},
-	compoundAssignmentExpr: {
-		strict: callExpression$compoundAssignmentExpr(F.buildCallExpression, F.buildCompoundAssignmentExpr),
-		coerce: callExpression$compoundAssignmentExpr(C.coerceToCallExpression, C.coerceToCompoundAssignmentExpr)
-	},
-	typeCastExpression: {
-		strict: callExpression$typeCastExpression(F.buildCallExpression, F.buildTypeCastExpression),
-		coerce: callExpression$typeCastExpression(C.coerceToCallExpression, C.coerceToTypeCastExpression)
-	},
-	callExpression: {
-		strict: callExpression$callExpression(F.buildCallExpression, F.buildCallExpression),
-		coerce: callExpression$callExpression(C.coerceToCallExpression, C.coerceToCallExpression)
-	},
-	returnExpression: {
-		strict: callExpression$returnExpression(F.buildCallExpression, F.buildReturnExpression),
-		coerce: callExpression$returnExpression(C.coerceToCallExpression, C.coerceToReturnExpression)
-	},
-	yieldExpression: {
-		strict: callExpression$yieldExpression(F.buildCallExpression, F.buildYieldExpression),
-		coerce: callExpression$yieldExpression(C.coerceToCallExpression, C.coerceToYieldExpression)
-	},
-	identifier: {
-		strict: callExpression$identifier(F.buildCallExpression, F.buildIdentifier),
-		coerce: callExpression$identifier(C.coerceToCallExpression, C.coerceToIdentifier)
-	},
-	self: {
-		strict: callExpression$self(F.buildCallExpression, F.buildSelf),
-		coerce: callExpression$self(C.coerceToCallExpression, C.coerceToSelf)
-	},
-	scopedIdentifier: {
-		strict: callExpression$scopedIdentifier(F.buildCallExpression, F.buildScopedIdentifier),
-		coerce: callExpression$scopedIdentifier(C.coerceToCallExpression, C.coerceToScopedIdentifier)
-	},
-	genericFunction: {
-		strict: callExpression$genericFunction(F.buildCallExpression, F.buildGenericFunction),
-		coerce: callExpression$genericFunction(C.coerceToCallExpression, C.coerceToGenericFunction)
-	},
-	awaitExpression: {
-		strict: callExpression$awaitExpression(F.buildCallExpression, F.buildAwaitExpression),
-		coerce: callExpression$awaitExpression(C.coerceToCallExpression, C.coerceToAwaitExpression)
-	},
-	fieldExpression: {
-		strict: callExpression$fieldExpression(F.buildCallExpression, F.buildFieldExpression),
-		coerce: callExpression$fieldExpression(C.coerceToCallExpression, C.coerceToFieldExpression)
-	},
-	semi: {
-		strict: callExpression$semi(F.buildCallExpression, F.buildArrayExpressionSemi),
-		coerce: callExpression$semi(C.coerceToCallExpression, C.coerceToArrayExpressionSemi)
-	},
-	list: {
-		strict: callExpression$list(F.buildCallExpression, arrayExpressionList.strict),
-		coerce: callExpression$list(C.coerceToCallExpression, arrayExpressionList.coerce)
-	},
-	tupleExpression: {
-		strict: callExpression$tupleExpression(F.buildCallExpression, F.buildTupleExpression),
-		coerce: callExpression$tupleExpression(C.coerceToCallExpression, C.coerceToTupleExpression)
-	},
-	macroInvocation: {
-		strict: callExpression$macroInvocation(F.buildCallExpression, F.buildMacroInvocation),
-		coerce: callExpression$macroInvocation(C.coerceToCallExpression, C.coerceToMacroInvocation)
-	},
-	unitExpression: {
-		strict: callExpression$unitExpression(F.buildCallExpression, F.buildUnitExpression),
-		coerce: callExpression$unitExpression(C.coerceToCallExpression, C.coerceToUnitExpression)
-	},
-	breakExpression: {
-		strict: callExpression$breakExpression(F.buildCallExpression, F.buildBreakExpression),
-		coerce: callExpression$breakExpression(C.coerceToCallExpression, C.coerceToBreakExpression)
-	},
-	continueExpression: {
-		strict: callExpression$continueExpression(F.buildCallExpression, F.buildContinueExpression),
-		coerce: callExpression$continueExpression(C.coerceToCallExpression, C.coerceToContinueExpression)
-	},
-	indexExpression: {
-		strict: callExpression$indexExpression(F.buildCallExpression, F.buildIndexExpression),
-		coerce: callExpression$indexExpression(C.coerceToCallExpression, C.coerceToIndexExpression)
-	},
-	metavariable: {
-		strict: callExpression$metavariable(F.buildCallExpression, F.buildMetavariable),
-		coerce: callExpression$metavariable(C.coerceToCallExpression, C.coerceToMetavariable)
-	},
-	closureExpressionBlock: {
-		strict: callExpression$closureExpressionBlock(F.buildCallExpression, F.buildClosureExpressionBlock),
-		coerce: callExpression$closureExpressionBlock(C.coerceToCallExpression, C.coerceToClosureExpressionBlock)
-	},
-	expr: {
-		strict: callExpression$expr(F.buildCallExpression, F.buildClosureExpressionExpr),
-		coerce: callExpression$expr(C.coerceToCallExpression, C.coerceToClosureExpressionExpr)
-	},
-	parenthesizedExpression: {
-		strict: callExpression$parenthesizedExpression(F.buildCallExpression, F.buildParenthesizedExpression),
-		coerce: callExpression$parenthesizedExpression(C.coerceToCallExpression, C.coerceToParenthesizedExpression)
-	},
-	structExpression: {
-		strict: callExpression$structExpression(F.buildCallExpression, F.buildStructExpression),
-		coerce: callExpression$structExpression(C.coerceToCallExpression, C.coerceToStructExpression)
-	},
-	unsafeBlock: {
-		strict: callExpression$unsafeBlock(F.buildCallExpression, F.buildUnsafeBlock),
-		coerce: callExpression$unsafeBlock(C.coerceToCallExpression, C.coerceToUnsafeBlock)
-	},
-	asyncBlock: {
-		strict: callExpression$asyncBlock(F.buildCallExpression, F.buildAsyncBlock),
-		coerce: callExpression$asyncBlock(C.coerceToCallExpression, C.coerceToAsyncBlock)
-	},
-	genBlock: {
-		strict: callExpression$genBlock(F.buildCallExpression, F.buildGenBlock),
-		coerce: callExpression$genBlock(C.coerceToCallExpression, C.coerceToGenBlock)
-	},
-	tryBlock: {
-		strict: callExpression$tryBlock(F.buildCallExpression, F.buildTryBlock),
-		coerce: callExpression$tryBlock(C.coerceToCallExpression, C.coerceToTryBlock)
-	},
-	block: {
-		strict: callExpression$block(F.buildCallExpression, F.buildBlock),
-		coerce: callExpression$block(C.coerceToCallExpression, C.coerceToBlock)
-	},
-	ifExpression: {
-		strict: callExpression$ifExpression(F.buildCallExpression, F.buildIfExpression),
-		coerce: callExpression$ifExpression(C.coerceToCallExpression, C.coerceToIfExpression)
-	},
-	matchExpression: {
-		strict: callExpression$matchExpression(F.buildCallExpression, F.buildMatchExpression),
-		coerce: callExpression$matchExpression(C.coerceToCallExpression, C.coerceToMatchExpression)
-	},
-	whileExpression: {
-		strict: callExpression$whileExpression(F.buildCallExpression, F.buildWhileExpression),
-		coerce: callExpression$whileExpression(C.coerceToCallExpression, C.coerceToWhileExpression)
-	},
-	loopExpression: {
-		strict: callExpression$loopExpression(F.buildCallExpression, F.buildLoopExpression),
-		coerce: callExpression$loopExpression(C.coerceToCallExpression, C.coerceToLoopExpression)
-	},
-	forExpression: {
-		strict: callExpression$forExpression(F.buildCallExpression, F.buildForExpression),
-		coerce: callExpression$forExpression(C.coerceToCallExpression, C.coerceToForExpression)
-	},
-	constBlock: {
-		strict: callExpression$constBlock(F.buildCallExpression, F.buildConstBlock),
-		coerce: callExpression$constBlock(C.coerceToCallExpression, C.coerceToConstBlock)
-	}
-};
-
-const fieldInitializer$fieldIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { field: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(seated) } as never, options as never);
-	};
-const fieldInitializer$decimal =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'suffix') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) } as never, options as never);
-	};
-const fieldInitializer$hex =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'suffix') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) } as never, options as never);
-	};
-const fieldInitializer$binary =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'suffix') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) } as never, options as never);
-	};
-const fieldInitializer$octal =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'suffix') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) } as never, options as never);
-	};
-export const fieldInitializer: typeof B.fieldInitializer & {
-	fieldIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
-				field: ArgsOf<typeof F.buildFieldIdentifier>[0];
-			},
-			options?: OptionsArg<typeof F.buildFieldInitializer>
-		) => ReturnType<typeof F.buildFieldInitializer>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
-				field: ArgsOf<typeof C.coerceToFieldIdentifier>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToFieldInitializer>
-		) => ReturnType<typeof C.coerceToFieldInitializer>;
-	};
-	decimal: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> &
-				ArgsOf<typeof F.buildIntegerLiteralDecimal>[0],
-			options?: OptionsArg<typeof F.buildFieldInitializer>
-		) => ReturnType<typeof F.buildFieldInitializer>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> &
-				ArgsOf<typeof C.coerceToIntegerLiteralDecimal>[0],
-			options?: OptionsArg<typeof C.coerceToFieldInitializer>
-		) => ReturnType<typeof C.coerceToFieldInitializer>;
-	};
-	hex: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & ArgsOf<typeof F.buildIntegerLiteralHex>[0],
-			options?: OptionsArg<typeof F.buildFieldInitializer>
-		) => ReturnType<typeof F.buildFieldInitializer>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> &
-				ArgsOf<typeof C.coerceToIntegerLiteralHex>[0],
-			options?: OptionsArg<typeof C.coerceToFieldInitializer>
-		) => ReturnType<typeof C.coerceToFieldInitializer>;
-	};
-	binary: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> &
-				ArgsOf<typeof F.buildIntegerLiteralBinary>[0],
-			options?: OptionsArg<typeof F.buildFieldInitializer>
-		) => ReturnType<typeof F.buildFieldInitializer>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> &
-				ArgsOf<typeof C.coerceToIntegerLiteralBinary>[0],
-			options?: OptionsArg<typeof C.coerceToFieldInitializer>
-		) => ReturnType<typeof C.coerceToFieldInitializer>;
-	};
-	octal: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> &
-				ArgsOf<typeof F.buildIntegerLiteralOctal>[0],
-			options?: OptionsArg<typeof F.buildFieldInitializer>
-		) => ReturnType<typeof F.buildFieldInitializer>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> &
-				ArgsOf<typeof C.coerceToIntegerLiteralOctal>[0],
-			options?: OptionsArg<typeof C.coerceToFieldInitializer>
-		) => ReturnType<typeof C.coerceToFieldInitializer>;
-	};
-} = {
-	...B.fieldInitializer,
-	fieldIdentifier: {
-		strict: fieldInitializer$fieldIdentifier(F.buildFieldInitializer, F.buildFieldIdentifier),
-		coerce: fieldInitializer$fieldIdentifier(C.coerceToFieldInitializer, C.coerceToFieldIdentifier)
-	},
-	decimal: {
-		strict: fieldInitializer$decimal(F.buildFieldInitializer, F.buildIntegerLiteralDecimal),
-		coerce: fieldInitializer$decimal(C.coerceToFieldInitializer, C.coerceToIntegerLiteralDecimal)
-	},
-	hex: {
-		strict: fieldInitializer$hex(F.buildFieldInitializer, F.buildIntegerLiteralHex),
-		coerce: fieldInitializer$hex(C.coerceToFieldInitializer, C.coerceToIntegerLiteralHex)
-	},
-	binary: {
-		strict: fieldInitializer$binary(F.buildFieldInitializer, F.buildIntegerLiteralBinary),
-		coerce: fieldInitializer$binary(C.coerceToFieldInitializer, C.coerceToIntegerLiteralBinary)
-	},
-	octal: {
-		strict: fieldInitializer$octal(F.buildFieldInitializer, F.buildIntegerLiteralOctal),
-		coerce: fieldInitializer$octal(C.coerceToFieldInitializer, C.coerceToIntegerLiteralOctal)
-	}
-};
-
 const elseClause$block =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const elseClause$ifExpression =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const elseClause$letCondition =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const elseClause$letChain =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -8302,14 +692,6 @@ export const elseClause: typeof B.elseClause & {
 	ifExpression: {
 		strict: (...args: ArgsOf<typeof F.buildIfExpression>) => ReturnType<typeof F.buildElseClause>;
 		coerce: (...args: ArgsOf<typeof C.coerceToIfExpression>) => ReturnType<typeof F.buildElseClause>;
-		letCondition: {
-			strict: (...args: ArgsOf<typeof ifExpression.letCondition.strict>) => ReturnType<typeof F.buildElseClause>;
-			coerce: (...args: ArgsOf<typeof ifExpression.letCondition.coerce>) => ReturnType<typeof F.buildElseClause>;
-		};
-		letChain: {
-			strict: (...args: ArgsOf<typeof ifExpression.letChain.strict>) => ReturnType<typeof F.buildElseClause>;
-			coerce: (...args: ArgsOf<typeof ifExpression.letChain.coerce>) => ReturnType<typeof F.buildElseClause>;
-		};
 	};
 } = {
 	...B.elseClause,
@@ -8319,15 +701,7 @@ export const elseClause: typeof B.elseClause & {
 	},
 	ifExpression: {
 		strict: elseClause$ifExpression(F.buildElseClause, F.buildIfExpression),
-		coerce: elseClause$ifExpression(F.buildElseClause, C.coerceToIfExpression),
-		letCondition: {
-			strict: elseClause$letCondition(F.buildElseClause, ifExpression.letCondition.strict),
-			coerce: elseClause$letCondition(F.buildElseClause, ifExpression.letCondition.coerce)
-		},
-		letChain: {
-			strict: elseClause$letChain(F.buildElseClause, ifExpression.letChain.strict),
-			coerce: elseClause$letChain(F.buildElseClause, ifExpression.letChain.coerce)
-		}
+		coerce: elseClause$ifExpression(F.buildElseClause, C.coerceToIfExpression)
 	}
 };
 
@@ -8350,63 +724,6 @@ export const matchBlock: typeof B.matchBlock & {
 	...B.matchBlock,
 	strict: matchBlock$seated,
 	coerce: matchBlock$seatedCoerce
-};
-
-const matchPattern$letCondition =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'condition'> & { condition: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { condition: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, condition: _c(child)(seated) } as never, options as never);
-	};
-const matchPattern$letChain =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'condition'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'right') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, condition: _c(child)(inner) } as never, options as never);
-	};
-export const matchPattern: typeof B.matchPattern & {
-	letCondition: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMatchPattern>[0], 'condition'> & {
-				condition: ArgsOf<typeof F.buildLetCondition>[0];
-			},
-			options?: OptionsArg<typeof F.buildMatchPattern>
-		) => ReturnType<typeof F.buildMatchPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMatchPattern>[0], 'condition'> & {
-				condition: ArgsOf<typeof C.coerceToLetCondition>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToMatchPattern>
-		) => ReturnType<typeof C.coerceToMatchPattern>;
-	};
-	letChain: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMatchPattern>[0], 'condition'> & ArgsOf<typeof F.buildLetChain>[0],
-			options?: OptionsArg<typeof F.buildMatchPattern>
-		) => ReturnType<typeof F.buildMatchPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMatchPattern>[0], 'condition'> & ArgsOf<typeof C.coerceToLetChain>[0],
-			options?: OptionsArg<typeof C.coerceToMatchPattern>
-		) => ReturnType<typeof C.coerceToMatchPattern>;
-	};
-} = {
-	...B.matchPattern,
-	letCondition: {
-		strict: matchPattern$letCondition(F.buildMatchPattern, F.buildLetCondition),
-		coerce: matchPattern$letCondition(C.coerceToMatchPattern, C.coerceToLetCondition)
-	},
-	letChain: {
-		strict: matchPattern$letChain(F.buildMatchPattern, F.buildLetChain),
-		coerce: matchPattern$letChain(C.coerceToMatchPattern, C.coerceToLetChain)
-	}
 };
 
 const lastMatchArm$splice =
@@ -8557,91 +874,11 @@ const tupleStructPattern$seatedCoerce: (
 	C.coerceToTupleStructPattern,
 	C.coerceToPatterns
 );
-const tupleStructPattern$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { type: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(...seated) } as never, options as never);
-	};
-const tupleStructPattern$scopedIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'type'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'name') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(inner) } as never, options as never);
-	};
-const tupleStructPattern$genericTypeWithTurbofish =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'type'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'type' || key === 'typeArguments') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(inner) } as never, options as never);
-	};
 export const tupleStructPattern: typeof B.tupleStructPattern & {
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof tupleStructPattern$seated>[0], 'type'> & {
-				type: ArgsOf<typeof F.buildIdentifier>;
-			},
-			options?: OptionsArg<typeof tupleStructPattern$seated>
-		) => ReturnType<typeof tupleStructPattern$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof tupleStructPattern$seatedCoerce>[0], 'type'> & {
-				type: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof tupleStructPattern$seatedCoerce>
-		) => ReturnType<typeof tupleStructPattern$seatedCoerce>;
-	};
-	scopedIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof tupleStructPattern$seated>[0], 'type'> & ArgsOf<typeof F.buildScopedIdentifier>[0],
-			options?: OptionsArg<typeof tupleStructPattern$seated>
-		) => ReturnType<typeof tupleStructPattern$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof tupleStructPattern$seatedCoerce>[0], 'type'> &
-				ArgsOf<typeof C.coerceToScopedIdentifier>[0],
-			options?: OptionsArg<typeof tupleStructPattern$seatedCoerce>
-		) => ReturnType<typeof tupleStructPattern$seatedCoerce>;
-	};
-	genericTypeWithTurbofish: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof tupleStructPattern$seated>[0], 'type'> &
-				ArgsOf<typeof F.buildGenericTypeWithTurbofish>[0],
-			options?: OptionsArg<typeof tupleStructPattern$seated>
-		) => ReturnType<typeof tupleStructPattern$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof tupleStructPattern$seatedCoerce>[0], 'type'> &
-				ArgsOf<typeof C.coerceToGenericTypeWithTurbofish>[0],
-			options?: OptionsArg<typeof tupleStructPattern$seatedCoerce>
-		) => ReturnType<typeof tupleStructPattern$seatedCoerce>;
-	};
 	strict: typeof tupleStructPattern$seated;
 	coerce: typeof tupleStructPattern$seatedCoerce;
 } = {
 	...B.tupleStructPattern,
-	identifier: {
-		strict: tupleStructPattern$identifier(tupleStructPattern$seated, F.buildIdentifier),
-		coerce: tupleStructPattern$identifier(tupleStructPattern$seatedCoerce, C.coerceToIdentifier)
-	},
-	scopedIdentifier: {
-		strict: tupleStructPattern$scopedIdentifier(tupleStructPattern$seated, F.buildScopedIdentifier),
-		coerce: tupleStructPattern$scopedIdentifier(tupleStructPattern$seatedCoerce, C.coerceToScopedIdentifier)
-	},
-	genericTypeWithTurbofish: {
-		strict: tupleStructPattern$genericTypeWithTurbofish(tupleStructPattern$seated, F.buildGenericTypeWithTurbofish),
-		coerce: tupleStructPattern$genericTypeWithTurbofish(
-			tupleStructPattern$seatedCoerce,
-			C.coerceToGenericTypeWithTurbofish
-		)
-	},
 	strict: tupleStructPattern$seated,
 	coerce: tupleStructPattern$seatedCoerce
 };
@@ -8677,66 +914,16 @@ const structPattern$seatedCoerce: (
 	C.coerceToStructPattern,
 	C.coerceToStructPatternElements
 );
-const structPattern$typeIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'type'> & { type: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { type: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(seated) } as never, options as never);
-	};
-const structPattern$scopedTypeIdentifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'type'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'path' || key === 'name') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, type: _c(child)(inner) } as never, options as never);
-	};
 export const structPattern: typeof B.structPattern & {
-	typeIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & {
-				type: ArgsOf<typeof F.buildTypeIdentifier>[0];
-			},
-			options?: OptionsArg<typeof structPattern$seated>
-		) => ReturnType<typeof structPattern$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> & {
-				type: ArgsOf<typeof C.coerceToTypeIdentifier>[0];
-			},
-			options?: OptionsArg<typeof structPattern$seatedCoerce>
-		) => ReturnType<typeof structPattern$seatedCoerce>;
-	};
-	scopedTypeIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof structPattern$seated>[0], 'type'> & ArgsOf<typeof F.buildScopedTypeIdentifier>[0],
-			options?: OptionsArg<typeof structPattern$seated>
-		) => ReturnType<typeof structPattern$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof structPattern$seatedCoerce>[0], 'type'> &
-				ArgsOf<typeof C.coerceToScopedTypeIdentifier>[0],
-			options?: OptionsArg<typeof structPattern$seatedCoerce>
-		) => ReturnType<typeof structPattern$seatedCoerce>;
-	};
 	strict: typeof structPattern$seated;
 	coerce: typeof structPattern$seatedCoerce;
 } = {
 	...B.structPattern,
-	typeIdentifier: {
-		strict: structPattern$typeIdentifier(structPattern$seated, F.buildTypeIdentifier),
-		coerce: structPattern$typeIdentifier(structPattern$seatedCoerce, C.coerceToTypeIdentifier)
-	},
-	scopedTypeIdentifier: {
-		strict: structPattern$scopedTypeIdentifier(structPattern$seated, F.buildScopedTypeIdentifier),
-		coerce: structPattern$scopedTypeIdentifier(structPattern$seatedCoerce, C.coerceToScopedTypeIdentifier)
-	},
 	strict: structPattern$seated,
 	coerce: structPattern$seatedCoerce
 };
 
-const lineComment$regularDslash =
+const lineComment$extraSlashes =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -8748,14 +935,14 @@ const lineComment$docInner =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const lineComment$content =
+const lineComment$regular =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const lineComment: typeof B.lineComment & {
-	regularDslash: {
-		strict: (...args: ArgsOf<typeof F.buildLineCommentRegularDslash>) => ReturnType<typeof F.buildLineComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentRegularDslash>) => ReturnType<typeof F.buildLineComment>;
+	extraSlashes: {
+		strict: (...args: ArgsOf<typeof F.buildLineCommentExtraSlashes>) => ReturnType<typeof F.buildLineComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentExtraSlashes>) => ReturnType<typeof F.buildLineComment>;
 	};
 	docOuter: {
 		strict: (...args: ArgsOf<typeof F.buildLineCommentDocOuter>) => ReturnType<typeof F.buildLineComment>;
@@ -8765,15 +952,15 @@ export const lineComment: typeof B.lineComment & {
 		strict: (...args: ArgsOf<typeof F.buildLineCommentDocInner>) => ReturnType<typeof F.buildLineComment>;
 		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentDocInner>) => ReturnType<typeof F.buildLineComment>;
 	};
-	content: {
-		strict: (...args: ArgsOf<typeof F.buildLineCommentContent>) => ReturnType<typeof F.buildLineComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentContent>) => ReturnType<typeof F.buildLineComment>;
+	regular: {
+		strict: (...args: ArgsOf<typeof F.buildLineCommentRegular>) => ReturnType<typeof F.buildLineComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentRegular>) => ReturnType<typeof F.buildLineComment>;
 	};
 } = {
 	...B.lineComment,
-	regularDslash: {
-		strict: lineComment$regularDslash(F.buildLineComment, F.buildLineCommentRegularDslash),
-		coerce: lineComment$regularDslash(F.buildLineComment, C.coerceToLineCommentRegularDslash)
+	extraSlashes: {
+		strict: lineComment$extraSlashes(F.buildLineComment, F.buildLineCommentExtraSlashes),
+		coerce: lineComment$extraSlashes(F.buildLineComment, C.coerceToLineCommentExtraSlashes)
 	},
 	docOuter: {
 		strict: lineComment$docOuter(F.buildLineComment, F.buildLineCommentDocOuter),
@@ -8783,9 +970,9 @@ export const lineComment: typeof B.lineComment & {
 		strict: lineComment$docInner(F.buildLineComment, F.buildLineCommentDocInner),
 		coerce: lineComment$docInner(F.buildLineComment, C.coerceToLineCommentDocInner)
 	},
-	content: {
-		strict: lineComment$content(F.buildLineComment, F.buildLineCommentContent),
-		coerce: lineComment$content(F.buildLineComment, C.coerceToLineCommentContent)
+	regular: {
+		strict: lineComment$regular(F.buildLineComment, F.buildLineCommentRegular),
+		coerce: lineComment$regular(F.buildLineComment, C.coerceToLineCommentRegular)
 	}
 };
 
@@ -8797,7 +984,7 @@ const blockComment$docInner =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const blockComment$content =
+const blockComment$regular =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -8810,7 +997,7 @@ export const blockComment: typeof B.blockComment & {
 		strict: (...args: ArgsOf<typeof F.buildBlockCommentDocInner>) => ReturnType<typeof F.buildBlockComment>;
 		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentDocInner>) => ReturnType<typeof F.buildBlockComment>;
 	};
-	content: {
+	regular: {
 		strict: (...args: ArgsOf<typeof F.buildBlockCommentContent>) => ReturnType<typeof F.buildBlockComment>;
 		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentContent>) => ReturnType<typeof F.buildBlockComment>;
 	};
@@ -8824,9 +1011,9 @@ export const blockComment: typeof B.blockComment & {
 		strict: blockComment$docInner(F.buildBlockComment, F.buildBlockCommentDocInner),
 		coerce: blockComment$docInner(F.buildBlockComment, C.coerceToBlockCommentDocInner)
 	},
-	content: {
-		strict: blockComment$content(F.buildBlockComment, F.buildBlockCommentContent),
-		coerce: blockComment$content(F.buildBlockComment, C.coerceToBlockCommentContent)
+	regular: {
+		strict: blockComment$regular(F.buildBlockComment, F.buildBlockCommentContent),
+		coerce: blockComment$regular(F.buildBlockComment, C.coerceToBlockCommentContent)
 	}
 };
 
@@ -9263,6 +1450,120 @@ export const typeArgumentsElements: typeof B.typeArgumentsElements & {
 	coerce: typeArgumentsElements$seatedCoerce
 };
 
+const argumentsElements$element = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean =>
+		typeof e === 'object' &&
+		e !== null &&
+		!('$type' in e) &&
+		Object.keys(e).every((key) => key === 'attributeItem' || key === 'expression');
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+const argumentsElements$seated: (
+	...args:
+		| [
+				first: ListElement<ElementsOf<typeof F.buildArgumentsElements>> | ArgsOf<typeof F.buildAttributedArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildArgumentsElements>>
+					| ArgsOf<typeof F.buildAttributedArgument>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildArgumentsElements>>,
+				first: ListElement<ElementsOf<typeof F.buildArgumentsElements>> | ArgsOf<typeof F.buildAttributedArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildArgumentsElements>>
+					| ArgsOf<typeof F.buildAttributedArgument>[0]
+				)[]
+		  ]
+) => ReturnType<typeof F.buildArgumentsElements> = argumentsElements$element(
+	F.buildArgumentsElements,
+	F.buildAttributedArgument
+);
+const argumentsElements$seatedCoerce: (
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
+					| ArgsOf<typeof C.coerceToAttributedArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
+					| ArgsOf<typeof C.coerceToAttributedArgument>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToArgumentsElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
+					| ArgsOf<typeof C.coerceToAttributedArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
+					| ArgsOf<typeof C.coerceToAttributedArgument>[0]
+				)[]
+		  ]
+) => ReturnType<typeof C.coerceToArgumentsElements> = argumentsElements$element(
+	C.coerceToArgumentsElements,
+	C.coerceToAttributedArgument
+);
+export const argumentsElements: typeof B.argumentsElements & {
+	strict: typeof argumentsElements$seated;
+	coerce: typeof argumentsElements$seatedCoerce;
+} = {
+	...B.argumentsElements,
+	strict: argumentsElements$seated,
+	coerce: argumentsElements$seatedCoerce
+};
+
+const arrayExpressionList$argumentsElements = <
+	PF extends (config: never) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	return (
+		config:
+			| ArgsOf<PF>[0]
+			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'argumentsElements'> & { argumentsElements: ArgsOf<CF> }),
+		options?: unknown
+	): ReturnType<PF> => {
+		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
+		const seat = _o(config)['argumentsElements'];
+		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
+		return _fwd<ReturnType<PF>>(parent, { ..._o(config), argumentsElements: _c(child)(...seat) }, options);
+	};
+};
+const arrayExpressionList$seated: (
+	config:
+		| ArgsOf<typeof F.buildArrayExpressionList>[0]
+		| (OmitEach<NonNullable<ArgsOf<typeof F.buildArrayExpressionList>[0]>, 'argumentsElements'> & {
+				argumentsElements: ArgsOf<typeof argumentsElements.strict>;
+		  })
+) => ReturnType<typeof F.buildArrayExpressionList> = arrayExpressionList$argumentsElements(
+	F.buildArrayExpressionList,
+	argumentsElements.strict
+);
+const arrayExpressionList$seatedCoerce: (
+	config:
+		| ArgsOf<typeof C.coerceToArrayExpressionList>[0]
+		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToArrayExpressionList>[0]>, 'argumentsElements'> & {
+				argumentsElements: ArgsOf<typeof argumentsElements.coerce>;
+		  })
+) => ReturnType<typeof C.coerceToArrayExpressionList> = arrayExpressionList$argumentsElements(
+	C.coerceToArrayExpressionList,
+	argumentsElements.coerce
+);
+const arrayExpressionList: {
+	strict: typeof arrayExpressionList$seated;
+	coerce: typeof arrayExpressionList$seatedCoerce;
+} = {
+	strict: arrayExpressionList$seated,
+	coerce: arrayExpressionList$seatedCoerce
+};
+
 const implItemBody$positiveClause =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -9487,289 +1788,10 @@ const matchArmBlockEnding$seatedCoerce: (
 	C.coerceToMatchPattern,
 	TSKindId.MatchPattern
 );
-const matchArmBlockEnding$unsafeBlock =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { value: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) } as never, options as never);
-	};
-const matchArmBlockEnding$asyncBlock =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'moveMarker' || key === 'body') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
-	};
-const matchArmBlockEnding$genBlock =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'moveMarker' || key === 'body') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
-	};
-const matchArmBlockEnding$tryBlock =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { value: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) } as never, options as never);
-	};
-const matchArmBlockEnding$block =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'label' || key === 'statements' || key === 'trailingExpression') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
-	};
-const matchArmBlockEnding$ifExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'condition' || key === 'consequence' || key === 'alternative') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
-	};
-const matchArmBlockEnding$matchExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'value' || key === 'body') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
-	};
-const matchArmBlockEnding$whileExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'label' || key === 'condition' || key === 'body') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
-	};
-const matchArmBlockEnding$loopExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'label' || key === 'body') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
-	};
-const matchArmBlockEnding$forExpression =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { value: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) } as never, options as never);
-	};
-const matchArmBlockEnding$constBlock =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { value: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) } as never, options as never);
-	};
 const matchArmBlockEnding: {
-	unsafeBlock: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & {
-				value: ArgsOf<typeof F.buildUnsafeBlock>[0];
-			},
-			options?: OptionsArg<typeof matchArmBlockEnding$seated>
-		) => ReturnType<typeof matchArmBlockEnding$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> & {
-				value: ArgsOf<typeof C.coerceToUnsafeBlock>[0];
-			},
-			options?: OptionsArg<typeof matchArmBlockEnding$seatedCoerce>
-		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
-	};
-	asyncBlock: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & ArgsOf<typeof F.buildAsyncBlock>[0],
-			options?: OptionsArg<typeof matchArmBlockEnding$seated>
-		) => ReturnType<typeof matchArmBlockEnding$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> &
-				ArgsOf<typeof C.coerceToAsyncBlock>[0],
-			options?: OptionsArg<typeof matchArmBlockEnding$seatedCoerce>
-		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
-	};
-	genBlock: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & ArgsOf<typeof F.buildGenBlock>[0],
-			options?: OptionsArg<typeof matchArmBlockEnding$seated>
-		) => ReturnType<typeof matchArmBlockEnding$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> &
-				ArgsOf<typeof C.coerceToGenBlock>[0],
-			options?: OptionsArg<typeof matchArmBlockEnding$seatedCoerce>
-		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
-	};
-	tryBlock: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & {
-				value: ArgsOf<typeof F.buildTryBlock>[0];
-			},
-			options?: OptionsArg<typeof matchArmBlockEnding$seated>
-		) => ReturnType<typeof matchArmBlockEnding$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> & {
-				value: ArgsOf<typeof C.coerceToTryBlock>[0];
-			},
-			options?: OptionsArg<typeof matchArmBlockEnding$seatedCoerce>
-		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
-	};
-	block: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & ArgsOf<typeof F.buildBlock>[0],
-			options?: OptionsArg<typeof matchArmBlockEnding$seated>
-		) => ReturnType<typeof matchArmBlockEnding$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> & ArgsOf<typeof C.coerceToBlock>[0],
-			options?: OptionsArg<typeof matchArmBlockEnding$seatedCoerce>
-		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
-	};
-	ifExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & ArgsOf<typeof F.buildIfExpression>[0],
-			options?: OptionsArg<typeof matchArmBlockEnding$seated>
-		) => ReturnType<typeof matchArmBlockEnding$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> &
-				ArgsOf<typeof C.coerceToIfExpression>[0],
-			options?: OptionsArg<typeof matchArmBlockEnding$seatedCoerce>
-		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
-	};
-	matchExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> &
-				ArgsOf<typeof F.buildMatchExpression>[0],
-			options?: OptionsArg<typeof matchArmBlockEnding$seated>
-		) => ReturnType<typeof matchArmBlockEnding$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> &
-				ArgsOf<typeof C.coerceToMatchExpression>[0],
-			options?: OptionsArg<typeof matchArmBlockEnding$seatedCoerce>
-		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
-	};
-	whileExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> &
-				ArgsOf<typeof F.buildWhileExpression>[0],
-			options?: OptionsArg<typeof matchArmBlockEnding$seated>
-		) => ReturnType<typeof matchArmBlockEnding$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> &
-				ArgsOf<typeof C.coerceToWhileExpression>[0],
-			options?: OptionsArg<typeof matchArmBlockEnding$seatedCoerce>
-		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
-	};
-	loopExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & ArgsOf<typeof F.buildLoopExpression>[0],
-			options?: OptionsArg<typeof matchArmBlockEnding$seated>
-		) => ReturnType<typeof matchArmBlockEnding$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> &
-				ArgsOf<typeof C.coerceToLoopExpression>[0],
-			options?: OptionsArg<typeof matchArmBlockEnding$seatedCoerce>
-		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
-	};
-	forExpression: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & {
-				value: ArgsOf<typeof F.buildForExpression>[0];
-			},
-			options?: OptionsArg<typeof matchArmBlockEnding$seated>
-		) => ReturnType<typeof matchArmBlockEnding$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> & {
-				value: ArgsOf<typeof C.coerceToForExpression>[0];
-			},
-			options?: OptionsArg<typeof matchArmBlockEnding$seatedCoerce>
-		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
-	};
-	constBlock: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & {
-				value: ArgsOf<typeof F.buildConstBlock>[0];
-			},
-			options?: OptionsArg<typeof matchArmBlockEnding$seated>
-		) => ReturnType<typeof matchArmBlockEnding$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> & {
-				value: ArgsOf<typeof C.coerceToConstBlock>[0];
-			},
-			options?: OptionsArg<typeof matchArmBlockEnding$seatedCoerce>
-		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
-	};
 	strict: typeof matchArmBlockEnding$seated;
 	coerce: typeof matchArmBlockEnding$seatedCoerce;
 } = {
-	unsafeBlock: {
-		strict: matchArmBlockEnding$unsafeBlock(matchArmBlockEnding$seated, F.buildUnsafeBlock),
-		coerce: matchArmBlockEnding$unsafeBlock(matchArmBlockEnding$seatedCoerce, C.coerceToUnsafeBlock)
-	},
-	asyncBlock: {
-		strict: matchArmBlockEnding$asyncBlock(matchArmBlockEnding$seated, F.buildAsyncBlock),
-		coerce: matchArmBlockEnding$asyncBlock(matchArmBlockEnding$seatedCoerce, C.coerceToAsyncBlock)
-	},
-	genBlock: {
-		strict: matchArmBlockEnding$genBlock(matchArmBlockEnding$seated, F.buildGenBlock),
-		coerce: matchArmBlockEnding$genBlock(matchArmBlockEnding$seatedCoerce, C.coerceToGenBlock)
-	},
-	tryBlock: {
-		strict: matchArmBlockEnding$tryBlock(matchArmBlockEnding$seated, F.buildTryBlock),
-		coerce: matchArmBlockEnding$tryBlock(matchArmBlockEnding$seatedCoerce, C.coerceToTryBlock)
-	},
-	block: {
-		strict: matchArmBlockEnding$block(matchArmBlockEnding$seated, F.buildBlock),
-		coerce: matchArmBlockEnding$block(matchArmBlockEnding$seatedCoerce, C.coerceToBlock)
-	},
-	ifExpression: {
-		strict: matchArmBlockEnding$ifExpression(matchArmBlockEnding$seated, F.buildIfExpression),
-		coerce: matchArmBlockEnding$ifExpression(matchArmBlockEnding$seatedCoerce, C.coerceToIfExpression)
-	},
-	matchExpression: {
-		strict: matchArmBlockEnding$matchExpression(matchArmBlockEnding$seated, F.buildMatchExpression),
-		coerce: matchArmBlockEnding$matchExpression(matchArmBlockEnding$seatedCoerce, C.coerceToMatchExpression)
-	},
-	whileExpression: {
-		strict: matchArmBlockEnding$whileExpression(matchArmBlockEnding$seated, F.buildWhileExpression),
-		coerce: matchArmBlockEnding$whileExpression(matchArmBlockEnding$seatedCoerce, C.coerceToWhileExpression)
-	},
-	loopExpression: {
-		strict: matchArmBlockEnding$loopExpression(matchArmBlockEnding$seated, F.buildLoopExpression),
-		coerce: matchArmBlockEnding$loopExpression(matchArmBlockEnding$seatedCoerce, C.coerceToLoopExpression)
-	},
-	forExpression: {
-		strict: matchArmBlockEnding$forExpression(matchArmBlockEnding$seated, F.buildForExpression),
-		coerce: matchArmBlockEnding$forExpression(matchArmBlockEnding$seatedCoerce, C.coerceToForExpression)
-	},
-	constBlock: {
-		strict: matchArmBlockEnding$constBlock(matchArmBlockEnding$seated, F.buildConstBlock),
-		coerce: matchArmBlockEnding$constBlock(matchArmBlockEnding$seatedCoerce, C.coerceToConstBlock)
-	},
 	strict: matchArmBlockEnding$seated,
 	coerce: matchArmBlockEnding$seatedCoerce
 };
@@ -9811,34 +1833,10 @@ const macroDefinitionParen$seatedCoerce: (
 	C.coerceToMacroDefinitionParen,
 	C.coerceToMacroRules
 );
-const macroDefinitionParen$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
-	};
 const macroDefinitionParen: {
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof macroDefinitionParen$seated>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildIdentifier>;
-			},
-			options?: OptionsArg<typeof macroDefinitionParen$seated>
-		) => ReturnType<typeof macroDefinitionParen$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof macroDefinitionParen$seatedCoerce>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof macroDefinitionParen$seatedCoerce>
-		) => ReturnType<typeof macroDefinitionParen$seatedCoerce>;
-	};
 	strict: typeof macroDefinitionParen$seated;
 	coerce: typeof macroDefinitionParen$seatedCoerce;
 } = {
-	identifier: {
-		strict: macroDefinitionParen$identifier(macroDefinitionParen$seated, F.buildIdentifier),
-		coerce: macroDefinitionParen$identifier(macroDefinitionParen$seatedCoerce, C.coerceToIdentifier)
-	},
 	strict: macroDefinitionParen$seated,
 	coerce: macroDefinitionParen$seatedCoerce
 };
@@ -9880,34 +1878,10 @@ const macroDefinitionBracket$seatedCoerce: (
 	C.coerceToMacroDefinitionBracket,
 	C.coerceToMacroRules
 );
-const macroDefinitionBracket$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
-	};
 const macroDefinitionBracket: {
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof macroDefinitionBracket$seated>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildIdentifier>;
-			},
-			options?: OptionsArg<typeof macroDefinitionBracket$seated>
-		) => ReturnType<typeof macroDefinitionBracket$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof macroDefinitionBracket$seatedCoerce>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof macroDefinitionBracket$seatedCoerce>
-		) => ReturnType<typeof macroDefinitionBracket$seatedCoerce>;
-	};
 	strict: typeof macroDefinitionBracket$seated;
 	coerce: typeof macroDefinitionBracket$seatedCoerce;
 } = {
-	identifier: {
-		strict: macroDefinitionBracket$identifier(macroDefinitionBracket$seated, F.buildIdentifier),
-		coerce: macroDefinitionBracket$identifier(macroDefinitionBracket$seatedCoerce, C.coerceToIdentifier)
-	},
 	strict: macroDefinitionBracket$seated,
 	coerce: macroDefinitionBracket$seatedCoerce
 };
@@ -9949,34 +1923,10 @@ const macroDefinitionBrace$seatedCoerce: (
 	C.coerceToMacroDefinitionBrace,
 	C.coerceToMacroRules
 );
-const macroDefinitionBrace$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
-	};
 const macroDefinitionBrace: {
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof macroDefinitionBrace$seated>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildIdentifier>;
-			},
-			options?: OptionsArg<typeof macroDefinitionBrace$seated>
-		) => ReturnType<typeof macroDefinitionBrace$seated>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof macroDefinitionBrace$seatedCoerce>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof macroDefinitionBrace$seatedCoerce>
-		) => ReturnType<typeof macroDefinitionBrace$seatedCoerce>;
-	};
 	strict: typeof macroDefinitionBrace$seated;
 	coerce: typeof macroDefinitionBrace$seatedCoerce;
 } = {
-	identifier: {
-		strict: macroDefinitionBrace$identifier(macroDefinitionBrace$seated, F.buildIdentifier),
-		coerce: macroDefinitionBrace$identifier(macroDefinitionBrace$seatedCoerce, C.coerceToIdentifier)
-	},
 	strict: macroDefinitionBrace$seated,
 	coerce: macroDefinitionBrace$seatedCoerce
 };
@@ -10090,28 +2040,28 @@ const rangePatternWithLeft$withRight =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
-const rangePatternWithLeft$dotDotDot =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const rangePatternWithLeft$dotDotEq =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const rangePatternWithLeft$dotDot =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
 const rangePatternWithLeft$bare =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: _c(child)() } as never, options as never);
+const rangePatternWithLeft$withRight$dotDotDot =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const rangePatternWithLeft$withRight$dotDotEq =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const rangePatternWithLeft$withRight$dotDot =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
 const rangePatternWithLeft: {
 	withRight: {
 		strict: (
@@ -10182,25 +2132,34 @@ const rangePatternWithLeft: {
 		strict: rangePatternWithLeft$withRight(F.buildRangePatternWithLeft, F.buildRangePatternWithLeftWithRight),
 		coerce: rangePatternWithLeft$withRight(C.coerceToRangePatternWithLeft, C.coerceToRangePatternWithLeftWithRight),
 		dotDotDot: {
-			strict: rangePatternWithLeft$dotDotDot(
+			strict: rangePatternWithLeft$withRight$dotDotDot(
 				F.buildRangePatternWithLeft,
 				rangePatternWithLeftWithRight.dotDotDot.strict
 			),
-			coerce: rangePatternWithLeft$dotDotDot(
+			coerce: rangePatternWithLeft$withRight$dotDotDot(
 				C.coerceToRangePatternWithLeft,
 				rangePatternWithLeftWithRight.dotDotDot.coerce
 			)
 		},
 		dotDotEq: {
-			strict: rangePatternWithLeft$dotDotEq(F.buildRangePatternWithLeft, rangePatternWithLeftWithRight.dotDotEq.strict),
-			coerce: rangePatternWithLeft$dotDotEq(
+			strict: rangePatternWithLeft$withRight$dotDotEq(
+				F.buildRangePatternWithLeft,
+				rangePatternWithLeftWithRight.dotDotEq.strict
+			),
+			coerce: rangePatternWithLeft$withRight$dotDotEq(
 				C.coerceToRangePatternWithLeft,
 				rangePatternWithLeftWithRight.dotDotEq.coerce
 			)
 		},
 		dotDot: {
-			strict: rangePatternWithLeft$dotDot(F.buildRangePatternWithLeft, rangePatternWithLeftWithRight.dotDot.strict),
-			coerce: rangePatternWithLeft$dotDot(C.coerceToRangePatternWithLeft, rangePatternWithLeftWithRight.dotDot.coerce)
+			strict: rangePatternWithLeft$withRight$dotDot(
+				F.buildRangePatternWithLeft,
+				rangePatternWithLeftWithRight.dotDot.strict
+			),
+			coerce: rangePatternWithLeft$withRight$dotDot(
+				C.coerceToRangePatternWithLeft,
+				rangePatternWithLeftWithRight.dotDot.coerce
+			)
 		}
 	},
 	bare: {
@@ -10281,6 +2240,32 @@ export const pointerType: {
 	mut: { strict: F.buildPointerTypeMut, coerce: C.coerceToPointerTypeMut }
 };
 
+export const expressionEndingWithBlock: {
+	readonly unsafeBlock: typeof B.unsafeBlock;
+	readonly asyncBlock: typeof B.asyncBlock;
+	readonly genBlock: typeof B.genBlock;
+	readonly tryBlock: typeof B.tryBlock;
+	readonly block: typeof B.block;
+	readonly ifExpression: typeof B.ifExpression;
+	readonly matchExpression: typeof B.matchExpression;
+	readonly whileExpression: typeof B.whileExpression;
+	readonly loopExpression: typeof B.loopExpression;
+	readonly forExpression: typeof B.forExpression;
+	readonly constBlock: typeof B.constBlock;
+} = {
+	unsafeBlock: B.unsafeBlock,
+	asyncBlock: B.asyncBlock,
+	genBlock: B.genBlock,
+	tryBlock: B.tryBlock,
+	block: B.block,
+	ifExpression: B.ifExpression,
+	matchExpression: B.matchExpression,
+	whileExpression: B.whileExpression,
+	loopExpression: B.loopExpression,
+	forExpression: B.forExpression,
+	constBlock: B.constBlock
+};
+
 export const delimTokenTree: {
 	readonly paren: { strict: typeof F.buildDelimTokenTreeParen; coerce: typeof C.coerceToDelimTokenTreeParen };
 	readonly bracket: { strict: typeof F.buildDelimTokenTreeBracket; coerce: typeof C.coerceToDelimTokenTreeBracket };
@@ -10331,13 +2316,10 @@ export const matchArm: {
 
 export const closureExpression: {
 	readonly block: { strict: typeof F.buildClosureExpressionBlock; coerce: typeof C.coerceToClosureExpressionBlock };
-	readonly expr: {
-		strict: typeof F.buildClosureExpressionExpr;
-		coerce: typeof C.coerceToClosureExpressionExpr;
-	} & typeof closureExpressionExpr;
+	readonly expr: { strict: typeof F.buildClosureExpressionExpr; coerce: typeof C.coerceToClosureExpressionExpr };
 } = {
 	block: { strict: F.buildClosureExpressionBlock, coerce: C.coerceToClosureExpressionBlock },
-	expr: { strict: F.buildClosureExpressionExpr, coerce: C.coerceToClosureExpressionExpr, ...closureExpressionExpr }
+	expr: { strict: F.buildClosureExpressionExpr, coerce: C.coerceToClosureExpressionExpr }
 };
 
 export const fieldPattern: {
@@ -10373,29 +2355,17 @@ export const orPattern: {
 export const integerLiteral: {
 	readonly strict: typeof F.buildIntegerLiteralDecimal;
 	readonly coerce: typeof C.coerceToIntegerLiteralDecimal;
-	readonly decimal: {
-		strict: typeof F.buildIntegerLiteralDecimal;
-		coerce: typeof C.coerceToIntegerLiteralDecimal;
-	} & typeof integerLiteralDecimal;
-	readonly hex: {
-		strict: typeof F.buildIntegerLiteralHex;
-		coerce: typeof C.coerceToIntegerLiteralHex;
-	} & typeof integerLiteralHex;
-	readonly binary: {
-		strict: typeof F.buildIntegerLiteralBinary;
-		coerce: typeof C.coerceToIntegerLiteralBinary;
-	} & typeof integerLiteralBinary;
-	readonly octal: {
-		strict: typeof F.buildIntegerLiteralOctal;
-		coerce: typeof C.coerceToIntegerLiteralOctal;
-	} & typeof integerLiteralOctal;
+	readonly decimal: { strict: typeof F.buildIntegerLiteralDecimal; coerce: typeof C.coerceToIntegerLiteralDecimal };
+	readonly hex: { strict: typeof F.buildIntegerLiteralHex; coerce: typeof C.coerceToIntegerLiteralHex };
+	readonly binary: { strict: typeof F.buildIntegerLiteralBinary; coerce: typeof C.coerceToIntegerLiteralBinary };
+	readonly octal: { strict: typeof F.buildIntegerLiteralOctal; coerce: typeof C.coerceToIntegerLiteralOctal };
 } = {
 	strict: F.buildIntegerLiteralDecimal,
 	coerce: C.coerceToIntegerLiteralDecimal,
-	decimal: { strict: F.buildIntegerLiteralDecimal, coerce: C.coerceToIntegerLiteralDecimal, ...integerLiteralDecimal },
-	hex: { strict: F.buildIntegerLiteralHex, coerce: C.coerceToIntegerLiteralHex, ...integerLiteralHex },
-	binary: { strict: F.buildIntegerLiteralBinary, coerce: C.coerceToIntegerLiteralBinary, ...integerLiteralBinary },
-	octal: { strict: F.buildIntegerLiteralOctal, coerce: C.coerceToIntegerLiteralOctal, ...integerLiteralOctal }
+	decimal: { strict: F.buildIntegerLiteralDecimal, coerce: C.coerceToIntegerLiteralDecimal },
+	hex: { strict: F.buildIntegerLiteralHex, coerce: C.coerceToIntegerLiteralHex },
+	binary: { strict: F.buildIntegerLiteralBinary, coerce: C.coerceToIntegerLiteralBinary },
+	octal: { strict: F.buildIntegerLiteralOctal, coerce: C.coerceToIntegerLiteralOctal }
 };
 
 export const charLiteral: {
@@ -10432,4 +2402,50 @@ export const escapeSequence: {
 	unicodeFixed: { strict: F.buildEscapeSequenceUnicodeFixed, coerce: C.coerceToEscapeSequenceUnicodeFixed },
 	unicodeBraced: { strict: F.buildEscapeSequenceUnicodeBraced, coerce: C.coerceToEscapeSequenceUnicodeBraced },
 	hex: { strict: F.buildEscapeSequenceHex, coerce: C.coerceToEscapeSequenceHex }
+};
+
+export const declarationStatement: {
+	readonly const: typeof B.constItem;
+	readonly macroInvocation: typeof B.macroInvocation;
+	readonly macro: typeof macroDefinition;
+	readonly empty: { strict: typeof F.buildEmptyStatement; coerce: typeof C.coerceToEmptyStatement };
+	readonly attribute: typeof B.attributeItem;
+	readonly innerAttribute: typeof B.innerAttributeItem;
+	readonly mod: typeof modItem;
+	readonly foreignMod: typeof foreignModItem;
+	readonly struct: typeof structItem;
+	readonly union: typeof B.unionItem;
+	readonly enum: typeof B.enumItem;
+	readonly type: typeof B.typeItem;
+	readonly function: typeof B.functionItem;
+	readonly functionSignature: typeof B.functionSignatureItem;
+	readonly impl: typeof implItem;
+	readonly trait: typeof B.traitItem;
+	readonly associated: typeof B.associatedType;
+	readonly let: typeof B.letDeclaration;
+	readonly use: typeof B.useDeclaration;
+	readonly externCrate: typeof B.externCrateDeclaration;
+	readonly static: typeof B.staticItem;
+} = {
+	const: B.constItem,
+	macroInvocation: B.macroInvocation,
+	macro: macroDefinition,
+	empty: { strict: F.buildEmptyStatement, coerce: C.coerceToEmptyStatement },
+	attribute: B.attributeItem,
+	innerAttribute: B.innerAttributeItem,
+	mod: modItem,
+	foreignMod: foreignModItem,
+	struct: structItem,
+	union: B.unionItem,
+	enum: B.enumItem,
+	type: B.typeItem,
+	function: B.functionItem,
+	functionSignature: B.functionSignatureItem,
+	impl: implItem,
+	trait: B.traitItem,
+	associated: B.associatedType,
+	let: B.letDeclaration,
+	use: B.useDeclaration,
+	externCrate: B.externCrateDeclaration,
+	static: B.staticItem
 };

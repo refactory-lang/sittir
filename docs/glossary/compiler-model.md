@@ -331,13 +331,15 @@ generated enum and the enum's own variants cannot disagree.
 ### `packages/codegen/src/compiler/model/node-map.ts::armFactsOf`
 
 The per-arm annotations a slot value carries: the declared `variant`/`variantOf`
-pair and `default`. One derivation spread into all four SYMBOL branches of
-`deriveValuesForRule` and into supertype subtype refs, so an arm fact added to
-the model reaches every value shape and every subtype without further edits.
-
-#### spliced
-
-`annotations.spliced` on a reference becomes a `spliced` fact on the value, next to `variant` and `default`. It says the reference is a visible wrapper the grammar declares as spliced onto its parent's slot.
+pair, and `default`. A `variantOf`-only literal arm has no display of its own to
+derive a `variant` from, so it is named from the resolved catalog kind the arm
+target carries (`resolvedKind`): `prefixNamedSuffix(variantOf, resolvedKind)`
+when that kind is named under its owner's prefix, else
+`undisplayedKindAddress(resolvedKind)`. That way an enrich-stamped literal still
+gets a spelled arm name; with no owner or resolved kind it gets none. One
+derivation spread into all four SYMBOL branches of `deriveValuesForRule` and into
+supertype subtype refs, so an arm fact added to the model reaches every value
+shape and every subtype without further edits.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::deriveValuesForRule`
 
@@ -3031,23 +3033,6 @@ least two subtypes, every one stamped as a variant of this kind — or
 re-checking the subtype facts (sub-factory mounting through a slot, route
 emission).
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.declaredSupertype`
-
-Whether the grammar's own `supertypes:` declaration lists this kind
-(`NormalizedGrammar.supertypes`). tree-sitter keeps a declared supertype as a
-node-types entry; an undeclared hidden choice that link classifies as a
-supertype is flattened into its parent's child types instead.
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.armSubtypes`
-
-The values a slot holding this supertype mounts as arms: the variant subtypes
-when it is a flattened polymorph parent, else, for an undeclared supertype,
-its subtype values derived by `deriveValuesForRule` on its own rule (the same
-derivation, alias envelopes included, that link's flattening gives an
-unaliased parent's slot). An aliased reference keeps the supertype as one
-slot value (the alias site is an envelope), and this extends the unaliased
-expansion to it. A declared supertype has none.
-
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.<unknown>`
 
 ```text
@@ -4083,24 +4068,6 @@ that is not a node is a codegen error; a site that holds a second display for
 a kind (a `parseKind`, an alias target) carries it itself
 (`displayNameOfRef`).
 
-### `packages/codegen/src/compiler/model/display-name.ts::displayedLiteralTarget`
-
-The display node a slot value stands for when the value is a displayed
-literal: its storage (a node reference's storage kind, or a terminal value's
-resolved kind) is an anonymous literal token in the catalog, and the site
-issues it under a different kind (`parseKindId` ≠ storage id). Otherwise
-`undefined`. After enrich's unaliasing only a terminal display keeps a
-literal under it, so the target is always a terminal kind (typescript
-`async` shown as `identifier`, rust `u8` shown as `identifier`).
-
-### `packages/codegen/src/compiler/model/display-name.ts::displayNameOfValue`
-
-The display at one slot value: the name the parser issues at that site
-(`parseKind`) when it differs from the value's storage kind, which is an
-alias at the site; otherwise the node's own stamp. The value-level twin of
-`displayNameOfRef`, for the assembled model where the reference is already
-resolved to a node.
-
 ### `packages/codegen/src/compiler/model/display-name.ts::ownsItsDisplay`
 
 Whether a kind's display is its own name. Where two kinds share one display,
@@ -4431,6 +4398,12 @@ The options site of a supertype's choice between its variants, addressed `<kind>
 `VARIANT_LABEL`. It lets a binding pick a default variant at the kind itself (typescript `string/variant` →
 quote style) rather than at each slot that holds it.
 ```
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::armValue`
+
+The option value one arm reports: a terminal value's own text always wins
+(a literal IS its text, whatever label it might also carry); otherwise the
+arm's stamped `variant` name, falling back to its resolved `kind`.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::armsOf`
 

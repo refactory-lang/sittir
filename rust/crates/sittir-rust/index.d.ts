@@ -1688,22 +1688,22 @@ export interface VariadicParameterTransport {
   _pattern?: SlotValue<PatternTransport>
 }
 
-export interface VisibilityModifierGroupTransport {
+export interface VisibilityModifierPubScopeInPathTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content: SlotValue<VisibilityModifierGroupContentTransportSlot>
+  _path: SlotValue<VisibilityModifierPubScopeInPathPathTransportSlot>
 }
 
-export interface VisibilityModifierPubInPathTransport {
+export interface VisibilityModifierPubScopeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _path: SlotValue<VisibilityModifierPubInPathPathTransportSlot>
+  _content: SlotValue<VisibilityModifierPubScopeContentTransportSlot>
 }
 
 export interface VisibilityModifierPubTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _visibility_modifier_group?: SlotValue<VisibilityModifierGroupTransport>
+  _visibility_modifier_pub_scope?: SlotValue<VisibilityModifierPubScopeTransport>
 }
 
 export interface VisibilityModifierTransport {

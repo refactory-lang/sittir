@@ -307,7 +307,8 @@ function subFactoryChildrenArgs(
 function childBareCallArgs(
 	child: AssembledNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	withOptions = false
 ): string | undefined {
 	switch (child.modelType) {
 		case 'branch':
@@ -318,7 +319,9 @@ function childBareCallArgs(
 			if (testConstructsWithChildren(child, nodeMap)) {
 				return subFactoryChildrenArgs(child, nodeMap, kindEntries);
 			}
-			return factoryCallArgs(child, nodeMap, kindEntries).renderConfigArg;
+			const { renderConfigArg, registeredOptionsArg } = factoryCallArgs(child, nodeMap, kindEntries);
+			if (!withOptions || registeredOptionsArg === undefined) return renderConfigArg;
+			return `${renderConfigArg === '' ? 'undefined' : renderConfigArg}, ${registeredOptionsArg}`;
 		}
 		case 'list':
 			return dummyValueForField(buildSeparatedListContentSlot(child), nodeMap, kindEntries, 0, new Set());
@@ -380,7 +383,7 @@ function subFactoryCallArgs(
 	const { child, path } = sub.arm;
 	let childArgs: string | undefined;
 	if (path.length === 0) {
-		childArgs = childBareCallArgs(child, nodeMap, kindEntries);
+		childArgs = childBareCallArgs(child, nodeMap, kindEntries, sub.residual.length === 0);
 	} else {
 		if (!bundledKinds.has(child.kind) || visiting.has(child.kind)) return undefined;
 		const nested = subFactoriesOf(child, nodeMap, { isEmitted }).entries.find((e) => e.name === path[0]);
@@ -447,7 +450,7 @@ function emitSubFactoryTests(
 		const args = subFactoryCallArgs(sub, nodeMap, kindEntries, isEmitted, bundledKinds, new Set(), positional);
 		if (args === undefined) continue;
 		const spelling = emittedArmPath(kind, [sub.name], polymorphWires).join('.');
-		const knownFailure = expectTestFailures?.[`${kind}.${sub.name}`];
+		const knownFailure = expectTestFailures?.[`${kind}.${spelling}`];
 		if (knownFailure !== undefined) cases.push(`  // known-failing: ${knownFailure}`);
 		cases.push(
 			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(spelling)} builds the parent', () => {`

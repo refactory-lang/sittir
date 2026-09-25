@@ -8,6 +8,7 @@
     "_expressions",
     "_f_expression",
     "_left_hand_side",
+    "_match_block",
     "_named_expression_lhs",
     "_right_hand_side",
     "_simple_pattern",
@@ -45,23 +46,105 @@
     "}"
   ],
   "polymorphVariants": {
+    "future_import_statement": {
+      "definedBy": "override",
+      "childKind": {
+        "import_list": "import_list",
+        "parenthesized_import_list": "parenthesized_import_list"
+      }
+    },
+    "import_from_statement": {
+      "definedBy": "override",
+      "childKind": {
+        "wildcard_import": "wildcard_import",
+        "import_list": "import_list",
+        "parenthesized_import_list": "parenthesized_import_list"
+      }
+    },
     "expression_statement": {
       "definedBy": "override",
       "childKind": {
-        "expression_statement_tuple": "tuple"
-      }
-    },
-    "_match_block": {
-      "definedBy": "override",
-      "childKind": {
-        "match_block_block": "block",
-        "newline": "empty"
+        "expression": "expression",
+        "expression_statement_tuple": "tuple",
+        "assignment": "assignment",
+        "augmented_assignment": "augmented_assignment",
+        "yield": "yield"
       }
     },
     "except_clause": {
       "definedBy": "override",
       "childKind": {
         "except_clause_exception": "exception"
+      }
+    },
+    "parenthesized_list_splat": {
+      "definedBy": "enrich",
+      "childKind": {
+        "parenthesized_list_splat": "parenthesized_list_splat",
+        "list_splat": "list_splat"
+      }
+    },
+    "case_pattern": {
+      "definedBy": "override",
+      "childKind": {
+        "case_as_pattern": "case_as_pattern",
+        "keyword_pattern": "keyword_pattern",
+        "simple_pattern": "simple_pattern"
+      }
+    },
+    "complex_pattern": {
+      "definedBy": "enrich",
+      "childKind": {
+        "integer": "integer",
+        "float": "float"
+      }
+    },
+    "list_splat_pattern": {
+      "definedBy": "enrich",
+      "childKind": {
+        "identifier": "identifier",
+        "subscript": "subscript",
+        "attribute": "attribute"
+      }
+    },
+    "dictionary_splat_pattern": {
+      "definedBy": "enrich",
+      "childKind": {
+        "identifier": "identifier",
+        "subscript": "subscript",
+        "attribute": "attribute"
+      }
+    },
+    "yield": {
+      "definedBy": "override",
+      "childKind": {
+        "yield_from_clause": "from_clause"
+      }
+    },
+    "typed_parameter": {
+      "definedBy": "enrich",
+      "childKind": {
+        "identifier": "identifier",
+        "list_splat_pattern": "list_splat_pattern",
+        "dictionary_splat_pattern": "dictionary_splat_pattern"
+      }
+    },
+    "type": {
+      "definedBy": "enrich",
+      "childKind": {
+        "expression": "expression",
+        "splat_type": "splat_type",
+        "generic_type": "generic_type",
+        "union_type": "union_type",
+        "constrained_type": "constrained_type",
+        "member_type": "member_type"
+      }
+    },
+    "parenthesized_expression": {
+      "definedBy": "enrich",
+      "childKind": {
+        "expression": "expression",
+        "yield": "yield"
       }
     }
   },
@@ -85,6 +168,7 @@
     "integer_octal": "integer.octal",
     "line_continuation_newline": "lineContinuation.newline",
     "line_continuation_nul": "lineContinuation.nul",
+    "match_block_block": "matchBlock.block",
     "suite_block": "suite.block",
     "suite_empty": "suite.empty",
     "suite_inline": "suite.inline",
@@ -552,19 +636,6 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      }
-    },
-    "_match_block": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_match_block_block",
-          "_newline"
-        ]
       }
     },
     "case_clause": {
@@ -3504,12 +3575,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "simple_pattern_negative",
-              "parseKind": "simple_pattern_negative",
-              "seat": {
-                "kind": "simple_pattern_negative",
-                "shape": "arm",
-                "mount": "negative"
-              }
+              "parseKind": "simple_pattern_negative"
             },
             {
               "kind": "node-ref",
@@ -3584,50 +3650,12 @@
     },
     {
       "kind": "_match_block",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "MatchBlock",
-      "factoryName": "matchBlock",
       "irKey": "matchBlock",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "match_block_block",
-            "_newline"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "match_block_block",
-              "parseKind": "match_block_block",
-              "seat": {
-                "kind": "match_block_block",
-                "shape": "arm",
-                "mount": "block"
-              }
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_newline",
-              "parseKind": "newline"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ],
-      "bareAccepts": [
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
         "_newline",
         "match_block_block"
       ]
@@ -8708,12 +8736,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "expression_list_expressions",
-              "parseKind": "expression_list_expressions",
-              "seat": {
-                "kind": "expression_list_expressions",
-                "shape": "arm",
-                "mount": "expressions"
-              }
+              "parseKind": "expression_list_expressions"
             }
           ]
         }
@@ -11323,12 +11346,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "simple_pattern_negative",
-              "parseKind": "simple_pattern_negative",
-              "seat": {
-                "kind": "simple_pattern_negative",
-                "shape": "arm",
-                "mount": "negative"
-              }
+              "parseKind": "simple_pattern_negative"
             },
             {
               "kind": "node-ref",
@@ -12971,12 +12989,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "pattern_list_patterns",
-              "parseKind": "pattern_list_patterns",
-              "seat": {
-                "kind": "pattern_list_patterns",
-                "shape": "arm",
-                "mount": "patterns"
-              }
+              "parseKind": "pattern_list_patterns"
             }
           ]
         }

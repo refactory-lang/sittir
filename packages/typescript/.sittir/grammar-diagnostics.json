@@ -150,22 +150,6 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "typescript",
-    "ownerKind": "_number",
-    "message": "[assemble] typeName collision: kind '_number' renamed 'Number' → '_Number' (visible sibling(s): 'number')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Number",
-      "newType": "_Number",
-      "visibleKinds": [
-        "number"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
     "ownerKind": "_identifier",
     "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')",
     "canProceed": true,

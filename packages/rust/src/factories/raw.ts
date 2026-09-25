@@ -26,8 +26,8 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 const _leafRe_buildIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
 const _leafRe_buildCharLiteralEmpty = /^(?:(?:b)?'')$/u;
 const _leafRe_buildStringOpen = /^(?:(?:[bc]?"))$/u;
-const _leafRe_buildLineCommentRegularDslash = /^(?:(?:\/\/)(?:.*))$/u;
-const _leafRe_buildLineCommentContent = /^(?:(?:.*))$/u;
+const _leafRe_buildLineCommentExtraSlashes = /^(?:(?:\/\/)(?:.*))$/u;
+const _leafRe_buildLineCommentRegular = /^(?:(?:.*))$/u;
 const _leafRe_buildFloatLiteral =
 	/^(?:(?:[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u;
 const _leafRe_buildStringContent = /^(?:(?:[^"\\]+))$/u;
@@ -4405,7 +4405,7 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 }
 
 export function buildLineComment(
-	value: T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent
+	value: T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular
 ): T.LineComment.Built {
 	const _content = value;
 	return withMethods(
@@ -4417,7 +4417,7 @@ export function buildLineComment(
 				_content,
 				$with: {
 					content: (
-						value: T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent
+						value: T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular
 					) => buildLineComment(value)
 				}
 			},
@@ -5759,35 +5759,6 @@ export function buildUseWildcardGroup(
 	);
 }
 
-export function buildVisibilityModifierGroup(
-	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath
-): T.VisibilityModifierGroup.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.VisibilityModifierGroup['_content']>>(value, [
-		['self', TSKindId.Self] as const,
-		['super', TSKindId.Super] as const,
-		['crate', TSKindId.Crate] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.VisibilityModifierGroup as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (
-						value: NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath>
-					) => buildVisibilityModifierGroup(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildTupleTypeElements(
 	...elements: NonEmptyArray<T.Type | T.TypeIdentifier.Types>
 ): ReturnType<typeof _buildTupleTypeElements>;
@@ -6641,49 +6612,7 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 	);
 }
 
-export function buildVisibilityModifierPub(
-	value?: T.VisibilityModifierGroup
-): ReturnType<typeof _buildVisibilityModifierPub>;
-export function buildVisibilityModifierPub(
-	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath
-): ReturnType<typeof _buildVisibilityModifierPub>;
-export function buildVisibilityModifierPub(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildVisibilityModifierPub(args[0] as T.VisibilityModifierGroup);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.VisibilityModifierGroup as const);
-	return prebuilt
-		? _buildVisibilityModifierPub(args[0] as T.VisibilityModifierGroup)
-		: _buildVisibilityModifierPub(
-				(buildVisibilityModifierGroup as (...a: unknown[]) => unknown)(...args) as T.VisibilityModifierGroup
-			);
-}
-function _buildVisibilityModifierPub(value?: T.VisibilityModifierGroup): T.VisibilityModifierPub.Built {
-	const _visibility_modifier_group = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.VisibilityModifierPub as const,
-				$source: 2 as const,
-				$named: true as const,
-				_visibility_modifier_group,
-				$with: {
-					visibilityModifierGroup: (value?: T.VisibilityModifierGroup) => buildVisibilityModifierPub(value)
-				}
-			},
-			{
-				visibilityModifierGroup: () => _visibility_modifier_group
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildVisibilityModifierPubInPath(
+export function buildVisibilityModifierPubScopeInPath(
 	value:
 		| TSKindId.Self
 		| TSKindId.U8Keyword
@@ -6711,8 +6640,8 @@ export function buildVisibilityModifierPubInPath(
 		| TSKindId.DefaultKeyword
 		| TSKindId.UnionKeyword
 		| TSKindId.GenKeyword
-): T.VisibilityModifierPubInPath.Built {
-	const _path = coerceMixedEnumStorage<NonNullable<T.VisibilityModifierPubInPath['_path']>>(value, [
+): T.VisibilityModifierPubScopeInPath.Built {
+	const _path = coerceMixedEnumStorage<NonNullable<T.VisibilityModifierPubScopeInPath['_path']>>(value, [
 		['self', TSKindId.Self] as const,
 		['u8', TSKindId.U8Keyword] as const,
 		['i8', TSKindId.I8Keyword] as const,
@@ -6740,7 +6669,7 @@ export function buildVisibilityModifierPubInPath(
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.VisibilityModifierPubInPath as const,
+				$type: TSKindId.VisibilityModifierPubScopeInPath as const,
 				$source: 2 as const,
 				$named: true as const,
 				_path,
@@ -6774,11 +6703,82 @@ export function buildVisibilityModifierPubInPath(
 							| TSKindId.UnionKeyword
 							| TSKindId.GenKeyword
 						>
-					) => buildVisibilityModifierPubInPath(value)
+					) => buildVisibilityModifierPubScopeInPath(value)
 				}
 			},
 			{
 				path: () => _path
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildVisibilityModifierPubScope(
+	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath
+): T.VisibilityModifierPubScope.Built {
+	const _content = coerceMixedEnumStorage<NonNullable<T.VisibilityModifierPubScope['_content']>>(value, [
+		['self', TSKindId.Self] as const,
+		['super', TSKindId.Super] as const,
+		['crate', TSKindId.Crate] as const
+	]);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.VisibilityModifierPubScope as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (
+						value: NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
+					) => buildVisibilityModifierPubScope(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildVisibilityModifierPub(
+	value?: T.VisibilityModifierPubScope
+): ReturnType<typeof _buildVisibilityModifierPub>;
+export function buildVisibilityModifierPub(
+	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath
+): ReturnType<typeof _buildVisibilityModifierPub>;
+export function buildVisibilityModifierPub(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildVisibilityModifierPub(args[0] as T.VisibilityModifierPubScope);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.VisibilityModifierPubScope as const);
+	return prebuilt
+		? _buildVisibilityModifierPub(args[0] as T.VisibilityModifierPubScope)
+		: _buildVisibilityModifierPub(
+				(buildVisibilityModifierPubScope as (...a: unknown[]) => unknown)(...args) as T.VisibilityModifierPubScope
+			);
+}
+function _buildVisibilityModifierPub(value?: T.VisibilityModifierPubScope): T.VisibilityModifierPub.Built {
+	const _visibility_modifier_pub_scope = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.VisibilityModifierPub as const,
+				$source: 2 as const,
+				$named: true as const,
+				_visibility_modifier_pub_scope,
+				$with: {
+					visibilityModifierPubScope: (value?: T.VisibilityModifierPubScope) => buildVisibilityModifierPub(value)
+				}
+			},
+			{
+				visibilityModifierPubScope: () => _visibility_modifier_pub_scope
 			}
 		),
 		methodsEngine
@@ -7252,13 +7252,13 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 	);
 }
 
-export function buildLineCommentRegularDslash(text: string): T.LineCommentRegularDslash.Built {
-	if (text.length === 0) throw new Error(`line_comment_regular_dslash: text must be non-empty`);
-	if (!_leafRe_buildLineCommentRegularDslash.test(text))
-		throw new Error(`line_comment_regular_dslash: text does not match pattern: ${text}`);
+export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSlashes.Built {
+	if (text.length === 0) throw new Error(`line_comment_extra_slashes: text must be non-empty`);
+	if (!_leafRe_buildLineCommentExtraSlashes.test(text))
+		throw new Error(`line_comment_extra_slashes: text does not match pattern: ${text}`);
 	return withMethods(
 		{
-			$type: TSKindId.LineCommentRegularDslash as const,
+			$type: TSKindId.LineCommentExtraSlashes as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -7355,12 +7355,12 @@ function _buildLineCommentDocInner(value: T.LineDocContent | string): T.LineComm
 	);
 }
 
-export function buildLineCommentContent(text: string): T.LineCommentContent.Built {
-	if (!_leafRe_buildLineCommentContent.test(text))
-		throw new Error(`line_comment_content: text does not match pattern: ${text}`);
+export function buildLineCommentRegular(text: string): T.LineCommentRegular.Built {
+	if (!_leafRe_buildLineCommentRegular.test(text))
+		throw new Error(`line_comment_regular: text does not match pattern: ${text}`);
 	return withMethods(
 		{
-			$type: TSKindId.LineCommentContent as const,
+			$type: TSKindId.LineCommentRegular as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -8713,7 +8713,6 @@ export type FluentKindMap = {
 	patterns: T.Patterns.Built;
 	struct_pattern_elements: T.StructPatternElements.Built;
 	use_wildcard_group: T.UseWildcardGroup.Built;
-	visibility_modifier_group: T.VisibilityModifierGroup.Built;
 	_tuple_type_elements: T.TupleTypeElements.Built;
 	_tuple_expression_elements: T.TupleExpressionElements.Built;
 	integer_literal_decimal: T.IntegerLiteralDecimal.Built;
@@ -8740,8 +8739,9 @@ export type FluentKindMap = {
 	impl_item_negative_clause: T.ImplItemNegativeClause.Built;
 	impl_item_body: T.ImplItemBody.Built;
 	impl_item_semi: T.ImplItemSemi.Built;
+	visibility_modifier_pub_scope_in_path: T.VisibilityModifierPubScopeInPath.Built;
+	visibility_modifier_pub_scope: T.VisibilityModifierPubScope.Built;
 	visibility_modifier_pub: T.VisibilityModifierPub.Built;
-	visibility_modifier_pub_in_path: T.VisibilityModifierPubInPath.Built;
 	function_type_trait_form: T.FunctionTypeTraitForm.Built;
 	function_type_fn_form: T.FunctionTypeFnForm.Built;
 	mod_item_external: T.ModItemExternal.Built;
@@ -8759,10 +8759,10 @@ export type FluentKindMap = {
 	foreign_mod_item_body: T.ForeignModItemBody.Built;
 	match_arm_with_comma: T.MatchArmWithComma.Built;
 	match_arm_block_ending: T.MatchArmBlockEnding.Built;
-	line_comment_regular_dslash: T.LineCommentRegularDslash;
+	line_comment_extra_slashes: T.LineCommentExtraSlashes;
 	line_comment_doc_outer: T.LineCommentDocOuter.Built;
 	line_comment_doc_inner: T.LineCommentDocInner.Built;
-	line_comment_content: T.LineCommentContent;
+	line_comment_regular: T.LineCommentRegular;
 	block_comment_doc_outer: T.BlockCommentDocOuter.Built;
 	block_comment_doc_inner: T.BlockCommentDocInner.Built;
 	token_tree_pattern_paren: T.TokenTreePatternParen.Built;
@@ -8961,7 +8961,6 @@ export const _factoryMap = {
 	patterns: buildPatterns,
 	struct_pattern_elements: buildStructPatternElements,
 	use_wildcard_group: buildUseWildcardGroup,
-	visibility_modifier_group: buildVisibilityModifierGroup,
 	_tuple_type_elements: buildTupleTypeElements,
 	_tuple_expression_elements: buildTupleExpressionElements,
 	integer_literal_decimal: buildIntegerLiteralDecimal,
@@ -8988,8 +8987,9 @@ export const _factoryMap = {
 	impl_item_negative_clause: buildImplItemNegativeClause,
 	impl_item_body: buildImplItemBody,
 	impl_item_semi: buildImplItemSemi,
+	visibility_modifier_pub_scope_in_path: buildVisibilityModifierPubScopeInPath,
+	visibility_modifier_pub_scope: buildVisibilityModifierPubScope,
 	visibility_modifier_pub: buildVisibilityModifierPub,
-	visibility_modifier_pub_in_path: buildVisibilityModifierPubInPath,
 	function_type_trait_form: buildFunctionTypeTraitForm,
 	function_type_fn_form: buildFunctionTypeFnForm,
 	mod_item_external: buildModItemExternal,
@@ -9007,10 +9007,10 @@ export const _factoryMap = {
 	foreign_mod_item_body: buildForeignModItemBody,
 	match_arm_with_comma: buildMatchArmWithComma,
 	match_arm_block_ending: buildMatchArmBlockEnding,
-	line_comment_regular_dslash: buildLineCommentRegularDslash,
+	line_comment_extra_slashes: buildLineCommentExtraSlashes,
 	line_comment_doc_outer: buildLineCommentDocOuter,
 	line_comment_doc_inner: buildLineCommentDocInner,
-	line_comment_content: buildLineCommentContent,
+	line_comment_regular: buildLineCommentRegular,
 	block_comment_doc_outer: buildBlockCommentDocOuter,
 	block_comment_doc_inner: buildBlockCommentDocInner,
 	token_tree_pattern_paren: buildTokenTreePatternParen,

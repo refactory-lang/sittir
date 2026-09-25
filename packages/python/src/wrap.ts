@@ -562,6 +562,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'decorated_definition',
 		'match_statement'
 	]),
+	_match_block: new Set(['match_block_block', '_newline', 'newline']),
 	with_clause: new Set(['with_clause_bare', 'with_clause_paren']),
 	_suite: new Set(['suite_inline', 'suite_block', 'suite_empty']),
 	_simple_pattern: new Set([
@@ -2724,39 +2725,31 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle) {
 }
 
 export function wrapMatchBlock(
-	data: T.MatchBlock & {
-		readonly _match_block_block?: T.MatchBlockBlock | TSKindId.Newline;
-		readonly _newline?: T.MatchBlockBlock | TSKindId.Newline;
-	},
+	data: T.MatchBlock & { readonly $other?: T.MatchBlock | readonly T.MatchBlock[] },
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, ['_content', '_match_block_block', '_newline']);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.MatchBlock as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			..._omitWrapKeys(data, ['_match_block_block', '_newline']),
-			$type: TSKindId.MatchBlock as const,
-			_content: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(
-					data._content ?? data._match_block_block ?? data._newline,
-					'content',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
-				{ '\n': 113 }
-			),
-
-			content() {
-				return drillIn<T.MatchBlockBlock | TSKindId.Newline>(this._content, tree);
-			},
-			$with: {
-				content: (v: NonNullable<T.MatchBlock['_content']>) => wrapMatchBlock({ ...$edited(data), _content: v }, tree)
-			}
-		},
-		_treeEngine(tree)
+	if (typeof data === 'number') return data;
+	const node = _keepModelledSlots(data, ['_match_block_block', '__newline', '_newline']);
+	const kindKeyed = _firstKindKeyedWrapChild(node, ['match_block_block', '_newline', 'newline']) as
+		| T.MatchBlock
+		| readonly T.MatchBlock[]
+		| undefined;
+	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['match_block_block', '_newline', 'newline']);
+	if (
+		filtered === undefined &&
+		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
+	) {
+		return drillInSelf<T.MatchBlock>(node as T.MatchBlock, tree);
+	}
+	return drillIn<T.MatchBlock>(
+		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
+			tree,
+			nodeType: node.$type,
+			slotName: 'children',
+			span: (node as _NodeData).$span
+		}),
+		tree
 	);
-	return _node;
 }
 
 export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {

@@ -323,11 +323,9 @@ export default grammar(
 
 				visibility_modifier: [
 					{ '1/1/0/1/3/0': field('in') },
-					{
-						'1/1/0/1/3': variant('in_path'),
-						'0': variant('crate'),
-						'1': variant('pub')
-					}
+					{ '1/1/0/1/3': variant('in_path') },
+					{ '1/1/0': variant('scope') },
+					{ '0': variant('crate'), '1': variant('pub') }
 				],
 
 				function_type: { '1/0/0': variant('trait_form'), '1/0/1': variant('fn_form') },
@@ -472,18 +470,18 @@ export default grammar(
 				// distributes over the doc sequence rather than fusing onto one
 				// kind as two independent optional markers.
 				line_comment: {
-					'1/0': variant('regular_dslash'),
+					'1/0': variant('extra_slashes'),
 					'1/1': variant('doc_outer'),
 					'1/2': variant('doc_inner'),
-					'1/3': variant('content')
+					'1/3': variant('regular', { default: true })
 				},
 
-				// `/**` and `/*!`, the block spelling of the same split. Only
-				// the two distributed arms are named; the third is already a
-				// reference to a named content rule.
+				// `/**` and `/*!`, the block spelling of the same split; the
+				// plain `/* … */` arm is the default.
 				block_comment: {
 					'1/0/0': variant('doc_outer'),
-					'1/0/1': variant('doc_inner')
+					'1/0/1': variant('doc_inner'),
+					'1/0/2': variant('regular', { default: true })
 				},
 
 				// The token-tree repeats' element fields (`field('delim_tokens',

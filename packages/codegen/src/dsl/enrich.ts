@@ -51,6 +51,7 @@ import { ruleKey } from './shared.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { distributeTokenForms } from './transform/token-forms.ts';
+import { ENRICH_AUTOMATIC_VARIANTS_KEY, stampAutomaticVariants } from './automatic-variants.ts';
 
 export interface GrammarResult {
 	grammar: {
@@ -183,6 +184,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
 	}
 	synthesizeFieldEnumRules(mergedRules);
+	const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
 	setGroupLiftRuleMap({
 		get: (n) => mergedRules[n] as unknown as RuntimeRule | undefined,
 		set: (n, b) => {
@@ -206,6 +208,14 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	if (clauseGroupOwners.size > 0) {
 		Object.defineProperty(result, ENRICH_CLAUSE_GROUP_OWNERS_KEY, {
 			value: clauseGroupOwners,
+			enumerable: false,
+			writable: false,
+			configurable: true
+		});
+	}
+	if (automaticVariants.size > 0) {
+		Object.defineProperty(result, ENRICH_AUTOMATIC_VARIANTS_KEY, {
+			value: automaticVariants,
 			enumerable: false,
 			writable: false,
 			configurable: true

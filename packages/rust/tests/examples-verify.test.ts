@@ -43,8 +43,7 @@ describe('examples/01 construct nodes', () => {
 	});
 	it('nested strict construction renders greet with its parameter', () => {
 		const text = nestedGreetFunction().$render();
-		// The arm three levels down keeps the name the grammar authored, so
-		// `visibilityModifier.inPath` renders the whole pub(...) chain.
+		// `visibilityModifier.pub.scope.inPath` renders the whole pub(...) chain.
 		expect(text).toContain('pub(in crate::x)');
 		expect(text).toContain('greet');
 		expect(text).toContain('name');
@@ -157,19 +156,19 @@ describe('dogfoodContract helper', () => {
 
 describe('structuralShape trivia handling', () => {
 	it("keeps a bare leaf's $text alongside its $_trivia", () => {
-		const leaf = ir.synonym.identifier('main').$trivia(ir.lineComment.content('c'));
+		const leaf = ir.synonym.identifier('main').$trivia(ir.lineComment.regular('c'));
 		const shape = structuralShape(leaf) as Record<string, unknown>;
 		expect(shape.$text).toBe('main');
 		expect(shape.$_trivia).toBeDefined();
 	});
 	it('differs when only the comment text differs', () => {
-		const alpha = ir.synonym.identifier('main').$trivia(ir.lineComment.content('alpha'));
-		const beta = ir.synonym.identifier('main').$trivia(ir.lineComment.content('beta'));
+		const alpha = ir.synonym.identifier('main').$trivia(ir.lineComment.regular('alpha'));
+		const beta = ir.synonym.identifier('main').$trivia(ir.lineComment.regular('beta'));
 		expect(JSON.stringify(structuralShape(alpha))).not.toBe(JSON.stringify(structuralShape(beta)));
 	});
 	it('differs when the same comment is leading vs. trailing', () => {
-		const leading = ir.synonym.identifier('main').$trivia({ leading: [ir.lineComment.content('c')] });
-		const trailing = ir.synonym.identifier('main').$trivia({ trailing: [ir.lineComment.content('c')] });
+		const leading = ir.synonym.identifier('main').$trivia({ leading: [ir.lineComment.regular('c')] });
+		const trailing = ir.synonym.identifier('main').$trivia({ trailing: [ir.lineComment.regular('c')] });
 		expect(JSON.stringify(structuralShape(leading))).not.toBe(JSON.stringify(structuralShape(trailing)));
 	});
 });
@@ -196,21 +195,17 @@ describe('namespaced constructors reach the arm kinds', () => {
 		}
 	});
 	it('builds a plain line comment through the same parent', () => {
-		expect(ir.lineComment.content(' hi').$render()).toBe('// hi');
+		expect(ir.lineComment.regular(' hi').$render()).toBe('// hi');
 	});
 	it('builds a semicolon-terminated expression statement', () => {
 		expect(ir.expressionStatement.withSemi(ir.identifier('x')).$render()).toBe('x;');
 	});
 	// A variant minted inside another variant's rule is spelled inside it: the
-	// caller types the authored form name, under the arm that reaches it.
+	// caller types each authored form name, under the arm that reaches it.
 	it('reaches an in-path visibility modifier under the arm it nests in', () => {
-		const pub = ir.visibilityModifier.pub as unknown as Record<
-			string,
-			{ strict(...args: unknown[]): { $render(): string } }
-		>;
 		const path = ir.scopedIdentifier({ path: ir.crate(), name: ir.identifier('x') });
-		expect(pub.inPath!.strict(path).$render()).toBe('pub(in crate::x)');
-		expect(pub.self!.strict().$render()).toBe('pub(self)');
+		expect(ir.visibilityModifier.pub.scope.inPath.strict(path).$render()).toBe('pub(in crate::x)');
+		expect(ir.visibilityModifier.pub.scope.self.strict().$render()).toBe('pub(self)');
 	});
 	// `crate` names both `visibility_modifier`'s own arm and, one hop down,
 	// `pub(crate)`. Flattening stops at the clash, so the hoisted one is

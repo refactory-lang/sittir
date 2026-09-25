@@ -392,20 +392,24 @@ export function emittedArmPath(kind: string, path: readonly string[], wires: Pol
 	if (set === undefined || head === undefined) return [...path];
 	const sub = set.subs.find((candidate) => candidate.name === head);
 	if (sub === undefined) return [...path];
-	const under = nestingArmOf(sub, set.subs);
-	const spelled = under === undefined ? [sub.name] : [under.host, under.key];
+	const under = nestingArmOf(sub, set.subs, wires);
+	const spelled = under === undefined ? [sub.name] : [under.host, ...under.keys];
 	const rest = path.slice(1);
 	if (rest.length === 0) return spelled;
 	const next = sub.arm.via === 'node' ? sub.arm.child.kind : undefined;
 	return next === undefined ? [...spelled, ...rest] : [...spelled, ...emittedArmPath(next, rest, wires)];
 }
 
-function nestingArmOf(sub: SubFactory, subs: readonly SubFactory[]): { host: string; key: string } | undefined {
+function nestingArmOf(sub: SubFactory, subs: readonly SubFactory[], wires: PolymorphWires): { host: string; keys: readonly string[] } | undefined {
 	if (sub.arm.via !== 'node' || sub.arm.path.length === 0) return undefined;
 	const child = sub.arm.child;
 	const host = subs.find((d) => d.arm.via === 'node' && d.arm.path.length === 0 && d.arm.child === child);
 	if (host === undefined) return undefined;
 	const key = sub.arm.path[sub.arm.path.length - 1]!;
+	const inner = wires.byKind.get(child.kind)?.subs.find((candidate) => candidate.name === key);
+	if (inner !== undefined && inner.arm.via === 'node' && inner.arm.path.length > 0) {
+		return { host: host.name, keys: emittedArmPath(child.kind, sub.arm.path, wires) };
+	}
 	const collides = subs.some(
 		(other) =>
 			other !== sub &&
@@ -414,7 +418,7 @@ function nestingArmOf(sub: SubFactory, subs: readonly SubFactory[]): { host: str
 			other.arm.child === child &&
 			other.arm.path[other.arm.path.length - 1] === key
 	);
-	return { host: host.name, key: collides ? sub.name : key };
+	return { host: host.name, keys: [collides ? sub.name : key] };
 }
 
 function childChains(sub: SubFactory, chainedByKind: ReadonlyMap<string, ReadonlyMap<string, readonly string[]>>): readonly string[] {
@@ -876,16 +880,16 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 					: `strict: ${emission.strictType}; coerce: ${emission.coerceType}`;
 			const entry: ArmEntry = { sub, line: body, type: bodyType, children: new Map() };
 			built.push({ sub, entry });
-			if (nestingArmOf(sub, wireSet.subs) === undefined) armEntries.set(sub.name, entry);
+			if (nestingArmOf(sub, wireSet.subs, wires) === undefined) armEntries.set(sub.name, entry);
 		}
 		for (const { sub, entry } of built) {
-			const under = nestingArmOf(sub, wireSet.subs);
+			const under = nestingArmOf(sub, wireSet.subs, wires);
 			if (under === undefined) continue;
-			const host = armEntries.get(under.host);
-			if (host === undefined) {
+			const parent = under.keys.slice(0, -1).reduce<ArmEntry | undefined>((at, key) => at?.children.get(key), armEntries.get(under.host));
+			if (parent === undefined) {
 				flat.push({ line: `	${sub.name}: { ${entry.line} },`, type: `	${sub.name}: { ${entry.type} };` });
 			} else {
-				host.children.set(under.key, entry);
+				parent.children.set(under.keys[under.keys.length - 1]!, entry);
 			}
 			for (const chain of childChains(sub, chainedByKind)) {
 				if (sub.arm.via !== 'node') break;
@@ -976,6 +980,13 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		const uses = new Set<string>();
 		for (const route of parent.variants) {
 			const { name, child, nestedParentKey } = route;
+			if (route.leaf === true) {
+				const id = kindDiscriminantExpr(child.kind, nodeMap, wires.kindEntries);
+				usesKindId = true;
+				lines.push(`	${name}: ${id},`);
+				types.push(`	readonly ${name}: typeof ${id};`);
+				continue;
+			}
 			const target = nestedParentKey === undefined ? variantRouteOf(child) : defaultRoutes.get(nestedParentKey);
 			if (target?.set !== undefined) uses.add(target.set);
 			if (route.default && target !== undefined) {

@@ -8,6 +8,7 @@ import {
 	isFieldType
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
+import { readRuleMetadata } from '../rule-metadata.ts';
 
 interface RuntimeDsl {
 	seq?: (...members: RuntimeRule[]) => RuntimeRule;
@@ -184,11 +185,15 @@ function descendThroughPrecWrapper(
 	return reconstructPrec(rule, newContent);
 }
 
+export function isEnrichAuthored(rule: unknown): boolean {
+	return readRuleMetadata((rule as { metadata?: unknown } | undefined)?.metadata)?.author === 'enrich';
+}
+
 export function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
 	const t = (rule as { type?: string }).type;
 	if (t !== 'SYMBOL') return false;
-	const meta = (rule as unknown as { metadata?: { author?: string } }).metadata;
-	return meta?.author === 'enrich';
+	const meta = readRuleMetadata((rule as unknown as { metadata?: unknown }).metadata);
+	return meta?.symbolSource === 'group-lift';
 }
 
 export interface GroupLiftRuleMap {

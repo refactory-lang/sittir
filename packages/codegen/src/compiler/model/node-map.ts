@@ -26,7 +26,8 @@ import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
 import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry } from '../generated-metadata.ts';
-import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
+import { stampDisplay, undisplayedKindAddress, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
+import { prefixNamedSuffix } from '../variant-structural.ts';
 import { tokenToName } from '../normalize.ts';
 import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
 import { assertNever } from '../../polymorph-variant.ts';
@@ -703,11 +704,16 @@ export interface ArmFacts {
 	readonly spliced?: true;
 }
 
-export function armFactsOf(rule: { annotations?: RuleAnnotations }): ArmFacts {
-	const annotations = rule.annotations;
+export function armFactsOf(arm: { readonly annotations?: RuleAnnotations; readonly resolvedKind?: string }): ArmFacts {
+	const { annotations, resolvedKind } = arm;
 	if (annotations === undefined) return {};
+	const literalName =
+		annotations.variantOf === undefined || resolvedKind === undefined
+			? undefined
+			: (prefixNamedSuffix(annotations.variantOf, resolvedKind) ?? undisplayedKindAddress(resolvedKind));
+	const variant = annotations.variant ?? literalName;
 	return {
-		...(annotations.variant === undefined ? {} : { variant: annotations.variant, variantOf: annotations.variantOf }),
+		...(variant === undefined ? {} : { variant, variantOf: annotations.variantOf }),
 		...(annotations.default === true ? { default: true as const } : {}),
 		...(annotations.spliced === true ? { spliced: true as const } : {})
 	};
@@ -737,7 +743,7 @@ export function deriveValuesForRule(
 ): NodeOrTerminal[] {
 	switch (rule.type) {
 		case SYMBOL: {
-			const armFacts = armFactsOf(rule);
+			const armFacts = armFactsOf({ annotations: rule.annotations, resolvedKind: rule.literal === undefined ? undefined : rule.name });
 			if (rule.literal !== undefined) {
 				if (rule.kindId !== undefined) {
 					return [
@@ -821,9 +827,8 @@ export function deriveValuesForRule(
 			});
 		case STRING:
 		case PATTERN: {
-			const armFacts = armFactsOf(rule);
 			if (rule.type === PATTERN && rule.fieldName !== undefined) {
-				return [{ pattern: rule.value, ...armFacts, multiplicity }];
+				return [{ pattern: rule.value, ...armFactsOf(rule), multiplicity }];
 			}
 			if (rule.resolvedKindId !== undefined) {
 				const entry = findKindEntryById({ entries: ctx?.kindEntries ?? [], id: rule.resolvedKindId });
@@ -835,7 +840,7 @@ export function deriveValuesForRule(
 						resolvedKindId: rule.resolvedKindId,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
 						parseKindId: entry?.parseId ?? rule.resolvedKindId,
-						...armFacts,
+						...armFactsOf({ annotations: rule.annotations, resolvedKind: rk }),
 						multiplicity
 					}
 				];
@@ -849,7 +854,7 @@ export function deriveValuesForRule(
 					resolvedKindId: entry?.id,
 					parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
 					parseKindId: entry?.parseId ?? entry?.id,
-					...armFacts,
+					...armFactsOf({ annotations: rule.annotations, resolvedKind: rk }),
 					multiplicity
 				}
 			];
@@ -870,7 +875,7 @@ export function deriveValuesForRule(
 						resolvedKindId: entry?.id,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
 						parseKindId: entry?.parseId ?? entry?.id,
-						...armFactsOf(m),
+						...armFactsOf({ annotations: m.annotations, resolvedKind: rk }),
 						multiplicity
 					};
 				});
@@ -2013,8 +2018,6 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 		return true;
 	}
 	readonly #subtypes: readonly NodeOrTerminal[];
-	readonly #armValues: readonly NodeOrTerminal[];
-	readonly declaredSupertype: boolean;
 	transitiveParseKinds?: readonly NodeOrTerminal[];
 	optionDefaultArm?: string;
 
@@ -2022,11 +2025,9 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 		kind: string,
 		rule: SupertypeRule | ChoiceRule,
 		subtypes: readonly SubtypeRef[],
-		opts?: { kindEntries?: readonly GeneratedKindEntry[]; declared?: boolean; deriveCtx?: DeriveCtx }
+		opts?: { kindEntries?: readonly GeneratedKindEntry[] }
 	) {
 		super(kind, rule, { hidden: true, kindEntries: opts?.kindEntries, rowless: 'supertype' });
-		this.declaredSupertype = opts?.declared === true;
-		this.#armValues = rule.type === SUPERTYPE ? deriveValuesForRule(rule, opts?.deriveCtx, 'single') : [];
 		this.#subtypes = subtypes.map(
 			({ name, storageKindId, ...armFacts }): NodeOrTerminal => ({
 				node: { kind: 'unresolved-ref', name },
@@ -2048,10 +2049,6 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 	get variantSubtypes(): readonly NodeBackedRef[] | undefined {
 		const refs = this.#subtypes.filter(isNodeRef);
 		return refs.length >= 2 && refs.every((ref) => ref.variantOf === this.kind && ref.variant !== undefined) ? refs : undefined;
-	}
-
-	get armSubtypes(): readonly NodeOrTerminal[] | undefined {
-		return this.variantSubtypes ?? (this.declaredSupertype ? undefined : this.#armValues);
 	}
 
 	get subtypeParseNames(): Readonly<Record<string, string>> | undefined {

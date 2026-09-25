@@ -5175,7 +5175,14 @@ export function buildMappedTypeClause(config: T.MappedTypeClause.Config): T.Mapp
 }
 
 export function buildLiteralType(
-	value: T._Number | T.Number | T.String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined
+	value:
+		| T.LiteralTypeNegativeNumber
+		| T.Number
+		| T.String
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.Null
+		| TSKindId.Undefined
 ): T.LiteralType.Built {
 	const _content = coerceMixedEnumStorage<NonNullable<T.LiteralType['_content']>>(value, [
 		['true', TSKindId.True] as const,
@@ -5193,41 +5200,19 @@ export function buildLiteralType(
 				$with: {
 					content: (
 						value: NonNullable<
-							T._Number | T.Number | T.String | TSKindId.True | TSKindId.False | TSKindId.Null | TSKindId.Undefined
+							| T.LiteralTypeNegativeNumber
+							| T.Number
+							| T.String
+							| TSKindId.True
+							| TSKindId.False
+							| TSKindId.Null
+							| TSKindId.Undefined
 						>
 					) => buildLiteralType(value)
 				}
 			},
 			{
 				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function build_Number(config: T._Number.Config): T._Number.Built {
-	const _operator = coerceKindEnumStorage<NonNullable<T._Number['_operator']>>(config.operator, [
-		['-', TSKindId.Dash] as const,
-		['+', TSKindId.Plus] as const
-	]);
-	const _argument = config.argument;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId._Number as const,
-				$source: 2 as const,
-				$named: true as const,
-				_operator,
-				_argument,
-				$with: {
-					operator: (value: NonNullable<T._Number.Config>['operator']) => build_Number({ ...config, operator: value }),
-					argument: (value: T.Number) => build_Number({ ...config, argument: value })
-				}
-			},
-			{
-				operator: () => _operator,
-				argument: () => _argument
 			}
 		),
 		methodsEngine
@@ -6928,6 +6913,37 @@ export function buildCommentBlock(value: string): T.CommentBlock.Built {
 			},
 			{
 				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildLiteralTypeNegativeNumber(
+	config: T.LiteralTypeNegativeNumber.Config
+): T.LiteralTypeNegativeNumber.Built {
+	const _operator = coerceKindEnumStorage<NonNullable<T.LiteralTypeNegativeNumber['_operator']>>(config.operator, [
+		['-', TSKindId.Dash] as const,
+		['+', TSKindId.Plus] as const
+	]);
+	const _argument = config.argument;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.LiteralTypeNegativeNumber as const,
+				$source: 2 as const,
+				$named: true as const,
+				_operator,
+				_argument,
+				$with: {
+					operator: (value: NonNullable<T.LiteralTypeNegativeNumber.Config>['operator']) =>
+						buildLiteralTypeNegativeNumber({ ...config, operator: value }),
+					argument: (value: T.Number) => buildLiteralTypeNegativeNumber({ ...config, argument: value })
+				}
+			},
+			{
+				operator: () => _operator,
+				argument: () => _argument
 			}
 		),
 		methodsEngine
@@ -9019,7 +9035,6 @@ export type FluentKindMap = {
 	lookup_type: T.LookupType.Built;
 	mapped_type_clause: T.MappedTypeClause.Built;
 	literal_type: T.LiteralType.Built;
-	_number: T._Number.Built;
 	existential_type: T.ExistentialType;
 	flow_maybe_type: T.FlowMaybeType.Built;
 	parenthesized_type: T.ParenthesizedType.Built;
@@ -9055,6 +9070,7 @@ export type FluentKindMap = {
 	export_statement_equals_export: T.ExportStatementEqualsExport.Built;
 	comment_line: T.CommentLine.Built;
 	comment_block: T.CommentBlock.Built;
+	literal_type_negative_number: T.LiteralTypeNegativeNumber.Built;
 	number_hex: T.NumberHex.Built;
 	number_float_point: T.NumberFloatPoint.Built;
 	number_float_leading_point: T.NumberFloatLeadingPoint.Built;
@@ -9263,7 +9279,6 @@ export const _factoryMap = {
 	lookup_type: buildLookupType,
 	mapped_type_clause: buildMappedTypeClause,
 	literal_type: buildLiteralType,
-	_number: build_Number,
 	existential_type: buildExistentialType,
 	flow_maybe_type: buildFlowMaybeType,
 	parenthesized_type: buildParenthesizedType,
@@ -9299,6 +9314,7 @@ export const _factoryMap = {
 	export_statement_equals_export: buildExportStatementEqualsExport,
 	comment_line: buildCommentLine,
 	comment_block: buildCommentBlock,
+	literal_type_negative_number: buildLiteralTypeNegativeNumber,
 	number_hex: buildNumberHex,
 	number_float_point: buildNumberFloatPoint,
 	number_float_leading_point: buildNumberFloatLeadingPoint,

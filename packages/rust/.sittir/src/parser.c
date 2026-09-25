@@ -170,9 +170,9 @@ enum ts_symbol_identifiers {
   sym_escape_sequence_hex = 148,
   anon_sym_raw = 149,
   sym__string_open = 150,
-  aux_sym_line_comment_regular_dslash_token1 = 151,
-  aux_sym_line_comment_regular_dslash_token2 = 152,
-  sym_line_comment_content = 153,
+  aux_sym_line_comment_extra_slashes_token1 = 151,
+  aux_sym_line_comment_extra_slashes_token2 = 152,
+  sym_line_comment_regular = 153,
   anon_sym_macro_rules_BANG = 154,
   sym_string_content = 155,
   sym__raw_string_literal_start = 156,
@@ -378,32 +378,32 @@ enum ts_symbol_identifiers {
   sym_patterns = 356,
   sym_struct_pattern_elements = 357,
   sym_use_wildcard_group = 358,
-  sym_visibility_modifier_group = 359,
-  sym__kw_async = 360,
-  sym__kw_default = 361,
-  sym__kw_const = 362,
-  sym__kw_unsafe = 363,
-  sym__tuple_type_elements = 364,
-  sym__tuple_expression_elements = 365,
-  sym__token_tree_punctuation = 366,
-  sym__token_keywords = 367,
-  sym__range_expression_bare = 368,
-  sym__impl_item_unsafe_marker = 369,
-  sym_array_expression_semi = 370,
-  sym_array_expression_list = 371,
-  sym_attribute_input = 372,
-  sym_closure_expression_block = 373,
-  sym_closure_expression_expr = 374,
-  sym_reference_expression_raw_const = 375,
-  sym_reference_expression_raw_mut = 376,
-  sym_reference_expression_mut = 377,
-  sym_reference_expression_bare = 378,
-  sym_impl_item_positive_clause = 379,
-  sym_impl_item_negative_clause = 380,
-  sym_impl_item_body = 381,
-  sym_impl_item_semi = 382,
-  sym_visibility_modifier_pub = 383,
-  sym_visibility_modifier_pub_in_path = 384,
+  sym__kw_async = 359,
+  sym__kw_default = 360,
+  sym__kw_const = 361,
+  sym__kw_unsafe = 362,
+  sym__tuple_type_elements = 363,
+  sym__tuple_expression_elements = 364,
+  sym__token_tree_punctuation = 365,
+  sym__token_keywords = 366,
+  sym__range_expression_bare = 367,
+  sym__impl_item_unsafe_marker = 368,
+  sym_array_expression_semi = 369,
+  sym_array_expression_list = 370,
+  sym_attribute_input = 371,
+  sym_closure_expression_block = 372,
+  sym_closure_expression_expr = 373,
+  sym_reference_expression_raw_const = 374,
+  sym_reference_expression_raw_mut = 375,
+  sym_reference_expression_mut = 376,
+  sym_reference_expression_bare = 377,
+  sym_impl_item_positive_clause = 378,
+  sym_impl_item_negative_clause = 379,
+  sym_impl_item_body = 380,
+  sym_impl_item_semi = 381,
+  sym_visibility_modifier_pub_scope_in_path = 382,
+  sym_visibility_modifier_pub_scope = 383,
+  sym_visibility_modifier_pub = 384,
   sym_function_type_trait_form = 385,
   sym_function_type_fn_form = 386,
   sym_mod_item_external = 387,
@@ -420,7 +420,7 @@ enum ts_symbol_identifiers {
   sym_foreign_mod_item_body = 398,
   sym_match_arm_with_comma = 399,
   sym_match_arm_block_ending = 400,
-  sym_line_comment_regular_dslash = 401,
+  sym_line_comment_extra_slashes = 401,
   sym_line_comment_doc_outer = 402,
   sym_line_comment_doc_inner = 403,
   sym_block_comment_doc_outer = 404,
@@ -643,9 +643,9 @@ static const char * const ts_symbol_names[] = {
   [sym_escape_sequence_hex] = "escape_sequence_hex",
   [anon_sym_raw] = "raw",
   [sym__string_open] = "string_open",
-  [aux_sym_line_comment_regular_dslash_token1] = "line_comment_regular_dslash_token1",
-  [aux_sym_line_comment_regular_dslash_token2] = "line_comment_regular_dslash_token2",
-  [sym_line_comment_content] = "line_comment_content",
+  [aux_sym_line_comment_extra_slashes_token1] = "line_comment_extra_slashes_token1",
+  [aux_sym_line_comment_extra_slashes_token2] = "line_comment_extra_slashes_token2",
+  [sym_line_comment_regular] = "line_comment_regular",
   [anon_sym_macro_rules_BANG] = "macro_rules!",
   [sym_string_content] = "string_content",
   [sym__raw_string_literal_start] = "raw_string_literal_start",
@@ -851,7 +851,6 @@ static const char * const ts_symbol_names[] = {
   [sym_patterns] = "patterns",
   [sym_struct_pattern_elements] = "struct_pattern_elements",
   [sym_use_wildcard_group] = "use_wildcard_group",
-  [sym_visibility_modifier_group] = "visibility_modifier_group",
   [sym__kw_async] = "_kw_async",
   [sym__kw_default] = "_kw_default",
   [sym__kw_const] = "_kw_const",
@@ -875,8 +874,9 @@ static const char * const ts_symbol_names[] = {
   [sym_impl_item_negative_clause] = "impl_item_negative_clause",
   [sym_impl_item_body] = "impl_item_body",
   [sym_impl_item_semi] = "impl_item_semi",
+  [sym_visibility_modifier_pub_scope_in_path] = "visibility_modifier_pub_scope_in_path",
+  [sym_visibility_modifier_pub_scope] = "visibility_modifier_pub_scope",
   [sym_visibility_modifier_pub] = "visibility_modifier_pub",
-  [sym_visibility_modifier_pub_in_path] = "visibility_modifier_pub_in_path",
   [sym_function_type_trait_form] = "function_type_trait_form",
   [sym_function_type_fn_form] = "function_type_fn_form",
   [sym_mod_item_external] = "mod_item_external",
@@ -893,7 +893,7 @@ static const char * const ts_symbol_names[] = {
   [sym_foreign_mod_item_body] = "foreign_mod_item_body",
   [sym_match_arm_with_comma] = "match_arm_with_comma",
   [sym_match_arm_block_ending] = "match_arm_block_ending",
-  [sym_line_comment_regular_dslash] = "line_comment_regular_dslash",
+  [sym_line_comment_extra_slashes] = "line_comment_extra_slashes",
   [sym_line_comment_doc_outer] = "line_comment_doc_outer",
   [sym_line_comment_doc_inner] = "line_comment_doc_inner",
   [sym_block_comment_doc_outer] = "block_comment_doc_outer",
@@ -1116,9 +1116,9 @@ static const TSSymbol ts_symbol_map[] = {
   [sym_escape_sequence_hex] = sym_escape_sequence_hex,
   [anon_sym_raw] = anon_sym_raw,
   [sym__string_open] = sym__string_open,
-  [aux_sym_line_comment_regular_dslash_token1] = aux_sym_line_comment_regular_dslash_token1,
-  [aux_sym_line_comment_regular_dslash_token2] = aux_sym_line_comment_regular_dslash_token2,
-  [sym_line_comment_content] = sym_line_comment_content,
+  [aux_sym_line_comment_extra_slashes_token1] = aux_sym_line_comment_extra_slashes_token1,
+  [aux_sym_line_comment_extra_slashes_token2] = aux_sym_line_comment_extra_slashes_token2,
+  [sym_line_comment_regular] = sym_line_comment_regular,
   [anon_sym_macro_rules_BANG] = anon_sym_macro_rules_BANG,
   [sym_string_content] = sym_string_content,
   [sym__raw_string_literal_start] = sym__raw_string_literal_start,
@@ -1324,7 +1324,6 @@ static const TSSymbol ts_symbol_map[] = {
   [sym_patterns] = sym_patterns,
   [sym_struct_pattern_elements] = sym_struct_pattern_elements,
   [sym_use_wildcard_group] = sym_use_wildcard_group,
-  [sym_visibility_modifier_group] = sym_visibility_modifier_group,
   [sym__kw_async] = sym__kw_async,
   [sym__kw_default] = sym__kw_default,
   [sym__kw_const] = sym__kw_const,
@@ -1348,8 +1347,9 @@ static const TSSymbol ts_symbol_map[] = {
   [sym_impl_item_negative_clause] = sym_impl_item_negative_clause,
   [sym_impl_item_body] = sym_impl_item_body,
   [sym_impl_item_semi] = sym_impl_item_semi,
+  [sym_visibility_modifier_pub_scope_in_path] = sym_visibility_modifier_pub_scope_in_path,
+  [sym_visibility_modifier_pub_scope] = sym_visibility_modifier_pub_scope,
   [sym_visibility_modifier_pub] = sym_visibility_modifier_pub,
-  [sym_visibility_modifier_pub_in_path] = sym_visibility_modifier_pub_in_path,
   [sym_function_type_trait_form] = sym_function_type_trait_form,
   [sym_function_type_fn_form] = sym_function_type_fn_form,
   [sym_mod_item_external] = sym_mod_item_external,
@@ -1366,7 +1366,7 @@ static const TSSymbol ts_symbol_map[] = {
   [sym_foreign_mod_item_body] = sym_foreign_mod_item_body,
   [sym_match_arm_with_comma] = sym_match_arm_with_comma,
   [sym_match_arm_block_ending] = sym_match_arm_block_ending,
-  [sym_line_comment_regular_dslash] = sym_line_comment_regular_dslash,
+  [sym_line_comment_extra_slashes] = sym_line_comment_extra_slashes,
   [sym_line_comment_doc_outer] = sym_line_comment_doc_outer,
   [sym_line_comment_doc_inner] = sym_line_comment_doc_inner,
   [sym_block_comment_doc_outer] = sym_block_comment_doc_outer,
@@ -2042,15 +2042,15 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = true,
     .named = true,
   },
-  [aux_sym_line_comment_regular_dslash_token1] = {
+  [aux_sym_line_comment_extra_slashes_token1] = {
     .visible = false,
     .named = false,
   },
-  [aux_sym_line_comment_regular_dslash_token2] = {
+  [aux_sym_line_comment_extra_slashes_token2] = {
     .visible = false,
     .named = false,
   },
-  [sym_line_comment_content] = {
+  [sym_line_comment_regular] = {
     .visible = true,
     .named = true,
   },
@@ -2898,10 +2898,6 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = true,
     .named = true,
   },
-  [sym_visibility_modifier_group] = {
-    .visible = true,
-    .named = true,
-  },
   [sym__kw_async] = {
     .visible = false,
     .named = true,
@@ -2994,11 +2990,15 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = true,
     .named = true,
   },
-  [sym_visibility_modifier_pub] = {
+  [sym_visibility_modifier_pub_scope_in_path] = {
     .visible = true,
     .named = true,
   },
-  [sym_visibility_modifier_pub_in_path] = {
+  [sym_visibility_modifier_pub_scope] = {
+    .visible = true,
+    .named = true,
+  },
+  [sym_visibility_modifier_pub] = {
     .visible = true,
     .named = true,
   },
@@ -3066,7 +3066,7 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = true,
     .named = true,
   },
-  [sym_line_comment_regular_dslash] = {
+  [sym_line_comment_extra_slashes] = {
     .visible = true,
     .named = true,
   },
@@ -11486,17 +11486,17 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       ACCEPT_TOKEN(sym__string_open);
       END_STATE();
     case 224:
-      ACCEPT_TOKEN(aux_sym_line_comment_regular_dslash_token1);
+      ACCEPT_TOKEN(aux_sym_line_comment_extra_slashes_token1);
       END_STATE();
     case 225:
-      ACCEPT_TOKEN(aux_sym_line_comment_regular_dslash_token2);
+      ACCEPT_TOKEN(aux_sym_line_comment_extra_slashes_token2);
       if (lookahead == '*') ADVANCE(182);
       if (lookahead == '/') ADVANCE(177);
       if (lookahead != 0 &&
           lookahead != '\n') ADVANCE(227);
       END_STATE();
     case 226:
-      ACCEPT_TOKEN(aux_sym_line_comment_regular_dslash_token2);
+      ACCEPT_TOKEN(aux_sym_line_comment_extra_slashes_token2);
       if (lookahead == '/') ADVANCE(225);
       if (lookahead == '\t' ||
           (0x0b <= lookahead && lookahead <= '\r') ||
@@ -11505,12 +11505,12 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
           (lookahead < '\t' || '\r' < lookahead)) ADVANCE(227);
       END_STATE();
     case 227:
-      ACCEPT_TOKEN(aux_sym_line_comment_regular_dslash_token2);
+      ACCEPT_TOKEN(aux_sym_line_comment_extra_slashes_token2);
       if (lookahead != 0 &&
           lookahead != '\n') ADVANCE(227);
       END_STATE();
     case 228:
-      ACCEPT_TOKEN(sym_line_comment_content);
+      ACCEPT_TOKEN(sym_line_comment_regular);
       if (lookahead == '!') ADVANCE(178);
       if (lookahead == '/') ADVANCE(180);
       if (lookahead == '\t' ||
@@ -11520,14 +11520,14 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
           (lookahead < '\t' || '\r' < lookahead)) ADVANCE(231);
       END_STATE();
     case 229:
-      ACCEPT_TOKEN(sym_line_comment_content);
+      ACCEPT_TOKEN(sym_line_comment_regular);
       if (lookahead == '*') ADVANCE(231);
       if (lookahead == '/') ADVANCE(231);
       if (lookahead != 0 &&
           lookahead != '\n') ADVANCE(231);
       END_STATE();
     case 230:
-      ACCEPT_TOKEN(sym_line_comment_content);
+      ACCEPT_TOKEN(sym_line_comment_regular);
       if (lookahead == '/') ADVANCE(229);
       if (lookahead == '\t' ||
           (0x0b <= lookahead && lookahead <= '\r') ||
@@ -11536,7 +11536,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
           (lookahead < '\t' || '\r' < lookahead)) ADVANCE(231);
       END_STATE();
     case 231:
-      ACCEPT_TOKEN(sym_line_comment_content);
+      ACCEPT_TOKEN(sym_line_comment_regular);
       if (lookahead != 0 &&
           lookahead != '\n') ADVANCE(231);
       END_STATE();
@@ -157048,7 +157048,7 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(4055), 1,
       anon_sym_LPAREN,
     STATE(1537), 1,
-      sym_visibility_modifier_group,
+      sym_visibility_modifier_pub_scope,
     STATE(1531), 2,
       sym_line_comment,
       sym_block_comment,
@@ -182759,7 +182759,7 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(4668), 1,
       anon_sym_LPAREN,
     STATE(2049), 1,
-      sym_visibility_modifier_group,
+      sym_visibility_modifier_pub_scope,
     STATE(1993), 2,
       sym_line_comment,
       sym_block_comment,
@@ -187772,9 +187772,9 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(5012), 1,
       anon_sym_SLASH2,
     ACTIONS(5014), 1,
-      aux_sym_line_comment_regular_dslash_token1,
+      aux_sym_line_comment_extra_slashes_token1,
     ACTIONS(5016), 1,
-      sym_line_comment_content,
+      sym_line_comment_regular,
     STATE(3248), 1,
       sym__inner_line_doc_comment_marker,
     STATE(3254), 1,
@@ -187783,7 +187783,7 @@ static const uint16_t ts_small_parse_table[] = {
       sym_line_comment,
       sym_block_comment,
     STATE(3531), 3,
-      sym_line_comment_regular_dslash,
+      sym_line_comment_extra_slashes,
       sym_line_comment_doc_outer,
       sym_line_comment_doc_inner,
   [69773] = 12,
@@ -191907,7 +191907,7 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(5398), 1,
       anon_sym_in,
     STATE(3351), 1,
-      sym_visibility_modifier_pub_in_path,
+      sym_visibility_modifier_pub_scope_in_path,
     STATE(2395), 2,
       sym_line_comment,
       sym_block_comment,
@@ -192108,7 +192108,7 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(5398), 1,
       anon_sym_in,
     STATE(3367), 1,
-      sym_visibility_modifier_pub_in_path,
+      sym_visibility_modifier_pub_scope_in_path,
     STATE(2407), 2,
       sym_line_comment,
       sym_block_comment,
@@ -203272,7 +203272,7 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(5), 1,
       anon_sym_SLASH_STAR,
     ACTIONS(6700), 1,
-      aux_sym_line_comment_regular_dslash_token2,
+      aux_sym_line_comment_extra_slashes_token2,
     STATE(3229), 2,
       sym_line_comment,
       sym_block_comment,
@@ -210738,8 +210738,8 @@ static const TSParseActionEntry ts_parse_actions[] = {
   [4088] = {.entry = {.count = 1, .reusable = false}}, SHIFT(40),
   [4090] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_visibility_modifier_pub, 2, 0, 0),
   [4092] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_visibility_modifier_pub, 2, 0, 0),
-  [4094] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_visibility_modifier_group, 3, 0, 0),
-  [4096] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_visibility_modifier_group, 3, 0, 0),
+  [4094] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_visibility_modifier_pub_scope, 3, 0, 0),
+  [4096] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_visibility_modifier_pub_scope, 3, 0, 0),
   [4098] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_impl_item_positive_clause, 2, 0, 12),
   [4100] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_impl_item_positive_clause, 2, 0, 12),
   [4102] = {.entry = {.count = 1, .reusable = false}}, SHIFT(314),
@@ -211842,11 +211842,11 @@ static const TSParseActionEntry ts_parse_actions[] = {
   [6332] = {.entry = {.count = 1, .reusable = true}}, SHIFT(145),
   [6334] = {.entry = {.count = 1, .reusable = true}}, SHIFT(147),
   [6336] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym__kw_ref_marker, 1, 0, 0),
-  [6338] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_visibility_modifier_pub_in_path, 2, 0, 149),
+  [6338] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_visibility_modifier_pub_scope_in_path, 2, 0, 149),
   [6340] = {.entry = {.count = 1, .reusable = true}}, SHIFT(3162),
   [6342] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym__type_argument, 2, 0, 0),
   [6344] = {.entry = {.count = 1, .reusable = false}}, SHIFT(1230),
-  [6346] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_visibility_modifier_pub_in_path, 2, 0, 150),
+  [6346] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_visibility_modifier_pub_scope_in_path, 2, 0, 150),
   [6348] = {.entry = {.count = 1, .reusable = true}}, SHIFT(2701),
   [6350] = {.entry = {.count = 1, .reusable = false}}, SHIFT(1091),
   [6352] = {.entry = {.count = 1, .reusable = false}}, SHIFT(1581),
@@ -212290,7 +212290,7 @@ static const TSParseActionEntry ts_parse_actions[] = {
   [7228] = {.entry = {.count = 1, .reusable = true}}, SHIFT(2302),
   [7230] = {.entry = {.count = 1, .reusable = true}}, SHIFT(2060),
   [7232] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_line_comment, 2, 0, 0),
-  [7234] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_line_comment_regular_dslash, 2, 0, 0),
+  [7234] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_line_comment_extra_slashes, 2, 0, 0),
   [7236] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_line_comment_doc_outer, 2, 0, 33),
   [7238] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_line_comment_doc_inner, 2, 0, 32),
   [7240] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_block_comment, 3, 0, 0),

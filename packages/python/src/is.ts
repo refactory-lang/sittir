@@ -17,6 +17,7 @@ import type {
 	Integer,
 	LeftHandSide,
 	LineContinuation,
+	MatchBlock,
 	NamedExpressionLhs,
 	Parameter,
 	Pattern,
@@ -92,9 +93,6 @@ export interface IsGuards {
 	matchStatement<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchStatement };
-	MatchBlock<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlock };
 	caseClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CaseClause };
@@ -431,6 +429,7 @@ export interface IsGuards {
 	namedExpressionLhs(v: { readonly $type: string | number } | number): v is NamedExpressionLhs;
 	expressions(v: { readonly $type: string | number } | number): v is Expressions;
 	compoundStatement(v: { readonly $type: string | number } | number): v is CompoundStatement;
+	matchBlock(v: { readonly $type: string | number } | number): v is MatchBlock;
 	withClause(v: { readonly $type: string | number } | number): v is WithClause;
 	suite(v: { readonly $type: string | number } | number): v is Suite;
 	simplePattern(v: { readonly $type: string | number } | number): v is SimplePattern;
@@ -478,7 +477,6 @@ export interface AssertGuards {
 	elifClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ElifClause };
 	elseClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ElseClause };
 	matchStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.MatchStatement };
-	MatchBlock(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.MatchBlock };
 	caseClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CaseClause };
 	forStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ForStatement };
 	whileStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.WhileStatement };
@@ -659,6 +657,7 @@ export interface AssertGuards {
 	namedExpressionLhs(v: { readonly $type: string | number } | number): asserts v is NamedExpressionLhs;
 	expressions(v: { readonly $type: string | number } | number): asserts v is Expressions;
 	compoundStatement(v: { readonly $type: string | number } | number): asserts v is CompoundStatement;
+	matchBlock(v: { readonly $type: string | number } | number): asserts v is MatchBlock;
 	withClause(v: { readonly $type: string | number } | number): asserts v is WithClause;
 	suite(v: { readonly $type: string | number } | number): asserts v is Suite;
 	simplePattern(v: { readonly $type: string | number } | number): asserts v is SimplePattern;
@@ -695,6 +694,7 @@ const _supertype_simpleStatement_ids = new Set<number>([
 const _supertype_namedExpressionLhs_ids = new Set<number>([1, 68, 38, 69, 70, 39, 22]);
 const _supertype_expressions_ids = new Set<number>([177]);
 const _supertype_compoundStatement_ids = new Set<number>([147, 153, 154, 155, 158, 161, 170, 174, 150]);
+const _supertype_matchBlock_ids = new Set<number>([290]);
 const _supertype_withClause_ids = new Set<number>([288, 289]);
 const _supertype_suite_ids = new Set<number>([291, 292, 293]);
 const _supertype_simplePattern_ids = new Set<number>([
@@ -738,7 +738,6 @@ export const is = {
 	elifClause: _g(TSKindId.ElifClause),
 	elseClause: _g(TSKindId.ElseClause),
 	matchStatement: _g(TSKindId.MatchStatement),
-	MatchBlock: _g(TSKindId.MatchBlock),
 	caseClause: _g(TSKindId.CaseClause),
 	forStatement: _g(TSKindId.ForStatement),
 	whileStatement: _g(TSKindId.WhileStatement),
@@ -855,6 +854,7 @@ export const is = {
 	namedExpressionLhs: _sg(_supertype_namedExpressionLhs_ids),
 	expressions: _sg(_supertype_expressions_ids),
 	compoundStatement: _sg(_supertype_compoundStatement_ids),
+	matchBlock: _sg(_supertype_matchBlock_ids),
 	withClause: _sg(_supertype_withClause_ids),
 	suite: _sg(_supertype_suite_ids),
 	simplePattern: _sg(_supertype_simplePattern_ids),
@@ -917,7 +917,6 @@ export const assert = {
 	elifClause: _makeAssert('elifClause', is.elifClause as _AnyGuard),
 	elseClause: _makeAssert('elseClause', is.elseClause as _AnyGuard),
 	matchStatement: _makeAssert('matchStatement', is.matchStatement as _AnyGuard),
-	MatchBlock: _makeAssert('MatchBlock', is.MatchBlock as _AnyGuard),
 	caseClause: _makeAssert('caseClause', is.caseClause as _AnyGuard),
 	forStatement: _makeAssert('forStatement', is.forStatement as _AnyGuard),
 	whileStatement: _makeAssert('whileStatement', is.whileStatement as _AnyGuard),
@@ -1034,6 +1033,7 @@ export const assert = {
 	namedExpressionLhs: _makeAssert('namedExpressionLhs', is.namedExpressionLhs as _AnyGuard),
 	expressions: _makeAssert('expressions', is.expressions as _AnyGuard),
 	compoundStatement: _makeAssert('compoundStatement', is.compoundStatement as _AnyGuard),
+	matchBlock: _makeAssert('matchBlock', is.matchBlock as _AnyGuard),
 	withClause: _makeAssert('withClause', is.withClause as _AnyGuard),
 	suite: _makeAssert('suite', is.suite as _AnyGuard),
 	simplePattern: _makeAssert('simplePattern', is.simplePattern as _AnyGuard),

@@ -939,11 +939,7 @@ function collectHiddenNamedArmChoices(rawRules: Record<string, Rule<'evaluate'>>
 		if (
 			rule.type === CHOICE &&
 			rule.members.length > 0 &&
-			rule.members.every(
-				(m) =>
-					(m.type === ALIAS && m.named && m.content.type === SYMBOL) ||
-					(m.type === SYMBOL && m.annotations?.variantOf === name)
-			)
+			rule.members.every((m) => m.type === ALIAS && m.named && m.content.type === SYMBOL)
 		) {
 			out.add(name);
 		}

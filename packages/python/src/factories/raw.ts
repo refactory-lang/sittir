@@ -641,29 +641,6 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 	);
 }
 
-export function buildMatchBlock(value: T.MatchBlockBlock | TSKindId.Newline): T.MatchBlock.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.MatchBlock['_content']>>(value, [
-		['\n', TSKindId.Newline] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MatchBlock as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: NonNullable<T.MatchBlockBlock | TSKindId.Newline>) => buildMatchBlock(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Built {
 	const _case_patterns = config.casePatterns;
 	const _guard = config.guard;
@@ -5412,7 +5389,6 @@ export type FluentKindMap = {
 	elif_clause: T.ElifClause.Built;
 	else_clause: T.ElseClause.Built;
 	match_statement: T.MatchStatement.Built;
-	_match_block: T.MatchBlock.Built;
 	case_clause: T.CaseClause.Built;
 	for_statement: T.ForStatement.Built;
 	while_statement: T.WhileStatement.Built;
@@ -5597,7 +5573,6 @@ export const _factoryMap = {
 	elif_clause: buildElifClause,
 	else_clause: buildElseClause,
 	match_statement: buildMatchStatement,
-	_match_block: buildMatchBlock,
 	case_clause: buildCaseClause,
 	for_statement: buildForStatement,
 	while_statement: buildWhileStatement,
