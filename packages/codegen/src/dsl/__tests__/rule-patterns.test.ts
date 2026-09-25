@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { separatorOf, rulesEqual } from '../rule-patterns.ts';
+import { separatorOf, rulesEqual, parserSymbolCtxOf } from '../rule-patterns.ts';
+
+const symbols = parserSymbolCtxOf({}, ['_semicolon'], []);
 
 describe('rulesEqual does not crash comparing mixed-phase repeat separators', () => {
 	it('returns false (not a throw) for an object-shaped separator vs a plain string', () => {
@@ -19,6 +21,23 @@ describe('rulesEqual does not crash comparing mixed-phase repeat separators', ()
 });
 
 describe('separatorOf preserves a choice-shaped separator', () => {
+	it('a choice of nonterminal symbols is content, not a separator', () => {
+		const seq = {
+			type: 'SEQ',
+			members: [
+				{
+					type: 'CHOICE',
+					members: [
+						{ type: 'SYMBOL', name: 'group' },
+						{ type: 'SYMBOL', name: 'character' }
+					]
+				},
+				{ type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'quantifier' }, { type: 'BLANK' }] }
+			]
+		};
+		expect(separatorOf(seq, symbols)).toBeNull();
+	});
+
 	it('returns the full CHOICE rule, not just its first string arm', () => {
 		const seq = {
 			type: 'SEQ',
@@ -33,7 +52,7 @@ describe('separatorOf preserves a choice-shaped separator', () => {
 				{ type: 'SYMBOL', name: 'item' }
 			]
 		};
-		const result = separatorOf(seq);
+		const result = separatorOf(seq, symbols);
 		expect(result).not.toBeNull();
 		expect(result!.separator).toEqual({
 			type: 'CHOICE',
@@ -52,7 +71,7 @@ describe('separatorOf preserves a choice-shaped separator', () => {
 				{ type: 'SYMBOL', name: 'item' }
 			]
 		};
-		const result = separatorOf(seq);
+		const result = separatorOf(seq, symbols);
 		expect(result!.separator).toEqual({ type: 'STRING', value: ',' });
 	});
 
@@ -64,7 +83,7 @@ describe('separatorOf preserves a choice-shaped separator', () => {
 				{ type: 'STRING', value: ',' }
 			]
 		};
-		const result = separatorOf(seq);
+		const result = separatorOf(seq, symbols);
 		expect(result!.trailing).toBe(true);
 		expect(result!.separator).toEqual({ type: 'STRING', value: ',' });
 	});
@@ -86,7 +105,7 @@ describe('separatorOf preserves a choice-shaped separator', () => {
 				{ type: 'SYMBOL', name: 'item' }
 			]
 		};
-		const result = separatorOf(seq);
+		const result = separatorOf(seq, symbols);
 		expect(result!.separator).toEqual({
 			type: 'CHOICE',
 			members: [

@@ -3565,9 +3565,7 @@ and `separator` sites are per-kind keys with no top-level label.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::separatorArmKinds`
 
-The catalog kinds of a list's separator tokens: one for a literal, the
-members' kinds for a choice of literals. A token with no catalog kind, or
-a separator of any other shape, is a build error naming the list.
+The catalog kinds of a list's separator tokens: one for a literal or a terminal symbol, the members' kinds for a choice of them — the token shape `separatorOf` detects. A token with no catalog kind, or a separator of any other shape, is a build error naming the list.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::SitePreferencesConfig.renderRules`
 

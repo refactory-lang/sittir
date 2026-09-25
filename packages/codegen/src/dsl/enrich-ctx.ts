@@ -1,8 +1,11 @@
 import type { Rule } from '../types/rule.ts';
+import { parserSymbolCtxOf, type ParserSymbolCtx } from './rule-patterns.ts';
 
 export interface EnrichCtxInit {
 	readonly rulesBag: Record<string, Rule>;
 	readonly supertypeNames: ReadonlySet<string>;
+	readonly externals: ReadonlySet<string>;
+	readonly inline: ReadonlySet<string>;
 	readonly wordMatcher: RegExp | undefined;
 }
 
@@ -12,6 +15,7 @@ export interface ClauseHoistState {
 }
 
 interface EnrichCtxFields extends EnrichCtxInit {
+	readonly sourceSymbols: ParserSymbolCtx;
 	readonly kwRules: Record<string, Rule>;
 	readonly clauseGroupRules: Record<string, Rule>;
 	readonly clauseDedupeMap: Record<string, string>;
@@ -24,7 +28,10 @@ interface EnrichCtxFields extends EnrichCtxInit {
 export class EnrichCtx implements EnrichCtxFields {
 	readonly rulesBag: Record<string, Rule>;
 	readonly supertypeNames: ReadonlySet<string>;
+	readonly externals: ReadonlySet<string>;
+	readonly inline: ReadonlySet<string>;
 	readonly wordMatcher: RegExp | undefined;
+	readonly sourceSymbols: ParserSymbolCtx;
 	readonly kwRules: Record<string, Rule>;
 	readonly clauseGroupRules: Record<string, Rule>;
 	readonly clauseDedupeMap: Record<string, string>;
@@ -36,7 +43,10 @@ export class EnrichCtx implements EnrichCtxFields {
 	private constructor(fields: EnrichCtxFields) {
 		this.rulesBag = fields.rulesBag;
 		this.supertypeNames = fields.supertypeNames;
+		this.externals = fields.externals;
+		this.inline = fields.inline;
 		this.wordMatcher = fields.wordMatcher;
+		this.sourceSymbols = fields.sourceSymbols;
 		this.kwRules = fields.kwRules;
 		this.clauseGroupRules = fields.clauseGroupRules;
 		this.clauseDedupeMap = fields.clauseDedupeMap;
@@ -49,6 +59,7 @@ export class EnrichCtx implements EnrichCtxFields {
 	static create(init: EnrichCtxInit): EnrichCtx {
 		return new EnrichCtx({
 			...init,
+			sourceSymbols: parserSymbolCtxOf(init.rulesBag, init.externals, init.inline),
 			kwRules: {},
 			clauseGroupRules: {},
 			clauseDedupeMap: {},

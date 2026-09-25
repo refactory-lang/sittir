@@ -18,7 +18,7 @@ import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, Desug
 import type { GeneratedIdTables } from '../generated-metadata.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
-import { tokenUseCounts, type ParserSymbolCtx } from '../../dsl/rule-patterns.ts';
+import { parserSymbolCtxOf } from '../../dsl/rule-patterns.ts';
 
 export type { GrammarDiagnostic };
 
@@ -212,12 +212,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		grammar: input.rawGrammar.name,
 		contentAliasedTo: linked.contentAliasedTo
 	});
-	const symbols: ParserSymbolCtx = {
-		rules: input.rawGrammar.rules,
-		externals: new Set(input.rawGrammar.externals),
-		inline: new Set(input.rawGrammar.inline),
-		tokenUses: tokenUseCounts(input.rawGrammar.rules)
-	};
+	const symbols = parserSymbolCtxOf(input.rawGrammar.rules, input.rawGrammar.externals, input.rawGrammar.inline);
 	const orphanedSyntheticGroups = new Set(input.rawGrammar.orphanedSyntheticGroups ?? []);
 	const kindIdStampDiagnostics: GrammarDiagnostic[] = compilerDiagnostics
 		.all()

@@ -4063,22 +4063,11 @@ The whole-text regex source of a token, composed from its interior rule: a strin
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::separatorOf`
 
-#### body
+Recognizes a two-member `seq` as one separated-list step: `seq(SEP, X)` (leading) or `seq(X, SEP)` (trailing). A separator is a token: a literal, or a choice whose every arm lexes as one token by `terminalContentOf` over the grammar's source symbols — literals, patterns, token bodies, externals, and inlined rules whose own bodies are tokens (typescript's `_semicolon`, a choice of the external `_automatic_semicolon` and `;`). The full choice is kept, never narrowed to one literal arm; `separatorArmKinds` consumes the same shape.
 
-```text
-// Canonical: `seq(SEP, X)` (leading) or `seq(X, SEP)` (trailing).
-```
+A choice of nonterminals is content, not a separator: regex's `term` is `seq(choice(<atoms>), optional(<quantifier>))`, an element followed by its quantifier. An optional token (`choice(tok, blank)`) is not one either — it may be absent, so it is a per-element flank.
 
-#### body
-
-```text
-// Choice-of-separators in the separator position — preserve the FULL
-// choice; the caller (and everything downstream) now knows how to handle
-// a non-literal separator rule. No literal-presence check here by design:
-// a choice with zero STRING arms (all-symbol/external-scanner) still
-// counts as a detected separator shape — it's up to the caller to decide
-// what to do when it can't extract a literal from it.
-```
+Terminal-ness is the grammar-source classification of `parserSymbolClassOf`, so the test is the same in enrich (before any parser catalog exists) and in link; the link caller (`LinkCtx.sourceSymbols`) depends on that classifier and moves with it if link switches to the parser catalog's terminal fact.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::permutationAtomKey`
 
@@ -6291,7 +6280,9 @@ The content under a chain of named aliases.
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx`
 
-The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes and word matcher, and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `visibleGroupSources`, `clauseGroupOwners`). Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
+The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `visibleGroupSources`, `clauseGroupOwners`). Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
+
+`sourceSymbols` is the `ParserSymbolCtx` over the base rules — the grammar-source facts separator detection reads. It is distinct from the one `enrich()` builds over the enriched rules for `unaliasOverloadedDisplays` at the end (`enrichedSymbols`): the two describe the grammar at different points and are never merged.
 
 `hoist` is present only on the view `enrich()` hands to the clause-hoist loop (`withHoist`). Helpers that are also reached before that loop — `visibleGroupSynthName` from the token-form hoist — read it to tell the two apart: without it they fall back to ordinal naming and skip hidden-list promotion.
 
@@ -6309,5 +6300,9 @@ State that exists only while the clause hoist runs. `separatedListNameCounts` is
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtxInit`
 
-The grammar-level inputs of an `enrich()` call: the base rules, the supertype names and the compiled word matcher.
+The grammar-level inputs of an `enrich()` call: the base rules, the supertype, external and inline names, and the compiled word matcher.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::parserSymbolCtxOf`
+
+Builds a `ParserSymbolCtx` from a rule set and its `externals`/`inline` names, counting token uses over the same rules. The one constructor for every phase's symbol context, so the four fields are always derived together from one rule set.
 

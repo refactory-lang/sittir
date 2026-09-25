@@ -87,7 +87,9 @@ import {
 	isNamedArmChoice,
 	isParserHiddenName,
 	rulesEqual,
-	separatorOf
+	separatorOf,
+	parserSymbolCtxOf,
+	type ParserSymbolCtx
 } from '../dsl/rule-patterns.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
@@ -134,6 +136,13 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 
 	get rules(): Record<string, Rule<'evaluate'>> {
 		return this.grammar.rules;
+	}
+
+	#sourceSymbols?: ParserSymbolCtx;
+
+	get sourceSymbols(): ParserSymbolCtx {
+		this.#sourceSymbols ??= parserSymbolCtxOf(this.grammar.rules, this.grammar.externals, this.grammar.inline);
+		return this.#sourceSymbols;
 	}
 }
 
@@ -1916,7 +1925,7 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 		case REPEAT:
 		case REPEAT1: {
 			const content = liftSeparators(rule.content, ctx);
-			const sep = separatorOf(content);
+			const sep = separatorOf(content, ctx.sourceSymbols);
 			if (sep) {
 				return {
 					...rule,

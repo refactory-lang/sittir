@@ -1,6 +1,6 @@
 import type { NodeMap } from '../types.ts';
-import { findEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
-import { CHOICE, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
+import { findEntryForLiteralText, findOwnKindEntry, type KindEntryLike } from '../generated-metadata.ts';
+import { CHOICE, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule, SeamOrigin } from '../../types/rule.ts';
 import { DELIMITER_LABEL, SEPARATOR_LABEL, VARIANT_LABEL } from '../../dsl/primitives/spacing.ts';
 import {
@@ -209,14 +209,19 @@ function registerSlot(nodeMap: NodeMap, site: SiteCandidate, arm: string, mode: 
 }
 
 function separatorArmKinds(kind: string, rule: RenderRule, config: SitePreferencesConfig): string[] {
-	const r = rule as { type: string; value?: string; members?: RenderRule[] };
+	const r = rule as { type: string; value?: string; name?: string; members?: RenderRule[] };
 	if (r.type === STRING && typeof r.value === 'string') {
 		const name = tokenKind(r.value, config);
 		if (name === undefined) throw new Error(`defaults: separator token '${r.value}' of ${displayNameOf(kind, config.nodeMap)} has no kind in the catalog`);
 		return [name];
 	}
+	if (r.type === SYMBOL && typeof r.name === 'string') {
+		const entry = findOwnKindEntry(config.kindEntries, r.name);
+		if (entry === undefined) throw new Error(`defaults: separator token '${r.name}' of ${displayNameOf(kind, config.nodeMap)} has no kind in the catalog`);
+		return [displayNameOfEntry(entry, config.kindEntries)];
+	}
 	if (r.type === CHOICE && r.members !== undefined) return r.members.flatMap((m) => separatorArmKinds(kind, m, config));
-	throw new Error(`defaults: ${displayNameOf(kind, config.nodeMap)} has a separator of shape ${r.type}; only a literal or a choice of literals is supported`);
+	throw new Error(`defaults: ${displayNameOf(kind, config.nodeMap)} has a separator of shape ${r.type}; only a token or a choice of tokens is supported`);
 }
 
 function tokenKind(text: string, config: SitePreferencesConfig): string | undefined {

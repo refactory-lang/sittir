@@ -837,47 +837,6 @@ function renameNameList(value, renames) {
   return renameRule(value, renames);
 }
 
-// packages/codegen/src/dsl/enrich-ctx.ts
-var EnrichCtx = class _EnrichCtx {
-  rulesBag;
-  supertypeNames;
-  wordMatcher;
-  kwRules;
-  clauseGroupRules;
-  clauseDedupeMap;
-  groupDedupeMap;
-  visibleGroupSources;
-  clauseGroupOwners;
-  hoist;
-  constructor(fields) {
-    this.rulesBag = fields.rulesBag;
-    this.supertypeNames = fields.supertypeNames;
-    this.wordMatcher = fields.wordMatcher;
-    this.kwRules = fields.kwRules;
-    this.clauseGroupRules = fields.clauseGroupRules;
-    this.clauseDedupeMap = fields.clauseDedupeMap;
-    this.groupDedupeMap = fields.groupDedupeMap;
-    this.visibleGroupSources = fields.visibleGroupSources;
-    this.clauseGroupOwners = fields.clauseGroupOwners;
-    this.hoist = fields.hoist;
-  }
-  static create(init) {
-    return new _EnrichCtx({
-      ...init,
-      kwRules: {},
-      clauseGroupRules: {},
-      clauseDedupeMap: {},
-      groupDedupeMap: {},
-      visibleGroupSources: /* @__PURE__ */ new Set(),
-      clauseGroupOwners: /* @__PURE__ */ new Map(),
-      hoist: void 0
-    });
-  }
-  withHoist(hoist) {
-    return new _EnrichCtx({ ...this, hoist });
-  }
-};
-
 // packages/codegen/src/util/word-matcher.ts
 function compileWordMatcher(word, rules) {
   if (!word) return void 0;
@@ -988,7 +947,7 @@ function leadingLiteralOf(r) {
   const lit = members.find((m) => typeEq(m.type, "STRING"));
   return lit ? lit.value : null;
 }
-function separatorOf(resolved) {
+function separatorOf(resolved, symbols) {
   if (!typeEq(resolved.type, "SEQ")) return null;
   const members = resolved.members;
   if (!members || members.length !== 2) return null;
@@ -997,10 +956,9 @@ function separatorOf(resolved) {
   const secondIsStr = typeEq(second.type, "STRING");
   if (firstIsStr && !secondIsStr) return { content: second, separator: first };
   if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
-  const firstIsChoice = typeEq(first.type, "CHOICE");
-  const secondIsChoice = typeEq(second.type, "CHOICE");
-  if (firstIsChoice && !secondIsStr) return { content: second, separator: first };
-  if (secondIsChoice && !firstIsStr) return { content: first, separator: second, trailing: true };
+  const isToken = (r) => typeEq(r.type, "CHOICE") && terminalContentOf(r, symbols.rules, symbols);
+  if (isToken(first) && !secondIsStr) return { content: second, separator: first };
+  if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
   return null;
 }
 function ruleMatchesEmpty(rule2) {
@@ -1088,10 +1046,10 @@ function seqHasTopLevelRepeat(members) {
 function isNonterminalSeparatorType(t) {
   return isChoiceType(t) || isSymbolType(t) || typeEq(t, "PATTERN");
 }
-function repeatHasNonterminalSeparator(repeatRule) {
+function repeatHasNonterminalSeparator(repeatRule, symbols) {
   const content = repeatRule.content;
   if (!content || typeof content !== "object") return false;
-  const detected = separatorOf(content);
+  const detected = separatorOf(content, symbols);
   if (!detected) return false;
   return isNonterminalSeparatorType(detected.separator.type);
 }
@@ -1120,20 +1078,20 @@ function isOptionalSeparatorFlank(member, sepValue) {
   }
   return false;
 }
-function repeatMemberHasGenuineSeparatorVariability(repeatRule, siblings) {
-  if (repeatHasNonterminalSeparator(repeatRule)) return true;
+function repeatMemberHasGenuineSeparatorVariability(repeatRule, siblings, symbols) {
+  if (repeatHasNonterminalSeparator(repeatRule, symbols)) return true;
   const content = repeatRule.content;
   if (!content || typeof content !== "object") return false;
-  const detected = separatorOf(content);
+  const detected = separatorOf(content, symbols);
   if (!detected || !isStringType(detected.separator.type)) return false;
   const sepValue = detected.separator.value;
   if (typeof sepValue !== "string") return false;
   return siblings.some((m) => m !== repeatRule && isOptionalSeparatorFlank(m, sepValue));
 }
-function repeatHasGenuineSeparatorVariability(repeatRule) {
-  return repeatHasNonterminalSeparator(repeatRule);
+function repeatHasGenuineSeparatorVariability(repeatRule, symbols) {
+  return repeatHasNonterminalSeparator(repeatRule, symbols);
 }
-function seqHasGenuineSeparatorVariability(members) {
+function seqHasGenuineSeparatorVariability(members, symbols) {
   const flat = flattenSeqMembers(members);
   const repeatMembers = [];
   for (const m of flat) {
@@ -1142,24 +1100,24 @@ function seqHasGenuineSeparatorVariability(members) {
     const ct = core.type;
     if (typeof ct !== "string" || !isRepeatLike(ct)) continue;
     const content = core.content;
-    if (content && typeof content === "object" && separatorOf(content) !== null) {
+    if (content && typeof content === "object" && separatorOf(content, symbols) !== null) {
       repeatMembers.push(core);
     }
   }
   if (repeatMembers.length !== 1) return false;
-  return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0], flat);
+  return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0], flat, symbols);
 }
-function isInlineSafe(seqBody, rulesBag) {
+function isInlineSafe(seqBody, symbols) {
   if (!seqBody || typeof seqBody !== "object") return false;
   const r = seqBody;
   const t = typeof r.type === "string" ? r.type : "";
-  if (isRepeatLike(t)) return !repeatHasGenuineSeparatorVariability(seqBody);
+  if (isRepeatLike(t)) return !repeatHasGenuineSeparatorVariability(seqBody, symbols);
   if (typeEq(t, "ALIAS")) return true;
   if (!isSeqType(t)) return false;
   const members = r.members;
   if (!Array.isArray(members)) return false;
-  if (seqHasTopLevelRepeat(members)) return !seqHasGenuineSeparatorVariability(members);
-  const slots = collectSlots(members, rulesBag);
+  if (seqHasTopLevelRepeat(members)) return !seqHasGenuineSeparatorVariability(members, symbols);
+  const slots = collectSlots(members, symbols.rules);
   if (slots.length !== 1) return false;
   const core = unwrapPrec(slots[0]);
   if (!core || typeof core !== "object") return false;
@@ -1373,6 +1331,9 @@ function tokenUseCounts(rules) {
   for (const rule2 of Object.values(rules)) visit(rule2);
   return counts;
 }
+function parserSymbolCtxOf(rules, externals, inline) {
+  return { rules, externals: new Set(externals), inline: new Set(inline), tokenUses: tokenUseCounts(rules) };
+}
 function choiceArmsOf(content) {
   if (content.type !== CHOICE) return void 0;
   return content.members.flatMap((m) => choiceArmsOf(m) ?? [m]);
@@ -1487,7 +1448,7 @@ function peelOptionalSeq(rule2) {
   }
   return null;
 }
-function listSeparatorOfOptionalSeq(rule2) {
+function listSeparatorOfOptionalSeq(rule2, symbols) {
   const peeled = peelOptionalSeq(rule2);
   if (peeled === null) return null;
   const seqMembers = peeled.seqBody.members;
@@ -1498,7 +1459,7 @@ function listSeparatorOfOptionalSeq(rule2) {
     if (typeof sepAttr === "string") return sepAttr;
     const content = m.content;
     if (content) {
-      const detected = separatorOf(content);
+      const detected = separatorOf(content, symbols);
       if (detected) {
         const sep = detected.separator;
         if (typeEq(sep.type, "STRING")) return sep.value;
@@ -1544,14 +1505,14 @@ function peelOptionalEitherSpelling(rule2) {
   const peeled = peelOptional(rule2);
   return peeled.isOptional ? peeled.inner : null;
 }
-function separatedListBodyInfo(body) {
+function separatedListBodyInfo(body, symbols) {
   if (!isSeqType(body.type)) return null;
   const members = body.members;
   if (!Array.isArray(members) || members.length === 0) return null;
   const separatorRepeatOf = (m) => {
     if (!isRepeatType(m.type)) return null;
     const content = m.content;
-    return content ? separatorOf(content) : null;
+    return content ? separatorOf(content, symbols) : null;
   };
   if (members.length >= 2 && !members.some((m) => separatorRepeatOf(m) !== null)) {
     const nestedIdx = members.findIndex((m) => {
@@ -1564,7 +1525,7 @@ function separatedListBodyInfo(body) {
       return separatedListBodyInfo({
         ...body,
         members: [...members.slice(0, nestedIdx), ...headMembers, ...members.slice(nestedIdx + 1)]
-      });
+      }, symbols);
     }
   }
   const repeatIdx = members.findIndex((m) => separatorRepeatOf(m) !== null);
@@ -1709,6 +1670,54 @@ function armsDifferOnlyByLiteralChoice(a, b) {
   };
   return same(a, b) && literalDeltas === 1;
 }
+
+// packages/codegen/src/dsl/enrich-ctx.ts
+var EnrichCtx = class _EnrichCtx {
+  rulesBag;
+  supertypeNames;
+  externals;
+  inline;
+  wordMatcher;
+  sourceSymbols;
+  kwRules;
+  clauseGroupRules;
+  clauseDedupeMap;
+  groupDedupeMap;
+  visibleGroupSources;
+  clauseGroupOwners;
+  hoist;
+  constructor(fields) {
+    this.rulesBag = fields.rulesBag;
+    this.supertypeNames = fields.supertypeNames;
+    this.externals = fields.externals;
+    this.inline = fields.inline;
+    this.wordMatcher = fields.wordMatcher;
+    this.sourceSymbols = fields.sourceSymbols;
+    this.kwRules = fields.kwRules;
+    this.clauseGroupRules = fields.clauseGroupRules;
+    this.clauseDedupeMap = fields.clauseDedupeMap;
+    this.groupDedupeMap = fields.groupDedupeMap;
+    this.visibleGroupSources = fields.visibleGroupSources;
+    this.clauseGroupOwners = fields.clauseGroupOwners;
+    this.hoist = fields.hoist;
+  }
+  static create(init) {
+    return new _EnrichCtx({
+      ...init,
+      sourceSymbols: parserSymbolCtxOf(init.rulesBag, init.externals, init.inline),
+      kwRules: {},
+      clauseGroupRules: {},
+      clauseDedupeMap: {},
+      groupDedupeMap: {},
+      visibleGroupSources: /* @__PURE__ */ new Set(),
+      clauseGroupOwners: /* @__PURE__ */ new Map(),
+      hoist: void 0
+    });
+  }
+  withHoist(hoist) {
+    return new _EnrichCtx({ ...this, hoist });
+  }
+};
 
 // packages/codegen/src/dsl/rule-transforms.ts
 function innermostNamedAliasContent(rule2) {
@@ -2227,9 +2236,12 @@ function enrich(baseInput) {
   if (!rulesBag) return base2;
   const grammarMeta = hasWrapper ? base2.grammar : base2;
   const supertypeNames = extractGrammarSymbolNames(base2, hasWrapper, "supertypes");
+  const inlineNames = extractGrammarSymbolNames(base2, hasWrapper, "inline");
   const ctx = EnrichCtx.create({
     rulesBag,
     supertypeNames,
+    externals: extractGrammarSymbolNames(base2, hasWrapper, "externals"),
+    inline: inlineNames,
     wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag)
   });
   const { kwRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners } = ctx;
@@ -2242,14 +2254,13 @@ function enrich(baseInput) {
     const rule2 = enrichedRules[name];
     if (!rule2) continue;
     if (!isSeqType(rule2.type)) continue;
-    const info = separatedListBodyInfo(rule2);
+    const info = separatedListBodyInfo(rule2, ctx.sourceSymbols);
     if (!info?.flankCarrying || info.form !== "head") continue;
     const members = rule2.members;
     if (info.flatMembers === members) continue;
     enrichedRules[name] = { ...rule2, members: info.flatMembers };
   }
   Object.assign(enrichedRules, mintInlineLiteralAliasStorage(enrichedRules));
-  const inlineNames = extractGrammarSymbolNames(base2, hasWrapper, "inline");
   Object.assign(enrichedRules, liftAliasedHiddenRuleBodies(enrichedRules));
   for (const name of Object.keys(enrichedRules)) {
     const rule2 = enrichedRules[name];
@@ -2258,24 +2269,15 @@ function enrich(baseInput) {
       inlineBodyOf: (target) => inlineNames.has(target) ? enrichedRules[target] ?? rulesBag[target] : void 0
     });
   }
-  Object.assign(
-    enrichedRules,
-    unaliasOverloadedDisplays(enrichedRules, {
-      symbols: {
-        rules: enrichedRules,
-        externals: extractGrammarSymbolNames(base2, hasWrapper, "externals"),
-        inline: inlineNames,
-        tokenUses: tokenUseCounts(enrichedRules)
-      }
-    })
-  );
+  const enrichedSymbols = parserSymbolCtxOf(enrichedRules, ctx.externals, ctx.inline);
+  Object.assign(enrichedRules, unaliasOverloadedDisplays(enrichedRules, { symbols: enrichedSymbols }));
   for (const name of Object.keys(enrichedRules)) {
     const rule2 = enrichedRules[name];
     if (!rule2) continue;
     enrichedRules[name] = distributeExclusiveFieldChoices(rule2, enrichedRules);
   }
   const wordName = extractWordName(grammarMeta?.word);
-  const unhoistableNames = /* @__PURE__ */ new Set([...extractGrammarSymbolNames(base2, hasWrapper, "externals"), ...wordName === null ? [] : [wordName]]);
+  const unhoistableNames = /* @__PURE__ */ new Set([...ctx.externals, ...wordName === null ? [] : [wordName]]);
   const tokenFormParents = [];
   for (const name of Object.keys(enrichedRules)) {
     const rule2 = enrichedRules[name];
@@ -2287,7 +2289,7 @@ function enrich(baseInput) {
     tokenFormParents.push(name);
   }
   const hoistCtx = ctx.withHoist({
-    separatedListNameCounts: collectSeparatedListNameProposals(enrichedRules),
+    separatedListNameCounts: collectSeparatedListNameProposals(enrichedRules, ctx.sourceSymbols),
     hiddenListPromotionNames: /* @__PURE__ */ new Map()
   });
   for (const name of Object.keys(enrichedRules)) {
@@ -2304,7 +2306,7 @@ function enrich(baseInput) {
   for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules, isSupertypeOwner(parent, mergedRules, supertypeNames, inlineNames));
   for (const name of Object.keys(mergedRules)) {
     const rule2 = mergedRules[name];
-    if (rule2) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule2, mergedRules, supertypeNames);
+    if (rule2) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule2, mergedRules, ctx);
   }
   synthesizeFieldEnumRules(mergedRules);
   const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
@@ -2714,7 +2716,7 @@ function deriveElementFieldName(elementRule) {
   }
   return "element";
 }
-function fieldSeparatedListElements(seqRule, reserve) {
+function fieldSeparatedListElements(seqRule, reserve, symbols) {
   const members = seqRule.members;
   if (!Array.isArray(members)) return null;
   for (let i = 0; i < members.length - 1; i++) {
@@ -2733,7 +2735,7 @@ function fieldSeparatedListElements(seqRule, reserve) {
       innerPrecStack.push(inner);
       inner = inner.content;
     }
-    const detected = separatorOf(inner);
+    const detected = separatorOf(inner, symbols);
     if (!detected || detected.trailing) continue;
     const innerElement = detected.content;
     if (!sameElementShape(leading, innerElement)) continue;
@@ -2759,7 +2761,8 @@ function fieldSeparatedListElements(seqRule, reserve) {
   }
   return null;
 }
-function applyNodeChoiceFieldWrap(ruleName, rule2, mergedRules, supertypeNames) {
+function applyNodeChoiceFieldWrap(ruleName, rule2, mergedRules, ctx) {
+  const { supertypeNames } = ctx;
   let changed = false;
   const namesDeepIn = (r) => {
     const names = /* @__PURE__ */ new Set();
@@ -2833,7 +2836,7 @@ function applyNodeChoiceFieldWrap(ruleName, rule2, mergedRules, supertypeNames) 
       return rebuildRepeat(visitedInner);
     }
     if (isSeqType(r.type)) {
-      const sepListRewrite = fieldSeparatedListElements(r, (base2) => reserve(base2, scope));
+      const sepListRewrite = fieldSeparatedListElements(r, (base2) => reserve(base2, scope), ctx.sourceSymbols);
       if (sepListRewrite) {
         changed = true;
         r = sepListRewrite;
@@ -3448,7 +3451,7 @@ function appendTrailingMemberToOptionalSeq(optSeqRule, trailingOptional) {
   const newSeqBody = { ...seqBody, members: [...seqMembers, trailingOptional] };
   return rebuildOptional(optSeqRule, newSeqBody);
 }
-function detectInlineSeparatedListRuns(members) {
+function detectInlineSeparatedListRuns(members, symbols) {
   const carriesRepeat = (m) => {
     if (isRepeatType(m.type)) return true;
     if (!isSeqType(m.type)) return false;
@@ -3464,7 +3467,7 @@ function detectInlineSeparatedListRuns(members) {
       const window = members.slice(i, i + size);
       if (!window.some(carriesRepeat)) continue;
       const synthetic = size === 1 && isSeqType(window[0].type) ? window[0] : { type: "SEQ", members: window };
-      const info = separatedListBodyInfo(synthetic);
+      const info = separatedListBodyInfo(synthetic, symbols);
       if (info?.flankCarrying) {
         if (info.form === "tail") {
           const repeatMember = window[0];
@@ -3481,7 +3484,7 @@ function detectInlineSeparatedListRuns(members) {
   }
   return runs;
 }
-function collectSeparatedListNameProposals(rules) {
+function collectSeparatedListNameProposals(rules, symbols) {
   const keysByName = /* @__PURE__ */ new Map();
   const record = (info, key) => {
     if (info.elementName === null) return;
@@ -3497,13 +3500,13 @@ function collectSeparatedListNameProposals(rules) {
     if (isSeqType(t)) {
       const rawMembers = rule2.members;
       if (Array.isArray(rawMembers)) {
-        const members2 = absorbTrailingListSeparators(rawMembers) ?? rawMembers;
+        const members2 = absorbTrailingListSeparators(rawMembers, symbols) ?? rawMembers;
         const folded = members2 === rawMembers ? rule2 : { ...rule2, members: members2 };
-        const whole = separatedListBodyInfo(folded);
+        const whole = separatedListBodyInfo(folded, symbols);
         if (whole?.flankCarrying) {
           record(whole, ruleKey(folded));
         } else {
-          for (const run of detectInlineSeparatedListRuns(members2)) record(run.info, run.key);
+          for (const run of detectInlineSeparatedListRuns(members2, symbols)) record(run.info, run.key);
         }
         for (const m of members2) visit(m);
         return;
@@ -3528,7 +3531,7 @@ function promoteHiddenListRef(member, ctx) {
   if (visibleName === void 0) {
     const body = rulesBag[name];
     if (!body || !isSeqType(body.type)) return member;
-    const info = separatedListBodyInfo(body);
+    const info = separatedListBodyInfo(body, ctx.sourceSymbols);
     if (!info?.flankCarrying || info.form !== "head") return member;
     const base2 = name.replace(/^_+/, "");
     const bare = info.elementName !== null ? pluralizeFieldName(info.elementName) : null;
@@ -3542,13 +3545,13 @@ function promoteHiddenListRef(member, ctx) {
   }
   return makeVisibleGroupAlias(member, visibleName);
 }
-function absorbTrailingListSeparators(members) {
+function absorbTrailingListSeparators(members, symbols) {
   let changed = false;
   const out = [];
   for (let i = 0; i < members.length; i++) {
     const cur = members[i];
     const next = members[i + 1];
-    const sep = next ? listSeparatorOfOptionalSeq(cur) : null;
+    const sep = next ? listSeparatorOfOptionalSeq(cur, symbols) : null;
     if (sep !== null && optionalStringLiteral(next) === sep) {
       out.push(appendTrailingMemberToOptionalSeq(cur, next));
       i++;
@@ -3575,7 +3578,7 @@ function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosin
         newMembers[peeled.seqIdx] = recursedSeqBody;
         return { ...rule2, members: newMembers };
       }
-    } else if (isInlineSafe(recursedSeqBody, rulesBag)) {
+    } else if (isInlineSafe(recursedSeqBody, ctx.sourceSymbols)) {
       const name = clauseHoistSynthName(recursedSeqBody, parentKind, ctx, counter);
       if (name !== null) {
         if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
@@ -3645,7 +3648,7 @@ function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosin
   if (isSeqType(rule2.type)) {
     const rawMembers = rule2.members;
     if (!Array.isArray(rawMembers)) return rule2;
-    const absorbed = absorbTrailingListSeparators(rawMembers);
+    const absorbed = absorbTrailingListSeparators(rawMembers, ctx.sourceSymbols);
     const members = absorbed ?? rawMembers;
     let changed = absorbed !== null;
     const newMembers = members.map((m) => {
@@ -3654,8 +3657,8 @@ function applyClauseHoist(parentKind, rule2, ctx, counter, ambientPrec, enclosin
       if (out !== m) changed = true;
       return out;
     });
-    if (ctx.hoist !== void 0 && separatedListBodyInfo({ ...rule2, members: newMembers }) === null) {
-      const runs = detectInlineSeparatedListRuns(newMembers);
+    if (ctx.hoist !== void 0 && separatedListBodyInfo({ ...rule2, members: newMembers }, ctx.sourceSymbols) === null) {
+      const runs = detectInlineSeparatedListRuns(newMembers, ctx.sourceSymbols);
       for (let r = runs.length - 1; r >= 0; r--) {
         const run = runs[r];
         const isTail = run.info.form === "tail";
@@ -3809,7 +3812,7 @@ function visibleGroupSynthName(content, parentKind, ctx, counter, ambientPrec, e
   const { groupDedupeMap, rulesBag, clauseGroupRules } = ctx;
   const separatedListNameCounts = ctx.hoist?.separatedListNameCounts;
   if (process.env.SITTIR_DEBUG_LISTNAME) {
-    const info = separatedListBodyInfo(content);
+    const info = separatedListBodyInfo(content, ctx.sourceSymbols);
     process.stderr.write(
       `[listname] mint for parent='${parentKind}' list=${JSON.stringify(info)} counts=${info?.elementName ? separatedListNameCounts?.get(pluralizeFieldName(info.elementName)) : "-"}
 `
@@ -3828,7 +3831,7 @@ function visibleGroupSynthName(content, parentKind, ctx, counter, ambientPrec, e
     clauseGroupRules[name] = body;
     return name;
   };
-  const listInfo = separatedListNameCounts !== void 0 ? separatedListBodyInfo(content) : null;
+  const listInfo = separatedListNameCounts !== void 0 ? separatedListBodyInfo(content, ctx.sourceSymbols) : null;
   if (listInfo?.flankCarrying) {
     const nameFree = (n) => !(n in rulesBag) && !(`_${n}` in rulesBag) && !(n in clauseGroupRules) && !(`_${n}` in clauseGroupRules);
     const bare = listInfo.elementName !== null ? pluralizeFieldName(listInfo.elementName) : null;
@@ -3931,7 +3934,7 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     if (counter.supertypeNames?.has(name)) return null;
     if (Object.hasOwn(clauseGroupRules, name)) return null;
     const body = rulesBag[name];
-    if (!body || ruleMatchesEmpty(body) || isInlineSafe(body, rulesBag)) return null;
+    if (!body || ruleMatchesEmpty(body) || isInlineSafe(body, ctx.sourceSymbols)) return null;
     if (isSupertypeLike(body)) return null;
     const promoted = promoteExistingHiddenRuleName(name, parentKind, ctx, counter, "arm");
     if (!promoted) return null;
@@ -3941,7 +3944,7 @@ function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadin
     return makeVisibleGroupAlias(arm2, promoted.visibleName);
   }
   if (isSeqType(t) || isChoiceType(t)) {
-    if (ruleMatchesEmpty(arm2) || isInlineSafe(arm2, rulesBag)) return null;
+    if (ruleMatchesEmpty(arm2) || isInlineSafe(arm2, ctx.sourceSymbols)) return null;
     if (isSupertypeLike(arm2)) return null;
     if (isPermutationChoice(arm2, rulesBag, ctx.kwRules, ctx.wordMatcher)) return null;
     const minted = visibleGroupSynthName(arm2, parentKind, ctx, counter, ambientPrec, enclosingFieldName, "arm");

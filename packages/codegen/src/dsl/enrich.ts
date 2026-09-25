@@ -47,7 +47,8 @@ import {
 	selfReferentialFoldOf,
 	type SeparatedListBodyInfo,
 	throughPrec,
-	tokenUseCounts
+	parserSymbolCtxOf,
+	type ParserSymbolCtx
 } from './rule-patterns.ts';
 import { ruleKey } from './shared.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
@@ -86,9 +87,12 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		| { word?: string | null | ((dollar: unknown) => unknown) }
 		| undefined;
 	const supertypeNames = extractGrammarSymbolNames(base, hasWrapper, 'supertypes');
+	const inlineNames = extractGrammarSymbolNames(base, hasWrapper, 'inline');
 	const ctx = EnrichCtx.create({
 		rulesBag,
 		supertypeNames,
+		externals: extractGrammarSymbolNames(base, hasWrapper, 'externals'),
+		inline: inlineNames,
 		wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag)
 	});
 	const { kwRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners } = ctx;
@@ -101,14 +105,13 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		const rule = enrichedRules[name];
 		if (!rule) continue;
 		if (!isSeqType((rule as { type?: string }).type)) continue;
-		const info = separatedListBodyInfo(rule);
+		const info = separatedListBodyInfo(rule, ctx.sourceSymbols);
 		if (!info?.flankCarrying || info.form !== 'head') continue;
 		const members = (rule as unknown as { members: Rule[] }).members;
 		if (info.flatMembers === members) continue;
 		enrichedRules[name] = { ...rule, members: info.flatMembers } as Rule;
 	}
 	Object.assign(enrichedRules, mintInlineLiteralAliasStorage(enrichedRules));
-	const inlineNames = extractGrammarSymbolNames(base, hasWrapper, 'inline');
 	Object.assign(enrichedRules, liftAliasedHiddenRuleBodies(enrichedRules));
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
@@ -117,24 +120,15 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			inlineBodyOf: (target) => (inlineNames.has(target) ? (enrichedRules[target] ?? rulesBag[target]) : undefined)
 		});
 	}
-	Object.assign(
-		enrichedRules,
-		unaliasOverloadedDisplays(enrichedRules, {
-			symbols: {
-				rules: enrichedRules,
-				externals: extractGrammarSymbolNames(base, hasWrapper, 'externals'),
-				inline: inlineNames,
-				tokenUses: tokenUseCounts(enrichedRules)
-			}
-		})
-	);
+	const enrichedSymbols = parserSymbolCtxOf(enrichedRules, ctx.externals, ctx.inline);
+	Object.assign(enrichedRules, unaliasOverloadedDisplays(enrichedRules, { symbols: enrichedSymbols }));
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
 		if (!rule) continue;
 		enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
 	}
 	const wordName = extractWordName(grammarMeta?.word);
-	const unhoistableNames = new Set([...extractGrammarSymbolNames(base, hasWrapper, 'externals'), ...(wordName === null ? [] : [wordName])]);
+	const unhoistableNames = new Set([...ctx.externals, ...(wordName === null ? [] : [wordName])]);
 	const tokenFormParents: string[] = [];
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
@@ -146,7 +140,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		tokenFormParents.push(name);
 	}
 	const hoistCtx = ctx.withHoist({
-		separatedListNameCounts: collectSeparatedListNameProposals(enrichedRules),
+		separatedListNameCounts: collectSeparatedListNameProposals(enrichedRules, ctx.sourceSymbols),
 		hiddenListPromotionNames: new Map()
 	});
 	for (const name of Object.keys(enrichedRules)) {
@@ -163,7 +157,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules, isSupertypeOwner(parent, mergedRules, supertypeNames, inlineNames));
 	for (const name of Object.keys(mergedRules)) {
 		const rule = mergedRules[name];
-		if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
+		if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, ctx);
 	}
 	synthesizeFieldEnumRules(mergedRules);
 	const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
@@ -625,7 +619,7 @@ function deriveElementFieldName(elementRule: Rule): string {
 	return 'element';
 }
 
-function fieldSeparatedListElements(seqRule: Rule, reserve: (base: string) => string): Rule | null {
+function fieldSeparatedListElements(seqRule: Rule, reserve: (base: string) => string, symbols: ParserSymbolCtx): Rule | null {
 	const members = (seqRule as unknown as { members?: Rule[] }).members;
 	if (!Array.isArray(members)) return null;
 	for (let i = 0; i < members.length - 1; i++) {
@@ -644,7 +638,7 @@ function fieldSeparatedListElements(seqRule: Rule, reserve: (base: string) => st
 			innerPrecStack.push(inner as unknown as Rule);
 			inner = (inner as unknown as { content: RuntimeRule }).content;
 		}
-		const detected = separatorOf(inner);
+		const detected = separatorOf(inner, symbols);
 		if (!detected || detected.trailing) continue;
 		const innerElement = detected.content as unknown as Rule;
 		if (!sameElementShape(leading, innerElement)) continue;
@@ -673,12 +667,8 @@ function fieldSeparatedListElements(seqRule: Rule, reserve: (base: string) => st
 	return null;
 }
 
-function applyNodeChoiceFieldWrap(
-	ruleName: string,
-	rule: Rule,
-	mergedRules: Record<string, Rule>,
-	supertypeNames: ReadonlySet<string>
-): Rule {
+function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Record<string, Rule>, ctx: EnrichCtx): Rule {
+	const { supertypeNames } = ctx;
 	let changed = false;
 
 	const namesDeepIn = (r: Rule): Set<string> => {
@@ -762,7 +752,7 @@ function applyNodeChoiceFieldWrap(
 		}
 
 		if (isSeqType((r as { type: string }).type)) {
-			const sepListRewrite = fieldSeparatedListElements(r, (base) => reserve(base, scope));
+			const sepListRewrite = fieldSeparatedListElements(r, (base) => reserve(base, scope), ctx.sourceSymbols);
 			if (sepListRewrite) {
 				changed = true;
 				r = sepListRewrite;
@@ -1489,7 +1479,7 @@ interface InlineSeparatedListRun {
 	size: number;
 }
 
-function detectInlineSeparatedListRuns(members: Rule[]): InlineSeparatedListRun[] {
+function detectInlineSeparatedListRuns(members: Rule[], symbols: ParserSymbolCtx): InlineSeparatedListRun[] {
 	const carriesRepeat = (m: Rule): boolean => {
 		if (isRepeatType((m as { type?: string }).type)) return true;
 		if (!isSeqType((m as { type?: string }).type)) return false;
@@ -1508,7 +1498,7 @@ function detectInlineSeparatedListRuns(members: Rule[]): InlineSeparatedListRun[
 				size === 1 && isSeqType((window[0] as { type?: string }).type)
 					? window[0]!
 					: ({ type: 'SEQ', members: window } as unknown as Rule);
-			const info = separatedListBodyInfo(synthetic);
+			const info = separatedListBodyInfo(synthetic, symbols);
 			if (info?.flankCarrying) {
 				if (info.form === 'tail') {
 					const repeatMember = window[0]!;
@@ -1528,7 +1518,7 @@ function detectInlineSeparatedListRuns(members: Rule[]): InlineSeparatedListRun[
 	return runs;
 }
 
-function collectSeparatedListNameProposals(rules: Record<string, Rule>): Map<string, number> {
+function collectSeparatedListNameProposals(rules: Record<string, Rule>, symbols: ParserSymbolCtx): Map<string, number> {
 	const keysByName = new Map<string, Set<string>>();
 	const record = (info: SeparatedListBodyInfo, key: string) => {
 		if (info.elementName === null) return;
@@ -1544,13 +1534,13 @@ function collectSeparatedListNameProposals(rules: Record<string, Rule>): Map<str
 		if (isSeqType(t)) {
 			const rawMembers = (rule as unknown as { members?: Rule[] }).members;
 			if (Array.isArray(rawMembers)) {
-				const members = absorbTrailingListSeparators(rawMembers) ?? rawMembers;
+				const members = absorbTrailingListSeparators(rawMembers, symbols) ?? rawMembers;
 				const folded = members === rawMembers ? rule : ({ ...rule, members } as Rule);
-				const whole = separatedListBodyInfo(folded);
+				const whole = separatedListBodyInfo(folded, symbols);
 				if (whole?.flankCarrying) {
 					record(whole, ruleKey(folded as RuntimeRule));
 				} else {
-					for (const run of detectInlineSeparatedListRuns(members)) record(run.info, run.key);
+					for (const run of detectInlineSeparatedListRuns(members, symbols)) record(run.info, run.key);
 				}
 				for (const m of members) visit(m);
 				return;
@@ -1576,7 +1566,7 @@ function promoteHiddenListRef(member: Rule, ctx: EnrichCtx): Rule {
 	if (visibleName === undefined) {
 		const body = rulesBag[name];
 		if (!body || !isSeqType((body as { type?: string }).type)) return member;
-		const info = separatedListBodyInfo(body);
+		const info = separatedListBodyInfo(body, ctx.sourceSymbols);
 		if (!info?.flankCarrying || info.form !== 'head') return member;
 		const base = name.replace(/^_+/, '');
 		const bare = info.elementName !== null ? pluralizeFieldName(info.elementName) : null;
@@ -1591,13 +1581,13 @@ function promoteHiddenListRef(member: Rule, ctx: EnrichCtx): Rule {
 	return makeVisibleGroupAlias(member, visibleName);
 }
 
-function absorbTrailingListSeparators(members: Rule[]): Rule[] | null {
+function absorbTrailingListSeparators(members: Rule[], symbols: ParserSymbolCtx): Rule[] | null {
 	let changed = false;
 	const out: Rule[] = [];
 	for (let i = 0; i < members.length; i++) {
 		const cur = members[i]!;
 		const next = members[i + 1];
-		const sep = next ? listSeparatorOfOptionalSeq(cur) : null;
+		const sep = next ? listSeparatorOfOptionalSeq(cur, symbols) : null;
 		if (sep !== null && optionalStringLiteral(next!) === sep) {
 			out.push(appendTrailingMemberToOptionalSeq(cur, next!));
 			i++;
@@ -1633,7 +1623,7 @@ function applyClauseHoist(
 				newMembers[peeled.seqIdx] = recursedSeqBody;
 				return { ...rule, members: newMembers } as Rule;
 			}
-		} else if (isInlineSafe(recursedSeqBody, rulesBag)) {
+		} else if (isInlineSafe(recursedSeqBody, ctx.sourceSymbols)) {
 			const name = clauseHoistSynthName(recursedSeqBody, parentKind, ctx, counter);
 			if (name !== null) {
 				if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
@@ -1705,7 +1695,7 @@ function applyClauseHoist(
 	if (isSeqType(rule.type)) {
 		const rawMembers = (rule as unknown as { members?: Rule[] }).members;
 		if (!Array.isArray(rawMembers)) return rule;
-		const absorbed = absorbTrailingListSeparators(rawMembers);
+		const absorbed = absorbTrailingListSeparators(rawMembers, ctx.sourceSymbols);
 		const members = absorbed ?? rawMembers;
 		let changed = absorbed !== null;
 		const newMembers = members.map((m) => {
@@ -1714,8 +1704,8 @@ function applyClauseHoist(
 			if (out !== m) changed = true;
 			return out;
 		});
-		if (ctx.hoist !== undefined && separatedListBodyInfo({ ...rule, members: newMembers } as Rule) === null) {
-			const runs = detectInlineSeparatedListRuns(newMembers);
+		if (ctx.hoist !== undefined && separatedListBodyInfo({ ...rule, members: newMembers } as Rule, ctx.sourceSymbols) === null) {
+			const runs = detectInlineSeparatedListRuns(newMembers, ctx.sourceSymbols);
 			for (let r = runs.length - 1; r >= 0; r--) {
 				const run = runs[r]!;
 				const isTail = run.info.form === 'tail';
@@ -1897,7 +1887,7 @@ function visibleGroupSynthName(
 	const { groupDedupeMap, rulesBag, clauseGroupRules } = ctx;
 	const separatedListNameCounts = ctx.hoist?.separatedListNameCounts;
 	if (process.env.SITTIR_DEBUG_LISTNAME) {
-		const info = separatedListBodyInfo(content);
+		const info = separatedListBodyInfo(content, ctx.sourceSymbols);
 		process.stderr.write(
 			`[listname] mint for parent='${parentKind}' list=${JSON.stringify(info)} counts=${
 				info?.elementName ? separatedListNameCounts?.get(pluralizeFieldName(info.elementName)) : '-'
@@ -1917,7 +1907,7 @@ function visibleGroupSynthName(
 		clauseGroupRules[name] = body;
 		return name;
 	};
-	const listInfo = separatedListNameCounts !== undefined ? separatedListBodyInfo(content) : null;
+	const listInfo = separatedListNameCounts !== undefined ? separatedListBodyInfo(content, ctx.sourceSymbols) : null;
 	if (listInfo?.flankCarrying) {
 		const nameFree = (n: string) =>
 			!(n in rulesBag) && !(`_${n}` in rulesBag) && !(n in clauseGroupRules) && !(`_${n}` in clauseGroupRules);
@@ -2038,7 +2028,7 @@ function mintStructuredChoiceArm(
 		if (counter.supertypeNames?.has(name)) return null;
 		if (Object.hasOwn(clauseGroupRules, name)) return null;
 		const body = rulesBag[name];
-		if (!body || ruleMatchesEmpty(body) || isInlineSafe(body, rulesBag)) return null;
+		if (!body || ruleMatchesEmpty(body) || isInlineSafe(body, ctx.sourceSymbols)) return null;
 		if (isSupertypeLike(body)) return null;
 		const promoted = promoteExistingHiddenRuleName(name, parentKind, ctx, counter, 'arm');
 		if (!promoted) return null;
@@ -2049,7 +2039,7 @@ function mintStructuredChoiceArm(
 	}
 
 	if (isSeqType(t) || isChoiceType(t)) {
-		if (ruleMatchesEmpty(arm) || isInlineSafe(arm, rulesBag)) return null;
+		if (ruleMatchesEmpty(arm) || isInlineSafe(arm, ctx.sourceSymbols)) return null;
 		if (isSupertypeLike(arm)) return null;
 		if (isPermutationChoice(arm, rulesBag, ctx.kwRules, ctx.wordMatcher)) return null;
 		const minted = visibleGroupSynthName(arm, parentKind, ctx, counter, ambientPrec, enclosingFieldName, 'arm');

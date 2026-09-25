@@ -22,8 +22,8 @@ import { readRuleMetadata } from '../rule-metadata.ts';
 beforeAll(() => installFakeDsl());
 afterAll(() => restoreFakeDsl());
 
-function mkGrammar(rules: Record<string, unknown>) {
-	return { grammar: { name: 'test', rules } };
+function mkGrammar(rules: Record<string, unknown>, externals: readonly string[] = []) {
+	return { grammar: { name: 'test', rules, externals: externals.map((name) => ({ type: 'SYMBOL', name })) } };
 }
 
 function runEnrich(input: ReturnType<typeof mkGrammar>) {
@@ -550,7 +550,7 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 					{ type: 'STRING', value: ')' }
 				]
 			}
-		});
+		}, ['_a', '_b']);
 		const result = runEnrich(input);
 		const rules = result.grammar.rules;
 
