@@ -812,6 +812,28 @@ git commit -m "refactor(rust,python): four hand-written rules retire into alias(
 
 ---
 
+### Task 7a: Arms are the variants at the end of wire
+
+The user's rule: a sub-factory arm exists exactly where a variant label (`variant`/`variantOf` annotation) exists at the end of wire. Nothing else makes an arm. The field rule lives where variants are made: a fielded slot gets no automatic variant.
+
+**Stamp (enrich).** Enrich stamps `variant: <name>, variantOf: <owner>` on each arm of every unfielded (`_content`) choice. The name is computed once, at stamp time, with today's arm naming: `prefixNamedSuffix(owner, display) ?? display`, where display = the alias target, else the storage name without its leading `_`. A literal arm is named by its token kind. Enrich records every label it stamps in its non-enumerable sidecar.
+- A displayed literal (an anonymous literal shown under another kind's display, e.g. `alias('async', $.identifier)`) gets no variant: it is its display.
+- A supertype's own members are stamped with the supertype as `variantOf`; the existing variant-subtype path mounts them wherever the supertype sits.
+- The clash-fallback rename in `unaliasOverloadedDisplays` (`_number` → `unary_expression_number`) stamps the arm with its own name (`number`) through the same stamp.
+
+**Strip (wire).** When a patch fields a slot after enrich, wire removes the automatic variants on that slot, using the sidecar. `alias(name)` on a site writes that site's label (`variant` = the name's arm label, `variantOf` = the owning rule), overwriting an automatic one. Authored `variant()` stays.
+
+**Overlay.** The arm set is exactly the variant-labelled members. Nesting is a child's own variants under its arm (the ir paths are unchanged). Deleted: display-derived arm naming (`armName`, `kindArmName`, `displayNameOfValue` for arms, `armNaming`'s fallback), grand-arm lifting (`grandArmCandidates`, `flattened`, `hostedApart`, claim counting and deconfliction), `armSubtypes`/`declaredSupertype`, `foldDisplayedLiterals`/`displayedLiteralTarget`, and the unlabelled hoisted-group path.
+
+**Provenance.** A node-model childKind descriptor built from enrich-stamped labels reads `definedBy: 'enrich'` (from `author: 'enrich'` on the stamp), `'override'` otherwise; the descriptor's value is `'enrich'` only when every labelled arm of the kind is enrich-authored. It is a label; nothing branches on it.
+
+- [ ] Enrich stamp, sidecar record, clash-fallback label.
+- [ ] Wire strip on field(); alias() writes the label.
+- [ ] Overlay arm set = variant-labelled members; deletions above.
+- [ ] definedBy 'enrich'.
+- [ ] Gates: rows identical; options addresses unmoved; types.ts, factory signatures and transport unmoved; storage gate unchanged; lint 0 (by count); suite; cargo. Node-model may move only by new polymorphVariants childKind entries (report the count per grammar); any modelType change or factorySlots/shape/field move stops.
+- [ ] Report the arm diff per grammar before committing, with every ir-path change named.
+
 ### Task 7b: A built node carries the alias envelope its read shows
 
 Every alias site is an envelope (the user's rule), and the read materializes it: python `case test():` reads `case_pattern → _simple_pattern {simple_pattern} → _class_pattern`, typescript `a = 1;` reads `assignment_expression._left = {lhs_expression} → _identifier`. A factory or composer at an aliased site builds the content directly (`casePattern.classPattern(...)` → `case_pattern._content = class_pattern`), so built ≠ read; render and the validators still pass because they compare text and parse trees, not the read-vs-built model shape.
