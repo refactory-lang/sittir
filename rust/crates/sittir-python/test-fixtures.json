@@ -129768,8 +129768,8 @@
                         "$type": 188,
                         "$source": 0,
                         "$named": true,
-                        "_real": true,
-                        "_imaginary": {
+                        "_sign": true,
+                        "_real": {
                           "$type": 93,
                           "$source": 0,
                           "$named": true,
@@ -129780,13 +129780,7 @@
                           }
                         },
                         "_operator": 49,
-                        "$slotOrder": [
-                          "real",
-                          "imaginary",
-                          "operator",
-                          "integer_decimal"
-                        ],
-                        "_content": {
+                        "_imaginary": {
                           "$type": 93,
                           "$source": 0,
                           "$named": true,
@@ -129795,7 +129789,13 @@
                             "start": 24,
                             "end": 26
                           }
-                        }
+                        },
+                        "$slotOrder": [
+                          "sign",
+                          "real",
+                          "operator",
+                          "imaginary"
+                        ]
                       }
                     }
                   ],
@@ -129892,8 +129892,8 @@
                             "$type": 188,
                             "$source": 0,
                             "$named": true,
-                            "_real": true,
-                            "_imaginary": {
+                            "_sign": true,
+                            "_real": {
                               "$type": 93,
                               "$source": 0,
                               "$named": true,
@@ -129904,13 +129904,7 @@
                               }
                             },
                             "_operator": 49,
-                            "$slotOrder": [
-                              "real",
-                              "imaginary",
-                              "operator",
-                              "integer_decimal"
-                            ],
-                            "_content": {
+                            "_imaginary": {
                               "$type": 93,
                               "$source": 0,
                               "$named": true,
@@ -129919,7 +129913,13 @@
                                 "start": 56,
                                 "end": 58
                               }
-                            }
+                            },
+                            "$slotOrder": [
+                              "sign",
+                              "real",
+                              "operator",
+                              "imaginary"
+                            ]
                           }
                         },
                         "_identifier": {
@@ -130100,8 +130100,8 @@
                             "$type": 188,
                             "$source": 0,
                             "$named": true,
-                            "_real": true,
-                            "_imaginary": {
+                            "_sign": true,
+                            "_real": {
                               "$type": 93,
                               "$source": 0,
                               "$named": true,
@@ -130112,13 +130112,7 @@
                               }
                             },
                             "_operator": 49,
-                            "$slotOrder": [
-                              "real",
-                              "imaginary",
-                              "operator",
-                              "integer_decimal"
-                            ],
-                            "_content": {
+                            "_imaginary": {
                               "$type": 93,
                               "$source": 0,
                               "$named": true,
@@ -130127,7 +130121,13 @@
                                 "start": 103,
                                 "end": 105
                               }
-                            }
+                            },
+                            "$slotOrder": [
+                              "sign",
+                              "real",
+                              "operator",
+                              "imaginary"
+                            ]
                           }
                         },
                         "_identifier": {
@@ -130256,8 +130256,8 @@
                         "$type": 188,
                         "$source": 0,
                         "$named": true,
-                        "_real": true,
-                        "_imaginary": {
+                        "_sign": true,
+                        "_real": {
                           "$type": 94,
                           "$source": 0,
                           "$named": true,
@@ -130269,13 +130269,7 @@
                           "_integer": "3"
                         },
                         "_operator": 49,
-                        "$slotOrder": [
-                          "real",
-                          "imaginary",
-                          "operator",
-                          "integer_decimal"
-                        ],
-                        "_content": {
+                        "_imaginary": {
                           "$type": 93,
                           "$source": 0,
                           "$named": true,
@@ -130284,7 +130278,13 @@
                             "start": 142,
                             "end": 144
                           }
-                        }
+                        },
+                        "$slotOrder": [
+                          "sign",
+                          "real",
+                          "operator",
+                          "imaginary"
+                        ]
                       }
                     }
                   ],
@@ -130373,7 +130373,7 @@
                         "$type": 188,
                         "$source": 0,
                         "$named": true,
-                        "_imaginary": {
+                        "_real": {
                           "$type": 93,
                           "$source": 0,
                           "$named": true,
@@ -130384,12 +130384,7 @@
                           }
                         },
                         "_operator": 50,
-                        "$slotOrder": [
-                          "imaginary",
-                          "operator",
-                          "float_point"
-                        ],
-                        "_content": {
+                        "_imaginary": {
                           "$type": 94,
                           "$source": 0,
                           "$named": true,
@@ -130400,7 +130395,12 @@
                           },
                           "_integer": "5",
                           "_imaginary": "j"
-                        }
+                        },
+                        "$slotOrder": [
+                          "real",
+                          "operator",
+                          "imaginary"
+                        ]
                       }
                     }
                   ],
@@ -130512,7 +130512,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "match x:\n    case - 3 + 5j:\n        pass\n    case - 3 + 5j as b2:\n        pass\n    case 3j as b1, - 3 + 5j as b2:\n        pass\n    case - 3. + 5j:\n        pass\n    case 3 - 5.j:\n        pass\n",
-    "expectedReparseTree": "(module statements: (match_statement (subjects subject: (identifier)) body: (match_block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (simple_pattern (complex_pattern imaginary: (integer_decimal) (integer_decimal))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_as_pattern (case_pattern (simple_pattern (complex_pattern imaginary: (integer_decimal) (integer_decimal)))) (identifier)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_as_pattern (case_pattern (simple_pattern (simple_pattern_negative value: (integer_decimal)))) (identifier))) case_pattern: (case_pattern (case_as_pattern (case_pattern (simple_pattern (complex_pattern imaginary: (integer_decimal) (integer_decimal)))) (identifier)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (simple_pattern (complex_pattern imaginary: (float_point) (integer_decimal))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (simple_pattern (complex_pattern imaginary: (integer_decimal) (float_point))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)))))))))",
+    "expectedReparseTree": "(module statements: (match_statement (subjects subject: (identifier)) body: (match_block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (simple_pattern (complex_pattern real: (integer_decimal) imaginary: (integer_decimal))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_as_pattern (case_pattern (simple_pattern (complex_pattern real: (integer_decimal) imaginary: (integer_decimal)))) (identifier)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_as_pattern (case_pattern (simple_pattern (simple_pattern_negative value: (integer_decimal)))) (identifier))) case_pattern: (case_pattern (case_as_pattern (case_pattern (simple_pattern (complex_pattern real: (integer_decimal) imaginary: (integer_decimal)))) (identifier)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (simple_pattern (complex_pattern real: (float_point) imaginary: (integer_decimal))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (simple_pattern (complex_pattern real: (integer_decimal) imaginary: (float_point))))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)))))))))",
     "wrappedText": "match x:\n    case - 3 + 5j:\n        pass\n    case - 3 + 5j as b2:\n        pass\n    case 3j as b1, - 3 + 5j as b2:\n        pass\n    case - 3. + 5j:\n        pass\n    case 3 - 5.j:\n        pass\n",
     "wrappedOffset": 0
   },

@@ -2543,13 +2543,13 @@
         "members": [
           {
             "type": "FIELD",
-            "name": "real",
+            "name": "sign",
             "content": {
               "type": "CHOICE",
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "_kw_real"
+                  "name": "_kw_sign"
                 },
                 {
                   "type": "BLANK"
@@ -2562,7 +2562,7 @@
           },
           {
             "type": "FIELD",
-            "name": "imaginary",
+            "name": "real",
             "content": {
               "type": "CHOICE",
               "members": [
@@ -2601,25 +2601,24 @@
             }
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "integer",
-                "annotations": {
-                  "variant": "integer",
-                  "variantOf": "complex_pattern"
+            "type": "FIELD",
+            "name": "imaginary",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "integer"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "float"
                 }
-              },
-              {
-                "type": "SYMBOL",
-                "name": "float",
-                "annotations": {
-                  "variant": "float",
-                  "variantOf": "complex_pattern"
-                }
-              }
-            ]
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       }
@@ -9050,17 +9049,9 @@
         "hoisted": true
       }
     },
-    "_kw_real": {
+    "_kw_sign": {
       "type": "STRING",
       "value": "-"
-    },
-    "_kw_sign": {
-      "type": "PREC",
-      "value": 1,
-      "content": {
-        "type": "STRING",
-        "value": "-"
-      }
     },
     "simple_pattern_negative": {
       "type": "PREC",
@@ -10082,7 +10073,6 @@
     "_raise_statement_optional1",
     "_function_definition_optional1",
     "_exec_statement_optional1",
-    "_kw_real",
     "_kw_comma",
     "_kw_eq_marker"
   ],

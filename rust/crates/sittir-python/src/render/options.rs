@@ -232,7 +232,7 @@ pub const SITE_COMPARISON_OPERATOR_COMPARATOR_COMPARISON_OPERATOR_COMPARATOR_BEF
 pub const SITE_COMPARISON_OPERATOR_COMPARATOR_COMPARISON_OPERATOR_COMPARATOR_AFTER: usize = 224;
 pub const SITE_COMPLEX_PATTERN_OPERATOR_BEFORE: usize = 225;
 pub const SITE_COMPLEX_PATTERN_OPERATOR_AFTER: usize = 226;
-pub const SITE_COMPLEX_PATTERN_REAL_AFTER: usize = 227;
+pub const SITE_COMPLEX_PATTERN_SIGN_AFTER: usize = 227;
 pub const SITE_COMPLEX_PATTERN_COMPLEX_PATTERN_BEFORE: usize = 228;
 pub const SITE_COMPLEX_PATTERN_COMPLEX_PATTERN_AFTER: usize = 229;
 pub const SITE_COMPREHENSION_CLAUSES_CONTENT_FOR_IN_CLAUSE_AFTER: usize = 230;
@@ -1250,7 +1250,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("comparison_operator_comparator", "comparison_operator_comparator_after", "comparison_operator_comparator_after", &[120, 121, 113, 122, 123]),
     ("complex_pattern", "operator_before", "operator_before", &[120, 121, 113, 122, 123]),
     ("complex_pattern", "operator_after", "operator_after", &[120, 121, 113, 122, 123]),
-    ("complex_pattern", "real_after", "real_after", &[120, 121, 113, 122, 123]),
+    ("complex_pattern", "sign_after", "sign_after", &[120, 121, 113, 122, 123]),
     ("complex_pattern", "complex_pattern_before", "complex_pattern_before", &[120, 121, 113, 122, 123]),
     ("complex_pattern", "complex_pattern_after", "complex_pattern_after", &[120, 121, 113, 122, 123]),
     ("comprehension_clauses", "content_for_in_clause_after", "for_in_clause_after", &[120, 121, 113, 122, 123]),
@@ -4422,8 +4422,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPLEX_PATTERN_OPERATOR_AFTER, path: "(complex_pattern)/operator:/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPLEX_PATTERN_OPERATOR_BEFORE, path: "(complex_pattern)/operator:/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "real", path: "(complex_pattern)/real:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPLEX_PATTERN_REAL_AFTER, path: "(complex_pattern)/real:/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "sign", path: "(complex_pattern)/sign:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COMPLEX_PATTERN_SIGN_AFTER, path: "(complex_pattern)/sign:/after" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "comprehensionClauses", path: "(comprehension_clauses)", children: &[

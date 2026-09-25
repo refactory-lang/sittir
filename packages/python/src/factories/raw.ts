@@ -1653,37 +1653,37 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 }
 
 export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexPattern.Built {
-	const _real = coerceBooleanKeywordStorage(config.real);
-	const _imaginary = config.imaginary;
+	const _sign = coerceBooleanKeywordStorage(config.sign);
+	const _real = config.real;
 	const _operator = coerceKindEnumStorage<NonNullable<T.ComplexPattern['_operator']>>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['-', TSKindId.Dash] as const
 	]);
-	const _content = config.content;
+	const _imaginary = config.imaginary;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ComplexPattern as const,
 				$source: 2 as const,
 				$named: true as const,
+				_sign,
 				_real,
-				_imaginary,
 				_operator,
-				_content,
+				_imaginary,
 				$with: {
-					real: (value?: NonNullable<T.ComplexPattern.Config>['real']) =>
-						buildComplexPattern({ ...config, real: value }),
-					imaginary: (value: T.Integer | T.Float) => buildComplexPattern({ ...config, imaginary: value }),
+					sign: (value?: NonNullable<T.ComplexPattern.Config>['sign']) =>
+						buildComplexPattern({ ...config, sign: value }),
+					real: (value: T.Integer | T.Float) => buildComplexPattern({ ...config, real: value }),
 					operator: (value: NonNullable<T.ComplexPattern.Config>['operator']) =>
 						buildComplexPattern({ ...config, operator: value }),
-					content: (value: T.Integer | T.Float) => buildComplexPattern({ ...config, content: value })
+					imaginary: (value: T.Integer | T.Float) => buildComplexPattern({ ...config, imaginary: value })
 				}
 			},
 			{
+				sign: () => _sign,
 				real: () => _real,
-				imaginary: () => _imaginary,
 				operator: () => _operator,
-				content: () => _content
+				imaginary: () => _imaginary
 			}
 		),
 		methodsEngine

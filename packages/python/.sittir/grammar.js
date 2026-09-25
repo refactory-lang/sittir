@@ -6096,9 +6096,10 @@ var grammar_sittir_default = grammar(
           1: field("comparators")
         },
         complex_pattern: {
-          0: field("real"),
-          1: field("imaginary"),
-          2: field("operator")
+          0: field("sign"),
+          1: field("real"),
+          2: field("operator"),
+          3: field("imaginary")
         },
         conditional_expression: {
           0: field("body"),

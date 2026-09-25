@@ -11139,14 +11139,125 @@ impl ::sittir_core::render::Render for SplatPatternNameTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ComplexPatternRealTransportSlot {
+pub enum ComplexPatternSignTransportSlot {
     Literal16_64_61_73_68,
 }
 
-impl ::sittir_core::prepare::Prepare for ComplexPatternRealTransportSlot {
+impl ::sittir_core::prepare::Prepare for ComplexPatternSignTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ComplexPatternRealTransportSlot::Literal16_64_61_73_68 => Ok(()),
+            ComplexPatternSignTransportSlot::Literal16_64_61_73_68 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ComplexPatternSignTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal16_64_61_73_68 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternSignTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    50 => Ok(Self::Literal16_64_61_73_68),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ComplexPatternSignTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ComplexPatternSignTransportSlot")
+                )?;
+                match kind_id {
+                    50 => Ok(Self::Literal16_64_61_73_68),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ComplexPatternSignTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ComplexPatternSignTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ComplexPatternSignTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ComplexPatternSignTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ComplexPatternSignTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ComplexPatternSignTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ComplexPatternSignTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ComplexPatternSignTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn complex_pattern_sign_transport_slot_to_any(t: ComplexPatternSignTransportSlot) -> AnyTransport {
+    match t {
+        ComplexPatternSignTransportSlot::Literal16_64_61_73_68 => AnyTransport::Literal16_64_61_73_68,
+    }
+}
+
+impl ::sittir_core::render::Render for ComplexPatternSignTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ComplexPatternSignTransportSlot::Literal16_64_61_73_68 => w.text("-"),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ComplexPatternRealTransportSlot {
+    IntegerHex(IntegerHexTransport),
+    IntegerOctal(IntegerOctalTransport),
+    IntegerBinary(IntegerBinaryTransport),
+    IntegerDecimal(IntegerDecimalTransport),
+    FloatPoint(FloatPointTransport),
+    FloatLeadingPoint(FloatLeadingPointTransport),
+    FloatScientific(FloatScientificTransport),
+    Verbatim(VerbatimTransport),
+}
+
+impl ::sittir_core::prepare::Prepare for ComplexPatternRealTransportSlot {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            ComplexPatternRealTransportSlot::IntegerHex(t) => t.prepare(ctx),
+            ComplexPatternRealTransportSlot::IntegerOctal(t) => t.prepare(ctx),
+            ComplexPatternRealTransportSlot::IntegerBinary(t) => t.prepare(ctx),
+            ComplexPatternRealTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
+            ComplexPatternRealTransportSlot::FloatPoint(t) => t.prepare(ctx),
+            ComplexPatternRealTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
+            ComplexPatternRealTransportSlot::FloatScientific(t) => t.prepare(ctx),
+            ComplexPatternRealTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
@@ -11154,7 +11265,14 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternRealTransportSlot {
 impl ::sittir_core::view::KindOf for ComplexPatternRealTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal16_64_61_73_68 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+            Self::IntegerHex(inner) => inner.kind_in(kinds),
+            Self::IntegerOctal(inner) => inner.kind_in(kinds),
+            Self::IntegerBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerDecimal(inner) => inner.kind_in(kinds),
+            Self::FloatPoint(inner) => inner.kind_in(kinds),
+            Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -11168,7 +11286,27 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternRealTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    50 => Ok(Self::Literal16_64_61_73_68),
+                    90 => Ok(Self::IntegerHex(
+                        IntegerHexTransport::from_napi_value(env, napi_val)?
+                    )),
+                    91 => Ok(Self::IntegerOctal(
+                        IntegerOctalTransport::from_napi_value(env, napi_val)?
+                    )),
+                    92 => Ok(Self::IntegerBinary(
+                        IntegerBinaryTransport::from_napi_value(env, napi_val)?
+                    )),
+                    93 => Ok(Self::IntegerDecimal(
+                        IntegerDecimalTransport::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::FloatPoint(
+                        FloatPointTransport::from_napi_value(env, napi_val)?
+                    )),
+                    95 => Ok(Self::FloatLeadingPoint(
+                        FloatLeadingPointTransport::from_napi_value(env, napi_val)?
+                    )),
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComplexPatternRealTransportSlot",
                     ))),
@@ -11180,13 +11318,34 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternRealTransportSlot 
                     ::napi::Error::from_reason("$type property missing in ComplexPatternRealTransportSlot")
                 )?;
                 match kind_id {
-                    50 => Ok(Self::Literal16_64_61_73_68),
+                    90 => Ok(Self::IntegerHex(
+                        IntegerHexTransport::from_napi_value(env, napi_val)?
+                    )),
+                    91 => Ok(Self::IntegerOctal(
+                        IntegerOctalTransport::from_napi_value(env, napi_val)?
+                    )),
+                    92 => Ok(Self::IntegerBinary(
+                        IntegerBinaryTransport::from_napi_value(env, napi_val)?
+                    )),
+                    93 => Ok(Self::IntegerDecimal(
+                        IntegerDecimalTransport::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::FloatPoint(
+                        FloatPointTransport::from_napi_value(env, napi_val)?
+                    )),
+                    95 => Ok(Self::FloatLeadingPoint(
+                        FloatLeadingPointTransport::from_napi_value(env, napi_val)?
+                    )),
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComplexPatternRealTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ComplexPatternRealTransportSlot: expected u16 kind_id or object with $type")),
+            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
+            _ => Err(::napi::Error::from_reason("ComplexPatternRealTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
@@ -11223,14 +11382,132 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComplexPatternRealTransportSlo
 
 fn complex_pattern_real_transport_slot_to_any(t: ComplexPatternRealTransportSlot) -> AnyTransport {
     match t {
-        ComplexPatternRealTransportSlot::Literal16_64_61_73_68 => AnyTransport::Literal16_64_61_73_68,
+        ComplexPatternRealTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
+        ComplexPatternRealTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
+        ComplexPatternRealTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
+        ComplexPatternRealTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
+        ComplexPatternRealTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
+        ComplexPatternRealTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
+        ComplexPatternRealTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
+        ComplexPatternRealTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
 impl ::sittir_core::render::Render for ComplexPatternRealTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ComplexPatternRealTransportSlot::Literal16_64_61_73_68 => w.text("-"),
+            ComplexPatternRealTransportSlot::IntegerHex(inner) => inner.render(w),
+            ComplexPatternRealTransportSlot::IntegerOctal(inner) => inner.render(w),
+            ComplexPatternRealTransportSlot::IntegerBinary(inner) => inner.render(w),
+            ComplexPatternRealTransportSlot::IntegerDecimal(inner) => inner.render(w),
+            ComplexPatternRealTransportSlot::FloatPoint(inner) => inner.render(w),
+            ComplexPatternRealTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
+            ComplexPatternRealTransportSlot::FloatScientific(inner) => inner.render(w),
+            ComplexPatternRealTransportSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ComplexPatternOperatorTransportSlot {
+    Literal17_70_6c_75_73,
+    Literal16_64_61_73_68,
+}
+
+impl ::sittir_core::prepare::Prepare for ComplexPatternOperatorTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            ComplexPatternOperatorTransportSlot::Literal17_70_6c_75_73 => Ok(()),
+            ComplexPatternOperatorTransportSlot::Literal16_64_61_73_68 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for ComplexPatternOperatorTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal17_70_6c_75_73 => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::Literal16_64_61_73_68 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternOperatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    49 => Ok(Self::Literal17_70_6c_75_73),
+                    50 => Ok(Self::Literal16_64_61_73_68),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ComplexPatternOperatorTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ComplexPatternOperatorTransportSlot")
+                )?;
+                match kind_id {
+                    49 => Ok(Self::Literal17_70_6c_75_73),
+                    50 => Ok(Self::Literal16_64_61_73_68),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ComplexPatternOperatorTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ComplexPatternOperatorTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ComplexPatternOperatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ComplexPatternOperatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ComplexPatternOperatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ComplexPatternOperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ComplexPatternOperatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ComplexPatternOperatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn complex_pattern_operator_transport_slot_to_any(t: ComplexPatternOperatorTransportSlot) -> AnyTransport {
+    match t {
+        ComplexPatternOperatorTransportSlot::Literal17_70_6c_75_73 => AnyTransport::Literal17_70_6c_75_73,
+        ComplexPatternOperatorTransportSlot::Literal16_64_61_73_68 => AnyTransport::Literal16_64_61_73_68,
+    }
+}
+
+impl ::sittir_core::render::Render for ComplexPatternOperatorTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            ComplexPatternOperatorTransportSlot::Literal17_70_6c_75_73 => w.text("+"),
+            ComplexPatternOperatorTransportSlot::Literal16_64_61_73_68 => w.text("-"),
         }
     }
 }
@@ -11404,283 +11681,6 @@ impl ::sittir_core::render::Render for ComplexPatternImaginaryTransportSlot {
             ComplexPatternImaginaryTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
             ComplexPatternImaginaryTransportSlot::FloatScientific(inner) => inner.render(w),
             ComplexPatternImaginaryTransportSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum ComplexPatternOperatorTransportSlot {
-    Literal17_70_6c_75_73,
-    Literal16_64_61_73_68,
-}
-
-impl ::sittir_core::prepare::Prepare for ComplexPatternOperatorTransportSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            ComplexPatternOperatorTransportSlot::Literal17_70_6c_75_73 => Ok(()),
-            ComplexPatternOperatorTransportSlot::Literal16_64_61_73_68 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for ComplexPatternOperatorTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Literal17_70_6c_75_73 => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
-            Self::Literal16_64_61_73_68 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternOperatorTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    49 => Ok(Self::Literal17_70_6c_75_73),
-                    50 => Ok(Self::Literal16_64_61_73_68),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ComplexPatternOperatorTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ComplexPatternOperatorTransportSlot")
-                )?;
-                match kind_id {
-                    49 => Ok(Self::Literal17_70_6c_75_73),
-                    50 => Ok(Self::Literal16_64_61_73_68),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ComplexPatternOperatorTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ComplexPatternOperatorTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ComplexPatternOperatorTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ComplexPatternOperatorTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ComplexPatternOperatorTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ComplexPatternOperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ComplexPatternOperatorTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ComplexPatternOperatorTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn complex_pattern_operator_transport_slot_to_any(t: ComplexPatternOperatorTransportSlot) -> AnyTransport {
-    match t {
-        ComplexPatternOperatorTransportSlot::Literal17_70_6c_75_73 => AnyTransport::Literal17_70_6c_75_73,
-        ComplexPatternOperatorTransportSlot::Literal16_64_61_73_68 => AnyTransport::Literal16_64_61_73_68,
-    }
-}
-
-impl ::sittir_core::render::Render for ComplexPatternOperatorTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ComplexPatternOperatorTransportSlot::Literal17_70_6c_75_73 => w.text("+"),
-            ComplexPatternOperatorTransportSlot::Literal16_64_61_73_68 => w.text("-"),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum ComplexPatternContentTransportSlot {
-    IntegerHex(IntegerHexTransport),
-    IntegerOctal(IntegerOctalTransport),
-    IntegerBinary(IntegerBinaryTransport),
-    IntegerDecimal(IntegerDecimalTransport),
-    FloatPoint(FloatPointTransport),
-    FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatScientific(FloatScientificTransport),
-    Verbatim(VerbatimTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for ComplexPatternContentTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            ComplexPatternContentTransportSlot::IntegerHex(t) => t.prepare(ctx),
-            ComplexPatternContentTransportSlot::IntegerOctal(t) => t.prepare(ctx),
-            ComplexPatternContentTransportSlot::IntegerBinary(t) => t.prepare(ctx),
-            ComplexPatternContentTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
-            ComplexPatternContentTransportSlot::FloatPoint(t) => t.prepare(ctx),
-            ComplexPatternContentTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            ComplexPatternContentTransportSlot::FloatScientific(t) => t.prepare(ctx),
-            ComplexPatternContentTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for ComplexPatternContentTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::IntegerHex(inner) => inner.kind_in(kinds),
-            Self::IntegerOctal(inner) => inner.kind_in(kinds),
-            Self::IntegerBinary(inner) => inner.kind_in(kinds),
-            Self::IntegerDecimal(inner) => inner.kind_in(kinds),
-            Self::FloatPoint(inner) => inner.kind_in(kinds),
-            Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatScientific(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    90 => Ok(Self::IntegerHex(
-                        IntegerHexTransport::from_napi_value(env, napi_val)?
-                    )),
-                    91 => Ok(Self::IntegerOctal(
-                        IntegerOctalTransport::from_napi_value(env, napi_val)?
-                    )),
-                    92 => Ok(Self::IntegerBinary(
-                        IntegerBinaryTransport::from_napi_value(env, napi_val)?
-                    )),
-                    93 => Ok(Self::IntegerDecimal(
-                        IntegerDecimalTransport::from_napi_value(env, napi_val)?
-                    )),
-                    94 => Ok(Self::FloatPoint(
-                        FloatPointTransport::from_napi_value(env, napi_val)?
-                    )),
-                    95 => Ok(Self::FloatLeadingPoint(
-                        FloatLeadingPointTransport::from_napi_value(env, napi_val)?
-                    )),
-                    96 => Ok(Self::FloatScientific(
-                        FloatScientificTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ComplexPatternContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ComplexPatternContentTransportSlot")
-                )?;
-                match kind_id {
-                    90 => Ok(Self::IntegerHex(
-                        IntegerHexTransport::from_napi_value(env, napi_val)?
-                    )),
-                    91 => Ok(Self::IntegerOctal(
-                        IntegerOctalTransport::from_napi_value(env, napi_val)?
-                    )),
-                    92 => Ok(Self::IntegerBinary(
-                        IntegerBinaryTransport::from_napi_value(env, napi_val)?
-                    )),
-                    93 => Ok(Self::IntegerDecimal(
-                        IntegerDecimalTransport::from_napi_value(env, napi_val)?
-                    )),
-                    94 => Ok(Self::FloatPoint(
-                        FloatPointTransport::from_napi_value(env, napi_val)?
-                    )),
-                    95 => Ok(Self::FloatLeadingPoint(
-                        FloatLeadingPointTransport::from_napi_value(env, napi_val)?
-                    )),
-                    96 => Ok(Self::FloatScientific(
-                        FloatScientificTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ComplexPatternContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("ComplexPatternContentTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ComplexPatternContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ComplexPatternContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ComplexPatternContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ComplexPatternContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ComplexPatternContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ComplexPatternContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn complex_pattern_content_transport_slot_to_any(t: ComplexPatternContentTransportSlot) -> AnyTransport {
-    match t {
-        ComplexPatternContentTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        ComplexPatternContentTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        ComplexPatternContentTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        ComplexPatternContentTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
-        ComplexPatternContentTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        ComplexPatternContentTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ComplexPatternContentTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        ComplexPatternContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl ::sittir_core::render::Render for ComplexPatternContentTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ComplexPatternContentTransportSlot::IntegerHex(inner) => inner.render(w),
-            ComplexPatternContentTransportSlot::IntegerOctal(inner) => inner.render(w),
-            ComplexPatternContentTransportSlot::IntegerBinary(inner) => inner.render(w),
-            ComplexPatternContentTransportSlot::IntegerDecimal(inner) => inner.render(w),
-            ComplexPatternContentTransportSlot::FloatPoint(inner) => inner.render(w),
-            ComplexPatternContentTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            ComplexPatternContentTransportSlot::FloatScientific(inner) => inner.render(w),
-            ComplexPatternContentTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -28097,14 +28097,14 @@ pub struct ComplexPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign"))]
+    pub sign: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_real"))]
-    pub real: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_imaginary"))]
-    pub imaginary: ::sittir_core::SlotValue<ComplexPatternImaginaryTransportSlot>,
+    pub real: ::sittir_core::SlotValue<ComplexPatternRealTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ::sittir_core::SlotValue<Box<AnyTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<ComplexPatternContentTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_imaginary"))]
+    pub imaginary: ::sittir_core::SlotValue<ComplexPatternImaginaryTransportSlot>,
 }
 
 impl ::sittir_core::view::KindOf for ComplexPatternTransport {
@@ -28128,10 +28128,10 @@ impl ::sittir_core::render::Render for ComplexPatternTransport {
 impl ::sittir_core::prepare::Prepare for ComplexPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.sign.prepare(ctx)?;
         self.real.prepare(ctx)?;
-        self.imaginary.prepare(ctx)?;
         self.operator.prepare(ctx)?;
-        self.content.prepare(ctx)?;
+        self.imaginary.prepare(ctx)?;
         Ok(())
     }
 }
@@ -49322,20 +49322,20 @@ fn render_class_pattern(node: &ClassPatternTransport, w: &mut dyn ::sittir_core:
 }
 
 fn render_complex_pattern(node: &ComplexPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
     let imaginary = &node.imaginary;
     let operator = &node.operator;
-    let real = View::new(&node.real, "-");
+    let real = &node.real;
+    let sign = View::new(&node.sign, "-");
     w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    if real.is_present() {
-        real.render(w)?;
-        w.site_at(options::SITE_COMPLEX_PATTERN_REAL_AFTER);
+    if sign.is_present() {
+        sign.render(w)?;
+        w.site_at(options::SITE_COMPLEX_PATTERN_SIGN_AFTER);
     }
-    imaginary.render(w)?;
+    real.render(w)?;
     w.site_at(options::SITE_COMPLEX_PATTERN_OPERATOR_BEFORE);
     operator.render(w)?;
     w.site_at(options::SITE_COMPLEX_PATTERN_OPERATOR_AFTER);
-    content.render(w)?;
+    imaginary.render(w)?;
     w.edge(::sittir_core::types::KindId(188), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }

@@ -320,10 +320,10 @@ export interface ComparisonOperatorTransport {
 export interface ComplexPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _real?: boolean
-  _imaginary: SlotValue<ComplexPatternImaginaryTransportSlot>
+  _sign?: boolean
+  _real: SlotValue<ComplexPatternRealTransportSlot>
   _operator: SlotValue<Box<AnyTransport>>
-  _content: SlotValue<ComplexPatternContentTransportSlot>
+  _imaginary: SlotValue<ComplexPatternImaginaryTransportSlot>
 }
 
 export interface ComprehensionClausesTransport {

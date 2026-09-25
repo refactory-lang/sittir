@@ -3055,18 +3055,18 @@ export interface ClassPattern {
 
 export interface ComplexPattern {
 	readonly $type: TSKindId.ComplexPattern;
-	readonly _real?: boolean;
-	readonly _imaginary: Integer | Float;
+	readonly _sign?: boolean;
+	readonly _real: Integer | Float;
 	readonly _operator: number;
-	readonly _content: Integer | Float;
+	readonly _imaginary: Integer | Float;
 	readonly __inputHints__?: {
-		readonly real?: BaseBooleanKeyword<'-'>;
+		readonly sign?: BaseBooleanKeyword<'-'>;
 		readonly operator: KindEnum<'+' | '-', TSKindId.Plus | TSKindId.Dash>;
 	};
-	real(): boolean | undefined;
-	imaginary(): Integer | Float;
+	sign(): boolean | undefined;
+	real(): Integer | Float;
 	operator(): number;
-	content(): Integer | Float;
+	imaginary(): Integer | Float;
 }
 
 export interface _Parameters {
@@ -6157,7 +6157,7 @@ export namespace ComplexPattern {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
 			readonly operator?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly real?: { readonly after?: SpacingArm };
+			readonly sign?: { readonly after?: SpacingArm };
 		};
 	}
 }
@@ -10591,10 +10591,10 @@ export namespace ComplexPattern {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			real(value?: NonNullable<T.ComplexPattern.Config>['real']): T.ComplexPattern.Built;
-			imaginary(value: T.Integer | T.Float): T.ComplexPattern.Built;
+			sign(value?: NonNullable<T.ComplexPattern.Config>['sign']): T.ComplexPattern.Built;
+			real(value: T.Integer | T.Float): T.ComplexPattern.Built;
 			operator(value: NonNullable<T.ComplexPattern.Config>['operator']): T.ComplexPattern.Built;
-			content(value: T.Integer | T.Float): T.ComplexPattern.Built;
+			imaginary(value: T.Integer | T.Float): T.ComplexPattern.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ComplexPattern>;

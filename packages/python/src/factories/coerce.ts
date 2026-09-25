@@ -3569,13 +3569,11 @@ export function coerceToClassPattern(input: T.ClassPattern.Loose): ReturnType<ty
 	});
 }
 
-export function resolveComplexPattern_real(value: T.ComplexPattern.LooseConfig['real']): T.ComplexPattern['_real'] {
+export function resolveComplexPattern_sign(value: T.ComplexPattern.LooseConfig['sign']): T.ComplexPattern['_sign'] {
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveComplexPattern_imaginary(
-	value: T.ComplexPattern.LooseConfig['imaginary']
-): T.ComplexPattern['_imaginary'] {
+export function resolveComplexPattern_real(value: T.ComplexPattern.LooseConfig['real']): T.ComplexPattern['_real'] {
 	return _resolveOne<T.Integer | T.Float>(value, _K20, _K21);
 }
 
@@ -3588,9 +3586,9 @@ export function resolveComplexPattern_operator(
 	);
 }
 
-export function resolveComplexPattern_content(
-	value: T.ComplexPattern.LooseConfig['content']
-): T.ComplexPattern['_content'] {
+export function resolveComplexPattern_imaginary(
+	value: T.ComplexPattern.LooseConfig['imaginary']
+): T.ComplexPattern['_imaginary'] {
 	return _resolveOne<T.Integer | T.Float>(value, _K20, _K21);
 }
 
@@ -3598,10 +3596,10 @@ export function coerceToComplexPattern(input: T.ComplexPattern.Loose): ReturnTyp
 	if (!_isLooseConfig<T.ComplexPattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildComplexPattern>;
 	return F.buildComplexPattern({
-		real: resolveComplexPattern_real(input.real),
-		imaginary: _requireField('complex_pattern', 'imaginary', resolveComplexPattern_imaginary(input.imaginary)),
+		sign: resolveComplexPattern_sign(input.sign),
+		real: _requireField('complex_pattern', 'real', resolveComplexPattern_real(input.real)),
 		operator: _requireField('complex_pattern', 'operator', resolveComplexPattern_operator(input.operator)),
-		content: _requireField('complex_pattern', 'content', resolveComplexPattern_content(input.content))
+		imaginary: _requireField('complex_pattern', 'imaginary', resolveComplexPattern_imaginary(input.imaginary))
 	});
 }
 

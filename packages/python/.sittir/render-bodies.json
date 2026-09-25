@@ -922,15 +922,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "real",
+					"test": "sign",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "real"
+							"name": "sign"
 						},
 						{
 							"kind": "seam",
-							"field": "real_after"
+							"field": "sign_after"
 						}
 					]
 				}
@@ -938,7 +938,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "imaginary"
+			"name": "real"
 		},
 		{
 			"kind": "seam",
@@ -954,7 +954,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "imaginary"
 		},
 		{
 			"kind": "seam",

@@ -2725,21 +2725,21 @@ static const TSMapSlice ts_field_map_slices[PRODUCTION_ID_COUNT] = {
   [183] = {.index = 330, .length = 2},
   [184] = {.index = 332, .length = 1},
   [185] = {.index = 333, .length = 2},
-  [186] = {.index = 335, .length = 2},
-  [187] = {.index = 337, .length = 1},
-  [188] = {.index = 338, .length = 2},
-  [189] = {.index = 340, .length = 5},
-  [190] = {.index = 345, .length = 4},
-  [191] = {.index = 349, .length = 4},
-  [192] = {.index = 353, .length = 4},
-  [193] = {.index = 357, .length = 5},
-  [194] = {.index = 362, .length = 5},
-  [195] = {.index = 367, .length = 3},
-  [196] = {.index = 370, .length = 3},
-  [197] = {.index = 373, .length = 2},
-  [198] = {.index = 375, .length = 2},
-  [199] = {.index = 377, .length = 5},
-  [200] = {.index = 382, .length = 6},
+  [186] = {.index = 335, .length = 3},
+  [187] = {.index = 338, .length = 1},
+  [188] = {.index = 339, .length = 2},
+  [189] = {.index = 341, .length = 5},
+  [190] = {.index = 346, .length = 4},
+  [191] = {.index = 350, .length = 4},
+  [192] = {.index = 354, .length = 4},
+  [193] = {.index = 358, .length = 5},
+  [194] = {.index = 363, .length = 5},
+  [195] = {.index = 368, .length = 3},
+  [196] = {.index = 371, .length = 4},
+  [197] = {.index = 375, .length = 2},
+  [198] = {.index = 377, .length = 2},
+  [199] = {.index = 379, .length = 5},
+  [200] = {.index = 384, .length = 6},
 };
 
 static const TSFieldMapEntry ts_field_map_entries[] = {
@@ -3256,67 +3256,69 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_patterns, 0, .inherited = true},
     {field_patterns, 1, .inherited = true},
   [335] =
-    {field_imaginary, 0},
+    {field_imaginary, 2},
     {field_operator, 1},
-  [337] =
-    {field_consequence, 3},
+    {field_real, 0},
   [338] =
+    {field_consequence, 3},
+  [339] =
     {field_exception, 2},
     {field_star_marker, 1},
-  [340] =
+  [341] =
     {field_body, 7},
     {field_name, 1},
     {field_parameters, 3},
     {field_return_type, 5},
     {field_type_parameters, 2},
-  [345] =
+  [346] =
     {field_comma, 5},
     {field_left, 1},
     {field_right, 3},
     {field_right, 4},
-  [349] =
+  [350] =
     {field_async_marker, 0},
     {field_comma, 5},
     {field_left, 2},
     {field_right, 4},
-  [353] =
+  [354] =
     {field_async_marker, 0},
     {field_left, 2},
     {field_right, 4},
     {field_right, 5},
-  [357] =
+  [358] =
     {field_alternative, 7},
     {field_async_marker, 0},
     {field_body, 6},
     {field_left, 2},
     {field_right, 4},
-  [362] =
+  [363] =
     {field_async_marker, 0},
     {field_body, 7},
     {field_name, 2},
     {field_parameters, 3},
     {field_return_type, 5},
-  [367] =
+  [368] =
     {field_element, 1},
     {field_key, 1, .inherited = true},
     {field_value, 1, .inherited = true},
-  [370] =
-    {field_imaginary, 1},
+  [371] =
+    {field_imaginary, 3},
     {field_operator, 2},
-    {field_real, 0},
-  [373] =
+    {field_real, 1},
+    {field_sign, 0},
+  [375] =
     {field_arguments, 2},
     {field_name, 0},
-  [375] =
+  [377] =
     {field_consequence, 4},
     {field_guard, 2},
-  [377] =
+  [379] =
     {field_async_marker, 0},
     {field_comma, 6},
     {field_left, 2},
     {field_right, 4},
     {field_right, 5},
-  [382] =
+  [384] =
     {field_async_marker, 0},
     {field_body, 8},
     {field_name, 2},

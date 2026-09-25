@@ -252,10 +252,12 @@ declared supertype is a root.
 ### `complex_pattern` (`packages/python/grammar.sittir.ts:256`)
 
 ```text
-				// complex_pattern: real/imaginary (0,1) + the `+`/`-` operator enum (2)
-				// and a trailing number choice (3). Positions 2 and 3 are both unnamed
-				// → 2 `content` slots; name the operator so the number stays the single
-				// sanctioned `content` (base-rule field, complex_pattern is not a polymorph).
+				// complex_pattern: seq(optional('-'), choice(integer, float),
+				// choice('+', '-'), choice(integer, float)) is `sign real operator
+				// imaginary`: position 0 the optional leading `-` (fielded, so it mints
+				// `_kw_sign`, as `simple_pattern_negative`'s sign does), 1 the real
+				// part, 2 the `+`/`-` operator enum, 3 the imaginary part. Every
+				// position is fielded, so no `content` slot and no automatic arms.
 ```
 
 ### `dictionary` (`packages/python/grammar.sittir.ts:284`)

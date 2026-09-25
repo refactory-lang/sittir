@@ -84,13 +84,6 @@
         "simple_pattern": "simple_pattern"
       }
     },
-    "complex_pattern": {
-      "definedBy": "enrich",
-      "childKind": {
-        "integer": "integer",
-        "float": "float"
-      }
-    },
     "yield": {
       "definedBy": "enrich",
       "childKind": {
@@ -1188,14 +1181,14 @@
       }
     },
     "complex_pattern": {
-      "real": {
+      "sign": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "imaginary": {
+      "real": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1209,21 +1202,12 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "imaginary": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific"
-        ]
+        "nonEmpty": false
       }
     },
     "_parameters": {
@@ -6396,9 +6380,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "real",
-          "propertyName": "real",
-          "paramName": "real",
+          "name": "sign",
+          "propertyName": "sign",
+          "paramName": "sign",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6414,9 +6398,9 @@
           ]
         },
         {
-          "name": "imaginary",
-          "propertyName": "imaginary",
-          "paramName": "imaginary",
+          "name": "real",
+          "propertyName": "real",
+          "paramName": "real",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6465,9 +6449,9 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "imaginary",
+          "propertyName": "imaginary",
+          "paramName": "imaginary",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6494,10 +6478,10 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
+        "sign",
         "real",
-        "imaginary",
         "operator",
-        "content"
+        "imaginary"
       ]
     },
     {

@@ -520,12 +520,12 @@ export type PythonGrammar = {
 				types: [{ type: 'float'; named: true }, { type: 'integer'; named: true }];
 			};
 			operator: { multiple: false; required: true; types: [{ type: '+'; named: false }, { type: '-'; named: false }] };
-			real: { multiple: false; required: false; types: [{ type: '-'; named: false }] };
-		};
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: 'float'; named: true }, { type: 'integer'; named: true }];
+			real: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'float'; named: true }, { type: 'integer'; named: true }];
+			};
+			sign: { multiple: false; required: false; types: [{ type: '-'; named: false }] };
 		};
 	};
 	readonly comprehension_clauses: {

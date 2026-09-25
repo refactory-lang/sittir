@@ -2054,94 +2054,21 @@ describe('class_pattern', () => {
 describe('complex_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.complexPattern({
-			imaginary: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any,
+			real: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any,
 			operator: '+',
-			content: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any
+			imaginary: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ComplexPattern);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.complexPattern({
-			imaginary: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any,
+			real: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any,
 			operator: '+',
-			content: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any
+			imaginary: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('complex_pattern sub-factories', () => {
-	it('hex builds the parent', () => {
-		const node = ir.complexPattern.hex({
-			imaginary: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any,
-			operator: '+',
-			content: 'a'
-		});
-		expect(node.$type).toBe(TSKindId.ComplexPattern);
-		expect((node as any).content()?.$type).toBe(TSKindId.IntegerHex);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('octal builds the parent', () => {
-		const node = ir.complexPattern.octal({
-			imaginary: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any,
-			operator: '+',
-			content: '1'
-		});
-		expect(node.$type).toBe(TSKindId.ComplexPattern);
-		expect((node as any).content()?.$type).toBe(TSKindId.IntegerOctal);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('binary builds the parent', () => {
-		const node = ir.complexPattern.binary({
-			imaginary: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any,
-			operator: '+',
-			content: '1'
-		});
-		expect(node.$type).toBe(TSKindId.ComplexPattern);
-		expect((node as any).content()?.$type).toBe(TSKindId.IntegerBinary);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('decimal builds the parent', () => {
-		const node = ir.complexPattern.decimal({
-			imaginary: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any,
-			operator: '+',
-			content: ['1']
-		});
-		expect(node.$type).toBe(TSKindId.ComplexPattern);
-		expect((node as any).content()?.$type).toBe(TSKindId.IntegerDecimal);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('point builds the parent', () => {
-		const node = ir.complexPattern.point({
-			imaginary: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any,
-			operator: '+',
-			content: { integer: '1' }
-		});
-		expect(node.$type).toBe(TSKindId.ComplexPattern);
-		expect((node as any).content()?.$type).toBe(TSKindId.FloatPoint);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('leadingPoint builds the parent', () => {
-		const node = ir.complexPattern.leadingPoint({
-			imaginary: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any,
-			operator: '+',
-			content: { fraction: '1' }
-		});
-		expect(node.$type).toBe(TSKindId.ComplexPattern);
-		expect((node as any).content()?.$type).toBe(TSKindId.FloatLeadingPoint);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('scientific builds the parent', () => {
-		const node = ir.complexPattern.scientific({
-			imaginary: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any,
-			operator: '+',
-			content: { integer: '1', marker: 'e', exponent: '1' }
-		});
-		expect(node.$type).toBe(TSKindId.ComplexPattern);
-		expect((node as any).content()?.$type).toBe(TSKindId.FloatScientific);
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

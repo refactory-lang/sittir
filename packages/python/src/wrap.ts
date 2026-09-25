@@ -4431,57 +4431,26 @@ export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapComplexPattern(
-	data: T.ComplexPattern & {
-		readonly _integer_hex?: T.Integer | T.Float;
-		readonly _integer_octal?: T.Integer | T.Float;
-		readonly _integer_binary?: T.Integer | T.Float;
-		readonly _integer_decimal?: T.Integer | T.Float;
-		readonly _float_point?: T.Integer | T.Float;
-		readonly _float_leading_point?: T.Integer | T.Float;
-		readonly _float_scientific?: T.Integer | T.Float;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_real',
-		'_imaginary',
-		'_operator',
-		'_content',
-		'_integer_hex',
-		'_integer_octal',
-		'_integer_binary',
-		'_integer_decimal',
-		'_float_point',
-		'_float_leading_point',
-		'_float_scientific'
-	]);
+export function wrapComplexPattern(data: T.ComplexPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_sign', '_real', '_operator', '_imaginary']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ComplexPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_float_leading_point',
-				'_float_point',
-				'_float_scientific',
-				'_integer_binary',
-				'_integer_decimal',
-				'_integer_hex',
-				'_integer_octal'
-			]),
+			...data,
 			$type: TSKindId.ComplexPattern as const,
-			_real: coerceBooleanKeywordStorage(
-				normalizeSingularWrapSlot(data._real, 'real', false, data.$type, {
+			_sign: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._sign, 'sign', false, data.$type, {
 					tree,
 					nodeType: data.$type,
-					slotName: 'real',
+					slotName: 'sign',
 					span: (data as _NodeData).$span
 				})
 			),
-			_imaginary: normalizeSingularWrapSlot(data._imaginary, 'imaginary', true, data.$type, {
+			_real: normalizeSingularWrapSlot(data._real, 'real', true, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'imaginary',
+				slotName: 'real',
 				span: (data as _NodeData).$span
 			}),
 			_operator: projectKindEnumStorage(
@@ -4494,41 +4463,32 @@ export function wrapComplexPattern(
 				),
 				{ '+': 49, '-': 50 }
 			),
-			_content: normalizeSingularWrapSlot(
-				data._content ??
-					data._integer_hex ??
-					data._integer_octal ??
-					data._integer_binary ??
-					data._integer_decimal ??
-					data._float_point ??
-					data._float_leading_point ??
-					data._float_scientific,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_imaginary: normalizeSingularWrapSlot(data._imaginary, 'imaginary', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'imaginary',
+				span: (data as _NodeData).$span
+			}),
 
-			real() {
-				return this._real;
+			sign() {
+				return this._sign;
 			},
-			imaginary() {
-				return drillIn<T.Integer | T.Float>(this._imaginary, tree);
+			real() {
+				return drillIn<T.Integer | T.Float>(this._real, tree);
 			},
 			operator() {
 				return this._operator;
 			},
-			content() {
-				return drillIn<T.Integer | T.Float>(this._content, tree);
+			imaginary() {
+				return drillIn<T.Integer | T.Float>(this._imaginary, tree);
 			},
 			$with: {
+				sign: (v: NonNullable<T.ComplexPattern['_sign']>) => wrapComplexPattern({ ...$edited(data), _sign: v }, tree),
 				real: (v: NonNullable<T.ComplexPattern['_real']>) => wrapComplexPattern({ ...$edited(data), _real: v }, tree),
-				imaginary: (v: NonNullable<T.ComplexPattern['_imaginary']>) =>
-					wrapComplexPattern({ ...$edited(data), _imaginary: v }, tree),
 				operator: (v: NonNullable<T.ComplexPattern['_operator']>) =>
 					wrapComplexPattern({ ...$edited(data), _operator: v }, tree),
-				content: (v: NonNullable<T.ComplexPattern['_content']>) =>
-					wrapComplexPattern({ ...$edited(data), _content: v }, tree)
+				imaginary: (v: NonNullable<T.ComplexPattern['_imaginary']>) =>
+					wrapComplexPattern({ ...$edited(data), _imaginary: v }, tree)
 			}
 		},
 		_treeEngine(tree)
