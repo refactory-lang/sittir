@@ -32,8 +32,9 @@ exist.
 Register a hidden-rule body against the active wire context. Returns
 `true` when the context absorbed the call, `false` when there is no
 active context (caller falls back to the legacy accumulator). Stores the
-body unlabelled (`unlabelled`): a minted rule's own label, if any, belongs
-on the reference site that names it, not on the body the mint deposits.
+body unlabelled (`automatic-variants.ts`'s `withoutLabel`): a minted rule's
+own label, if any, belongs on the reference site that names it, not on the
+body the mint deposits.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireDeclareRuleBody`
 
@@ -117,9 +118,15 @@ exists only for the agreement check.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireAutomaticVariants`
 
-The active wire context's automatic-variant stamp set, or an empty set
+The active wire context's `AutomaticVariants` sidecar, or an empty one
 outside a wire context. `resolveFieldPlaceholder` reads it to strip an
-enrich-stamped label from content a patch pulls under a `field()`.
+enrich-stamped label from content a patch pulls under a `field()`;
+`resolveAliasPlaceholder` reads it to restamp a label at a rewritten
+alias site. Both read it through this ambient accessor rather than an
+explicit parameter, since both run inside the context-setting rule
+wrapper. Contrast `buildPatternReplacingFn`/`replaceInBodyRt`, which run
+outside that wrapper and so take the sidecar as an explicit argument
+instead.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::withWireContext`
 
@@ -138,23 +145,6 @@ enrich-stamped label from content a patch pulls under a `field()`.
 An optional `base` grammar seeds the new context's `automaticVariants`
 (`getEnrichAutomaticVariants`), so a test exercising DSL helpers against an
 already-enriched grammar sees the same labels `wire()` itself would.
-
-### `packages/codegen/src/dsl/wire/wire.ts::polymorphVisibleName`
-
-```text
-/**
- * The rule name a polymorph variant mints — also its node kind, since a
- * variant is a visible rule rather than a hidden rule behind an alias.
- *
- * When the parent is itself a hidden rule (name starts with `_`) —
- * e.g. `_for_header` — the leading underscore is stripped so the
- * variant kind (`for_header_lhs`) is visible in the parse tree.
- * Without stripping, tree-sitter would hide it, collapsing the variant.
- *
- * Used by wire's placeholder registration AND transform.ts's
- * variant-resolution paths so both agree on the rule name.
- */
-```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::patchSetsOf`
 
@@ -611,6 +601,11 @@ A replaced sub-tree is re-labelled (`relabelledArm`, against the matched
 rule) rather than left bare: a candidate's own site may be an automatically
 or author-labelled arm, and the SYMBOL (or, for an `aliasAs` candidate, the
 ALIAS) it collapses to needs the same label to keep standing in for it.
+Takes the context's `AutomaticVariants` sidecar as an explicit `automatic`
+parameter (passed down from `buildPatternReplacingFn`) rather than reading
+it off the ambient wire context: the pattern-replacing wrapper this
+function serves runs outside the context-setting rule wrapper, so it
+cannot read the current context when it actually executes.
 
 #### body
 
@@ -641,6 +636,14 @@ ALIAS) it collapses to needs the same label to keep standing in for it.
  * Wrap a rule fn so its return value has matching pattern sub-trees replaced.
  */
 ```
+
+Captures the `AutomaticVariants` sidecar at build time
+(`context?.automaticVariants ?? getEnrichAutomaticVariants(undefined)`) and
+threads it through to `replaceInBodyRt` as an explicit argument every time
+the wrapped fn runs, rather than having `replaceInBodyRt` read the ambient
+wire context itself — by the time the wrapped fn is invoked, the
+pattern-replacing wrapper is running outside the context-setting rule
+wrapper.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::withStringGlobalShim`
 
@@ -867,10 +870,15 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
 
 `ruleBodies` holds, per `rule()` name, the canonical text of its declared
 body and the first site that declared it (`wireDeclareRuleBody`).
-`automaticVariants` holds the base grammar's automatic-variant stamp set
-(`getEnrichAutomaticVariants`), seeded once when the context is built —
-`resolveFieldPlaceholder`, `resolveAliasPlaceholder`, and `replaceInBodyRt`
-read it to keep an arm's label consistent across a patch or a group
+`automaticVariants` is an `AutomaticVariants` sidecar, seeded once when the
+context is built (`getEnrichAutomaticVariants`, off the base grammar).
+Every downstream reader gets it through the context, not by re-deriving:
+`resolveFieldPlaceholder` reads it (via `wireAutomaticVariants`) to strip a
+label from content a patch pulls under a `field()`; `resolveAliasPlaceholder`
+(also via `wireAutomaticVariants`) and `replaceInBodyRt` (passed down
+explicitly through `buildPatternReplacingFn`, since it runs outside the
+context-setting rule wrapper) read it to restamp a label at a rewritten
+site — so an arm's label stays consistent across a patch or a group
 body-pattern substitution.
 
 ```text

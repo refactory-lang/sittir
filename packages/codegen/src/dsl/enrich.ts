@@ -213,7 +213,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			configurable: true
 		});
 	}
-	if (automaticVariants.size > 0) {
+	if (automaticVariants.keys.size > 0) {
 		Object.defineProperty(result, ENRICH_AUTOMATIC_VARIANTS_KEY, {
 			value: automaticVariants,
 			enumerable: false,
@@ -2252,7 +2252,7 @@ function makeGroupLiftSymbol(_referenceRule: Rule, name: string): Rule {
 function makeVisibleGroupAlias(symbolRef: Rule, name: string): Rule {
 	const aliasFn = nativeRuleFn<(r: unknown, v: unknown) => Rule>('alias');
 	const symbol = nativeRuleFn<(n: string) => Rule>('symbol', 'sym');
-	return { ...aliasFn(symbolRef, symbol(name)), metadata: makeRuleMetadata({ author: 'enrich' }) };
+	return { ...aliasFn(symbolRef, symbol(name)), metadata: makeRuleMetadata({ author: 'enrich', aliasSource: 'visible-group' }) };
 }
 
 function synthesizeFieldEnumRules(rules: Record<string, Rule>): void {

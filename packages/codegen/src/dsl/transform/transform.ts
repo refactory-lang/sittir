@@ -40,9 +40,9 @@ import {
 	wireHasDeposit,
 	wireDeclareRuleBody,
 	wireAutomaticVariants,
-	makeSimpleDollarProxy,
-	polymorphVisibleName
+	makeSimpleDollarProxy
 } from '../wire/wire.ts';
+import { polymorphVisibleName } from '../arm-names.ts';
 import {
 	isFieldLike,
 	isEnrichShapedFieldWrapper,
@@ -883,7 +883,7 @@ function resolveAliasPlaceholder(
 	originalMember: RuntimeRule,
 	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
-	const labelled = (site: RuntimeRule): RuntimeRule => relabelledArm(site, originalMember) as RuntimeRule;
+	const labelled = (site: RuntimeRule): RuntimeRule => relabelledArm(site, originalMember, wireAutomaticVariants()) as RuntimeRule;
 	const ruleName = '_' + patch.name;
 	const lift = enrichLiftArmOf(originalMember);
 	if (lift !== null) return labelled(renameEnrichLift(originalMember, lift, ruleName, patch.name));

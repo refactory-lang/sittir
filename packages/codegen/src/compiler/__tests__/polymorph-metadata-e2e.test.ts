@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { resolve } from 'node:path';
 import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
-import { deriveVariantChildren, polymorphVisibleName } from '../variant-structural.ts';
+import { deriveVariantChildren } from '../variant-structural.ts';
+import { polymorphVisibleName } from '../../dsl/arm-names.ts';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 const resolveOverrides = (grammar: string) => resolve(__dirname, `../../../../${grammar}/grammar.sittir.ts`);

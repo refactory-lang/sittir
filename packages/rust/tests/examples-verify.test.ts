@@ -207,11 +207,12 @@ describe('namespaced constructors reach the arm kinds', () => {
 		expect(ir.visibilityModifier.pub.scope.inPath.strict(path).$render()).toBe('pub(in crate::x)');
 		expect(ir.visibilityModifier.pub.scope.self.strict().$render()).toBe('pub(self)');
 	});
-	// `crate` names both `visibility_modifier`'s own arm and, one hop down,
-	// `pub(crate)`. Flattening stops at the clash, so the hoisted one is
-	// dropped and this kind's own arm — never hoisted — keeps the name.
-	it('keeps the direct arm when a hoisted constructor claims its name', () => {
+	// `crate` names both `visibility_modifier`'s own arm and the arm under
+	// `pub.scope`; each sits under the arm that reaches it, so neither claims
+	// the other's name.
+	it('keeps a direct arm and a nested arm of the same name apart', () => {
 		expect(ir.visibilityModifier.crate().$render()).toBe('crate');
+		expect(ir.visibilityModifier.pub.scope.crate().$render()).toBe('pub(crate)');
 	});
 });
 

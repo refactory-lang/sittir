@@ -223,7 +223,7 @@ function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): u
 	return slots;
 }
 
-function unwrapPrec(rule: unknown): unknown {
+export function unwrapPrec(rule: unknown): unknown {
 	let cur = rule;
 	while (cur && typeof cur === 'object') {
 		const r = cur as Record<string, unknown>;
@@ -372,6 +372,23 @@ export function isInlineSafe(seqBody: unknown, rulesBag?: Record<string, unknown
 	if (typeof coreType !== 'string') return false;
 
 	return isFieldType(coreType) || isSymbolType(coreType);
+}
+
+export function isNamedArmChoice(body: unknown): boolean {
+	const b = unwrapPrec(body) as { type?: unknown; members?: unknown } | undefined;
+	if (!b || typeof b.type !== 'string' || !isChoiceType(b.type)) return false;
+	const members = b.members;
+	if (!Array.isArray(members) || members.length === 0) return false;
+	return members.every((m) => {
+		const alias = m as { type?: unknown; named?: unknown; content?: { type?: unknown } } | undefined;
+		return (
+			typeof alias?.type === 'string' &&
+			typeEq(alias.type, 'ALIAS') &&
+			alias.named === true &&
+			typeof alias.content?.type === 'string' &&
+			isSymbolType(alias.content.type)
+		);
+	});
 }
 
 export function isSupertypeLike(body: unknown): boolean {

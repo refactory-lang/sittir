@@ -14,7 +14,7 @@ import {
 } from '../../compiler/model/node-map.ts';
 import { collectCatalogKinds, collectKindEntries, hasCatalogEntry } from '../kind-discriminant.ts';
 import { camelCase } from '../refine-emit.ts';
-import { polymorphVisibleName } from '../../compiler/variant-structural.ts';
+import { polymorphVisibleName } from '../../dsl/arm-names.ts';
 import { classifyFromEmission, isValidIdent } from '../shared.ts';
 
 export const OVERLAY_CHAIN = ['refines', 'polymorphs', 'supertypes'] as const;

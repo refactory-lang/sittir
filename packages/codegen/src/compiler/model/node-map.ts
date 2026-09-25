@@ -26,8 +26,8 @@ import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
 import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry } from '../generated-metadata.ts';
-import { stampDisplay, undisplayedKindAddress, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
-import { prefixNamedSuffix } from '../variant-structural.ts';
+import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
+import { armNameOf, undisplayedKindAddress } from '../../dsl/arm-names.ts';
 import { tokenToName } from '../normalize.ts';
 import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
 import { assertNever } from '../../polymorph-variant.ts';
@@ -710,7 +710,7 @@ export function armFactsOf(arm: { readonly annotations?: RuleAnnotations; readon
 	const literalName =
 		annotations.variantOf === undefined || resolvedKind === undefined
 			? undefined
-			: (prefixNamedSuffix(annotations.variantOf, resolvedKind) ?? undisplayedKindAddress(resolvedKind));
+			: armNameOf(annotations.variantOf, undisplayedKindAddress(resolvedKind), false);
 	const variant = annotations.variant ?? literalName;
 	return {
 		...(variant === undefined ? {} : { variant, variantOf: annotations.variantOf }),

@@ -6,7 +6,7 @@ import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
-import { prefixNamedSuffix } from '../../compiler/variant-structural.ts';
+import { stampAutomaticVariants } from '../../dsl/automatic-variants.ts';
 import { emitPolymorphsOverlay } from '../overlays/polymorphs.ts';
 import { listRestParamType } from '../shared.ts';
 
@@ -20,19 +20,9 @@ import { listRestParamType } from '../shared.ts';
 // ---------------------------------------------------------------------------
 
 function labelArms(rules: Record<string, Rule<'evaluate'>>): Record<string, Rule<'evaluate'>> {
-	const label = (owner: string, arm: Rule<'evaluate'>): Rule<'evaluate'> => {
-		const display = arm.type === SYMBOL ? arm.name.replace(/^_+/, '') : arm.type === STRING ? arm.value : undefined;
-		const variant = display === undefined ? undefined : (prefixNamedSuffix(owner, display) ?? display);
-		return variant === undefined || arm.annotations?.variant !== undefined ? arm : ({ ...arm, annotations: { ...arm.annotations, variant, variantOf: owner } } as Rule<'evaluate'>);
-	};
-	const visit = (owner: string, rule: Rule<'evaluate'>): Rule<'evaluate'> => {
-		const r = rule as { members?: Rule<'evaluate'>[]; content?: Rule<'evaluate'> };
-		if (rule.type === CHOICE && r.members !== undefined && r.members.length >= 2) return { ...rule, members: r.members.map((m) => (m.type === CHOICE ? visit(owner, m) : label(owner, m))) } as Rule<'evaluate'>;
-		if (r.members !== undefined) return { ...rule, members: r.members.map((m) => visit(owner, m)) } as Rule<'evaluate'>;
-		if (r.content !== undefined) return { ...rule, content: visit(owner, r.content) } as Rule<'evaluate'>;
-		return rule;
-	};
-	return Object.fromEntries(Object.entries(rules).map(([owner, rule]) => [owner, visit(owner, rule)]));
+	const stamped = { ...rules } as Record<string, Rule>;
+	stampAutomaticVariants(stamped, new Set(), new Set());
+	return stamped as Record<string, Rule<'evaluate'>>;
 }
 
 function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
@@ -96,8 +86,8 @@ function polymorphNodeMap(): NodeMap {
 					content: {
 						type: CHOICE,
 						members: [
-							{ type: STRING, value: 'and' },
-							{ type: STRING, value: 'or' }
+							{ type: STRING, value: 'and', annotations: { variant: 'and', variantOf: 'logic' } },
+							{ type: STRING, value: 'or', annotations: { variant: 'or', variantOf: 'logic' } }
 						]
 					}
 				},
@@ -119,8 +109,8 @@ function polymorphNodeMap(): NodeMap {
 						content: {
 							type: CHOICE,
 							members: [
-								{ type: STRING, value: 'plus' },
-								{ type: STRING, value: 'minus' }
+								{ type: STRING, value: 'plus', annotations: { variant: 'plus', variantOf: 'annotated' } },
+								{ type: STRING, value: 'minus', annotations: { variant: 'minus', variantOf: 'annotated' } }
 							]
 						}
 					}
@@ -144,8 +134,8 @@ function parameterlessArmNodeMap(): NodeMap {
 					content: {
 						type: CHOICE,
 						members: [
-							{ type: SYMBOL, name: 'kw_self' },
-							{ type: SYMBOL, name: 'kw_super' }
+							{ type: SYMBOL, name: 'kw_self', annotations: { variant: 'kw_self', variantOf: 'pair' } },
+							{ type: SYMBOL, name: 'kw_super', annotations: { variant: 'kw_super', variantOf: 'pair' } }
 						]
 					}
 				}
@@ -390,7 +380,13 @@ describe('a mount route carries the seats of its own parent', () => {
 					{
 						type: FIELD,
 						name: 'body',
-						content: { type: CHOICE, members: [{ type: SYMBOL, name: '_clause_block' }, { type: SYMBOL, name: 'literal' }] }
+						content: {
+							type: CHOICE,
+							members: [
+								{ type: SYMBOL, name: '_clause_block', annotations: { variant: 'block', variantOf: 'clause' } },
+								{ type: SYMBOL, name: 'literal', annotations: { variant: 'literal', variantOf: 'clause' } }
+							]
+						}
 					}
 				]
 			},

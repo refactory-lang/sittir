@@ -93,15 +93,6 @@ elsewhere. It is what a literal segment matches against.
  */
 ```
 
-### `packages/codegen/src/dsl/transform/transform-path.ts::isEnrichAuthored`
-
-The sanctioned read of whether a rule's metadata names enrich as its
-author (`readRuleMetadata(rule.metadata)?.author === 'enrich'`) — the one
-place that test runs, so every caller that needs to tell an enrich-stamped
-rule from an author-declared one (`compiler/variant-structural.ts`'s
-`definedByOf`, among others) shares the same check rather than re-reading
-`author` inline.
-
 ### `packages/codegen/src/dsl/transform/transform-path.ts::isEnrichGroupLiftSymbol`
 
 True when `rule` is an enrich-synthesized group-lift symbol: a SYMBOL whose
@@ -169,18 +160,13 @@ decides this.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::isEnrichContentAlias`
 
-```text
-/**
- * True when `rule` is an enrich-synthesized content-alias — an `ALIAS`
- * node tagged `metadata.author === 'enrich'` (debt: source-homonym
- * resolution, decision 6 — was `metadata.source === 'enrich'`). enrich wraps
- * an inline-unsafe `optional(seq)` / bare `choice` in `alias(<content>,
- * $.<name>)` to surface it as a visible CST kind; path-descent travels
- * THROUGH it (see `descendThroughEnrichContentAlias`), unlike a normal
- * aliased symbol (which keeps `descendThroughAlias`'s single-content /
- * index-0 behaviour).
- */
-```
+True when `rule` is an enrich-synthesized content-alias — an `ALIAS` node
+tagged `metadata.aliasSource === 'visible-group'`, the one field this test
+keys on. enrich wraps an inline-unsafe `optional(seq)` / bare `choice` in
+`alias(<content>, $.<name>)` to surface it as a visible CST kind;
+path-descent travels THROUGH it (see `descendThroughEnrichContentAlias`),
+unlike a normal aliased symbol (which keeps `descendThroughAlias`'s
+single-content / index-0 behaviour).
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughEnrichContentAlias`
 

@@ -7,6 +7,7 @@ export interface RuleMetadataShape {
 	classifiedBy?: 'grammar' | 'link';
 	fieldSource?: 'grammar' | 'override' | 'enriched';
 	symbolSource?: 'grammar' | 'link' | 'group-lift';
+	aliasSource?: 'visible-group';
 }
 
 export function makeRuleMetadata(shape: RuleMetadataShape): RuleMetadata {
@@ -15,6 +16,10 @@ export function makeRuleMetadata(shape: RuleMetadataShape): RuleMetadata {
 
 export function readRuleMetadata(meta: unknown): RuleMetadataShape | undefined {
 	return meta as RuleMetadataShape | undefined;
+}
+
+export function isEnrichAuthored(rule: unknown): boolean {
+	return readRuleMetadata((rule as { metadata?: unknown } | undefined)?.metadata)?.author === 'enrich';
 }
 
 export function normalizeEnumMembers(

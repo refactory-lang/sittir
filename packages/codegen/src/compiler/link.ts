@@ -74,7 +74,7 @@ import { loadGrammarJsonInlineList } from './inline-sets.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
-import { polymorphVisibleName } from '../dsl/wire/wire.ts';
+import { polymorphVisibleName } from '../dsl/arm-names.ts';
 import { deriveVariantChildren, isAliasMintedRef } from './variant-structural.ts';
 import {
 	composeTokenText,
@@ -82,6 +82,8 @@ import {
 	isEnumChoiceRule,
 	isHiddenKind,
 	isKindChoice,
+	isNamedArmChoice,
+	isParserHiddenName,
 	rulesEqual,
 	separatorOf
 } from '../dsl/rule-patterns.ts';
@@ -935,14 +937,7 @@ function mintDisplayUnionRules(
 function collectHiddenNamedArmChoices(rawRules: Record<string, Rule<'evaluate'>>): ReadonlySet<string> {
 	const out = new Set<string>();
 	for (const [name, rule] of Object.entries(rawRules)) {
-		if (!name.startsWith('_')) continue;
-		if (
-			rule.type === CHOICE &&
-			rule.members.length > 0 &&
-			rule.members.every((m) => m.type === ALIAS && m.named && m.content.type === SYMBOL)
-		) {
-			out.add(name);
-		}
+		if (isParserHiddenName(name) && isNamedArmChoice(rule)) out.add(name);
 	}
 	return out;
 }

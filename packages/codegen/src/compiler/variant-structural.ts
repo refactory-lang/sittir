@@ -1,63 +1,12 @@
-import { polymorphVisibleName } from '../dsl/wire/wire.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { ALIAS, SUPERTYPE, SYMBOL } from '../types/rule-types.ts';
 import type { AliasRule, Rule, RuleAnnotations, SymbolRule } from '../types/rule.ts';
-import { isEnrichAuthored } from '../dsl/transform/transform-path.ts';
-
-export { polymorphVisibleName };
+import { isEnrichAuthored } from '../dsl/rule-metadata.ts';
 
 export function isAliasMintedRef(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>): boolean {
 	if (rule.type === ALIAS) return true;
 	if (rule.type === SYMBOL) return !(rule.name in rules);
 	return false;
-}
-
-export function prefixNamedSuffix(parentKind: string, targetName: string): string | null {
-	const bareTarget = targetName.startsWith('_') ? targetName.slice(1) : targetName;
-	const prefix = `${polymorphVisibleName(parentKind, '')}`;
-	if (!bareTarget.startsWith(prefix)) return null;
-	const suffix = bareTarget.slice(prefix.length);
-	return suffix.length > 0 ? suffix : null;
-}
-
-const GROUP_TOKEN_SYNONYMS: Readonly<Record<string, string>> = {
-	item: 'statement',
-	stmt: 'statement',
-	expr: 'expression',
-	decl: 'declaration',
-	impl: 'implementation'
-};
-
-const CATEGORY_TOKENS: ReadonlySet<string> = new Set([
-	'expression',
-	'statement',
-	'literal',
-	'declaration',
-	'definition',
-	'operator',
-	'pattern',
-	'type'
-]);
-
-function normalizeGroupToken(token: string): string {
-	return GROUP_TOKEN_SYNONYMS[token] ?? token;
-}
-
-function tokensOf(name: string): string[] {
-	return name.split('_').filter((t) => t.length > 0);
-}
-
-export function supertypeMemberName(memberKind: string, supertypeKind: string): string {
-	const parts = tokensOf(memberKind);
-	const bareMember = parts.join('_');
-	const groupTokens = new Set(tokensOf(supertypeKind).map(normalizeGroupToken));
-	let kept = parts.filter((t) => !groupTokens.has(normalizeGroupToken(t)));
-	if (kept.length === parts.length && parts.length >= 2) {
-		const tail = normalizeGroupToken(parts[parts.length - 1]!);
-		if (CATEGORY_TOKENS.has(tail)) kept = parts.slice(0, -1);
-	}
-	if (kept.length === 0 || kept.join('_') === tokensOf(supertypeKind).join('_')) return bareMember;
-	return kept.join('_');
 }
 
 export interface VariantChild {

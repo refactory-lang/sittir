@@ -2,6 +2,7 @@ import type { NodeMap } from '../types.ts';
 import { findAnonEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
 import { aliasTargetOf, storageNameOf, type SymbolRule } from '../../types/rule.ts';
 import { isParserHiddenName } from '../../dsl/rule-patterns.ts';
+import { undisplayedKindAddress } from '../../dsl/arm-names.ts';
 
 export type DisplaySource = 'catalog' | 'supertype' | 'phantom';
 
@@ -33,9 +34,6 @@ export function displayOfParserName(name: string): string {
 	return isParserHiddenName(name) ? undisplayedKindAddress(name) : name;
 }
 
-export function undisplayedKindAddress(symbol: string): string {
-	return symbol.replace(/^_+/, '');
-}
 
 export function displayNameOf(kind: string, nodeMap: NodeMap): string {
 	const node = nodeMap.nodes.get(kind);

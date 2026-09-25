@@ -15266,6 +15266,13 @@ field name, so the label adds nothing there. A labelled value whose owner
 DOES have a node (a real, named rule) always seats, since there the label
 means an actual arm that rule declares.
 
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::NESTED`
+
+The depth increment for an arm nested one level under its host: a nested
+arm's own `depth` is its inner entry's `depth` plus `NESTED` (`nestedArmsOf`'s
+`depth: inner.depth + NESTED`), so a doubly-nested arm accumulates two.
+Paired with `DIRECT` (0), the depth a directly-reached arm carries.
+
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::nestedArmsOf`
 
 The arms a direct node arm's child contributes under it: every entry of
@@ -15363,7 +15370,16 @@ builder.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::childChains`
 
-The chained arm keys a child's own entry carries under the arm a grand arm reaches. A parent that mounts a child variant's arms (`except_clause`'s `exception.list`, reached through the `exception` variant) mounts the child's chain beneath it the same way, as another route onto the child's composed `list.block`, so the parent spells `exception.list.block` without composing a chain of its own. Composing it at the parent would apply the inner arm to the parent's builder instead of the variant's. `wires.order` emits a child before its parent, so the child's chains are recorded first.
+The chained arm keys recorded for a nested arm's last path key, on its
+child's kind (`chainedByKind.get(sub.arm.child.kind)?.get(<last path
+key>)`, empty when the arm isn't node-backed or nests at depth zero). A
+parent that mounts a child variant's arms (`except_clause`'s
+`exception.list`, reached through the `exception` variant) mounts the
+child's chain beneath it the same way, as another route onto the child's
+composed `list.block`, so the parent spells `exception.list.block` without
+composing a chain of its own. Composing it at the parent would apply the
+inner arm to the parent's builder instead of the variant's. `wires.order`
+emits a child before its parent, so the child's chains are recorded first.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::composeAcrossSlots`
 

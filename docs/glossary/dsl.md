@@ -1123,24 +1123,24 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
  *
  * Shape (confirmed against generated grammar.json ALIAS nodes):
  *   `{ type: 'ALIAS', content: symbol($._<name>), named: true,
- *      value: '<name>', metadata: { author: 'enrich' } }`
+ *      value: '<name>', metadata: { author: 'enrich', aliasSource: 'visible-group' } }`
  *
  * - The aliased thing is a SYMBOL ref to the hidden `_<name>` rule (NOT the raw
  *   multi-member seq). tree-sitter renames that ONE symbol-node into ONE visible
  *   CST node for `<name>` (a real kindId in parser.c). Aliasing the raw seq
  *   instead made tree-sitter DISTRIBUTE the alias name across the seq members.
- * - `metadata.author === 'enrich'` (debt: source-homonym resolution, decision
- *   6 — was `metadata.source === 'enrich'`) is REQUIRED for transform-path: it
- *   travels THROUGH this tag for authored path-patches
- *   (`dsl/transform/transform-path.ts`'s `isEnrichContentAlias` /
- *   `descendThroughEnrichContentAlias` — the sanctioned dsl-side reader,
- *   doctrine decision 3). (Debt PR-0c: `compiler/link.ts`'s
- *   `mintContentAliasKinds` no longer reads this tag — it identifies the
- *   same population structurally via `isClauseHoistVisibleGroupAlias`,
- *   keying on the alias's `optional`/`CHOICE[x,BLANK]` parent shape, the
- *   target name's absence from `rules`, and the hidden content symbol not
- *   being in the grammar's `inline:` list. The write here stays load-bearing
- *   for transform-path only.)
+ * - `metadata.aliasSource === 'visible-group'` is REQUIRED for transform-path: it
+ *   is the sole test `dsl/transform/transform-path.ts`'s `isEnrichContentAlias`
+ *   keys on to travel THROUGH this tag for authored path-patches
+ *   (`descendThroughEnrichContentAlias`), rather than a normal aliased symbol's
+ *   single-content descent. `metadata.author: 'enrich'` is also stamped, for the
+ *   general `isEnrichAuthored` check every other enrich-minted rule carries.
+ *   `compiler/link.ts`'s `mintContentAliasKinds` reads neither tag — it
+ *   identifies the same population structurally via
+ *   `isClauseHoistVisibleGroupAlias`, keying on the alias's
+ *   `optional`/`CHOICE[x,BLANK]` parent shape, the target name's absence from
+ *   `rules`, and the hidden content symbol not being in the grammar's
+ *   `inline:` list.
  * - Case is the active runtime's: built via the injected `alias()`/`symbol()`
  *   constructors, so sittir evaluate yields lowercase, tree-sitter CLI uppercase.
  */
@@ -1150,9 +1150,10 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 
 ```text
 // Pass a SYMBOL value so the runtime constructor sets named:true, value=name
-// (a bare-string value would yield named:false). `metadata.author: 'enrich'`
-// is REQUIRED for transform-path's path-descent (see doc comment above) —
-// the runtime alias() doesn't add it, so stamp it on the cased result.
+// (a bare-string value would yield named:false). `metadata.aliasSource:
+// 'visible-group'` is REQUIRED for transform-path's path-descent (see doc
+// comment above) — the runtime alias() doesn't add it, so stamp it, plus
+// `author: 'enrich'`, on the cased result.
 ```
 
 ### `packages/codegen/src/dsl/group-classify.ts::ruleMatchesEmpty`
@@ -1236,7 +1237,7 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 		   the permissive counting that ignores this distinction. */
 ```
 
-### `packages/codegen/src/dsl/group-classify.ts::unwrapPrec`
+### `packages/codegen/src/dsl/rule-patterns.ts::unwrapPrec`
 
 ```text
 /**
@@ -1461,6 +1462,15 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 	   expose its content (possibly a choice), which would incorrectly
 	   classify the slot as unsafe. */
 ```
+
+### `packages/codegen/src/dsl/rule-patterns.ts::isNamedArmChoice`
+
+A choice — through a root `PREC` — whose every member is a named ALIAS of a
+SYMBOL. The one recognizer for "a hidden choice of named aliases stays a
+polymorph" rather than collapsing to an abstract supertype: `link.ts`'s
+`collectHiddenNamedArmChoices` uses it to leave such a choice a polymorph, and
+`automatic-variants.ts`'s `stampAutomaticVariants` uses the same test to
+exclude a hidden rule from its `supertypeOwners` set.
 
 ### `packages/codegen/src/dsl/group-classify.ts::isSupertypeLike`
 
@@ -1783,6 +1793,14 @@ rebuild goes through here.
  * function regardless of caller layer).
  */
 ```
+
+### `packages/codegen/src/dsl/rule-metadata.ts::isEnrichAuthored`
+
+The sanctioned read of whether a rule's metadata names enrich as its
+author (`readRuleMetadata(rule.metadata)?.author === 'enrich'`), so every
+caller that needs to tell an enrich-stamped rule from an author-declared
+one shares the same check rather than re-reading `author` inline —
+`compiler/variant-structural.ts`'s `definedByOf` is one such reader.
 
 ### `packages/codegen/src/dsl/rule-metadata.ts::normalizeEnumMembers`
 
@@ -2360,6 +2378,14 @@ rebuild goes through here.
 /** Relocated `SymbolRule.source` (debt PR-P1 item 2). */
 ```
 
+### `packages/codegen/src/dsl/rule-metadata.ts::aliasSource`
+
+Stamped `'visible-group'` by enrich's `makeVisibleGroupAlias` on the
+content alias it mints for a promoted hidden rule. The only reader is
+`dsl/transform/transform-path.ts`'s `isEnrichContentAlias`, which keys on
+this field alone to decide whether path-descent should travel transparently
+through the alias.
+
 ### `packages/codegen/src/dsl/rule-transforms.ts::RuleBuilder`
 
 ```text
@@ -2425,26 +2451,131 @@ rebuild goes through here.
  */
 ```
 
+### `packages/codegen/src/dsl/arm-names.ts::polymorphVisibleName`
+
+The rule name a polymorph variant mints — also its node kind, since a
+variant is a visible rule rather than a hidden rule behind an alias. When
+the parent is itself a hidden rule (name starts with `_`) — e.g.
+`_for_header` — the leading underscore is stripped so the variant kind
+(`for_header_lhs`) is visible in the parse tree; without stripping,
+tree-sitter would hide it, collapsing the variant. The one naming
+convention every wire/transform placeholder-resolution path, `link.ts`'s
+override-polymorph matching, and `emitters/overlays/module.ts`'s minted-route
+detection share, so a variant registered under a given parent and suffix is
+found under the same name wherever it is minted or looked up.
+
+### `packages/codegen/src/dsl/arm-names.ts::undisplayedKindAddress`
+
+The underscore-less address of a kind: strips every leading underscore,
+unconditionally. `display-name.ts`'s `displayOfParserName` applies it only
+to a hidden-prefixed parser name; `automatic-variants.ts`'s `armDisplayOf`
+and `node-map.ts`'s `armFactsOf` apply it directly to a SYMBOL's own name or
+a literal arm's resolved kind to get the name an arm label is built from.
+
+### `packages/codegen/src/dsl/arm-names.ts::prefixNamedSuffix`
+
+The suffix that turns `parentKind`'s visible name into `targetName`
+(`polymorphVisibleName(parentKind, suffix)`), or `null` when `targetName` is
+not so named or the suffix would be empty. Both names may carry a leading
+`_`. A naming helper only: it never decides whether an arm is a variant.
+
+### `packages/codegen/src/dsl/arm-names.ts::GROUP_TOKEN_SYNONYMS`
+
+Token spellings that name the same syntactic category as one of
+`CATEGORY_TOKENS` under a different word than the category itself —
+`item`/`stmt` for `statement`, `expr` for `expression`, `decl` for
+`declaration`, `impl` for `implementation`. `normalizeGroupToken` maps a raw
+member/group token through this table before two names' tokens are compared,
+so `declaration_statement` and `function_item` agree they share a category
+token even though neither spells it `statement`.
+
+### `packages/codegen/src/dsl/arm-names.ts::CATEGORY_TOKENS`
+
+The token vocabulary `supertypeMemberName` may drop from a member's trailing
+position when nothing else in the member's name already overlaps the
+supertype's own tokens: syntactic categories rather than constructs
+(`expression`, `statement`, `literal`, `declaration`, `definition`,
+`operator`, `pattern`, `type`). `line_comment` keeps `comment` because
+comment is the construct, not one of these categories.
+
+### `packages/codegen/src/dsl/arm-names.ts::normalizeGroupToken`
+
+A token's canonical spelling for group-name comparison: itself, unless
+`GROUP_TOKEN_SYNONYMS` names a synonym.
+
+### `packages/codegen/src/dsl/arm-names.ts::tokensOf`
+
+A kind name's underscore-separated tokens, with empty segments dropped.
+
+### `packages/codegen/src/dsl/arm-names.ts::supertypeMemberName`
+
+The one derivation of a supertype member's short name: `memberKind`'s tokens
+with whatever `supertypeKind`'s own name already says (synonym-normalized via
+`normalizeGroupToken`) removed. When nothing overlapped and the member has
+more than one token, a trailing `CATEGORY_TOKENS` token is dropped instead.
+Falls back to the bare, unstripped member name when nothing was left to drop
+or the surviving tokens would just repeat the supertype's own name (a
+stutter). Called through `armNameOf` for a supertype owner's arms (the
+automatic-variant stamp and relabel in `automatic-variants.ts`), and directly by
+`emitters/ir.ts`'s `memberKeyFor` to key a member inside its supertype's
+grouped namespace — one derivation, so an arm's variant name and its ir
+group key never drift apart.
+
+### `packages/codegen/src/dsl/arm-names.ts::armNameOf`
+
+The one arm-naming rule: a supertype owner names its members by
+`supertypeMemberName(display, owner)` (a short name stripped of the owner's
+own tokens or trailing category word); any other owner by
+`prefixNamedSuffix(owner, display) ?? display` (the owner-prefix suffix, or
+the bare display when the display isn't so prefixed). `automatic-variants.ts`'s
+`labelOf` and `node-map.ts`'s `armFactsOf` both route through this one
+function so an arm's enrich-stamped name and its structurally-derived name
+can never diverge.
+
 ### `packages/codegen/src/dsl/automatic-variants.ts::module`
 
 Stamps `variant`/`variantOf` annotations on every arm that needs one, once,
 in `enrich`, right after `synthesizeFieldEnumRules` — so a sub-factory arm
 exists exactly where a variant label sits at the end of wire, and nothing
-downstream re-derives arm-ness from a choice's shape. `wire`'s
-`resolveFieldPlaceholder`, `resolveAliasPlaceholder`, and `replaceInBodyRt`
-(`dsl/wire/wire.ts`) read the stamped set back through
-`WireContext.automaticVariants` to strip a label a patch consumed
-(`withoutAutomaticVariants`) or restamp a label at a rewritten site
+downstream re-derives arm-ness from a choice's shape. The stamp walk and its
+readers all work over `ArmShape`, a structural view wide enough to cover
+every wrapper the rule tree can carry at this phase; `coreOf`/`throughPrec`
+reach through `PREC` wrappers (`dsl/rule-patterns.ts`'s `unwrapPrec`) so a
+label lands on the wrapped core while the wrapper chain rebuilds around it.
+Produces an `AutomaticVariants` sidecar (`keys` + `supertypeOwners`), not a
+bare set, so a caller has both facts a relabel needs: whether a given stamp
+is automatic, and whether its owner names members by the supertype rule or
+the suffix rule. `getEnrichAutomaticVariants` reads the sidecar off a
+grammar result to seed `WireContext.automaticVariants`; downstream,
+`resolveFieldPlaceholder` reads it through the context to strip a label a
+patch consumed (`withoutAutomaticVariants`), and `resolveAliasPlaceholder`
+and `replaceInBodyRt` read it to restamp a label at a rewritten site
 (`relabelledArm`), so overrides and group body-pattern substitutions keep
 the invariant intact instead of losing or duplicating a label.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::AutomaticVariants`
+
+The sidecar record `stampAutomaticVariants` returns and every consumer
+reads: `keys` is the set of every automatic label's stamp key
+(`automaticVariantKey`), the single source of truth for whether a given
+label is automatic rather than override-declared; `supertypeOwners` is the
+set of owners `armNameOf` must name through `supertypeMemberName` rather
+than `prefixNamedSuffix`, decided once per grammar at enrich time.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::ArmShape`
+
+The structural view every function in this module reads and rebuilds
+through: wide enough to cover a SYMBOL, an ALIAS, a CHOICE's `members`, a
+wrapper's `content`, and the `annotations`/`metadata` a label lives on,
+without committing to one rule-tree phase's exact node shapes.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::ENRICH_AUTOMATIC_VARIANTS_KEY`
 
 Well-known non-enumerable key attached by `enrich()` to the grammar result:
-the set of `variantOf\0variant\0ref` stamp keys (`automaticVariantKey`)
-every automatically-labelled arm carries. `withWireContext`/`wire()` read it
-(`getEnrichAutomaticVariants`) into `WireContext.automaticVariants`, the set
-`withoutAutomaticVariants` strips a label against.
+the `AutomaticVariants` sidecar (`keys` + `supertypeOwners`)
+`stampAutomaticVariants` accumulated. `withWireContext`/`wire()` read it
+(`getEnrichAutomaticVariants`) into `WireContext.automaticVariants`, the
+record `withoutAutomaticVariants` strips a label against.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::SLOT_BOUNDARIES`
 
@@ -2457,10 +2588,24 @@ for `holdsChoice`'s sake (a bare reference has no body of its own to walk
 into); `visit` special-cases SYMBOL itself, ahead of this boundary, to
 decide whether the rule it names is a hoisted choice worth labelling.
 
+### `packages/codegen/src/dsl/automatic-variants.ts::coreOf`
+
+An arm's `PREC`-unwrapped core (`rule-patterns.ts`'s `unwrapPrec`, read back
+as an `ArmShape`) — where an arm's own type and annotations actually live,
+ignoring any precedence wrapper around it.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::throughPrec`
+
+Applies `fn` to an arm's core and rebuilds the chain of `PREC` wrappers (if
+any) around the result: a labelled site sits on the core under its `PREC`
+wrappers, never on the wrapper itself. A non-`PREC` arm is passed to `fn`
+directly.
+
 ### `packages/codegen/src/dsl/automatic-variants.ts::armDisplayOf`
 
-The display name an arm would be labelled with, if any: a SYMBOL's own name
-with any leading underscores stripped, or a named ALIAS-of-SYMBOL's
+The display name an arm would be labelled with, if any, read off its
+`coreOf` (through any `PREC` wrapper): a SYMBOL's own name with leading
+underscores stripped (`undisplayedKindAddress`), or a named ALIAS-of-SYMBOL's
 `value`. `undefined` for anything else — a literal, an unnamed alias, a
 seq — which is exactly what makes the arm `variantOf`-only.
 
@@ -2486,10 +2631,27 @@ JSON-stringified `value` (a literal keys by its own text).
 
 The full stamp key for an arm that already carries a `variantOf`
 annotation: `variantOf\0variant\0ref` — `undefined` for an arm with no
-`variantOf` at all. The set `stampAutomaticVariants` returns and
-`withoutAutomaticVariants`/`getEnrichAutomaticVariants` consume is built
+`variantOf` at all. `AutomaticVariants.keys`, and every strip/restamp
+lookup against it (`withoutAutomaticVariants`, `relabelledArm`), is built
 and read through this one key shape, so a label added and a label stripped
 can never disagree on identity.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::labelOf`
+
+The `variant`/`variantOf` annotation pair for an arm: `{ variantOf: owner }`
+alone when the arm has no display, else `{ variant: armNameOf(owner,
+display, ownerIsSupertype), variantOf: owner }` — `armNameOf` picks the
+supertype or suffix naming rule from `ownerIsSupertype`.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::withAutomaticLabel`
+
+Writes a label onto an arm's core and records the stamp: `withAnnotations(core,
+label)`, then merges `author: 'enrich'` into the result's own rule metadata,
+then adds the labelled node's `automaticVariantKey` to `automatic.keys`. The
+one site that mints an automatic stamp — `stampRuleVariants` and
+`relabelledArm`'s automatic branch both route their label writes through
+it, so every key in `automatic.keys` was recorded at the same site that
+wrote the label.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::holdsChoice`
 
@@ -2511,65 +2673,76 @@ own arms would get if inlined.
 ### `packages/codegen/src/dsl/automatic-variants.ts::stampRuleVariants`
 
 Labels one rule's choice arms, called from `stampAutomaticVariants`'s
-per-owner loop with that owner's `isSupertype` fact. `visit` walks the
-rule; at a CHOICE with two or more non-blank members (`choosable`), each
-non-blank member goes through `stamp` — labelled directly (`label`) unless
-it already carries a `variantOf` (an override-declared arm) or is a
-displayed literal, or is itself a nested CHOICE, in which case `visit`
+per-owner loop with the grammar's one `AutomaticVariants` record. `visit` walks
+the rule; at a CHOICE with two or more non-blank members (`choosable`),
+each non-blank member goes through `stamp` — labelled through `throughPrec`
+(so a `PREC`-wrapped arm is labelled on its core, then rewrapped) unless it
+already carries a `variantOf` (an override-declared arm) or is a displayed
+literal, or its core is itself a nested CHOICE, in which case `visit`
 recurses into it instead so only the innermost arms of a nested choice ever
 carry a label. A choice with fewer than two non-blank members (an
 optional-shaped one) is walked but not labelled. `visit`'s other branches:
 a bare SYMBOL naming a hoisted choice-holding rule gets labelled as a
 stand-in for that choice (`isHoistedChoiceGroup`); `SLOT_BOUNDARIES` stops
-the walk; everything else recurses into `members`/`content`. `label` stamps
-`variantOf: owner` (plus a `variant` name when the arm has a display:
-`compiler/variant-structural.ts`'s `supertypeMemberName(display, owner)`
-for a supertype owner, `prefixNamedSuffix(owner, display) ?? display`
-otherwise — a supertype names its members by what's left after its own
-name's tokens, a non-supertype owner by suffix), merges `author: 'enrich'`
-into the arm's own rule metadata (`makeRuleMetadata({ ...existing, author:
-'enrich' })`, so any metadata the arm already carried survives), and
-records its stamp key into the caller's `stamped` set.
+the walk; everything else recurses into `members`/`content`. The label
+itself is `withAutomaticLabel(core, labelOf(owner, armDisplayOf(core),
+ownerIsSupertype), automatic)` — `labelOf` builds the `variantOf`/`variant`
+pair (`armNameOf` under the hood), `withAutomaticLabel` writes it plus
+`author: 'enrich'` onto the core and records the stamp.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::stampAutomaticVariants`
 
-Labels every eligible choice arm across the whole grammar: for each rule,
-`stampRuleVariants(owner, rule, ruleOf, stamped, isSupertype)` with the
-rule's own name as `owner`, a lookup back into `rules` for
-`isHoistedChoiceGroup`'s SYMBOL case, and `isSupertype` — true when `owner`
-is in the declared `supertypeNames` set, or when it is a hidden parser
-name not in `inlineNames` whose body is supertype-like
-(`dsl/rule-patterns.ts`'s `isSupertypeLike`) — replacing the rule in place.
-A supertype owner's members are named by `supertypeMemberName`
-(stripped-of-category short names, e.g. `ir.expression.binary`); any other
-owner's by `prefixNamedSuffix` (owner-prefix suffix names). Called once
-from `enrich`, after `synthesizeFieldEnumRules` (labelling has to see the
-synthesized field-enum choices too). Returns the accumulated stamp-key set,
-which `enrich` attaches to the grammar result as
-`ENRICH_AUTOMATIC_VARIANTS_KEY` when non-empty.
+Labels every eligible choice arm across the whole grammar. First derives
+`supertypeOwners`: `owner` counts when it's in the declared
+`supertypeNames` set, or when it's a hidden parser name not in
+`inlineNames` whose body is supertype-like (`dsl/rule-patterns.ts`'s
+`isSupertypeLike`) AND is not itself a named-arm choice
+(`isNamedArmChoice` — the same recognizer `link.ts`'s
+`collectHiddenNamedArmChoices` uses to leave such a choice a polymorph
+rather than classify it a supertype, so the stamp and link agree on which
+hidden choices are supertypes). Then, for each
+rule, `stampRuleVariants(owner, rule, ruleOf, automatic)` with the rule's
+own name as `owner` and a lookup back into `rules` for
+`isHoistedChoiceGroup`'s SYMBOL case, replacing the rule in place. A
+supertype owner's members are named through `armNameOf` by
+`supertypeMemberName` (stripped-of-category short names, e.g.
+`ir.expression.binary`); any other owner's by `prefixNamedSuffix`
+(owner-prefix suffix names). Called once from `enrich`, after
+`synthesizeFieldEnumRules` (labelling has to see the synthesized
+field-enum choices too). Returns the accumulated `AutomaticVariants`
+sidecar, which `enrich` attaches to the grammar result as
+`ENRICH_AUTOMATIC_VARIANTS_KEY` when its `keys` set is non-empty.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::getEnrichAutomaticVariants`
 
-The stamped set off a grammar result, or an empty set for anything that
-isn't one — a grammar with no automatically-labelled arms never got the
-key attached at all.
+The `AutomaticVariants` sidecar off a grammar result, or an empty one
+(`keys`/`supertypeOwners` both empty sets) for anything that isn't one — a
+grammar with no automatically-labelled arms never got the key attached at
+all.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::withoutAutomaticVariants`
 
 Strips every automatically-stamped label (never an override-declared one —
-only a key present in `automatic`) from a rule tree, without touching
-anything else: a CHOICE's members are checked by `automaticVariantKey` and
-de-labelled (`withoutLabel`) when their key is in `automatic`, otherwise
-walked; every other node type just recurses into `members`/`content`. Used
-by `resolveFieldPlaceholder` so a patch that pulls a labelled arm under a
-`field()` doesn't leave the enrich label sitting underneath the field's
-own address.
+only a key present in `automatic.keys`) from a rule tree. Checks
+`automaticVariantKey` at every node it visits, starting at the root itself,
+not only at choice-member positions: a match is de-labelled
+(`withoutLabel`), and the walk still recurses into what's left — through
+`members`/`content` — until it passes a `SLOT_BOUNDARIES` type, where it
+stops. A grammar with no automatic labels at all (`automatic.keys.size ===
+0`) short-circuits to the input unchanged. Used by `resolveFieldPlaceholder`
+so a patch that pulls a labelled arm under a `field()` doesn't leave the
+enrich label sitting underneath the field's own address.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::withoutLabel`
 
 Removes `variant`/`variantOf` from a rule's own annotations (or, for an
 ALIAS, its `content`'s), dropping the `annotations` key entirely once both
-are gone rather than leaving an empty object behind.
+are gone rather than leaving an empty object behind. Generic and exported
+directly: `wire.ts`'s `wireRegisterSyntheticRule` calls it on a minted body
+with no `AutomaticVariants` set to check against, since a mint's label
+belongs on the reference site that names it, not on the body it points to;
+`withoutAutomaticVariants`'s own strip calls it once a node's key is
+confirmed to be in `automatic.keys`.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::withAuthoredLabel`
 
@@ -2584,25 +2757,24 @@ for one of enrich's own.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::relabelledArm`
 
-Re-stamps a label at a rewritten site: when `original` carried a
-`variantOf` (its arm was labelled, by enrich or by an override), `site` —
-the new rule the rewrite produced — gets `variantOf: <that owner>` and, if
-`site` itself has a display (`armDisplayOf`), a freshly-computed `variant`
-name relative to that owner, written through `withAuthoredLabel` (so the
-relabelled site is stamped `author: 'override'`, never left as enrich's).
-`original` with no label leaves `site` untouched. Used wherever wire
+Re-stamps a label at a rewritten site, branching on whether `original`'s
+label (read off its `coreOf`) was authored or automatic. No `variantOf` on
+`original` leaves `site` untouched. An authored original (no key, or a key
+not present in `automatic.keys`) keeps its whole label — `variantOf`,
+`variant`, and `default` copied through unchanged — written onto `site` via
+`withAuthoredLabel` (so the relabelled site stays stamped `author:
+'override'`). An automatic original (its key present in `automatic.keys`)
+is NOT copied verbatim: `site`'s own core is freshly labelled from ITS OWN
+display (`throughPrec` + `armDisplayOf` + `labelOf`, using the owner's
+`supertypeOwners` membership) via `withAutomaticLabel`, so the new site
+gets a name matching what it now spells, stamped `author: 'enrich'` and
+recorded into `automatic.keys` under its own key. Used wherever wire
 resolution replaces one rule shape with another in place of the arm it
 started from — `resolveAliasPlaceholder`'s lift/mint/rename branches, and
 `replaceInBodyRt`'s group body-pattern substitution — so the label follows
-the arm to its new shape instead of vanishing or staying pinned to the old
-shape's name.
-
-### `packages/codegen/src/dsl/automatic-variants.ts::unlabelled`
-
-`withoutLabel`, exposed for a caller with no `automatic` set to check
-against — `wireRegisterSyntheticRule` uses it to store a minted body with
-no label of its own, since a mint's label belongs on the reference site
-that names it, not on the body it points to.
+the arm to its new shape instead of vanishing, staying pinned to the old
+shape's name, or, for an automatic label, going stale against a shape
+whose display changed.
 
 ### `packages/codegen/src/dsl/rule-transforms.ts::structuralBuilder`
 

@@ -244,20 +244,6 @@ describe('import_from_statement sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('wildcardImport builds the parent', () => {
-		const node = ir.importFromStatement.wildcardImport({
-			moduleName: {
-				$type: TSKindId.RelativeImport,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_prefix: { $type: TSKindId.ImportPrefix, $text: 'test', $source: 2, $named: true } as any
-			} as any
-		});
-		expect(node.$type).toBe(TSKindId.ImportFromStatement);
-		expect((node as any).content()).toBe(TSKindId.WildcardImport);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
 });
 
 describe('aliased_import', () => {

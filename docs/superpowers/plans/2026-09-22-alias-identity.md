@@ -819,7 +819,7 @@ The user's rule: a sub-factory arm exists exactly where a variant label (`varian
 **Stamp (enrich).** Enrich stamps `variant: <name>, variantOf: <owner>` on each arm of every unfielded (`_content`) choice. The name is computed once, at stamp time, with today's arm naming: `prefixNamedSuffix(owner, display) ?? display`, where display = the alias target, else the storage name without its leading `_`. A literal arm is named by its token kind, the same rule as every other arm (keyword kinds are `<text>_keyword`); no text-derived names. Enrich records every label it stamps in its non-enumerable sidecar.
 - A displayed literal (an anonymous literal shown under another kind's display, e.g. `alias('async', $.identifier)`) gets no variant: it is its display.
 - A supertype's own members are stamped with the supertype as `variantOf`; the existing variant-subtype path mounts them wherever the supertype sits.
-- The clash-fallback rename in `unaliasOverloadedDisplays` (`_number` → `unary_expression_number`) stamps the arm with its own name (`number`) through the same stamp.
+- The clash-fallback rename in `unaliasOverloadedDisplays` (`_number` → `unary_expression_number`) is named by the one naming rule (`armNameOf`), with no stamp of its own. A name collision is resolved by an authored `variant()`: typescript `literal_type`'s `negative_number` (the user's ruling).
 
 **Strip (wire).** When a patch fields a slot after enrich, wire removes the automatic variants on that slot, using the sidecar. `alias(name)` on a site writes that site's label (`variant` = the name's arm label, `variantOf` = the owning rule), overwriting an automatic one. Authored `variant()` stays.
 
@@ -827,7 +827,7 @@ The user's rule: a sub-factory arm exists exactly where a variant label (`varian
 
 **Provenance.** A node-model childKind descriptor built from enrich-stamped labels reads `definedBy: 'enrich'` (from `author: 'enrich'` on the stamp), `'override'` otherwise; the descriptor's value is `'enrich'` only when every labelled arm of the kind is enrich-authored. It is a label; nothing branches on it.
 
-- [ ] Enrich stamp, sidecar record, clash-fallback label.
+- [ ] Enrich stamp and sidecar record.
 - [ ] Wire strip on field(); alias() writes the label.
 - [ ] Overlay arm set = variant-labelled members; deletions above.
 - [ ] definedBy 'enrich'.
@@ -839,6 +839,10 @@ The user's rule: a sub-factory arm exists exactly where a variant label (`varian
 - [ ] rust: `variant('scope')` on pub's group reference; the in_path patches apply before it and `crate`/`pub` after. Target: `ir.visibilityModifier.pub.scope.inPath`, used by examples/01.
 
 **Follow-up:** a patch path should reach through a mint that `variant()` renamed. Today rust `visibility_modifier` works only because of patch order: the `in`/`in_path` patches apply first, then `'1/1/0': variant('scope')`, then `crate`/`pub`. With the scope patch first, the `in_path` path descends into the renamed group-lift symbol, which the lift map does not know. With it last, `'1'` is already minted as `pub`, so `'1/1/0'` cannot descend.
+
+**Follow-up:** module.ts recognises a minted variant route by name (`mintedBy`: the child's name equals `polymorphVisibleName(parent, variant)` and the parent is its sole referrer). Stamp a minted fact at wire mint time and read that instead.
+
+**Follow-up:** `seatsInlinedLabel` recognises a label minted by an inline rule by its owner having no model node. The slot's stamped `inlinedFrom` is not that fact: a fielded slot holding an inline reference (typescript `terminator` over `_semicolon`) carries no `inlinedFrom`, and reading it re-admits 48 typescript arms. An inline-owner fact must be stamped on the value where the inline rule is spliced.
 
 **Follow-up:** generated arm tests for a parameterless leaf arm (e.g. rust `pub.scope.crate builds the parent`) pass a hand-built node cast `as any`. `ir.visibilityModifier.pub.scope.crate()` with no arguments type-checks and renders `pub(crate)`, so the test generator should call such an arm with no arguments and drop the cast.
 

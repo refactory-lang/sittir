@@ -47,16 +47,15 @@
   ],
   "polymorphVariants": {
     "future_import_statement": {
-      "definedBy": "override",
+      "definedBy": "enrich",
       "childKind": {
         "import_list": "import_list",
         "parenthesized_import_list": "parenthesized_import_list"
       }
     },
     "import_from_statement": {
-      "definedBy": "override",
+      "definedBy": "enrich",
       "childKind": {
-        "wildcard_import": "wildcard_import",
         "import_list": "import_list",
         "parenthesized_import_list": "parenthesized_import_list"
       }
@@ -85,7 +84,7 @@
       }
     },
     "case_pattern": {
-      "definedBy": "override",
+      "definedBy": "enrich",
       "childKind": {
         "case_as_pattern": "case_as_pattern",
         "keyword_pattern": "keyword_pattern",
@@ -116,7 +115,7 @@
       }
     },
     "yield": {
-      "definedBy": "override",
+      "definedBy": "enrich",
       "childKind": {
         "yield_from_clause": "from_clause"
       }

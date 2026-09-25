@@ -10,7 +10,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import { isValidIdent, irNamespacesChildFactory, compareOrdinal, lexedContentSlot } from './shared.ts';
 import { isHiddenKind } from '../dsl/rule-patterns.ts';
-import { supertypeMemberName } from '../compiler/variant-structural.ts';
+import { supertypeMemberName } from '../dsl/arm-names.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry,
 } from './kind-discriminant.ts';
 import { bundleEntries, flattenedVariantParents } from './overlays/module.ts';

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { deriveVariantChildren, prefixNamedSuffix, variantChildrenOf } from '../variant-structural.ts';
+import { deriveVariantChildren, variantChildrenOf } from '../variant-structural.ts';
+import { prefixNamedSuffix } from '../../dsl/arm-names.ts';
 import type { Rule } from '../../types/rule.ts';
 
 const variantOf = (parent: string, variant: string) => ({ annotations: { variant, variantOf: parent } });

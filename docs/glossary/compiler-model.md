@@ -331,15 +331,16 @@ generated enum and the enum's own variants cannot disagree.
 ### `packages/codegen/src/compiler/model/node-map.ts::armFactsOf`
 
 The per-arm annotations a slot value carries: the declared `variant`/`variantOf`
-pair, and `default`. A `variantOf`-only literal arm has no display of its own to
-derive a `variant` from, so it is named from the resolved catalog kind the arm
-target carries (`resolvedKind`): `prefixNamedSuffix(variantOf, resolvedKind)`
-when that kind is named under its owner's prefix, else
-`undisplayedKindAddress(resolvedKind)`. That way an enrich-stamped literal still
-gets a spelled arm name; with no owner or resolved kind it gets none. One
-derivation spread into all four SYMBOL branches of `deriveValuesForRule` and into
-supertype subtype refs, so an arm fact added to the model reaches every value
-shape and every subtype without further edits.
+pair, `default`, and `spliced`. A `variantOf`-only literal arm has no display of
+its own to derive a `variant` from, so it is named from the resolved catalog kind
+the arm target carries (`resolvedKind`) via `armNameOf(variantOf,
+undisplayedKindAddress(resolvedKind), false)` — always the non-supertype naming
+branch, since a supertype's members are symbols and a literal arm never reaches
+one. That way an enrich-stamped literal still gets a spelled arm name; with no
+owner or resolved kind it gets none. One derivation spread into all four SYMBOL
+branches of `deriveValuesForRule` and into supertype subtype refs, so an arm fact
+added to the model reaches every value shape and every subtype without further
+edits.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::deriveValuesForRule`
 
@@ -4054,12 +4055,6 @@ The one naming rule for a name the parser does not show: a hidden-prefixed
 parser name (rust `_let_chain`, `_token_keywords`; python
 `_simple_statements`) addresses as `undisplayedKindAddress`, and any other
 parser name is its own display.
-
-### `packages/codegen/src/compiler/model/display-name.ts::undisplayedKindAddress`
-
-The underscore-less address of a kind the parser never displays. It is the
-only place a leading underscore is stripped, and only a hidden-prefixed
-parser name reaches it.
 
 ### `packages/codegen/src/compiler/model/display-name.ts::displayNameOf`
 

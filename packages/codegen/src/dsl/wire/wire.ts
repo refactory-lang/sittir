@@ -25,7 +25,8 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
-import { getEnrichAutomaticVariants, relabelledArm, unlabelled } from '../automatic-variants.ts';
+import { getEnrichAutomaticVariants, relabelledArm, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
+import { polymorphVisibleName } from '../arm-names.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
 
@@ -54,7 +55,7 @@ export interface WireContext {
 	readonly precedenceRankedNames: ReadonlySet<string>;
 	readonly flattenedParents: Set<string>;
 	readonly aliasTargets: Set<string>;
-	readonly automaticVariants: ReadonlySet<string>;
+	readonly automaticVariants: AutomaticVariants;
 }
 
 export interface RefineForm {
@@ -70,7 +71,7 @@ export function getCurrentWireContext(): WireContext | null {
 
 export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): boolean {
 	if (!currentContext) return false;
-	currentContext.deposits.set(name, unlabelled(content) as RuntimeRule);
+	currentContext.deposits.set(name, withoutLabel(content) as RuntimeRule);
 	return true;
 }
 
@@ -136,8 +137,8 @@ export function wireGetCurrentRuleKind(): string | null {
 	return currentContext?.currentRuleKind ?? null;
 }
 
-export function wireAutomaticVariants(): ReadonlySet<string> {
-	return currentContext?.automaticVariants ?? new Set();
+export function wireAutomaticVariants(): AutomaticVariants {
+	return currentContext?.automaticVariants ?? getEnrichAutomaticVariants(undefined);
 }
 
 export function wireIsExtraRule(name: string): boolean {
@@ -443,10 +444,6 @@ function renamingCallback<F extends (...args: never[]) => unknown>(
 	} as unknown as DollarFn<unknown>;
 }
 
-export function polymorphVisibleName(parentKind: string, suffix: string): string {
-	const visibleParent = parentKind.startsWith('_') ? parentKind.slice(1) : parentKind;
-	return `${visibleParent}_${suffix}`;
-}
 
 function knownRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
 	const baseRules = (base?.grammar?.rules ?? base?.rules ?? {}) as Record<string, unknown>;
@@ -891,7 +888,7 @@ function patternBodyEqual(aIn: unknown, bIn: unknown): boolean {
 	return false;
 }
 
-function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidate[]): unknown {
+function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidate[], automatic: AutomaticVariants): unknown {
 	if (!rule || typeof rule !== 'object') return rule;
 	const r = rule as { type: string; members?: unknown[]; content?: unknown };
 	for (const c of candidates) {
@@ -900,7 +897,7 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 				c.aliasAs === undefined
 					? { type: 'SYMBOL', name: c.name }
 					: { type: 'ALIAS', content: { type: 'SYMBOL', name: c.name }, named: true, value: c.aliasAs };
-			return relabelledArm(site, rule);
+			return relabelledArm(site, rule, automatic);
 		}
 	}
 	const t = r.type;
@@ -909,7 +906,7 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 		if (!Array.isArray(members)) return rule;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const replaced = replaceInBodyRt(m, candidates);
+			const replaced = replaceInBodyRt(m, candidates, automatic);
 			if (replaced !== m) changed = true;
 			return replaced;
 		});
@@ -926,16 +923,16 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 		t === 'PREC_DYNAMIC' ||
 		t === 'TOKEN'
 	) {
-		const newContent = replaceInBodyRt(r.content, candidates);
+		const newContent = replaceInBodyRt(r.content, candidates, automatic);
 		return newContent !== r.content ? { ...r, content: newContent } : rule;
 	}
 	return rule;
 }
 
-function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCandidate[]): RuleFn {
+function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCandidate[], automatic: AutomaticVariants): RuleFn {
 	return function patternReplacingRuleFn($, previous) {
 		const result = fn($, previous);
-		return replaceInBodyRt(result, candidates);
+		return replaceInBodyRt(result, candidates, automatic);
 	};
 }
 
@@ -1095,6 +1092,6 @@ export function applyWirePatternReplacement(
 	const candidateNames = new Set(candidates.map((c) => c.name));
 	for (const [name, fn] of Object.entries(rules)) {
 		if (candidateNames.has(name)) continue;
-		rules[name] = buildPatternReplacingFn(fn, candidates);
+		rules[name] = buildPatternReplacingFn(fn, candidates, context?.automaticVariants ?? getEnrichAutomaticVariants(undefined));
 	}
 }

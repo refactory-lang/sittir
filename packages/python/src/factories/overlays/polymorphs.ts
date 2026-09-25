@@ -77,10 +77,6 @@ const importFromStatement$parenthesizedImportList =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
-const importFromStatement$wildcardImport =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, content: _c(child)() } as never, options as never);
 export const importFromStatement: typeof B.importFromStatement & {
 	importList: {
 		strict: (
@@ -110,16 +106,6 @@ export const importFromStatement: typeof B.importFromStatement & {
 			options?: OptionsArg<typeof C.coerceToImportFromStatement>
 		) => ReturnType<typeof C.coerceToImportFromStatement>;
 	};
-	wildcardImport: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildImportFromStatement>[0], 'content'>,
-			options?: OptionsArg<typeof F.buildImportFromStatement>
-		) => ReturnType<typeof F.buildImportFromStatement>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToImportFromStatement>[0], 'content'>,
-			options?: OptionsArg<typeof C.coerceToImportFromStatement>
-		) => ReturnType<typeof C.coerceToImportFromStatement>;
-	};
 } = {
 	...B.importFromStatement,
 	importList: {
@@ -132,10 +118,6 @@ export const importFromStatement: typeof B.importFromStatement & {
 			C.coerceToImportFromStatement,
 			C.coerceToParenthesizedImportList
 		)
-	},
-	wildcardImport: {
-		strict: importFromStatement$wildcardImport(F.buildImportFromStatement, F.buildWildcardImport),
-		coerce: importFromStatement$wildcardImport(C.coerceToImportFromStatement, C.coerceToWildcardImport)
 	}
 };
 
