@@ -34,7 +34,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool bootstrap-grammar --name <name> [--up
   Check provenance first (`npm view <pkg> repository.url time`) — an old anonymous npm snapshot
   is worse than a pinned git tag of the maintained repo.
 - It writes `package.json`, `tsconfig*.json`, `README.md` and a minimal `grammar.sittir.ts`
-  (`enrich(base)` + `wire` with the three whitespace externals), inserts a root `tsconfig.json`
+  (`grammar(enrichedBase, wire({...}, enrichedBase))` with the three whitespace externals — the same composition as every grammar), inserts a root `tsconfig.json`
   reference, formats with oxfmt and runs `pnpm install`.
 - It does **not** write the native crate. `gen --all` scaffolds `rust/crates/sittir-<name>` the
   first time it emits the grammar's render module (template: `emitters/native-crate.ts`, pinned to
@@ -76,7 +76,7 @@ same for any grammar with that shape, it is core; don't patch around core defect
 |---|---|---|
 | `storagename-collision` / `content-collision`: two positional slots of one type (`seq(x, '.', x)`, `seq(a, '-', a)`) | authoring | `patches: { rule: { 0: field('start'), 2: field('end') } }` — name the roles |
 | `TemplateEmitter duplicate-slot violation` on a choice whose arms share a slot | core defect, authoring workaround | `variant()` each arm (and `field()` any trailing single member) so each arm is its own form; report the core defect |
-| `seated in a list but has no kind id` after a `variant()` patch | usually patch keyed on the wrong rule | key the patch on the enrich-lifted group (`<rule>_group`), not the parent's path into it — check `.sittir/src/grammar.json` for an orphaned mint and `pruned N orphaned rule(s)` in the log |
+| `seated in a list but has no kind id` after a patch through an enrich-lifted group; parser `grammar.json` lacks a patch the IR has | composition | `wire(cfg, enrichedBase)` must receive the enriched base (`const enrichedBase = enrich(base); grammar(enrichedBase, wire({...}, enrichedBase))`) — without it a patch through a `<rule>_group` lands in the IR but not the parser, and a `variant()` mint ships orphaned. A test pins the composition for every grammar |
 | `aliased token … has no verbatim literal` | core | report; the literal must come from grammar.json, not the mangled C name |
 | `defaults: <kind> has a separator of shape SYMBOL` | core | report; fielding the member does not help |
 | `Cannot find module …/src/boundary.ts` at post-generate | core (missing emitter) | report |
@@ -89,7 +89,7 @@ same for any grammar with that shape, it is core; don't patch around core defect
   `optional(x)` is `choice(x, blank)`, so `x` is at `…/0`.
 - Several patch kinds on one rule go in an array of blocks (a duplicate key in one block replaces
   the earlier one): `rule: [{ '1/0': field('a'), … }, { '1/0': variant('v'), … }]`.
-- A rule that enrich lifts into `<rule>_group` / `<rule>_arm` is patched under that minted name.
+- A path may walk through a rule enrich lifts into `<rule>_group` / `<rule>_arm` (the parent's path continues into the lifted body), or the patch may be keyed on the minted name directly.
 
 ## 3. Gates
 
