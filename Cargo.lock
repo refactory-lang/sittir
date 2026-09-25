@@ -494,6 +494,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "sittir-scm"
+version = "0.0.0"
+dependencies = [
+ "cc",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "serde",
+ "serde_json",
+ "sittir-core",
+ "tree-sitter",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "sittir-typescript"
 version = "0.0.0"
 dependencies = [

@@ -192,6 +192,25 @@ importers:
         specifier: ^5.6.0
         version: 5.6.0
 
+  packages/scm:
+    dependencies:
+      '@sittir/common':
+        specifier: workspace:*
+        version: link:../common
+      '@sittir/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@types/node':
+        specifier: ^25.6.0
+        version: 25.6.0
+      tree-sitter-scm:
+        specifier: github:tree-sitter-grammars/tree-sitter-query#v0.8.0
+        version: tree-sitter-query@https://codeload.github.com/tree-sitter-grammars/tree-sitter-query/tar.gz/a225e21d81201be77da58de614e2b7851735677a(tree-sitter@0.22.4)
+      type-fest:
+        specifier: ^5.6.0
+        version: 5.6.0
+
   packages/tools:
     dependencies:
       '@ast-grep/wasm':
@@ -261,6 +280,12 @@ importers:
         version: 3.6.2(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.6.0)(node-addon-api@8.9.2)
 
   rust/crates/sittir-rust:
+    devDependencies:
+      '@napi-rs/cli':
+        specifier: ^3.0.0
+        version: 3.6.2(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.6.0)(node-addon-api@8.9.2)
+
+  rust/crates/sittir-scm:
     devDependencies:
       '@napi-rs/cli':
         specifier: ^3.0.0
@@ -2362,6 +2387,15 @@ packages:
       tree-sitter:
         optional: true
 
+  tree-sitter-query@https://codeload.github.com/tree-sitter-grammars/tree-sitter-query/tar.gz/a225e21d81201be77da58de614e2b7851735677a:
+    resolution: {tarball: https://codeload.github.com/tree-sitter-grammars/tree-sitter-query/tar.gz/a225e21d81201be77da58de614e2b7851735677a}
+    version: 0.8.0
+    peerDependencies:
+      tree-sitter: ^0.22.4
+    peerDependenciesMeta:
+      tree-sitter:
+        optional: true
+
   tree-sitter-rust@0.24.0:
     resolution: {integrity: sha512-NWemUDf629Tfc90Y0Z55zuwPCAHkLxWnMf2RznYu4iBkkrQl2o/CHGB7Cr52TyN5F1DAx8FmUnDtCy9iUkXZEQ==}
     peerDependencies:
@@ -2991,7 +3025,7 @@ snapshots:
       es-toolkit: 1.46.0
       js-yaml: 4.3.1
       obug: 2.1.1
-      semver: 7.7.4
+      semver: 7.8.1
       typanion: 3.14.0
     optionalDependencies:
       '@emnapi/runtime': 1.9.2
@@ -4031,8 +4065,7 @@ snapshots:
 
   node-addon-api@8.7.0: {}
 
-  node-addon-api@8.9.2:
-    optional: true
+  node-addon-api@8.9.2: {}
 
   node-fetch@2.7.0:
     dependencies:
@@ -4273,6 +4306,13 @@ snapshots:
     dependencies:
       node-addon-api: 8.7.0
       node-gyp-build: 4.8.4
+
+  tree-sitter-query@https://codeload.github.com/tree-sitter-grammars/tree-sitter-query/tar.gz/a225e21d81201be77da58de614e2b7851735677a(tree-sitter@0.22.4):
+    dependencies:
+      node-addon-api: 8.9.2
+      node-gyp-build: 4.8.4
+    optionalDependencies:
+      tree-sitter: 0.22.4
 
   tree-sitter-rust@0.24.0(tree-sitter@0.22.4):
     dependencies:
