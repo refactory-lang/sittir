@@ -15236,6 +15236,13 @@ so `rangePattern.withLeft.withRight.dotDotEq` exists. The forwarding
 grand-arms here. If one of them skipped value entries, the child's token arms
 would be emitted with nothing referencing them.
 
+A grand arm flattens only through an unfielded slot (`isUnnamed`, the
+`_content` of a choice). A fielded slot is already addressed by its field,
+so through it the parent mounts the child's direct arm and the child's own
+forms are chosen inside it (`abstractType.genericType(...)`, not
+`abstractType.genericTypeIdentifier`), the same way a fielded slot needs no
+automatic variant name.
+
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::authoredArmCandidatesOf`
 
 The arms of a node with more than one choice slot, where `derive` has no

@@ -822,6 +822,14 @@ Instances: python `_simple_pattern` at case_pattern (alias `simple_pattern`); ty
 - [ ] Pinned test: built python `casePattern.classPattern` and typescript `assignmentExpression` left equal their read shape (text-stripped).
 - [ ] Gates as Task 7.
 
+### Task 7c: The identifier leaf guard rejects a reserved word the slot does not admit
+
+A contextual keyword displayed as `identifier` is an identifier only where the parser admits it: each slot lists the keywords it admits (the per-slot admitted keyword sets). Today the identifier leaf guard is the identifier pattern alone, so `ir.identifier('if')` is accepted anywhere.
+
+- [ ] The identifier leaf guard rejects a reserved word unless the slot it is built for admits that keyword, read from the slot's admitted keyword set.
+- [ ] Test: an admitting slot builds, renders and reparses the keyword spelling; a non-admitting slot rejects it.
+- [ ] Gates as Task 7.
+
 ### Task 8: Glossary, spec status, PR
 
 **Files:**

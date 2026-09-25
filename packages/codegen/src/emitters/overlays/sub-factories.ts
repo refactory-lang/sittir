@@ -174,6 +174,7 @@ function grandArmCandidates(
 	isEmitted: IsEmittedPredicate,
 	visiting: ReadonlySet<string>
 ): Candidate[] {
+	if (!slot.isUnnamed) return [];
 	return subFactoriesInternal(child, nodeMap, isEmitted, visiting).entries.map((inner) => {
 		const leaf = inner.arm.via === 'node' ? (inner.arm.leaf ?? inner.arm.child) : undefined;
 		const name = leaf === undefined ? inner.name : kindArmName(node.kind, leaf.display.name);
