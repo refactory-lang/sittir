@@ -6647,6 +6647,17 @@ that wants the keyword's own text (a literal arm's name) read `literalText`
 instead of stripping the suffix from the name. `collectGeneratedKindEntries`
 carries it onto `GeneratedKindEntry.keyword`.
 
+`aliasedNonTerminal` is set on a nonterminal that parser.c lists in
+`ts_non_terminal_alias_map` (see
+`generated-metadata.ts::collectAliasedNonTerminals`): tree-sitter lists a
+nonterminal there when some parent shows it under an alias name while it
+keeps its own symbol, so the parser issues the nonterminal's node renamed
+rather than renaming the symbol itself (a symbol aliased alike at every use
+is renamed in place and is not listed). It is the parser's own fact, stamped
+separately from `hidden`; a consumer that needs a hidden nonterminal shown
+under an alias reads both. `collectGeneratedKindEntries` carries it onto
+`GeneratedKindEntry.aliasedNonTerminal`.
+
 ### `packages/codegen/src/compiler/types.ts::presence`
 
 ```text
@@ -9762,6 +9773,14 @@ the `TSKindId` member, the kind string, factories, and the nested option key
 `nestedKey` derives all follow from it. If a suffixed name still collides
 with an existing key, `joinIdNames` throws naming both symbols — there is no
 second, id-suffixed fallback.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::collectAliasedNonTerminals`
+
+The C symbol names parser.c lists in `ts_non_terminal_alias_map`. The table is
+a flat run of records, each a nonterminal symbol, a count, and that many
+symbols (the nonterminal itself and the alias symbols it is shown as), ended
+by `0`; the first symbol of each record is collected. The initializer's
+identifiers and numbers are read through the C parser, as the name tables are.
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::keywordTextOf`
 

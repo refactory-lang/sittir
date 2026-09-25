@@ -32,6 +32,7 @@ export interface GeneratedKindEntry {
 	readonly alias?: boolean;
 	readonly hidden?: boolean;
 	readonly keyword?: boolean;
+	readonly aliasedNonTerminal?: boolean;
 }
 
 export interface TreeSitterLanguageMetadata {
@@ -84,10 +85,11 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 	const fieldIds = collectEnumIds(parser, source, 'enum ts_field_identifiers');
 	const symbolNames = collectNameTable(parser, source, 'static const char * const ts_symbol_names[]');
 	const fieldNames = collectNameTable(parser, source, 'static const char * const ts_field_names[]');
+	const aliasedNonTerminals = collectAliasedNonTerminals(parser, source);
 	const symbolTextFacts = resolveSymbolTextFacts(symbolNames, collectGrammarFacts(grammarJson));
 
 	return {
-		kindIds: joinIdNames(symbolIds, symbolNames, deriveSymbolRuntimeName(symbolTextFacts), symbolTextFacts),
+		kindIds: joinIdNames(symbolIds, symbolNames, deriveSymbolRuntimeName(symbolTextFacts), symbolTextFacts, aliasedNonTerminals),
 		fieldIds: joinIdNames(fieldIds, fieldNames, deriveFieldRuntimeName),
 		sourceArtifact
 	};
@@ -208,7 +210,8 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 			literalRule: entry.parser?.literalRule || undefined,
 			alias: entry.parser?.alias || undefined,
 			hidden: entry.parser?.hidden || undefined,
-			keyword: entry.parser?.keyword || undefined
+			keyword: entry.parser?.keyword || undefined,
+			aliasedNonTerminal: entry.parser?.aliasedNonTerminal || undefined
 		}));
 }
 
@@ -353,6 +356,26 @@ function collectEnumIds(parser: CParser, source: string, marker: string): Map<st
 	return result;
 }
 
+function collectAliasedNonTerminals(parser: CParser, source: string): Set<string> {
+	const block = sliceCBlock(source, 'static const uint16_t ts_non_terminal_alias_map[]');
+	if (!block) return new Set();
+	const tree = parser.parse(block);
+	if (!tree) return new Set();
+	const values: string[] = [];
+	walkCNodes(tree.rootNode, (node) => {
+		if (node.parent?.type === 'initializer_list' && (node.type === 'identifier' || node.type === 'number_literal')) values.push(node.text);
+	});
+	const result = new Set<string>();
+	for (let i = 0; i + 1 < values.length; ) {
+		const symbol = values[i]!;
+		const count = Number.parseInt(values[i + 1]!, 10);
+		if (symbol === '0' || Number.isNaN(count)) break;
+		result.add(symbol);
+		i += 2 + count;
+	}
+	return result;
+}
+
 function collectNameTable(parser: CParser, source: string, marker: string): Map<string, string> {
 	const block = sliceCBlock(source, marker);
 	if (!block) return new Map();
@@ -376,12 +399,13 @@ function joinIdNames(
 	ids: ReadonlyMap<string, CEnumEntry>,
 	names: ReadonlyMap<string, string>,
 	fallbackName: (cName: string) => string,
-	symbolTextFacts?: ReadonlyMap<string, SymbolTextFacts>
+	symbolTextFacts?: ReadonlyMap<string, SymbolTextFacts>,
+	aliasedNonTerminals?: ReadonlySet<string>
 ): Map<string, GeneratedIdEntry> {
 	const result = new Map<string, GeneratedIdEntry>();
 	for (const entry of ids.values()) {
 		const key = fallbackName(entry.cName);
-		const parser = createParserMetadata(entry, key, names, symbolTextFacts);
+		const parser = createParserMetadata(entry, key, names, symbolTextFacts, aliasedNonTerminals);
 		const existing = result.get(key);
 		if (!existing || !existing.parser) {
 			result.set(key, { id: entry.id, parser });
@@ -420,7 +444,8 @@ function createParserMetadata(
 	entry: CEnumEntry,
 	parserName: string,
 	names: ReadonlyMap<string, string>,
-	symbolTextFacts?: ReadonlyMap<string, SymbolTextFacts>
+	symbolTextFacts?: ReadonlyMap<string, SymbolTextFacts>,
+	aliasedNonTerminals?: ReadonlySet<string>
 ): KindParserMetadata {
 	const facts = symbolTextFacts?.get(entry.cName);
 	return {
@@ -433,7 +458,8 @@ function createParserMetadata(
 		aux: entry.cName.startsWith('aux_sym_'),
 		alias: entry.cName.startsWith('alias_sym_'),
 		hidden: parserName.startsWith('_'),
-		...(keywordTextOf(entry.cName, symbolTextFacts) === undefined ? {} : { keyword: true as const })
+		...(keywordTextOf(entry.cName, symbolTextFacts) === undefined ? {} : { keyword: true as const }),
+		...(aliasedNonTerminals?.has(entry.cName) ? { aliasedNonTerminal: true as const } : {})
 	};
 }
 

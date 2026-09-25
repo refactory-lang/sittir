@@ -170,6 +170,52 @@ static const char * const ts_field_names[] = {
 		expect(entries.find((entry) => entry.id === 10)).toMatchObject({ kind: 'if_keyword', literalText: 'if', keyword: true });
 	});
 
+	it('marks a symbol listed in the non-terminal alias map as an aliased non-terminal', async () => {
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			`
+enum ts_symbol_identifiers {
+  sym__lhs_expression = 20,
+  sym_object_type = 21,
+  sym_pattern = 22,
+  alias_sym_lhs_expression = 30,
+  alias_sym_interface_body = 31,
+};
+
+static const char * const ts_symbol_names[] = {
+  [sym__lhs_expression] = "_lhs_expression",
+  [sym_object_type] = "object_type",
+  [sym_pattern] = "pattern",
+  [alias_sym_lhs_expression] = "lhs_expression",
+  [alias_sym_interface_body] = "interface_body",
+};
+
+static const uint16_t ts_non_terminal_alias_map[] = {
+  sym__lhs_expression, 2,
+    sym__lhs_expression,
+    alias_sym_lhs_expression,
+  sym_object_type, 2,
+    sym_object_type,
+    alias_sym_interface_body,
+  0,
+};
+
+enum ts_field_identifiers {
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+};
+`,
+			'parser.c'
+		);
+		const byId = new Map(collectGeneratedKindEntries(tables).map((entry) => [entry.id, entry]));
+		expect(byId.get(20)?.aliasedNonTerminal).toBe(true);
+		expect(byId.get(21)?.aliasedNonTerminal).toBe(true);
+		expect(byId.get(22)?.aliasedNonTerminal).toBeUndefined();
+		expect(byId.get(30)?.aliasedNonTerminal).toBeUndefined();
+		expect(byId.get(31)?.aliasedNonTerminal).toBeUndefined();
+	});
+
 	it('leaves a symbolic (non-keyword-shaped) anonymous token under its plain derived name', async () => {
 		const tables = await deriveGeneratedIdTablesFromParserCSource(
 			`
