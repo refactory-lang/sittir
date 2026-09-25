@@ -16684,3 +16684,8 @@ The model kind a catalog row names: an alias row's display name, otherwise
 its parser name. The inverse of findEntryForKindName, used for the id → name
 tables so both directions agree.
 ```
+
+### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
+
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and any scanner), the napi `package.json`, and `src/lib.rs` (the `LanguageFn`, `EngineGrammar`/`ReadModel` impls over the generated render module, and `sittir_core::napi_engine!`). `runCodegenInternal` writes it once, the first time it emits a grammar's render module, so a crate exists only alongside generated code it can compile. Pinned by a test to reproduce `sittir-python` byte-for-byte; a grammar whose crate needs more (typescript's scanner header) is edited after scaffolding.
+

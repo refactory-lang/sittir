@@ -21,7 +21,8 @@ import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { writeManifestForGrammar } from './scripts/generated-manifest.ts';
-import { isGrammar, nativeCrateRelDir } from './grammars.ts';
+import { isGrammar, nativeCrateDir, nativeCrateRelDir } from './grammars.ts';
+import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
 import { OVERLAY_CHAIN } from './emitters/overlays/module.ts';
@@ -295,6 +296,13 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	const shouldEmitRustRender = all && isGrammar(grammar);
 
 	if (shouldEmitRustRender) {
+		const crateDir = nativeCrateDir(grammar);
+		const scaffoldCrate = !existsSync(join(crateDir, 'Cargo.toml'));
+		if (scaffoldCrate) {
+			for (const file of nativeCrateFiles(grammar)) await writeFile(join(crateDir, file.path), file.contents);
+			console.log(`  → scaffolded native crate ${nativeCrateRelDir(grammar)}`);
+			execSync('pnpm install --prefer-offline', { stdio: 'inherit', cwd: process.cwd() });
+		}
 		const renderModule = result.renderModule;
 		if (!renderModule) {
 			throw new Error(`generate() did not return renderModule output for ${grammar}`);

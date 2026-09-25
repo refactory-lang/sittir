@@ -157,6 +157,25 @@ Benchmark codemod on a corpus directory
 pnpm exec tsx packages/cli/src/cli.ts tool bench-codemod <corpus-dir> [options]
 ```
 
+### `tool bootstrap-grammar`
+
+Scaffold a new grammar package from an upstream tree-sitter grammar (its native crate is scaffolded by the first gen --all)
+
+**Options**
+
+- `-n, --name <name>` — Sittir grammar name (package dir, crate suffix, wire name)
+- `-u, --upstream <package>` — Upstream npm package, or a verbatim non-npm spec such as github:owner/repo#tag (default: tree-sitter-<name>)
+- `-r, --range <range>` — Upstream version range (default: ^<latest>)
+- `--no-install` — Skip pnpm install
+- `-g, --generate` — Run the full gen --all chain after install
+- `--dry-run` — Print the files that would be written
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool bootstrap-grammar [options]
+```
+
 ### `tool check-baseline`
 
 Check or collect parity baselines
