@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "b7201d91a5ef0b8f69a3cefa36d1b92c5763045652071dbec1f9d5bafe7dc1fa",
+  "source_hash": "dfb03880803b0ec7888a5ac58be02dd685da0d202bb6ad844140c400524da860",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "1fd958abbfc1ec8d7134f1017d428e6feb3eb368763c9330ed7f467b0e11a247",
     "packages/python/.sittir/grammar.js": "495451e04720284bb92f49db5e5f3f3a76b4422ba40a010cabae2e31f29b6e1b",
@@ -16,8 +16,8 @@
     "packages/python/.sittir/src/tree_sitter/parser.h": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
     "packages/python/.sittir/tree-sitter.json": "3950b01c1615b2635ff9b254e6dbfca6d068240af7df192da0c0cdd396115c62",
     "packages/python/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
-    "packages/python/src/backend.ts": "c145a2485c853a1b1bc19a99d0c2061fe5ddf939dc294b2241ae85c1380a14c0",
-    "packages/python/src/boundary.ts": "7f9e570083dcece4214a13db507ece408778b425d7b03a9d49b4183fdfae3618",
+    "packages/python/src/backend.ts": "19286f9b2efc9700ebc4c9407a0c5a8583ef165febfd6ebf32afadbcce965720",
+    "packages/python/src/boundary.ts": "7f256c0c44ba6c69c06eb402129d5859b76c736b868655c12707ba2a0ee80c92",
     "packages/python/src/consts.ts": "fc5f04f25cf1fb62c18d30feb6c3acf728776f4ed9549dd0181d332faad638c5",
     "packages/python/src/engine.ts": "212ca2fa46fb17b754ddb58d90675f78d1c5bc3ff2bd935b1b066f816ec27fa5",
     "packages/python/src/factories/bundle.ts": "69c98729711b39f1da19550e8e0ece507ae9981e688fd7992361e52f48147c22",

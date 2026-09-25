@@ -8,6 +8,7 @@ import { emitConfig } from '../emitters/config.ts';
 import { emitIndex } from '../emitters/index-file.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine, emitRenderEngine } from '../emitters/engine.ts';
+import { emitBackend, emitBoundary } from '../emitters/grammar-runtime.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
@@ -29,6 +30,8 @@ export interface GeneratedFiles {
 	types: string;
 	engine: string;
 	renderEngine: string;
+	backend: string;
+	boundary: string;
 	templates: EmittedTemplates;
 	factories: string;
 	overlays: Record<OverlayName, string>;
@@ -142,6 +145,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			grammar: emitGrammar({ grammar: cfg.grammar }),
 			engine: emitEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 			renderEngine: emitRenderEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
+			backend: emitBackend({ grammar: cfg.grammar }),
+			boundary: emitBoundary({ grammar: cfg.grammar }),
 			types: emitted.types,
 			templates: emitted.templates,
 			factories: emitted.factories,

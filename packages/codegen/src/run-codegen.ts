@@ -225,6 +225,8 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	await writeFile(join(outDir, 'grammar.ts'), result.grammar);
 	await writeFile(join(outDir, 'engine.ts'), result.engine);
 	await writeFile(join(outDir, 'render-engine.ts'), result.renderEngine);
+	await writeFile(join(outDir, 'backend.ts'), result.backend);
+	await writeFile(join(outDir, 'boundary.ts'), result.boundary);
 	await writeFile(join(outDir, 'types.ts'), result.types);
 	const factoriesDir = join(outDir, 'factories');
 	mkdirSync(join(factoriesDir, 'overlays'), { recursive: true });
@@ -247,8 +249,11 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 
 	writeFileSync(
 		join(dirname(outDir), '.sittir', 'render-bodies.json'),
-		JSON.stringify(Object.fromEntries([...result.templates.bodies].sort(([a], [b]) => compareOrdinal(a, b))), null, '\t') +
-			'\n',
+		JSON.stringify(
+			Object.fromEntries([...result.templates.bodies].sort(([a], [b]) => compareOrdinal(a, b))),
+			null,
+			'\t'
+		) + '\n',
 		'utf8'
 	);
 
@@ -274,7 +279,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 					runtimeVarying: census.runtimeVarying,
 					preferenceOrigin: census.preferenceOrigin,
 					literalDefaultOrigin: census.literalDefaultOrigin,
-				wordDefaultOrigin: census.wordDefaultOrigin,
+					wordDefaultOrigin: census.wordDefaultOrigin,
 					cascadeOrigin: census.cascadeOrigin,
 					fallbackOrigin: census.fallbackOrigin,
 					boundaries: census.boundaries

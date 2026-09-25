@@ -16689,3 +16689,15 @@ tables so both directions agree.
 
 The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and any scanner), the napi `package.json`, and `src/lib.rs` (the `LanguageFn`, `EngineGrammar`/`ReadModel` impls over the generated render module, and `sittir_core::napi_engine!`). `runCodegenInternal` writes it once, the first time it emits a grammar's render module, so a crate exists only alongside generated code it can compile. Pinned by a test to reproduce `sittir-python` byte-for-byte; a grammar whose crate needs more (typescript's scanner header) is edited after scaffolding.
 
+### `packages/codegen/src/emitters/grammar-runtime.ts::EmitGrammarRuntimeConfig`
+
+The per-grammar runtime glue shared by every grammar package, emitted into `packages/<name>/src/` next to `engine.ts`. It differs between grammars only in the grammar name, so it is emitted rather than copied into each package — a new grammar gets it from its first `gen --all`.
+
+### `packages/codegen/src/emitters/grammar-runtime.ts::emitBackend`
+
+`backend.ts`: loads the grammar-local native build (`rust/crates/sittir-<name>/index.js`) once per process and checks its render-module hash and transport ABI against the package's generated `RENDER_MODULE_HASH` / `NATIVE_RENDER_TRANSPORT_ABI`. The outcome is `native` or `js`; `js` means "native unavailable" — there is no JS engine behind it, and `createRenderEngine` throws on it. `SITTIR_BACKEND` forces a choice; a forced `native` that fails to load throws.
+
+### `packages/codegen/src/emitters/grammar-runtime.ts::emitBoundary`
+
+`boundary.ts`: the default-engine `render` / `toEdit` / `applyEdits` entry points the factories reach through `utils`, each timed with `recordFfi('<name>', …)` so FFI cost is attributed per grammar.
+

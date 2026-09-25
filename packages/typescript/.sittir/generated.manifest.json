@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "66d928abd84d1746d4f47b6acd5b7c833f6877cd05480d05dcc614aab7072553",
+  "source_hash": "e8ac29343b5734e27320f03281aef168d1fba7c734f732a8f8a89ae109ea418f",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "c67bba94212b112725d0b3c7fe62e65386d965102e166cacc4e20ed320beff38",
     "packages/typescript/.sittir/grammar.js": "5a1d658500ec505d20f319d4fa3b650c7ca85a38a518edf165ac65f0b6a241fa",
@@ -16,8 +16,8 @@
     "packages/typescript/.sittir/src/tree_sitter/parser.h": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
     "packages/typescript/.sittir/tree-sitter.json": "9f1a0a28bf7b0d72fde59956be9d85aea276447d08ad124cb9b474aa9575ae8e",
     "packages/typescript/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
-    "packages/typescript/src/backend.ts": "45417b77c8cdf4d88caa3a97bbbbb8a4318cf8c15aefdd631ed973ffbc11c33e",
-    "packages/typescript/src/boundary.ts": "4bc0e961536fbff326712cec7d247dc59df122f875583e80a0ff0de5ca268fac",
+    "packages/typescript/src/backend.ts": "06d30d9821658787e2fec800caf1d984ccda8d0862117e1792851c739de28c87",
+    "packages/typescript/src/boundary.ts": "cd8fb83b1116939dd41355bed7958113d54be63f7ae5860a79cc2163abdab3e3",
     "packages/typescript/src/consts.ts": "8d51005dfc35d6a95de5049df6c7f4af7a09cd93a2d7f5683876a8fff0c2cda8",
     "packages/typescript/src/engine.ts": "9cf6d8e7475a6d72a1ef0684bb41ca817f7e2a7c382f5284f22418cc584ede0f",
     "packages/typescript/src/factories/bundle.ts": "0432ad2291293918dadf69e7afc20d838103e9a510833cfeac92bb06b2c5b71a",
