@@ -141,6 +141,8 @@ describe('post-evaluate invariant', () => {
 				// wire() config sidecars — drained from __wireContext__ in evaluate.ts.
 				'groups',
 				'renderAs',
+				// The wire context's automatic-variant record; link reads definedBy from it.
+				'automaticVariants',
 				// visibleExternals: — externals auto-aliased visible with a
 				// fixed render body (drainVisibleExternalsMetadata).
 				'visibleExternals',

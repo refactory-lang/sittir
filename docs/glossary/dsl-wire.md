@@ -118,15 +118,16 @@ exists only for the agreement check.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireAutomaticVariants`
 
-The active wire context's `AutomaticVariants` sidecar, or an empty one
-outside a wire context. `resolveFieldPlaceholder` reads it to strip an
-enrich-stamped label from content a patch pulls under a `field()`;
-`resolveAliasPlaceholder` reads it to restamp a label at a rewritten
-alias site. Both read it through this ambient accessor rather than an
-explicit parameter, since both run inside the context-setting rule
-wrapper. Contrast `buildPatternReplacingFn`/`replaceInBodyRt`, which run
-outside that wrapper and so take the sidecar as an explicit argument
-instead.
+The current wire context's automatic-variant record (`automaticVariantsOf`).
+`resolveFieldPlaceholder` (strip), `resolveAliasPlaceholder` (relabel) and
+`withVariantAnnotation` (authored claim) read it while a rule fn runs inside
+the context-setting wrapper.
+
+### `packages/codegen/src/dsl/wire/wire.ts::automaticVariantsOf`
+
+A wire context's record. A read with no wire context throws: a label is
+only ever stripped, restamped or claimed inside `wire()` or
+`withWireContext`.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::withWireContext`
 
@@ -601,11 +602,11 @@ A replaced sub-tree is re-labelled (`relabelledArm`, against the matched
 rule) rather than left bare: a candidate's own site may be an automatically
 or author-labelled arm, and the SYMBOL (or, for an `aliasAs` candidate, the
 ALIAS) it collapses to needs the same label to keep standing in for it.
-Takes the context's `AutomaticVariants` sidecar as an explicit `automatic`
-parameter (passed down from `buildPatternReplacingFn`) rather than reading
-it off the ambient wire context: the pattern-replacing wrapper this
-function serves runs outside the context-setting rule wrapper, so it
-cannot read the current context when it actually executes.
+Takes the record as a lookup (`automatic`, passed down from
+`buildPatternReplacingFn`) rather than reading the current wire context:
+the pattern-replacing wrapper runs outside the context-setting rule
+wrapper, so no context is current when it executes. The lookup is called
+only when a replacement happens.
 
 #### body
 
@@ -631,19 +632,11 @@ cannot read the current context when it actually executes.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::buildPatternReplacingFn`
 
-```text
-/**
- * Wrap a rule fn so its return value has matching pattern sub-trees replaced.
- */
-```
-
-Captures the `AutomaticVariants` sidecar at build time
-(`context?.automaticVariants ?? getEnrichAutomaticVariants(undefined)`) and
-threads it through to `replaceInBodyRt` as an explicit argument every time
-the wrapped fn runs, rather than having `replaceInBodyRt` read the ambient
-wire context itself — by the time the wrapped fn is invoked, the
-pattern-replacing wrapper is running outside the context-setting rule
-wrapper.
+Wraps a rule fn so its result has every structural match of a candidate
+replaced (`replaceInBodyRt`). The record reaches `replaceInBodyRt` as a
+lookup bound to the wire context (`() => context.automaticVariants`),
+because the wrapped fn runs after the context-setting wrapper has restored
+the previous context.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::withStringGlobalShim`
 
@@ -771,6 +764,9 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
 // the body fn evaluates inside a proper wire context.
 ```
 
+The wire context is required: each injected or grouped rule fn is wrapped in
+it, and the pattern-replacing wrappers read its automatic-variant record.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::RenderAsConfig`
 
 ```text
@@ -870,9 +866,13 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
 
 `ruleBodies` holds, per `rule()` name, the canonical text of its declared
 body and the first site that declared it (`wireDeclareRuleBody`).
-`automaticVariants` is an `AutomaticVariants` sidecar, seeded once when the
-context is built (`getEnrichAutomaticVariants`, off the base grammar).
-Every downstream reader gets it through the context, not by re-deriving:
+`automaticVariants` is the context's one automatic-variant record, made when
+the context is built and never at a read site (`seedAutomaticVariants`): a
+copy of the base's record when the base went through `enrich`, otherwise an
+empty record, because without an enrich pass no label is automatic. A
+malformed record on the base is an error. Wire edits the copy (restamps add
+keys, authored label writers remove them) and evaluate carries it to link.
+Every reader gets it through the context:
 `resolveFieldPlaceholder` reads it (via `wireAutomaticVariants`) to strip a
 label from content a patch pulls under a `field()`; `resolveAliasPlaceholder`
 (also via `wireAutomaticVariants`) and `replaceInBodyRt` (passed down

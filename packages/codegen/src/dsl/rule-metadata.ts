@@ -18,10 +18,6 @@ export function readRuleMetadata(meta: unknown): RuleMetadataShape | undefined {
 	return meta as RuleMetadataShape | undefined;
 }
 
-export function isEnrichAuthored(rule: unknown): boolean {
-	return readRuleMetadata((rule as { metadata?: unknown } | undefined)?.metadata)?.author === 'enrich';
-}
-
 export function normalizeEnumMembers(
 	members: readonly StringRule[],
 	provenance?: { author?: RuleMetadataShape['author']; classifiedBy?: RuleMetadataShape['classifiedBy'] }

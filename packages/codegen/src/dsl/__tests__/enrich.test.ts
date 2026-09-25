@@ -804,7 +804,7 @@ describe('enrich()', () => {
 				}
 			});
 			const out = runEnrich(input);
-			const label = (variant: string) => ({ annotations: { variant, variantOf: 'expr' }, metadata: { author: 'enrich' } });
+			const label = (variant: string) => ({ annotations: { variant, variantOf: 'expr' } });
 			expect(out.grammar.rules.expr).toEqual({
 				type: CHOICE,
 				members: [
@@ -870,8 +870,7 @@ describe('enrich()', () => {
 					members: ['+', '-', '*', '/'].map((value) => ({
 						type: 'STRING',
 						value,
-						annotations: { variantOf: '_binary_expression_operator' },
-						metadata: { author: 'enrich' }
+						annotations: { variantOf: '_binary_expression_operator' }
 					})),
 					metadata: { author: 'enrich' }
 				},

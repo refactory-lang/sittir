@@ -1,14 +1,13 @@
 export function polymorphVisibleName(parentKind: string, suffix: string): string {
-	const visibleParent = parentKind.startsWith('_') ? parentKind.slice(1) : parentKind;
-	return `${visibleParent}_${suffix}`;
+	return `${undisplayedKindAddress(parentKind)}_${suffix}`;
 }
 
 export function undisplayedKindAddress(symbol: string): string {
 	return symbol.replace(/^_+/, '');
 }
 
-export function prefixNamedSuffix(parentKind: string, targetName: string): string | null {
-	const bareTarget = targetName.startsWith('_') ? targetName.slice(1) : targetName;
+function prefixNamedSuffix(parentKind: string, targetName: string): string | null {
+	const bareTarget = undisplayedKindAddress(targetName);
 	const prefix = `${polymorphVisibleName(parentKind, '')}`;
 	if (!bareTarget.startsWith(prefix)) return null;
 	const suffix = bareTarget.slice(prefix.length);

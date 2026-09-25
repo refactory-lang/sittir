@@ -338,8 +338,8 @@ function resolveSupertypeSubtypes(
 	const refOf = (s: SymbolRule | SupertypeRule['subtypes'][number]): SubtypeRef => {
 		const display = aliasEnvelopeOf(s, compoundCtx);
 		return display !== undefined
-			? { name: display, storageKindId: s.aliasedToId, ...armFactsOf(s) }
-			: { name: s.name, storageKindId: s.kindId, ...armFactsOf(s) };
+			? { name: display, storageKindId: s.aliasedToId, ...armFactsOf(s, compoundCtx) }
+			: { name: s.name, storageKindId: s.kindId, ...armFactsOf(s, compoundCtx) };
 	};
 	const subtypes: SubtypeRef[] =
 		rule.type === SUPERTYPE

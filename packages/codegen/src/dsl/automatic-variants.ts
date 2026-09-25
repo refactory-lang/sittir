@@ -1,9 +1,7 @@
 import { withAnnotations } from './annotations.ts';
 import type { Rule, RuleAnnotations } from '../types/rule.ts';
 import { armNameOf, undisplayedKindAddress } from './arm-names.ts';
-import { isNamedArmChoice, isParserHiddenName, isSupertypeLike, unwrapPrec } from './rule-patterns.ts';
-import { makeRuleMetadata } from './rule-metadata.ts';
-import { isPrecWrapper } from '../types/runtime-shapes.ts';
+import { hiddenChoiceClass, isNamedArmChoice, isParserHiddenName, throughPrec, unwrapPrec } from './rule-patterns.ts';
 
 export const ENRICH_AUTOMATIC_VARIANTS_KEY = '__enrichedAutomaticVariants__' as const;
 
@@ -20,19 +18,12 @@ interface ArmShape {
 	readonly content?: ArmShape;
 	readonly members?: readonly ArmShape[];
 	readonly annotations?: RuleAnnotations;
-	readonly metadata?: object;
 }
 
 const SLOT_BOUNDARIES = new Set(['FIELD', 'TOKEN', 'IMMEDIATE_TOKEN', 'ALIAS', 'PATTERN', 'STRING', 'SYMBOL', 'BLANK']);
 
 function coreOf(arm: ArmShape): ArmShape {
 	return unwrapPrec(arm) as ArmShape;
-}
-
-function throughPrec(arm: ArmShape, fn: (core: ArmShape) => ArmShape): ArmShape {
-	if (arm.type === undefined || !isPrecWrapper({ type: arm.type }) || arm.content === undefined) return fn(arm);
-	const content = throughPrec(arm.content, fn);
-	return content === arm.content ? arm : { ...arm, content };
 }
 
 function armDisplayOf(arm: ArmShape): string | undefined {
@@ -56,10 +47,11 @@ function refOf(arm: ArmShape): string {
 	return JSON.stringify(arm.value);
 }
 
-function automaticVariantKey(arm: ArmShape): string | undefined {
-	const annotations = annotationsOf(arm);
+export function automaticVariantKey(arm: unknown): string | undefined {
+	const shape = arm as ArmShape;
+	const annotations = annotationsOf(shape);
 	if (annotations?.variantOf === undefined) return undefined;
-	return `${annotations.variantOf}\u0000${annotations.variant ?? ''}\u0000${refOf(arm)}`;
+	return `${annotations.variantOf}\u0000${annotations.variant ?? ''}\u0000${refOf(shape)}`;
 }
 
 function labelOf(owner: string, display: string | undefined, ownerIsSupertype: boolean): RuleAnnotations {
@@ -67,8 +59,7 @@ function labelOf(owner: string, display: string | undefined, ownerIsSupertype: b
 }
 
 function withAutomaticLabel(core: ArmShape, label: RuleAnnotations, automatic: AutomaticVariants): ArmShape {
-	const annotated = withAnnotations(core, label) as unknown as ArmShape;
-	const out = { ...annotated, metadata: makeRuleMetadata({ ...annotated.metadata, author: 'enrich' }) } as ArmShape;
+	const out = withAnnotations(core, label) as ArmShape;
 	automatic.keys.add(automaticVariantKey(out)!);
 	return out;
 }
@@ -82,6 +73,18 @@ function holdsChoice(node: ArmShape | undefined): boolean {
 
 function isHoistedChoiceGroup(rule: ArmShape | undefined): boolean {
 	return rule?.annotations?.hoisted === true && holdsChoice(rule);
+}
+
+export function isSupertypeOwner(
+	owner: string,
+	rules: Readonly<Record<string, unknown>>,
+	supertypeNames: ReadonlySet<string>,
+	inlineNames: ReadonlySet<string>
+): boolean {
+	if (supertypeNames.has(owner)) return true;
+	if (!isParserHiddenName(owner) || inlineNames.has(owner)) return false;
+	const rule = rules[owner];
+	return hiddenChoiceClass(rule, (name) => rules[name], isNamedArmChoice(rule)) === 'supertype';
 }
 
 function stampRuleVariants(
@@ -125,12 +128,7 @@ export function stampAutomaticVariants(
 	supertypeNames: ReadonlySet<string>,
 	inlineNames: ReadonlySet<string>
 ): AutomaticVariants {
-	const supertypeOwners = new Set<string>();
-	for (const [owner, rule] of Object.entries(rules)) {
-		if (supertypeNames.has(owner) || (isParserHiddenName(owner) && !inlineNames.has(owner) && isSupertypeLike(rule) && !isNamedArmChoice(rule))) {
-			supertypeOwners.add(owner);
-		}
-	}
+	const supertypeOwners = new Set(Object.keys(rules).filter((owner) => isSupertypeOwner(owner, rules, supertypeNames, inlineNames)));
 	const automatic: AutomaticVariants = { keys: new Set(), supertypeOwners };
 	for (const owner of Object.keys(rules)) {
 		const rule = rules[owner];
@@ -140,9 +138,23 @@ export function stampAutomaticVariants(
 	return automatic;
 }
 
-export function getEnrichAutomaticVariants(grammar: unknown): AutomaticVariants {
-	const value = grammar && typeof grammar === 'object' ? (grammar as Record<string, unknown>)[ENRICH_AUTOMATIC_VARIANTS_KEY] : undefined;
-	return (value as AutomaticVariants | undefined) ?? { keys: new Set(), supertypeOwners: new Set() };
+function isAutomaticVariants(value: unknown): value is AutomaticVariants {
+	const record = value as Partial<AutomaticVariants> | undefined;
+	return record?.keys instanceof Set && record.supertypeOwners instanceof Set;
+}
+
+export function getEnrichAutomaticVariants(grammar: unknown): AutomaticVariants | undefined {
+	if (!grammar || typeof grammar !== 'object' || !(ENRICH_AUTOMATIC_VARIANTS_KEY in grammar)) return undefined;
+	const value = (grammar as Record<string, unknown>)[ENRICH_AUTOMATIC_VARIANTS_KEY];
+	if (!isAutomaticVariants(value)) throw new Error('enrich: the automatic-variant sidecar is malformed; expected { keys: Set, supertypeOwners: Set }');
+	return value;
+}
+
+export function seedAutomaticVariants(grammar: unknown): AutomaticVariants {
+	const enriched = getEnrichAutomaticVariants(grammar);
+	return enriched === undefined
+		? { keys: new Set(), supertypeOwners: new Set() }
+		: { keys: new Set(enriched.keys), supertypeOwners: enriched.supertypeOwners };
 }
 
 export function withoutAutomaticVariants(rule: unknown, automatic: AutomaticVariants): unknown {
@@ -179,9 +191,11 @@ export function withoutLabel<T>(rule: T): T {
 	return (arm.type === 'ALIAS' && arm.content !== undefined ? { ...arm, content: rebuild(arm.content) } : rebuild(arm)) as T;
 }
 
-export function withAuthoredLabel(site: unknown, label: RuleAnnotations): unknown {
-	const annotated = withAnnotations(site, label) as unknown as { readonly metadata?: object };
-	return { ...annotated, metadata: makeRuleMetadata({ ...annotated.metadata, author: 'override' }) };
+export function withAuthoredLabel<T>(site: T, label: RuleAnnotations, automatic: AutomaticVariants): T {
+	const out = withAnnotations(site, label) as T;
+	const key = automaticVariantKey(out);
+	if (key !== undefined) automatic.keys.delete(key);
+	return out;
 }
 
 export function relabelledArm(site: unknown, original: unknown, automatic: AutomaticVariants): unknown {
@@ -192,9 +206,8 @@ export function relabelledArm(site: unknown, original: unknown, automatic: Autom
 	const key = automaticVariantKey(core);
 	if (key === undefined || !automatic.keys.has(key)) {
 		const { variant, default: isDefault } = annotations!;
-		return withAuthoredLabel(site, { variantOf: owner, ...(variant === undefined ? {} : { variant }), ...(isDefault === true ? { default: true } : {}) });
+		return withAuthoredLabel(site, { variantOf: owner, ...(variant === undefined ? {} : { variant }), ...(isDefault === true ? { default: true } : {}) }, automatic);
 	}
-	const siteArm = site as ArmShape;
 	const ownerIsSupertype = automatic.supertypeOwners.has(owner);
-	return throughPrec(siteArm, (siteCore) => withAutomaticLabel(siteCore, labelOf(owner, armDisplayOf(siteCore), ownerIsSupertype), automatic));
+	return throughPrec(site as ArmShape, (siteCore) => withAutomaticLabel(siteCore, labelOf(owner, armDisplayOf(siteCore), ownerIsSupertype), automatic));
 }

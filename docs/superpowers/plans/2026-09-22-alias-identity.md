@@ -844,6 +844,8 @@ The user's rule: a sub-factory arm exists exactly where a variant label (`varian
 
 **Follow-up:** `seatsInlinedLabel` recognises a label minted by an inline rule by its owner having no model node. The slot's stamped `inlinedFrom` is not that fact: a fielded slot holding an inline reference (typescript `terminator` over `_semicolon`) carries no `inlinedFrom`, and reading it re-admits 48 typescript arms. An inline-owner fact must be stamped on the value where the inline rule is spliced.
 
+**Follow-up:** `emitters/ir.ts`'s `memberKeyFor` derives a supertype member's ir key in the emitter (`supertypeMemberName`). The member's stamped `variant` already carries that name; read it instead.
+
 **Follow-up:** generated arm tests for a parameterless leaf arm (e.g. rust `pub.scope.crate builds the parent`) pass a hand-built node cast `as any`. `ir.visibilityModifier.pub.scope.crate()` with no arguments type-checks and renders `pub(crate)`, so the test generator should call such an arm with no arguments and drop the cast.
 
 ### Task 7b: A built node carries the alias envelope its read shows

@@ -398,6 +398,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		expectDiagnostics,
 		expectTestFailures,
 		orphanedSyntheticGroups,
+		automaticVariants: wireCtx?.automaticVariants,
 		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined,
 		desugarDivergences: ctx.desugarDivergences.length > 0 ? [...ctx.desugarDivergences] : undefined
 	} satisfies RawGrammar;

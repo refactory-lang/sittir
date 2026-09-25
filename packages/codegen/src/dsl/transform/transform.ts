@@ -62,7 +62,7 @@ import { nativeRuleFn } from '../enrich.ts';
 import { relabelledArm, withAuthoredLabel, withoutAutomaticVariants } from '../automatic-variants.ts';
 
 function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string, arm?: unknown): RuntimeRule {
-	return withAuthoredLabel(rule, { variant: variantName, variantOf: parentKind, ...(isDefaultArm(arm) ? { default: true } : {}) }) as RuntimeRule;
+	return withAuthoredLabel(rule as RuntimeRule, { variant: variantName, variantOf: parentKind, ...(isDefaultArm(arm) ? { default: true } : {}) }, wireAutomaticVariants());
 }
 
 function isDefaultArm(arm: unknown): boolean {

@@ -1,3 +1,4 @@
+import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
 import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
@@ -111,6 +112,7 @@ export interface RawGrammar {
 	readonly expectTestFailures?: Readonly<Record<string, string>>;
 	readonly orphanedSyntheticGroups?: readonly string[];
 	readonly visibleInlineNames?: readonly string[];
+	readonly automaticVariants?: AutomaticVariants;
 
 	readonly bodyPatternZeroMatches?: readonly string[];
 	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];

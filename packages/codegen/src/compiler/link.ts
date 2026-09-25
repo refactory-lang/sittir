@@ -76,11 +76,13 @@ import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
 import { polymorphVisibleName } from '../dsl/arm-names.ts';
 import { deriveVariantChildren, isAliasMintedRef } from './variant-structural.ts';
+import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
 import {
 	composeTokenText,
 	deriveComplexAliasTargetHidden,
 	isEnumChoiceRule,
 	isHiddenKind,
+	hiddenChoiceClass,
 	isKindChoice,
 	isNamedArmChoice,
 	isParserHiddenName,
@@ -225,7 +227,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 
 	markSupertypeRefsNonInline(rules);
 
-	applyOverridePolymorphs(rules, derivations);
+	applyOverridePolymorphs(rules, derivations, raw.automaticVariants);
 
 	collectRepeatedShapes(rules, derivations.repeatedShapes);
 	const complexAliasTargetHidden = deriveComplexAliasTargetHidden(rawRules);
@@ -257,7 +259,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, grammarJsonInline, reachableFromRoot);
 
 	stampLinkMintedVisibility(rules, linkCtx);
-	const variantChildren = deriveVariantChildren(rules);
+	const variantChildren = deriveVariantChildren(rules, raw.automaticVariants);
 	const refineForms = new Map<string, readonly LinkedRefineForm[]>();
 	for (const [kind, forms] of raw.refineForms ?? []) {
 		const rule = rules[kind];
@@ -1085,8 +1087,12 @@ export interface VariantChoiceLocation {
 	suffix: Rule<'link'>[];
 }
 
-export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>, derivations: DerivationLog): void {
-	const structural = deriveVariantChildren(rules);
+export function applyOverridePolymorphs(
+	rules: Record<string, Rule<'link'>>,
+	derivations: DerivationLog,
+	automatic: AutomaticVariants | undefined
+): void {
+	const structural = deriveVariantChildren(rules, automatic);
 	const parentToChildren = new Map<string, string[]>();
 	for (const [parentKind, variantChildren] of structural) {
 		const names = variantChildren.map((c) => c.name);
@@ -1543,6 +1549,7 @@ function classifyHiddenChoiceRule(
 	rules: Record<string, Rule<'link'>>
 ): ClassifyResult {
 	const { supertypes, hiddenNamedArmChoices } = ctx;
+	const shape = hiddenChoiceClass(rule, (n) => rules[n], hiddenNamedArmChoices.has(name));
 	const enumMembers = rule.members.map((m): StringRule<'link'> | SymbolRule<'link'> | undefined => {
 		if (m.type === STRING) return m;
 		if (m.type === SYMBOL) {
@@ -1562,7 +1569,7 @@ function classifyHiddenChoiceRule(
 		}
 		return undefined;
 	});
-	if (!supertypes.has(name) && enumMembers.every((m): m is StringRule<'link'> | SymbolRule<'link'> => m !== undefined)) {
+	if (!supertypes.has(name) && shape === 'enum' && enumMembers.every((m): m is StringRule<'link'> | SymbolRule<'link'> => m !== undefined)) {
 		const allStrings = enumMembers.every((m): m is StringRule<'link'> => m.type === STRING);
 		return {
 			rule: allStrings
@@ -1577,18 +1584,8 @@ function classifyHiddenChoiceRule(
 		};
 	}
 
-	if (hiddenNamedArmChoices.has(name) && !supertypes.has(name)) {
-		return { rule };
-	}
-
-	const flatMembers = flattenNestedChoiceMembers(rule.members);
-	const supertypeCompatible = (m: Rule<'link'>): boolean =>
-		m.type === SYMBOL ||
-		isEnumChoiceRule(m) ||
-		m.type === STRING ||
-		(m.type === ALIAS && m.named && (m.content.type === STRING || aliasedSymbolWithin(m.content) !== undefined));
-	const allCompatible = flatMembers.every(supertypeCompatible);
-	if (allCompatible || supertypes.has(name)) {
+	if (shape === 'supertype' || supertypes.has(name)) {
+		const flatMembers = flattenNestedChoiceMembers(rule.members);
 		const subtypes = collectSubtypeRefs(rule, ctx);
 		if (subtypes.length > 0) {
 			const classifiedBy = supertypes.has(name) ? 'grammar' : 'link';

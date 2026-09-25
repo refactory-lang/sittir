@@ -1725,13 +1725,11 @@ stripped.
 ```text
 // Enrich group-lift symbols are transparent to path addressing, like prec
 // wrappers. enrich hoists `optional(seq)` / `repeat(seq)` into a SYMBOL ref
-// tagged `metadata.author === 'enrich'` (debt: source-homonym resolution,
-// decision 6 — was `metadata.source === 'enrich'`) that carries the hoisted
-// seq body on `content`. An authored patch whose path was written against the pre-hoist
-// seq must travel THROUGH the symbol into that body. We descend without
-// consuming a segment (transparent) and rebuild the symbol around the patched
-// body. Works in both runtimes (sittir evaluate + tree-sitter generate)
-// because the tag + body ride the symbol object itself — no rule-map resolver.
+// tagged `metadata.symbolSource === 'group-lift'`, and the hoisted body is
+// looked up by name in the group-lift rule map. An authored patch whose path
+// was written against the pre-hoist seq must travel THROUGH the symbol into
+// that body. We descend without consuming a segment (transparent) and write
+// the patched body back to the map.
 ```
 
 #### body
@@ -1740,8 +1738,7 @@ stripped.
 // Enrich content-aliases are ALSO transparent to path addressing. enrich
 // wraps an inline-unsafe `optional(seq)` / bare `choice` in
 // `alias(<content>, $.<name>)` (the visible-kind form) tagged
-// `metadata.author === 'enrich'` (was `metadata.source === 'enrich'`,
-// decision 6). enrich runs BEFORE the authored
+// `metadata.aliasSource === 'visible-group'`. enrich runs BEFORE the authored
 // transform()/variant()/groups path-patches, so a patch whose path was
 // written against the pre-alias content must travel THROUGH the alias into
 // that content. Without this, `descendThroughAlias` (single-content, index 0

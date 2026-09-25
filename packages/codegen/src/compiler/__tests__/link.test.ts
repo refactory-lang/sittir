@@ -669,7 +669,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		// The variant children come from the arms' variant annotations
 		// (`deriveVariantChildren`), so the inner choice's two annotated
 		// symbols are found without an explicit pairs argument.
-		applyOverridePolymorphs(rules, derivations);
+		applyOverridePolymorphs(rules, derivations, undefined);
 		// Parent rule stays as a choice (not replaced by flat polymorph).
 		expect(rules['visibility_modifier']!.type).toBe('CHOICE');
 		// Each variant-child hidden rule now has its body wrapped in the

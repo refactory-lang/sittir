@@ -6,6 +6,7 @@ import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
+import type { GeneratedIdEntry, GeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { stampAutomaticVariants } from '../../dsl/automatic-variants.ts';
 import { emitPolymorphsOverlay } from '../overlays/polymorphs.ts';
 import { listRestParamType } from '../shared.ts';
@@ -25,7 +26,7 @@ function labelArms(rules: Record<string, Rule<'evaluate'>>): Record<string, Rule
 	return stamped as Record<string, Rule<'evaluate'>>;
 }
 
-function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
+function buildNodeMap(rules: Record<string, Rule<'evaluate'>>, generatedIdTables?: GeneratedIdTables): NodeMap {
 	const raw: RawGrammar = {
 		name: 'synth',
 		rules: labelArms(rules),
@@ -40,9 +41,9 @@ function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
 		word: null,
 		references: []
 	};
-	const linked = link(raw);
+	const linked = link(raw, { generatedIdTables });
 	const normalized = normalizeGrammar(linked);
-	return assemble(AssembleCtx.from(normalized));
+	return assemble(AssembleCtx.from(normalized, generatedIdTables));
 }
 
 function polymorphNodeMap(): NodeMap {
@@ -459,5 +460,32 @@ describe('a list takes its rest parameter by cardinality and options', () => {
 	it('lets an empty-capable list take nothing, or only its options', () => {
 		expect(listRestParamType(false, 'E', undefined)).toBe('readonly E[]');
 		expect(listRestParamType(false, 'E', 'O')).toBe('[first?: E | O, ...rest: E[]]');
+	});
+});
+
+describe('a literal arm named through its token kind', () => {
+	const keyword = (id: number, kind: string, text: string): GeneratedIdEntry => ({
+		id,
+		parser: { cSymbol: `anon_sym_${id}`, parserName: kind, symbolName: kind, literalText: text, anon: true, aux: false, alias: false, hidden: false }
+	});
+
+	it('mounts each literal of an unfielded choice under the name its kind gives it', () => {
+		const nodeMap = buildNodeMap(
+			{
+				junction: {
+					type: SEQ,
+					members: [
+						{ type: FIELD, name: 'left', content: { type: SYMBOL, name: 'word' } },
+						{ type: CHOICE, members: [{ type: STRING, value: 'and' }, { type: STRING, value: 'or' }] },
+						{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'word' } }
+					]
+				},
+				word: { type: PATTERN, value: '[a-z]+' }
+			},
+			{ kindIds: { and_keyword: keyword(3, 'and_keyword', 'and'), or_keyword: keyword(4, 'or_keyword', 'or') }, sourceArtifact: 'test' }
+		);
+		const out = emitPolymorphsOverlay({ nodeMap });
+		expect(out).toContain("andKeyword: { strict: junction$andKeyword(F.buildJunction, 'and')");
+		expect(out).toContain("orKeyword: { strict: junction$orKeyword(F.buildJunction, 'or')");
 	});
 });

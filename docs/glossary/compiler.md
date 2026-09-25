@@ -3718,28 +3718,17 @@ An external is never inlined: a ref to an external keeps its symbol even when th
 
 ### `packages/codegen/src/compiler/link.ts::collectHiddenNamedArmChoices`
 
-Hidden (`_`-prefixed) kind names whose own raw rule body is a named-arm
-choice (`isNamedArmChoice`, `dsl/rule-patterns.ts` — through a root `PREC`,
-every member a named ALIAS of a SYMBOL): dispatch choices where every arm
-names its own CST node. `resolveRule` keeps a bare-symbol-content named
-alias as the ALIAS wrapper rather than collapsing it to a plain `symbol`
-ref (`aliasedSymbolWithin` is what makes that shape eligible to stay
-wrapped) — but without this set, `classifyHiddenChoiceRule`'s
-supertype-compatible check would treat an ALIAS-of-SYMBOL member the same
-as a bare `symbol` and still promote the choice to a supertype. Every alias
-target here is a real runtime CST node, not an erased abstraction;
-classifying them `supertype` would make the transport expect transparent
-subtype dispatch, which fails at decode when the reader sees the concrete
-kind ID.
-
-A `variant`/`variantOf` annotation plays no part in the test: enrich stamps
-one on almost every unfielded choice arm, so it does not tell a dispatch
-choice (every arm its own named node) apart from an ordinary union of bare
-symbols — only the structural named-alias shape does. A choice with an arm
-that is not a named alias over a symbol (a bare, undeclared symbol) is
-excluded: that arm may still need supertype treatment. Called on the
-evaluated, pre-link rules map, before `resolveRule` flattens alias nodes to
-symbols.
+Hidden (`_`-prefixed) kind names whose raw rule body is a named-arm choice
+(`isNamedArmChoice`, `dsl/rule-patterns.ts`: a root CHOICE whose every member
+is a named ALIAS of a SYMBOL), computed on the evaluated rules before
+`resolveRule` flattens such aliases to plain symbols. `classifyHiddenChoiceRule`
+passes membership to `hiddenChoiceClass`, which then leaves the choice a
+polymorph: every alias target is a real CST node, and classifying the choice
+a supertype would make the transport expect transparent subtype dispatch,
+which fails at decode when the reader sees the concrete kind id. A
+`variant`/`variantOf` annotation plays no part in the test; labels sit on
+almost every unfielded choice arm and do not tell a dispatch choice from an
+ordinary union.
 
 ### `packages/codegen/src/compiler/link.ts::collectAliasedByParents`
 
@@ -3958,141 +3947,24 @@ symbols.
 
 ### `packages/codegen/src/compiler/link.ts::classifyHiddenChoiceRule`
 
-```text
-/**
- * Classify a hidden `choice` rule per the spec taxonomy.
- *
- * @param rule - A `ChoiceRule<'link'>` to classify.
- * @param ctx - Link phase context; `ctx.supertypes` are kind names explicitly
- *   declared in `grammar.supertypes`.
- * @param name - The grammar kind name (used to check `ctx.supertypes`).
- * @param rules - The resolved rules map under construction (same map
- *   `classifyAndLogHiddenRules` iterates) — needed to compute `variantArms`
- *   via `isAliasMintedRef`'s independent-body test. See `RuleBase.variantArms`
- *   doc comment (types/rule.ts).
- * @returns A {@link ClassifyResult}: `rule` is an `EnumRule<'link'>`,
- *   `SupertypeRule<'link'>`, or the original rule unchanged; `classification`
- *   / `classifiedBy` are set only when a new classification was made.
- * @remarks
- *   Classification:
- *   - All-string members → `EnumRule<'link'>` (promoted), unless the grammar
- *     declares the rule in `supertypes:` — `_whitespace` is a choice over
- *     fixed-text tokens and must stay a supertype.
- *   - Supertype-compatible members (symbols, named aliases, enums/strings) →
- *     `SupertypeRule<'link'>` when at least one concrete subtype name can be resolved.
- *   - Mixed/structural members → rule unchanged; Assemble classifies by shape.
- *
- *   The old rule ("any hidden choice → supertype, subtypes best-effort")
- *   produced zero-subtype supertypes for hidden choices of structural members
- *   (`_match_block`, `_line_doc_comment_marker`, `_jsx_string`, …). Those are
- *   real alternatives with fields/seqs, not abstract kind unions.
- *
- *   A choice member is "supertype-compatible" when it is: a bare `symbol`
- *   ($.foo), a named `alias(..., $.foo)`, or an `enum`/`string`. Mixed
- *   structural members (seq, field, nested choice/optional/repeat) disqualify.
- */
-```
-
-#### body
-
-```text
-// Enum admission. Three member shapes qualify:
-//   - bare STRING literals (the original all-STRING enum);
-//   - an already-literal-carrying SYMBOL (`.literal !== undefined`, set by
-//     `canonicalizeRuleLiterals`' STRING-target case); and
-//   - a named ALIAS whose content resolves to a STRING (`alias('x', $.kind)`)
-//     or to a SYMBOL whose STORAGE rule body (`rules[content.name]`) is a
-//     bare STRING — the kind's whole realization is one fixed render text
-//     (visibleExternals: `_semicolon`'s `automatic_semicolon` arm, storage
-//     `_automatic_semicolon := '\n'`). Both ALIAS cases synthesize a
-//     literal-carrying SYMBOL (`name: <alias name>`) so the choice classifies
-//     as an ENUM of {literal → kind} members instead of a supertype whose
-//     member set can never project a type union.
-```
-
-#### body
-
-```text
-// If this hidden choice's ORIGINAL (pre-resolveRule) rule body contained
-// named-alias members, its choice arms represent REAL aliased CST nodes —
-// NOT abstract supertypes that tree-sitter erases at parse time. Block
-// supertype promotion so these kinds fall through to branch classification.
-// Grammar-declared supertypes (in grammar.supertypes) are never blocked.
-```
-
-#### body
-
-```text
-// Grammar inheritance idioms author a hidden union as `choice(previous,
-// $.new_arm)` — a CHOICE member that is ITSELF a CHOICE, not a leaf. Since
-// choice-of-choice is parse-equivalent (tree-sitter erases the nesting),
-// flatten before checking supertype-compatibility and before computing
-// variantArms below; otherwise a single nested-CHOICE member fails
-// `supertypeCompatible` outright and blocks promotion for the WHOLE
-// hidden union, even though every actual leaf arm qualifies (confirmed
-// case: typescript's `_lhs_expression`, authored as
-// `choice(previous, $.non_null_expression)`).
-```
-
-#### body
-
-```text
-// Only promote if we actually resolved subtype names. An empty
-// subtypes list means the choice members aren't symbols and we
-// can't project a union — fall through to leave-as-is.
-```
-
-#### body
-
-```text
-// stamp the variant-arm linkage THIS flatten is about to erase —
-// see `RuleBase.variantArms`'s doc comment. Computed from the
-// PRE-flatten CHOICE's own members (not `subtypes`, which already
-// lost per-arm rule-shape info): a bare SYMBOL/ALIAS arm that is
-// alias-minted (the exact `isAliasMintedRef` condition
-// `variant-structural.ts`'s CHOICE-arm predicate uses, shared not
-// re-derived) names its subtype-list entry by STORAGE name (an
-// ALIAS arm by its wrapped symbol's `.name`, a SYMBOL arm by its
-// own `.name` — matching `collectSubtypeRefs`'s own per-arm naming
-// exactly, so `variantArms` entries are always a subset of
-// `subtypes`' storage names).
-//
-// This surfaces MORE alias-minted arms than the wire channel ever
-// registered for SUPERTYPE parents: every `alias($.hidden,
-// $.visible)` construct inside a supertype's choice qualifies,
-// whether hand-authored in an override `rules:` replacement OR
-// inherited from the upstream base grammar (verified during Task
-// 1 development: rust's `_pattern`/`wildcard_pattern`,
-// `_condition`/`let_chain`, `_type`/`primitive_type` are all
-// genuine upstream `alias` calls in tree-sitter-rust's own
-// grammar.js, not false positives). This is the SAME
-// reviewed-additive widening V1 already accepted for
-// CHOICE-classified parents (rust's
-// `impl_item`/`reference_expression`, ts `string`'s
-// `string_fragment` — hand-authored `alias()` calls with no
-// `variant()` registration); Task 3's probe
-// exceptions table enumerates the SUPERTYPE-parent instances the
-// same way.
-```
-
-#### body
-
-```text
-// Named ALIAS arm: record the HIDDEN symbol name (content.name),
-// matching collectSubtypeRefs' per-arm naming — variantArms
-// entries must stay a subset of `subtypes`, and assemble's
-// lookup keys on the hidden name. Live today: link's `resolveRule`
-// keeps a bare-symbol-content named alias as the ALIAS wrapper (it
-// no longer collapses to a plain symbol), so this arm's raw ALIAS
-// shape is the common case reaching this walk, not a defensive
-// fallback.
-```
-
-#### body
-
-```text
-// Mixed/structural hidden choice — survive as-is.
-```
+Classifies a hidden choice rule. The decision is `hiddenChoiceClass`
+(`dsl/rule-patterns.ts`), the same predicate the automatic stamp's
+`isSupertypeOwner` asks, fed the rule, a storage lookup into the rules map
+under construction, and the named-arm fact from
+`collectHiddenNamedArmChoices`. What remains here is construction and the
+declared-supertype override:
+- `'enum'` and not a declared supertype: the members become an enum rule
+  (`normalizeEnumMembers` when all are strings, else a choice of literal
+  symbols), `classifiedBy: 'link'`. A declared supertype (`_whitespace`, a
+  choice over fixed-text tokens) stays a supertype.
+- `'named-arms'` and not a declared supertype: the rule unchanged.
+- `'supertype'`, or a declared supertype: a `SupertypeRule` when at least one
+  subtype ref resolves (`collectSubtypeRefs`), with `variantArms` for the
+  members `isAliasMintedRef` marks as mints; `classifiedBy` is `'grammar'`
+  for a declared supertype, else `'link'`.
+- Otherwise the rule unchanged; assemble classifies it by shape. A hidden
+  choice of structural members (seqs, fields) is a real alternative, not an
+  abstract kind union.
 
 ### `packages/codegen/src/compiler/link.ts::collectSubtypeRefs`
 
@@ -5741,17 +5613,23 @@ the text a SEQ collapses to is spaced by the grammar's word shape, not `\w`.
 ### `packages/codegen/src/compiler/variant-structural.ts::VariantChild`
 
 One variant of a parent: the kind the arm names, the variant name it is
-addressed by, and `definedBy` — `'enrich'` when the arm's own rule was
-stamped by enrich's automatic variant labelling, `'override'` when a
-`variant()` patch (or other author-declared label) stamped it instead
-(`definedByOf`, reading `dsl/rule-metadata.ts`'s sanctioned
-`isEnrichAuthored` accessor). All three resolved once in the derivation and
-read unchanged by every consumer.
+addressed by, and `definedBy` — `'enrich'` when the arm's label is automatic
+(its key is in the automatic-variant record), `'override'` when an authored
+label (`variant()`, `alias()`, a group) placed it (`definedByOf`). All three
+resolved once in the derivation and read unchanged by every consumer.
+
+### `packages/codegen/src/compiler/variant-structural.ts::definedByOf`
+
+`'enrich'` when the arm's key (`automaticVariantKey`) is in the automatic-variant
+record link was handed (`RawGrammar.automaticVariants`), else `'override'`.
+The record is the only source for whether a label is automatic; nothing reads
+rule metadata for it.
 
 ### `packages/codegen/src/compiler/variant-structural.ts::deriveVariantChildren`
 
 `{parent -> VariantChild[]}` for every rule in `rules` that has at least one
-variant, by `variantChildrenOf`.
+variant, by `variantChildrenOf`, with `definedBy` read from the given
+automatic-variant record.
 
 ### `packages/codegen/src/compiler/variant-structural.ts::variantChildrenOf`
 
@@ -5766,7 +5644,7 @@ The variant a node declares for `parentKind`: a symbol carrying the
 annotations (the child kind is the symbol's name), or a named alias whose own
 annotations — or its content symbol's — carry them (the child kind is the
 alias's visible value). Annotations for a different parent do not count.
-Also stamps `definedBy` from the arm's own rule metadata (`definedByOf`).
+`definedBy` comes from the automatic-variant record (`definedByOf`).
 
 ### `packages/codegen/src/compiler/variant-structural.ts::annotationsOf`
 
@@ -7119,6 +6997,12 @@ collector parameter.
  *  `inline-array-visible-name` diagnostic. */
 ```
 
+### `packages/codegen/src/compiler/types.ts::automaticVariants`
+
+The wire context's automatic-variant record, carried by evaluate so link can
+tell an automatic arm label from an authored one (`definedByOf`). Absent for a
+grammar that never ran through `wire()`; then no label is automatic.
+
 ### `packages/codegen/src/compiler/types.ts::visibleAliasTargets`
 
 ```text
@@ -8063,9 +7947,8 @@ a structural choice) or by a `variant()` patch resolving an override arm.
 Nothing here recognises a variant by name or by shape — a prefix-named
 sibling rule, a `groups:` entry, or an upstream external that happens to
 share the parent's name is not a variant unless one of those two paths
-stamped it. `VariantChild.definedBy` (`definedByOf`, reading
-`dsl/rule-metadata.ts`'s sanctioned `isEnrichAuthored` accessor) tells
-which path stamped a given arm, so a consumer can still single out an
+stamped it. `VariantChild.definedBy` (`definedByOf`, reading the
+automatic-variant record) tells which path stamped a given arm, so a consumer can still single out an
 author-declared variant without re-deriving it.
 
 Link reads the derivation twice (`applyOverridePolymorphs`, and the final
@@ -9007,76 +8890,13 @@ parser rule; only the sittir-side rule the model reads changes.
 
 ### `packages/codegen/src/compiler/link.ts::applyOverridePolymorphs`
 
-```text
-// ---------------------------------------------------------------------------
-// applyOverridePolymorphs — variant-adoption choice → ambient-scaffold push-down
-// ---------------------------------------------------------------------------
-//
-// (parent, children) pairs are now discovered STRUCTURALLY from `rules`
-// (`deriveStructuralVariantChildren`, variant-structural.ts) instead of the
-// deleted wire-metadata channel (formerly `variants: PolymorphVariant[]`,
-// populated by `wireRegisterPolymorphVariant`). Verified byte-neutral: the ONE
-// parent that reaches this function's real structural mutation
-// (`pushAmbientScaffoldIntoVariantChildren` — the `!anyChildMemberInFoundChoice`
-// branch; the OTHER branch below is a no-op derivation-log-only path since the
-// 2026-06-01 DE-POLYMORPH change) is typescript's `public_field_definition`;
-// `deriveStructuralVariantChildren` reproduces its exact 5-child set (same full
-// names, same order) both mid-link (the `rules` snapshot this function receives,
-// already past wire's alias injection + `resolveRule`) and post-link — confirmed
-// empirically during V2 development. Short suffixes (needed by
-// `emitVariantChildDerivations`'s `${parentKind}_${child}` log format and
-// `polymorphVisibleName`) are recovered from the derivation's full target names
-// via `prefixNamedSuffix` (the exact inverse of `polymorphVisibleName`, shared
-// not re-derived).
-//
-// Form names use the SHORT child suffix from variant() — not the
-// tagVariants-derived names — so generated factories/types align with
-// what the user wrote. Mutates `rules` in place; logs to derivations.
-```
-
-#### body
-
-```text
-// Deep choice: push ambient scaffold into variant children instead.
-```
-
-#### body
-
-```text
-// Check whether any variant-child symbol appears in the found choice — either
-// as a direct member or nested inside choice/seq arms at any shallow depth.
-```
-
-#### body
-
-```text
-// Wire injects variant-child aliases as `optional(alias(...))` for
-// some parents (e.g. public_field_definition) — unwrap OPTIONAL, or
-// the alias is invisible to
-// this check and the parent wrongly falls into the ambient-scaffold
-// pushdown branch below (which is a no-op for it, since the aliases
-// ARE already present — its only effect is to rebuild the rule tree
-// without preserving rule ids, per `rewriteSeqWithVariantAliasChoice`).
-```
-
-#### body
-
-```text
-// DE-POLYMORPH (2026-06-01): wire already injected the variant-child
-// aliases into this choice (confirmed by anyChildMemberInFoundChoice
-// above). We intentionally STOP here — no longer reclassifying the
-// parent into a PolymorphRule / modelType:'polymorph' with forms. The
-// rule stays the wire-produced seq(..., choice(alias_a, alias_b, …), …)
-// and flows through as a plain BRANCH: faithful order-preserving render
-// over a single choice slot, no forms / no $variant dispatch. The
-// `variant()` overlay and wire's alias synthesis are
-// retained, so factory submethod sugar derives from the choice arms
-// (the alias kinds) rather than from a forms list.
-//
-// (Was: rules[parentKind] = { type:'polymorph',
-//   forms: buildOverridePolymorphForms(parentKind, children, found, rules),
-//   source:'override' }.)
-```
+Pushes a variant-adoption choice's ambient scaffold down into its variant
+children. The (parent, children) pairs come from `deriveVariantChildren` over
+the rules as they stand mid-link (past wire's alias injection and
+`resolveRule`), with the automatic-variant record for `definedBy`. The only
+structural mutation is `pushAmbientScaffoldIntoVariantChildren`, for a parent
+whose choice holds none of the children's own members (typescript's
+`public_field_definition`); every other parent only records its derivation.
 
 ### `packages/codegen/src/compiler/link.ts::findVariantChoice`
 

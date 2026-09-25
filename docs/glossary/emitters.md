@@ -15342,20 +15342,18 @@ clash on the short key falls back to the flattened name.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emittedArmPath`
 
-How an arm is actually spelled on its emitted entry: one segment at the top,
-two when it nests. Every reader of an arm's spelling goes through this — the
+How an arm is spelled on its emitted entry: its own name at the top, or its
+host's name followed by the keys it nests under, one per level, however deep
+(`nestingArmOf`). Every reader of an arm's spelling goes through this — the
 child references inside the overlay, the seat stamps in the node model, and
 the generated per-kind tests — so no second derivation can drift from what was
 emitted.
 
-
 The overlay's mount loop places arms in two passes — every emitted arm is
-built first, then each grand-arm attaches under its host — so nesting does
+built first, then each nested arm attaches under its host — so nesting does
 not depend on the order the derivation listed the arms in. A host that
-appears after its grand-arm (python `case_pattern`'s `negative` after the
-`integer` and `float` it hosts) still receives them; a one-pass placement
-left such arms flat while this function spelled them nested, and the
-generated pins called a path the overlay never mounted.
+appears after an arm it hosts (python `case_pattern`'s `negative` after the
+`integer` and `float` it hosts) still receives them.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatBearing`
 

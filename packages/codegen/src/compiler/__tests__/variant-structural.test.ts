@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { deriveVariantChildren, variantChildrenOf } from '../variant-structural.ts';
-import { prefixNamedSuffix } from '../../dsl/arm-names.ts';
+import { armNameOf } from '../../dsl/arm-names.ts';
 import type { Rule } from '../../types/rule.ts';
 
 const variantOf = (parent: string, variant: string) => ({ annotations: { variant, variantOf: parent } });
@@ -19,30 +19,30 @@ const field = (name: string, content: Rule<'link'>): Rule<'link'> =>
 const supertype = (name: string, ...subtypes: Rule<'link'>[]): Rule<'link'> =>
 	({ type: 'SUPERTYPE', name, subtypes }) as unknown as Rule<'link'>;
 
-describe('prefixNamedSuffix', () => {
+describe('armNameOf', () => {
 	it('matches a visible parent + visible target', () => {
-		expect(prefixNamedSuffix('array_expression', 'array_expression_semi')).toBe('semi');
+		expect(armNameOf('array_expression', 'array_expression_semi', false)).toBe('semi');
 	});
 
 	it('strips a hidden parent before comparing', () => {
-		expect(prefixNamedSuffix('_export_statement_default', 'export_statement_default_from_arm')).toBe('from_arm');
+		expect(armNameOf('_export_statement_default', 'export_statement_default_from_arm', false)).toBe('from_arm');
 	});
 
 	it('strips a hidden target before comparing', () => {
-		expect(prefixNamedSuffix('_simple_pattern', '_simple_pattern_negative')).toBe('negative');
+		expect(armNameOf('_simple_pattern', '_simple_pattern_negative', false)).toBe('negative');
 	});
 
-	it('returns null for a non-prefixed name or an empty suffix', () => {
-		expect(prefixNamedSuffix('dictionary', 'pair')).toBeNull();
-		expect(prefixNamedSuffix('foo', 'foo_')).toBeNull();
-		expect(prefixNamedSuffix('foo', 'foo')).toBeNull();
+	it('falls back to the display for a non-prefixed name or an empty suffix', () => {
+		expect(armNameOf('dictionary', 'pair', false)).toBe('pair');
+		expect(armNameOf('foo', 'foo_', false)).toBe('foo_');
+		expect(armNameOf('foo', 'foo', false)).toBe('foo');
 	});
 });
 
 describe('variantChildrenOf — variants come from the variant annotation only', () => {
 	it('reads a symbol arm annotated as a variant of the parent', () => {
 		const rule = choice(sym('assignment_eq', variantOf('assignment', 'eq')), sym('assignment_type', variantOf('assignment', 'type')));
-		expect(variantChildrenOf('assignment', rule)).toEqual([
+		expect(variantChildrenOf('assignment', rule, undefined)).toEqual([
 			{ kind: 'assignment_eq', name: 'eq', definedBy: 'override' },
 			{ kind: 'assignment_type', name: 'type', definedBy: 'override' }
 		]);
@@ -50,12 +50,12 @@ describe('variantChildrenOf — variants come from the variant annotation only',
 
 	it('ignores a prefix-named arm with no variant annotation', () => {
 		const rule = seq(str('yield'), sym('yield_from_clause'));
-		expect(variantChildrenOf('yield', rule)).toEqual([]);
+		expect(variantChildrenOf('yield', rule, undefined)).toEqual([]);
 	});
 
 	it('ignores an arm annotated as a variant of a different parent', () => {
 		const rule = choice(sym('other_x', variantOf('other', 'x')), sym('parent_y', variantOf('parent', 'y')));
-		expect(variantChildrenOf('parent', rule)).toEqual([{ kind: 'parent_y', name: 'y', definedBy: 'override' }]);
+		expect(variantChildrenOf('parent', rule, undefined)).toEqual([{ kind: 'parent_y', name: 'y', definedBy: 'override' }]);
 	});
 
 	it('names an aliased arm by its visible value, with the annotation on the alias or its content', () => {
@@ -63,7 +63,7 @@ describe('variantChildrenOf — variants come from the variant annotation only',
 			alias('crate', sym('crate'), variantOf('visibility_modifier', 'crate')),
 			alias('visibility_modifier_pub', sym('_pub', variantOf('visibility_modifier', 'pub')))
 		);
-		expect(variantChildrenOf('visibility_modifier', rule)).toEqual([
+		expect(variantChildrenOf('visibility_modifier', rule, undefined)).toEqual([
 			{ kind: 'crate', name: 'crate', definedBy: 'override' },
 			{ kind: 'visibility_modifier_pub', name: 'pub', definedBy: 'override' }
 		]);
@@ -71,7 +71,7 @@ describe('variantChildrenOf — variants come from the variant annotation only',
 
 	it('finds variants nested under fields and sequences', () => {
 		const rule = seq(str('impl'), field('trait_clause', choice(sym('impl_item_positive_clause', variantOf('impl_item', 'positive_clause')))));
-		expect(variantChildrenOf('impl_item', rule)).toEqual([{ kind: 'impl_item_positive_clause', name: 'positive_clause', definedBy: 'override' }]);
+		expect(variantChildrenOf('impl_item', rule, undefined)).toEqual([{ kind: 'impl_item_positive_clause', name: 'positive_clause', definedBy: 'override' }]);
 	});
 
 	it('walks a flattened parent\'s supertype subtypes', () => {
@@ -80,7 +80,7 @@ describe('variantChildrenOf — variants come from the variant annotation only',
 			sym('reference_expression_raw_const', variantOf('reference_expression', 'raw_const')),
 			sym('reference_expression_bare', variantOf('reference_expression', 'bare'))
 		);
-		expect(variantChildrenOf('reference_expression', rule)).toEqual([
+		expect(variantChildrenOf('reference_expression', rule, undefined)).toEqual([
 			{ kind: 'reference_expression_raw_const', name: 'raw_const', definedBy: 'override' },
 			{ kind: 'reference_expression_bare', name: 'bare', definedBy: 'override' }
 		]);
@@ -88,7 +88,7 @@ describe('variantChildrenOf — variants come from the variant annotation only',
 
 	it('lists a variant reached from several arms once', () => {
 		const eq = sym('assignment_eq', variantOf('assignment', 'eq'));
-		expect(variantChildrenOf('assignment', choice(seq(str('='), eq), seq(str(':='), eq)))).toEqual([{ kind: 'assignment_eq', name: 'eq', definedBy: 'override' }]);
+		expect(variantChildrenOf('assignment', choice(seq(str('='), eq), seq(str(':='), eq)), undefined)).toEqual([{ kind: 'assignment_eq', name: 'eq', definedBy: 'override' }]);
 	});
 });
 
@@ -98,7 +98,7 @@ describe('deriveVariantChildren', () => {
 			string: choice(sym('string_double', variantOf('string', 'double')), sym('string_single', variantOf('string', 'single'))),
 			identifier: str('x')
 		};
-		const map = deriveVariantChildren(rules);
+		const map = deriveVariantChildren(rules, undefined);
 		expect([...map.keys()]).toEqual(['string']);
 		expect(map.get('string')).toEqual([
 			{ kind: 'string_double', name: 'double', definedBy: 'override' },

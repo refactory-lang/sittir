@@ -1,11 +1,13 @@
-import { ALIAS, CHOICE, FIELD, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, FIELD, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { enrich } from '../enrich.ts';
 import { transform } from '../transform/transform.ts';
 import { field } from '../primitives/field.ts';
 import { variant } from '../primitives/variant.ts';
 import { withWireContext } from '../wire/wire.ts';
-import { getEnrichAutomaticVariants, relabelledArm } from '../automatic-variants.ts';
+import { getEnrichAutomaticVariants, isSupertypeOwner, relabelledArm } from '../automatic-variants.ts';
+import { link } from '../../compiler/link.ts';
+import type { RawGrammar } from '../../compiler/types.ts';
 import { variantChildrenOf } from '../../compiler/variant-structural.ts';
 import { armFactsOf } from '../../compiler/model/node-map.ts';
 import type { Rule, RuleAnnotations } from '../../types/rule.ts';
@@ -128,17 +130,68 @@ describe('automatic variants', () => {
 
 	it('reads definedBy enrich from an automatic label and override from an authored one', () => {
 		const base = enriched({ pick, ...leaves });
-		const { result } = withWireContext('pick', () => transform(base.grammar.rules.pick as unknown as RuntimeRule, { '1/1': variant('yellow') }), base);
-		expect(variantChildrenOf('pick', result as never).map((child) => [child.name, child.definedBy])).toEqual([
+		const { result, ctx } = withWireContext('pick', () => transform(base.grammar.rules.pick as unknown as RuntimeRule, { '1/1': variant('yellow') }), base);
+		expect(variantChildrenOf('pick', result as never, ctx.automaticVariants).map((child) => [child.name, child.definedBy])).toEqual([
 			['apple', 'enrich'],
 			['yellow', 'override']
 		]);
 	});
 
-	it('names a literal arm from its resolved token kind', () => {
-		expect(armFactsOf({ annotations: { variantOf: 'logic' }, resolvedKind: 'logic_and' })).toEqual({ variant: 'and', variantOf: 'logic' });
-		expect(armFactsOf({ annotations: { variantOf: 'logic' }, resolvedKind: 'or_keyword' })).toEqual({ variant: 'or_keyword', variantOf: 'logic' });
+	it('names a literal arm from its resolved token kind, by the supertype member rule under a supertype owner', () => {
+		expect(armFactsOf({ annotations: { variantOf: 'logic' }, resolvedKind: 'logic_and' }, undefined)).toEqual({ variant: 'and', variantOf: 'logic' });
+		expect(armFactsOf({ annotations: { variantOf: 'logic' }, resolvedKind: 'or_keyword' }, undefined)).toEqual({ variant: 'or_keyword', variantOf: 'logic' });
+		const supertypeOwner = { simplifiedRules: { _literal: { type: SUPERTYPE } } } as never;
+		expect(armFactsOf({ annotations: { variantOf: '_literal' }, resolvedKind: 'true_literal' }, supertypeOwner)).toEqual({ variant: 'true', variantOf: '_literal' });
 	});
+
+	it('keeps an authored variant() that spells the automatic name when a patch fields the slot', () => {
+		const base = enriched({ pick, ...leaves });
+		const { result } = withWireContext(
+			'pick',
+			() => {
+				const authored = transform(base.grammar.rules.pick as unknown as RuntimeRule, { '1/0': variant('apple', { default: true }) });
+				return transform(authored, { 1: field('fruit') });
+			},
+			base
+		);
+		const choice = (result as unknown as { members: { content: Members }[] }).members[1]!.content;
+		expect(choice.members.map(labelOf)).toEqual([{ variant: 'apple', variantOf: 'pick', default: true }, undefined]);
+	});
+});
+
+describe('the supertype recognizer', () => {
+	const sym = (name: string) => ({ type: SYMBOL, name });
+	const shapes = {
+		'a prec-wrapped choice': { type: 'PREC', value: 1, content: { type: CHOICE, members: [sym('a_thing'), sym('b_thing')] } },
+		'a choice holding a choice': { type: CHOICE, members: [sym('a_thing'), { type: CHOICE, members: [sym('b_thing'), sym('c_thing')] }] }
+	};
+	for (const [label, body] of Object.entries(shapes)) {
+		it(`classifies ${label} the same in link and in the stamp`, () => {
+			const rules = {
+				root: { type: SEQ, members: [{ type: STRING, value: 'r' }, sym('_thing')] },
+				_thing: body,
+				a_thing: { type: PATTERN, value: 'a' },
+				b_thing: { type: PATTERN, value: 'b' },
+				c_thing: { type: PATTERN, value: 'c' }
+			} as unknown as Record<string, Rule<'evaluate'>>;
+			const raw = {
+				name: 'probe',
+				rules: structuredClone(rules),
+				ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
+				extras: [],
+				externals: [],
+				supertypes: [],
+				factoryInline: [],
+				inline: [],
+				conflicts: [],
+				precedences: [],
+				word: null,
+				references: []
+			} as unknown as RawGrammar;
+			const linked = link(raw).rules._thing?.type === SUPERTYPE;
+			expect(isSupertypeOwner('_thing', rules, new Set(), new Set())).toBe(linked);
+		});
+	}
 });
 
 describe('relabelling an arm', () => {
@@ -146,7 +199,7 @@ describe('relabelling an arm', () => {
 
 	it('keeps an authored label whole', () => {
 		const original = { type: SYMBOL, name: 'x', annotations: { variant: 'mine', variantOf: 'p', default: true } };
-		const out = relabelledArm(site, original, getEnrichAutomaticVariants(undefined)) as Arm;
+		const out = relabelledArm(site, original, { keys: new Set(), supertypeOwners: new Set() }) as Arm;
 		expect(labelOf(out)).toEqual({ variant: 'mine', variantOf: 'p', default: true });
 	});
 
@@ -156,7 +209,7 @@ describe('relabelling an arm', () => {
 			x: { type: STRING, value: 'x' },
 			y: { type: STRING, value: 'y' }
 		} as Record<string, Rule<'evaluate'>>);
-		const record = getEnrichAutomaticVariants(stamped);
+		const record = getEnrichAutomaticVariants(stamped)!;
 		const before = record.keys.size;
 		const out = relabelledArm(site, choiceOf(stamped.grammar.rules.p).members[0]!, record) as Arm;
 		expect(labelOf(out)).toEqual({ variant: 'shown', variantOf: 'p' });

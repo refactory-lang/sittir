@@ -704,13 +704,13 @@ export interface ArmFacts {
 	readonly spliced?: true;
 }
 
-export function armFactsOf(arm: { readonly annotations?: RuleAnnotations; readonly resolvedKind?: string }): ArmFacts {
+export function armFactsOf(arm: { readonly annotations?: RuleAnnotations; readonly resolvedKind?: string }, ctx: DeriveCtx | undefined): ArmFacts {
 	const { annotations, resolvedKind } = arm;
 	if (annotations === undefined) return {};
 	const literalName =
 		annotations.variantOf === undefined || resolvedKind === undefined
 			? undefined
-			: armNameOf(annotations.variantOf, undisplayedKindAddress(resolvedKind), false);
+			: armNameOf(annotations.variantOf, undisplayedKindAddress(resolvedKind), ctx?.simplifiedRules?.[annotations.variantOf]?.type === SUPERTYPE);
 	const variant = annotations.variant ?? literalName;
 	return {
 		...(variant === undefined ? {} : { variant, variantOf: annotations.variantOf }),
@@ -743,7 +743,7 @@ export function deriveValuesForRule(
 ): NodeOrTerminal[] {
 	switch (rule.type) {
 		case SYMBOL: {
-			const armFacts = armFactsOf({ annotations: rule.annotations, resolvedKind: rule.literal === undefined ? undefined : rule.name });
+			const armFacts = armFactsOf({ annotations: rule.annotations, resolvedKind: rule.literal === undefined ? undefined : rule.name }, ctx);
 			if (rule.literal !== undefined) {
 				if (rule.kindId !== undefined) {
 					return [
@@ -802,7 +802,7 @@ export function deriveValuesForRule(
 		case SUPERTYPE:
 			return rule.subtypes.map((subRef) => {
 				const name = subRef.name;
-				const armFacts = armFactsOf(subRef);
+				const armFacts = armFactsOf(subRef, ctx);
 				const display = aliasEnvelopeValueOf(subRef, ctx, multiplicity);
 				if (display !== undefined) return { ...display, ...armFacts };
 				if (subRef.kindId !== undefined) {
@@ -828,7 +828,7 @@ export function deriveValuesForRule(
 		case STRING:
 		case PATTERN: {
 			if (rule.type === PATTERN && rule.fieldName !== undefined) {
-				return [{ pattern: rule.value, ...armFactsOf(rule), multiplicity }];
+				return [{ pattern: rule.value, ...armFactsOf(rule, ctx), multiplicity }];
 			}
 			if (rule.resolvedKindId !== undefined) {
 				const entry = findKindEntryById({ entries: ctx?.kindEntries ?? [], id: rule.resolvedKindId });
@@ -840,7 +840,7 @@ export function deriveValuesForRule(
 						resolvedKindId: rule.resolvedKindId,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
 						parseKindId: entry?.parseId ?? rule.resolvedKindId,
-						...armFactsOf({ annotations: rule.annotations, resolvedKind: rk }),
+						...armFactsOf({ annotations: rule.annotations, resolvedKind: rk }, ctx),
 						multiplicity
 					}
 				];
@@ -854,7 +854,7 @@ export function deriveValuesForRule(
 					resolvedKindId: entry?.id,
 					parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
 					parseKindId: entry?.parseId ?? entry?.id,
-					...armFactsOf({ annotations: rule.annotations, resolvedKind: rk }),
+					...armFactsOf({ annotations: rule.annotations, resolvedKind: rk }, ctx),
 					multiplicity
 				}
 			];
@@ -875,7 +875,7 @@ export function deriveValuesForRule(
 						resolvedKindId: entry?.id,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
 						parseKindId: entry?.parseId ?? entry?.id,
-						...armFactsOf({ annotations: m.annotations, resolvedKind: rk }),
+						...armFactsOf({ annotations: m.annotations, resolvedKind: rk }, ctx),
 						multiplicity
 					};
 				});

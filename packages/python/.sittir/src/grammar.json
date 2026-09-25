@@ -44,9 +44,6 @@
           "annotations": {
             "variant": "compound",
             "variantOf": "_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ]
@@ -82,9 +79,6 @@
           "annotations": {
             "variant": "future_import",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -93,9 +87,6 @@
           "annotations": {
             "variant": "import",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -104,9 +95,6 @@
           "annotations": {
             "variant": "import_from",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -115,9 +103,6 @@
           "annotations": {
             "variant": "print",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -126,9 +111,6 @@
           "annotations": {
             "variant": "assert",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -137,9 +119,6 @@
           "annotations": {
             "variant": "expression",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -148,9 +127,6 @@
           "annotations": {
             "variant": "return",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -159,9 +135,6 @@
           "annotations": {
             "variant": "delete",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -170,9 +143,6 @@
           "annotations": {
             "variant": "raise",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -181,9 +151,6 @@
           "annotations": {
             "variant": "pass",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -192,9 +159,6 @@
           "annotations": {
             "variant": "break",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -203,9 +167,6 @@
           "annotations": {
             "variant": "continue",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -214,9 +175,6 @@
           "annotations": {
             "variant": "global",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -225,9 +183,6 @@
           "annotations": {
             "variant": "nonlocal",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -236,9 +191,6 @@
           "annotations": {
             "variant": "exec",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -247,9 +199,6 @@
           "annotations": {
             "variant": "type_alias",
             "variantOf": "_simple_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ]
@@ -364,10 +313,7 @@
                 }
               },
               "named": true,
-              "value": "parenthesized_import_list",
-              "metadata": {
-                "author": "enrich"
-              }
+              "value": "parenthesized_import_list"
             }
           ]
         }
@@ -409,10 +355,7 @@
               "name": "wildcard_import",
               "content": {
                 "type": "SYMBOL",
-                "name": "wildcard_import",
-                "metadata": {
-                  "author": "enrich"
-                }
+                "name": "wildcard_import"
               },
               "metadata": {
                 "fieldSource": "override"
@@ -446,10 +389,7 @@
                 }
               },
               "named": true,
-              "value": "parenthesized_import_list",
-              "metadata": {
-                "author": "enrich"
-              }
+              "value": "parenthesized_import_list"
             }
           ]
         }
@@ -649,9 +589,6 @@
           "annotations": {
             "variant": "expression",
             "variantOf": "expression_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -660,9 +597,6 @@
           "annotations": {
             "variant": "tuple",
             "variantOf": "expression_statement"
-          },
-          "metadata": {
-            "author": "override"
           }
         },
         {
@@ -671,9 +605,6 @@
           "annotations": {
             "variant": "assignment",
             "variantOf": "expression_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -682,9 +613,6 @@
           "annotations": {
             "variant": "augmented_assignment",
             "variantOf": "expression_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -693,9 +621,6 @@
           "annotations": {
             "variant": "yield",
             "variantOf": "expression_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ]
@@ -734,9 +659,6 @@
           "annotations": {
             "variant": "identifier",
             "variantOf": "_named_expression_lhs"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -745,9 +667,6 @@
           "annotations": {
             "variant": "keyword_identifier",
             "variantOf": "_named_expression_lhs"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ]
@@ -795,9 +714,6 @@
           "annotations": {
             "variant": "expression",
             "variantOf": "_expressions"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -806,9 +722,6 @@
           "annotations": {
             "variant": "expression_list",
             "variantOf": "_expressions"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ]
@@ -883,9 +796,6 @@
           "annotations": {
             "variant": "if",
             "variantOf": "_compound_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -894,9 +804,6 @@
           "annotations": {
             "variant": "for",
             "variantOf": "_compound_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -905,9 +812,6 @@
           "annotations": {
             "variant": "while",
             "variantOf": "_compound_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -916,9 +820,6 @@
           "annotations": {
             "variant": "try",
             "variantOf": "_compound_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -927,9 +828,6 @@
           "annotations": {
             "variant": "with",
             "variantOf": "_compound_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -938,9 +836,6 @@
           "annotations": {
             "variant": "function",
             "variantOf": "_compound_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -949,9 +844,6 @@
           "annotations": {
             "variant": "class",
             "variantOf": "_compound_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -960,9 +852,6 @@
           "annotations": {
             "variant": "decorated",
             "variantOf": "_compound_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -971,9 +860,6 @@
           "annotations": {
             "variant": "match",
             "variantOf": "_compound_statement"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ]
@@ -1128,9 +1014,6 @@
             "variant": "block",
             "variantOf": "_match_block",
             "default": true
-          },
-          "metadata": {
-            "author": "override"
           }
         },
         {
@@ -1143,8 +1026,7 @@
               "variantOf": "_match_block"
             },
             "metadata": {
-              "fieldSource": "override",
-              "author": "override"
+              "fieldSource": "override"
             }
           },
           "named": true,
@@ -1434,7 +1316,7 @@
                 "type": "SYMBOL",
                 "name": "except_clause_exception",
                 "metadata": {
-                  "author": "override",
+                  "author": "enrich",
                   "symbolSource": "group-lift"
                 },
                 "annotations": {
@@ -1543,7 +1425,7 @@
           "type": "SYMBOL",
           "name": "with_clause_bare",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -1555,7 +1437,7 @@
           "type": "SYMBOL",
           "name": "with_clause_paren",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -2032,9 +1914,6 @@
                 "annotations": {
                   "variant": "parenthesized_list_splat",
                   "variantOf": "parenthesized_list_splat"
-                },
-                "metadata": {
-                  "author": "enrich"
                 }
               },
               {
@@ -2043,9 +1922,6 @@
                 "annotations": {
                   "variant": "list_splat",
                   "variantOf": "parenthesized_list_splat"
-                },
-                "metadata": {
-                  "author": "enrich"
                 }
               }
             ]
@@ -2167,9 +2043,6 @@
           "annotations": {
             "variant": "inline",
             "variantOf": "_suite"
-          },
-          "metadata": {
-            "author": "override"
           }
         },
         {
@@ -2178,9 +2051,6 @@
           "annotations": {
             "variant": "block",
             "variantOf": "_suite"
-          },
-          "metadata": {
-            "author": "override"
           }
         },
         {
@@ -2189,9 +2059,6 @@
           "annotations": {
             "variant": "empty",
             "variantOf": "_suite"
-          },
-          "metadata": {
-            "author": "override"
           }
         }
       ]
@@ -2237,10 +2104,7 @@
               "members": [
                 {
                   "type": "STRING",
-                  "value": ",",
-                  "metadata": {
-                    "author": "enrich"
-                  }
+                  "value": ","
                 },
                 {
                   "type": "SYMBOL",
@@ -2319,10 +2183,7 @@
               }
             },
             "named": true,
-            "value": "case_as_pattern",
-            "metadata": {
-              "author": "enrich"
-            }
+            "value": "case_as_pattern"
           },
           {
             "type": "SYMBOL",
@@ -2330,9 +2191,6 @@
             "annotations": {
               "variant": "keyword_pattern",
               "variantOf": "case_pattern"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           },
           {
@@ -2411,9 +2269,6 @@
             "annotations": {
               "variant": "negative",
               "variantOf": "_simple_pattern"
-            },
-            "metadata": {
-              "author": "override"
             }
           },
           {
@@ -2599,17 +2454,11 @@
               "members": [
                 {
                   "type": "STRING",
-                  "value": "*",
-                  "metadata": {
-                    "author": "enrich"
-                  }
+                  "value": "*"
                 },
                 {
                   "type": "STRING",
-                  "value": "**",
-                  "metadata": {
-                    "author": "enrich"
-                  }
+                  "value": "**"
                 }
               ]
             },
@@ -2625,17 +2474,11 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "identifier",
-                  "metadata": {
-                    "author": "enrich"
-                  }
+                  "name": "identifier"
                 },
                 {
                   "type": "STRING",
-                  "value": "_",
-                  "metadata": {
-                    "author": "enrich"
-                  }
+                  "value": "_"
                 }
               ]
             },
@@ -2726,17 +2569,11 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "integer",
-                  "metadata": {
-                    "author": "enrich"
-                  }
+                  "name": "integer"
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "float",
-                  "metadata": {
-                    "author": "enrich"
-                  }
+                  "name": "float"
                 }
               ]
             },
@@ -2752,17 +2589,11 @@
               "members": [
                 {
                   "type": "STRING",
-                  "value": "+",
-                  "metadata": {
-                    "author": "enrich"
-                  }
+                  "value": "+"
                 },
                 {
                   "type": "STRING",
-                  "value": "-",
-                  "metadata": {
-                    "author": "enrich"
-                  }
+                  "value": "-"
                 }
               ]
             },
@@ -2779,9 +2610,6 @@
                 "annotations": {
                   "variant": "integer",
                   "variantOf": "complex_pattern"
-                },
-                "metadata": {
-                  "author": "enrich"
                 }
               },
               {
@@ -2790,9 +2618,6 @@
                 "annotations": {
                   "variant": "float",
                   "variantOf": "complex_pattern"
-                },
-                "metadata": {
-                  "author": "enrich"
                 }
               }
             ]
@@ -2911,9 +2736,6 @@
           "annotations": {
             "variant": "identifier",
             "variantOf": "parameter"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -2922,9 +2744,6 @@
           "annotations": {
             "variant": "typed",
             "variantOf": "parameter"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -2933,9 +2752,6 @@
           "annotations": {
             "variant": "default",
             "variantOf": "parameter"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -2944,9 +2760,6 @@
           "annotations": {
             "variant": "typed_default",
             "variantOf": "parameter"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -2955,9 +2768,6 @@
           "annotations": {
             "variant": "list_splat",
             "variantOf": "parameter"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -2966,9 +2776,6 @@
           "annotations": {
             "variant": "tuple",
             "variantOf": "parameter"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -2977,9 +2784,6 @@
           "annotations": {
             "variant": "keyword_separator",
             "variantOf": "parameter"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -2988,9 +2792,6 @@
           "annotations": {
             "variant": "positional_separator",
             "variantOf": "parameter"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -2999,9 +2800,6 @@
           "annotations": {
             "variant": "dictionary_splat",
             "variantOf": "parameter"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ]
@@ -3015,9 +2813,6 @@
           "annotations": {
             "variant": "identifier",
             "variantOf": "pattern"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3026,9 +2821,6 @@
           "annotations": {
             "variant": "keyword_identifier",
             "variantOf": "pattern"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3037,9 +2829,6 @@
           "annotations": {
             "variant": "subscript",
             "variantOf": "pattern"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3048,9 +2837,6 @@
           "annotations": {
             "variant": "attribute",
             "variantOf": "pattern"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3059,9 +2845,6 @@
           "annotations": {
             "variant": "list_splat",
             "variantOf": "pattern"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3070,9 +2853,6 @@
           "annotations": {
             "variant": "tuple",
             "variantOf": "pattern"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3081,9 +2861,6 @@
           "annotations": {
             "variant": "list",
             "variantOf": "pattern"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ]
@@ -3247,9 +3024,6 @@
               "annotations": {
                 "variant": "identifier",
                 "variantOf": "list_splat_pattern"
-              },
-              "metadata": {
-                "author": "enrich"
               }
             },
             {
@@ -3258,9 +3032,6 @@
               "annotations": {
                 "variant": "keyword_identifier",
                 "variantOf": "list_splat_pattern"
-              },
-              "metadata": {
-                "author": "enrich"
               }
             },
             {
@@ -3269,9 +3040,6 @@
               "annotations": {
                 "variant": "subscript",
                 "variantOf": "list_splat_pattern"
-              },
-              "metadata": {
-                "author": "enrich"
               }
             },
             {
@@ -3280,9 +3048,6 @@
               "annotations": {
                 "variant": "attribute",
                 "variantOf": "list_splat_pattern"
-              },
-              "metadata": {
-                "author": "enrich"
               }
             }
           ]
@@ -3305,9 +3070,6 @@
               "annotations": {
                 "variant": "identifier",
                 "variantOf": "dictionary_splat_pattern"
-              },
-              "metadata": {
-                "author": "enrich"
               }
             },
             {
@@ -3316,9 +3078,6 @@
               "annotations": {
                 "variant": "keyword_identifier",
                 "variantOf": "dictionary_splat_pattern"
-              },
-              "metadata": {
-                "author": "enrich"
               }
             },
             {
@@ -3327,9 +3086,6 @@
               "annotations": {
                 "variant": "subscript",
                 "variantOf": "dictionary_splat_pattern"
-              },
-              "metadata": {
-                "author": "enrich"
               }
             },
             {
@@ -3338,9 +3094,6 @@
               "annotations": {
                 "variant": "attribute",
                 "variantOf": "dictionary_splat_pattern"
-              },
-              "metadata": {
-                "author": "enrich"
               }
             }
           ]
@@ -3393,9 +3146,6 @@
           "annotations": {
             "variant": "expression",
             "variantOf": "_expression_within_for_in_clause"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3404,9 +3154,6 @@
           "annotations": {
             "variant": "lambda",
             "variantOf": "_expression_within_for_in_clause"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ]
@@ -3420,9 +3167,6 @@
           "annotations": {
             "variant": "comparison",
             "variantOf": "expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3431,9 +3175,6 @@
           "annotations": {
             "variant": "not",
             "variantOf": "expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3442,9 +3183,6 @@
           "annotations": {
             "variant": "boolean",
             "variantOf": "expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3453,9 +3191,6 @@
           "annotations": {
             "variant": "lambda",
             "variantOf": "expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3464,9 +3199,6 @@
           "annotations": {
             "variant": "primary",
             "variantOf": "expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3475,9 +3207,6 @@
           "annotations": {
             "variant": "conditional",
             "variantOf": "expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3486,9 +3215,6 @@
           "annotations": {
             "variant": "named",
             "variantOf": "expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3497,9 +3223,6 @@
           "annotations": {
             "variant": "as",
             "variantOf": "expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ]
@@ -3513,9 +3236,6 @@
           "annotations": {
             "variant": "await",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3524,9 +3244,6 @@
           "annotations": {
             "variant": "binary",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3535,9 +3252,6 @@
           "annotations": {
             "variant": "identifier",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3546,9 +3260,6 @@
           "annotations": {
             "variant": "keyword_identifier",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3557,9 +3268,6 @@
           "annotations": {
             "variant": "string",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3568,9 +3276,6 @@
           "annotations": {
             "variant": "concatenated_string",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3579,9 +3284,6 @@
           "annotations": {
             "variant": "integer",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3590,9 +3292,6 @@
           "annotations": {
             "variant": "float",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3601,9 +3300,6 @@
           "annotations": {
             "variant": "true",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3612,9 +3308,6 @@
           "annotations": {
             "variant": "false",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3623,9 +3316,6 @@
           "annotations": {
             "variant": "none",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3634,9 +3324,6 @@
           "annotations": {
             "variant": "unary",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3645,9 +3332,6 @@
           "annotations": {
             "variant": "attribute",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3656,9 +3340,6 @@
           "annotations": {
             "variant": "subscript",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3667,9 +3348,6 @@
           "annotations": {
             "variant": "call",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3678,9 +3356,6 @@
           "annotations": {
             "variant": "list",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3689,9 +3364,6 @@
           "annotations": {
             "variant": "list_comprehension",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3700,9 +3372,6 @@
           "annotations": {
             "variant": "dictionary",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3711,9 +3380,6 @@
           "annotations": {
             "variant": "dictionary_comprehension",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3722,9 +3388,6 @@
           "annotations": {
             "variant": "set",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3733,9 +3396,6 @@
           "annotations": {
             "variant": "set_comprehension",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3744,9 +3404,6 @@
           "annotations": {
             "variant": "tuple",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3755,9 +3412,6 @@
           "annotations": {
             "variant": "parenthesized",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3766,9 +3420,6 @@
           "annotations": {
             "variant": "generator",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3777,9 +3428,6 @@
           "annotations": {
             "variant": "ellipsis",
             "variantOf": "primary_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -3849,9 +3497,6 @@
             ],
             "annotations": {
               "variantOf": "boolean_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         },
@@ -3888,9 +3533,6 @@
             ],
             "annotations": {
               "variantOf": "boolean_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         }
@@ -3932,9 +3574,6 @@
             ],
             "annotations": {
               "variantOf": "binary_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         },
@@ -3971,9 +3610,6 @@
             ],
             "annotations": {
               "variantOf": "binary_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         },
@@ -4010,9 +3646,6 @@
             ],
             "annotations": {
               "variantOf": "binary_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         },
@@ -4049,9 +3682,6 @@
             ],
             "annotations": {
               "variantOf": "binary_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         },
@@ -4088,9 +3718,6 @@
             ],
             "annotations": {
               "variantOf": "binary_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         },
@@ -4127,9 +3754,6 @@
             ],
             "annotations": {
               "variantOf": "binary_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         },
@@ -4166,9 +3790,6 @@
             ],
             "annotations": {
               "variantOf": "binary_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         },
@@ -4205,9 +3826,6 @@
             ],
             "annotations": {
               "variantOf": "binary_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         },
@@ -4244,9 +3862,6 @@
             ],
             "annotations": {
               "variantOf": "binary_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         },
@@ -4283,9 +3898,6 @@
             ],
             "annotations": {
               "variantOf": "binary_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         },
@@ -4322,9 +3934,6 @@
             ],
             "annotations": {
               "variantOf": "binary_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         },
@@ -4361,9 +3970,6 @@
             ],
             "annotations": {
               "variantOf": "binary_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         },
@@ -4400,9 +4006,6 @@
             ],
             "annotations": {
               "variantOf": "binary_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         }
@@ -4598,9 +4201,6 @@
           "annotations": {
             "variant": "eq",
             "variantOf": "assignment"
-          },
-          "metadata": {
-            "author": "override"
           }
         },
         {
@@ -4609,9 +4209,6 @@
           "annotations": {
             "variant": "type",
             "variantOf": "assignment"
-          },
-          "metadata": {
-            "author": "override"
           }
         },
         {
@@ -4620,9 +4217,6 @@
           "annotations": {
             "variant": "typed",
             "variantOf": "assignment"
-          },
-          "metadata": {
-            "author": "override"
           }
         }
       ]
@@ -4665,9 +4259,6 @@
           "annotations": {
             "variant": "pattern",
             "variantOf": "_left_hand_side"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -4676,9 +4267,6 @@
           "annotations": {
             "variant": "pattern_list",
             "variantOf": "_left_hand_side"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ]
@@ -4698,10 +4286,7 @@
             "members": [
               {
                 "type": "STRING",
-                "value": ",",
-                "metadata": {
-                  "author": "enrich"
-                }
+                "value": ","
               },
               {
                 "type": "SYMBOL",
@@ -4728,9 +4313,6 @@
           "annotations": {
             "variant": "expression",
             "variantOf": "_right_hand_side"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -4739,9 +4321,6 @@
           "annotations": {
             "variant": "expression_list",
             "variantOf": "_right_hand_side"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -4750,9 +4329,6 @@
           "annotations": {
             "variant": "assignment",
             "variantOf": "_right_hand_side"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -4761,9 +4337,6 @@
           "annotations": {
             "variant": "augmented_assignment",
             "variantOf": "_right_hand_side"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -4772,9 +4345,6 @@
           "annotations": {
             "variant": "pattern_list",
             "variantOf": "_right_hand_side"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -4783,9 +4353,6 @@
           "annotations": {
             "variant": "yield",
             "variantOf": "_right_hand_side"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ]
@@ -4814,10 +4381,7 @@
                   }
                 },
                 "named": true,
-                "value": "yield_from_clause",
-                "metadata": {
-                  "author": "enrich"
-                }
+                "value": "yield_from_clause"
               },
               {
                 "type": "CHOICE",
@@ -5021,9 +4585,6 @@
                 "annotations": {
                   "variant": "identifier",
                   "variantOf": "typed_parameter"
-                },
-                "metadata": {
-                  "author": "enrich"
                 }
               },
               {
@@ -5032,9 +4593,6 @@
                 "annotations": {
                   "variant": "list_splat_pattern",
                   "variantOf": "typed_parameter"
-                },
-                "metadata": {
-                  "author": "enrich"
                 }
               },
               {
@@ -5043,9 +4601,6 @@
                 "annotations": {
                   "variant": "dictionary_splat_pattern",
                   "variantOf": "typed_parameter"
-                },
-                "metadata": {
-                  "author": "enrich"
                 }
               }
             ]
@@ -5077,9 +4632,6 @@
             "annotations": {
               "variant": "expression",
               "variantOf": "type"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         },
@@ -5089,9 +4641,6 @@
           "annotations": {
             "variant": "splat_type",
             "variantOf": "type"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -5100,9 +4649,6 @@
           "annotations": {
             "variant": "generic_type",
             "variantOf": "type"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -5111,9 +4657,6 @@
           "annotations": {
             "variant": "union_type",
             "variantOf": "type"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -5122,9 +4665,6 @@
           "annotations": {
             "variant": "constrained_type",
             "variantOf": "type"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -5133,9 +4673,6 @@
           "annotations": {
             "variant": "member_type",
             "variantOf": "type"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ]
@@ -5154,17 +4691,11 @@
               "members": [
                 {
                   "type": "STRING",
-                  "value": "*",
-                  "metadata": {
-                    "author": "enrich"
-                  }
+                  "value": "*"
                 },
                 {
                   "type": "STRING",
-                  "value": "**",
-                  "metadata": {
-                    "author": "enrich"
-                  }
+                  "value": "**"
                 }
               ]
             },
@@ -5200,10 +4731,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "identifier",
-                  "metadata": {
-                    "author": "enrich"
-                  }
+                  "name": "identifier"
                 },
                 {
                   "type": "ALIAS",
@@ -5639,9 +5167,6 @@
                 "annotations": {
                   "variant": "expression",
                   "variantOf": "parenthesized_expression"
-                },
-                "metadata": {
-                  "author": "enrich"
                 }
               },
               {
@@ -5650,9 +5175,6 @@
                 "annotations": {
                   "variant": "yield",
                   "variantOf": "parenthesized_expression"
-                },
-                "metadata": {
-                  "author": "enrich"
                 }
               }
             ]
@@ -6096,9 +5618,6 @@
           "annotations": {
             "variant": "expression",
             "variantOf": "_f_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -6107,9 +5626,6 @@
           "annotations": {
             "variant": "list",
             "variantOf": "_f_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -6118,9 +5634,6 @@
           "annotations": {
             "variant": "pattern_list",
             "variantOf": "_f_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         },
         {
@@ -6129,9 +5642,6 @@
           "annotations": {
             "variant": "yield",
             "variantOf": "_f_expression"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ]
@@ -6143,7 +5653,7 @@
           "type": "SYMBOL",
           "name": "escape_sequence_unicode_fixed",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6155,7 +5665,7 @@
           "type": "SYMBOL",
           "name": "escape_sequence_unicode_wide",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6167,7 +5677,7 @@
           "type": "SYMBOL",
           "name": "escape_sequence_hex",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6179,7 +5689,7 @@
           "type": "SYMBOL",
           "name": "escape_sequence_octal",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6191,7 +5701,7 @@
           "type": "SYMBOL",
           "name": "escape_sequence_line_break",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6203,7 +5713,7 @@
           "type": "SYMBOL",
           "name": "escape_sequence_simple",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6216,7 +5726,7 @@
           "type": "SYMBOL",
           "name": "escape_sequence_named",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6281,7 +5791,7 @@
           "type": "SYMBOL",
           "name": "integer_hex",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6293,7 +5803,7 @@
           "type": "SYMBOL",
           "name": "integer_octal",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6305,7 +5815,7 @@
           "type": "SYMBOL",
           "name": "integer_binary",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6317,7 +5827,7 @@
           "type": "SYMBOL",
           "name": "integer_decimal",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6335,7 +5845,7 @@
           "type": "SYMBOL",
           "name": "float_point",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6348,7 +5858,7 @@
           "type": "SYMBOL",
           "name": "float_leading_point",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6360,7 +5870,7 @@
           "type": "SYMBOL",
           "name": "float_scientific",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6501,7 +6011,7 @@
           "type": "SYMBOL",
           "name": "line_continuation_newline",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -6514,7 +6024,7 @@
           "type": "SYMBOL",
           "name": "line_continuation_nul",
           "metadata": {
-            "author": "override",
+            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -8248,9 +7758,6 @@
           "annotations": {
             "variant": "as",
             "variantOf": "except_clause"
-          },
-          "metadata": {
-            "author": "override"
           }
         },
         {
@@ -8259,9 +7766,6 @@
           "annotations": {
             "variant": "list",
             "variantOf": "except_clause"
-          },
-          "metadata": {
-            "author": "override"
           }
         }
       ]
@@ -8317,9 +7821,6 @@
                 "annotations": {
                   "variant": "integer",
                   "variantOf": "simple_pattern_arm"
-                },
-                "metadata": {
-                  "author": "enrich"
                 }
               },
               {
@@ -8328,9 +7829,6 @@
                 "annotations": {
                   "variant": "float",
                   "variantOf": "simple_pattern_arm"
-                },
-                "metadata": {
-                  "author": "enrich"
                 }
               }
             ]
@@ -8407,9 +7905,6 @@
             "value": "+=",
             "annotations": {
               "variantOf": "_augmented_assignment_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           },
           {
@@ -8417,9 +7912,6 @@
             "value": "-=",
             "annotations": {
               "variantOf": "_augmented_assignment_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           },
           {
@@ -8427,9 +7919,6 @@
             "value": "*=",
             "annotations": {
               "variantOf": "_augmented_assignment_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           },
           {
@@ -8437,9 +7926,6 @@
             "value": "/=",
             "annotations": {
               "variantOf": "_augmented_assignment_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           },
           {
@@ -8447,9 +7933,6 @@
             "value": "@=",
             "annotations": {
               "variantOf": "_augmented_assignment_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           },
           {
@@ -8457,9 +7940,6 @@
             "value": "//=",
             "annotations": {
               "variantOf": "_augmented_assignment_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           },
           {
@@ -8467,9 +7947,6 @@
             "value": "%=",
             "annotations": {
               "variantOf": "_augmented_assignment_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           },
           {
@@ -8477,9 +7954,6 @@
             "value": "**=",
             "annotations": {
               "variantOf": "_augmented_assignment_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           },
           {
@@ -8487,9 +7961,6 @@
             "value": ">>=",
             "annotations": {
               "variantOf": "_augmented_assignment_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           },
           {
@@ -8497,9 +7968,6 @@
             "value": "<<=",
             "annotations": {
               "variantOf": "_augmented_assignment_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           },
           {
@@ -8507,9 +7975,6 @@
             "value": "&=",
             "annotations": {
               "variantOf": "_augmented_assignment_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           },
           {
@@ -8517,9 +7982,6 @@
             "value": "^=",
             "annotations": {
               "variantOf": "_augmented_assignment_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           },
           {
@@ -8527,9 +7989,6 @@
             "value": "|=",
             "annotations": {
               "variantOf": "_augmented_assignment_operator"
-            },
-            "metadata": {
-              "author": "enrich"
             }
           }
         ],
@@ -9697,9 +9156,6 @@
           }
         }
       ],
-      "metadata": {
-        "author": "enrich"
-      },
       "annotations": {
         "hoisted": true
       }
@@ -9713,9 +9169,6 @@
           "annotations": {
             "variant": "as",
             "variantOf": "except_clause"
-          },
-          "metadata": {
-            "author": "override"
           }
         },
         {
@@ -9724,9 +9177,6 @@
           "annotations": {
             "variant": "list",
             "variantOf": "except_clause"
-          },
-          "metadata": {
-            "author": "override"
           }
         }
       ],
@@ -9775,9 +9225,6 @@
           ],
           "annotations": {
             "variantOf": "assignment"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ],
@@ -9814,9 +9261,6 @@
           ],
           "annotations": {
             "variantOf": "assignment"
-          },
-          "metadata": {
-            "author": "enrich"
           }
         }
       ],
@@ -9927,9 +9371,6 @@
           ]
         }
       ],
-      "metadata": {
-        "author": "enrich"
-      },
       "annotations": {
         "hoisted": true
       }
@@ -10035,9 +9476,6 @@
           "name": "_dedent"
         }
       ],
-      "metadata": {
-        "author": "enrich"
-      },
       "annotations": {
         "hoisted": true
       }
@@ -10061,9 +9499,6 @@
           "name": "block"
         }
       ],
-      "metadata": {
-        "author": "enrich"
-      },
       "annotations": {
         "hoisted": true
       }

@@ -374,21 +374,63 @@ export function isInlineSafe(seqBody: unknown, rulesBag?: Record<string, unknown
 	return isFieldType(coreType) || isSymbolType(coreType);
 }
 
+type ChoiceShape = { readonly type?: unknown; readonly named?: unknown; readonly value?: unknown; readonly name?: unknown; readonly literal?: unknown; readonly content?: ChoiceShape; readonly members?: readonly ChoiceShape[]; readonly annotations?: { readonly hoisted?: unknown } };
+
+function typeOf(rule: ChoiceShape | undefined): string | undefined {
+	return typeof rule?.type === 'string' ? rule.type : undefined;
+}
+
+function isNamedAlias(rule: ChoiceShape): boolean {
+	return typeEq(typeOf(rule) ?? '', 'ALIAS') && rule.named === true;
+}
+
 export function isNamedArmChoice(body: unknown): boolean {
-	const b = unwrapPrec(body) as { type?: unknown; members?: unknown } | undefined;
-	if (!b || typeof b.type !== 'string' || !isChoiceType(b.type)) return false;
-	const members = b.members;
-	if (!Array.isArray(members) || members.length === 0) return false;
-	return members.every((m) => {
-		const alias = m as { type?: unknown; named?: unknown; content?: { type?: unknown } } | undefined;
-		return (
-			typeof alias?.type === 'string' &&
-			typeEq(alias.type, 'ALIAS') &&
-			alias.named === true &&
-			typeof alias.content?.type === 'string' &&
-			isSymbolType(alias.content.type)
-		);
-	});
+	const b = body as ChoiceShape | undefined;
+	if (!isChoiceType(typeOf(b) ?? '') || !Array.isArray(b!.members) || b!.members.length === 0) return false;
+	return b!.members.every((m) => isNamedAlias(m) && isSymbolType(typeOf(m.content) ?? ''));
+}
+
+export type HiddenChoiceClass = 'enum' | 'named-arms' | 'supertype';
+
+function isEnumMember(member: ChoiceShape, storageBodyOf: (name: string) => unknown): boolean {
+	const t = typeOf(member) ?? '';
+	if (isStringType(t)) return true;
+	if (isSymbolType(t)) return member.literal !== undefined;
+	if (!isNamedAlias(member)) return false;
+	const content = member.content;
+	if (isStringType(typeOf(content) ?? '')) return true;
+	return isSymbolType(typeOf(content) ?? '') && typeof content!.name === 'string' && isStringType(typeOf(storageBodyOf(content!.name) as ChoiceShape) ?? '');
+}
+
+function aliasesSymbol(content: ChoiceShape | undefined): boolean {
+	const t = typeOf(content) ?? '';
+	if (isSymbolType(t)) return true;
+	return typeEq(t, 'TOKEN') && aliasesSymbol(content!.content);
+}
+
+function isSupertypeMember(member: ChoiceShape): boolean {
+	const t = typeOf(member) ?? '';
+	if (isSymbolType(t) || isStringType(t)) return true;
+	return isNamedAlias(member) && (isStringType(typeOf(member.content) ?? '') || aliasesSymbol(member.content));
+}
+
+function flattenChoiceMembers(members: readonly ChoiceShape[]): ChoiceShape[] {
+	return members.flatMap((m) => (isChoiceType(typeOf(m) ?? '') ? flattenChoiceMembers(m.members ?? []) : [m]));
+}
+
+export function hiddenChoiceClass(body: unknown, storageBodyOf: (name: string) => unknown, namedArms: boolean): HiddenChoiceClass | undefined {
+	const b = body as ChoiceShape | undefined;
+	if (b?.annotations?.hoisted === true || !isChoiceType(typeOf(b) ?? '') || !Array.isArray(b!.members)) return undefined;
+	if (b!.members.every((m) => isEnumMember(m, storageBodyOf))) return 'enum';
+	if (namedArms) return 'named-arms';
+	return flattenChoiceMembers(b!.members).every(isSupertypeMember) ? 'supertype' : undefined;
+}
+
+export function throughPrec<T>(rule: T, fn: (core: T) => T): T {
+	const r = rule as { type?: unknown; content?: T };
+	if (typeof r?.type !== 'string' || !isPrecWrapper(r as { type: string }) || r.content === undefined) return fn(rule);
+	const content = throughPrec(r.content, fn);
+	return content === r.content ? rule : ({ ...(rule as object), content } as T);
 }
 
 export function isSupertypeLike(body: unknown): boolean {

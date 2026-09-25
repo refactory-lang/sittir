@@ -25,7 +25,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
-import { getEnrichAutomaticVariants, relabelledArm, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
+import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
@@ -138,7 +138,12 @@ export function wireGetCurrentRuleKind(): string | null {
 }
 
 export function wireAutomaticVariants(): AutomaticVariants {
-	return currentContext?.automaticVariants ?? getEnrichAutomaticVariants(undefined);
+	return automaticVariantsOf(currentContext);
+}
+
+function automaticVariantsOf(context: WireContext | null | undefined): AutomaticVariants {
+	if (!context) throw new Error('wire: an arm label was read outside a wire context');
+	return context.automaticVariants;
 }
 
 export function wireIsExtraRule(name: string): boolean {
@@ -168,7 +173,7 @@ export function withWireContext<T>(
 		precedenceRankedNames: new Set(),
 		flattenedParents: new Set(),
 		aliasTargets: new Set(),
-		automaticVariants: getEnrichAutomaticVariants(base)
+		automaticVariants: seedAutomaticVariants(base)
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -343,7 +348,7 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
 		flattenedParents: new Set(),
 		aliasTargets: new Set(),
-		automaticVariants: getEnrichAutomaticVariants(base)
+		automaticVariants: seedAutomaticVariants(base)
 	};
 
 	const patches = cfg.patches ?? {};
@@ -888,7 +893,7 @@ function patternBodyEqual(aIn: unknown, bIn: unknown): boolean {
 	return false;
 }
 
-function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidate[], automatic: AutomaticVariants): unknown {
+function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidate[], automatic: () => AutomaticVariants): unknown {
 	if (!rule || typeof rule !== 'object') return rule;
 	const r = rule as { type: string; members?: unknown[]; content?: unknown };
 	for (const c of candidates) {
@@ -897,7 +902,7 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 				c.aliasAs === undefined
 					? { type: 'SYMBOL', name: c.name }
 					: { type: 'ALIAS', content: { type: 'SYMBOL', name: c.name }, named: true, value: c.aliasAs };
-			return relabelledArm(site, rule, automatic);
+			return relabelledArm(site, rule, automatic());
 		}
 	}
 	const t = r.type;
@@ -929,7 +934,7 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 	return rule;
 }
 
-function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCandidate[], automatic: AutomaticVariants): RuleFn {
+function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCandidate[], automatic: () => AutomaticVariants): RuleFn {
 	return function patternReplacingRuleFn($, previous) {
 		const result = fn($, previous);
 		return replaceInBodyRt(result, candidates, automatic);
@@ -1028,8 +1033,8 @@ function applyWireVisibleExternalsRewrite(
 export function applyWirePatternReplacement(
 	rules: Record<string, RuleFn>,
 	authoredRuleNames: ReadonlySet<string>,
-	groups?: GroupsConfig,
-	context?: WireContext,
+	groups: GroupsConfig | undefined,
+	context: WireContext,
 	injects?: GroupsConfig
 ): void {
 	const candidates: WirePatternCandidate[] = [];
@@ -1083,7 +1088,7 @@ export function applyWirePatternReplacement(
 			);
 		}
 		candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
-		const registered = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+		const registered = wrapOneRuleFn(hiddenName, value, context);
 		rules[hiddenName] = section === 'groups' ? stampHoistedFn(registered) : registered;
 	}
 
@@ -1092,6 +1097,6 @@ export function applyWirePatternReplacement(
 	const candidateNames = new Set(candidates.map((c) => c.name));
 	for (const [name, fn] of Object.entries(rules)) {
 		if (candidateNames.has(name)) continue;
-		rules[name] = buildPatternReplacingFn(fn, candidates, context?.automaticVariants ?? getEnrichAutomaticVariants(undefined));
+		rules[name] = buildPatternReplacingFn(fn, candidates, () => context.automaticVariants);
 	}
 }

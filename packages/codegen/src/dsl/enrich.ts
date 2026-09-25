@@ -45,13 +45,15 @@ import {
 	armsDifferOnlyByLiteralChoice,
 	selfReferentialFoldOf,
 	type SeparatedListBodyInfo,
+	throughPrec,
 	tokenUseCounts
 } from './rule-patterns.ts';
 import { ruleKey } from './shared.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { distributeTokenForms } from './transform/token-forms.ts';
-import { ENRICH_AUTOMATIC_VARIANTS_KEY, stampAutomaticVariants } from './automatic-variants.ts';
+import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, stampAutomaticVariants } from './automatic-variants.ts';
+import { armNameOf, undisplayedKindAddress } from './arm-names.ts';
 
 export interface GrammarResult {
 	grammar: {
@@ -178,7 +180,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	}
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
 	collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners);
-	for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules);
+	for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules, isSupertypeOwner(parent, mergedRules, supertypeNames, inlineNames));
 	for (const name of Object.keys(mergedRules)) {
 		const rule = mergedRules[name];
 		if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
@@ -213,14 +215,12 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			configurable: true
 		});
 	}
-	if (automaticVariants.keys.size > 0) {
-		Object.defineProperty(result, ENRICH_AUTOMATIC_VARIANTS_KEY, {
-			value: automaticVariants,
-			enumerable: false,
-			writable: false,
-			configurable: true
-		});
-	}
+	Object.defineProperty(result, ENRICH_AUTOMATIC_VARIANTS_KEY, {
+		value: automaticVariants,
+		enumerable: false,
+		writable: false,
+		configurable: true
+	});
 	if (visibleGroupSources.size > 0) {
 		Object.defineProperty(result, ENRICH_VISIBLE_GROUP_SOURCES_KEY, {
 			value: visibleGroupSources,
@@ -350,25 +350,19 @@ function replaceExtras(result: Record<string, unknown>, replacements: ReadonlyMa
 	if (Array.isArray(current)) result.extras = replaced(current, undefined);
 }
 
-function annotateTokenFormArms(parent: string, rules: Record<string, Rule>): void {
-	const stack: Rule[] = [];
-	let core = rules[parent];
-	while (core !== undefined && isPrecWrapper(core as { type: string })) {
-		stack.push(core);
-		core = (core as unknown as { content: Rule }).content;
-	}
-	const members = (core as unknown as { members?: Rule[] } | undefined)?.members;
-	if (core === undefined || members === undefined) return;
-	const base = parent.replace(/^_+/, '');
-	const preferred = defaultTokenFormArm(members, rules);
-	const annotated = members.map((member, i) => {
-		const name = (member as { name?: string }).name ?? '';
-		const variant = name.startsWith(`${base}_`) ? name.slice(base.length + 1) : name;
-		return withAnnotations(member, { variant, variantOf: parent, ...(i === preferred ? { default: true } : {}) }) as unknown as Rule;
+function annotateTokenFormArms(parent: string, rules: Record<string, Rule>, parentIsSupertype: boolean): void {
+	const rule = rules[parent];
+	if (rule === undefined) return;
+	rules[parent] = throughPrec(rule, (core) => {
+		const members = (core as unknown as { members?: Rule[] }).members;
+		if (members === undefined) return core;
+		const preferred = defaultTokenFormArm(members, rules);
+		const annotated = members.map((member, i) => {
+			const variant = armNameOf(parent, undisplayedKindAddress((member as { name?: string }).name ?? ''), parentIsSupertype);
+			return withAnnotations(member, { variant, variantOf: parent, ...(i === preferred ? { default: true } : {}) }) as unknown as Rule;
+		});
+		return { ...core, members: annotated } as unknown as Rule;
 	});
-	let out = { ...core, members: annotated } as unknown as Rule;
-	for (let i = stack.length - 1; i >= 0; i--) out = { ...stack[i]!, content: out } as unknown as Rule;
-	rules[parent] = out;
 }
 
 function defaultTokenFormArm(members: readonly Rule[], rules: Record<string, Rule>): number {

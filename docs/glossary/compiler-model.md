@@ -332,13 +332,13 @@ generated enum and the enum's own variants cannot disagree.
 
 The per-arm annotations a slot value carries: the declared `variant`/`variantOf`
 pair, `default`, and `spliced`. A `variantOf`-only literal arm has no display of
-its own to derive a `variant` from, so it is named from the resolved catalog kind
-the arm target carries (`resolvedKind`) via `armNameOf(variantOf,
-undisplayedKindAddress(resolvedKind), false)` — always the non-supertype naming
-branch, since a supertype's members are symbols and a literal arm never reaches
-one. That way an enrich-stamped literal still gets a spelled arm name; with no
-owner or resolved kind it gets none. One derivation spread into all four SYMBOL
-branches of `deriveValuesForRule` and into supertype subtype refs, so an arm fact
+its own, so it is named from the resolved catalog kind it carries
+(`resolvedKind`): `armNameOf(variantOf, undisplayedKindAddress(resolvedKind),
+<owner is a SUPERTYPE>)`, where the owner's classification is read from the
+derive context's simplified rules, so a literal arm of a supertype owner is
+named by the supertype member rule like the owner's other arms. With no owner
+or resolved kind it gets no name. One derivation spread into every SYMBOL
+branch of `deriveValuesForRule` and into supertype subtype refs, so an arm fact
 added to the model reaches every value shape and every subtype without further
 edits.
 
