@@ -115,6 +115,40 @@ describe('checkRegression', () => {
 		}
 	});
 
+	it('a grammar new to head passes — the base baseline may predate it', () => {
+		const head = baseline();
+		const base = clone(head);
+		delete (base.grammars as Record<string, GrammarEntry>).typescript;
+		base.totals = { pass: 100, fail: 0, total: 100 };
+		const verdict = checkRegression(base, head);
+		expect(verdict.ok).toBe(true);
+	});
+
+	it('a stable grammar missing from head fails, naming it', () => {
+		const base = baseline();
+		const head = clone(base);
+		delete (head.grammars as Record<string, GrammarEntry>).rust;
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.details.path).toBe('head.grammars.rust');
+	});
+
+	it('a baselined grammar missing from head fails as grammar-dropped, even when it is not stable', () => {
+		const base = baseline();
+		(base.grammars as Record<string, GrammarEntry>) = {
+			python: entry(),
+			rust: entry(),
+			scm: entry(),
+			typescript: entry()
+		};
+		base.totals = { pass: 200, fail: 0, total: 200 };
+		const head = baseline();
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('grammar-dropped');
+		expect(verdict.summary).toContain('scm');
+	});
+
 	it('left-out rise detected — an uncompensated per-grammar sum rise names the grammar path', () => {
 		const base = baseline();
 		const head = clone(base);

@@ -73,7 +73,8 @@ export type RegressionVerdictReason =
 	| 'total-fail-rise'
 	| 'schema-violation'
 	| 'format-deferred-rise'
-	| 'left-out-rise';
+	| 'left-out-rise'
+	| 'grammar-dropped';
 
 export type RegressionVerdict =
 	| { ok: true; summary: string }
@@ -327,7 +328,8 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 			}
 		};
 	}
-	for (const g of GRAMMARS) {
+	const checkedGrammars = label === 'head' ? [...new Set([...GRAMMARS, ...grammarKeys])] : grammarKeys;
+	for (const g of checkedGrammars) {
 		const gPath = `${label}.grammars.${g}`;
 		const ge = (grammars as Record<string, unknown>)[g];
 		if (ge === undefined) {
@@ -458,11 +460,28 @@ function passCountFail(path: string, before: number, after: number): RegressionV
  * conflicting floor on the same numbers. This function owns only the
  * per-grammar, per-validator, and per-grammar parity-fixture floors.
  */
+function checkDroppedGrammars(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
+	const baseGrammars = Object.keys(base.grammars);
+	const dropped = baseGrammars.filter((g) => head.grammars[g] === undefined);
+	if (dropped.length === 0) return null;
+	return {
+		ok: false,
+		reason: 'grammar-dropped',
+		summary: `grammar(s) in the base baseline are missing from head: ${dropped.join(', ')}`,
+		details: {
+			path: 'grammars',
+			before: baseGrammars,
+			after: Object.keys(head.grammars),
+			note: 'a baselined grammar leaves the ratchet only through a reviewed baseline change'
+		}
+	};
+}
+
 function* comparedGrammars(
 	base: BackendBaseline,
 	head: BackendBaseline
 ): Generator<readonly [string, GrammarEntry, GrammarEntry]> {
-	for (const g of GRAMMARS) {
+	for (const g of Object.keys(base.grammars)) {
 		const baseGrammar = base.grammars[g];
 		const headGrammar = head.grammars[g];
 		if (baseGrammar && headGrammar) yield [g, baseGrammar, headGrammar];
@@ -677,6 +696,9 @@ export function checkRegression(base: BackendBaseline, head: BackendBaseline): R
 			details: { path: 'backend', before: base.backend, after: head.backend }
 		};
 	}
+
+	const dropped = checkDroppedGrammars(base, head);
+	if (dropped) return dropped;
 
 	const leftOutRise = checkLeftOutRise(base, head);
 	if (leftOutRise) return leftOutRise;
