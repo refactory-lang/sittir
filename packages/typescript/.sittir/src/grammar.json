@@ -8291,14 +8291,11 @@
                 {
                   "type": "ALIAS",
                   "content": {
-                    "type": "STRING",
-                    "value": ";",
-                    "annotations": {
-                      "variantOf": "class_body"
-                    }
+                    "type": "SYMBOL",
+                    "name": "_empty_member"
                   },
                   "named": true,
-                  "value": "semicolon"
+                  "value": "empty_member"
                 }
               ]
             }
@@ -17230,6 +17227,10 @@
       "annotations": {
         "hoisted": true
       }
+    },
+    "_empty_member": {
+      "type": "STRING",
+      "value": ";"
     },
     "class_body_method": {
       "type": "SEQ",

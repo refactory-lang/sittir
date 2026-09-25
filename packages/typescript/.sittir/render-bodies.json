@@ -7007,12 +7007,6 @@
 			"field": "satisfies_expression_after"
 		}
 	],
-	"semicolon": [
-		{
-			"kind": "text",
-			"text": ";"
-		}
-	],
 	"sequence_expression": [
 		{
 			"kind": "seam",

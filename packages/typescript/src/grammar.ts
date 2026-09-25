@@ -654,7 +654,7 @@ export type TypescriptGrammar = {
 					{ type: 'class_body_method'; named: true },
 					{ type: 'class_body_method_sig'; named: true },
 					{ type: 'class_static_block'; named: true },
-					{ type: 'semicolon'; named: true }
+					{ type: 'empty_member'; named: true }
 				];
 			};
 		};
@@ -879,6 +879,7 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: { body: { multiple: false; required: true; types: [{ type: 'statement'; named: true }] } };
 	};
+	readonly empty_member: { type: 'empty_member'; named: true; fields: {} };
 	readonly empty_statement: { type: 'empty_statement'; named: true; fields: {} };
 	readonly enum_assignment: {
 		type: 'enum_assignment';
@@ -2928,7 +2929,6 @@ export type TypescriptGrammar = {
 	readonly _anonymous_require: { type: 'require'; named: false };
 	readonly _anonymous_return: { type: 'return'; named: false };
 	readonly _anonymous_satisfies: { type: 'satisfies'; named: false };
-	readonly semicolon: { type: 'semicolon'; named: true };
 	readonly _anonymous_set: { type: 'set'; named: false };
 	readonly shorthand_property_identifier: { type: 'shorthand_property_identifier'; named: true };
 	readonly shorthand_property_identifier_pattern: { type: 'shorthand_property_identifier_pattern'; named: true };

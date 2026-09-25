@@ -884,7 +884,7 @@ function resolveAliasPlaceholder(
 	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
 	const originalMember = isEnrichShapedFieldWrapper(site) ? (site.content as RuntimeRule) : site;
-	const labelled = (site: RuntimeRule): RuntimeRule => relabelledArm(site, originalMember, wireAutomaticVariants()) as RuntimeRule;
+	const labelled = (resolved: RuntimeRule): RuntimeRule => relabelledArm(resolved, originalMember, wireAutomaticVariants()) as RuntimeRule;
 	const ruleName = '_' + patch.name;
 	const lift = enrichLiftArmOf(originalMember);
 	if (lift !== null) return labelled(renameEnrichLift(originalMember, lift, ruleName, patch.name));

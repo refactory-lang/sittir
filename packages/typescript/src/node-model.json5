@@ -4449,15 +4449,6 @@
         "nonEmpty": false
       }
     },
-    "semicolon": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "interface_body": {
       "content": {
         "unnamed": false,
@@ -4607,6 +4598,16 @@
         "array_pattern",
         "object_pattern"
       ]
+    },
+    {
+      "kind": "_empty_member",
+      "modelType": "punctuation",
+      "typeName": "EmptyMember",
+      "irKey": "emptyMember",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\";\" as const",
+      "text": ";"
     },
     {
       "kind": "_expressions",
@@ -8653,7 +8654,8 @@
             "class_body_method",
             "class_body_method_sig",
             "class_static_block",
-            "class_body_member"
+            "class_body_member",
+            "_empty_member"
           ],
           "values": [
             {
@@ -8681,10 +8683,10 @@
               "parseKind": "class_body_member"
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "array",
-              "value": ";",
-              "parseKind": "semicolon"
+              "name": "_empty_member",
+              "parseKind": "empty_member"
             }
           ]
         }
@@ -24000,38 +24002,6 @@
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "text": ";"
-    },
-    {
-      "kind": "semicolon",
-      "modelType": "alias",
-      "typeName": "Semicolon",
-      "factoryName": "semicolon",
-      "irKey": "semicolon",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": ";",
-              "parseKind": "semi"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ]
     },
     {
       "kind": "sequence_expression",

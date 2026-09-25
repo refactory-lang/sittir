@@ -5776,7 +5776,7 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
 }
 function resolveAliasPlaceholder(patch, site, precStack) {
   const originalMember = isEnrichShapedFieldWrapper(site) ? site.content : site;
-  const labelled = (site2) => relabelledArm(site2, originalMember, wireAutomaticVariants());
+  const labelled = (resolved) => relabelledArm(resolved, originalMember, wireAutomaticVariants());
   const ruleName = "_" + patch.name;
   const lift = enrichLiftArmOf(originalMember);
   if (lift !== null) return labelled(renameEnrichLift(originalMember, lift, ruleName, patch.name));
@@ -6234,13 +6234,13 @@ var grammar_sittir_default = grammar(
         },
         // Patch sets apply in order. The second fields the member repeat
         // AFTER the arm-level paths of the first resolve against the
-        // un-fielded shape: with the `';'` arm alias-identified (see the
-        // `class_body` rules: override), every element — members and stray
-        // semicolons alike — keys into one ordered `_content` array,
-        // retiring this kind's per-kind bucket merge. The third's variant
-        // paths then traverse the `content` field the second added.
+        // un-fielded shape: with the stray `';'` arm minted as its own kind
+        // `empty_member`, every element — members and stray semicolons
+        // alike — keys into one ordered `_content` array. The third's
+        // variant paths then traverse the `content` field the second added.
         class_body: [
           {
+            "1/0/4": alias("empty_member"),
             "1/0/0/2": field("terminator"),
             "1/0/1/1": field("terminator"),
             "1/0/3/1": field("terminator")
@@ -6554,18 +6554,6 @@ var grammar_sittir_default = grammar(
         // references render seam-free. Parser-neutral by the absorption
         // argument above.
         template_substitution: ($) => seq(token.immediate("${"), field("expression", $._expressions), "}"),
-        // The class-body repeat's bare `';'` arm (stray member-separator
-        // semicolons) has no kind identity, so the read's array capture
-        // cannot materialize it. Alias the STRING in place to the visible
-        // `semicolon` kind — the existing `_semicolon` enum (values
-        // `'\n'`/`';'`) already owns that name and member text, so the
-        // canonical-hidden lookup and enum transport serve it with no new
-        // machinery. An alias on a string renames the node only — no
-        // lexing/LR change — and the arm keeps its position, so the
-        // `class_body` path patches below stay valid. (NOT the one-arg
-        // `alias('semicolon')` patch helper — that synthesizes/reuses a
-        // `_semicolon` RULE for the arm, which would make class bodies
-        // accept automatic semicolons.)
         // The signature arm of an arrow function is upstream's hidden
         // `_call_signature`, whose fields inline into the parent. Upstream
         // typescript already declares that body as the visible kind
@@ -6580,20 +6568,6 @@ var grammar_sittir_default = grammar(
             (m, i) => i === 1 ? {
               ...m,
               members: m.members.map((arm2, j) => j === 1 ? $.call_signature : arm2)
-            } : m
-          )
-        }),
-        class_body: ($, original) => ({
-          ...original,
-          members: original.members.map(
-            (m) => m.type === "REPEAT" ? {
-              ...m,
-              content: {
-                ...m.content,
-                members: m.content.members.map(
-                  (arm2) => arm2.type === "STRING" && arm2.value === ";" ? { type: "ALIAS", content: arm2, named: true, value: "semicolon" } : arm2
-                )
-              }
             } : m
           )
         }),

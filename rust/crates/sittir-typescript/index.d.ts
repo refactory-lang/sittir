@@ -1394,12 +1394,6 @@ export interface SatisfiesExpressionTransport {
   _type_annotation: SlotValue<TypeTransport>
 }
 
-export interface SemicolonTransport {
-  '$_trivia'?: TransportTrivia
-  '$_edges'?: Edges
-  _content: SlotValue<Box<AnyTransport>>
-}
-
 export interface SequenceExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges

@@ -4942,7 +4942,7 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
 }
 function resolveAliasPlaceholder(patch, site, precStack) {
   const originalMember = isEnrichShapedFieldWrapper(site) ? site.content : site;
-  const labelled = (site2) => relabelledArm(site2, originalMember, wireAutomaticVariants());
+  const labelled = (resolved) => relabelledArm(resolved, originalMember, wireAutomaticVariants());
   const ruleName = "_" + patch.name;
   const lift = enrichLiftArmOf(originalMember);
   if (lift !== null) return labelled(renameEnrichLift(originalMember, lift, ruleName, patch.name));

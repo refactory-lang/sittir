@@ -6111,12 +6111,13 @@ export function wrapClassBody(data: T.ClassBody, tree: TreeHandle) {
 					slotName: 'content',
 					span: (data as _NodeData).$span
 				}),
-				{ ';': 20 }
+				{ ';': 399 },
+				{ 20: 399 }
 			),
 
 			contents() {
 				return drillInAll<
-					T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.Semi
+					T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.EmptyMember
 				>(
 					this._content as
 						| readonly (
@@ -6124,7 +6125,7 @@ export function wrapClassBody(data: T.ClassBody, tree: TreeHandle) {
 								| T.ClassBodyMethodSig
 								| T.ClassStaticBlock
 								| T.ClassBodyMember
-								| TSKindId.Semi
+								| TSKindId.EmptyMember
 						  )[]
 						| undefined,
 					tree
@@ -17309,36 +17310,6 @@ export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapSemicolon(data: T.Semicolon, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_content']);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId._Semicolon as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId._Semicolon as const,
-			_content: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._content ?? readTerminalFromOther(data, [TSKindId.Semi]),
-					'content',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
-				{ ';': 20 }
-			),
-
-			content() {
-				return this._content;
-			},
-			$with: {
-				content: (v: NonNullable<T.Semicolon['_content']>) => wrapSemicolon({ ...$edited(data), _content: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
 export function wrapInterfaceBody(data: T.InterfaceBody, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_content']);
 	const _node = withMethods(
@@ -17694,7 +17665,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId._PropertyIdentifier]: (d, t) =>
 		wrapPropertyIdentifier(_aliasEnvelope(d, t) as unknown as T.PropertyIdentifier, t),
 	[TSKindId._TypeIdentifier]: (d, t) => wrapTypeIdentifier(_aliasEnvelope(d, t) as unknown as T.TypeIdentifier, t),
-	[TSKindId._Semicolon]: (d, t) => wrapSemicolon(_aliasEnvelope(d, t) as unknown as T.Semicolon, t),
 	[TSKindId._InterfaceBody]: (d, t) => wrapInterfaceBody(_aliasEnvelope(d, t) as unknown as T.InterfaceBody, t)
 };
 
@@ -18016,7 +17986,6 @@ interface _WrapReturnByKindId {
 	[TSKindId._ShorthandPropertyIdentifierPattern]: ReturnType<typeof wrapShorthandPropertyIdentifierPattern>;
 	[TSKindId._PropertyIdentifier]: ReturnType<typeof wrapPropertyIdentifier>;
 	[TSKindId._TypeIdentifier]: ReturnType<typeof wrapTypeIdentifier>;
-	[TSKindId._Semicolon]: ReturnType<typeof wrapSemicolon>;
 	[TSKindId._InterfaceBody]: ReturnType<typeof wrapInterfaceBody>;
 }
 

@@ -1832,7 +1832,7 @@
             "named": true
           },
           {
-            "type": "semicolon",
+            "type": "empty_member",
             "named": true
           }
         ]
@@ -2503,6 +2503,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "empty_member",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "empty_statement",
@@ -8366,10 +8371,6 @@
   {
     "type": "satisfies",
     "named": false
-  },
-  {
-    "type": "semicolon",
-    "named": true
   },
   {
     "type": "set",

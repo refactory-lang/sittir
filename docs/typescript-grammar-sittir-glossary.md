@@ -211,6 +211,12 @@ polymorph helpers need to appear explicitly.
 				// so the choice becomes symbol-like across all arms.
 ```
 
+The bare `';'` arm (a stray member-separator semicolon) is minted as its own
+hidden leaf kind by `'1/0/4': alias('empty_member')`: `_empty_member` over
+`';'`, shown as `empty_member`. The mint keeps read identity (the node's
+grammar symbol is `_empty_member`, not the shared `';'` token) and does not
+collide with upstream's `_semicolon` (the automatic-semicolon rule).
+
 ### `_for_header` (`packages/typescript/grammar.sittir.ts:373`)
 
 ```text

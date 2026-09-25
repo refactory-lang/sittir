@@ -2634,7 +2634,13 @@ export function buildDecoratorCallExpression(
 }
 
 export function buildClassBody(
-	...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.Semi)[]
+	...children: (
+		| T.ClassBodyMethod
+		| T.ClassBodyMethodSig
+		| T.ClassStaticBlock
+		| T.ClassBodyMember
+		| TSKindId.EmptyMember
+	)[]
 ): T.ClassBody.Built {
 	const _content = children;
 	return withMethods(
@@ -2646,7 +2652,13 @@ export function buildClassBody(
 				_content,
 				$with: {
 					contents: (
-						...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.Semi)[]
+						...vs: (
+							| T.ClassBodyMethod
+							| T.ClassBodyMethodSig
+							| T.ClassStaticBlock
+							| T.ClassBodyMember
+							| TSKindId.EmptyMember
+						)[]
 					) => buildClassBody(...vs)
 				}
 			},
@@ -8842,27 +8854,6 @@ export function buildTypeIdentifier(value: T.Identifier): T.TypeIdentifier.Built
 	);
 }
 
-export function buildSemicolon(value: TSKindId.Semi): T.Semicolon.Built {
-	const _content = coerceKindEnumStorage<NonNullable<T.Semicolon['_content']>>(value, [[';', TSKindId.Semi] as const]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId._Semicolon as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: NonNullable<TSKindId.Semi>) => buildSemicolon(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildInterfaceBody(value: T.ObjectType): T.InterfaceBody.Built {
 	const _content = value;
 	return withMethods(
@@ -9124,7 +9115,6 @@ export type FluentKindMap = {
 	shorthand_property_identifier_pattern: T.ShorthandPropertyIdentifierPattern.Built;
 	property_identifier: T.PropertyIdentifier.Built;
 	type_identifier: T.TypeIdentifier.Built;
-	semicolon: T.Semicolon.Built;
 	interface_body: T.InterfaceBody.Built;
 };
 
@@ -9368,7 +9358,6 @@ export const _factoryMap = {
 	shorthand_property_identifier_pattern: buildShorthandPropertyIdentifierPattern,
 	property_identifier: buildPropertyIdentifier,
 	type_identifier: buildTypeIdentifier,
-	semicolon: buildSemicolon,
 	interface_body: buildInterfaceBody
 } as const;
 export type _FactoryMap = typeof _factoryMap;
