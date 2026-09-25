@@ -448,4 +448,66 @@ static const char * const ts_field_names[] = {
 			'generated-metadata: aliased token anon_sym_UNVERIFIED (display "renamed_thing") has no verbatim literal'
 		);
 	});
+
+	const aliasSource = (entries: readonly [string, number, string][]) => `
+enum ts_symbol_identifiers {
+${entries.map(([c, id]) => `  ${c} = ${id},`).join('\n')}
+};
+
+static const char * const ts_symbol_names[] = {
+${entries.map(([c, , name]) => `  [${c}] = "${name}",`).join('\n')}
+};
+
+enum ts_field_identifiers {
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+};
+`;
+	const aliasedStrings = (value: string, literals: readonly string[]) => ({
+		rules: Object.fromEntries(
+			literals.map((literal, i) => [
+				`rule_${i}`,
+				{ type: 'ALIAS', content: { type: 'STRING', value: literal }, named: true, value }
+			])
+		)
+	});
+
+	it('recovers a non-identifier aliased literal from the grammar, not from the mangled C name', async () => {
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			aliasSource([['anon_sym_BSLASH_DASH', 19, 'identity_escape']]),
+			'parser.c',
+			aliasedStrings('identity_escape', ['\\-'])
+		);
+		const entry = collectGeneratedKindEntries(tables).find((e) => e.id === 19);
+		expect(entry?.literalText).toBe('\\-');
+	});
+
+	it('pairs identifier-safe aliased literals by name and eliminates to the one remaining literal', async () => {
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			aliasSource([
+				['anon_sym_x', 20, 'escape'],
+				['anon_sym_BSLASH_DASH', 21, 'escape']
+			]),
+			'parser.c',
+			aliasedStrings('escape', ['x', '\\-'])
+		);
+		const entries = collectGeneratedKindEntries(tables);
+		expect(entries.find((e) => e.id === 20)?.literalText).toBe('x');
+		expect(entries.find((e) => e.id === 21)?.literalText).toBe('\\-');
+	});
+
+	it('throws when several non-identifier literals alias to one name', async () => {
+		await expect(
+			deriveGeneratedIdTablesFromParserCSource(
+				aliasSource([
+					['anon_sym_BSLASH_DASH', 19, 'identity_escape'],
+					['anon_sym_BSLASH_DOT', 20, 'identity_escape']
+				]),
+				'parser.c',
+				aliasedStrings('identity_escape', ['\\-', '\\.'])
+			)
+		).rejects.toThrow('generated-metadata: aliased token anon_sym_BSLASH_DASH (display "identity_escape") has no verbatim literal');
+	});
 });

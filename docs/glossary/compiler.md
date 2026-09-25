@@ -9650,44 +9650,11 @@ the set from that annotation alone.
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::collectGrammarFacts`
 
-```text
-/**
- * Ground truth for a symbol's literal text and alias status, read once from
- * the compiled grammar.json rather than re-derived per symbol: which
- * `ALIAS` nodes target a given display name (`aliasTargetNames`), which
- * `STRING` values exist anywhere in the grammar (`stringLiterals`, used to
- * verify an aliased anon token's raw C suffix is a real literal, never
- * guessed), and which named rules are themselves nothing but a literal — a
- * bare STRING body or an unnamed ALIAS body (`literalRules`, keyed by rule
- * name). The alias TARGET side is all this collects; whether a given rule
- * IS the alias source is decided later, at the symbol, by comparing the
- * parser's own display name against the rule name derived from the C symbol
- * (see `resolveSymbolTextFacts`) — never by re-walking the grammar tree for
- * `ALIAS` content a second time.
- */
-```
+Ground truth for a symbol's literal text and alias status, read once from the compiled grammar.json rather than re-derived per symbol: `aliasTargets` maps every named `ALIAS` target to the set of literals aliased to it (a `STRING` content, seen through `token`/`prec` wrappers — see `aliasedLiteral`; a symbol-content alias contributes the name with no literal), and `literalRules` records the named rules that are themselves nothing but a literal — a bare STRING body or an unnamed ALIAS body, keyed by rule name. Whether a given rule IS the alias source is decided later, at the symbol, by comparing the parser's own display name against the rule name derived from the C symbol (see `resolveSymbolTextFacts`) — never by re-walking the grammar tree.
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::resolveSymbolTextFacts`
 
-```text
-/**
- * Per-C-symbol literal-text and literal-rule facts, keyed by `cName`, fed
- * into `createParserMetadata`. `symbolName` (the parser's own display name)
- * is never touched here — it comes straight from `ts_symbol_names[]`
- * unconditionally, in every case, aliased or not. This resolves the
- * SEPARATE fact `literalText`: for `anon_sym_*`, the display name itself
- * when unaliased, or the verified raw C suffix (checked against
- * `stringLiterals`; throws if it is not a real literal anywhere in the
- * grammar) when the display name is an alias target. For `sym_*`, present
- * only when the rule is a bare-literal rule (`literalRules`) AND the
- * parser's display name for that symbol equals the rule name parsed from
- * `cName` — a mismatch means tree-sitter compiled this rule's hidden body
- * into the SAME symbol id as a differently-named alias elsewhere (python's
- * `_wildcard_pattern` compiling into the `wildcard_pattern` alias symbol),
- * and the alias's own display name must survive untouched, not be
- * overwritten by the literal text of the rule it wraps.
- */
-```
+Per-C-symbol literal-text and literal-rule facts, keyed by `cName`, fed into `createParserMetadata`. `symbolName` (the parser's own display name) is never touched here — it comes straight from `ts_symbol_names[]`. This resolves the separate fact `literalText`: for an aliased `anon_sym_*`, the literal `resolveAliasedTokenLiterals` pairs it with; for any other `anon_sym_*`, the display name itself. For `sym_*`, present only when the rule is a bare-literal rule (`literalRules`) AND the parser's display name for that symbol equals the rule name parsed from `cName` — a mismatch means tree-sitter compiled this rule's hidden body into the same symbol id as a differently-named alias elsewhere (python's `_wildcard_pattern` compiling into the `wildcard_pattern` alias symbol), and the alias's own display name must survive untouched.
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::symbolNameIsNotable`
 
@@ -10724,3 +10691,16 @@ The slice of DeriveCtx slot derivation needs (kindEntries, simplifiedRules),
 passed through from the owning node's derive ctx so slots resolve alias
 envelopes the same way element and value derivation does.
 ```
+
+### `packages/codegen/src/compiler/generated-metadata.ts::resolveAliasedTokenLiterals`
+
+The literal each aliased anonymous token lexes. Tree-sitter names an anonymous token by its alias only when every use of that token aliases it to the same name, so a parser symbol displayed as an alias target `D` lexes one of the literals aliased to `D` in grammar.json — and the parser keeps no other record of which. Per display name: (a) a C symbol whose `anon_sym_` suffix is itself one of `D`'s literals is that literal (the identifier-safe case, where tree-sitter's C name spells the literal); (b) the symbols left over take the literals no (a) symbol claimed, which resolves only when exactly one symbol and one literal remain; (c) anything else throws, naming the symbol, `D` and the unclaimed literals. A symbol whose display equals its own suffix is not aliased at all and is skipped — its text is its display. No part of tree-sitter's C-name mangling is re-implemented: a non-identifier literal (`'\-'` → `anon_sym_BSLASH_DASH`) is recovered by elimination, never by decoding the mangled name.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::aliasedLiteral`
+
+The literal a named alias wraps: its `STRING` content, looking through `LITERAL_WRAPPERS` (`token`, `token.immediate`, `prec*`), or `undefined` for any other content.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::LITERAL_WRAPPERS`
+
+Rule types that wrap a literal without changing the token it lexes.
+

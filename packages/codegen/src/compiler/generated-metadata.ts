@@ -96,14 +96,12 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 }
 
 interface GrammarFacts {
-	readonly aliasTargetNames: ReadonlySet<string>;
-	readonly stringLiterals: ReadonlySet<string>;
+	readonly aliasTargets: ReadonlyMap<string, ReadonlySet<string>>;
 	readonly literalRules: ReadonlyMap<string, string>;
 }
 
 function collectGrammarFacts(grammarJson: unknown): GrammarFacts {
-	const aliasTargetNames = new Set<string>();
-	const stringLiterals = new Set<string>();
+	const aliasTargets = new Map<string, Set<string>>();
 	const literalRules = new Map<string, string>();
 	const rules = (grammarJson as { rules?: Record<string, unknown> } | undefined)?.rules;
 	if (rules) {
@@ -112,10 +110,10 @@ function collectGrammarFacts(grammarJson: unknown): GrammarFacts {
 			if (literalValue !== undefined) literalRules.set(name, literalValue);
 		}
 		for (const rule of Object.values(rules)) {
-			walkGrammarNode(rule, aliasTargetNames, stringLiterals, literalRules);
+			walkGrammarNode(rule, aliasTargets, literalRules);
 		}
 	}
-	return { aliasTargetNames, stringLiterals, literalRules };
+	return { aliasTargets, literalRules };
 }
 
 function literalRuleValue(rule: unknown): string | undefined {
@@ -128,25 +126,70 @@ function literalRuleValue(rule: unknown): string | undefined {
 
 function walkGrammarNode(
 	node: unknown,
-	aliasTargetNames: Set<string>,
-	stringLiterals: Set<string>,
+	aliasTargets: Map<string, Set<string>>,
 	literalRules: Map<string, string>
 ): void {
 	if (Array.isArray(node)) {
-		for (const child of node) walkGrammarNode(child, aliasTargetNames, stringLiterals, literalRules);
+		for (const child of node) walkGrammarNode(child, aliasTargets, literalRules);
 		return;
 	}
 	if (node === null || typeof node !== 'object') return;
 	const record = node as Record<string, unknown>;
-	if (record.type === 'STRING' && typeof record.value === 'string') stringLiterals.add(record.value);
 	if (record.type === 'ALIAS' && record.named === true && typeof record.value === 'string') {
-		aliasTargetNames.add(record.value);
+		const literals = aliasTargets.get(record.value) ?? new Set<string>();
+		const literal = aliasedLiteral(record.content);
+		if (literal !== undefined) literals.add(literal);
+		aliasTargets.set(record.value, literals);
 	}
 	if (record.type === 'ALIAS' && record.named === false && typeof record.value === 'string') {
 		const content = record.content as Record<string, unknown> | undefined;
 		if (content?.type === 'SYMBOL' && typeof content.name === 'string') literalRules.set(content.name, record.value as string);
 	}
-	for (const value of Object.values(record)) walkGrammarNode(value, aliasTargetNames, stringLiterals, literalRules);
+	for (const value of Object.values(record)) walkGrammarNode(value, aliasTargets, literalRules);
+}
+
+const LITERAL_WRAPPERS = new Set(['TOKEN', 'IMMEDIATE_TOKEN', 'PREC', 'PREC_LEFT', 'PREC_RIGHT', 'PREC_DYNAMIC']);
+
+function aliasedLiteral(content: unknown): string | undefined {
+	if (content === null || typeof content !== 'object') return undefined;
+	const record = content as Record<string, unknown>;
+	if (record.type === 'STRING' && typeof record.value === 'string') return record.value;
+	if (typeof record.type === 'string' && LITERAL_WRAPPERS.has(record.type)) return aliasedLiteral(record.content);
+	return undefined;
+}
+
+function resolveAliasedTokenLiterals(
+	names: ReadonlyMap<string, string>,
+	aliasTargets: ReadonlyMap<string, ReadonlySet<string>>
+): ReadonlyMap<string, string> {
+	const byDisplay = new Map<string, string[]>();
+	for (const [cName, displayName] of names) {
+		if (!cName.startsWith('anon_sym_') || !aliasTargets.has(displayName)) continue;
+		if (cName.slice('anon_sym_'.length) === displayName) continue;
+		byDisplay.set(displayName, [...(byDisplay.get(displayName) ?? []), cName]);
+	}
+	const resolved = new Map<string, string>();
+	for (const [displayName, cNames] of byDisplay) {
+		const literals = aliasTargets.get(displayName)!;
+		const unresolved: string[] = [];
+		for (const cName of cNames) {
+			const suffix = cName.slice('anon_sym_'.length);
+			if (literals.has(suffix)) resolved.set(cName, suffix);
+			else unresolved.push(cName);
+		}
+		const claimed = new Set(cNames.map((c) => resolved.get(c)).filter((l) => l !== undefined));
+		const candidates = [...literals].filter((l) => !claimed.has(l));
+		for (const cName of unresolved) {
+			if (candidates.length !== 1 || unresolved.length !== 1) {
+				throw new Error(
+					`generated-metadata: aliased token ${cName} (display ${JSON.stringify(displayName)}) has no verbatim literal` +
+						` — unclaimed literals aliased to it: ${JSON.stringify(candidates)}`
+				);
+			}
+			resolved.set(cName, candidates[0]!);
+		}
+	}
+	return resolved;
 }
 
 interface SymbolTextFacts {
@@ -159,16 +202,12 @@ function resolveSymbolTextFacts(
 	grammar: GrammarFacts
 ): ReadonlyMap<string, SymbolTextFacts> {
 	const result = new Map<string, SymbolTextFacts>();
+	const aliasedLiterals = resolveAliasedTokenLiterals(names, grammar.aliasTargets);
 	for (const [cName, displayName] of names) {
 		if (cName.startsWith('anon_sym_')) {
-			if (grammar.aliasTargetNames.has(displayName)) {
-				const rawSuffix = cName.slice('anon_sym_'.length);
-				if (!grammar.stringLiterals.has(rawSuffix)) {
-					throw new Error(
-						`generated-metadata: aliased token ${cName} (display ${JSON.stringify(displayName)}) has no verbatim literal`
-					);
-				}
-				result.set(cName, { literalText: rawSuffix });
+			const aliasedLiteralText = aliasedLiterals.get(cName);
+			if (aliasedLiteralText !== undefined) {
+				result.set(cName, { literalText: aliasedLiteralText });
 				continue;
 			}
 			result.set(cName, { literalText: displayName });
@@ -178,7 +217,7 @@ function resolveSymbolTextFacts(
 			const ruleName = cName.slice('sym_'.length);
 			const literalValue = grammar.literalRules.get(ruleName);
 			if (literalValue === undefined) continue;
-			const isNamedAliasTarget = grammar.aliasTargetNames.has(displayName);
+			const isNamedAliasTarget = grammar.aliasTargets.has(displayName);
 			if (isNamedAliasTarget) continue;
 			result.set(cName, { literalText: literalValue, literalRule: true });
 		}
