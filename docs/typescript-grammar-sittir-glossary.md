@@ -258,8 +258,7 @@ class-member ambiguities against `public_field_definition` itself.
 				// The two-slot seq causes the template to flatten both slots, losing the
 				// name–attribute distinction. Registering as a visible group collapses the
 				// parent's optional to a single `jsx_opening_element_content` slot so each
-				// field renders from its own slot. Also fixes _jsx_start_opening_element's
-				// multi-slot-nested-seq diagnostic (it inlines __jsx_start_opening_element_optional1).
+				// field renders from its own slot.
 				// The name+type_arguments arm is NOT written out inline: enrich's group
 				// lift has already hoisted it into `_jsx_start_opening_element_group1`
 				// (aliased visible) by the time pattern replacement compares bodies, so

@@ -7010,8 +7010,8 @@ grammar that never ran through `wire()`; then no label is automatic.
 ```text
 /** `{parent -> childTargetName[]}` for every variant-adoption parent, stamped
  *  once at the end of link from the final link rules
- *  (`deriveStructuralVariantChildren`). Normalize's `variantSkip` and
- *  assemble's `variantChildrenByParent` consume this table; it is carried
+ *  (`deriveStructuralVariantChildren`). Assemble's `variantChildrenByParent`
+ *  consumes this table; it is carried
  *  unchanged onto `NormalizedGrammar` and `SimplifiedGrammar`. Absent when
  *  no kind adopts variants. */
 ```
@@ -9855,12 +9855,6 @@ same kinds, so the name and the fact cannot disagree.
  */
 ```
 
-### `packages/codegen/src/compiler/simplify.ts::SimplifyCtx.polymorphSkipExtra`
-
-```text
-/** Extra kinds the slot-grouping diagnostic skips (variant-resolved). */
-```
-
 ### `packages/codegen/src/compiler/simplify.ts::SimplifyCtx.constructor`
 
 #### body
@@ -9957,18 +9951,13 @@ same kinds, so the name and the fact cannot disagree.
 ```text
 /**
  * compiler/inline-sets.ts — shared derivation of the normalize-pipeline's
- * inline-decision and diagnostic-skip sets.
+ * inline-decision set.
  *
  * Extracted from generate.ts so `collectGrammarDiagnosticsForGrammar`
  * (diagnostics/grammar-diagnostics.ts) can build the SAME NormalizeCtx inputs
  * the real pipeline uses. generate.ts imports grammar-diagnostics.ts (for
  * formatCompilerDiagnostics), so the diagnostics module cannot import
- * generate.ts back — this neutral module breaks the cycle. Without shared
- * inputs the preflight's normalize ran ctx-less, `diagnoseSlotGrouping` never
- * saw `inlineKinds`, and every shape-①b `multi-slot-nested-seq` violation
- * (auto-group helper bodies like rust `_match_block_optional1`) was invisible
- * in the persisted grammar-diagnostics.json / validation report — console-only
- * during regen.
+ * generate.ts back — this neutral module breaks the cycle.
  */
 ```
 

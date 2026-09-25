@@ -245,12 +245,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		}
 	});
 
-	const variantSkip = new Set<string>();
-	for (const [parentKind, children] of linked.variantChildren ?? []) {
-		variantSkip.add(parentKind);
-		for (const child of children) variantSkip.add(child.name);
-	}
-
 	const normalizedGrammarView: NormalizedGrammar = {
 		name: linked.name,
 		rules: normalizedRules,
@@ -275,7 +269,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 			diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
 			wordMatcher: ctx?.wordMatcher,
 			inlineKinds,
-			polymorphSkipExtra: variantSkip,
 			builder: attributeBuilder,
 			slotGroupingCollector: ctx?.slotGroupingCollector
 		})
@@ -299,7 +292,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 				diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
 				wordMatcher: ctx?.wordMatcher,
 				inlineKinds,
-				polymorphSkipExtra: variantSkip,
 				builder: attributeBuilder,
 				slotGroupingCollector: ctx?.slotGroupingCollector
 			})
