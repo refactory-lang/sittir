@@ -75,11 +75,9 @@ same for any grammar with that shape, it is core; don't patch around core defect
 | Symptom | Class | Fix |
 |---|---|---|
 | `storagename-collision` / `content-collision`: two positional slots of one type (`seq(x, '.', x)`, `seq(a, '-', a)`) | authoring | `patches: { rule: { 0: field('start'), 2: field('end') } }` — name the roles |
-| `TemplateEmitter duplicate-slot violation` on a choice whose arms share a slot | core defect, authoring workaround | `variant()` each arm (and `field()` any trailing single member) so each arm is its own form; report the core defect |
+| `TemplateEmitter duplicate-slot violation` on a choice whose arms share a slot | core defect, authoring workaround | `variant()` each arm (and `field()` any trailing single member) so each arm is its own form; the core defect is written up in `docs/superpowers/plans/2026-09-25-grammar-bootstrap-follow-ups.md` |
 | `seated in a list but has no kind id` after a patch through an enrich-lifted group; parser `grammar.json` lacks a patch the IR has | composition | `wire(cfg, enrichedBase)` must receive the enriched base (`const enrichedBase = enrich(base); grammar(enrichedBase, wire({...}, enrichedBase))`) — without it a patch through a `<rule>_group` lands in the IR but not the parser, and a `variant()` mint ships orphaned. A test pins the composition for every grammar |
-| `aliased token … has no verbatim literal` | core | report; the literal must come from grammar.json, not the mangled C name |
-| `defaults: <kind> has a separator of shape SYMBOL` | core | report; fielding the member does not help |
-| `Cannot find module …/src/boundary.ts` at post-generate | core (missing emitter) | report |
+| `multi-slot-nested-seq` in `grammar-diagnostics.json` | authoring | enrich lifts a repeated multi-slot element into a visible `<rule>_group` on its own; the diagnostic means the element escaped the lift (e.g. reached through a rule the lift doesn't see). Register a visible `groups:` entry for the element; an authored `groups:` pattern also takes over an enrich mint with the same body |
 | `cargo check --workspace` fails in a crate with no `src/render/` | stale scaffold | delete that crate; the next successful `gen --all` recreates it |
 
 ### Patch path addressing
