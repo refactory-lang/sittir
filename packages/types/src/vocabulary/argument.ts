@@ -9,7 +9,7 @@ import type * as V from './index.ts';
 
 export interface Argument<G extends GrammarContext> {
 	readonly kind: 'argument';
-	readonly name: G['identifier'];
+	readonly name: G['identifier'] | 'async' | 'await' | 'exec' | 'match' | 'print' | 'type';
 	// p only
 	readonly value: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	// p only
@@ -19,7 +19,7 @@ export namespace Argument {
 	export interface Keyword<G extends GrammarContext> extends Simplify<SubKindOf<V.Argument<G>>> {
 		// claimed by p
 		readonly kind: 'argument.keyword';
-		readonly name: G['identifier'];
+		readonly name: G['identifier'] | 'async' | 'await' | 'exec' | 'match' | 'print' | 'type';
 		readonly value: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
 	export type Any<G extends GrammarContext> = V.Argument.Keyword<G>;

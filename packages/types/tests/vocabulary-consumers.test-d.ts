@@ -83,7 +83,7 @@ export const notEqual: Expression.Binary.Comparison.Equal<BaseContext> = {
 // A trait is an interface with more: a refinement carries its own kind and the members its parent lacks.
 export const trait: Declaration.Interface.Trait<BaseContext> = {
 	kind: 'declaration.interface.trait',
-	name: { kind: 'identifier' },
+	name: { kind: 'identifier.type' },
 	body: [],
 	unsafe: true
 };

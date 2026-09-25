@@ -132,9 +132,6 @@ export namespace Literal {
 	export interface String<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal<G>>> {
 		// claimed by prt
 		readonly kind: 'literal.string';
-		readonly content?: V.Unmapped<'typescript:string_double'> | V.Unmapped<'typescript:string_single'>;
-		// t only
-		// unmapped: <typescript:string_double> <typescript:string_single>
 		readonly contents?: (V.Unmapped<'python:string_content'> | V.Expression.Interpolation<G>)[];
 		// p only
 		// unmapped: <python:string_content>

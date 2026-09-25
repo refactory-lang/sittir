@@ -20,7 +20,28 @@ export namespace Attribute {
 		readonly kind: 'attribute.content';
 		readonly input?: V.Unmapped<'rust:attribute_input'>;
 		// unmapped: <rust:attribute_input>
-		readonly path?: G['identifier'];
+		readonly path?:
+			| G['identifier']
+			| 'bool'
+			| 'char'
+			| 'default'
+			| 'f32'
+			| 'f64'
+			| 'gen'
+			| 'i128'
+			| 'i16'
+			| 'i32'
+			| 'i64'
+			| 'i8'
+			| 'isize'
+			| 'str'
+			| 'u128'
+			| 'u16'
+			| 'u32'
+			| 'u64'
+			| 'u8'
+			| 'union'
+			| 'usize';
 	}
 	export namespace Content {
 		export interface Call<G extends GrammarContext> extends Simplify<SubKindOf<V.Attribute.Content<G>>> {
@@ -34,7 +55,7 @@ export namespace Attribute {
 			// claimed by t
 			readonly kind: 'attribute.content.member';
 			readonly object: V.Attribute.Content.Member<G> | G['identifier'];
-			readonly property: G['identifier'];
+			readonly property: V.Identifier.Property<G>;
 		}
 		export interface Parenthesized<G extends GrammarContext> extends Simplify<SubKindOf<V.Attribute.Content<G>>> {
 			// claimed by t
