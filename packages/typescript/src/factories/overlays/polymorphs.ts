@@ -4494,11 +4494,11 @@ export const parenthesizedExpression: {
 };
 
 export const formalParameter: {
-	readonly requiredParameter: typeof B.requiredParameter;
-	readonly optionalParameter: typeof B.optionalParameter;
+	readonly required: typeof B.requiredParameter;
+	readonly optional: typeof B.optionalParameter;
 } = {
-	requiredParameter: B.requiredParameter,
-	optionalParameter: B.optionalParameter
+	required: B.requiredParameter,
+	optional: B.optionalParameter
 };
 
 export const callExpression: {

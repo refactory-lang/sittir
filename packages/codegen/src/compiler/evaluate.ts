@@ -908,6 +908,10 @@ function appendDedup(sink: string[], value: string): void {
 	if (!sink.includes(value)) sink.push(value);
 }
 
+function baseNameSymbols(names: readonly unknown[] | undefined): unknown[] {
+	return (names ?? []).map((name) => (typeof name === 'string' ? sym(name) : name));
+}
+
 function appendCallbackMetadataNames(sink: string[], result: unknown): void {
 	if (!Array.isArray(result)) return;
 	for (const item of result) {
@@ -964,7 +968,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 
 	if (opts.supertypes) {
 		const $ = createProxy('_supertypes_', refs);
-		const baseSupertypes = baseGrammar?.supertypes ?? [];
+		const baseSupertypes = baseNameSymbols(baseGrammar?.supertypes);
 		appendCallbackMetadataNames(sinks.supertypes, opts.supertypes.call($, $, baseSupertypes));
 	}
 
@@ -976,13 +980,13 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 
 	if (opts.inline) {
 		const $ = createProxy('_inline_', refs);
-		const baseInline = baseGrammar?.inline ?? [];
+		const baseInline = baseNameSymbols(baseGrammar?.inline);
 		appendCallbackMetadataNames(sinks.inline, opts.inline.call($, $, baseInline));
 	}
 
 	if (opts.conflicts) {
 		const $ = createProxy('_conflicts_', refs);
-		const baseConflicts = baseGrammar?.conflicts ?? [];
+		const baseConflicts = (baseGrammar?.conflicts ?? []).map((group) => baseNameSymbols(group));
 		const result = opts.conflicts.call($, $, baseConflicts);
 		if (Array.isArray(result)) {
 			for (const c of result) {

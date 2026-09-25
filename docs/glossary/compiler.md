@@ -2872,6 +2872,10 @@ runs once the metadata callbacks have been evaluated.
  * where `$` is a fresh proxy and `baseValue` is the base grammar's
  * version of that property. Extras entries can be bare names (the base's
  * own spelling in this pass) as well as rules; both land in the extras sink.
+ * The base `supertypes`, `inline` and `conflicts` (group-wise) arrive as
+ * SYMBOL rules (`baseNameSymbols`), exactly as the tree-sitter CLI hands
+ * them, so a wired callback's removals, renames and dedupe act the same in
+ * both pipelines.
  */
 ```
 
@@ -8366,13 +8370,21 @@ carried through a side channel.
 
 ```text
 // Shared by the `supertypes`, `factoryInline` and `inline` callback results:
-// each accepts a mixed array where the callback's `previous` param carries
-// already-coerced STRING names from the base grammar, while `$.foo` references
-// added in the override coerce to `{ type: 'SYMBOL', name: 'foo' }`. An
-// override body like `previous.concat([$.foo])` produces exactly this mixed
-// shape; without the string branch the base-inherited names silently drop
-// (coerceToRule() turns a bare string into a STRING rule, never SYMBOL, so
-// `n.type === SYMBOL` is always false for them).
+// each accepts a mixed array of bare names and `$.foo` references (which
+// coerce to `{ type: 'SYMBOL', name: 'foo' }`). `factoryInline`'s `previous`
+// still carries bare STRING names from the base grammar; without the string
+// branch those names would silently drop (coerceToRule() turns a bare string
+// into a STRING rule, never SYMBOL).
+```
+
+### `packages/codegen/src/compiler/evaluate.ts::baseNameSymbols`
+
+```text
+// The base grammar's name list as SYMBOL rules: the shape the tree-sitter CLI
+// passes as `previous` to `supertypes`, `inline` and each `conflicts` group.
+// Wired callbacks match SYMBOL entries only (inline removals, symbol renames,
+// existing-name dedupe); bare strings would leave those steps inert on the
+// sittir side and its inline and conflicts would diverge from grammar.json.
 ```
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::BuildResult`
