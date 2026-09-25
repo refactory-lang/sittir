@@ -908,4 +908,6 @@ git commit --no-verify -q -m "feat(emit): the factory source emitter prints arm,
 - rust ir-render-parse 1170/1170 → 1168/1169: `Use declarations (use_wildcard)`, `root._use_wildcard_group._path: shape mismatch (node vs scalar)`.
 - python ir-render-parse 1241/1241 → 1239/1239 (two rows fewer, no failure).
 
-The fix lands with the seating work that makes these mints seat correctly; the rows above are its gate.
+**Landed without `hoisted`.** `reconstructContainer` now carries over every container property except `hoisted`, which `withoutHoisted` removes first. The automatic `variantOf` labels and container `metadata` survive a patch, with no node-model, ir or row move. The remaining step is to lift the `withoutHoisted` exclusion together with the seating work that makes the mints above seat correctly; the rows above are its gate.
+
+A patch written through the parent does not avoid the rebuild. Typescript `import_clause: { '2/1/0/1': field('bindings') }` walks through the group lift (`descendThroughGroupLiftSymbol` runs `applyPath` on the mint's body), which rebuilds `import_clause_group`'s seq through `applyToMembers` → `reconstructContainer`, so the mint gains `fields.bindings` in node-types but still loses `hoisted`.

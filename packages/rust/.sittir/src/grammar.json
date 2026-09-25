@@ -6115,7 +6115,10 @@
                   "fieldSource": "override"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "_let_chain"
+            }
           },
           {
             "type": "SEQ",
@@ -6146,7 +6149,10 @@
                   "fieldSource": "override"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "_let_chain"
+            }
           },
           {
             "type": "SEQ",
@@ -6177,7 +6183,10 @@
                   "fieldSource": "override"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "_let_chain"
+            }
           },
           {
             "type": "SEQ",
@@ -6208,7 +6217,10 @@
                   "fieldSource": "override"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "_let_chain"
+            }
           },
           {
             "type": "SEQ",
@@ -6239,7 +6251,10 @@
                   "fieldSource": "override"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "_let_chain"
+            }
           }
         ]
       }
@@ -13795,6 +13810,7 @@
           }
         ],
         "annotations": {
+          "variantOf": "or_pattern",
           "hoisted": true
         }
       }
@@ -13912,6 +13928,7 @@
           }
         ],
         "annotations": {
+          "variantOf": "range_expression",
           "hoisted": true
         }
       }
@@ -13946,6 +13963,7 @@
           }
         ],
         "annotations": {
+          "variantOf": "range_expression",
           "hoisted": true
         }
       }
@@ -13980,6 +13998,7 @@
           }
         ],
         "annotations": {
+          "variantOf": "range_expression",
           "hoisted": true
         }
       }

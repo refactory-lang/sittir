@@ -9072,7 +9072,10 @@
                         }
                       ]
                     }
-                  ]
+                  ],
+                  "annotations": {
+                    "variantOf": "public_field_definition"
+                  }
                 },
                 {
                   "type": "SEQ",
@@ -9107,7 +9110,10 @@
                         }
                       ]
                     }
-                  ]
+                  ],
+                  "annotations": {
+                    "variantOf": "public_field_definition"
+                  }
                 }
               ]
             },

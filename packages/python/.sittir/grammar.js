@@ -482,8 +482,8 @@ function isWalkableNode(rule2) {
 }
 function reconstructContainer(rule2, members) {
   const t = rule2.type;
-  if (isSeqType(t)) return nativeRequired("seq")(...members);
-  if (isChoiceType(t)) return nativeRequired("choice")(...members);
+  if (isSeqType(t)) return carryOverProperties(withoutHoisted(rule2), nativeRequired("seq")(...members));
+  if (isChoiceType(t)) return carryOverProperties(withoutHoisted(rule2), nativeRequired("choice")(...members));
   throw new Error(`reconstructContainer: unknown container type '${t}'`);
 }
 function reconstructWrapper(rule2, newContent) {
@@ -506,6 +506,12 @@ function reconstructWrapper(rule2, newContent) {
   throw new Error(
     `reconstructWrapper: no native dsl reconstruction for wrapper type '${rule2.type}' \u2014 this is a bug in the path-descent logic.`
   );
+}
+function withoutHoisted(rule2) {
+  const { annotations, ...rest } = rule2;
+  if (annotations?.hoisted !== true) return rule2;
+  const { hoisted: _hoisted, ...kept } = annotations;
+  return Object.keys(kept).length === 0 ? rest : { ...rest, annotations: kept };
 }
 function carryOverProperties(rule2, rebuilt2) {
   if (rebuilt2.type !== rule2.type) return rebuilt2;

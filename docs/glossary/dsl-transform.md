@@ -358,6 +358,12 @@ single-content / index-0 behaviour).
  * runtime's native dsl function with the new members. Delegating to
  * native ensures the result has the correct rule-type case and
  * inherits any normalization the runtime applies.
+ *
+ * A patch rebuilds the same rule, so the container keeps its own
+ * properties through `carryOverProperties`, as a rebuilt wrapper does:
+ * the automatic `variantOf` label on a choice arm and the container's
+ * `metadata` survive a patch on one of its members. The one exception
+ * is `hoisted`, which `withoutHoisted` removes first.
  */
 ```
 
@@ -389,6 +395,24 @@ single-content / index-0 behaviour).
  *
  * Throws on an unknown wrapper type — safer than emitting a hand-rolled
  * shape that may be wrong-case in the tree-sitter runtime.
+ */
+```
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::withoutHoisted`
+
+```text
+/**
+ * The container `reconstructContainer` carries over, minus the
+ * `hoisted` annotation (the rest of its annotations and its metadata
+ * are kept; an annotation set left empty is dropped).
+ *
+ * A patch that rebuilds a hoisted group's body clears `hoisted`, so
+ * the group leaves the hoisted set and is no longer seated on its
+ * parent. Keeping `hoisted` would seat 19 groups that are not seated
+ * today, and the seating does not yet handle them. That work, its
+ * group list and the rows it moves are in the group-seating plan's
+ * section "a patch on a hoisted mint un-hoists it". Lifting this
+ * exclusion is its remaining step.
  */
 ```
 
