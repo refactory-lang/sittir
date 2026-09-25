@@ -1809,6 +1809,23 @@ to, the declaration under its kind says what its arm is. Welded together, as
 `preference(label, arm)` repeated at every site does today, neither can be
 stated once.
 
+### `packages/codegen/src/dsl/wire/wire.ts::declaredGroupMintName`
+
+The rule name a `groups:` or `injects:` declaration is registered under: the
+key itself when it already starts with `_`, otherwise `_<key>` (the visible key
+becomes the alias display over that hidden rule). `applyWirePatternReplacement`
+registers the body under this name and `assertNoDeclaredGroupPatches` checks
+patch keys against it, so both read the one naming rule.
+
+### `packages/codegen/src/dsl/wire/wire.ts::assertNoDeclaredGroupPatches`
+
+Refuses a `patches:` key that names a `groups:` or `injects:` declaration,
+either by its key or by its registered name (`declaredGroupMintName`). Such a
+body is registered after the patch wrappers are composed, and the registration
+replaces the wrapper under that name, so the patch would be dropped without a
+trace. The declared body is authored in the grammar file, so its fields and
+variants are written in that body instead.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::assertNoSpacingAddressPatches`
 
 Refuses a gap, seam or flank spelling as a top-level `patches:` key. Those

@@ -923,7 +923,8 @@ The user's ruling: a fielded slot takes no automatic arms, so an unfielded choic
 
 **Follow-ups:**
 - A `groups:` mint that gains a field loses its own seat (the rust attributed groups above); diagnose why.
-- A patch keyed by a `groups:` mint name is silently ignored; it must be a hard error.
+- [x] A patch keyed by a `groups:` or `injects:` declaration (its key or its `_` mint name) was silently dropped: the declared body is registered after the patch wrappers and replaces the wrapper. `wire()` now refuses it (`assertNoDeclaredGroupPatches`).
+- A patch key that names no rule at all (a typo) is not refused: `composeOrSynthesizePatchedParents` synthesizes a rule for it. Measured: the keys that name no rule in `rules:`, `groups:` or the base grammar are typescript `export_statement_default`, `export_statement_equals_export`, `export_statement_namespace_export`, `export_statement_type_export` and python `_parenthesized_import_list`. Each names a rule another patch mints (a variant mint), none is a typo. A typo check therefore has to admit the names other patches mint, not only the known rule set.
 
 ### Task 7d: The identifier leaf guard rejects a reserved word the slot does not admit
 

@@ -4373,6 +4373,7 @@ function wire(config, base2) {
   const cfg = config;
   const baseArg = base2;
   assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
+  assertNoDeclaredGroupPatches(cfg.patches ?? {}, cfg.groups, cfg.injects);
   const context = {
     deposits: /* @__PURE__ */ new Map(),
     ruleBodies: /* @__PURE__ */ new Map(),
@@ -4490,6 +4491,21 @@ function assertNoSpacingAddressPatches(patches, rules) {
     if (!patches[key]) continue;
     if (isRetiredAddressKey(key, rules)) {
       throw new Error(`patches: '${key}' is a spacing address; declare it under options: against the site it names`);
+    }
+  }
+}
+function declaredGroupMintName(key) {
+  return key.startsWith("_") ? key : `_${key}`;
+}
+function assertNoDeclaredGroupPatches(patches, groups, injects) {
+  for (const [section, declared] of [["groups", groups], ["injects", injects]]) {
+    for (const key of Object.keys(declared ?? {})) {
+      for (const patchKey of /* @__PURE__ */ new Set([key, declaredGroupMintName(key)])) {
+        if (!patches[patchKey]) continue;
+        throw new Error(
+          `patches: '${patchKey}' names the ${section}: declaration '${key}' \u2014 its body is declared under ${section}:; write the field()/variant() in that body`
+        );
+      }
     }
   }
 }
@@ -4955,8 +4971,8 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context, 
     if (typeof value === "function") declared.push(["injects", key, value]);
   }
   for (const [section, key, value] of declared) {
-    const hidden = key.startsWith("_");
-    const hiddenName = hidden ? key : `_${key}`;
+    const hiddenName = declaredGroupMintName(key);
+    const hidden = hiddenName === key;
     let body;
     try {
       const result = value.call(void 0, $, void 0);
