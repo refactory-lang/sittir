@@ -743,7 +743,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "value"
 		},
 		{
 			"kind": "seam",
@@ -1354,7 +1354,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "member"
 		},
 		{
 			"kind": "slot",
@@ -1920,7 +1920,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "expression"
 		},
 		{
 			"kind": "seam",
@@ -2004,7 +2004,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "expression"
 		},
 		{
 			"kind": "seam",
@@ -5932,7 +5932,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "members"
 		},
 		{
 			"kind": "seam",
@@ -7422,7 +7422,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "type"
 		},
 		{
 			"kind": "seam",
@@ -7937,7 +7937,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "expression"
 		},
 		{
 			"kind": "seam",

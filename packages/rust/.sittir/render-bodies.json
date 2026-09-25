@@ -1076,7 +1076,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "type"
 		},
 		{
 			"kind": "seam",
@@ -1860,7 +1860,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "body"
 		},
 		{
 			"kind": "seam",
@@ -3290,7 +3290,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "name"
 		},
 		{
 			"kind": "seam",

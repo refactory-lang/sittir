@@ -1319,7 +1319,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "target"
 		},
 		{
 			"kind": "seam",
@@ -2147,7 +2147,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "elements"
 		},
 		{
 			"kind": "seam",
@@ -2956,7 +2956,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "target"
 		},
 		{
 			"kind": "seam",
@@ -3222,7 +3222,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "expression"
 		},
 		{
 			"kind": "seam",
@@ -3578,7 +3578,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "value"
 		},
 		{
 			"kind": "seam",
@@ -4129,7 +4129,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "name"
 		},
 		{
 			"kind": "seam",

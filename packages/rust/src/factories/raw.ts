@@ -1973,8 +1973,8 @@ export function buildVisibilityModifier(value: TSKindId.Crate | T.VisibilityModi
 }
 
 export function buildBracketedType(value: (T.Type | T.QualifiedType) | T.TypeIdentifier.Types): T.BracketedType.Built {
-	const _content = admitAliasContent<NonNullable<T.BracketedType['_content']>>(
-		coerceMixedEnumStorage<NonNullable<T.BracketedType['_content']>>(value, []),
+	const _type = admitAliasContent<NonNullable<T.BracketedType['_type']>>(
+		coerceMixedEnumStorage<NonNullable<T.BracketedType['_type']>>(value, []),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	return withMethods(
@@ -1983,14 +1983,13 @@ export function buildBracketedType(value: (T.Type | T.QualifiedType) | T.TypeIde
 				$type: TSKindId.BracketedType as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_type,
 				$with: {
-					content: (value: NonNullable<(T.Type | T.QualifiedType) | T.TypeIdentifier.Types>) =>
-						buildBracketedType(value)
+					type: (value: NonNullable<(T.Type | T.QualifiedType) | T.TypeIdentifier.Types>) => buildBracketedType(value)
 				}
 			},
 			{
-				content: () => _content
+				type: () => _type
 			}
 		),
 		methodsEngine
@@ -3436,20 +3435,20 @@ export function buildLetChain(config: Partial<T.LetChain.Config> = {}): T.LetCha
 }
 
 export function buildElseClause(value: T.Block | T.IfExpression): T.ElseClause.Built {
-	const _content = value;
+	const _body = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ElseClause as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_body,
 				$with: {
-					content: (value: T.Block | T.IfExpression) => buildElseClause(value)
+					body: (value: T.Block | T.IfExpression) => buildElseClause(value)
 				}
 			},
 			{
-				content: () => _content
+				body: () => _body
 			}
 		),
 		methodsEngine
@@ -4052,7 +4051,7 @@ export function buildBlock(config: Partial<T.Block.Config> = {}): T.Block.Built 
 }
 
 export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericPattern.Built {
-	const _content = config.content;
+	const _name = config.name;
 	const _type_arguments = config.typeArguments;
 	return withMethods(
 		withAccessors(
@@ -4060,15 +4059,15 @@ export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericP
 				$type: TSKindId.GenericPattern as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_name,
 				_type_arguments,
 				$with: {
-					content: (value: T.Identifier | T.ScopedIdentifier) => buildGenericPattern({ ...config, content: value }),
+					name: (value: T.Identifier | T.ScopedIdentifier) => buildGenericPattern({ ...config, name: value }),
 					typeArguments: (value: T.TypeArguments) => buildGenericPattern({ ...config, typeArguments: value })
 				}
 			},
 			{
-				content: () => _content,
+				name: () => _name,
 				typeArguments: () => _type_arguments
 			}
 		),

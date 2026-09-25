@@ -217,7 +217,7 @@ export interface AssertsAnnotationTransport {
 export interface AssertsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content: SlotValue<Box<AssertsContentTransportSlot>>
+  _value: SlotValue<Box<AssertsValueTransportSlot>>
 }
 
 export interface AssignmentExpressionTransport {
@@ -320,8 +320,8 @@ export interface CatchClauseTransport {
 export interface ClassBodyMemberTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  _member: SlotValue<ClassBodyMemberMemberTransportSlot>
   _terminator?: SlotValue<ClassBodyMemberTerminatorTransportSlot>
-  _content: SlotValue<ClassBodyMemberContentTransportSlot>
 }
 
 export interface ClassBodyMethodSigTransport {
@@ -473,13 +473,13 @@ export interface DecoratorMemberExpressionTransport {
 export interface DecoratorParenthesizedExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content: SlotValue<DecoratorParenthesizedExpressionContentTransportSlot>
+  _expression: SlotValue<DecoratorParenthesizedExpressionExpressionTransportSlot>
 }
 
 export interface DecoratorTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content: SlotValue<DecoratorContentTransportSlot>
+  _expression: SlotValue<DecoratorExpressionTransportSlot>
 }
 
 export interface DefaultTypeTransport {
@@ -1206,11 +1206,11 @@ export interface ObjectTransport {
 export interface ObjectTypeContentTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content?: Array<SlotValue<ObjectTypeContentContentTransportSlot>>
+  _members: Array<SlotValue<ObjectTypeContentMembersTransportSlot>>
   _delimiter?: number
   _separator?: number
-  _content_separator_space_before?: number
-  _content_separator_space_after?: number
+  _members_separator_space_before?: number
+  _members_separator_space_after?: number
 }
 
 export interface ObjectTypeTransport {
@@ -1504,7 +1504,7 @@ export interface TemplateSubstitutionTransport {
 export interface TemplateTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content: SlotValue<TemplateTypeContentTransportSlot>
+  _type: SlotValue<TemplateTypeTypeTransportSlot>
 }
 
 export interface TernaryExpressionTransport {
@@ -1669,7 +1669,7 @@ export interface TypeQuerySubscriptExpressionTransport {
 export interface TypeQueryTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content: SlotValue<TypeQueryContentTransportSlot>
+  _expression: SlotValue<TypeQueryExpressionTransportSlot>
 }
 
 export interface TypesTransport {

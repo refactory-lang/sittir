@@ -3592,25 +3592,18 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapParenthesizedListSplat(
-	data: T.ParenthesizedListSplat & {
-		readonly _parenthesized_list_splat?: T.ParenthesizedListSplat | T.ListSplat;
-		readonly _list_splat?: T.ParenthesizedListSplat | T.ListSplat;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_parenthesized_list_splat', '_list_splat']);
+export function wrapParenthesizedListSplat(data: T.ParenthesizedListSplat, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_list_splat', '_parenthesized_list_splat']),
+			...data,
 			$type: TSKindId.ParenthesizedListSplat as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._parenthesized_list_splat ?? data._list_splat,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			content() {
 				return drillIn<T.ParenthesizedListSplat | T.ListSplat>(this._content, tree);
@@ -4867,150 +4860,25 @@ export function wrapTypedDefaultParameter(data: T.TypedDefaultParameter, tree: T
 	return _node;
 }
 
-export function wrapListSplatPattern(
-	data: T.ListSplatPattern & {
-		readonly _identifier?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _print_keyword?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _exec_keyword?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _async_keyword?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _await_keyword?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _type_keyword?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _match_keyword?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _subscript?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _attribute?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_content',
-		'_identifier',
-		'_print_keyword',
-		'_exec_keyword',
-		'_async_keyword',
-		'_await_keyword',
-		'_type_keyword',
-		'_match_keyword',
-		'_subscript',
-		'_attribute'
-	]);
+export function wrapListSplatPattern(data: T.ListSplatPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_target']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ListSplatPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_async_keyword',
-				'_attribute',
-				'_await_keyword',
-				'_exec_keyword',
-				'_identifier',
-				'_match_keyword',
-				'_print_keyword',
-				'_subscript',
-				'_type_keyword'
-			]),
+			...data,
 			$type: TSKindId.ListSplatPattern as const,
-			_content: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(
-					data._content ??
-						data._identifier ??
-						data._print_keyword ??
-						data._exec_keyword ??
-						data._async_keyword ??
-						data._await_keyword ??
-						data._type_keyword ??
-						data._match_keyword ??
-						data._subscript ??
-						data._attribute,
-					'content',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
+			_target: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._target, 'target', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'target',
+					span: (data as _NodeData).$span
+				}),
 				{ print: 68, exec: 38, async: 69, await: 70, type: 39, match: 22 }
 			),
 
-			content() {
+			target() {
 				return drillIn<
 					| T.Identifier
 					| TSKindId.PrintKeyword
@@ -5021,11 +4889,11 @@ export function wrapListSplatPattern(
 					| TSKindId.MatchKeyword
 					| T.Subscript
 					| T.Attribute
-				>(this._content, tree);
+				>(this._target, tree);
 			},
 			$with: {
-				content: (v: NonNullable<T.ListSplatPattern['_content']>) =>
-					wrapListSplatPattern({ ...$edited(data), _content: v }, tree)
+				target: (v: NonNullable<T.ListSplatPattern['_target']>) =>
+					wrapListSplatPattern({ ...$edited(data), _target: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -5033,150 +4901,25 @@ export function wrapListSplatPattern(
 	return _node;
 }
 
-export function wrapDictionarySplatPattern(
-	data: T.DictionarySplatPattern & {
-		readonly _identifier?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _print_keyword?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _exec_keyword?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _async_keyword?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _await_keyword?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _type_keyword?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _match_keyword?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _subscript?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-		readonly _attribute?:
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_content',
-		'_identifier',
-		'_print_keyword',
-		'_exec_keyword',
-		'_async_keyword',
-		'_await_keyword',
-		'_type_keyword',
-		'_match_keyword',
-		'_subscript',
-		'_attribute'
-	]);
+export function wrapDictionarySplatPattern(data: T.DictionarySplatPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_target']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.DictionarySplatPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_async_keyword',
-				'_attribute',
-				'_await_keyword',
-				'_exec_keyword',
-				'_identifier',
-				'_match_keyword',
-				'_print_keyword',
-				'_subscript',
-				'_type_keyword'
-			]),
+			...data,
 			$type: TSKindId.DictionarySplatPattern as const,
-			_content: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(
-					data._content ??
-						data._identifier ??
-						data._print_keyword ??
-						data._exec_keyword ??
-						data._async_keyword ??
-						data._await_keyword ??
-						data._type_keyword ??
-						data._match_keyword ??
-						data._subscript ??
-						data._attribute,
-					'content',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
+			_target: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._target, 'target', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'target',
+					span: (data as _NodeData).$span
+				}),
 				{ print: 68, exec: 38, async: 69, await: 70, type: 39, match: 22 }
 			),
 
-			content() {
+			target() {
 				return drillIn<
 					| T.Identifier
 					| TSKindId.PrintKeyword
@@ -5187,11 +4930,11 @@ export function wrapDictionarySplatPattern(
 					| TSKindId.MatchKeyword
 					| T.Subscript
 					| T.Attribute
-				>(this._content, tree);
+				>(this._target, tree);
 			},
 			$with: {
-				content: (v: NonNullable<T.DictionarySplatPattern['_content']>) =>
-					wrapDictionarySplatPattern({ ...$edited(data), _content: v }, tree)
+				target: (v: NonNullable<T.DictionarySplatPattern['_target']>) =>
+					wrapDictionarySplatPattern({ ...$edited(data), _target: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -6826,32 +6569,18 @@ export function wrapCall(data: T.Call, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapTypedParameter(
-	data: T.TypedParameter & {
-		readonly _identifier?: T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern;
-		readonly _list_splat_pattern?: T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern;
-		readonly _dictionary_splat_pattern?: T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_content',
-		'_type',
-		'_identifier',
-		'_list_splat_pattern',
-		'_dictionary_splat_pattern'
-	]);
+export function wrapTypedParameter(data: T.TypedParameter, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_name', '_type']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_dictionary_splat_pattern', '_identifier', '_list_splat_pattern']),
+			...data,
 			$type: TSKindId.TypedParameter as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._identifier ?? data._list_splat_pattern ?? data._dictionary_splat_pattern,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'name',
+				span: (data as _NodeData).$span
+			}),
 			_type: normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -6859,15 +6588,14 @@ export function wrapTypedParameter(
 				span: (data as _NodeData).$span
 			}),
 
-			content() {
-				return drillIn<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>(this._content, tree);
+			name() {
+				return drillIn<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>(this._name, tree);
 			},
 			type() {
 				return drillIn<T.Type>(this._type, tree);
 			},
 			$with: {
-				content: (v: NonNullable<T.TypedParameter['_content']>) =>
-					wrapTypedParameter({ ...$edited(data), _content: v }, tree),
+				name: (v: NonNullable<T.TypedParameter['_name']>) => wrapTypedParameter({ ...$edited(data), _name: v }, tree),
 				type: (v: NonNullable<T.TypedParameter['_type']>) => wrapTypedParameter({ ...$edited(data), _type: v }, tree)
 			}
 		},
@@ -7817,212 +7545,28 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
 	return _node;
 }
 
-export function wrapParenthesizedExpression(
-	data: T.ParenthesizedExpression & {
-		readonly _comparison_operator?: T.Expression | T.Yield;
-		readonly _not_operator?: T.Expression | T.Yield;
-		readonly _boolean_operator?: T.Expression | T.Yield;
-		readonly _lambda?: T.Expression | T.Yield;
-		readonly _identifier?: T.Expression | T.Yield;
-		readonly _await?: T.Expression | T.Yield;
-		readonly _binary_operator?: T.Expression | T.Yield;
-		readonly _print_keyword?: T.Expression | T.Yield;
-		readonly _exec_keyword?: T.Expression | T.Yield;
-		readonly _async_keyword?: T.Expression | T.Yield;
-		readonly _await_keyword?: T.Expression | T.Yield;
-		readonly _type_keyword?: T.Expression | T.Yield;
-		readonly _match_keyword?: T.Expression | T.Yield;
-		readonly _string?: T.Expression | T.Yield;
-		readonly _concatenated_string?: T.Expression | T.Yield;
-		readonly _integer_hex?: T.Expression | T.Yield;
-		readonly _integer_octal?: T.Expression | T.Yield;
-		readonly _integer_binary?: T.Expression | T.Yield;
-		readonly _integer_decimal?: T.Expression | T.Yield;
-		readonly _float_point?: T.Expression | T.Yield;
-		readonly _float_leading_point?: T.Expression | T.Yield;
-		readonly _float_scientific?: T.Expression | T.Yield;
-		readonly _true?: T.Expression | T.Yield;
-		readonly _false?: T.Expression | T.Yield;
-		readonly _none?: T.Expression | T.Yield;
-		readonly _unary_operator?: T.Expression | T.Yield;
-		readonly _attribute?: T.Expression | T.Yield;
-		readonly _subscript?: T.Expression | T.Yield;
-		readonly _call?: T.Expression | T.Yield;
-		readonly _list?: T.Expression | T.Yield;
-		readonly _list_comprehension?: T.Expression | T.Yield;
-		readonly _dictionary?: T.Expression | T.Yield;
-		readonly _dictionary_comprehension?: T.Expression | T.Yield;
-		readonly _set?: T.Expression | T.Yield;
-		readonly _set_comprehension?: T.Expression | T.Yield;
-		readonly _tuple?: T.Expression | T.Yield;
-		readonly _parenthesized_expression?: T.Expression | T.Yield;
-		readonly _generator_expression?: T.Expression | T.Yield;
-		readonly _ellipsis?: T.Expression | T.Yield;
-		readonly _list_splat_pattern?: T.Expression | T.Yield;
-		readonly _conditional_expression?: T.Expression | T.Yield;
-		readonly _named_expression?: T.Expression | T.Yield;
-		readonly _as_pattern?: T.Expression | T.Yield;
-		readonly _yield?: T.Expression | T.Yield;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_content',
-		'_comparison_operator',
-		'_not_operator',
-		'_boolean_operator',
-		'_lambda',
-		'_identifier',
-		'_await',
-		'_binary_operator',
-		'_print_keyword',
-		'_exec_keyword',
-		'_async_keyword',
-		'_await_keyword',
-		'_type_keyword',
-		'_match_keyword',
-		'_string',
-		'_concatenated_string',
-		'_integer_hex',
-		'_integer_octal',
-		'_integer_binary',
-		'_integer_decimal',
-		'_float_point',
-		'_float_leading_point',
-		'_float_scientific',
-		'_true',
-		'_false',
-		'_none',
-		'_unary_operator',
-		'_attribute',
-		'_subscript',
-		'_call',
-		'_list',
-		'_list_comprehension',
-		'_dictionary',
-		'_dictionary_comprehension',
-		'_set',
-		'_set_comprehension',
-		'_tuple',
-		'_parenthesized_expression',
-		'_generator_expression',
-		'_ellipsis',
-		'_list_splat_pattern',
-		'_conditional_expression',
-		'_named_expression',
-		'_as_pattern',
-		'_yield'
-	]);
+export function wrapParenthesizedExpression(data: T.ParenthesizedExpression, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_expression']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_as_pattern',
-				'_async_keyword',
-				'_attribute',
-				'_await',
-				'_await_keyword',
-				'_binary_operator',
-				'_boolean_operator',
-				'_call',
-				'_comparison_operator',
-				'_concatenated_string',
-				'_conditional_expression',
-				'_dictionary',
-				'_dictionary_comprehension',
-				'_ellipsis',
-				'_exec_keyword',
-				'_false',
-				'_float_leading_point',
-				'_float_point',
-				'_float_scientific',
-				'_generator_expression',
-				'_identifier',
-				'_integer_binary',
-				'_integer_decimal',
-				'_integer_hex',
-				'_integer_octal',
-				'_lambda',
-				'_list',
-				'_list_comprehension',
-				'_list_splat_pattern',
-				'_match_keyword',
-				'_named_expression',
-				'_none',
-				'_not_operator',
-				'_parenthesized_expression',
-				'_print_keyword',
-				'_set',
-				'_set_comprehension',
-				'_string',
-				'_subscript',
-				'_true',
-				'_tuple',
-				'_type_keyword',
-				'_unary_operator',
-				'_yield'
-			]),
+			...data,
 			$type: TSKindId.ParenthesizedExpression as const,
-			_content: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(
-					data._content ??
-						data._comparison_operator ??
-						data._not_operator ??
-						data._boolean_operator ??
-						data._lambda ??
-						data._identifier ??
-						data._await ??
-						data._binary_operator ??
-						data._print_keyword ??
-						data._exec_keyword ??
-						data._async_keyword ??
-						data._await_keyword ??
-						data._type_keyword ??
-						data._match_keyword ??
-						data._string ??
-						data._concatenated_string ??
-						data._integer_hex ??
-						data._integer_octal ??
-						data._integer_binary ??
-						data._integer_decimal ??
-						data._float_point ??
-						data._float_leading_point ??
-						data._float_scientific ??
-						data._true ??
-						data._false ??
-						data._none ??
-						data._unary_operator ??
-						data._attribute ??
-						data._subscript ??
-						data._call ??
-						data._list ??
-						data._list_comprehension ??
-						data._dictionary ??
-						data._dictionary_comprehension ??
-						data._set ??
-						data._set_comprehension ??
-						data._tuple ??
-						data._parenthesized_expression ??
-						data._generator_expression ??
-						data._ellipsis ??
-						data._list_splat_pattern ??
-						data._conditional_expression ??
-						data._named_expression ??
-						data._as_pattern ??
-						data._yield,
-					'content',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
+			_expression: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._expression, 'expression', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'expression',
+					span: (data as _NodeData).$span
+				}),
 				{ True: 71, False: 72, None: 73, '...': 64 }
 			),
 
-			content() {
-				return drillIn<T.Expression | T.Yield>(this._content, tree);
+			expression() {
+				return drillIn<T.Expression | T.Yield>(this._expression, tree);
 			},
 			$with: {
-				content: (v: NonNullable<T.ParenthesizedExpression['_content']>) =>
-					wrapParenthesizedExpression({ ...$edited(data), _content: v }, tree)
+				expression: (v: NonNullable<T.ParenthesizedExpression['_expression']>) =>
+					wrapParenthesizedExpression({ ...$edited(data), _expression: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -8714,37 +8258,30 @@ export function wrapEscapeSequence(
 	);
 }
 
-export function wrapFormatSpecifier(
-	data: T.FormatSpecifier & {
-		readonly _format_expression?: '[^{}\\n]+' | T.FormatExpression | readonly ('[^{}\\n]+' | T.FormatExpression)[];
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_format_expression']);
+export function wrapFormatSpecifier(data: T.FormatSpecifier, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_elements']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.FormatSpecifier as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_format_expression']),
+			...data,
 			$type: TSKindId.FormatSpecifier as const,
-			_content: normalizeRepeatedWrapSlot(
-				data._content !== undefined
-					? _toArr(data._content)
-					: _interleaveBySlotOrder(data as _NodeData, [['format_expression', data._format_expression]]),
-				false,
-				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_elements: normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _NodeData).$span
+			}),
 
-			contents() {
+			elements() {
 				return drillInAll<'[^{}\\n]+' | T.FormatExpression>(
-					this._content as readonly ('[^{}\\n]+' | T.FormatExpression)[] | undefined,
+					this._elements as readonly ('[^{}\\n]+' | T.FormatExpression)[] | undefined,
 					tree
 				);
 			},
 			$with: {
-				contents: (...v: NonNullable<T.FormatSpecifier['_content']>[number][]) =>
-					wrapFormatSpecifier({ ...$edited(data), _content: v }, tree)
+				elements: (...v: NonNullable<T.FormatSpecifier['_elements']>[number][]) =>
+					wrapFormatSpecifier({ ...$edited(data), _elements: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -10481,42 +10018,13 @@ export function wrapEscapeSequenceNamed(data: T.EscapeSequenceNamed, tree: TreeH
 	return _node;
 }
 
-export function wrapSimplePatternNegative(
-	data: T.SimplePatternNegative & {
-		readonly _integer_hex?: T.Integer | T.Float;
-		readonly _integer_octal?: T.Integer | T.Float;
-		readonly _integer_binary?: T.Integer | T.Float;
-		readonly _integer_decimal?: T.Integer | T.Float;
-		readonly _float_point?: T.Integer | T.Float;
-		readonly _float_leading_point?: T.Integer | T.Float;
-		readonly _float_scientific?: T.Integer | T.Float;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_sign',
-		'_content',
-		'_integer_hex',
-		'_integer_octal',
-		'_integer_binary',
-		'_integer_decimal',
-		'_float_point',
-		'_float_leading_point',
-		'_float_scientific'
-	]);
+export function wrapSimplePatternNegative(data: T.SimplePatternNegative, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_sign', '_value']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.SimplePatternNegative as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_float_leading_point',
-				'_float_point',
-				'_float_scientific',
-				'_integer_binary',
-				'_integer_decimal',
-				'_integer_hex',
-				'_integer_octal'
-			]),
+			...data,
 			$type: TSKindId.SimplePatternNegative as const,
 			_sign: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._sign, 'sign', false, data.$type, {
@@ -10526,32 +10034,24 @@ export function wrapSimplePatternNegative(
 					span: (data as _NodeData).$span
 				})
 			),
-			_content: normalizeSingularWrapSlot(
-				data._content ??
-					data._integer_hex ??
-					data._integer_octal ??
-					data._integer_binary ??
-					data._integer_decimal ??
-					data._float_point ??
-					data._float_leading_point ??
-					data._float_scientific,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'value',
+				span: (data as _NodeData).$span
+			}),
 
 			sign() {
 				return this._sign;
 			},
-			content() {
-				return drillIn<T.Integer | T.Float>(this._content, tree);
+			value() {
+				return drillIn<T.Integer | T.Float>(this._value, tree);
 			},
 			$with: {
 				sign: (v: NonNullable<T.SimplePatternNegative['_sign']>) =>
 					wrapSimplePatternNegative({ ...$edited(data), _sign: v }, tree),
-				content: (v: NonNullable<T.SimplePatternNegative['_content']>) =>
-					wrapSimplePatternNegative({ ...$edited(data), _content: v }, tree)
+				value: (v: NonNullable<T.SimplePatternNegative['_value']>) =>
+					wrapSimplePatternNegative({ ...$edited(data), _value: v }, tree)
 			}
 		},
 		_treeEngine(tree)

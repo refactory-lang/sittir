@@ -28852,19 +28852,7 @@
               "$type": 286,
               "$source": 0,
               "$named": true,
-              "$other": [
-                {
-                  "$type": 103,
-                  "$source": 0,
-                  "$named": false,
-                  "$text": "else",
-                  "$span": {
-                    "start": 23,
-                    "end": 27
-                  }
-                }
-              ],
-              "_content": {
+              "_body": {
                 "$type": 308,
                 "$source": 0,
                 "$named": true,
@@ -28901,7 +28889,19 @@
                   }
                 ],
                 "_statements": []
-              }
+              },
+              "$other": [
+                {
+                  "$type": 103,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "else",
+                  "$span": {
+                    "start": 23,
+                    "end": 27
+                  }
+                }
+              ]
             },
             "$other": [
               {
@@ -28969,7 +28969,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "let a = if b {\n    c\n} else {\n    d\n};",
-    "expectedReparseTree": "(source_file statements: (let_declaration pattern: (identifier) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (identifier)) alternative: (else_clause (block trailing_expression: (identifier))))))",
+    "expectedReparseTree": "(source_file statements: (let_declaration pattern: (identifier) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (identifier)) alternative: (else_clause body: (block trailing_expression: (identifier))))))",
     "wrappedText": "let a = if b {\n    c\n} else {\n    d\n};",
     "wrappedOffset": 0
   },
@@ -29047,19 +29047,7 @@
           "$type": 286,
           "$source": 0,
           "$named": true,
-          "$other": [
-            {
-              "$type": 103,
-              "$source": 0,
-              "$named": false,
-              "$text": "else",
-              "$span": {
-                "start": 23,
-                "end": 27
-              }
-            }
-          ],
-          "_content": {
+          "_body": {
             "$type": 308,
             "$source": 0,
             "$named": true,
@@ -29096,7 +29084,19 @@
               }
             ],
             "_statements": []
-          }
+          },
+          "$other": [
+            {
+              "$type": 103,
+              "$source": 0,
+              "$named": false,
+              "$text": "else",
+              "$span": {
+                "start": 23,
+                "end": 27
+              }
+            }
+          ]
         },
         "$other": [
           {
@@ -29162,7 +29162,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let a = if b {\n    c\n} else {\n    d\n};",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (identifier)) alternative: (else_clause (block trailing_expression: (identifier)))))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (identifier)) alternative: (else_clause body: (block trailing_expression: (identifier)))))",
     "wrappedText": "let a = if b {\n    c\n} else {\n    d\n};",
     "wrappedOffset": 0
   },
@@ -29226,19 +29226,7 @@
         "$type": 286,
         "$source": 0,
         "$named": true,
-        "$other": [
-          {
-            "$type": 103,
-            "$source": 0,
-            "$named": false,
-            "$text": "else",
-            "$span": {
-              "start": 23,
-              "end": 27
-            }
-          }
-        ],
-        "_content": {
+        "_body": {
           "$type": 308,
           "$source": 0,
           "$named": true,
@@ -29275,7 +29263,19 @@
             }
           ],
           "_statements": []
-        }
+        },
+        "$other": [
+          {
+            "$type": 103,
+            "$source": 0,
+            "$named": false,
+            "$text": "else",
+            "$span": {
+              "start": 23,
+              "end": 27
+            }
+          }
+        ]
       },
       "$other": [
         {
@@ -29304,7 +29304,7 @@
     "pattern": "if_expression",
     "edits": [],
     "expectedSourceOut": "if b {\n    c\n} else {\n    d\n}",
-    "expectedReparseTree": "(if_expression condition: (identifier) consequence: (block trailing_expression: (identifier)) alternative: (else_clause (block trailing_expression: (identifier))))",
+    "expectedReparseTree": "(if_expression condition: (identifier) consequence: (block trailing_expression: (identifier)) alternative: (else_clause body: (block trailing_expression: (identifier))))",
     "wrappedText": "fn _f() { let _ = if b {\n    c\n} else {\n    d\n}; }",
     "wrappedOffset": 18
   },
@@ -127954,19 +127954,7 @@
                     "$type": 286,
                     "$source": 0,
                     "$named": true,
-                    "$other": [
-                      {
-                        "$type": 103,
-                        "$source": 0,
-                        "$named": false,
-                        "$text": "else",
-                        "$span": {
-                          "start": 30,
-                          "end": 34
-                        }
-                      }
-                    ],
-                    "_content": {
+                    "_body": {
                       "$type": 282,
                       "$source": 0,
                       "$named": true,
@@ -128012,6 +128000,12 @@
                         "$type": 286,
                         "$source": 0,
                         "$named": true,
+                        "_body": {
+                          "$type": 308,
+                          "$source": 0,
+                          "$named": true,
+                          "_statements": []
+                        },
                         "$other": [
                           {
                             "$type": 103,
@@ -128023,13 +128017,7 @@
                               "end": 55
                             }
                           }
-                        ],
-                        "_content": {
-                          "$type": 308,
-                          "$source": 0,
-                          "$named": true,
-                          "_statements": []
-                        }
+                        ]
                       },
                       "$other": [
                         {
@@ -128048,7 +128036,19 @@
                         "consequence",
                         "alternative"
                       ]
-                    }
+                    },
+                    "$other": [
+                      {
+                        "$type": 103,
+                        "$source": 0,
+                        "$named": false,
+                        "$text": "else",
+                        "$span": {
+                          "start": 30,
+                          "end": 34
+                        }
+                      }
+                    ]
                   },
                   "$other": [
                     {
@@ -128204,19 +128204,7 @@
               "$type": 286,
               "$source": 0,
               "$named": true,
-              "$other": [
-                {
-                  "$type": 103,
-                  "$source": 0,
-                  "$named": false,
-                  "$text": "else",
-                  "$span": {
-                    "start": 90,
-                    "end": 94
-                  }
-                }
-              ],
-              "_content": {
+              "_body": {
                 "$type": 308,
                 "$source": 0,
                 "$named": true,
@@ -128254,7 +128242,19 @@
                   }
                 ],
                 "_statements": []
-              }
+              },
+              "$other": [
+                {
+                  "$type": 103,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "else",
+                  "$span": {
+                    "start": 90,
+                    "end": 94
+                  }
+                }
+              ]
             },
             "$other": [
               {
@@ -128469,7 +128469,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn main() {\n    if n == 1 {} else if n == 2 {} else {}\n}\n\nlet y = if x == 5 {\n    10\n} else {\n    15\n};\n\nif foo && bar {}\n\nif foo && bar || baz {}",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause (block)))))))) statements: (let_declaration pattern: (identifier) value: (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block trailing_expression: (integer_literal_decimal)) alternative: (else_clause (block trailing_expression: (integer_literal_decimal))))) statements: (expression_statement (if_expression condition: (binary_expression left: (identifier) right: (identifier)) consequence: (block))) statements: (expression_statement (if_expression condition: (binary_expression left: (binary_expression left: (identifier) right: (identifier)) right: (identifier)) consequence: (block))))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause body: (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause body: (block)))))))) statements: (let_declaration pattern: (identifier) value: (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block trailing_expression: (integer_literal_decimal)) alternative: (else_clause body: (block trailing_expression: (integer_literal_decimal))))) statements: (expression_statement (if_expression condition: (binary_expression left: (identifier) right: (identifier)) consequence: (block))) statements: (expression_statement (if_expression condition: (binary_expression left: (binary_expression left: (identifier) right: (identifier)) right: (identifier)) consequence: (block))))",
     "wrappedText": "fn main() {\n    if n == 1 {} else if n == 2 {} else {}\n}\n\nlet y = if x == 5 {\n    10\n} else {\n    15\n};\n\nif foo && bar {}\n\nif foo && bar || baz {}",
     "wrappedOffset": 0
   },
@@ -128555,19 +128555,7 @@
                 "$type": 286,
                 "$source": 0,
                 "$named": true,
-                "$other": [
-                  {
-                    "$type": 103,
-                    "$source": 0,
-                    "$named": false,
-                    "$text": "else",
-                    "$span": {
-                      "start": 30,
-                      "end": 34
-                    }
-                  }
-                ],
-                "_content": {
+                "_body": {
                   "$type": 282,
                   "$source": 0,
                   "$named": true,
@@ -128613,6 +128601,12 @@
                     "$type": 286,
                     "$source": 0,
                     "$named": true,
+                    "_body": {
+                      "$type": 308,
+                      "$source": 0,
+                      "$named": true,
+                      "_statements": []
+                    },
                     "$other": [
                       {
                         "$type": 103,
@@ -128624,13 +128618,7 @@
                           "end": 55
                         }
                       }
-                    ],
-                    "_content": {
-                      "$type": 308,
-                      "$source": 0,
-                      "$named": true,
-                      "_statements": []
-                    }
+                    ]
                   },
                   "$other": [
                     {
@@ -128649,7 +128637,19 @@
                     "consequence",
                     "alternative"
                   ]
-                }
+                },
+                "$other": [
+                  {
+                    "$type": 103,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "else",
+                    "$span": {
+                      "start": 30,
+                      "end": 34
+                    }
+                  }
+                ]
               },
               "$other": [
                 {
@@ -128721,7 +128721,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn main() {\n    if n == 1 {} else if n == 2 {} else {}\n}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause (block))))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block statements: (expression_statement (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause body: (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause body: (block))))))))",
     "wrappedText": "fn main() {\n    if n == 1 {} else if n == 2 {} else {}\n}",
     "wrappedOffset": 0
   },
@@ -128810,19 +128810,7 @@
               "$type": 286,
               "$source": 0,
               "$named": true,
-              "$other": [
-                {
-                  "$type": 103,
-                  "$source": 0,
-                  "$named": false,
-                  "$text": "else",
-                  "$span": {
-                    "start": 30,
-                    "end": 34
-                  }
-                }
-              ],
-              "_content": {
+              "_body": {
                 "$type": 282,
                 "$source": 0,
                 "$named": true,
@@ -128868,6 +128856,12 @@
                   "$type": 286,
                   "$source": 0,
                   "$named": true,
+                  "_body": {
+                    "$type": 308,
+                    "$source": 0,
+                    "$named": true,
+                    "_statements": []
+                  },
                   "$other": [
                     {
                       "$type": 103,
@@ -128879,13 +128873,7 @@
                         "end": 55
                       }
                     }
-                  ],
-                  "_content": {
-                    "$type": 308,
-                    "$source": 0,
-                    "$named": true,
-                    "_statements": []
-                  }
+                  ]
                 },
                 "$other": [
                   {
@@ -128904,7 +128892,19 @@
                   "consequence",
                   "alternative"
                 ]
-              }
+              },
+              "$other": [
+                {
+                  "$type": 103,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "else",
+                  "$span": {
+                    "start": 30,
+                    "end": 34
+                  }
+                }
+              ]
             },
             "$other": [
               {
@@ -128958,7 +128958,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{\n    if n == 1 {} else if n == 2 {} else {}\n}",
-    "expectedReparseTree": "(block statements: (expression_statement (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause (block)))))))",
+    "expectedReparseTree": "(block statements: (expression_statement (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause body: (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause body: (block)))))))",
     "wrappedText": "fn _f() { let _ = {\n    if n == 1 {} else if n == 2 {} else {}\n}; }",
     "wrappedOffset": 18
   },
@@ -129239,19 +129239,7 @@
         "$type": 286,
         "$source": 0,
         "$named": true,
-        "$other": [
-          {
-            "$type": 103,
-            "$source": 0,
-            "$named": false,
-            "$text": "else",
-            "$span": {
-              "start": 30,
-              "end": 34
-            }
-          }
-        ],
-        "_content": {
+        "_body": {
           "$type": 282,
           "$source": 0,
           "$named": true,
@@ -129297,6 +129285,12 @@
             "$type": 286,
             "$source": 0,
             "$named": true,
+            "_body": {
+              "$type": 308,
+              "$source": 0,
+              "$named": true,
+              "_statements": []
+            },
             "$other": [
               {
                 "$type": 103,
@@ -129308,13 +129302,7 @@
                   "end": 55
                 }
               }
-            ],
-            "_content": {
-              "$type": 308,
-              "$source": 0,
-              "$named": true,
-              "_statements": []
-            }
+            ]
           },
           "$other": [
             {
@@ -129333,7 +129321,19 @@
             "consequence",
             "alternative"
           ]
-        }
+        },
+        "$other": [
+          {
+            "$type": 103,
+            "$source": 0,
+            "$named": false,
+            "$text": "else",
+            "$span": {
+              "start": 30,
+              "end": 34
+            }
+          }
+        ]
       },
       "$other": [
         {
@@ -129362,7 +129362,7 @@
     "pattern": "if_expression",
     "edits": [],
     "expectedSourceOut": "if n == 1 {} else if n == 2 {} else {}",
-    "expectedReparseTree": "(if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause (block)))))",
+    "expectedReparseTree": "(if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause body: (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause body: (block)))))",
     "wrappedText": "fn _f() { let _ = if n == 1 {} else if n == 2 {} else {}; }",
     "wrappedOffset": 18
   },
@@ -129416,6 +129416,12 @@
         "$type": 286,
         "$source": 0,
         "$named": true,
+        "_body": {
+          "$type": 308,
+          "$source": 0,
+          "$named": true,
+          "_statements": []
+        },
         "$other": [
           {
             "$type": 103,
@@ -129427,13 +129433,7 @@
               "end": 55
             }
           }
-        ],
-        "_content": {
-          "$type": 308,
-          "$source": 0,
-          "$named": true,
-          "_statements": []
-        }
+        ]
       },
       "$other": [
         {
@@ -129462,7 +129462,7 @@
     "pattern": "if_expression",
     "edits": [],
     "expectedSourceOut": "if n == 2 {} else {}",
-    "expectedReparseTree": "(if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause (block)))",
+    "expectedReparseTree": "(if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block) alternative: (else_clause body: (block)))",
     "wrappedText": "fn _f() { let _ = if n == 2 {} else {}; }",
     "wrappedOffset": 18
   },
@@ -129549,19 +129549,7 @@
         "$type": 286,
         "$source": 0,
         "$named": true,
-        "$other": [
-          {
-            "$type": 103,
-            "$source": 0,
-            "$named": false,
-            "$text": "else",
-            "$span": {
-              "start": 90,
-              "end": 94
-            }
-          }
-        ],
-        "_content": {
+        "_body": {
           "$type": 308,
           "$source": 0,
           "$named": true,
@@ -129599,7 +129587,19 @@
             }
           ],
           "_statements": []
-        }
+        },
+        "$other": [
+          {
+            "$type": 103,
+            "$source": 0,
+            "$named": false,
+            "$text": "else",
+            "$span": {
+              "start": 90,
+              "end": 94
+            }
+          }
+        ]
       },
       "$other": [
         {
@@ -129628,7 +129628,7 @@
     "pattern": "if_expression",
     "edits": [],
     "expectedSourceOut": "if x == 5 {\n    10\n} else {\n    15\n}",
-    "expectedReparseTree": "(if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block trailing_expression: (integer_literal_decimal)) alternative: (else_clause (block trailing_expression: (integer_literal_decimal))))",
+    "expectedReparseTree": "(if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block trailing_expression: (integer_literal_decimal)) alternative: (else_clause body: (block trailing_expression: (integer_literal_decimal))))",
     "wrappedText": "fn _f() { let _ = if x == 5 {\n    10\n} else {\n    15\n}; }",
     "wrappedOffset": 18
   },
@@ -130352,19 +130352,7 @@
           "$type": 286,
           "$source": 0,
           "$named": true,
-          "$other": [
-            {
-              "$type": 103,
-              "$source": 0,
-              "$named": false,
-              "$text": "else",
-              "$span": {
-                "start": 90,
-                "end": 94
-              }
-            }
-          ],
-          "_content": {
+          "_body": {
             "$type": 308,
             "$source": 0,
             "$named": true,
@@ -130402,7 +130390,19 @@
               }
             ],
             "_statements": []
-          }
+          },
+          "$other": [
+            {
+              "$type": 103,
+              "$source": 0,
+              "$named": false,
+              "$text": "else",
+              "$span": {
+                "start": 90,
+                "end": 94
+              }
+            }
+          ]
         },
         "$other": [
           {
@@ -130468,7 +130468,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let y = if x == 5 {\n    10\n} else {\n    15\n};",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block trailing_expression: (integer_literal_decimal)) alternative: (else_clause (block trailing_expression: (integer_literal_decimal)))))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (if_expression condition: (binary_expression left: (identifier) right: (integer_literal_decimal)) consequence: (block trailing_expression: (integer_literal_decimal)) alternative: (else_clause body: (block trailing_expression: (integer_literal_decimal)))))",
     "wrappedText": "let y = if x == 5 {\n    10\n} else {\n    15\n};",
     "wrappedOffset": 0
   },
@@ -152310,29 +152310,7 @@
                   "$type": 232,
                   "$source": 0,
                   "$named": true,
-                  "$other": [
-                    {
-                      "$type": 44,
-                      "$source": 0,
-                      "$named": false,
-                      "$text": "<",
-                      "$span": {
-                        "start": 0,
-                        "end": 1
-                      }
-                    },
-                    {
-                      "$type": 45,
-                      "$source": 0,
-                      "$named": false,
-                      "$text": ">",
-                      "$span": {
-                        "start": 14,
-                        "end": 15
-                      }
-                    }
-                  ],
-                  "_content": {
+                  "_type": {
                     "$type": 233,
                     "$source": 0,
                     "$named": true,
@@ -152382,7 +152360,29 @@
                       "type",
                       "alias"
                     ]
-                  }
+                  },
+                  "$other": [
+                    {
+                      "$type": 44,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": "<",
+                      "$span": {
+                        "start": 0,
+                        "end": 1
+                      }
+                    },
+                    {
+                      "$type": 45,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": ">",
+                      "$span": {
+                        "start": 14,
+                        "end": 15
+                      }
+                    }
+                  ]
                 },
                 "_name": {
                   "$type": 1,
@@ -152492,7 +152492,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "<Dog as Animal>::eat(d);",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (scoped_identifier path: (bracketed_type (qualified_type type: (type_identifier) alias: (type_identifier))) name: (identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (identifier))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (scoped_identifier path: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (identifier))))))))",
     "wrappedText": "<Dog as Animal>::eat(d);",
     "wrappedOffset": 0
   },
@@ -152512,29 +152512,7 @@
           "$type": 232,
           "$source": 0,
           "$named": true,
-          "$other": [
-            {
-              "$type": 44,
-              "$source": 0,
-              "$named": false,
-              "$text": "<",
-              "$span": {
-                "start": 0,
-                "end": 1
-              }
-            },
-            {
-              "$type": 45,
-              "$source": 0,
-              "$named": false,
-              "$text": ">",
-              "$span": {
-                "start": 14,
-                "end": 15
-              }
-            }
-          ],
-          "_content": {
+          "_type": {
             "$type": 233,
             "$source": 0,
             "$named": true,
@@ -152584,7 +152562,29 @@
               "type",
               "alias"
             ]
-          }
+          },
+          "$other": [
+            {
+              "$type": 44,
+              "$source": 0,
+              "$named": false,
+              "$text": "<",
+              "$span": {
+                "start": 0,
+                "end": 1
+              }
+            },
+            {
+              "$type": 45,
+              "$source": 0,
+              "$named": false,
+              "$text": ">",
+              "$span": {
+                "start": 14,
+                "end": 15
+              }
+            }
+          ]
         },
         "_name": {
           "$type": 1,
@@ -152678,7 +152678,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "<Dog as Animal>::eat(d)",
-    "expectedReparseTree": "(call_expression function: (scoped_identifier path: (bracketed_type (qualified_type type: (type_identifier) alias: (type_identifier))) name: (identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)))))",
+    "expectedReparseTree": "(call_expression function: (scoped_identifier path: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)))))",
     "wrappedText": "fn _f() { let _ = <Dog as Animal>::eat(d); }",
     "wrappedOffset": 18
   },
@@ -152694,29 +152694,7 @@
         "$type": 232,
         "$source": 0,
         "$named": true,
-        "$other": [
-          {
-            "$type": 44,
-            "$source": 0,
-            "$named": false,
-            "$text": "<",
-            "$span": {
-              "start": 0,
-              "end": 1
-            }
-          },
-          {
-            "$type": 45,
-            "$source": 0,
-            "$named": false,
-            "$text": ">",
-            "$span": {
-              "start": 14,
-              "end": 15
-            }
-          }
-        ],
-        "_content": {
+        "_type": {
           "$type": 233,
           "$source": 0,
           "$named": true,
@@ -152766,7 +152744,29 @@
             "type",
             "alias"
           ]
-        }
+        },
+        "$other": [
+          {
+            "$type": 44,
+            "$source": 0,
+            "$named": false,
+            "$text": "<",
+            "$span": {
+              "start": 0,
+              "end": 1
+            }
+          },
+          {
+            "$type": 45,
+            "$source": 0,
+            "$named": false,
+            "$text": ">",
+            "$span": {
+              "start": 14,
+              "end": 15
+            }
+          }
+        ]
       },
       "_name": {
         "$type": 1,
@@ -152804,7 +152804,7 @@
     "pattern": "scoped_identifier",
     "edits": [],
     "expectedSourceOut": "<Dog as Animal>::eat",
-    "expectedReparseTree": "(scoped_identifier path: (bracketed_type (qualified_type type: (type_identifier) alias: (type_identifier))) name: (identifier))",
+    "expectedReparseTree": "(scoped_identifier path: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (identifier))",
     "wrappedText": "fn _f() { let _ = <Dog as Animal>::eat; }",
     "wrappedOffset": 18
   },
@@ -152969,29 +152969,7 @@
                   "$type": 232,
                   "$source": 0,
                   "$named": true,
-                  "$other": [
-                    {
-                      "$type": 44,
-                      "$source": 0,
-                      "$named": false,
-                      "$text": "<",
-                      "$span": {
-                        "start": 0,
-                        "end": 1
-                      }
-                    },
-                    {
-                      "$type": 45,
-                      "$source": 0,
-                      "$named": false,
-                      "$text": ">",
-                      "$span": {
-                        "start": 9,
-                        "end": 10
-                      }
-                    }
-                  ],
-                  "_content": {
+                  "_type": {
                     "$type": 254,
                     "$source": 0,
                     "$named": true,
@@ -153027,7 +153005,29 @@
                       "macro",
                       "arguments"
                     ]
-                  }
+                  },
+                  "$other": [
+                    {
+                      "$type": 44,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": "<",
+                      "$span": {
+                        "start": 0,
+                        "end": 1
+                      }
+                    },
+                    {
+                      "$type": 45,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": ">",
+                      "$span": {
+                        "start": 9,
+                        "end": 10
+                      }
+                    }
+                  ]
                 },
                 "_name": {
                   "$type": 1,
@@ -153095,7 +153095,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "<Token![]>::foo();",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (scoped_identifier path: (bracketed_type (macro_invocation macro: (identifier) arguments: (delim_token_tree_bracket))) name: (identifier)) arguments: (arguments)))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (scoped_identifier path: (bracketed_type type: (macro_invocation macro: (identifier) arguments: (delim_token_tree_bracket))) name: (identifier)) arguments: (arguments)))))",
     "wrappedText": "<Token![]>::foo();",
     "wrappedOffset": 0
   },
@@ -153115,29 +153115,7 @@
           "$type": 232,
           "$source": 0,
           "$named": true,
-          "$other": [
-            {
-              "$type": 44,
-              "$source": 0,
-              "$named": false,
-              "$text": "<",
-              "$span": {
-                "start": 0,
-                "end": 1
-              }
-            },
-            {
-              "$type": 45,
-              "$source": 0,
-              "$named": false,
-              "$text": ">",
-              "$span": {
-                "start": 9,
-                "end": 10
-              }
-            }
-          ],
-          "_content": {
+          "_type": {
             "$type": 254,
             "$source": 0,
             "$named": true,
@@ -153173,7 +153151,29 @@
               "macro",
               "arguments"
             ]
-          }
+          },
+          "$other": [
+            {
+              "$type": 44,
+              "$source": 0,
+              "$named": false,
+              "$text": "<",
+              "$span": {
+                "start": 0,
+                "end": 1
+              }
+            },
+            {
+              "$type": 45,
+              "$source": 0,
+              "$named": false,
+              "$text": ">",
+              "$span": {
+                "start": 9,
+                "end": 10
+              }
+            }
+          ]
         },
         "_name": {
           "$type": 1,
@@ -153225,7 +153225,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "<Token![]>::foo()",
-    "expectedReparseTree": "(call_expression function: (scoped_identifier path: (bracketed_type (macro_invocation macro: (identifier) arguments: (delim_token_tree_bracket))) name: (identifier)) arguments: (arguments))",
+    "expectedReparseTree": "(call_expression function: (scoped_identifier path: (bracketed_type type: (macro_invocation macro: (identifier) arguments: (delim_token_tree_bracket))) name: (identifier)) arguments: (arguments))",
     "wrappedText": "fn _f() { let _ = <Token![]>::foo(); }",
     "wrappedOffset": 18
   },
@@ -153241,29 +153241,7 @@
         "$type": 232,
         "$source": 0,
         "$named": true,
-        "$other": [
-          {
-            "$type": 44,
-            "$source": 0,
-            "$named": false,
-            "$text": "<",
-            "$span": {
-              "start": 0,
-              "end": 1
-            }
-          },
-          {
-            "$type": 45,
-            "$source": 0,
-            "$named": false,
-            "$text": ">",
-            "$span": {
-              "start": 9,
-              "end": 10
-            }
-          }
-        ],
-        "_content": {
+        "_type": {
           "$type": 254,
           "$source": 0,
           "$named": true,
@@ -153299,7 +153277,29 @@
             "macro",
             "arguments"
           ]
-        }
+        },
+        "$other": [
+          {
+            "$type": 44,
+            "$source": 0,
+            "$named": false,
+            "$text": "<",
+            "$span": {
+              "start": 0,
+              "end": 1
+            }
+          },
+          {
+            "$type": 45,
+            "$source": 0,
+            "$named": false,
+            "$text": ">",
+            "$span": {
+              "start": 9,
+              "end": 10
+            }
+          }
+        ]
       },
       "_name": {
         "$type": 1,
@@ -153337,7 +153337,7 @@
     "pattern": "scoped_identifier",
     "edits": [],
     "expectedSourceOut": "<Token![]>::foo",
-    "expectedReparseTree": "(scoped_identifier path: (bracketed_type (macro_invocation macro: (identifier) arguments: (delim_token_tree_bracket))) name: (identifier))",
+    "expectedReparseTree": "(scoped_identifier path: (bracketed_type type: (macro_invocation macro: (identifier) arguments: (delim_token_tree_bracket))) name: (identifier))",
     "wrappedText": "fn _f() { let _ = <Token![]>::foo; }",
     "wrappedOffset": 18
   },
@@ -162617,19 +162617,7 @@
               "$type": 286,
               "$source": 0,
               "$named": true,
-              "$other": [
-                {
-                  "$type": 103,
-                  "$source": 0,
-                  "$named": false,
-                  "$text": "else",
-                  "$span": {
-                    "start": 54,
-                    "end": 58
-                  }
-                }
-              ],
-              "_content": {
+              "_body": {
                 "$type": 308,
                 "$source": 0,
                 "$named": true,
@@ -162666,7 +162654,19 @@
                   }
                 ],
                 "_statements": []
-              }
+              },
+              "$other": [
+                {
+                  "$type": 103,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "else",
+                  "$span": {
+                    "start": 54,
+                    "end": 58
+                  }
+                }
+              ]
             },
             "$other": [
               {
@@ -162966,7 +162966,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "const {\n    1 + 3\n}\n\n;if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\n\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];",
-    "expectedReparseTree": "(source_file statements: (expression_statement (const_block body: (block trailing_expression: (binary_expression left: (integer_literal_decimal) right: (integer_literal_decimal))))) statements: (empty_statement) statements: (expression_statement (if_expression condition: (binary_expression left: (unary_expression operand: (identifier)) right: (integer_literal_decimal)) consequence: (block statements: (expression_statement (const_block body: (block trailing_expression: (reference_expression_bare value: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal_decimal)))))))))) alternative: (else_clause (block trailing_expression: (identifier))))) statements: (let_declaration pattern: (identifier) value: (array_expression_semi element: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression expression: (range_expression (range_expression_binary start: (integer_literal_decimal) end: (integer_literal_decimal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal_decimal))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (const_block body: (block trailing_expression: (binary_expression left: (integer_literal_decimal) right: (integer_literal_decimal))))) statements: (empty_statement) statements: (expression_statement (if_expression condition: (binary_expression left: (unary_expression operand: (identifier)) right: (integer_literal_decimal)) consequence: (block statements: (expression_statement (const_block body: (block trailing_expression: (reference_expression_bare value: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal_decimal)))))))))) alternative: (else_clause body: (block trailing_expression: (identifier))))) statements: (let_declaration pattern: (identifier) value: (array_expression_semi element: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression expression: (range_expression (range_expression_binary start: (integer_literal_decimal) end: (integer_literal_decimal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal_decimal))))",
     "wrappedText": "const {\n    1 + 3\n}\n\n;if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}\n\nlet three_ranges = [const {\n    (0..=5).into_inner()\n}; 3];",
     "wrappedOffset": 0
   },
@@ -164717,19 +164717,7 @@
         "$type": 286,
         "$source": 0,
         "$named": true,
-        "$other": [
-          {
-            "$type": 103,
-            "$source": 0,
-            "$named": false,
-            "$text": "else",
-            "$span": {
-              "start": 54,
-              "end": 58
-            }
-          }
-        ],
-        "_content": {
+        "_body": {
           "$type": 308,
           "$source": 0,
           "$named": true,
@@ -164766,7 +164754,19 @@
             }
           ],
           "_statements": []
-        }
+        },
+        "$other": [
+          {
+            "$type": 103,
+            "$source": 0,
+            "$named": false,
+            "$text": "else",
+            "$span": {
+              "start": 54,
+              "end": 58
+            }
+          }
+        ]
       },
       "$other": [
         {
@@ -164795,7 +164795,7 @@
     "pattern": "if_expression",
     "edits": [],
     "expectedSourceOut": "if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}",
-    "expectedReparseTree": "(if_expression condition: (binary_expression left: (unary_expression operand: (identifier)) right: (integer_literal_decimal)) consequence: (block statements: (expression_statement (const_block body: (block trailing_expression: (reference_expression_bare value: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal_decimal)))))))))) alternative: (else_clause (block trailing_expression: (identifier))))",
+    "expectedReparseTree": "(if_expression condition: (binary_expression left: (unary_expression operand: (identifier)) right: (integer_literal_decimal)) consequence: (block statements: (expression_statement (const_block body: (block trailing_expression: (reference_expression_bare value: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments (arguments_elements element: (attributed_argument (integer_literal_decimal)))))))))) alternative: (else_clause body: (block trailing_expression: (identifier))))",
     "wrappedText": "fn _f() { let _ = if *x < 0 {\n    const {\n        &4i32.pow(4)\n    }\n} else {\n    x\n}; }",
     "wrappedOffset": 18
   },
@@ -204087,6 +204087,16 @@
                         "$type": 310,
                         "$source": 0,
                         "$named": true,
+                        "_name": {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "None",
+                          "$span": {
+                            "start": 14,
+                            "end": 18
+                          }
+                        },
                         "_type_arguments": {
                           "$type": 245,
                           "$source": 0,
@@ -204155,19 +204165,9 @@
                           }
                         ],
                         "$slotOrder": [
-                          "identifier",
+                          "name",
                           "type_arguments"
-                        ],
-                        "_content": {
-                          "$type": 1,
-                          "$source": 0,
-                          "$named": true,
-                          "$text": "None",
-                          "$span": {
-                            "start": 14,
-                            "end": 18
-                          }
-                        }
+                        ]
                       }
                     },
                     "_value": {
@@ -204263,7 +204263,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "match y {\n    None::<T> => 17,\n    _ => 42,\n}",
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (generic_pattern (identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))) value: (integer_literal_decimal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (integer_literal_decimal)))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (generic_pattern name: (identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))) value: (integer_literal_decimal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (integer_literal_decimal)))))))",
     "wrappedText": "match y {\n    None::<T> => 17,\n    _ => 42,\n}",
     "wrappedOffset": 0
   },
@@ -204359,6 +204359,16 @@
                   "$type": 310,
                   "$source": 0,
                   "$named": true,
+                  "_name": {
+                    "$type": 1,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "None",
+                    "$span": {
+                      "start": 14,
+                      "end": 18
+                    }
+                  },
                   "_type_arguments": {
                     "$type": 245,
                     "$source": 0,
@@ -204427,19 +204437,9 @@
                     }
                   ],
                   "$slotOrder": [
-                    "identifier",
+                    "name",
                     "type_arguments"
-                  ],
-                  "_content": {
-                    "$type": 1,
-                    "$source": 0,
-                    "$named": true,
-                    "$text": "None",
-                    "$span": {
-                      "start": 14,
-                      "end": 18
-                    }
-                  }
+                  ]
                 }
               },
               "_value": {
@@ -204532,7 +204532,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match y {\n    None::<T> => 17,\n    _ => 42,\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (generic_pattern (identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))) value: (integer_literal_decimal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (integer_literal_decimal)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (generic_pattern name: (identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))) value: (integer_literal_decimal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (integer_literal_decimal)))))",
     "wrappedText": "fn _f() { let _ = match y {\n    None::<T> => 17,\n    _ => 42,\n}; }",
     "wrappedOffset": 18
   },
@@ -204600,6 +204600,16 @@
       "$type": 310,
       "$source": 0,
       "$named": true,
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "None",
+        "$span": {
+          "start": 14,
+          "end": 18
+        }
+      },
       "_type_arguments": {
         "$type": 245,
         "$source": 0,
@@ -204668,19 +204678,9 @@
         }
       ],
       "$slotOrder": [
-        "identifier",
+        "name",
         "type_arguments"
-      ],
-      "_content": {
-        "$type": 1,
-        "$source": 0,
-        "$named": true,
-        "$text": "None",
-        "$span": {
-          "start": 14,
-          "end": 18
-        }
-      }
+      ]
     },
     "expectedOutput": "None::<T>"
   },
@@ -204691,7 +204691,7 @@
     "pattern": "generic_pattern",
     "edits": [],
     "expectedSourceOut": "None::<T>",
-    "expectedReparseTree": "(generic_pattern (identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))",
+    "expectedReparseTree": "(generic_pattern name: (identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))",
     "wrappedText": "fn _f() { let None::<T> = (); }",
     "wrappedOffset": 14
   },
@@ -224549,29 +224549,7 @@
                               "$type": 232,
                               "$source": 0,
                               "$named": true,
-                              "$other": [
-                                {
-                                  "$type": 44,
-                                  "$source": 0,
-                                  "$named": false,
-                                  "$text": "<",
-                                  "$span": {
-                                    "start": 23,
-                                    "end": 24
-                                  }
-                                },
-                                {
-                                  "$type": 45,
-                                  "$source": 0,
-                                  "$named": false,
-                                  "$text": ">",
-                                  "$span": {
-                                    "start": 30,
-                                    "end": 31
-                                  }
-                                }
-                              ],
-                              "_content": {
+                              "_type": {
                                 "$type": 233,
                                 "$source": 0,
                                 "$named": true,
@@ -224621,7 +224599,29 @@
                                   "type",
                                   "alias"
                                 ]
-                              }
+                              },
+                              "$other": [
+                                {
+                                  "$type": 44,
+                                  "$source": 0,
+                                  "$named": false,
+                                  "$text": "<",
+                                  "$span": {
+                                    "start": 23,
+                                    "end": 24
+                                  }
+                                },
+                                {
+                                  "$type": 45,
+                                  "$source": 0,
+                                  "$named": false,
+                                  "$text": ">",
+                                  "$span": {
+                                    "start": 30,
+                                    "end": 31
+                                  }
+                                }
+                              ]
                             },
                             "_name": {
                               "$type": 469,
@@ -224746,7 +224746,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "a as B<C>;\n\nd as * mut E<<F as E>::G>;",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (type_cast_expression value: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))))) statements: (expression_statement (expression_statement_with_semi expression: (type_cast_expression value: (identifier) type: (pointer_type_mut (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (scoped_type_identifier path: (bracketed_type (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier)))))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (type_cast_expression value: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (type_identifier)))))))) statements: (expression_statement (expression_statement_with_semi expression: (type_cast_expression value: (identifier) type: (pointer_type_mut (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (scoped_type_identifier path: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier)))))))))))",
     "wrappedText": "a as B<C>;\n\nd as * mut E<<F as E>::G>;",
     "wrappedOffset": 0
   },
@@ -224939,29 +224939,7 @@
                       "$type": 232,
                       "$source": 0,
                       "$named": true,
-                      "$other": [
-                        {
-                          "$type": 44,
-                          "$source": 0,
-                          "$named": false,
-                          "$text": "<",
-                          "$span": {
-                            "start": 23,
-                            "end": 24
-                          }
-                        },
-                        {
-                          "$type": 45,
-                          "$source": 0,
-                          "$named": false,
-                          "$text": ">",
-                          "$span": {
-                            "start": 30,
-                            "end": 31
-                          }
-                        }
-                      ],
-                      "_content": {
+                      "_type": {
                         "$type": 233,
                         "$source": 0,
                         "$named": true,
@@ -225011,7 +224989,29 @@
                           "type",
                           "alias"
                         ]
-                      }
+                      },
+                      "$other": [
+                        {
+                          "$type": 44,
+                          "$source": 0,
+                          "$named": false,
+                          "$text": "<",
+                          "$span": {
+                            "start": 23,
+                            "end": 24
+                          }
+                        },
+                        {
+                          "$type": 45,
+                          "$source": 0,
+                          "$named": false,
+                          "$text": ">",
+                          "$span": {
+                            "start": 30,
+                            "end": 31
+                          }
+                        }
+                      ]
                     },
                     "_name": {
                       "$type": 469,
@@ -225120,7 +225120,7 @@
     "pattern": "type_cast_expression",
     "edits": [],
     "expectedSourceOut": "d as * mut E<<F as E>::G>",
-    "expectedReparseTree": "(type_cast_expression value: (identifier) type: (pointer_type_mut (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (scoped_type_identifier path: (bracketed_type (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier))))))))",
+    "expectedReparseTree": "(type_cast_expression value: (identifier) type: (pointer_type_mut (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (scoped_type_identifier path: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier))))))))",
     "wrappedText": "fn _f() { let _ = d as * mut E<<F as E>::G>; }",
     "wrappedOffset": 18
   },
@@ -225264,29 +225264,7 @@
                   "$type": 232,
                   "$source": 0,
                   "$named": true,
-                  "$other": [
-                    {
-                      "$type": 44,
-                      "$source": 0,
-                      "$named": false,
-                      "$text": "<",
-                      "$span": {
-                        "start": 23,
-                        "end": 24
-                      }
-                    },
-                    {
-                      "$type": 45,
-                      "$source": 0,
-                      "$named": false,
-                      "$text": ">",
-                      "$span": {
-                        "start": 30,
-                        "end": 31
-                      }
-                    }
-                  ],
-                  "_content": {
+                  "_type": {
                     "$type": 233,
                     "$source": 0,
                     "$named": true,
@@ -225336,7 +225314,29 @@
                       "type",
                       "alias"
                     ]
-                  }
+                  },
+                  "$other": [
+                    {
+                      "$type": 44,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": "<",
+                      "$span": {
+                        "start": 23,
+                        "end": 24
+                      }
+                    },
+                    {
+                      "$type": 45,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": ">",
+                      "$span": {
+                        "start": 30,
+                        "end": 31
+                      }
+                    }
+                  ]
                 },
                 "_name": {
                   "$type": 469,
@@ -225411,7 +225411,7 @@
     "pattern": "generic_type",
     "edits": [],
     "expectedSourceOut": "E<<F as E>::G>",
-    "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (scoped_type_identifier path: (bracketed_type (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier))))))",
+    "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (scoped_type_identifier path: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier))))))",
     "wrappedText": "type _X = E<<F as E>::G>;",
     "wrappedOffset": 10
   },
@@ -225655,29 +225655,7 @@
                     "$type": 232,
                     "$source": 0,
                     "$named": true,
-                    "$other": [
-                      {
-                        "$type": 44,
-                        "$source": 0,
-                        "$named": false,
-                        "$text": "<",
-                        "$span": {
-                          "start": 23,
-                          "end": 24
-                        }
-                      },
-                      {
-                        "$type": 45,
-                        "$source": 0,
-                        "$named": false,
-                        "$text": ">",
-                        "$span": {
-                          "start": 30,
-                          "end": 31
-                        }
-                      }
-                    ],
-                    "_content": {
+                    "_type": {
                       "$type": 233,
                       "$source": 0,
                       "$named": true,
@@ -225727,7 +225705,29 @@
                         "type",
                         "alias"
                       ]
-                    }
+                    },
+                    "$other": [
+                      {
+                        "$type": 44,
+                        "$source": 0,
+                        "$named": false,
+                        "$text": "<",
+                        "$span": {
+                          "start": 23,
+                          "end": 24
+                        }
+                      },
+                      {
+                        "$type": 45,
+                        "$source": 0,
+                        "$named": false,
+                        "$text": ">",
+                        "$span": {
+                          "start": 30,
+                          "end": 31
+                        }
+                      }
+                    ]
                   },
                   "_name": {
                     "$type": 469,
@@ -225819,7 +225819,7 @@
     "pattern": "pointer_type_mut",
     "edits": [],
     "expectedSourceOut": "* mut E<<F as E>::G>",
-    "expectedReparseTree": "(pointer_type_mut (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (scoped_type_identifier path: (bracketed_type (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier)))))))",
+    "expectedReparseTree": "(pointer_type_mut (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_arguments_elements element: (type_argument (scoped_type_identifier path: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier)))))))",
     "wrappedText": "type _X = * mut E<<F as E>::G>;",
     "wrappedOffset": 10
   },
@@ -225835,29 +225835,7 @@
         "$type": 232,
         "$source": 0,
         "$named": true,
-        "$other": [
-          {
-            "$type": 44,
-            "$source": 0,
-            "$named": false,
-            "$text": "<",
-            "$span": {
-              "start": 23,
-              "end": 24
-            }
-          },
-          {
-            "$type": 45,
-            "$source": 0,
-            "$named": false,
-            "$text": ">",
-            "$span": {
-              "start": 30,
-              "end": 31
-            }
-          }
-        ],
-        "_content": {
+        "_type": {
           "$type": 233,
           "$source": 0,
           "$named": true,
@@ -225907,7 +225885,29 @@
             "type",
             "alias"
           ]
-        }
+        },
+        "$other": [
+          {
+            "$type": 44,
+            "$source": 0,
+            "$named": false,
+            "$text": "<",
+            "$span": {
+              "start": 23,
+              "end": 24
+            }
+          },
+          {
+            "$type": 45,
+            "$source": 0,
+            "$named": false,
+            "$text": ">",
+            "$span": {
+              "start": 30,
+              "end": 31
+            }
+          }
+        ]
       },
       "_name": {
         "$type": 469,
@@ -225950,7 +225950,7 @@
     "pattern": "scoped_type_identifier",
     "edits": [],
     "expectedSourceOut": "<F as E>::G",
-    "expectedReparseTree": "(scoped_type_identifier path: (bracketed_type (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier))",
+    "expectedReparseTree": "(scoped_type_identifier path: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier))",
     "wrappedText": "type _X = <F as E>::G;",
     "wrappedOffset": 10
   }

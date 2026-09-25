@@ -2681,6 +2681,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterTransport {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    39 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     68 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -2691,9 +2694,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterTransport {
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     70 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     22 => Ok(Self::Identifier(
@@ -2767,6 +2767,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterTransport {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    39 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     68 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -2777,9 +2780,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterTransport {
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     70 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     22 => Ok(Self::Identifier(
@@ -9192,6 +9192,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecStatementCodeTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    39 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     68 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9202,9 +9205,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecStatementCodeTransportSlot {
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     70 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     22 => Ok(Self::Identifier(
@@ -9227,6 +9227,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecStatementCodeTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    39 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     68 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9237,9 +9240,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecStatementCodeTransportSlot {
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     70 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     22 => Ok(Self::Identifier(
@@ -11023,6 +11023,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternNameTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    39 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     68 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -11033,9 +11036,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternNameTransportSlot {
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     70 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     22 => Ok(Self::Identifier(
@@ -11056,6 +11056,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternNameTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    39 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     68 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -11066,9 +11069,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternNameTransportSlot {
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     70 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     22 => Ok(Self::Identifier(
@@ -11724,6 +11724,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultParameterNameTransportSlo
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    39 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     68 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -11734,9 +11737,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultParameterNameTransportSlo
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     70 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     22 => Ok(Self::Identifier(
@@ -11759,6 +11759,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultParameterNameTransportSlo
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    39 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     68 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -11769,9 +11772,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultParameterNameTransportSlo
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     70 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     22 => Ok(Self::Identifier(
@@ -11840,7 +11840,7 @@ impl ::sittir_core::render::Render for DefaultParameterNameTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ListSplatPatternContentTransportSlot {
+pub enum ListSplatPatternTargetTransportSlot {
     Identifier(IdentifierTransport),
     Subscript(SubscriptTransport),
     Attribute(AttributeTransport),
@@ -11853,24 +11853,24 @@ pub enum ListSplatPatternContentTransportSlot {
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for ListSplatPatternContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for ListSplatPatternTargetTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ListSplatPatternContentTransportSlot::Identifier(t) => t.prepare(ctx),
-            ListSplatPatternContentTransportSlot::Subscript(t) => t.prepare(ctx),
-            ListSplatPatternContentTransportSlot::Attribute(t) => t.prepare(ctx),
-            ListSplatPatternContentTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ListSplatPatternContentTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ListSplatPatternContentTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ListSplatPatternContentTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ListSplatPatternContentTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ListSplatPatternContentTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ListSplatPatternContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+            ListSplatPatternTargetTransportSlot::Identifier(t) => t.prepare(ctx),
+            ListSplatPatternTargetTransportSlot::Subscript(t) => t.prepare(ctx),
+            ListSplatPatternTargetTransportSlot::Attribute(t) => t.prepare(ctx),
+            ListSplatPatternTargetTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ListSplatPatternTargetTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ListSplatPatternTargetTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ListSplatPatternTargetTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ListSplatPatternTargetTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ListSplatPatternTargetTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ListSplatPatternTargetTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for ListSplatPatternContentTransportSlot {
+impl ::sittir_core::view::KindOf for ListSplatPatternTargetTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Identifier(inner) => inner.kind_in(kinds),
@@ -11888,7 +11888,7 @@ impl ::sittir_core::view::KindOf for ListSplatPatternContentTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ListSplatPatternContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ListSplatPatternTargetTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -11912,14 +11912,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ListSplatPatternContentTransport
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ListSplatPatternContentTransportSlot",
+                        "unknown kind id {other} in ListSplatPatternTargetTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ListSplatPatternContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ListSplatPatternTargetTransportSlot")
                 )?;
                 match kind_id {
                     68 => Ok(Self::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64),
@@ -11938,80 +11938,80 @@ impl ::napi::bindgen_prelude::FromNapiValue for ListSplatPatternContentTransport
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ListSplatPatternContentTransportSlot",
+                        "unknown kind id {other} in ListSplatPatternTargetTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("ListSplatPatternContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("ListSplatPatternTargetTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ListSplatPatternContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ListSplatPatternTargetTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ListSplatPatternContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ListSplatPatternTargetTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ListSplatPatternContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ListSplatPatternTargetTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ListSplatPatternContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ListSplatPatternTargetTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ListSplatPatternContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ListSplatPatternTargetTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ListSplatPatternContentTransportSlot::to_napi_value(env, *val)
+        ListSplatPatternTargetTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn list_splat_pattern_content_transport_slot_to_any(t: ListSplatPatternContentTransportSlot) -> AnyTransport {
+fn list_splat_pattern_target_transport_slot_to_any(t: ListSplatPatternTargetTransportSlot) -> AnyTransport {
     match t {
-        ListSplatPatternContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ListSplatPatternContentTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        ListSplatPatternContentTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        ListSplatPatternContentTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64,
-        ListSplatPatternContentTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64,
-        ListSplatPatternContentTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
-        ListSplatPatternContentTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64,
-        ListSplatPatternContentTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64,
-        ListSplatPatternContentTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64,
-        ListSplatPatternContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        ListSplatPatternTargetTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        ListSplatPatternTargetTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
+        ListSplatPatternTargetTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
+        ListSplatPatternTargetTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64,
+        ListSplatPatternTargetTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64,
+        ListSplatPatternTargetTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
+        ListSplatPatternTargetTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64,
+        ListSplatPatternTargetTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64,
+        ListSplatPatternTargetTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64,
+        ListSplatPatternTargetTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl ::sittir_core::render::Render for ListSplatPatternContentTransportSlot {
+impl ::sittir_core::render::Render for ListSplatPatternTargetTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ListSplatPatternContentTransportSlot::Identifier(inner) => inner.render(w),
-            ListSplatPatternContentTransportSlot::Subscript(inner) => inner.render(w),
-            ListSplatPatternContentTransportSlot::Attribute(inner) => inner.render(w),
-            ListSplatPatternContentTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => w.text("print"),
-            ListSplatPatternContentTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => w.text("exec"),
-            ListSplatPatternContentTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
-            ListSplatPatternContentTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => w.text("await"),
-            ListSplatPatternContentTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => w.text("type"),
-            ListSplatPatternContentTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => w.text("match"),
-            ListSplatPatternContentTransportSlot::Verbatim(inner) => inner.render(w),
+            ListSplatPatternTargetTransportSlot::Identifier(inner) => inner.render(w),
+            ListSplatPatternTargetTransportSlot::Subscript(inner) => inner.render(w),
+            ListSplatPatternTargetTransportSlot::Attribute(inner) => inner.render(w),
+            ListSplatPatternTargetTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => w.text("print"),
+            ListSplatPatternTargetTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => w.text("exec"),
+            ListSplatPatternTargetTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
+            ListSplatPatternTargetTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => w.text("await"),
+            ListSplatPatternTargetTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => w.text("type"),
+            ListSplatPatternTargetTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => w.text("match"),
+            ListSplatPatternTargetTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum DictionarySplatPatternContentTransportSlot {
+pub enum DictionarySplatPatternTargetTransportSlot {
     Identifier(IdentifierTransport),
     Subscript(SubscriptTransport),
     Attribute(AttributeTransport),
@@ -12024,24 +12024,24 @@ pub enum DictionarySplatPatternContentTransportSlot {
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for DictionarySplatPatternContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for DictionarySplatPatternTargetTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            DictionarySplatPatternContentTransportSlot::Identifier(t) => t.prepare(ctx),
-            DictionarySplatPatternContentTransportSlot::Subscript(t) => t.prepare(ctx),
-            DictionarySplatPatternContentTransportSlot::Attribute(t) => t.prepare(ctx),
-            DictionarySplatPatternContentTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            DictionarySplatPatternContentTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            DictionarySplatPatternContentTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            DictionarySplatPatternContentTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            DictionarySplatPatternContentTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            DictionarySplatPatternContentTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            DictionarySplatPatternContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+            DictionarySplatPatternTargetTransportSlot::Identifier(t) => t.prepare(ctx),
+            DictionarySplatPatternTargetTransportSlot::Subscript(t) => t.prepare(ctx),
+            DictionarySplatPatternTargetTransportSlot::Attribute(t) => t.prepare(ctx),
+            DictionarySplatPatternTargetTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            DictionarySplatPatternTargetTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            DictionarySplatPatternTargetTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            DictionarySplatPatternTargetTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            DictionarySplatPatternTargetTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            DictionarySplatPatternTargetTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            DictionarySplatPatternTargetTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for DictionarySplatPatternContentTransportSlot {
+impl ::sittir_core::view::KindOf for DictionarySplatPatternTargetTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Identifier(inner) => inner.kind_in(kinds),
@@ -12059,7 +12059,7 @@ impl ::sittir_core::view::KindOf for DictionarySplatPatternContentTransportSlot 
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for DictionarySplatPatternContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for DictionarySplatPatternTargetTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -12083,14 +12083,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DictionarySplatPatternContentTra
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in DictionarySplatPatternContentTransportSlot",
+                        "unknown kind id {other} in DictionarySplatPatternTargetTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in DictionarySplatPatternContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in DictionarySplatPatternTargetTransportSlot")
                 )?;
                 match kind_id {
                     68 => Ok(Self::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64),
@@ -12109,74 +12109,74 @@ impl ::napi::bindgen_prelude::FromNapiValue for DictionarySplatPatternContentTra
                         AttributeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in DictionarySplatPatternContentTransportSlot",
+                        "unknown kind id {other} in DictionarySplatPatternTargetTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("DictionarySplatPatternContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("DictionarySplatPatternTargetTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DictionarySplatPatternContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for DictionarySplatPatternTargetTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("DictionarySplatPatternContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("DictionarySplatPatternTargetTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DictionarySplatPatternContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DictionarySplatPatternTargetTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        DictionarySplatPatternContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        DictionarySplatPatternTargetTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DictionarySplatPatternContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DictionarySplatPatternTargetTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        DictionarySplatPatternContentTransportSlot::to_napi_value(env, *val)
+        DictionarySplatPatternTargetTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn dictionary_splat_pattern_content_transport_slot_to_any(t: DictionarySplatPatternContentTransportSlot) -> AnyTransport {
+fn dictionary_splat_pattern_target_transport_slot_to_any(t: DictionarySplatPatternTargetTransportSlot) -> AnyTransport {
     match t {
-        DictionarySplatPatternContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        DictionarySplatPatternContentTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        DictionarySplatPatternContentTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        DictionarySplatPatternContentTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64,
-        DictionarySplatPatternContentTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64,
-        DictionarySplatPatternContentTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
-        DictionarySplatPatternContentTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64,
-        DictionarySplatPatternContentTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64,
-        DictionarySplatPatternContentTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64,
-        DictionarySplatPatternContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        DictionarySplatPatternTargetTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        DictionarySplatPatternTargetTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
+        DictionarySplatPatternTargetTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
+        DictionarySplatPatternTargetTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64,
+        DictionarySplatPatternTargetTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64,
+        DictionarySplatPatternTargetTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
+        DictionarySplatPatternTargetTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64,
+        DictionarySplatPatternTargetTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64,
+        DictionarySplatPatternTargetTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64,
+        DictionarySplatPatternTargetTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl ::sittir_core::render::Render for DictionarySplatPatternContentTransportSlot {
+impl ::sittir_core::render::Render for DictionarySplatPatternTargetTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DictionarySplatPatternContentTransportSlot::Identifier(inner) => inner.render(w),
-            DictionarySplatPatternContentTransportSlot::Subscript(inner) => inner.render(w),
-            DictionarySplatPatternContentTransportSlot::Attribute(inner) => inner.render(w),
-            DictionarySplatPatternContentTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => w.text("print"),
-            DictionarySplatPatternContentTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => w.text("exec"),
-            DictionarySplatPatternContentTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
-            DictionarySplatPatternContentTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => w.text("await"),
-            DictionarySplatPatternContentTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => w.text("type"),
-            DictionarySplatPatternContentTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => w.text("match"),
-            DictionarySplatPatternContentTransportSlot::Verbatim(inner) => inner.render(w),
+            DictionarySplatPatternTargetTransportSlot::Identifier(inner) => inner.render(w),
+            DictionarySplatPatternTargetTransportSlot::Subscript(inner) => inner.render(w),
+            DictionarySplatPatternTargetTransportSlot::Attribute(inner) => inner.render(w),
+            DictionarySplatPatternTargetTransportSlot::Literal1_70_72_69_6e_74_5f_6b_65_79_77_6f_72_64 => w.text("print"),
+            DictionarySplatPatternTargetTransportSlot::Literal2_65_78_65_63_5f_6b_65_79_77_6f_72_64 => w.text("exec"),
+            DictionarySplatPatternTargetTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
+            DictionarySplatPatternTargetTransportSlot::Literal4_61_77_61_69_74_5f_6b_65_79_77_6f_72_64 => w.text("await"),
+            DictionarySplatPatternTargetTransportSlot::Literal5_74_79_70_65_5f_6b_65_79_77_6f_72_64 => w.text("type"),
+            DictionarySplatPatternTargetTransportSlot::Literal6_6d_61_74_63_68_5f_6b_65_79_77_6f_72_64 => w.text("match"),
+            DictionarySplatPatternTargetTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -15040,25 +15040,25 @@ impl ::sittir_core::render::Render for CallArgumentsTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum TypedParameterContentTransportSlot {
+pub enum TypedParameterNameTransportSlot {
     Identifier(IdentifierTransport),
     ListSplatPattern(ListSplatPatternTransport),
     DictionarySplatPattern(DictionarySplatPatternTransport),
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for TypedParameterContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for TypedParameterNameTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            TypedParameterContentTransportSlot::Identifier(t) => t.prepare(ctx),
-            TypedParameterContentTransportSlot::ListSplatPattern(t) => t.prepare(ctx),
-            TypedParameterContentTransportSlot::DictionarySplatPattern(t) => t.prepare(ctx),
-            TypedParameterContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+            TypedParameterNameTransportSlot::Identifier(t) => t.prepare(ctx),
+            TypedParameterNameTransportSlot::ListSplatPattern(t) => t.prepare(ctx),
+            TypedParameterNameTransportSlot::DictionarySplatPattern(t) => t.prepare(ctx),
+            TypedParameterNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for TypedParameterContentTransportSlot {
+impl ::sittir_core::view::KindOf for TypedParameterNameTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Identifier(inner) => inner.kind_in(kinds),
@@ -15070,7 +15070,7 @@ impl ::sittir_core::view::KindOf for TypedParameterContentTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TypedParameterContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for TypedParameterNameTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -15081,6 +15081,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypedParameterContentTransportSl
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    39 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     68 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -15093,9 +15096,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypedParameterContentTransportSl
                     70 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
                     22 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -15106,17 +15106,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypedParameterContentTransportSl
                         DictionarySplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TypedParameterContentTransportSlot",
+                        "unknown kind id {other} in TypedParameterNameTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in TypedParameterContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in TypedParameterNameTransportSlot")
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::Identifier(
@@ -15131,9 +15134,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypedParameterContentTransportSl
                     70 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
                     22 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -15144,62 +15144,62 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypedParameterContentTransportSl
                         DictionarySplatPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TypedParameterContentTransportSlot",
+                        "unknown kind id {other} in TypedParameterNameTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("TypedParameterContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("TypedParameterNameTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TypedParameterContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for TypedParameterNameTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TypedParameterContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("TypedParameterNameTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TypedParameterContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TypedParameterNameTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TypedParameterContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        TypedParameterNameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TypedParameterContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TypedParameterNameTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TypedParameterContentTransportSlot::to_napi_value(env, *val)
+        TypedParameterNameTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn typed_parameter_content_transport_slot_to_any(t: TypedParameterContentTransportSlot) -> AnyTransport {
+fn typed_parameter_name_transport_slot_to_any(t: TypedParameterNameTransportSlot) -> AnyTransport {
     match t {
-        TypedParameterContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        TypedParameterContentTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        TypedParameterContentTransportSlot::DictionarySplatPattern(inner) => AnyTransport::DictionarySplatPattern(inner),
-        TypedParameterContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        TypedParameterNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        TypedParameterNameTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
+        TypedParameterNameTransportSlot::DictionarySplatPattern(inner) => AnyTransport::DictionarySplatPattern(inner),
+        TypedParameterNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl ::sittir_core::render::Render for TypedParameterContentTransportSlot {
+impl ::sittir_core::render::Render for TypedParameterNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TypedParameterContentTransportSlot::Identifier(inner) => inner.render(w),
-            TypedParameterContentTransportSlot::ListSplatPattern(inner) => inner.render(w),
-            TypedParameterContentTransportSlot::DictionarySplatPattern(inner) => inner.render(w),
-            TypedParameterContentTransportSlot::Verbatim(inner) => inner.render(w),
+            TypedParameterNameTransportSlot::Identifier(inner) => inner.render(w),
+            TypedParameterNameTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            TypedParameterNameTransportSlot::DictionarySplatPattern(inner) => inner.render(w),
+            TypedParameterNameTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -16226,7 +16226,7 @@ impl ::sittir_core::render::Render for KeywordArgumentNameTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ParenthesizedExpressionContentTransportSlot {
+pub enum ParenthesizedExpressionExpressionTransportSlot {
     ComparisonOperator(ComparisonOperatorTransport),
     NotOperator(NotOperatorTransport),
     BooleanOperator(BooleanOperatorTransport),
@@ -16274,59 +16274,59 @@ pub enum ParenthesizedExpressionContentTransportSlot {
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionExpressionTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ParenthesizedExpressionContentTransportSlot::ComparisonOperator(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::NotOperator(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::BooleanOperator(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::Lambda(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::Await(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::BinaryOperator(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::Identifier(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::PrintKeyword(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::ExecKeyword(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::AsyncKeyword(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::AwaitKeyword(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::TypeKeyword(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::MatchKeyword(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::String(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::ConcatenatedString(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::IntegerHex(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::IntegerOctal(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::IntegerBinary(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::FloatPoint(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::FloatScientific(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::True(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::False(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::None(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::UnaryOperator(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::Attribute(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::Subscript(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::Call(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::List(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::ListComprehension(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::Dictionary(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::DictionaryComprehension(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::Set(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::SetComprehension(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::Tuple(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::ParenthesizedExpression(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::GeneratorExpression(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::Ellipsis(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::ListSplatPattern(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::ConditionalExpression(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::NamedExpression(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::AsPattern(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::Yield(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::ComparisonOperator(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::NotOperator(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::BooleanOperator(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Lambda(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Await(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::BinaryOperator(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Identifier(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::PrintKeyword(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::ExecKeyword(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::AsyncKeyword(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::AwaitKeyword(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::TypeKeyword(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::MatchKeyword(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::String(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::ConcatenatedString(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::IntegerHex(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::IntegerOctal(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::IntegerBinary(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::FloatPoint(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::FloatScientific(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::True(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::False(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::None(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::UnaryOperator(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Attribute(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Subscript(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Call(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::List(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::ListComprehension(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Dictionary(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::DictionaryComprehension(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Set(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::SetComprehension(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Tuple(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::ParenthesizedExpression(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::GeneratorExpression(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Ellipsis(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::ListSplatPattern(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::ConditionalExpression(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::NamedExpression(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::AsPattern(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Yield(t) => t.prepare(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for ParenthesizedExpressionContentTransportSlot {
+impl ::sittir_core::view::KindOf for ParenthesizedExpressionExpressionTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ComparisonOperator(inner) => inner.kind_in(kinds),
@@ -16379,7 +16379,7 @@ impl ::sittir_core::view::KindOf for ParenthesizedExpressionContentTransportSlot
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionExpressionTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -16520,14 +16520,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ParenthesizedExpressionContentTransportSlot",
+                        "unknown kind id {other} in ParenthesizedExpressionExpressionTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ParenthesizedExpressionContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ParenthesizedExpressionExpressionTransportSlot")
                 )?;
                 match kind_id {
                     68 => Ok(Self::PrintKeyword(
@@ -16663,144 +16663,144 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                         YieldTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ParenthesizedExpressionContentTransportSlot",
+                        "unknown kind id {other} in ParenthesizedExpressionExpressionTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("ParenthesizedExpressionContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("ParenthesizedExpressionExpressionTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ParenthesizedExpressionContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ParenthesizedExpressionExpressionTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ParenthesizedExpressionContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ParenthesizedExpressionExpressionTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ParenthesizedExpressionContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ParenthesizedExpressionExpressionTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ParenthesizedExpressionContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ParenthesizedExpressionExpressionTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenthesizedExpressionContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenthesizedExpressionExpressionTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ParenthesizedExpressionContentTransportSlot::to_napi_value(env, *val)
+        ParenthesizedExpressionExpressionTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn parenthesized_expression_content_transport_slot_to_any(t: ParenthesizedExpressionContentTransportSlot) -> AnyTransport {
+fn parenthesized_expression_expression_transport_slot_to_any(t: ParenthesizedExpressionExpressionTransportSlot) -> AnyTransport {
     match t {
-        ParenthesizedExpressionContentTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        ParenthesizedExpressionContentTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        ParenthesizedExpressionContentTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        ParenthesizedExpressionContentTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        ParenthesizedExpressionContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        ParenthesizedExpressionContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        ParenthesizedExpressionContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ParenthesizedExpressionContentTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
-        ParenthesizedExpressionContentTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
-        ParenthesizedExpressionContentTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        ParenthesizedExpressionContentTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
-        ParenthesizedExpressionContentTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        ParenthesizedExpressionContentTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
-        ParenthesizedExpressionContentTransportSlot::String(inner) => AnyTransport::String(inner),
-        ParenthesizedExpressionContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        ParenthesizedExpressionContentTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        ParenthesizedExpressionContentTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        ParenthesizedExpressionContentTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        ParenthesizedExpressionContentTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
-        ParenthesizedExpressionContentTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        ParenthesizedExpressionContentTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ParenthesizedExpressionContentTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        ParenthesizedExpressionContentTransportSlot::True(inner) => AnyTransport::True(inner),
-        ParenthesizedExpressionContentTransportSlot::False(inner) => AnyTransport::False(inner),
-        ParenthesizedExpressionContentTransportSlot::None(inner) => AnyTransport::None(inner),
-        ParenthesizedExpressionContentTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        ParenthesizedExpressionContentTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        ParenthesizedExpressionContentTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        ParenthesizedExpressionContentTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        ParenthesizedExpressionContentTransportSlot::List(inner) => AnyTransport::List(inner),
-        ParenthesizedExpressionContentTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        ParenthesizedExpressionContentTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        ParenthesizedExpressionContentTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        ParenthesizedExpressionContentTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        ParenthesizedExpressionContentTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        ParenthesizedExpressionContentTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        ParenthesizedExpressionContentTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        ParenthesizedExpressionContentTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        ParenthesizedExpressionContentTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
-        ParenthesizedExpressionContentTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        ParenthesizedExpressionContentTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        ParenthesizedExpressionContentTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        ParenthesizedExpressionContentTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        ParenthesizedExpressionContentTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
-        ParenthesizedExpressionContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        ParenthesizedExpressionExpressionTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
+        ParenthesizedExpressionExpressionTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
+        ParenthesizedExpressionExpressionTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
+        ParenthesizedExpressionExpressionTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
+        ParenthesizedExpressionExpressionTransportSlot::Await(inner) => AnyTransport::Await(inner),
+        ParenthesizedExpressionExpressionTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
+        ParenthesizedExpressionExpressionTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        ParenthesizedExpressionExpressionTransportSlot::PrintKeyword(inner) => AnyTransport::PrintKeyword(inner),
+        ParenthesizedExpressionExpressionTransportSlot::ExecKeyword(inner) => AnyTransport::ExecKeyword(inner),
+        ParenthesizedExpressionExpressionTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
+        ParenthesizedExpressionExpressionTransportSlot::AwaitKeyword(inner) => AnyTransport::AwaitKeyword(inner),
+        ParenthesizedExpressionExpressionTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
+        ParenthesizedExpressionExpressionTransportSlot::MatchKeyword(inner) => AnyTransport::MatchKeyword(inner),
+        ParenthesizedExpressionExpressionTransportSlot::String(inner) => AnyTransport::String(inner),
+        ParenthesizedExpressionExpressionTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
+        ParenthesizedExpressionExpressionTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
+        ParenthesizedExpressionExpressionTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
+        ParenthesizedExpressionExpressionTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
+        ParenthesizedExpressionExpressionTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
+        ParenthesizedExpressionExpressionTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
+        ParenthesizedExpressionExpressionTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
+        ParenthesizedExpressionExpressionTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
+        ParenthesizedExpressionExpressionTransportSlot::True(inner) => AnyTransport::True(inner),
+        ParenthesizedExpressionExpressionTransportSlot::False(inner) => AnyTransport::False(inner),
+        ParenthesizedExpressionExpressionTransportSlot::None(inner) => AnyTransport::None(inner),
+        ParenthesizedExpressionExpressionTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
+        ParenthesizedExpressionExpressionTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
+        ParenthesizedExpressionExpressionTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
+        ParenthesizedExpressionExpressionTransportSlot::Call(inner) => AnyTransport::Call(inner),
+        ParenthesizedExpressionExpressionTransportSlot::List(inner) => AnyTransport::List(inner),
+        ParenthesizedExpressionExpressionTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
+        ParenthesizedExpressionExpressionTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
+        ParenthesizedExpressionExpressionTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
+        ParenthesizedExpressionExpressionTransportSlot::Set(inner) => AnyTransport::Set(inner),
+        ParenthesizedExpressionExpressionTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
+        ParenthesizedExpressionExpressionTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
+        ParenthesizedExpressionExpressionTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
+        ParenthesizedExpressionExpressionTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
+        ParenthesizedExpressionExpressionTransportSlot::Ellipsis(inner) => AnyTransport::Ellipsis(inner),
+        ParenthesizedExpressionExpressionTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
+        ParenthesizedExpressionExpressionTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
+        ParenthesizedExpressionExpressionTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
+        ParenthesizedExpressionExpressionTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
+        ParenthesizedExpressionExpressionTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
+        ParenthesizedExpressionExpressionTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl ::sittir_core::render::Render for ParenthesizedExpressionContentTransportSlot {
+impl ::sittir_core::render::Render for ParenthesizedExpressionExpressionTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ParenthesizedExpressionContentTransportSlot::ComparisonOperator(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::NotOperator(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::BooleanOperator(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::Lambda(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::Await(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::BinaryOperator(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::Identifier(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::PrintKeyword(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::ExecKeyword(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::AsyncKeyword(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::AwaitKeyword(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::TypeKeyword(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::MatchKeyword(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::String(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::ConcatenatedString(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::IntegerHex(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::IntegerOctal(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::IntegerBinary(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::IntegerDecimal(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::FloatPoint(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::FloatScientific(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::True(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::False(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::None(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::UnaryOperator(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::Attribute(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::Subscript(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::Call(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::List(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::ListComprehension(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::Dictionary(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::DictionaryComprehension(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::Set(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::SetComprehension(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::Tuple(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::GeneratorExpression(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::Ellipsis(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::ListSplatPattern(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::ConditionalExpression(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::NamedExpression(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::AsPattern(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::Yield(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::Verbatim(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::ComparisonOperator(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::NotOperator(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::BooleanOperator(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::Lambda(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::Await(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::BinaryOperator(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::Identifier(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::PrintKeyword(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::ExecKeyword(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::AsyncKeyword(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::AwaitKeyword(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::TypeKeyword(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::MatchKeyword(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::String(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::IntegerHex(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::IntegerOctal(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::IntegerBinary(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::IntegerDecimal(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::FloatPoint(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::FloatScientific(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::True(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::False(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::None(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::UnaryOperator(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::Attribute(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::Subscript(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::Call(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::List(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::ListComprehension(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::Dictionary(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::DictionaryComprehension(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::Set(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::SetComprehension(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::Tuple(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::GeneratorExpression(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::Ellipsis(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::ListSplatPattern(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::ConditionalExpression(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::NamedExpression(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::AsPattern(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::Yield(inner) => inner.render(w),
+            ParenthesizedExpressionExpressionTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -19439,21 +19439,21 @@ impl ::sittir_core::render::Render for InterpolationEqMarkerTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum FormatSpecifierContentTransportSlot {
+pub enum FormatSpecifierElementsTransportSlot {
     FormatExpression(FormatExpressionTransport),
     Literal45_5b_5e_7b_7d_5c_6e_5d_2b,
 }
 
-impl ::sittir_core::prepare::Prepare for FormatSpecifierContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for FormatSpecifierElementsTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            FormatSpecifierContentTransportSlot::FormatExpression(t) => t.prepare(ctx),
-            FormatSpecifierContentTransportSlot::Literal45_5b_5e_7b_7d_5c_6e_5d_2b => Ok(()),
+            FormatSpecifierElementsTransportSlot::FormatExpression(t) => t.prepare(ctx),
+            FormatSpecifierElementsTransportSlot::Literal45_5b_5e_7b_7d_5c_6e_5d_2b => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for FormatSpecifierContentTransportSlot {
+impl ::sittir_core::view::KindOf for FormatSpecifierElementsTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::FormatExpression(inner) => inner.kind_in(kinds),
@@ -19463,7 +19463,7 @@ impl ::sittir_core::view::KindOf for FormatSpecifierContentTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierElementsTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -19475,71 +19475,71 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierContentTransportS
                         FormatExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FormatSpecifierContentTransportSlot",
+                        "unknown kind id {other} in FormatSpecifierElementsTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in FormatSpecifierContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in FormatSpecifierElementsTransportSlot")
                 )?;
                 match kind_id {
                     332 => Ok(Self::FormatExpression(
                         FormatExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FormatSpecifierContentTransportSlot",
+                        "unknown kind id {other} in FormatSpecifierElementsTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("FormatSpecifierContentTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("FormatSpecifierElementsTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FormatSpecifierContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for FormatSpecifierElementsTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FormatSpecifierContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("FormatSpecifierElementsTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FormatSpecifierContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FormatSpecifierElementsTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FormatSpecifierContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        FormatSpecifierElementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FormatSpecifierContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FormatSpecifierElementsTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FormatSpecifierContentTransportSlot::to_napi_value(env, *val)
+        FormatSpecifierElementsTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn format_specifier_content_transport_slot_to_any(t: FormatSpecifierContentTransportSlot) -> AnyTransport {
+fn format_specifier_elements_transport_slot_to_any(t: FormatSpecifierElementsTransportSlot) -> AnyTransport {
     match t {
-        FormatSpecifierContentTransportSlot::FormatExpression(inner) => AnyTransport::FormatExpression(inner),
-        FormatSpecifierContentTransportSlot::Literal45_5b_5e_7b_7d_5c_6e_5d_2b => AnyTransport::Literal45_5b_5e_7b_7d_5c_6e_5d_2b,
+        FormatSpecifierElementsTransportSlot::FormatExpression(inner) => AnyTransport::FormatExpression(inner),
+        FormatSpecifierElementsTransportSlot::Literal45_5b_5e_7b_7d_5c_6e_5d_2b => AnyTransport::Literal45_5b_5e_7b_7d_5c_6e_5d_2b,
     }
 }
 
-impl ::sittir_core::render::Render for FormatSpecifierContentTransportSlot {
+impl ::sittir_core::render::Render for FormatSpecifierElementsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FormatSpecifierContentTransportSlot::FormatExpression(inner) => inner.render(w),
-            FormatSpecifierContentTransportSlot::Literal45_5b_5e_7b_7d_5c_6e_5d_2b => w.text("[^{}\\n]+"),
+            FormatSpecifierElementsTransportSlot::FormatExpression(inner) => inner.render(w),
+            FormatSpecifierElementsTransportSlot::Literal45_5b_5e_7b_7d_5c_6e_5d_2b => w.text("[^{}\\n]+"),
         }
     }
 }
@@ -21681,7 +21681,7 @@ impl ::sittir_core::render::Render for SimplePatternNegativeSignTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum SimplePatternNegativeContentTransportSlot {
+pub enum SimplePatternNegativeValueTransportSlot {
     IntegerHex(IntegerHexTransport),
     IntegerOctal(IntegerOctalTransport),
     IntegerBinary(IntegerBinaryTransport),
@@ -21692,22 +21692,22 @@ pub enum SimplePatternNegativeContentTransportSlot {
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for SimplePatternNegativeContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for SimplePatternNegativeValueTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            SimplePatternNegativeContentTransportSlot::IntegerHex(t) => t.prepare(ctx),
-            SimplePatternNegativeContentTransportSlot::IntegerOctal(t) => t.prepare(ctx),
-            SimplePatternNegativeContentTransportSlot::IntegerBinary(t) => t.prepare(ctx),
-            SimplePatternNegativeContentTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
-            SimplePatternNegativeContentTransportSlot::FloatPoint(t) => t.prepare(ctx),
-            SimplePatternNegativeContentTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            SimplePatternNegativeContentTransportSlot::FloatScientific(t) => t.prepare(ctx),
-            SimplePatternNegativeContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+            SimplePatternNegativeValueTransportSlot::IntegerHex(t) => t.prepare(ctx),
+            SimplePatternNegativeValueTransportSlot::IntegerOctal(t) => t.prepare(ctx),
+            SimplePatternNegativeValueTransportSlot::IntegerBinary(t) => t.prepare(ctx),
+            SimplePatternNegativeValueTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
+            SimplePatternNegativeValueTransportSlot::FloatPoint(t) => t.prepare(ctx),
+            SimplePatternNegativeValueTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
+            SimplePatternNegativeValueTransportSlot::FloatScientific(t) => t.prepare(ctx),
+            SimplePatternNegativeValueTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for SimplePatternNegativeContentTransportSlot {
+impl ::sittir_core::view::KindOf for SimplePatternNegativeValueTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::IntegerHex(inner) => inner.kind_in(kinds),
@@ -21723,7 +21723,7 @@ impl ::sittir_core::view::KindOf for SimplePatternNegativeContentTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternNegativeContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternNegativeValueTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -21753,14 +21753,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternNegativeContentTran
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in SimplePatternNegativeContentTransportSlot",
+                        "unknown kind id {other} in SimplePatternNegativeValueTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in SimplePatternNegativeContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in SimplePatternNegativeValueTransportSlot")
                 )?;
                 match kind_id {
                     90 => Ok(Self::IntegerHex(
@@ -21785,70 +21785,70 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternNegativeContentTran
                         FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in SimplePatternNegativeContentTransportSlot",
+                        "unknown kind id {other} in SimplePatternNegativeValueTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("SimplePatternNegativeContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("SimplePatternNegativeValueTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SimplePatternNegativeContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for SimplePatternNegativeValueTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SimplePatternNegativeContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("SimplePatternNegativeValueTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SimplePatternNegativeContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SimplePatternNegativeValueTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        SimplePatternNegativeContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        SimplePatternNegativeValueTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SimplePatternNegativeContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SimplePatternNegativeValueTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        SimplePatternNegativeContentTransportSlot::to_napi_value(env, *val)
+        SimplePatternNegativeValueTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn simple_pattern_negative_content_transport_slot_to_any(t: SimplePatternNegativeContentTransportSlot) -> AnyTransport {
+fn simple_pattern_negative_value_transport_slot_to_any(t: SimplePatternNegativeValueTransportSlot) -> AnyTransport {
     match t {
-        SimplePatternNegativeContentTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
-        SimplePatternNegativeContentTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
-        SimplePatternNegativeContentTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
-        SimplePatternNegativeContentTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
-        SimplePatternNegativeContentTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
-        SimplePatternNegativeContentTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        SimplePatternNegativeContentTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        SimplePatternNegativeContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        SimplePatternNegativeValueTransportSlot::IntegerHex(inner) => AnyTransport::IntegerHex(inner),
+        SimplePatternNegativeValueTransportSlot::IntegerOctal(inner) => AnyTransport::IntegerOctal(inner),
+        SimplePatternNegativeValueTransportSlot::IntegerBinary(inner) => AnyTransport::IntegerBinary(inner),
+        SimplePatternNegativeValueTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
+        SimplePatternNegativeValueTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
+        SimplePatternNegativeValueTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
+        SimplePatternNegativeValueTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
+        SimplePatternNegativeValueTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl ::sittir_core::render::Render for SimplePatternNegativeContentTransportSlot {
+impl ::sittir_core::render::Render for SimplePatternNegativeValueTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SimplePatternNegativeContentTransportSlot::IntegerHex(inner) => inner.render(w),
-            SimplePatternNegativeContentTransportSlot::IntegerOctal(inner) => inner.render(w),
-            SimplePatternNegativeContentTransportSlot::IntegerBinary(inner) => inner.render(w),
-            SimplePatternNegativeContentTransportSlot::IntegerDecimal(inner) => inner.render(w),
-            SimplePatternNegativeContentTransportSlot::FloatPoint(inner) => inner.render(w),
-            SimplePatternNegativeContentTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            SimplePatternNegativeContentTransportSlot::FloatScientific(inner) => inner.render(w),
-            SimplePatternNegativeContentTransportSlot::Verbatim(inner) => inner.render(w),
+            SimplePatternNegativeValueTransportSlot::IntegerHex(inner) => inner.render(w),
+            SimplePatternNegativeValueTransportSlot::IntegerOctal(inner) => inner.render(w),
+            SimplePatternNegativeValueTransportSlot::IntegerBinary(inner) => inner.render(w),
+            SimplePatternNegativeValueTransportSlot::IntegerDecimal(inner) => inner.render(w),
+            SimplePatternNegativeValueTransportSlot::FloatPoint(inner) => inner.render(w),
+            SimplePatternNegativeValueTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
+            SimplePatternNegativeValueTransportSlot::FloatScientific(inner) => inner.render(w),
+            SimplePatternNegativeValueTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -28544,8 +28544,8 @@ pub struct ListSplatPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<Box<ListSplatPatternContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_target"))]
+    pub target: ::sittir_core::SlotValue<Box<ListSplatPatternTargetTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ListSplatPatternTransport {
@@ -28569,7 +28569,7 @@ impl ::sittir_core::render::Render for ListSplatPatternTransport {
 impl ::sittir_core::prepare::Prepare for ListSplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.content.prepare(ctx)?;
+        self.target.prepare(ctx)?;
         Ok(())
     }
 }
@@ -28601,8 +28601,8 @@ pub struct DictionarySplatPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<DictionarySplatPatternContentTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_target"))]
+    pub target: ::sittir_core::SlotValue<DictionarySplatPatternTargetTransportSlot>,
 }
 
 impl ::sittir_core::view::KindOf for DictionarySplatPatternTransport {
@@ -28626,7 +28626,7 @@ impl ::sittir_core::render::Render for DictionarySplatPatternTransport {
 impl ::sittir_core::prepare::Prepare for DictionarySplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.content.prepare(ctx)?;
+        self.target.prepare(ctx)?;
         Ok(())
     }
 }
@@ -29678,10 +29678,10 @@ pub struct TypedParameterTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: ::sittir_core::SlotValue<TypedParameterNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<TypedParameterContentTransportSlot>,
 }
 
 impl ::sittir_core::view::KindOf for TypedParameterTransport {
@@ -29705,8 +29705,8 @@ impl ::sittir_core::render::Render for TypedParameterTransport {
 impl ::sittir_core::prepare::Prepare for TypedParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
-        self.content.prepare(ctx)?;
         Ok(())
     }
 }
@@ -30682,8 +30682,8 @@ pub struct ParenthesizedExpressionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<Box<ParenthesizedExpressionContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    pub expression: ::sittir_core::SlotValue<Box<ParenthesizedExpressionExpressionTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ParenthesizedExpressionTransport {
@@ -30707,7 +30707,7 @@ impl ::sittir_core::render::Render for ParenthesizedExpressionTransport {
 impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.content.prepare(ctx)?;
+        self.expression.prepare(ctx)?;
         Ok(())
     }
 }
@@ -31366,8 +31366,8 @@ pub struct FormatSpecifierTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<Vec<::sittir_core::SlotValue<FormatSpecifierContentTransportSlot>>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<Vec<::sittir_core::SlotValue<FormatSpecifierElementsTransportSlot>>>,
 }
 
 impl ::sittir_core::view::KindOf for FormatSpecifierTransport {
@@ -31391,7 +31391,7 @@ impl ::sittir_core::render::Render for FormatSpecifierTransport {
 impl ::sittir_core::prepare::Prepare for FormatSpecifierTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.content.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
 }
@@ -35375,8 +35375,8 @@ pub struct SimplePatternNegativeTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_sign"))]
     pub sign: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<SimplePatternNegativeContentTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    pub value: ::sittir_core::SlotValue<SimplePatternNegativeValueTransportSlot>,
 }
 
 impl ::sittir_core::view::KindOf for SimplePatternNegativeTransport {
@@ -35401,7 +35401,7 @@ impl ::sittir_core::prepare::Prepare for SimplePatternNegativeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.sign.prepare(ctx)?;
-        self.content.prepare(ctx)?;
+        self.value.prepare(ctx)?;
         Ok(())
     }
 }
@@ -46887,7 +46887,7 @@ impl ::sittir_core::prepare::SeatTarget for ListSplatPatternTransport {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(197)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.content {
+        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.target {
             return inner.seat_target(table);
         }
         None
@@ -46899,7 +46899,7 @@ impl ::sittir_core::prepare::SeatTarget for DictionarySplatPatternTransport {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(198)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.content {
+        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.target {
             return inner.seat_target(table);
         }
         None
@@ -47193,7 +47193,7 @@ impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionTransport {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(238)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.content {
+        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.expression {
             return inner.seat_target(table);
         }
         None
@@ -47805,7 +47805,7 @@ impl ::sittir_core::prepare::SeatTarget for DefaultParameterNameTransportSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for ListSplatPatternContentTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for ListSplatPatternTargetTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::Subscript(t) => t.seat_target(table),
@@ -47816,7 +47816,7 @@ impl ::sittir_core::prepare::SeatTarget for ListSplatPatternContentTransportSlot
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for DictionarySplatPatternContentTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for DictionarySplatPatternTargetTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::Subscript(t) => t.seat_target(table),
@@ -47959,7 +47959,7 @@ impl ::sittir_core::prepare::SeatTarget for CallArgumentsTransportSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for TypedParameterContentTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for TypedParameterNameTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::ListSplatPattern(t) => t.seat_target(table),
@@ -48009,7 +48009,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeContentTransportSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionContentTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionExpressionTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::ComparisonOperator(t) => t.seat_target(table),
@@ -49428,21 +49428,21 @@ fn render_typed_default_parameter(node: &TypedDefaultParameterTransport, w: &mut
 }
 
 fn render_list_splat_pattern(node: &ListSplatPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+    let target = &node.target;
     w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("*")?;
     w.site_at(options::SITE_LIST_SPLAT_PATTERN_STAR_AFTER);
-    content.render(w)?;
+    target.render(w)?;
     w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 
 fn render_dictionary_splat_pattern(node: &DictionarySplatPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+    let target = &node.target;
     w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("**")?;
     w.site_at(options::SITE_DICTIONARY_SPLAT_PATTERN_STAR_STAR_AFTER);
-    content.render(w)?;
+    target.render(w)?;
     w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
@@ -49648,10 +49648,10 @@ fn render_call(node: &CallTransport, w: &mut dyn ::sittir_core::render::RenderSi
 }
 
 fn render_typed_parameter(node: &TypedParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+    let name = &node.name;
     let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    content.render(w)?;
+    name.render(w)?;
     w.site_at(options::SITE_TYPED_PARAMETER_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_TYPED_PARAMETER_COLON_AFTER);
@@ -49857,11 +49857,11 @@ fn render_generator_expression(node: &GeneratorExpressionTransport, w: &mut dyn 
 }
 
 fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+    let expression = &node.expression;
     w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
     w.site_at(options::SITE_PARENTHESIZED_EXPRESSION_LPAREN_AFTER);
-    content.render(w)?;
+    expression.render(w)?;
     w.site_at(options::SITE_PARENTHESIZED_EXPRESSION_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -50032,8 +50032,8 @@ fn render_not_escape_sequence(t: &NotEscapeSequenceTransport, w: &mut dyn ::sitt
 }
 
 fn render_format_specifier(node: &FormatSpecifierTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = ListView {
-        items: node.content.as_deref().unwrap_or(&[]),
+    let elements = ListView {
+        items: node.elements.as_deref().unwrap_or(&[]),
         template: "{}",
         token: "",
         before: 0,
@@ -50046,7 +50046,7 @@ fn render_format_specifier(node: &FormatSpecifierTransport, w: &mut dyn ::sittir
     w.edge(::sittir_core::types::KindId(250), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text(":")?;
     w.site_at(options::SITE_FORMAT_SPECIFIER_COLON_AFTER);
-    content.render(w)?;
+    elements.render(w)?;
     w.edge(::sittir_core::types::KindId(250), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
@@ -50611,14 +50611,14 @@ fn render_line_continuation_nul(t: &LineContinuationNulTransport, w: &mut dyn ::
 }
 
 fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
     let sign = View::new(&node.sign, "-");
+    let value = &node.value;
     w.edge(::sittir_core::types::KindId(281), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if sign.is_present() {
         sign.render(w)?;
         w.site_at(options::SITE_SIMPLE_PATTERN_NEGATIVE_SIGN_AFTER);
     }
-    content.render(w)?;
+    value.render(w)?;
     w.edge(::sittir_core::types::KindId(281), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }

@@ -15,7 +15,7 @@ it('types every site by kind id at its address and rejects a wrong member at com
 			formalParameter: { separator: { comma: { after: TSKindId.Space } }, delimiter: Delimiter.Trailing }
 		},
 		objectTypeContent: {
-			content: { separator: { kind: TSKindId.Semi, after: TSKindId.Newline }, delimiter: Delimiter.Trailing }
+			members: { separator: { kind: TSKindId.Semi, after: TSKindId.Newline }, delimiter: Delimiter.Trailing }
 		},
 		enumBodyElements: { content: { separator: { comma: { after: TSKindId.Newline } }, delimiter: Delimiter.Trailing } },
 		statements: { terminator: TSKindId.AutomaticSemicolon },
@@ -31,7 +31,7 @@ it('types every site by kind id at its address and rejects a wrong member at com
 			formalParameter: { delimiter: Delimiter.Leading }
 		},
 		// @ts-expect-error a separator is one of its literal kinds
-		objectTypeContent: { content: { separator: { kind: TSKindId.Colon } } },
+		objectTypeContent: { members: { separator: { kind: TSKindId.Colon } } },
 		// @ts-expect-error a brace has no 'sideways' edge
 		classBody: { lbrace: { sideways: TSKindId.Space } }
 	};

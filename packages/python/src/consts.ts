@@ -1628,13 +1628,14 @@ export enum TSFieldId {
 	FieldSubscript = 61,
 	FieldSuperclasses = 62,
 	FieldTail = 63,
-	FieldType = 64,
-	FieldTypeConversion = 65,
-	FieldTypeParameter = 66,
-	FieldTypeParameters = 67,
-	FieldValue = 68,
-	FieldWithClause = 70,
-	FieldWithItem = 71
+	FieldTarget = 64,
+	FieldType = 65,
+	FieldTypeConversion = 66,
+	FieldTypeParameter = 67,
+	FieldTypeParameters = 68,
+	FieldValue = 69,
+	FieldWithClause = 71,
+	FieldWithItem = 72
 }
 
 export const TREE_SITTER_FIELD_ID_BY_NAME = {
@@ -1701,6 +1702,7 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	subscript: TSFieldId.FieldSubscript,
 	superclasses: TSFieldId.FieldSuperclasses,
 	tail: TSFieldId.FieldTail,
+	target: TSFieldId.FieldTarget,
 	type: TSFieldId.FieldType,
 	type_conversion: TSFieldId.FieldTypeConversion,
 	type_parameter: TSFieldId.FieldTypeParameter,
@@ -1774,6 +1776,7 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldSubscript]: 'subscript',
 	[TSFieldId.FieldSuperclasses]: 'superclasses',
 	[TSFieldId.FieldTail]: 'tail',
+	[TSFieldId.FieldTarget]: 'target',
 	[TSFieldId.FieldType]: 'type',
 	[TSFieldId.FieldTypeConversion]: 'type_conversion',
 	[TSFieldId.FieldTypeParameter]: 'type_parameter',
@@ -1847,13 +1850,14 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'subscript', id: 61, enumName: 'FieldSubscript', cName: 'field_subscript' },
 	{ name: 'superclasses', id: 62, enumName: 'FieldSuperclasses', cName: 'field_superclasses' },
 	{ name: 'tail', id: 63, enumName: 'FieldTail', cName: 'field_tail' },
-	{ name: 'type', id: 64, enumName: 'FieldType', cName: 'field_type' },
-	{ name: 'type_conversion', id: 65, enumName: 'FieldTypeConversion', cName: 'field_type_conversion' },
-	{ name: 'type_parameter', id: 66, enumName: 'FieldTypeParameter', cName: 'field_type_parameter' },
-	{ name: 'type_parameters', id: 67, enumName: 'FieldTypeParameters', cName: 'field_type_parameters' },
-	{ name: 'value', id: 68, enumName: 'FieldValue', cName: 'field_value' },
-	{ name: 'with_clause', id: 70, enumName: 'FieldWithClause', cName: 'field_with_clause' },
-	{ name: 'with_item', id: 71, enumName: 'FieldWithItem', cName: 'field_with_item' }
+	{ name: 'target', id: 64, enumName: 'FieldTarget', cName: 'field_target' },
+	{ name: 'type', id: 65, enumName: 'FieldType', cName: 'field_type' },
+	{ name: 'type_conversion', id: 66, enumName: 'FieldTypeConversion', cName: 'field_type_conversion' },
+	{ name: 'type_parameter', id: 67, enumName: 'FieldTypeParameter', cName: 'field_type_parameter' },
+	{ name: 'type_parameters', id: 68, enumName: 'FieldTypeParameters', cName: 'field_type_parameters' },
+	{ name: 'value', id: 69, enumName: 'FieldValue', cName: 'field_value' },
+	{ name: 'with_clause', id: 71, enumName: 'FieldWithClause', cName: 'field_with_clause' },
+	{ name: 'with_item', id: 72, enumName: 'FieldWithItem', cName: 'field_with_item' }
 ] as const;
 
 import type { TokenInterior } from '@sittir/common';

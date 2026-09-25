@@ -5859,9 +5859,9 @@ export interface VisibilityModifier {
 
 export interface BracketedType {
 	readonly $type: TSKindId.BracketedType;
-	readonly _content: Type | QualifiedType;
+	readonly _type: Type | QualifiedType;
 	readonly __inputHints__?: {
-		readonly content:
+		readonly type:
 			| KindEnum<
 					| '!'
 					| 'u8'
@@ -5903,7 +5903,7 @@ export interface BracketedType {
 			| Type
 			| QualifiedType;
 	};
-	content(): Type | QualifiedType;
+	type(): Type | QualifiedType;
 }
 
 export interface QualifiedType {
@@ -7393,8 +7393,8 @@ export interface LetChain {
 
 export interface ElseClause {
 	readonly $type: TSKindId.ElseClause;
-	readonly _content: Block | IfExpression;
-	content(): Block | IfExpression;
+	readonly _body: Block | IfExpression;
+	body(): Block | IfExpression;
 }
 
 export interface MatchExpression {
@@ -7651,12 +7651,12 @@ export interface Block {
 
 export interface GenericPattern {
 	readonly $type: TSKindId.GenericPattern;
-	readonly _content: Identifier | ScopedIdentifier;
+	readonly _name: Identifier | ScopedIdentifier;
 	readonly _type_arguments: TypeArguments;
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly TypeArgument[];
 	};
-	content(): Identifier | ScopedIdentifier;
+	name(): Identifier | ScopedIdentifier;
 	typeArguments(): TypeArguments;
 }
 
@@ -17612,7 +17612,7 @@ export interface BracketedTypeNs extends NodeNs<
 	BracketedType.Built,
 	BracketedType.BuildArgs,
 	BracketedType.LooseArgs,
-	'content',
+	'type',
 	'bracketed_type'
 > {}
 export interface QualifiedTypeNs extends NodeNs<
@@ -18074,7 +18074,7 @@ export interface ElseClauseNs extends NodeNs<
 	ElseClause.Built,
 	ElseClause.BuildArgs,
 	ElseClause.LooseArgs,
-	'content',
+	'body',
 	'else_clause'
 > {}
 export interface MatchExpressionNs extends NodeNs<
@@ -20999,7 +20999,7 @@ export namespace BracketedType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: NonNullable<(T.Type | T.QualifiedType) | T.TypeIdentifier.Types>): T.BracketedType.Built;
+			type(value: NonNullable<(T.Type | T.QualifiedType) | T.TypeIdentifier.Types>): T.BracketedType.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.BracketedType>;
@@ -21853,7 +21853,7 @@ export namespace ElseClause {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: T.Block | T.IfExpression): T.ElseClause.Built;
+			body(value: T.Block | T.IfExpression): T.ElseClause.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ElseClause>;
@@ -22235,7 +22235,7 @@ export namespace GenericPattern {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: T.Identifier | T.ScopedIdentifier): T.GenericPattern.Built;
+			name(value: T.Identifier | T.ScopedIdentifier): T.GenericPattern.Built;
 			typeArguments(value: T.TypeArguments): T.GenericPattern.Built;
 		};
 	}

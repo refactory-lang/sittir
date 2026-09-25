@@ -3767,9 +3767,9 @@ export function coerceToTypedDefaultParameter(
 	});
 }
 
-export function resolveListSplatPattern_content(
-	value: T.ListSplatPattern.LooseConfig['content']
-): T.ListSplatPattern['_content'] {
+export function resolveListSplatPattern_target(
+	value: T.ListSplatPattern.LooseConfig['target']
+): T.ListSplatPattern['_target'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute>(
@@ -3795,18 +3795,16 @@ export function coerceToListSplatPattern(input: T.ListSplatPattern.Loose): Retur
 	return F.buildListSplatPattern(
 		_requireField(
 			'list_splat_pattern',
-			'content',
+			'target',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-						? input.content
-						: input,
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'target' in input ? input.target : input,
 					() =>
 						_resolveOne<
 							T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute
 						>(
-							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-								? input.content
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'target' in input
+								? input.target
 								: input,
 							_K12,
 							_K26
@@ -3825,9 +3823,9 @@ export function coerceToListSplatPattern(input: T.ListSplatPattern.Loose): Retur
 	);
 }
 
-export function resolveDictionarySplatPattern_content(
-	value: T.DictionarySplatPattern.LooseConfig['content']
-): T.DictionarySplatPattern['_content'] {
+export function resolveDictionarySplatPattern_target(
+	value: T.DictionarySplatPattern.LooseConfig['target']
+): T.DictionarySplatPattern['_target'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute>(
@@ -3855,18 +3853,16 @@ export function coerceToDictionarySplatPattern(
 	return F.buildDictionarySplatPattern(
 		_requireField(
 			'dictionary_splat_pattern',
-			'content',
+			'target',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-						? input.content
-						: input,
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'target' in input ? input.target : input,
 					() =>
 						_resolveOne<
 							T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute
 						>(
-							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-								? input.content
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'target' in input
+								? input.target
 								: input,
 							_K12,
 							_K26
@@ -4325,9 +4321,7 @@ export function coerceToCall(input: T.Call.Loose): ReturnType<typeof F.buildCall
 	});
 }
 
-export function resolveTypedParameter_content(
-	value: T.TypedParameter.LooseConfig['content']
-): T.TypedParameter['_content'] {
+export function resolveTypedParameter_name(value: T.TypedParameter.LooseConfig['name']): T.TypedParameter['_name'] {
 	return _resolveOne<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>(value, _K12, _K32);
 }
 
@@ -4339,7 +4333,7 @@ export function coerceToTypedParameter(input: T.TypedParameter.Loose): ReturnTyp
 	if (!_isLooseConfig<T.TypedParameter.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTypedParameter>;
 	return F.buildTypedParameter({
-		content: _requireField('typed_parameter', 'content', resolveTypedParameter_content(input.content)),
+		name: _requireField('typed_parameter', 'name', resolveTypedParameter_name(input.name)),
 		type: _requireField('typed_parameter', 'type', resolveTypedParameter_type(input.type))
 	});
 }
@@ -4719,9 +4713,9 @@ export function coerceToGeneratorExpression(
 	});
 }
 
-export function resolveParenthesizedExpression_content(
-	value: T.ParenthesizedExpression.LooseConfig['content']
-): T.ParenthesizedExpression['_content'] {
+export function resolveParenthesizedExpression_expression(
+	value: T.ParenthesizedExpression.LooseConfig['expression']
+): T.ParenthesizedExpression['_expression'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.Yield>(value, _K7, _K34)),
 		[]
@@ -4736,16 +4730,16 @@ export function coerceToParenthesizedExpression(
 	return F.buildParenthesizedExpression(
 		_requireField(
 			'parenthesized_expression',
-			'content',
+			'expression',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-						? input.content
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+						? input.expression
 						: input,
 					() =>
 						_resolveOne<T.Expression | T.Yield>(
-							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-								? input.content
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+								? input.expression
 								: input,
 							_K7,
 							_K34
@@ -5084,7 +5078,7 @@ export function coerceToFormatSpecifier(
 ): ReturnType<typeof F.buildFormatSpecifier> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FormatSpecifier) {
 		const data = input[0];
-		const stored = (data as unknown as { _content?: unknown })._content;
+		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildFormatSpecifier(
 			...(_resolveManyBranch<'[^{}\\n]+' | T.FormatExpression>(children, 'format_expression') as unknown as Parameters<
@@ -5095,8 +5089,8 @@ export function coerceToFormatSpecifier(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('content' in head)) return input;
-		const v = (head as Record<string, unknown>)['content'];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('elements' in head)) return input;
+		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildFormatSpecifier(
@@ -6395,9 +6389,9 @@ export function resolveSimplePatternNegative_sign(
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveSimplePatternNegative_content(
-	value: T.SimplePatternNegative.LooseConfig['content']
-): T.SimplePatternNegative['_content'] {
+export function resolveSimplePatternNegative_value(
+	value: T.SimplePatternNegative.LooseConfig['value']
+): T.SimplePatternNegative['_value'] {
 	return _resolveOne<T.Integer | T.Float>(value, _K20, _K21);
 }
 
@@ -6408,7 +6402,7 @@ export function coerceToSimplePatternNegative(
 		return input as unknown as ReturnType<typeof F.buildSimplePatternNegative>;
 	return F.buildSimplePatternNegative({
 		sign: resolveSimplePatternNegative_sign(input.sign),
-		content: _requireField('simple_pattern_negative', 'content', resolveSimplePatternNegative_content(input.content))
+		value: _requireField('simple_pattern_negative', 'value', resolveSimplePatternNegative_value(input.value))
 	});
 }
 

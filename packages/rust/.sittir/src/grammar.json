@@ -3334,25 +3334,24 @@
           "value": "<"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_type",
-              "annotations": {
-                "variant": "type",
-                "variantOf": "bracketed_type"
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_type"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "qualified_type"
               }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "qualified_type",
-              "annotations": {
-                "variant": "qualified_type",
-                "variantOf": "bracketed_type"
-              }
-            }
-          ]
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -6287,25 +6286,24 @@
           "value": "else"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "block",
-              "annotations": {
-                "variant": "block",
-                "variantOf": "else_clause"
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "block"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "if_expression"
               }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "if_expression",
-              "annotations": {
-                "variant": "if_expression",
-                "variantOf": "else_clause"
-              }
-            }
-          ]
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -7399,25 +7397,24 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "identifier",
-              "annotations": {
-                "variant": "identifier",
-                "variantOf": "generic_pattern"
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "scoped_identifier"
               }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "scoped_identifier",
-              "annotations": {
-                "variant": "scoped_identifier",
-                "variantOf": "generic_pattern"
-              }
-            }
-          ]
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",

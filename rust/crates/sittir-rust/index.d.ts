@@ -301,7 +301,7 @@ export interface BoundedTypeTransport {
 export interface BracketedTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content: SlotValue<Box<BracketedTypeContentTransportSlot>>
+  _type: SlotValue<Box<BracketedTypeTypeTransportSlot>>
 }
 
 export interface BreakExpressionTransport {
@@ -442,7 +442,7 @@ export interface DynamicTypeTransport {
 export interface ElseClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content: SlotValue<Box<ElseClauseContentTransportSlot>>
+  _body: SlotValue<Box<ElseClauseBodyTransportSlot>>
 }
 
 export interface EngineOptions {
@@ -717,8 +717,8 @@ export interface GenericFunctionTransport {
 export interface GenericPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  _name: SlotValue<Box<GenericPatternNameTransportSlot>>
   _type_arguments: SlotValue<TypeArgumentsTransport>
-  _content: SlotValue<Box<GenericPatternContentTransportSlot>>
 }
 
 export interface GenericTypeTransport {

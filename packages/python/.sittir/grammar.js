@@ -6002,6 +6002,11 @@ var grammar_sittir_default = grammar(
         }
       },
       patches: {
+        parenthesized_list_splat: { 1: field("content") },
+        list_splat_pattern: { 1: field("target") },
+        dictionary_splat_pattern: { 1: field("target") },
+        typed_parameter: { 0: field("name") },
+        parenthesized_expression: { 1: field("expression") },
         // See docs/python-grammar-sittir-glossary.md::case_pattern
         case_pattern: { 0: alias("case_as_pattern") },
         // See docs/python-grammar-sittir-glossary.md::comprehension_clauses
@@ -6095,7 +6100,7 @@ var grammar_sittir_default = grammar(
           4: field("alternative")
         },
         // See docs/python-grammar-sittir-glossary.md::_simple_pattern
-        _simple_pattern: [{ "11/0": field("sign") }, { "11": variant("negative") }],
+        _simple_pattern: [{ "11/0": field("sign"), "11/1": field("value") }, { "11": variant("negative") }],
         constrained_type: {
           0: field("base_type"),
           2: field("constraint")
@@ -6209,7 +6214,7 @@ var grammar_sittir_default = grammar(
           )
         ),
         // See docs/python-grammar-sittir-glossary.md::format_specifier
-        format_specifier: ($) => seq(":", repeat(choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression)))),
+        format_specifier: ($) => seq(":", repeat(field("elements", choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression))))),
         // See docs/python-grammar-sittir-glossary.md::case_tuple_pattern
         case_tuple_pattern: ($) => seq("(", optional($.list_pattern_case_patterns), ")"),
         case_list_pattern: ($) => seq("[", optional($.list_pattern_case_patterns), "]"),

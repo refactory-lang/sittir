@@ -76,13 +76,6 @@
         "except_clause_exception": "exception"
       }
     },
-    "parenthesized_list_splat": {
-      "definedBy": "enrich",
-      "childKind": {
-        "parenthesized_list_splat": "parenthesized_list_splat",
-        "list_splat": "list_splat"
-      }
-    },
     "case_pattern": {
       "definedBy": "enrich",
       "childKind": {
@@ -98,34 +91,10 @@
         "float": "float"
       }
     },
-    "list_splat_pattern": {
-      "definedBy": "enrich",
-      "childKind": {
-        "identifier": "identifier",
-        "subscript": "subscript",
-        "attribute": "attribute"
-      }
-    },
-    "dictionary_splat_pattern": {
-      "definedBy": "enrich",
-      "childKind": {
-        "identifier": "identifier",
-        "subscript": "subscript",
-        "attribute": "attribute"
-      }
-    },
     "yield": {
       "definedBy": "enrich",
       "childKind": {
         "yield_from_clause": "from_clause"
-      }
-    },
-    "typed_parameter": {
-      "definedBy": "enrich",
-      "childKind": {
-        "identifier": "identifier",
-        "list_splat_pattern": "list_splat_pattern",
-        "dictionary_splat_pattern": "dictionary_splat_pattern"
       }
     },
     "type": {
@@ -137,13 +106,6 @@
         "union_type": "union_type",
         "constrained_type": "constrained_type",
         "member_type": "member_type"
-      }
-    },
-    "parenthesized_expression": {
-      "definedBy": "enrich",
-      "childKind": {
-        "expression": "expression",
-        "yield": "yield"
       }
     }
   },
@@ -997,11 +959,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_parenthesized_list_splat",
-          "_list_splat"
-        ]
+        "nonEmpty": false
       }
     },
     "argument_list": {
@@ -1344,43 +1302,21 @@
       }
     },
     "list_splat_pattern": {
-      "content": {
+      "target": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_subscript",
-          "_attribute"
-        ]
+        "nonEmpty": false
       }
     },
     "dictionary_splat_pattern": {
-      "content": {
+      "target": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_subscript",
-          "_attribute"
-        ]
+        "nonEmpty": false
       }
     },
     "as_pattern": {
@@ -1699,17 +1635,12 @@
       }
     },
     "typed_parameter": {
-      "content": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_list_splat_pattern",
-          "_dictionary_splat_pattern"
-        ]
+        "nonEmpty": false
       },
       "type": {
         "unnamed": false,
@@ -1991,58 +1922,12 @@
       }
     },
     "parenthesized_expression": {
-      "content": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_comparison_operator",
-          "_not_operator",
-          "_boolean_operator",
-          "_lambda",
-          "_identifier",
-          "_await",
-          "_binary_operator",
-          "_print_keyword",
-          "_exec_keyword",
-          "_async_keyword",
-          "_await_keyword",
-          "_type_keyword",
-          "_match_keyword",
-          "_string",
-          "_concatenated_string",
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific",
-          "_true",
-          "_false",
-          "_none",
-          "_unary_operator",
-          "_attribute",
-          "_subscript",
-          "_call",
-          "_list",
-          "_list_comprehension",
-          "_dictionary",
-          "_dictionary_comprehension",
-          "_set",
-          "_set_comprehension",
-          "_tuple",
-          "_parenthesized_expression",
-          "_generator_expression",
-          "_ellipsis",
-          "_list_splat_pattern",
-          "_conditional_expression",
-          "_named_expression",
-          "_as_pattern",
-          "_yield"
-        ]
+        "nonEmpty": false
       }
     },
     "_collection_elements": {
@@ -2200,15 +2085,12 @@
       }
     },
     "format_specifier": {
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_format_expression"
-        ]
+        "nonEmpty": false
       }
     },
     "keyword_identifier": {
@@ -2784,21 +2666,12 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_integer_hex",
-          "_integer_octal",
-          "_integer_binary",
-          "_integer_decimal",
-          "_float_point",
-          "_float_leading_point",
-          "_float_scientific"
-        ]
+        "nonEmpty": false
       }
     },
     "except_clause_exception_list": {
@@ -7602,9 +7475,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "target",
+          "propertyName": "target",
+          "paramName": "target",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -7625,37 +7498,37 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "print",
-              "parseKind": "print_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "exec",
-              "parseKind": "exec_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "async",
-              "parseKind": "async_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "await",
-              "parseKind": "await_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "type",
-              "parseKind": "type_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "match",
-              "parseKind": "match_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "node-ref",
@@ -7674,7 +7547,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "content"
+        "target"
       ],
       "bareAccepts": [
         "attribute",
@@ -9922,9 +9795,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -9949,7 +9822,7 @@
       ],
       "factoryShape": "spread",
       "factoryFields": [
-        "content"
+        "elements"
       ]
     },
     {
@@ -11970,9 +11843,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "target",
+          "propertyName": "target",
+          "paramName": "target",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -11993,37 +11866,37 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "print",
-              "parseKind": "print_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "exec",
-              "parseKind": "exec_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "async",
-              "parseKind": "async_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "await",
-              "parseKind": "await_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "type",
-              "parseKind": "type_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
               "value": "match",
-              "parseKind": "match_keyword"
+              "parseKind": "identifier"
             },
             {
               "kind": "node-ref",
@@ -12042,7 +11915,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "content"
+        "target"
       ],
       "bareAccepts": [
         "attribute",
@@ -12712,9 +12585,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -12741,7 +12614,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "content"
+        "expression"
       ],
       "bareAccepts": [
         "_collection_elements",
@@ -13848,9 +13721,9 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -13879,7 +13752,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "sign",
-        "content"
+        "value"
       ]
     },
     {
@@ -15598,9 +15471,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -15654,7 +15527,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "content",
+        "name",
         "type"
       ]
     },

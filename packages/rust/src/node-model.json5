@@ -79,13 +79,6 @@
         "visibility_modifier_pub": "pub"
       }
     },
-    "bracketed_type": {
-      "definedBy": "enrich",
-      "childKind": {
-        "_type": "type",
-        "qualified_type": "qualified_type"
-      }
-    },
     "function_type": {
       "definedBy": "override",
       "childKind": {
@@ -100,20 +93,6 @@
         "range_expression_postfix": "postfix",
         "range_expression_prefix": "prefix",
         "range_expression_bare": "bare"
-      }
-    },
-    "else_clause": {
-      "definedBy": "enrich",
-      "childKind": {
-        "block": "block",
-        "if_expression": "if_expression"
-      }
-    },
-    "generic_pattern": {
-      "definedBy": "enrich",
-      "childKind": {
-        "identifier": "identifier",
-        "scoped_identifier": "scoped_identifier"
       }
     },
     "line_comment": {
@@ -226,7 +205,7 @@
     "parameter.type": {
       "type_identifier": "identifier"
     },
-    "bracketed_type.content": {
+    "bracketed_type.type": {
       "type_identifier": "identifier"
     },
     "qualified_type.type": {
@@ -1284,33 +1263,12 @@
       }
     },
     "bracketed_type": {
-      "content": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_type_identifier",
-          "_primitive_type",
-          "_abstract_type",
-          "_reference_type",
-          "_metavariable",
-          "_pointer_type_const",
-          "_pointer_type_mut",
-          "_generic_type",
-          "_scoped_type_identifier",
-          "_tuple_type",
-          "_unit_type",
-          "_array_type",
-          "_function_type",
-          "_macro_invocation",
-          "_never_type",
-          "_dynamic_type",
-          "_bounded_type",
-          "_removed_trait_bound",
-          "_qualified_type"
-        ]
+        "nonEmpty": false
       }
     },
     "qualified_type": {
@@ -1938,16 +1896,12 @@
       }
     },
     "else_clause": {
-      "content": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_block",
-          "_if_expression"
-        ]
+        "nonEmpty": false
       }
     },
     "match_expression": {
@@ -2334,16 +2288,12 @@
       }
     },
     "generic_pattern": {
-      "content": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_scoped_identifier"
-        ]
+        "nonEmpty": false
       },
       "type_arguments": {
         "unnamed": false,
@@ -7943,9 +7893,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -7972,7 +7922,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "content"
+        "type"
       ],
       "bareAccepts": [
         "_primitive_type",
@@ -9967,9 +9917,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -9996,7 +9946,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "content"
+        "body"
       ],
       "bareAccepts": [
         "block",
@@ -12967,9 +12917,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -13016,7 +12966,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "content",
+        "name",
         "type_arguments"
       ]
     },

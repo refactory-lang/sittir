@@ -4273,9 +4273,7 @@ export function coerceToVisibilityModifier(
 	);
 }
 
-export function resolveBracketedType_content(
-	value: T.BracketedType.LooseConfig['content']
-): T.BracketedType['_content'] {
+export function resolveBracketedType_type(value: T.BracketedType.LooseConfig['type']): T.BracketedType['_type'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.Type | T.QualifiedType>(value, _K13, _K30)),
 		[]
@@ -4288,17 +4286,13 @@ export function coerceToBracketedType(input: T.BracketedType.Loose): ReturnType<
 	return F.buildBracketedType(
 		_requireField(
 			'bracketed_type',
-			'content',
+			'type',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-						? input.content
-						: input,
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
 					() =>
 						_resolveOne<T.Type | T.QualifiedType>(
-							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-								? input.content
-								: input,
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
 							_K13,
 							_K30
 						)
@@ -5769,7 +5763,7 @@ export function coerceToLetChain(input?: T.LetChain.Loose): ReturnType<typeof F.
 	});
 }
 
-export function resolveElseClause_content(value: T.ElseClause.LooseConfig['content']): T.ElseClause['_content'] {
+export function resolveElseClause_body(value: T.ElseClause.LooseConfig['body']): T.ElseClause['_body'] {
 	return _resolveOne<T.Block | T.IfExpression>(value, _K2, _K50);
 }
 
@@ -5779,9 +5773,9 @@ export function coerceToElseClause(input: T.ElseClause.Loose): ReturnType<typeof
 	return F.buildElseClause(
 		_requireField(
 			'else_clause',
-			'content',
+			'body',
 			_resolveOne<T.Block | T.IfExpression>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
 				_K2,
 				_K50
 			)
@@ -6266,9 +6260,7 @@ export function coerceToBlock(input?: T.Block.Loose): ReturnType<typeof F.buildB
 	});
 }
 
-export function resolveGenericPattern_content(
-	value: T.GenericPattern.LooseConfig['content']
-): T.GenericPattern['_content'] {
+export function resolveGenericPattern_name(value: T.GenericPattern.LooseConfig['name']): T.GenericPattern['_name'] {
 	return _resolveOne<T.Identifier | T.ScopedIdentifier>(value, _K15, _K38);
 }
 
@@ -6282,7 +6274,7 @@ export function coerceToGenericPattern(input: T.GenericPattern.Loose): ReturnTyp
 	if (!_isLooseConfig<T.GenericPattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGenericPattern>;
 	return F.buildGenericPattern({
-		content: _requireField('generic_pattern', 'content', resolveGenericPattern_content(input.content)),
+		name: _requireField('generic_pattern', 'name', resolveGenericPattern_name(input.name)),
 		typeArguments: _requireField(
 			'generic_pattern',
 			'typeArguments',

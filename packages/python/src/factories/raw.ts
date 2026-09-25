@@ -1928,7 +1928,7 @@ export function buildListSplatPattern(
 		| T.Subscript
 		| T.Attribute
 ): T.ListSplatPattern.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.ListSplatPattern['_content']>>(value, [
+	const _target = coerceMixedEnumStorage<NonNullable<T.ListSplatPattern['_target']>>(value, [
 		['print', TSKindId.PrintKeyword] as const,
 		['exec', TSKindId.ExecKeyword] as const,
 		['async', TSKindId.AsyncKeyword] as const,
@@ -1942,9 +1942,9 @@ export function buildListSplatPattern(
 				$type: TSKindId.ListSplatPattern as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_target,
 				$with: {
-					content: (
+					target: (
 						value: NonNullable<
 							| T.Identifier
 							| TSKindId.PrintKeyword
@@ -1960,7 +1960,7 @@ export function buildListSplatPattern(
 				}
 			},
 			{
-				content: () => _content
+				target: () => _target
 			}
 		),
 		methodsEngine
@@ -1979,7 +1979,7 @@ export function buildDictionarySplatPattern(
 		| T.Subscript
 		| T.Attribute
 ): T.DictionarySplatPattern.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.DictionarySplatPattern['_content']>>(value, [
+	const _target = coerceMixedEnumStorage<NonNullable<T.DictionarySplatPattern['_target']>>(value, [
 		['print', TSKindId.PrintKeyword] as const,
 		['exec', TSKindId.ExecKeyword] as const,
 		['async', TSKindId.AsyncKeyword] as const,
@@ -1993,9 +1993,9 @@ export function buildDictionarySplatPattern(
 				$type: TSKindId.DictionarySplatPattern as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_target,
 				$with: {
-					content: (
+					target: (
 						value: NonNullable<
 							| T.Identifier
 							| TSKindId.PrintKeyword
@@ -2011,7 +2011,7 @@ export function buildDictionarySplatPattern(
 				}
 			},
 			{
-				content: () => _content
+				target: () => _target
 			}
 		),
 		methodsEngine
@@ -2467,7 +2467,7 @@ export function buildCall(config: T.Call.Config): T.Call.Built {
 }
 
 export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedParameter.Built {
-	const _content = config.content;
+	const _name = config.name;
 	const _type = config.type;
 	return withMethods(
 		withAccessors(
@@ -2475,16 +2475,16 @@ export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedPar
 				$type: TSKindId.TypedParameter as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_name,
 				_type,
 				$with: {
-					content: (value: T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern) =>
-						buildTypedParameter({ ...config, content: value }),
+					name: (value: T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern) =>
+						buildTypedParameter({ ...config, name: value }),
 					type: (value: T.Type) => buildTypedParameter({ ...config, type: value })
 				}
 			},
 			{
-				content: () => _content,
+				name: () => _name,
 				type: () => _type
 			}
 		),
@@ -2987,20 +2987,20 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 }
 
 export function buildParenthesizedExpression(value: T.Expression | T.Yield): T.ParenthesizedExpression.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.ParenthesizedExpression['_content']>>(value, []);
+	const _expression = coerceMixedEnumStorage<NonNullable<T.ParenthesizedExpression['_expression']>>(value, []);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ParenthesizedExpression as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_expression,
 				$with: {
-					content: (value: NonNullable<T.Expression | T.Yield>) => buildParenthesizedExpression(value)
+					expression: (value: NonNullable<T.Expression | T.Yield>) => buildParenthesizedExpression(value)
 				}
 			},
 			{
-				content: () => _content
+				expression: () => _expression
 			}
 		),
 		methodsEngine
@@ -3271,7 +3271,7 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 export function buildFormatSpecifier(
 	...children: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]
 ): T.FormatSpecifier.Built {
-	const _content = admitAliasContent<NonNullable<T.FormatSpecifier['_content']>>(children, [
+	const _elements = admitAliasContent<NonNullable<T.FormatSpecifier['_elements']>>(children, [
 		[[246], (v: unknown) => buildFormatExpression(v as never)]
 	]);
 	return withMethods(
@@ -3280,14 +3280,14 @@ export function buildFormatSpecifier(
 				$type: TSKindId.FormatSpecifier as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_elements,
 				$with: {
-					contents: (...vs: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]) =>
+					elements: (...vs: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]) =>
 						buildFormatSpecifier(...vs)
 				}
 			},
 			{
-				contents: () => _content
+				elements: () => _elements
 			}
 		),
 		methodsEngine
@@ -4763,7 +4763,7 @@ export function buildLineContinuationNul(): TSKindId.LineContinuationNul {
 
 export function buildSimplePatternNegative(config: T.SimplePatternNegative.Config): T.SimplePatternNegative.Built {
 	const _sign = coerceBooleanKeywordStorage(config.sign);
-	const _content = config.content;
+	const _value = config.value;
 	return withMethods(
 		withAccessors(
 			{
@@ -4771,16 +4771,16 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 				$source: 2 as const,
 				$named: true as const,
 				_sign,
-				_content,
+				_value,
 				$with: {
 					sign: (value?: NonNullable<T.SimplePatternNegative.Config>['sign']) =>
 						buildSimplePatternNegative({ ...config, sign: value }),
-					content: (value: T.Integer | T.Float) => buildSimplePatternNegative({ ...config, content: value })
+					value: (value: T.Integer | T.Float) => buildSimplePatternNegative({ ...config, value: value })
 				}
 			},
 			{
 				sign: () => _sign,
-				content: () => _content
+				value: () => _value
 			}
 		),
 		methodsEngine

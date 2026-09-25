@@ -16194,7 +16194,7 @@ impl ::sittir_core::render::Render for VisibilityModifierContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum BracketedTypeContentTransportSlot {
+pub enum BracketedTypeTypeTransportSlot {
     AbstractType(AbstractTypeTransport),
     ReferenceType(ReferenceTypeTransport),
     Metavariable(MetavariableTransport),
@@ -16216,33 +16216,33 @@ pub enum BracketedTypeContentTransportSlot {
     QualifiedType(QualifiedTypeTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for BracketedTypeContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for BracketedTypeTypeTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            BracketedTypeContentTransportSlot::AbstractType(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::ReferenceType(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::Metavariable(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::PointerTypeConst(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::PointerTypeMut(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::GenericType(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::ScopedTypeIdentifier(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::TupleType(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::UnitType(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::ArrayType(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::FunctionType(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::TypeIdentifier(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::MacroInvocation(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::NeverType(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::DynamicType(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::BoundedType(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::RemovedTraitBound(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::PrimitiveType(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::QualifiedType(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::AbstractType(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::ReferenceType(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::Metavariable(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::PointerTypeConst(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::PointerTypeMut(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::GenericType(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::ScopedTypeIdentifier(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::TupleType(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::UnitType(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::ArrayType(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::FunctionType(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::TypeIdentifier(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::MacroInvocation(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::NeverType(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::DynamicType(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::BoundedType(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::RemovedTraitBound(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            BracketedTypeTypeTransportSlot::QualifiedType(t) => t.prepare(ctx),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for BracketedTypeContentTransportSlot {
+impl ::sittir_core::view::KindOf for BracketedTypeTypeTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::AbstractType(inner) => inner.kind_in(kinds),
@@ -16269,7 +16269,7 @@ impl ::sittir_core::view::KindOf for BracketedTypeContentTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeTypeTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -16386,14 +16386,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlo
                         QualifiedTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BracketedTypeContentTransportSlot",
+                        "unknown kind id {other} in BracketedTypeTypeTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in BracketedTypeContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in BracketedTypeTypeTransportSlot")
                 )?;
                 match kind_id {
                     239 => Ok(Self::UnitType(
@@ -16505,91 +16505,91 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlo
                         QualifiedTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BracketedTypeContentTransportSlot",
+                        "unknown kind id {other} in BracketedTypeTypeTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("BracketedTypeContentTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("BracketedTypeTypeTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BracketedTypeContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for BracketedTypeTypeTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BracketedTypeContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("BracketedTypeTypeTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BracketedTypeContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BracketedTypeTypeTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        BracketedTypeContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        BracketedTypeTypeTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BracketedTypeContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BracketedTypeTypeTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        BracketedTypeContentTransportSlot::to_napi_value(env, *val)
+        BracketedTypeTypeTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn bracketed_type_content_transport_slot_to_any(t: BracketedTypeContentTransportSlot) -> AnyTransport {
+fn bracketed_type_type_transport_slot_to_any(t: BracketedTypeTypeTransportSlot) -> AnyTransport {
     match t {
-        BracketedTypeContentTransportSlot::AbstractType(inner) => AnyTransport::AbstractType(inner),
-        BracketedTypeContentTransportSlot::ReferenceType(inner) => AnyTransport::ReferenceType(inner),
-        BracketedTypeContentTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
-        BracketedTypeContentTransportSlot::PointerTypeConst(inner) => AnyTransport::PointerTypeConst(inner),
-        BracketedTypeContentTransportSlot::PointerTypeMut(inner) => AnyTransport::PointerTypeMut(inner),
-        BracketedTypeContentTransportSlot::GenericType(inner) => AnyTransport::GenericType(inner),
-        BracketedTypeContentTransportSlot::ScopedTypeIdentifier(inner) => AnyTransport::ScopedTypeIdentifier(inner),
-        BracketedTypeContentTransportSlot::TupleType(inner) => AnyTransport::TupleType(inner),
-        BracketedTypeContentTransportSlot::UnitType(inner) => AnyTransport::UnitType(inner),
-        BracketedTypeContentTransportSlot::ArrayType(inner) => AnyTransport::ArrayType(inner),
-        BracketedTypeContentTransportSlot::FunctionType(inner) => AnyTransport::FunctionType(inner),
-        BracketedTypeContentTransportSlot::TypeIdentifier(inner) => AnyTransport::TypeIdentifier(inner),
-        BracketedTypeContentTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
-        BracketedTypeContentTransportSlot::NeverType(inner) => AnyTransport::NeverType(inner),
-        BracketedTypeContentTransportSlot::DynamicType(inner) => AnyTransport::DynamicType(inner),
-        BracketedTypeContentTransportSlot::BoundedType(inner) => AnyTransport::BoundedType(inner),
-        BracketedTypeContentTransportSlot::RemovedTraitBound(inner) => AnyTransport::RemovedTraitBound(inner),
-        BracketedTypeContentTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
-        BracketedTypeContentTransportSlot::QualifiedType(inner) => AnyTransport::QualifiedType(inner),
+        BracketedTypeTypeTransportSlot::AbstractType(inner) => AnyTransport::AbstractType(inner),
+        BracketedTypeTypeTransportSlot::ReferenceType(inner) => AnyTransport::ReferenceType(inner),
+        BracketedTypeTypeTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
+        BracketedTypeTypeTransportSlot::PointerTypeConst(inner) => AnyTransport::PointerTypeConst(inner),
+        BracketedTypeTypeTransportSlot::PointerTypeMut(inner) => AnyTransport::PointerTypeMut(inner),
+        BracketedTypeTypeTransportSlot::GenericType(inner) => AnyTransport::GenericType(inner),
+        BracketedTypeTypeTransportSlot::ScopedTypeIdentifier(inner) => AnyTransport::ScopedTypeIdentifier(inner),
+        BracketedTypeTypeTransportSlot::TupleType(inner) => AnyTransport::TupleType(inner),
+        BracketedTypeTypeTransportSlot::UnitType(inner) => AnyTransport::UnitType(inner),
+        BracketedTypeTypeTransportSlot::ArrayType(inner) => AnyTransport::ArrayType(inner),
+        BracketedTypeTypeTransportSlot::FunctionType(inner) => AnyTransport::FunctionType(inner),
+        BracketedTypeTypeTransportSlot::TypeIdentifier(inner) => AnyTransport::TypeIdentifier(inner),
+        BracketedTypeTypeTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
+        BracketedTypeTypeTransportSlot::NeverType(inner) => AnyTransport::NeverType(inner),
+        BracketedTypeTypeTransportSlot::DynamicType(inner) => AnyTransport::DynamicType(inner),
+        BracketedTypeTypeTransportSlot::BoundedType(inner) => AnyTransport::BoundedType(inner),
+        BracketedTypeTypeTransportSlot::RemovedTraitBound(inner) => AnyTransport::RemovedTraitBound(inner),
+        BracketedTypeTypeTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        BracketedTypeTypeTransportSlot::QualifiedType(inner) => AnyTransport::QualifiedType(inner),
     }
 }
 
-impl ::sittir_core::render::Render for BracketedTypeContentTransportSlot {
+impl ::sittir_core::render::Render for BracketedTypeTypeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            BracketedTypeContentTransportSlot::AbstractType(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::ReferenceType(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::Metavariable(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::PointerTypeConst(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::PointerTypeMut(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::GenericType(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::ScopedTypeIdentifier(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::TupleType(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::UnitType(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::ArrayType(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::FunctionType(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::TypeIdentifier(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::MacroInvocation(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::NeverType(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::DynamicType(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::BoundedType(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::RemovedTraitBound(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::PrimitiveType(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::QualifiedType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::AbstractType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::ReferenceType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::Metavariable(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::PointerTypeConst(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::PointerTypeMut(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::GenericType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::ScopedTypeIdentifier(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::TupleType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::UnitType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::ArrayType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::FunctionType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::MacroInvocation(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::NeverType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::DynamicType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::BoundedType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::RemovedTraitBound(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::PrimitiveType(inner) => inner.render(w),
+            BracketedTypeTypeTransportSlot::QualifiedType(inner) => inner.render(w),
         }
     }
 }
@@ -24441,21 +24441,21 @@ impl ::sittir_core::render::Render for LetChainRightTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ElseClauseContentTransportSlot {
+pub enum ElseClauseBodyTransportSlot {
     Block(BlockTransport),
     IfExpression(IfExpressionTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for ElseClauseContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for ElseClauseBodyTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ElseClauseContentTransportSlot::Block(t) => t.prepare(ctx),
-            ElseClauseContentTransportSlot::IfExpression(t) => t.prepare(ctx),
+            ElseClauseBodyTransportSlot::Block(t) => t.prepare(ctx),
+            ElseClauseBodyTransportSlot::IfExpression(t) => t.prepare(ctx),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for ElseClauseContentTransportSlot {
+impl ::sittir_core::view::KindOf for ElseClauseBodyTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Block(inner) => inner.kind_in(kinds),
@@ -24465,7 +24465,7 @@ impl ::sittir_core::view::KindOf for ElseClauseContentTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ElseClauseContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ElseClauseBodyTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -24480,14 +24480,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseClauseContentTransportSlot {
                         IfExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ElseClauseContentTransportSlot",
+                        "unknown kind id {other} in ElseClauseBodyTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ElseClauseContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ElseClauseBodyTransportSlot")
                 )?;
                 match kind_id {
                     308 => Ok(Self::Block(
@@ -24497,57 +24497,57 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseClauseContentTransportSlot {
                         IfExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ElseClauseContentTransportSlot",
+                        "unknown kind id {other} in ElseClauseBodyTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ElseClauseContentTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ElseClauseBodyTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ElseClauseContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ElseClauseBodyTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ElseClauseContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ElseClauseBodyTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ElseClauseContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ElseClauseBodyTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ElseClauseContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ElseClauseBodyTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ElseClauseContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ElseClauseBodyTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ElseClauseContentTransportSlot::to_napi_value(env, *val)
+        ElseClauseBodyTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn else_clause_content_transport_slot_to_any(t: ElseClauseContentTransportSlot) -> AnyTransport {
+fn else_clause_body_transport_slot_to_any(t: ElseClauseBodyTransportSlot) -> AnyTransport {
     match t {
-        ElseClauseContentTransportSlot::Block(inner) => AnyTransport::Block(inner),
-        ElseClauseContentTransportSlot::IfExpression(inner) => AnyTransport::IfExpression(inner),
+        ElseClauseBodyTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        ElseClauseBodyTransportSlot::IfExpression(inner) => AnyTransport::IfExpression(inner),
     }
 }
 
-impl ::sittir_core::render::Render for ElseClauseContentTransportSlot {
+impl ::sittir_core::render::Render for ElseClauseBodyTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ElseClauseContentTransportSlot::Block(inner) => inner.render(w),
-            ElseClauseContentTransportSlot::IfExpression(inner) => inner.render(w),
+            ElseClauseBodyTransportSlot::Block(inner) => inner.render(w),
+            ElseClauseBodyTransportSlot::IfExpression(inner) => inner.render(w),
         }
     }
 }
@@ -28117,23 +28117,23 @@ impl ::sittir_core::render::Render for BlockStatementsTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum GenericPatternContentTransportSlot {
+pub enum GenericPatternNameTransportSlot {
     Identifier(IdentifierTransport),
     ScopedIdentifier(ScopedIdentifierTransport),
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for GenericPatternContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for GenericPatternNameTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            GenericPatternContentTransportSlot::Identifier(t) => t.prepare(ctx),
-            GenericPatternContentTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
-            GenericPatternContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+            GenericPatternNameTransportSlot::Identifier(t) => t.prepare(ctx),
+            GenericPatternNameTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
+            GenericPatternNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for GenericPatternContentTransportSlot {
+impl ::sittir_core::view::KindOf for GenericPatternNameTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Identifier(inner) => inner.kind_in(kinds),
@@ -28144,7 +28144,7 @@ impl ::sittir_core::view::KindOf for GenericPatternContentTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for GenericPatternContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for GenericPatternNameTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -28219,14 +28219,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericPatternContentTransportSl
                         ScopedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in GenericPatternContentTransportSlot",
+                        "unknown kind id {other} in GenericPatternNameTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in GenericPatternContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in GenericPatternNameTransportSlot")
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
@@ -28296,60 +28296,60 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericPatternContentTransportSl
                         ScopedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in GenericPatternContentTransportSlot",
+                        "unknown kind id {other} in GenericPatternNameTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("GenericPatternContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("GenericPatternNameTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for GenericPatternContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for GenericPatternNameTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("GenericPatternContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("GenericPatternNameTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<GenericPatternContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<GenericPatternNameTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        GenericPatternContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        GenericPatternNameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<GenericPatternContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<GenericPatternNameTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        GenericPatternContentTransportSlot::to_napi_value(env, *val)
+        GenericPatternNameTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn generic_pattern_content_transport_slot_to_any(t: GenericPatternContentTransportSlot) -> AnyTransport {
+fn generic_pattern_name_transport_slot_to_any(t: GenericPatternNameTransportSlot) -> AnyTransport {
     match t {
-        GenericPatternContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        GenericPatternContentTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
-        GenericPatternContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        GenericPatternNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        GenericPatternNameTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
+        GenericPatternNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl ::sittir_core::render::Render for GenericPatternContentTransportSlot {
+impl ::sittir_core::render::Render for GenericPatternNameTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            GenericPatternContentTransportSlot::Identifier(inner) => inner.render(w),
-            GenericPatternContentTransportSlot::ScopedIdentifier(inner) => inner.render(w),
-            GenericPatternContentTransportSlot::Verbatim(inner) => inner.render(w),
+            GenericPatternNameTransportSlot::Identifier(inner) => inner.render(w),
+            GenericPatternNameTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            GenericPatternNameTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -51076,8 +51076,8 @@ pub struct BracketedTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<Box<BracketedTypeContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    pub type_: ::sittir_core::SlotValue<Box<BracketedTypeTypeTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for BracketedTypeTransport {
@@ -51101,7 +51101,7 @@ impl ::sittir_core::render::Render for BracketedTypeTransport {
 impl ::sittir_core::prepare::Prepare for BracketedTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.content.prepare(ctx)?;
+        self.type_.prepare(ctx)?;
         Ok(())
     }
 }
@@ -54059,8 +54059,8 @@ pub struct ElseClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<Box<ElseClauseContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    pub body: ::sittir_core::SlotValue<Box<ElseClauseBodyTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ElseClauseTransport {
@@ -54084,7 +54084,7 @@ impl ::sittir_core::render::Render for ElseClauseTransport {
 impl ::sittir_core::prepare::Prepare for ElseClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.content.prepare(ctx)?;
+        self.body.prepare(ctx)?;
         Ok(())
     }
 }
@@ -55343,10 +55343,10 @@ pub struct GenericPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: ::sittir_core::SlotValue<Box<GenericPatternNameTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<Box<GenericPatternContentTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for GenericPatternTransport {
@@ -55370,8 +55370,8 @@ impl ::sittir_core::render::Render for GenericPatternTransport {
 impl ::sittir_core::prepare::Prepare for GenericPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.name.prepare(ctx)?;
         self.type_arguments.prepare(ctx)?;
-        self.content.prepare(ctx)?;
         Ok(())
     }
 }
@@ -81450,7 +81450,7 @@ impl ::sittir_core::prepare::SeatTarget for ExternModifierTransport {
 
 impl ::sittir_core::prepare::SeatTarget for BracketedTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.content {
+        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.type_ {
             return inner.seat_target(table);
         }
         None
@@ -81741,7 +81741,7 @@ impl ::sittir_core::prepare::SeatTarget for LetConditionTransport {
 
 impl ::sittir_core::prepare::SeatTarget for ElseClauseTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.content {
+        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.body {
             return inner.seat_target(table);
         }
         None
@@ -83037,7 +83037,7 @@ impl ::sittir_core::prepare::SeatTarget for ParameterNameTransportSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for BracketedTypeContentTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for BracketedTypeTypeTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::AbstractType(t) => t.seat_target(table),
@@ -83436,7 +83436,7 @@ impl ::sittir_core::prepare::SeatTarget for LetChainRightTransportSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for ElseClauseContentTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for ElseClauseBodyTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::Block(t) => t.seat_target(table),
@@ -83628,7 +83628,7 @@ impl ::sittir_core::prepare::SeatTarget for BlockStatementsTransportSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for GenericPatternContentTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for GenericPatternNameTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::ScopedIdentifier(t) => t.seat_target(table),
@@ -85143,11 +85143,11 @@ fn render_visibility_modifier(node: &VisibilityModifierTransport, w: &mut dyn ::
 }
 
 fn render_bracketed_type(node: &BracketedTypeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+    let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("<")?;
     w.site_at(options::SITE_BRACKETED_TYPE_LT_AFTER);
-    content.render(w)?;
+    type_.render(w)?;
     w.site_at(options::SITE_BRACKETED_TYPE_GT_BEFORE);
     w.text(">")?;
     w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
@@ -85734,11 +85734,11 @@ fn render_let_chain(node: &LetChainTransport, w: &mut dyn ::sittir_core::render:
 }
 
 fn render_else_clause(node: &ElseClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+    let body = &node.body;
     w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("else")?;
     w.site_at(options::SITE_ELSE_CLAUSE_ELSE_KEYWORD_AFTER);
-    content.render(w)?;
+    body.render(w)?;
     w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
@@ -86065,10 +86065,10 @@ fn render_block(node: &BlockTransport, w: &mut dyn ::sittir_core::render::Render
 }
 
 fn render_generic_pattern(node: &GenericPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
+    let name = &node.name;
     let type_arguments = &node.type_arguments;
     w.edge(::sittir_core::types::KindId(310), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    content.render(w)?;
+    name.render(w)?;
     w.site_at(options::SITE_GENERIC_PATTERN_COLON_COLON_BEFORE);
     w.text("::")?;
     w.adjacent();

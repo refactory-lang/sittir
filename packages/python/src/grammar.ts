@@ -652,15 +652,16 @@ export type PythonGrammar = {
 	readonly dictionary_splat_pattern: {
 		type: 'dictionary_splat_pattern';
 		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [
-				{ type: 'attribute'; named: true },
-				{ type: 'identifier'; named: true },
-				{ type: 'subscript'; named: true }
-			];
+		fields: {
+			target: {
+				multiple: false;
+				required: true;
+				types: [
+					{ type: 'attribute'; named: true },
+					{ type: 'identifier'; named: true },
+					{ type: 'subscript'; named: true }
+				];
+			};
 		};
 	};
 	readonly dotted_name: {
@@ -835,8 +836,7 @@ export type PythonGrammar = {
 	readonly format_specifier: {
 		type: 'format_specifier';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: false; types: [{ type: 'format_expression'; named: true }] };
+		fields: { elements: { multiple: true; required: false; types: [{ type: 'format_expression'; named: true }] } };
 	};
 	readonly function_definition: {
 		type: 'function_definition';
@@ -1074,15 +1074,16 @@ export type PythonGrammar = {
 	readonly list_splat_pattern: {
 		type: 'list_splat_pattern';
 		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [
-				{ type: 'attribute'; named: true },
-				{ type: 'identifier'; named: true },
-				{ type: 'subscript'; named: true }
-			];
+		fields: {
+			target: {
+				multiple: false;
+				required: true;
+				types: [
+					{ type: 'attribute'; named: true },
+					{ type: 'identifier'; named: true },
+					{ type: 'subscript'; named: true }
+				];
+			};
 		};
 	};
 	readonly match_block: {
@@ -1178,11 +1179,12 @@ export type PythonGrammar = {
 	readonly parenthesized_expression: {
 		type: 'parenthesized_expression';
 		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: 'expression'; named: true }, { type: 'yield'; named: true }];
+		fields: {
+			expression: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'expression'; named: true }, { type: 'yield'; named: true }];
+			};
 		};
 	};
 	readonly parenthesized_import_list: {
@@ -1194,11 +1196,12 @@ export type PythonGrammar = {
 	readonly parenthesized_list_splat: {
 		type: 'parenthesized_list_splat';
 		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: 'list_splat'; named: true }, { type: 'parenthesized_list_splat'; named: true }];
+		fields: {
+			content: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'list_splat'; named: true }, { type: 'parenthesized_list_splat'; named: true }];
+			};
 		};
 	};
 	readonly pass_statement: { type: 'pass_statement'; named: true; fields: {} };
@@ -1331,11 +1334,13 @@ export type PythonGrammar = {
 	readonly simple_pattern_negative: {
 		type: 'simple_pattern_negative';
 		named: true;
-		fields: { sign: { multiple: false; required: false; types: [{ type: '-'; named: false }] } };
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: 'float'; named: true }, { type: 'integer'; named: true }];
+		fields: {
+			sign: { multiple: false; required: false; types: [{ type: '-'; named: false }] };
+			value: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'float'; named: true }, { type: 'integer'; named: true }];
+			};
 		};
 	};
 	readonly simple_statements: {
@@ -1527,15 +1532,17 @@ export type PythonGrammar = {
 	readonly typed_parameter: {
 		type: 'typed_parameter';
 		named: true;
-		fields: { type: { multiple: false; required: true; types: [{ type: 'type'; named: true }] } };
-		children: {
-			multiple: false;
-			required: true;
-			types: [
-				{ type: 'dictionary_splat_pattern'; named: true },
-				{ type: 'identifier'; named: true },
-				{ type: 'list_splat_pattern'; named: true }
-			];
+		fields: {
+			name: {
+				multiple: false;
+				required: true;
+				types: [
+					{ type: 'dictionary_splat_pattern'; named: true },
+					{ type: 'identifier'; named: true },
+					{ type: 'list_splat_pattern'; named: true }
+				];
+			};
+			type: { multiple: false; required: true; types: [{ type: 'type'; named: true }] };
 		};
 	};
 	readonly types: {

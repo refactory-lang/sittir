@@ -912,6 +912,19 @@ A hand-written rule is retired when it reduces to enrich plus a patch with the p
 
 **Follow-up:** a leaf mint's input hint admits the anonymous token id beside its own: typescript `KindEnum<';', TSKindId.EmptyMember | TSKindId.Semi>`, python `KindEnum<'_', … TSKindId.WildcardPattern | TSKindId.Underscore>`. The stored value should be the mint's own id only.
 
+### Task 7g: Role slots are fielded
+
+The user's ruling: a fielded slot takes no automatic arms, so an unfielded choice that names a role (not a form selector) gets a `field()` patch in `grammar.sittir.ts`, which reaches the parser. The census of unfielded choice slots classified the role slots; typescript `string_content` is held.
+
+- [x] Fielded (node-types field added, the automatic arms under the slot removed): rust `bracketed_type` type, `else_clause` body, `generic_pattern` name; typescript `asserts` value, `class_body` member, `decorator` expression, `decorator_parenthesized_expression` expression, `object_type_content` members, `template_type` type, `type_query` expression; python `dictionary_splat_pattern` target, `format_specifier` elements, `list_splat_pattern` target, `parenthesized_expression` expression, `parenthesized_list_splat` content, `_simple_pattern` negative arm value, `typed_parameter` name.
+- [x] Skipped, with causes: typescript `enum_body_elements` (an arm is already fielded as `name`, so fielding the choice nests the field and removes `name`); rust `attributed_parameter`, `attributed_type_parameter`, `type_argument` (fielding the group's choice moves the `attribute_item` list into the parent `type_parameters_elements`).
+- [ ] typescript `import_clause_group` bindings: a patch on an enrich-hoisted mint drops its `hoisted` annotation, so the group leaves the hoisted set and becomes a flat `ir.importClauseGroup`. The patch path keeps the annotation; the field is re-added in that commit.
+- [ ] python `complex_pattern`: the existing patch names position 0 (the sign) `real` and position 1 (the real part) `imaginary`. Rename to sign / real / operator / imaginary.
+
+**Follow-ups:**
+- A `groups:` mint that gains a field loses its own seat (the rust attributed groups above); diagnose why.
+- A patch keyed by a `groups:` mint name is silently ignored; it must be a hard error.
+
 ### Task 7d: The identifier leaf guard rejects a reserved word the slot does not admit
 
 A contextual keyword displayed as `identifier` is an identifier only where the parser admits it: each slot lists the keywords it admits (the per-slot admitted keyword sets). Today the identifier leaf guard is the identifier pattern alone, so `ir.identifier('if')` is accepted anywhere.

@@ -193,6 +193,9 @@ export default grammar(
 			},
 
 			patches: {
+				bracketed_type: { 1: field('type') },
+				else_clause: { 1: field('body') },
+				generic_pattern: { 0: field('name') },
 				integer_literal: {
 					0: variant('decimal', { default: true }),
 					1: variant('hex'),

@@ -5125,7 +5125,7 @@ export function coerceToArguments(
 	);
 }
 
-export function resolveDecorator_content(value: T.Decorator.LooseConfig['content']): T.Decorator['_content'] {
+export function resolveDecorator_expression(value: T.Decorator.LooseConfig['expression']): T.Decorator['_expression'] {
 	return _resolveOne<
 		T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 	>(value, _K3, _K30);
@@ -5137,11 +5137,13 @@ export function coerceToDecorator(input: T.Decorator.Loose): ReturnType<typeof F
 	return F.buildDecorator(
 		_requireField(
 			'decorator',
-			'content',
+			'expression',
 			_resolveOne<
 				T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 			>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+					? input.expression
+					: input,
 				_K3,
 				_K30
 			)
@@ -6332,9 +6334,9 @@ export function coerceToFunctionSignature(
 	);
 }
 
-export function resolveDecoratorParenthesizedExpression_content(
-	value: T.DecoratorParenthesizedExpression.LooseConfig['content']
-): T.DecoratorParenthesizedExpression['_content'] {
+export function resolveDecoratorParenthesizedExpression_expression(
+	value: T.DecoratorParenthesizedExpression.LooseConfig['expression']
+): T.DecoratorParenthesizedExpression['_expression'] {
 	return _resolveOne<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(value, _K3, _K36);
 }
 
@@ -6346,9 +6348,11 @@ export function coerceToDecoratorParenthesizedExpression(
 	return F.buildDecoratorParenthesizedExpression(
 		_requireField(
 			'decorator_parenthesized_expression',
-			'content',
+			'expression',
 			_resolveOne<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+					? input.expression
+					: input,
 				_K3,
 				_K36
 			)
@@ -7331,7 +7335,7 @@ export function coerceToTypeQueryCallExpressionInTypeAnnotation(
 	});
 }
 
-export function resolveAsserts_content(value: T.Asserts.LooseConfig['content']): T.Asserts['_content'] {
+export function resolveAsserts_value(value: T.Asserts.LooseConfig['value']): T.Asserts['_value'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.TypePredicate | T.Identifier | 'this'>(value, _K46, _K47)),
 		[['this', TSKindId.This] as const]
@@ -7344,16 +7348,14 @@ export function coerceToAsserts(input: T.Asserts.Loose): ReturnType<typeof F.bui
 	return F.buildAsserts(
 		_requireField(
 			'asserts',
-			'content',
+			'value',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-						? input.content
-						: input,
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input ? input.value : input,
 					() =>
 						_resolveOne<T.TypePredicate | T.Identifier | 'this'>(
-							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-								? input.content
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input
+								? input.value
 								: input,
 							_K46,
 							_K47
@@ -7524,7 +7526,7 @@ export function coerceToConstructorType(input: T.ConstructorType.Loose): ReturnT
 	});
 }
 
-export function resolveTemplateType_content(value: T.TemplateType.LooseConfig['content']): T.TemplateType['_content'] {
+export function resolveTemplateType_type(value: T.TemplateType.LooseConfig['type']): T.TemplateType['_type'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () => _resolveOne<T.PrimaryType | T.InferType>(value, _K37, _K49)),
 		[]
@@ -7537,17 +7539,13 @@ export function coerceToTemplateType(input: T.TemplateType.Loose): ReturnType<ty
 	return F.buildTemplateType(
 		_requireField(
 			'template_type',
-			'content',
+			'type',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-						? input.content
-						: input,
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
 					() =>
 						_resolveOne<T.PrimaryType | T.InferType>(
-							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-								? input.content
-								: input,
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
 							_K37,
 							_K49
 						)
@@ -7945,7 +7943,7 @@ export function coerceToTypeQueryInstantiationExpression(
 	});
 }
 
-export function resolveTypeQuery_content(value: T.TypeQuery.LooseConfig['content']): T.TypeQuery['_content'] {
+export function resolveTypeQuery_expression(value: T.TypeQuery.LooseConfig['expression']): T.TypeQuery['_expression'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
 			_resolveOne<
@@ -7967,11 +7965,11 @@ export function coerceToTypeQuery(input: T.TypeQuery.Loose): ReturnType<typeof F
 	return F.buildTypeQuery(
 		_requireField(
 			'type_query',
-			'content',
+			'expression',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-						? input.content
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+						? input.expression
 						: input,
 					() =>
 						_resolveOne<
@@ -7982,8 +7980,8 @@ export function coerceToTypeQuery(input: T.TypeQuery.Loose): ReturnType<typeof F
 							| T.Identifier
 							| 'this'
 						>(
-							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
-								? input.content
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+								? input.expression
 								: input,
 							_K46,
 							_K58
@@ -9432,7 +9430,7 @@ export function coerceToObjectTypeContent(
 ): ReturnType<typeof F.buildObjectTypeContent> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ObjectTypeContent) {
 		const data = input[0];
-		const stored = (data as unknown as { _content?: unknown })._content;
+		const stored = (data as unknown as { _members?: unknown })._members;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObjectTypeContent(
 			{
@@ -9961,9 +9959,9 @@ export function coerceToClassBodyMethodSig(
 	});
 }
 
-export function resolveClassBodyMember_content(
-	value: T.ClassBodyMember.LooseConfig['content']
-): T.ClassBodyMember['_content'] {
+export function resolveClassBodyMember_member(
+	value: T.ClassBodyMember.LooseConfig['member']
+): T.ClassBodyMember['_member'] {
 	return _resolveOne<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>(
 		value,
 		_K2,
@@ -9980,9 +9978,9 @@ export function coerceToClassBodyMember(
 	return F.buildClassBodyMember(
 		_requireField(
 			'class_body_member',
-			'content',
+			'member',
 			_resolveOne<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'member' in input ? input.member : input,
 				_K2,
 				_K68
 			)

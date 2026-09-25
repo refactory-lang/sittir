@@ -823,22 +823,22 @@ pub const SITE_OBJECT_TYPE_CLOSING_BEFORE: usize = 814;
 pub const SITE_OBJECT_TYPE_OPENING_AFTER: usize = 815;
 pub const SITE_OBJECT_TYPE_OBJECT_TYPE_BEFORE: usize = 816;
 pub const SITE_OBJECT_TYPE_OBJECT_TYPE_AFTER: usize = 817;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_CALL_SIGNATURE_AFTER: usize = 818;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_CONSTRUCT_SIGNATURE_AFTER: usize = 819;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER: usize = 820;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_EXPORT_STATEMENT_DEFAULT_FROM_AFTER: usize = 821;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER: usize = 822;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER: usize = 823;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_EXPORT_STATEMENT_TYPE_EXPORT_AFTER: usize = 824;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_INDEX_SIGNATURE_COLON_AFTER: usize = 825;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_AFTER: usize = 826;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_METHOD_SIGNATURE_AFTER: usize = 827;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_PROPERTY_SIGNATURE_AFTER: usize = 828;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_END: usize = 829;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_START: usize = 830;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR: usize = 831;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR_SPACE_BEFORE: usize = 832;
-pub const SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR_SPACE_AFTER: usize = 833;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_CALL_SIGNATURE_AFTER: usize = 818;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_CONSTRUCT_SIGNATURE_AFTER: usize = 819;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER: usize = 820;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_DEFAULT_FROM_AFTER: usize = 821;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER: usize = 822;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER: usize = 823;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_TYPE_EXPORT_AFTER: usize = 824;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_INDEX_SIGNATURE_COLON_AFTER: usize = 825;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_AFTER: usize = 826;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_METHOD_SIGNATURE_AFTER: usize = 827;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_PROPERTY_SIGNATURE_AFTER: usize = 828;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_END: usize = 829;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_START: usize = 830;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_SEPARATOR: usize = 831;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_SEPARATOR_SPACE_BEFORE: usize = 832;
+pub const SITE_OBJECT_TYPE_CONTENT_MEMBERS_SEPARATOR_SPACE_AFTER: usize = 833;
 pub const SITE_OBJECT_TYPE_CONTENT_OBJECT_TYPE_CONTENT_BEFORE: usize = 834;
 pub const SITE_OBJECT_TYPE_CONTENT_OBJECT_TYPE_CONTENT_AFTER: usize = 835;
 pub const SITE_OMITTING_TYPE_ANNOTATION_DASH_QMARK_COLON_AFTER: usize = 836;
@@ -1417,7 +1417,7 @@ pub const DELIM_ENUM_BODY_ELEMENTS_CONTENT: usize = 0;
 pub const DELIM_EXPORT_SPECIFIERS_EXPORT_SPECIFIER: usize = 1;
 pub const DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER: usize = 2;
 pub const DELIM_IMPORT_SPECIFIERS_IMPORT_SPECIFIER: usize = 3;
-pub const DELIM_OBJECT_TYPE_CONTENT_CONTENT: usize = 4;
+pub const DELIM_OBJECT_TYPE_CONTENT_MEMBERS: usize = 4;
 pub const DELIM_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER: usize = 5;
 pub const DELIM_TYPE_PARAMETERS_ELEMENTS_TYPE_PARAMETER: usize = 6;
 pub const DELIM_TYPES_TYPE: usize = 7;
@@ -2242,22 +2242,22 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("object_type", "opening_after", "opening_after", &[177, 178, 179, 180, 181, 182]),
     ("object_type", "object_type_before", "object_type_before", &[177, 178, 179, 180, 181, 182]),
     ("object_type", "object_type_after", "object_type_after", &[177, 178, 179, 180, 181, 182]),
-    ("object_type_content", "content_call_signature_after", "call_signature_after", &[177, 178, 179, 180, 181, 182]),
-    ("object_type_content", "content_construct_signature_after", "construct_signature_after", &[177, 178, 179, 180, 181, 182]),
-    ("object_type_content", "content_export_statement_default_declaration_after", "export_statement_default_declaration_after", &[177, 178, 179, 180, 181, 182]),
-    ("object_type_content", "content_export_statement_default_from_after", "export_statement_default_from_after", &[177, 178, 179, 180, 181, 182]),
-    ("object_type_content", "content_export_statement_equals_export_after", "export_statement_equals_export_after", &[177, 178, 179, 180, 181, 182]),
-    ("object_type_content", "content_export_statement_namespace_export_after", "export_statement_namespace_export_after", &[177, 178, 179, 180, 181, 182]),
-    ("object_type_content", "content_export_statement_type_export_after", "export_statement_type_export_after", &[177, 178, 179, 180, 181, 182]),
-    ("object_type_content", "content_index_signature_colon_after", "index_signature_colon_after", &[177, 178, 179, 180, 181, 182]),
-    ("object_type_content", "content_index_signature_mapped_type_clause_after", "index_signature_mapped_type_clause_after", &[177, 178, 179, 180, 181, 182]),
-    ("object_type_content", "content_method_signature_after", "method_signature_after", &[177, 178, 179, 180, 181, 182]),
-    ("object_type_content", "content_property_signature_after", "property_signature_after", &[177, 178, 179, 180, 181, 182]),
+    ("object_type_content", "members_call_signature_after", "call_signature_after", &[177, 178, 179, 180, 181, 182]),
+    ("object_type_content", "members_construct_signature_after", "construct_signature_after", &[177, 178, 179, 180, 181, 182]),
+    ("object_type_content", "members_export_statement_default_declaration_after", "export_statement_default_declaration_after", &[177, 178, 179, 180, 181, 182]),
+    ("object_type_content", "members_export_statement_default_from_after", "export_statement_default_from_after", &[177, 178, 179, 180, 181, 182]),
+    ("object_type_content", "members_export_statement_equals_export_after", "export_statement_equals_export_after", &[177, 178, 179, 180, 181, 182]),
+    ("object_type_content", "members_export_statement_namespace_export_after", "export_statement_namespace_export_after", &[177, 178, 179, 180, 181, 182]),
+    ("object_type_content", "members_export_statement_type_export_after", "export_statement_type_export_after", &[177, 178, 179, 180, 181, 182]),
+    ("object_type_content", "members_index_signature_colon_after", "index_signature_colon_after", &[177, 178, 179, 180, 181, 182]),
+    ("object_type_content", "members_index_signature_mapped_type_clause_after", "index_signature_mapped_type_clause_after", &[177, 178, 179, 180, 181, 182]),
+    ("object_type_content", "members_method_signature_after", "method_signature_after", &[177, 178, 179, 180, 181, 182]),
+    ("object_type_content", "members_property_signature_after", "property_signature_after", &[177, 178, 179, 180, 181, 182]),
     ("object_type_content", "object_type_content_end", "object_type_content_end", &[177, 178, 179, 180, 181, 182]),
     ("object_type_content", "object_type_content_start", "object_type_content_start", &[177, 178, 179, 180, 181, 182]),
-    ("object_type_content", "content_separator", "separator", &[14, 20]),
-    ("object_type_content", "content_separator_space_before", "object_type_content_separator_space_before", &[177, 178, 179, 180]),
-    ("object_type_content", "content_separator_space_after", "object_type_content_separator_space_after", &[177, 178, 179, 180]),
+    ("object_type_content", "members_separator", "separator", &[14, 20]),
+    ("object_type_content", "members_separator_space_before", "object_type_content_separator_space_before", &[177, 178, 179, 180]),
+    ("object_type_content", "members_separator_space_after", "object_type_content_separator_space_after", &[177, 178, 179, 180]),
     ("object_type_content", "object_type_content_before", "object_type_content_before", &[177, 178, 179, 180, 181, 182]),
     ("object_type_content", "object_type_content_after", "object_type_content_after", &[177, 178, 179, 180, 181, 182]),
     ("omitting_type_annotation", "dash_qmark_colon_after", "dash_qmark_colon_after", &[177, 178, 179, 180, 181, 182]),
@@ -3069,7 +3069,7 @@ pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[
     ("export_specifiers", "export_specifier_delimiter", 2, 0),
     ("formal_parameters_elements", "formal_parameter_delimiter", 2, 0),
     ("import_specifiers", "import_specifier_delimiter", 2, 0),
-    ("object_type_content", "content_delimiter", 3, 2),
+    ("object_type_content", "members_delimiter", 3, 2),
     ("tuple_type_members", "tuple_type_member_delimiter", 2, 0),
     ("type_parameters_elements", "type_parameter_delimiter", 2, 0),
     ("types", "type_delimiter", 2, 0),
@@ -5193,7 +5193,7 @@ pub static SEATS_OBJECT_PATTERN_PROPERTIES: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_OBJECT_TYPE_CONTENT_CONTENT: &[u16] = &[
+pub static SEATS_OBJECT_TYPE_CONTENT_MEMBERS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -7514,48 +7514,48 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "objectTypeContent", path: "(object_type_content)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_OBJECT_TYPE_CONTENT_AFTER, path: "(object_type_content)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_OBJECT_TYPE_CONTENT_BEFORE, path: "(object_type_content)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "content", path: "(object_type_content)/content:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "callSignature", path: "(object_type_content)/content:/(call_signature)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_CALL_SIGNATURE_AFTER, path: "(object_type_content)/content:/(call_signature)/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "members", path: "(object_type_content)/members:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "callSignature", path: "(object_type_content)/members:/(call_signature)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_CALL_SIGNATURE_AFTER, path: "(object_type_content)/members:/(call_signature)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "constructSignature", path: "(object_type_content)/content:/(construct_signature)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_CONSTRUCT_SIGNATURE_AFTER, path: "(object_type_content)/content:/(construct_signature)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "constructSignature", path: "(object_type_content)/members:/(construct_signature)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_CONSTRUCT_SIGNATURE_AFTER, path: "(object_type_content)/members:/(construct_signature)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_OBJECT_TYPE_CONTENT_CONTENT, path: "(object_type_content)/content:/delimiter" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_END, path: "(object_type_content)/content:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultDeclaration", path: "(object_type_content)/content:/(export_statement_default_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER, path: "(object_type_content)/content:/(export_statement_default_declaration)/after" }] },
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_OBJECT_TYPE_CONTENT_MEMBERS, path: "(object_type_content)/members:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_END, path: "(object_type_content)/members:/end" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultDeclaration", path: "(object_type_content)/members:/(export_statement_default_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER, path: "(object_type_content)/members:/(export_statement_default_declaration)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultFrom", path: "(object_type_content)/content:/(export_statement_default_from)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_EXPORT_STATEMENT_DEFAULT_FROM_AFTER, path: "(object_type_content)/content:/(export_statement_default_from)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultFrom", path: "(object_type_content)/members:/(export_statement_default_from)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_DEFAULT_FROM_AFTER, path: "(object_type_content)/members:/(export_statement_default_from)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementEqualsExport", path: "(object_type_content)/content:/(export_statement_equals_export)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER, path: "(object_type_content)/content:/(export_statement_equals_export)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementEqualsExport", path: "(object_type_content)/members:/(export_statement_equals_export)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER, path: "(object_type_content)/members:/(export_statement_equals_export)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementNamespaceExport", path: "(object_type_content)/content:/(export_statement_namespace_export)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER, path: "(object_type_content)/content:/(export_statement_namespace_export)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementNamespaceExport", path: "(object_type_content)/members:/(export_statement_namespace_export)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER, path: "(object_type_content)/members:/(export_statement_namespace_export)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementTypeExport", path: "(object_type_content)/content:/(export_statement_type_export)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_EXPORT_STATEMENT_TYPE_EXPORT_AFTER, path: "(object_type_content)/content:/(export_statement_type_export)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementTypeExport", path: "(object_type_content)/members:/(export_statement_type_export)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_EXPORT_STATEMENT_TYPE_EXPORT_AFTER, path: "(object_type_content)/members:/(export_statement_type_export)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "indexSignatureColon", path: "(object_type_content)/content:/(index_signature_colon)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_INDEX_SIGNATURE_COLON_AFTER, path: "(object_type_content)/content:/(index_signature_colon)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "indexSignatureColon", path: "(object_type_content)/members:/(index_signature_colon)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_INDEX_SIGNATURE_COLON_AFTER, path: "(object_type_content)/members:/(index_signature_colon)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "indexSignatureMappedTypeClause", path: "(object_type_content)/content:/(index_signature_mapped_type_clause)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_AFTER, path: "(object_type_content)/content:/(index_signature_mapped_type_clause)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "indexSignatureMappedTypeClause", path: "(object_type_content)/members:/(index_signature_mapped_type_clause)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE_AFTER, path: "(object_type_content)/members:/(index_signature_mapped_type_clause)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "methodSignature", path: "(object_type_content)/content:/(method_signature)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_METHOD_SIGNATURE_AFTER, path: "(object_type_content)/content:/(method_signature)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "methodSignature", path: "(object_type_content)/members:/(method_signature)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_METHOD_SIGNATURE_AFTER, path: "(object_type_content)/members:/(method_signature)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "propertySignature", path: "(object_type_content)/content:/(property_signature)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_PROPERTY_SIGNATURE_AFTER, path: "(object_type_content)/content:/(property_signature)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "propertySignature", path: "(object_type_content)/members:/(property_signature)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_PROPERTY_SIGNATURE_AFTER, path: "(object_type_content)/members:/(property_signature)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(object_type_content)/content:/separator", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR_SPACE_AFTER, path: "(object_type_content)/content:/separator/after" }] },
-                ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR_SPACE_BEFORE, path: "(object_type_content)/content:/separator/before" }] },
-                ::sittir_core::options::AddressNode::Spacing { key: "kind", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR, path: "(object_type_content)/content:/separator/kind" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(object_type_content)/members:/separator", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_SEPARATOR_SPACE_AFTER, path: "(object_type_content)/members:/separator/after" }] },
+                ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_SEPARATOR_SPACE_BEFORE, path: "(object_type_content)/members:/separator/before" }] },
+                ::sittir_core::options::AddressNode::Spacing { key: "kind", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_SEPARATOR, path: "(object_type_content)/members:/separator/kind" }] },
             ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_CONTENT_START, path: "(object_type_content)/content:/start" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_TYPE_CONTENT_MEMBERS_START, path: "(object_type_content)/members:/start" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "omittingTypeAnnotation", path: "(omitting_type_annotation)", children: &[

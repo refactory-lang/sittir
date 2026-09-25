@@ -3132,7 +3132,7 @@ export interface TypedDefaultParameter {
 
 export interface ListSplatPattern {
 	readonly $type: TSKindId.ListSplatPattern;
-	readonly _content:
+	readonly _target:
 		| Identifier
 		| TSKindId.PrintKeyword
 		| TSKindId.ExecKeyword
@@ -3143,7 +3143,7 @@ export interface ListSplatPattern {
 		| Subscript
 		| Attribute;
 	readonly __inputHints__?: {
-		readonly content:
+		readonly target:
 			| KindEnum<
 					'print' | 'exec' | 'async' | 'await' | 'type' | 'match',
 					| TSKindId.PrintKeyword
@@ -3157,7 +3157,7 @@ export interface ListSplatPattern {
 			| Subscript
 			| Attribute;
 	};
-	content():
+	target():
 		| Identifier
 		| TSKindId.PrintKeyword
 		| TSKindId.ExecKeyword
@@ -3171,7 +3171,7 @@ export interface ListSplatPattern {
 
 export interface DictionarySplatPattern {
 	readonly $type: TSKindId.DictionarySplatPattern;
-	readonly _content:
+	readonly _target:
 		| Identifier
 		| TSKindId.PrintKeyword
 		| TSKindId.ExecKeyword
@@ -3182,7 +3182,7 @@ export interface DictionarySplatPattern {
 		| Subscript
 		| Attribute;
 	readonly __inputHints__?: {
-		readonly content:
+		readonly target:
 			| KindEnum<
 					'print' | 'exec' | 'async' | 'await' | 'type' | 'match',
 					| TSKindId.PrintKeyword
@@ -3196,7 +3196,7 @@ export interface DictionarySplatPattern {
 			| Subscript
 			| Attribute;
 	};
-	content():
+	target():
 		| Identifier
 		| TSKindId.PrintKeyword
 		| TSKindId.ExecKeyword
@@ -3476,12 +3476,12 @@ export interface Call {
 
 export interface TypedParameter {
 	readonly $type: TSKindId.TypedParameter;
-	readonly _content: Identifier | ListSplatPattern | DictionarySplatPattern;
+	readonly _name: Identifier | ListSplatPattern | DictionarySplatPattern;
 	readonly _type: Type;
 	readonly __looseHints__?: {
 		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
-	content(): Identifier | ListSplatPattern | DictionarySplatPattern;
+	name(): Identifier | ListSplatPattern | DictionarySplatPattern;
 	type(): Type;
 }
 
@@ -3712,14 +3712,14 @@ export interface GeneratorExpression {
 
 export interface ParenthesizedExpression {
 	readonly $type: TSKindId.ParenthesizedExpression;
-	readonly _content: Expression | Yield;
+	readonly _expression: Expression | Yield;
 	readonly __inputHints__?: {
-		readonly content:
+		readonly expression:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression
 			| Yield;
 	};
-	content(): Expression | Yield;
+	expression(): Expression | Yield;
 }
 
 export interface CollectionElements {
@@ -3840,8 +3840,8 @@ export interface Interpolation {
 
 export interface FormatSpecifier {
 	readonly $type: TSKindId.FormatSpecifier;
-	readonly _content?: readonly ('[^{}\\n]+' | FormatExpression)[];
-	contents(): readonly ('[^{}\\n]+' | FormatExpression)[];
+	readonly _elements?: readonly ('[^{}\\n]+' | FormatExpression)[];
+	elements(): readonly ('[^{}\\n]+' | FormatExpression)[];
 }
 
 export interface KeywordIdentifier {
@@ -4147,12 +4147,12 @@ export interface EscapeSequenceNamed {
 export interface SimplePatternNegative {
 	readonly $type: TSKindId.SimplePatternNegative;
 	readonly _sign?: boolean;
-	readonly _content: Integer | Float;
+	readonly _value: Integer | Float;
 	readonly __inputHints__?: {
 		readonly sign?: BaseBooleanKeyword<'-'>;
 	};
 	sign(): boolean | undefined;
-	content(): Integer | Float;
+	value(): Integer | Float;
 }
 
 export interface ExceptClauseExceptionList {
@@ -8124,7 +8124,7 @@ export interface ListSplatPatternNs extends NodeNs<
 	ListSplatPattern.Built,
 	ListSplatPattern.BuildArgs,
 	ListSplatPattern.LooseArgs,
-	'content',
+	'target',
 	'list_splat_pattern'
 > {}
 export interface DictionarySplatPatternNs extends NodeNs<
@@ -8135,7 +8135,7 @@ export interface DictionarySplatPatternNs extends NodeNs<
 	DictionarySplatPattern.Built,
 	DictionarySplatPattern.BuildArgs,
 	DictionarySplatPattern.LooseArgs,
-	'content',
+	'target',
 	'dictionary_splat_pattern'
 > {}
 export interface AsPatternNs extends NodeNs<
@@ -8498,7 +8498,7 @@ export interface ParenthesizedExpressionNs extends NodeNs<
 	ParenthesizedExpression.Built,
 	ParenthesizedExpression.BuildArgs,
 	ParenthesizedExpression.LooseArgs,
-	'content',
+	'expression',
 	'parenthesized_expression'
 > {}
 export interface CollectionElementsNs extends NodeNs<
@@ -10727,7 +10727,7 @@ export namespace ListSplatPattern {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(
+			target(
 				value: NonNullable<
 					| T.Identifier
 					| TSKindId.PrintKeyword
@@ -10781,7 +10781,7 @@ export namespace DictionarySplatPattern {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(
+			target(
 				value: NonNullable<
 					| T.Identifier
 					| TSKindId.PrintKeyword
@@ -11131,7 +11131,7 @@ export namespace TypedParameter {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern): T.TypedParameter.Built;
+			name(value: T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern): T.TypedParameter.Built;
 			type(value: T.Type): T.TypedParameter.Built;
 		};
 	}
@@ -11456,7 +11456,7 @@ export namespace ParenthesizedExpression {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: NonNullable<T.Expression | T.Yield>): T.ParenthesizedExpression.Built;
+			expression(value: NonNullable<T.Expression | T.Yield>): T.ParenthesizedExpression.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ParenthesizedExpression>;
@@ -11651,7 +11651,7 @@ export namespace FormatSpecifier {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			contents(...vs: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]): T.FormatSpecifier.Built;
+			elements(...vs: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]): T.FormatSpecifier.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.FormatSpecifier>;
@@ -12449,7 +12449,7 @@ export namespace SimplePatternNegative {
 		readonly $named: true;
 		readonly $with: {
 			sign(value?: NonNullable<T.SimplePatternNegative.Config>['sign']): T.SimplePatternNegative.Built;
-			content(value: T.Integer | T.Float): T.SimplePatternNegative.Built;
+			value(value: T.Integer | T.Float): T.SimplePatternNegative.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.SimplePatternNegative>;

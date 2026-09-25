@@ -5015,12 +5015,12 @@ export interface Arguments {
 
 export interface Decorator {
 	readonly $type: TSKindId.Decorator;
-	readonly _content:
+	readonly _expression:
 		| Identifier
 		| DecoratorMemberExpression
 		| DecoratorCallExpression
 		| DecoratorParenthesizedExpression;
-	content(): Identifier | DecoratorMemberExpression | DecoratorCallExpression | DecoratorParenthesizedExpression;
+	expression(): Identifier | DecoratorMemberExpression | DecoratorCallExpression | DecoratorParenthesizedExpression;
 }
 
 export interface DecoratorMemberExpression {
@@ -6192,8 +6192,8 @@ export interface FunctionSignature {
 
 export interface DecoratorParenthesizedExpression {
 	readonly $type: TSKindId.DecoratorParenthesizedExpression;
-	readonly _content: Identifier | DecoratorMemberExpression | DecoratorCallExpression;
-	content(): Identifier | DecoratorMemberExpression | DecoratorCallExpression;
+	readonly _expression: Identifier | DecoratorMemberExpression | DecoratorCallExpression;
+	expression(): Identifier | DecoratorMemberExpression | DecoratorCallExpression;
 }
 
 export interface TypeAssertion {
@@ -7076,11 +7076,11 @@ export interface TypeQueryCallExpressionInTypeAnnotation {
 
 export interface Asserts {
 	readonly $type: TSKindId.Asserts;
-	readonly _content: TypePredicate | Identifier | TSKindId.This;
+	readonly _value: TypePredicate | Identifier | TSKindId.This;
 	readonly __inputHints__?: {
-		readonly content: KindEnum<'this', TSKindId.This> | TypePredicate | Identifier;
+		readonly value: KindEnum<'this', TSKindId.This> | TypePredicate | Identifier;
 	};
-	content(): TypePredicate | Identifier | TSKindId.This;
+	value(): TypePredicate | Identifier | TSKindId.This;
 }
 
 export interface AssertsAnnotation {
@@ -7230,9 +7230,9 @@ export interface ConstructorType {
 
 export interface TemplateType {
 	readonly $type: TSKindId.TemplateType;
-	readonly _content: PrimaryType | InferType;
+	readonly _type: PrimaryType | InferType;
 	readonly __inputHints__?: {
-		readonly content:
+		readonly type:
 			| KindEnum<
 					| 'any'
 					| 'number'
@@ -7260,7 +7260,7 @@ export interface TemplateType {
 			| PrimaryType
 			| InferType;
 	};
-	content(): PrimaryType | InferType;
+	type(): PrimaryType | InferType;
 }
 
 export interface TemplateLiteralType {
@@ -7671,7 +7671,7 @@ export interface TypeQueryInstantiationExpression {
 
 export interface TypeQuery {
 	readonly $type: TSKindId.TypeQuery;
-	readonly _content:
+	readonly _expression:
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression
@@ -7679,7 +7679,7 @@ export interface TypeQuery {
 		| Identifier
 		| TSKindId.This;
 	readonly __inputHints__?: {
-		readonly content:
+		readonly expression:
 			| KindEnum<'this', TSKindId.This>
 			| TypeQuerySubscriptExpression
 			| TypeQueryMemberExpression
@@ -7687,7 +7687,7 @@ export interface TypeQuery {
 			| TypeQueryInstantiationExpression
 			| Identifier;
 	};
-	content():
+	expression():
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression
@@ -8706,22 +8706,12 @@ export interface AmbientDeclarationModule {
 
 export interface ObjectTypeContent {
 	readonly $type: TSKindId.ObjectTypeContent;
-	readonly _content?: readonly (
-		| ExportStatement
-		| PropertySignature
-		| CallSignature
-		| ConstructSignature
-		| IndexSignature
-		| MethodSignature
-	)[];
-	contents(): readonly (
-		| ExportStatement
-		| PropertySignature
-		| CallSignature
-		| ConstructSignature
-		| IndexSignature
-		| MethodSignature
-	)[];
+	readonly _members: NonEmptyArray<
+		ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature
+	>;
+	members(): NonEmptyArray<
+		ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature
+	>;
 }
 
 export interface ExportStatementNamespaceExport {
@@ -8908,12 +8898,12 @@ export interface ClassBodyMethodSig {
 
 export interface ClassBodyMember {
 	readonly $type: TSKindId.ClassBodyMember;
-	readonly _content: AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
+	readonly _member: AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
 	readonly _terminator: number;
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';' | ',', TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma>;
 	};
-	content(): AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
+	member(): AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
 	terminator(): number;
 }
 
@@ -13957,7 +13947,7 @@ export namespace ObjectTypeContent {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly content?: {
+			readonly members?: {
 				readonly callSignature?: { readonly after?: WhitespaceArm };
 				readonly constructSignature?: { readonly after?: WhitespaceArm };
 				readonly delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
@@ -15208,7 +15198,7 @@ export interface DecoratorNs extends NodeNs<
 	Decorator.Built,
 	Decorator.BuildArgs,
 	Decorator.LooseArgs,
-	'content',
+	'expression',
 	'decorator'
 > {}
 export interface DecoratorMemberExpressionNs extends NodeNs<
@@ -15384,7 +15374,7 @@ export interface DecoratorParenthesizedExpressionNs extends NodeNs<
 	DecoratorParenthesizedExpression.Built,
 	DecoratorParenthesizedExpression.BuildArgs,
 	DecoratorParenthesizedExpression.LooseArgs,
-	'content',
+	'expression',
 	'decorator_parenthesized_expression'
 > {}
 export interface TypeAssertionNs extends NodeNs<
@@ -15703,7 +15693,7 @@ export interface AssertsNs extends NodeNs<
 	Asserts.Built,
 	Asserts.BuildArgs,
 	Asserts.LooseArgs,
-	'content',
+	'value',
 	'asserts'
 > {}
 export interface AssertsAnnotationNs extends NodeNs<
@@ -15780,7 +15770,7 @@ export interface TemplateTypeNs extends NodeNs<
 	TemplateType.Built,
 	TemplateType.BuildArgs,
 	TemplateType.LooseArgs,
-	'content',
+	'type',
 	'template_type'
 > {}
 export interface TemplateLiteralTypeNs extends NodeNs<
@@ -15901,7 +15891,7 @@ export interface TypeQueryNs extends NodeNs<
 	TypeQuery.Built,
 	TypeQuery.BuildArgs,
 	TypeQuery.LooseArgs,
-	'content',
+	'expression',
 	'type_query'
 > {}
 export interface IndexTypeQueryNs extends NodeNs<
@@ -16264,7 +16254,7 @@ export interface ObjectTypeContentNs extends NodeNs<
 	ObjectTypeContent.Built,
 	ObjectTypeContent.BuildArgs,
 	ObjectTypeContent.LooseArgs,
-	'content',
+	'members',
 	'object_type_content'
 > {}
 export interface ExportStatementNamespaceExportNs extends NodeNs<
@@ -16451,7 +16441,7 @@ export interface ClassBodyMemberNs extends NodeNs<
 	ClassBodyMember.Built,
 	ClassBodyMember.BuildArgs,
 	ClassBodyMember.LooseArgs,
-	'content',
+	'member',
 	'class_body_member'
 > {}
 export interface IndexSignatureColonNs extends NodeNs<
@@ -18945,7 +18935,7 @@ export namespace Decorator {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(
+			expression(
 				value:
 					| T.Identifier
 					| T.DecoratorMemberExpression
@@ -19458,7 +19448,7 @@ export namespace DecoratorParenthesizedExpression {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(
+			expression(
 				value: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression
 			): T.DecoratorParenthesizedExpression.Built;
 		};
@@ -20085,7 +20075,7 @@ export namespace Asserts {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: NonNullable<T.TypePredicate | T.Identifier | TSKindId.This>): T.Asserts.Built;
+			value(value: NonNullable<T.TypePredicate | T.Identifier | TSKindId.This>): T.Asserts.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Asserts>;
@@ -20216,7 +20206,7 @@ export namespace TemplateType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: NonNullable<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>): T.TemplateType.Built;
+			type(value: NonNullable<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>): T.TemplateType.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TemplateType>;
@@ -20445,7 +20435,7 @@ export namespace TypeQuery {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(
+			expression(
 				value: NonNullable<
 					| T.TypeQuerySubscriptExpression
 					| T.TypeQueryMemberExpression
@@ -21408,7 +21398,7 @@ export namespace ObjectTypeContent {
 		readonly _separator: number | undefined;
 		readonly _delimiter: Delimiter;
 		readonly $with: {
-			contents(
+			members(
 				...vs: NonEmptyArray<
 					| T.ExportStatement
 					| T.PropertySignature
@@ -21894,7 +21884,7 @@ export namespace ClassBodyMember {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(
+			member(
 				value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition
 			): T.ClassBodyMember.Built;
 			terminator(value: NonNullable<T.ClassBodyMember.Options>['terminator']): T.ClassBodyMember.Built;

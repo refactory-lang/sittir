@@ -14,11 +14,11 @@ export function rebuildPython4spaceGenerated() {
 		body: ir.suite.block.strict(ir.block.strict(ir.functionDefinition.strict({
 			name: ir.identifier("__init__"),
 			parameters: ir.parameters.strict(ir._parameters.strict({ delimiter: Delimiter.None }, ir.identifier("self"), ir.typedParameter.strict({
+				name: ir.identifier("user_id"),
 				type: ir.type.strict(ir.identifier("int")),
-				content: ir.identifier("user_id"),
 			}), ir.typedParameter.strict({
+				name: ir.identifier("name"),
 				type: ir.type.strict(ir.identifier("str")),
-				content: ir.identifier("name"),
 			}))),
 			returnType: ir.type.strict(TSKindId.None),
 			body: ir.suite.block.strict(ir.block.strict(ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.expressionStatement.strict(ir.assignment.eq.strict({
@@ -52,11 +52,11 @@ export function rebuildPython4spaceGenerated() {
 	}), ir.functionDefinition.strict({
 		name: ir.identifier("find_user"),
 		parameters: ir.parameters.strict(ir._parameters.strict({ delimiter: Delimiter.None }, ir.typedParameter.strict({
+			name: ir.identifier("users"),
 			type: ir.type.strict(ir.identifier("list")),
-			content: ir.identifier("users"),
 		}), ir.typedParameter.strict({
+			name: ir.identifier("user_id"),
 			type: ir.type.strict(ir.identifier("int")),
-			content: ir.identifier("user_id"),
 		}))),
 		returnType: ir.type.strict(ir.genericType.strict({
 			name: ir.identifier("Optional"),

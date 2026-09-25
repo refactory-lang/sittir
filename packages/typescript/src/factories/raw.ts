@@ -2541,16 +2541,16 @@ export function buildArguments(...children: (T.Expression | T.SpreadElement)[]):
 export function buildDecorator(
 	value: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 ): T.Decorator.Built {
-	const _content = value;
+	const _expression = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.Decorator as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_expression,
 				$with: {
-					content: (
+					expression: (
 						value:
 							| T.Identifier
 							| T.DecoratorMemberExpression
@@ -2560,7 +2560,7 @@ export function buildDecorator(
 				}
 			},
 			{
-				content: () => _content
+				expression: () => _expression
 			}
 		),
 		methodsEngine
@@ -3469,21 +3469,21 @@ export function buildFunctionSignature(
 export function buildDecoratorParenthesizedExpression(
 	value: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression
 ): T.DecoratorParenthesizedExpression.Built {
-	const _content = value;
+	const _expression = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.DecoratorParenthesizedExpression as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_expression,
 				$with: {
-					content: (value: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression) =>
+					expression: (value: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression) =>
 						buildDecoratorParenthesizedExpression(value)
 				}
 			},
 			{
-				content: () => _content
+				expression: () => _expression
 			}
 		),
 		methodsEngine
@@ -4472,22 +4472,20 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 }
 
 export function buildAsserts(value: T.TypePredicate | T.Identifier | TSKindId.This): T.Asserts.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.Asserts['_content']>>(value, [
-		['this', TSKindId.This] as const
-	]);
+	const _value = coerceMixedEnumStorage<NonNullable<T.Asserts['_value']>>(value, [['this', TSKindId.This] as const]);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.Asserts as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_value,
 				$with: {
-					content: (value: NonNullable<T.TypePredicate | T.Identifier | TSKindId.This>) => buildAsserts(value)
+					value: (value: NonNullable<T.TypePredicate | T.Identifier | TSKindId.This>) => buildAsserts(value)
 				}
 			},
 			{
-				content: () => _content
+				value: () => _value
 			}
 		),
 		methodsEngine
@@ -4669,8 +4667,8 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 }
 
 export function buildTemplateType(value: (T.PrimaryType | T.InferType) | T.TypeIdentifier.Types): T.TemplateType.Built {
-	const _content = admitAliasContent<NonNullable<T.TemplateType['_content']>>(
-		coerceMixedEnumStorage<NonNullable<T.TemplateType['_content']>>(value, []),
+	const _type = admitAliasContent<NonNullable<T.TemplateType['_type']>>(
+		coerceMixedEnumStorage<NonNullable<T.TemplateType['_type']>>(value, []),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	return withMethods(
@@ -4679,14 +4677,13 @@ export function buildTemplateType(value: (T.PrimaryType | T.InferType) | T.TypeI
 				$type: TSKindId.TemplateType as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_type,
 				$with: {
-					content: (value: NonNullable<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>) =>
-						buildTemplateType(value)
+					type: (value: NonNullable<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>) => buildTemplateType(value)
 				}
 			},
 			{
-				content: () => _content
+				type: () => _type
 			}
 		),
 		methodsEngine
@@ -5060,7 +5057,7 @@ export function buildTypeQuery(
 		| T.Identifier
 		| TSKindId.This
 ): T.TypeQuery.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.TypeQuery['_content']>>(value, [
+	const _expression = coerceMixedEnumStorage<NonNullable<T.TypeQuery['_expression']>>(value, [
 		['this', TSKindId.This] as const
 	]);
 	return withMethods(
@@ -5069,9 +5066,9 @@ export function buildTypeQuery(
 				$type: TSKindId.TypeQuery as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_expression,
 				$with: {
-					content: (
+					expression: (
 						value: NonNullable<
 							| T.TypeQuerySubscriptExpression
 							| T.TypeQueryMemberExpression
@@ -5084,7 +5081,7 @@ export function buildTypeQuery(
 				}
 			},
 			{
-				content: () => _content
+				expression: () => _expression
 			}
 		),
 		methodsEngine
@@ -6722,7 +6719,7 @@ function _buildObjectTypeContent(
 	}
 ): T.ObjectTypeContent.Built {
 	_assertNonEmpty(elements, 'object_type_content.elements');
-	const _content = elements;
+	const _members = elements;
 	const _separator = options.separator ?? TSKindId.Semi;
 	const _delimiter = options.delimiter ?? Delimiter.Trailing;
 	return withMethods(
@@ -6731,11 +6728,11 @@ function _buildObjectTypeContent(
 				$type: TSKindId.ObjectTypeContent as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_members,
 				_separator,
 				_delimiter,
 				$with: {
-					contents: (
+					members: (
 						...vs: NonEmptyArray<
 							| T.ExportStatement
 							| T.PropertySignature
@@ -6752,7 +6749,7 @@ function _buildObjectTypeContent(
 				}
 			},
 			{
-				contents: () => _content
+				members: () => _members
 			}
 		),
 		methodsEngine
@@ -7322,7 +7319,7 @@ export function buildClassBodyMember(
 	value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition,
 	options?: T.ClassBodyMember.Options
 ): T.ClassBodyMember.Built {
-	const _content = value;
+	const _member = value;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMember['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const,
@@ -7334,18 +7331,17 @@ export function buildClassBodyMember(
 				$type: TSKindId.ClassBodyMember as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_member,
 				_terminator,
 				$with: {
-					content: (
-						value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition
-					) => buildClassBodyMember(value, options),
+					member: (value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition) =>
+						buildClassBodyMember(value, options),
 					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma) =>
 						buildClassBodyMember(value, { ...options, terminator: spelling })
 				}
 			},
 			{
-				content: () => _content,
+				member: () => _member,
 				terminator: () => _terminator
 			}
 		),

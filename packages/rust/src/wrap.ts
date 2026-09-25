@@ -5878,103 +5878,19 @@ export function wrapType(data: T.Type & { readonly $other?: T.Type | readonly T.
 	);
 }
 
-export function wrapBracketedType(
-	data: T.BracketedType & {
-		readonly _type_identifier?: T.Type | T.QualifiedType;
-		readonly _primitive_type?: T.Type | T.QualifiedType;
-		readonly _abstract_type?: T.Type | T.QualifiedType;
-		readonly _reference_type?: T.Type | T.QualifiedType;
-		readonly _metavariable?: T.Type | T.QualifiedType;
-		readonly _pointer_type_const?: T.Type | T.QualifiedType;
-		readonly _pointer_type_mut?: T.Type | T.QualifiedType;
-		readonly _generic_type?: T.Type | T.QualifiedType;
-		readonly _scoped_type_identifier?: T.Type | T.QualifiedType;
-		readonly _tuple_type?: T.Type | T.QualifiedType;
-		readonly _unit_type?: T.Type | T.QualifiedType;
-		readonly _array_type?: T.Type | T.QualifiedType;
-		readonly _function_type?: T.Type | T.QualifiedType;
-		readonly _macro_invocation?: T.Type | T.QualifiedType;
-		readonly _never_type?: T.Type | T.QualifiedType;
-		readonly _dynamic_type?: T.Type | T.QualifiedType;
-		readonly _bounded_type?: T.Type | T.QualifiedType;
-		readonly _removed_trait_bound?: T.Type | T.QualifiedType;
-		readonly _qualified_type?: T.Type | T.QualifiedType;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_content',
-		'_type_identifier',
-		'_primitive_type',
-		'_abstract_type',
-		'_reference_type',
-		'_metavariable',
-		'_pointer_type_const',
-		'_pointer_type_mut',
-		'_generic_type',
-		'_scoped_type_identifier',
-		'_tuple_type',
-		'_unit_type',
-		'_array_type',
-		'_function_type',
-		'_macro_invocation',
-		'_never_type',
-		'_dynamic_type',
-		'_bounded_type',
-		'_removed_trait_bound',
-		'_qualified_type'
-	]);
+export function wrapBracketedType(data: T.BracketedType, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_type']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_abstract_type',
-				'_array_type',
-				'_bounded_type',
-				'_dynamic_type',
-				'_function_type',
-				'_generic_type',
-				'_macro_invocation',
-				'_metavariable',
-				'_never_type',
-				'_pointer_type_const',
-				'_pointer_type_mut',
-				'_primitive_type',
-				'_qualified_type',
-				'_reference_type',
-				'_removed_trait_bound',
-				'_scoped_type_identifier',
-				'_tuple_type',
-				'_type_identifier',
-				'_unit_type'
-			]),
+			...data,
 			$type: TSKindId.BracketedType as const,
-			_content: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(
-					data._content ??
-						data._type_identifier ??
-						data._primitive_type ??
-						data._abstract_type ??
-						data._reference_type ??
-						data._metavariable ??
-						data._pointer_type_const ??
-						data._pointer_type_mut ??
-						data._generic_type ??
-						data._scoped_type_identifier ??
-						data._tuple_type ??
-						data._unit_type ??
-						data._array_type ??
-						data._function_type ??
-						data._macro_invocation ??
-						data._never_type ??
-						data._dynamic_type ??
-						data._bounded_type ??
-						data._removed_trait_bound ??
-						data._qualified_type,
-					'content',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
+			_type: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'type',
+					span: (data as _NodeData).$span
+				}),
 				{
 					'!': 249,
 					u8: 59,
@@ -5999,12 +5915,11 @@ export function wrapBracketedType(
 				[336]
 			),
 
-			content() {
-				return drillIn<T.Type | T.QualifiedType>(this._content, tree);
+			type() {
+				return drillIn<T.Type | T.QualifiedType>(this._type, tree);
 			},
 			$with: {
-				content: (v: NonNullable<T.BracketedType['_content']>) =>
-					wrapBracketedType({ ...$edited(data), _content: v }, tree)
+				type: (v: NonNullable<T.BracketedType['_type']>) => wrapBracketedType({ ...$edited(data), _type: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -9440,31 +9355,24 @@ export function wrapCondition(
 	);
 }
 
-export function wrapElseClause(
-	data: T.ElseClause & {
-		readonly _block?: T.Block | T.IfExpression;
-		readonly _if_expression?: T.Block | T.IfExpression;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_block', '_if_expression']);
+export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_body']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_block', '_if_expression']),
+			...data,
 			$type: TSKindId.ElseClause as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._block ?? data._if_expression,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_body: normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'body',
+				span: (data as _NodeData).$span
+			}),
 
-			content() {
-				return drillIn<T.Block | T.IfExpression>(this._content, tree);
+			body() {
+				return drillIn<T.Block | T.IfExpression>(this._body, tree);
 			},
 			$with: {
-				content: (v: NonNullable<T.ElseClause['_content']>) => wrapElseClause({ ...$edited(data), _content: v }, tree)
+				body: (v: NonNullable<T.ElseClause['_body']>) => wrapElseClause({ ...$edited(data), _body: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -10837,25 +10745,18 @@ export function wrapPattern(
 	);
 }
 
-export function wrapGenericPattern(
-	data: T.GenericPattern & {
-		readonly _identifier?: T.Identifier | T.ScopedIdentifier;
-		readonly _scoped_identifier?: T.Identifier | T.ScopedIdentifier;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_type_arguments', '_identifier', '_scoped_identifier']);
+export function wrapGenericPattern(data: T.GenericPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_name', '_type_arguments']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_identifier', '_scoped_identifier']),
+			...data,
 			$type: TSKindId.GenericPattern as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._identifier ?? data._scoped_identifier,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'name',
+				span: (data as _NodeData).$span
+			}),
 			_type_arguments: normalizeSingularWrapSlot(data._type_arguments, 'type_arguments', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -10863,15 +10764,14 @@ export function wrapGenericPattern(
 				span: (data as _NodeData).$span
 			}),
 
-			content() {
-				return drillIn<T.Identifier | T.ScopedIdentifier>(this._content, tree);
+			name() {
+				return drillIn<T.Identifier | T.ScopedIdentifier>(this._name, tree);
 			},
 			typeArguments() {
 				return drillIn<T.TypeArguments>(this._type_arguments, tree);
 			},
 			$with: {
-				content: (v: NonNullable<T.GenericPattern['_content']>) =>
-					wrapGenericPattern({ ...$edited(data), _content: v }, tree),
+				name: (v: NonNullable<T.GenericPattern['_name']>) => wrapGenericPattern({ ...$edited(data), _name: v }, tree),
 				typeArguments: (v: NonNullable<T.GenericPattern['_type_arguments']>) =>
 					wrapGenericPattern({ ...$edited(data), _type_arguments: v }, tree)
 			}

@@ -1906,25 +1906,24 @@
             "value": "("
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "parenthesized_list_splat",
-                "annotations": {
-                  "variant": "parenthesized_list_splat",
-                  "variantOf": "parenthesized_list_splat"
+            "type": "FIELD",
+            "name": "content",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "parenthesized_list_splat"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "list_splat"
                 }
-              },
-              {
-                "type": "SYMBOL",
-                "name": "list_splat",
-                "annotations": {
-                  "variant": "list_splat",
-                  "variantOf": "parenthesized_list_splat"
-                }
-              }
-            ]
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -3016,41 +3015,32 @@
           "value": "*"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "identifier",
-              "annotations": {
-                "variant": "identifier",
-                "variantOf": "list_splat_pattern"
+          "type": "FIELD",
+          "name": "target",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "keyword_identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "subscript"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "attribute"
               }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "keyword_identifier",
-              "annotations": {
-                "variant": "keyword_identifier",
-                "variantOf": "list_splat_pattern"
-              }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "subscript",
-              "annotations": {
-                "variant": "subscript",
-                "variantOf": "list_splat_pattern"
-              }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "attribute",
-              "annotations": {
-                "variant": "attribute",
-                "variantOf": "list_splat_pattern"
-              }
-            }
-          ]
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -3062,41 +3052,32 @@
           "value": "**"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "identifier",
-              "annotations": {
-                "variant": "identifier",
-                "variantOf": "dictionary_splat_pattern"
+          "type": "FIELD",
+          "name": "target",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "keyword_identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "subscript"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "attribute"
               }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "keyword_identifier",
-              "annotations": {
-                "variant": "keyword_identifier",
-                "variantOf": "dictionary_splat_pattern"
-              }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "subscript",
-              "annotations": {
-                "variant": "subscript",
-                "variantOf": "dictionary_splat_pattern"
-              }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "attribute",
-              "annotations": {
-                "variant": "attribute",
-                "variantOf": "dictionary_splat_pattern"
-              }
-            }
-          ]
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -4577,33 +4558,28 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "identifier",
-                "annotations": {
-                  "variant": "identifier",
-                  "variantOf": "typed_parameter"
+            "type": "FIELD",
+            "name": "name",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "list_splat_pattern"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "dictionary_splat_pattern"
                 }
-              },
-              {
-                "type": "SYMBOL",
-                "name": "list_splat_pattern",
-                "annotations": {
-                  "variant": "list_splat_pattern",
-                  "variantOf": "typed_parameter"
-                }
-              },
-              {
-                "type": "SYMBOL",
-                "name": "dictionary_splat_pattern",
-                "annotations": {
-                  "variant": "dictionary_splat_pattern",
-                  "variantOf": "typed_parameter"
-                }
-              }
-            ]
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -5159,25 +5135,24 @@
             "value": "("
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "expression",
-                "annotations": {
-                  "variant": "expression",
-                  "variantOf": "parenthesized_expression"
+            "type": "FIELD",
+            "name": "expression",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "yield"
                 }
-              },
-              {
-                "type": "SYMBOL",
-                "name": "yield",
-                "annotations": {
-                  "variant": "yield",
-                  "variantOf": "parenthesized_expression"
-                }
-              }
-            ]
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -5753,29 +5728,36 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "IMMEDIATE_TOKEN",
-                "content": {
-                  "type": "PREC",
-                  "value": 1,
+            "type": "FIELD",
+            "name": "elements",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "IMMEDIATE_TOKEN",
                   "content": {
-                    "type": "PATTERN",
-                    "value": "[^{}\\n]+"
+                    "type": "PREC",
+                    "value": 1,
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[^{}\\n]+"
+                    }
                   }
-                }
-              },
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "interpolation"
                 },
-                "named": true,
-                "value": "format_expression"
-              }
-            ]
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "interpolation"
+                  },
+                  "named": true,
+                  "value": "format_expression"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         }
       ]
@@ -9106,17 +9088,24 @@
             }
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "integer"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "float"
-              }
-            ]
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "integer"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "float"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ],
         "annotations": {

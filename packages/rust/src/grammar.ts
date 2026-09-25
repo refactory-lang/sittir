@@ -567,11 +567,12 @@ export type RustGrammar = {
 	readonly bracketed_type: {
 		type: 'bracketed_type';
 		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: '_type'; named: true }, { type: 'qualified_type'; named: true }];
+		fields: {
+			type: {
+				multiple: false;
+				required: true;
+				types: [{ type: '_type'; named: true }, { type: 'qualified_type'; named: true }];
+			};
 		};
 	};
 	readonly break_expression: {
@@ -813,11 +814,12 @@ export type RustGrammar = {
 	readonly else_clause: {
 		type: 'else_clause';
 		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: 'block'; named: true }, { type: 'if_expression'; named: true }];
+		fields: {
+			body: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'block'; named: true }, { type: 'if_expression'; named: true }];
+			};
 		};
 	};
 	readonly empty_statement: { type: 'empty_statement'; named: true; fields: {} };
@@ -1139,11 +1141,13 @@ export type RustGrammar = {
 	readonly generic_pattern: {
 		type: 'generic_pattern';
 		named: true;
-		fields: { type_arguments: { multiple: false; required: true; types: [{ type: 'type_arguments'; named: true }] } };
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: 'identifier'; named: true }, { type: 'scoped_identifier'; named: true }];
+		fields: {
+			name: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'identifier'; named: true }, { type: 'scoped_identifier'; named: true }];
+			};
+			type_arguments: { multiple: false; required: true; types: [{ type: 'type_arguments'; named: true }] };
 		};
 	};
 	readonly generic_type: {
