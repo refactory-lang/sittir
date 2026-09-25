@@ -33,8 +33,9 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import * as baseline from '../scripts/collect-baseline.ts';
+import { stableGrammars } from '@sittir/codegen/grammars';
 
-const grammarKeys = ['python', 'rust', 'typescript'] as const;
+const grammarKeys = stableGrammars();
 
 describe('collect-baseline', () => {
 	let result: baseline.BackendBaseline;
@@ -131,7 +132,7 @@ describe('collect-baseline', () => {
 
 	it('failingKinds and formatDeferredKinds arrays are sorted ascending', () => {
 		for (const grammar of grammarKeys) {
-			const validators = result.grammars[grammar].validators;
+			const validators = result.grammars[grammar]!.validators;
 			for (const name of ['from', 'coverage', 'roundtrip', 'factoryRoundtrip'] as const) {
 				const fk = validators[name].failingKinds;
 				const fdk = validators[name].formatDeferredKinds;
@@ -145,7 +146,7 @@ describe('collect-baseline', () => {
 
 	it('failingByKind and formatDeferredByKind keys are sorted ascending', () => {
 		for (const grammar of grammarKeys) {
-			const fp = result.grammars[grammar].parityFixtures;
+			const fp = result.grammars[grammar]!.parityFixtures;
 			for (const obj of [fp.failingByKind, fp.formatDeferredByKind]) {
 				const keys = Object.keys(obj);
 				expect(keys).toEqual([...keys].sort());
@@ -160,14 +161,14 @@ describe('collect-baseline', () => {
 		// formatDeferredKinds / formatDeferredByKind fields should always
 		// be empty at baseline since no triage has run yet.)
 		for (const grammar of grammarKeys) {
-			const validators = result.grammars[grammar].validators;
+			const validators = result.grammars[grammar]!.validators;
 			for (const name of ['from', 'coverage', 'roundtrip', 'factoryRoundtrip'] as const) {
 				expect(Array.isArray(validators[name].failingKinds)).toBe(true);
 				expect(Array.isArray(validators[name].formatDeferredKinds)).toBe(true);
 				// At baseline, no triage has been performed.
 				expect(validators[name].formatDeferredKinds).toEqual([]);
 			}
-			const fp = result.grammars[grammar].parityFixtures;
+			const fp = result.grammars[grammar]!.parityFixtures;
 			for (const obj of [fp.failingByKind, fp.formatDeferredByKind]) {
 				expect(typeof obj).toBe('object');
 				expect(obj).not.toBeNull();

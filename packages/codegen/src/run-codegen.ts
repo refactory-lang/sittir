@@ -20,7 +20,8 @@ import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
-import { writeManifestForGrammar, type Grammar } from './scripts/generated-manifest.ts';
+import { writeManifestForGrammar } from './scripts/generated-manifest.ts';
+import { isGrammar, nativeCrateRelDir } from './grammars.ts';
 import type { NodeMap } from './compiler/types.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
 import { OVERLAY_CHAIN } from './emitters/overlays/module.ts';
@@ -91,8 +92,6 @@ export async function runStandaloneSteps(opts: CodegenOptions): Promise<void> {
 		console.log(`  → ${wasmPath}`);
 	}
 }
-
-export const RUST_RENDER_GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
 export async function runGrammarDiagnosticsPreflight(input: {
 	grammar: string;
@@ -293,10 +292,9 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 
 	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
-	const shouldEmitRustRender = all && (RUST_RENDER_GRAMMARS as readonly string[]).includes(grammar);
+	const shouldEmitRustRender = all && isGrammar(grammar);
 
 	if (shouldEmitRustRender) {
-		const grammarTyped = grammar as (typeof RUST_RENDER_GRAMMARS)[number];
 		const renderModule = result.renderModule;
 		if (!renderModule) {
 			throw new Error(`generate() did not return renderModule output for ${grammar}`);
@@ -308,7 +306,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		await writeFile(emit.optionsRs.path, emit.optionsRs.contents);
 		await writeFile(emit.libRs.path, emit.libRs.contents);
 		if (result.kindIds) {
-			const kindIdsPath = `${renderModuleSrcDir(grammarTyped)}/kind_ids.rs`;
+			const kindIdsPath = `${renderModuleSrcDir(grammar)}/kind_ids.rs`;
 			await writeFile(kindIdsPath, result.kindIds);
 			console.log(`    ${kindIdsPath}`);
 		}
@@ -320,7 +318,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		console.log(`    ${emit.libRs.path}`);
 
 		if (buildNative !== false) {
-			const nativeCrate = `rust/crates/sittir-${grammar}`;
+			const nativeCrate = nativeCrateRelDir(grammar);
 			const nativeBuildScript = nativeDebug === true ? 'build:debug' : 'build';
 			console.log(
 				`  → rebuilding grammar-owned N-API binding for ${grammar}` +
@@ -374,11 +372,11 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		);
 	}
 
-	writeManifestForGrammar(grammar as Grammar);
+	writeManifestForGrammar(grammar);
 	console.log(`  → packages/${grammar}/.sittir/generated.manifest.json updated`);
 
 	if (all && !noEmitDiff) {
-		const emitDiff = formatEmitDiff(grammar as Grammar);
+		const emitDiff = formatEmitDiff(grammar);
 		if (emitDiff) console.log(`\n${emitDiff}`);
 	}
 

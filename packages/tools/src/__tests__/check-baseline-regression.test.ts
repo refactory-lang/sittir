@@ -118,7 +118,7 @@ describe('checkRegression', () => {
 	it('left-out rise detected — an uncompensated per-grammar sum rise names the grammar path', () => {
 		const base = baseline();
 		const head = clone(base);
-		head.grammars.typescript.parityFixtures.leftOutByKind = { for_statement: 1 };
+		head.grammars.typescript!.parityFixtures.leftOutByKind = { for_statement: 1 };
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('left-out-rise');
@@ -129,18 +129,18 @@ describe('checkRegression', () => {
 
 	it('left-out rename passes — a kind split moving the same fixtures to a new key does not raise the sum', () => {
 		const base = baseline();
-		base.grammars.python.parityFixtures.leftOutByKind = { assignment: 3 };
+		base.grammars.python!.parityFixtures.leftOutByKind = { assignment: 3 };
 		const head = clone(base);
-		head.grammars.python.parityFixtures.leftOutByKind = { assignment_eq: 3 };
+		head.grammars.python!.parityFixtures.leftOutByKind = { assignment_eq: 3 };
 		const verdict = checkRegression(base, head);
 		expect(verdict.ok).toBe(true);
 	});
 
 	it('left-out shrink passes — a kind the template reproduces again may leave the list', () => {
 		const base = baseline();
-		base.grammars.typescript.parityFixtures.leftOutByKind = { for_statement: 2, program: 6 };
+		base.grammars.typescript!.parityFixtures.leftOutByKind = { for_statement: 2, program: 6 };
 		const head = clone(base);
-		head.grammars.typescript.parityFixtures.leftOutByKind = { program: 5 };
+		head.grammars.typescript!.parityFixtures.leftOutByKind = { program: 5 };
 		const verdict = checkRegression(base, head);
 		expect(verdict.ok).toBe(true);
 	});
@@ -148,7 +148,7 @@ describe('checkRegression', () => {
 	it('left-out keys must be sorted — schema violation otherwise', () => {
 		const base = baseline();
 		const head = clone(base);
-		head.grammars.rust.parityFixtures.leftOutByKind = { program: 1, block: 1 };
+		head.grammars.rust!.parityFixtures.leftOutByKind = { program: 1, block: 1 };
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('schema-violation');
@@ -158,7 +158,7 @@ describe('checkRegression', () => {
 	it('pass-count drop detected — names the dropped path', () => {
 		const base = baseline();
 		const head = clone(base);
-		head.grammars.rust.validators.from.pass = 9;
+		head.grammars.rust!.validators.from.pass = 9;
 		// Keep totals consistent so this is the ONLY drop we trigger.
 		head.totals.pass = 149;
 		head.totals.fail = 1;
@@ -172,11 +172,11 @@ describe('checkRegression', () => {
 
 	it('coverage pass drop explained by a new supertype — passes (a kind lost its own template path, not a failure)', () => {
 		const base = baseline();
-		base.grammars.typescript.supertypeKindCount = 5;
-		base.grammars.typescript.validators.coverage = vr(193, 193);
+		base.grammars.typescript!.supertypeKindCount = 5;
+		base.grammars.typescript!.validators.coverage = vr(193, 193);
 		const head = clone(base);
-		head.grammars.typescript.supertypeKindCount = 6;
-		head.grammars.typescript.validators.coverage = vr(189, 189);
+		head.grammars.typescript!.supertypeKindCount = 6;
+		head.grammars.typescript!.validators.coverage = vr(189, 189);
 		head.totals.pass = 149 - 4;
 		head.totals.total = 150 - 4;
 		const verdict = checkRegression(base, head);
@@ -185,11 +185,11 @@ describe('checkRegression', () => {
 
 	it('factoryRoundtrip pass drop explained by a new supertype — passes (astMatchPass too)', () => {
 		const base = baseline();
-		base.grammars.python.supertypeKindCount = 2;
-		base.grammars.python.validators.factoryRoundtrip = rt(1390, 1390, 1390);
+		base.grammars.python!.supertypeKindCount = 2;
+		base.grammars.python!.validators.factoryRoundtrip = rt(1390, 1390, 1390);
 		const head = clone(base);
-		head.grammars.python.supertypeKindCount = 5;
-		head.grammars.python.validators.factoryRoundtrip = rt(1368, 1368, 1368);
+		head.grammars.python!.supertypeKindCount = 5;
+		head.grammars.python!.validators.factoryRoundtrip = rt(1368, 1368, 1368);
 		head.totals.pass = 149 - 22;
 		head.totals.total = 150 - 22;
 		const verdict = checkRegression(base, head);
@@ -198,9 +198,9 @@ describe('checkRegression', () => {
 
 	it('coverage pass drop with supertypeKindCount unchanged — fail (nothing structural explains it)', () => {
 		const base = baseline();
-		base.grammars.typescript.validators.coverage = vr(193, 193);
+		base.grammars.typescript!.validators.coverage = vr(193, 193);
 		const head = clone(base);
-		head.grammars.typescript.validators.coverage = vr(189, 193);
+		head.grammars.typescript!.validators.coverage = vr(189, 193);
 		head.totals.pass = 149 - 4;
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
@@ -210,13 +210,13 @@ describe('checkRegression', () => {
 
 	it('coverage pass drop alongside a new fail — fail (a new supertype does not excuse an actual regression)', () => {
 		const base = baseline();
-		base.grammars.typescript.supertypeKindCount = 5;
-		base.grammars.typescript.validators.coverage = vr(193, 193);
+		base.grammars.typescript!.supertypeKindCount = 5;
+		base.grammars.typescript!.validators.coverage = vr(193, 193);
 		const head = clone(base);
-		head.grammars.typescript.supertypeKindCount = 6;
+		head.grammars.typescript!.supertypeKindCount = 6;
 		// total held flat (not just decreased) so checkTotalDrop's aggregate
 		// rule doesn't preempt this — isolating checkPassCounts specifically.
-		head.grammars.typescript.validators.coverage = vr(188, 193, ['kind_a']);
+		head.grammars.typescript!.validators.coverage = vr(188, 193, ['kind_a']);
 		head.totals.pass = 149 - 5;
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
@@ -226,10 +226,10 @@ describe('checkRegression', () => {
 
 	it('from pass drop alongside a new supertype — fail (the exemption is coverage/factoryRoundtrip only)', () => {
 		const base = baseline();
-		base.grammars.typescript.supertypeKindCount = 5;
+		base.grammars.typescript!.supertypeKindCount = 5;
 		const head = clone(base);
-		head.grammars.typescript.supertypeKindCount = 6;
-		head.grammars.typescript.validators.from = vr(9, 10);
+		head.grammars.typescript!.supertypeKindCount = 6;
+		head.grammars.typescript!.validators.from = vr(9, 10);
 		head.totals.pass = 149;
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
@@ -250,7 +250,7 @@ describe('checkRegression', () => {
 		const base = baseline();
 		const head = clone(base);
 		// Force unsorted failingKinds (writer normally sorts; manual edit could break this).
-		head.grammars.rust.validators.from.failingKinds = ['zebra', 'alpha'];
+		head.grammars.rust!.validators.from.failingKinds = ['zebra', 'alpha'];
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('schema-violation');
@@ -263,7 +263,7 @@ describe('checkRegression', () => {
 			grammars: Record<string, GrammarEntry>;
 		};
 		// Cast to allow deletion of a required key — exercises the schema check.
-		delete (head.grammars.rust.validators.from as { formatDeferredKinds?: string[] }).formatDeferredKinds;
+		delete (head.grammars.rust!.validators.from as { formatDeferredKinds?: string[] }).formatDeferredKinds;
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('schema-violation');
@@ -274,7 +274,7 @@ describe('checkRegression', () => {
 		const base = baseline();
 		const head = clone(base);
 		// No move — failingKinds stayed []; formatDeferredKinds grew by 1 → SUM grew.
-		head.grammars.rust.validators.from.formatDeferredKinds = ['new_kind'];
+		head.grammars.rust!.validators.from.formatDeferredKinds = ['new_kind'];
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('format-deferred-rise');
@@ -283,11 +283,11 @@ describe('checkRegression', () => {
 
 	it('format-deferred count grew but failing-kind shrank by same amount — pass (move semantics)', () => {
 		const base = baseline();
-		base.grammars.rust.validators.from.failingKinds = ['kind_a'];
+		base.grammars.rust!.validators.from.failingKinds = ['kind_a'];
 		const head = clone(base);
 		// Move kind_a from failing → format-deferred (template-shape fix surfaced format-only diff).
-		head.grammars.rust.validators.from.failingKinds = [];
-		head.grammars.rust.validators.from.formatDeferredKinds = ['kind_a'];
+		head.grammars.rust!.validators.from.failingKinds = [];
+		head.grammars.rust!.validators.from.formatDeferredKinds = ['kind_a'];
 		const verdict = checkRegression(base, head);
 		expect(verdict.ok).toBe(true);
 	});
@@ -298,9 +298,9 @@ describe('checkRegression', () => {
 		head.totals.total = 149;
 		head.totals.pass = 148;
 		head.totals.fail = 1;
-		head.grammars.rust.validators.from.total = 9;
-		head.grammars.rust.validators.from.pass = 8;
-		head.grammars.rust.validators.from.failingKinds = ['kind_a'];
+		head.grammars.rust!.validators.from.total = 9;
+		head.grammars.rust!.validators.from.pass = 8;
+		head.grammars.rust!.validators.from.failingKinds = ['kind_a'];
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('total-drop');
@@ -309,13 +309,13 @@ describe('checkRegression', () => {
 	it('total fixture count decreased by removing an already-failing case — fail (deletion is not a rename, still needs a look)', () => {
 		const base = baseline();
 		base.totals = { pass: 149, fail: 1, total: 150 };
-		base.grammars.rust.validators.from.total = 10;
-		base.grammars.rust.validators.from.pass = 9;
-		base.grammars.rust.validators.from.failingKinds = ['kind_a'];
+		base.grammars.rust!.validators.from.total = 10;
+		base.grammars.rust!.validators.from.pass = 9;
+		base.grammars.rust!.validators.from.failingKinds = ['kind_a'];
 		const head = clone(base);
 		head.totals = { pass: 149, fail: 0, total: 149 };
-		head.grammars.rust.validators.from.total = 9;
-		head.grammars.rust.validators.from.failingKinds = [];
+		head.grammars.rust!.validators.from.total = 9;
+		head.grammars.rust!.validators.from.failingKinds = [];
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('total-drop');
@@ -324,13 +324,13 @@ describe('checkRegression', () => {
 	it('strictly improved counts pass — pass-count up, totals.fail down', () => {
 		const base = baseline();
 		// Encode 1 failure in base on rust.from so we can recover it in head.
-		base.grammars.rust.validators.from.pass = 9;
-		base.grammars.rust.validators.from.failingKinds = ['kind_x'];
+		base.grammars.rust!.validators.from.pass = 9;
+		base.grammars.rust!.validators.from.failingKinds = ['kind_x'];
 		base.totals.pass = 149;
 		base.totals.fail = 1;
 		const head = clone(base);
-		head.grammars.rust.validators.from.pass = 10;
-		head.grammars.rust.validators.from.failingKinds = [];
+		head.grammars.rust!.validators.from.pass = 10;
+		head.grammars.rust!.validators.from.failingKinds = [];
 		head.totals.pass = 150;
 		head.totals.fail = 0;
 		const verdict = checkRegression(base, head);
@@ -342,7 +342,7 @@ describe('checkRegression', () => {
 		const head = clone(base);
 		// Base has empty failingByKind; head adds two failure ids under one
 		// kind. parityFixturesSum grows from 0 → 2 → format-deferred-rise.
-		head.grammars.rust.parityFixtures.failingByKind = {
+		head.grammars.rust!.parityFixtures.failingByKind = {
 			list_comprehension: ['render #1', 'render #2']
 		};
 		const verdict = checkRegression(base, head);
@@ -356,7 +356,7 @@ describe('checkRegression', () => {
 		const head = clone(base);
 		// Inject a keys-unsorted object on head. The schema check must
 		// surface it BEFORE any count comparison runs.
-		head.grammars.rust.parityFixtures.failingByKind = {
+		head.grammars.rust!.parityFixtures.failingByKind = {
 			zebra: ['render #1'],
 			alpha: ['render #2']
 		};
@@ -372,9 +372,9 @@ describe('checkRegression', () => {
 		// Rebuild grammars in declaration order (rust, python, typescript)
 		// — keys are not ascending. Schema check must reject.
 		const reorderedGrammars: Record<string, GrammarEntry> = {};
-		reorderedGrammars['rust'] = head.grammars.rust;
-		reorderedGrammars['python'] = head.grammars.python;
-		reorderedGrammars['typescript'] = head.grammars.typescript;
+		reorderedGrammars['rust'] = head.grammars.rust!;
+		reorderedGrammars['python'] = head.grammars.python!;
+		reorderedGrammars['typescript'] = head.grammars.typescript!;
 		(head as { grammars: unknown }).grammars = reorderedGrammars;
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);

@@ -4933,20 +4933,11 @@ declared-supertype override:
 
 ### `packages/codegen/src/compiler/resolve-grammar.ts::resolveGrammarJsPath`
 
-```text
-/**
- * Resolve a grammar name to the absolute path of its grammar.js file.
- */
-```
+Resolve a grammar name to the absolute path of its upstream `grammar.js`, resolving the upstream package (`upstreamPackage`) from the grammar's own package directory (`grammarRequire`) — the grammar package is the one place its upstream dependency is declared.
 
 ### `packages/codegen/src/compiler/resolve-grammar.ts::resolveOverridesPath`
 
-```text
-/**
- * Resolve a grammar name to its grammar.sittir.ts path (if it exists).
- * Returns the path in packages/{grammar}/grammar.sittir.ts.
- */
-```
+The grammar's `grammar.sittir.ts` entry: `GRAMMAR_ENTRY` inside `grammarPackageDir(grammar)`.
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::classifyByType`
 
@@ -7463,14 +7454,9 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
  */
 ```
 
-### `packages/codegen/src/compiler/resolve-grammar.ts::GRAMMAR_JS_PATHS`
+### `packages/codegen/src/compiler/resolve-grammar.ts::GRAMMAR_JS_SUBPATHS`
 
-```text
-/**
- * Well-known grammar.js paths for grammars with non-standard layouts.
- * Most grammars use `tree-sitter-{grammar}/grammar.js`.
- */
-```
+`grammar.js` locations inside the upstream package for grammars with a non-standard layout (typescript ships its dialects in subdirectories). Every other grammar keeps `grammar.js` at the package root.
 
 ### `packages/codegen/src/compiler/simplify.ts::attributeBuilder`
 
@@ -10094,14 +10080,7 @@ same kinds, so the name and the fact cannot disagree.
 
 ### `packages/codegen/src/compiler/resolve-grammar.ts::module`
 
-```text
-/**
- * resolve-grammar.ts — resolve grammar name to grammar.js path
- *
- * Maps grammar names (e.g., "rust", "typescript", "python") to the
- * grammar.js file paths in node_modules.
- */
-```
+Maps a grammar name to its authored entry (`grammar.sittir.ts`) and to its upstream `grammar.js`. Grammar names and package locations come from the registry in `grammars.ts`.
 
 ### `packages/codegen/src/compiler/assemble.ts::module`
 

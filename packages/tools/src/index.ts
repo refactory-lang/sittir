@@ -56,7 +56,6 @@ export {
 } from './run.ts';
 
 export type {
-	Grammar,
 	Backend,
 	FromValidationResult,
 	FromValidationError,

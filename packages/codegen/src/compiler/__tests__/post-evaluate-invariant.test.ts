@@ -24,6 +24,7 @@
 import { describe, it, expect } from 'vitest';
 import { evaluate } from '../evaluate.ts';
 import { resolveOverridesPath } from '../resolve-grammar.ts';
+import { stableGrammars } from '../../grammars.ts';
 import { expectCompleteCatalog, serializeCatalog } from '../../__tests__/helpers/rule-catalog.ts';
 
 const KNOWN_RULE_TYPES = new Set([
@@ -52,7 +53,7 @@ const KNOWN_RULE_TYPES = new Set([
 	'TOKEN'
 ]);
 
-const GRAMMARS = ['python', 'rust', 'typescript'] as const;
+const GRAMMARS = stableGrammars();
 
 describe('post-evaluate invariant', () => {
 	for (const grammar of GRAMMARS) {

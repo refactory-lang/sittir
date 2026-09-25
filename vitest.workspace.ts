@@ -1,9 +1,8 @@
 import { defineWorkspace } from 'vitest/config';
+import { allGrammars } from './packages/codegen/src/grammars.ts';
 
 export default defineWorkspace([
 	'packages/codegen',
 	'packages/tools',
-	'packages/rust',
-	'packages/typescript',
-	'packages/python'
+	...allGrammars().map((g) => `packages/${g}`)
 ]);

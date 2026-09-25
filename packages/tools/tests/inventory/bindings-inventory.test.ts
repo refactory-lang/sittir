@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { type PatternNode, parseQuery, walk } from '../../src/inventory/query.ts';
-import { compileBindings, deriveVocabulary, INVENTORY_GRAMMARS } from '../../src/inventory/index.ts';
+import { compileBindings, deriveVocabulary, inventoryGrammars } from '../../src/inventory/index.ts';
 import { levelMembers } from '../../src/inventory/derive.ts';
 import { renderVocabularyFile, vocabularyFiles } from '../../src/inventory/emit.ts';
 
@@ -38,8 +38,8 @@ describe('parseQuery', () => {
 
 describe('compileBindings', () => {
 	it('reports each bindings file against its parser and never loses a compiling grammar', async () => {
-		const reports = await compileBindings(INVENTORY_GRAMMARS);
-		expect(reports.map((r) => r.grammar)).toEqual([...INVENTORY_GRAMMARS]);
+		const reports = await compileBindings(inventoryGrammars());
+		expect(reports.map((r) => r.grammar)).toEqual([...inventoryGrammars()]);
 		for (const report of reports) {
 			if (CEILING.compiling.includes(report.grammar)) expect(report.error, report.grammar).toBeNull();
 		}

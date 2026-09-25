@@ -139,7 +139,7 @@ export interface ProbeKindOptions {
 
 export async function run(opts: ProbeKindOptions): Promise<number> {
 	if (!opts.grammar) {
-		process.stderr.write('probe-kind: --grammar <rust|typescript|python> required\n');
+		process.stderr.write('probe-kind: --grammar <name> required\n');
 		return 2;
 	}
 	const grammar = opts.grammar;

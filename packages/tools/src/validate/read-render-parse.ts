@@ -537,7 +537,7 @@ export async function validateReadRenderParse(
 	// native engine.
 	const { loadBoundaryRender } = await import('../scripts/collect-baseline.ts');
 	const render: (node: AnyNodeData) => string = await loadBoundaryRender(
-		grammar as 'rust' | 'typescript' | 'python'
+		grammar
 	);
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);

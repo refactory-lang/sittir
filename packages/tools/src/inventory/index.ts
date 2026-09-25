@@ -1,15 +1,18 @@
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { compileQuery, parseQuery } from './query.ts';
 import { loadSlotModel } from './model.ts';
 import { type Derivation, type GrammarInput, derive } from './derive.ts';
 import { renderIndexFile, renderVocabularyFile, vocabularyFiles } from './emit.ts';
+import { allGrammars, grammarPackageDir, type GrammarName } from '@sittir/codegen/grammars';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 export const VOCABULARY_DIR = join(ROOT, 'packages', 'types', 'src', 'vocabulary');
-export const INVENTORY_GRAMMARS = ['python', 'typescript', 'rust'] as const;
+export function inventoryGrammars(): readonly GrammarName[] {
+	return allGrammars().filter((g) => existsSync(join(grammarPackageDir(g), 'bindings.scm')));
+}
 
 export interface BindingsInventoryOptions {
 	readonly grammars?: readonly string[];
@@ -27,7 +30,7 @@ export interface CompileReport {
 export async function compileBindings(grammars: readonly string[]): Promise<CompileReport[]> {
 	const out: CompileReport[] = [];
 	for (const grammar of grammars) {
-		const text = readFileSync(join(ROOT, 'packages', grammar, 'bindings.scm'), 'utf8');
+		const text = readFileSync(join(grammarPackageDir(grammar), 'bindings.scm'), 'utf8');
 		try {
 			const compiled = await compileQuery(grammar, text);
 			out.push({ grammar, patterns: compiled.patterns, error: null });
@@ -41,12 +44,12 @@ export async function compileBindings(grammars: readonly string[]): Promise<Comp
 export function loadInputs(grammars: readonly string[]): GrammarInput[] {
 	return grammars.map((grammar) => ({
 		grammar,
-		patterns: parseQuery(readFileSync(join(ROOT, 'packages', grammar, 'bindings.scm'), 'utf8')),
+		patterns: parseQuery(readFileSync(join(grammarPackageDir(grammar), 'bindings.scm'), 'utf8')),
 		model: loadSlotModel(grammar)
 	}));
 }
 
-export function deriveVocabulary(grammars: readonly string[] = INVENTORY_GRAMMARS): Derivation {
+export function deriveVocabulary(grammars: readonly string[] = inventoryGrammars()): Derivation {
 	return derive(loadInputs(grammars));
 }
 
@@ -104,7 +107,7 @@ export function membersTable(d: Derivation): string {
 }
 
 export async function run(opts: BindingsInventoryOptions): Promise<number> {
-	const grammars = opts.grammars ?? INVENTORY_GRAMMARS;
+	const grammars = opts.grammars ?? inventoryGrammars();
 	let code = 0;
 	if (opts.check) {
 		for (const report of await compileBindings(grammars)) {

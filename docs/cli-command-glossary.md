@@ -15,7 +15,7 @@ Generate typed factories, templates, and native bindings from a grammar
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `-o, --output <dir>` — Output directory
 - `-a, --all` — Generate TS + native render-module artifacts (full chain)
 - `--tests-dir <dir>` — Output directory for test files
@@ -24,6 +24,7 @@ Generate typed factories, templates, and native bindings from a grammar
 - `--ts-generate` — Run 'tree-sitter generate' in .sittir/
 - `--skip-ts-chain` — Skip the auto transpile + tree-sitter generate chain
 - `--roundtrip` — Run validator probes after generation
+- `--post-generate-only` — Run only the post-generate fixtures and probes
 - `--no-build-native` — Skip the post-regen N-API rebuild
 - `--native-debug` — Build the post-regen N-API binding in debug (incremental, unoptimized — dev iteration only, never for CI/validation)
 - `--no-workspace-check` — Skip the post-build cargo check --workspace (multi-grammar drivers run it once, on the last grammar)
@@ -99,7 +100,7 @@ Replay the first failing read-render-parse case as a rich trace
 
 **Arguments**
 
-- `grammar` (required) — Grammar to trace (rust, typescript, python)
+- `grammar` (required) — Grammar to trace
 
 **Options**
 
@@ -121,8 +122,8 @@ Census the rule shapes that reach each Assembled* constructor, grouped by modelT
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
-- `--all-grammars` — Run all three grammars
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--all-grammars` — Run every stable grammar
 - `--format <fmt>` — Output format: table | json (default: `table`)
 - `--view <view>` — Which rule view to census: constructor | simplified | both (default: `both`)
 
@@ -194,7 +195,7 @@ Inspect kind classification through the compiler phases
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `--kind <name>` — Show only this kind (repeatable) (default: ``)
 - `--modeltype <type>` — Filter output to this modelType
 - `--all` — Show all assembled kinds
@@ -211,8 +212,8 @@ Declared rule kinds with zero corpus exposure
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
-- `--all-grammars` — Run all three grammars
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--all-grammars` — Run every stable grammar
 - `--format <fmt>` — Output format: list | json (default: `list`)
 
 **Example**
@@ -227,7 +228,7 @@ Group read-render-parse failures by defect signature (deepest transport frame)
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 
 **Example**
 
@@ -245,7 +246,7 @@ Dump per-kind validator failures for a grammar
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 
 **Example**
 
@@ -259,8 +260,8 @@ Diagnostic for read-render-parse AST gaps
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
-- `--all-grammars` — Run all three grammars
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--all-grammars` — Run every stable grammar
 - `-m, --mode <mode>` — Mode: deep | shallow | diff (default: `deep`)
 - `-f, --filter <substr>` — Restrict to entries whose name contains substr
 - `-c, --cluster` — Group mismatches by message pattern
@@ -295,7 +296,7 @@ Print the strict factory source that rebuilds a source file
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `-f, --file <path>` — Source file to rebuild
 - `-e, --export <name>` — Exported function name (default: rebuild<Basename>)
 - `-o, --out <path>` — Write the module here instead of stdout
@@ -314,7 +315,7 @@ Exercise factory round-trips with built-in or corpus cases
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `-k, --kinds <kind,...>` — Comma-separated kind list to exercise
 
 **Example**
@@ -329,7 +330,7 @@ Field source tracking (override/enriched/grammar)
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `-k, --kind <K>` — Filter to a single rule kind
 - `--redundant` — Only print redundant-nested FIELD rows
 - `--source <src>` — Filter by source tag: override|enriched|grammar|inferred
@@ -346,7 +347,7 @@ Run pre-codegen grammar diagnostics
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 
 **Example**
 
@@ -360,7 +361,7 @@ Count hoisted kinds and list the ones no parent slot seats
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 
 **Example**
 
@@ -374,7 +375,7 @@ Inspect symbol references or derivation suggestions
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `--mode <mode>` — Mode: refs | suggestions (default: `refs`)
 - `--symbol <name>` — Target symbol name (refs mode) (default: `_type_identifier`)
 - `--base` — Use base grammar.js instead of overrides
@@ -392,7 +393,7 @@ Inspect Loose/Config type shapes via the TS compiler API
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `--entry <kindNs>` — Single namespace interface to inspect
 - `--namespaces <ns,...>` — Comma-separated list of namespaces (overrides --entry)
 - `--slots` — Print each slot type on the resolved Loose shape
@@ -410,7 +411,7 @@ List groups, unaliased, and phantom kinds
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `--groups` — List all group-modelled kinds
 - `--unaliased` — List groups with no visible non-group twin
 - `--phantom` — List phantom kinds (nodeMap without a parser symbol)
@@ -427,7 +428,7 @@ Enumerate codegen kinds with no parser symbol across grammars
 
 **Arguments**
 
-- `grammars…` (optional) — Grammars to check (default: all three)
+- `grammars…` (optional) — Grammars to check (default: every stable grammar)
 
 **Example**
 
@@ -441,7 +442,7 @@ Structured diagnostics for parse → readNode → render cycle
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `-s, --source <text>` — Source text to probe
 - `--stdin` — Read source from stdin
 - `-k, --kind <kind>` — Find first node of this kind and probe it
@@ -471,7 +472,7 @@ Probe read-render-parse coverage for a target kind
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `-t, --target <kind>` — Target kind to check coverage for (default: `visibility_modifier`)
 
 **Example**
@@ -486,7 +487,7 @@ Dump a rule shape at every compiler phase
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `-k, --kind <kind>` — Rule kind to probe
 - `--no-overrides` — Skip grammar.sittir.ts, use base grammar.js directly
 - `--compact` — Compact JSON output (no indent)
@@ -505,7 +506,7 @@ Probe a corpus entry through read → wrap → render pipeline
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `-e, --entry <name>` — Corpus entry name (exact match)
 - `--entry-pattern <regex>` — Corpus entry name (regex match, first hit)
 - `--first-failing` — Probe the first RT-failing entry for the grammar
@@ -529,7 +530,7 @@ Aggregate validator failures across grammars
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `--top <n>` — Number of top patterns (default: `15`)
 
 **Example**
@@ -544,7 +545,7 @@ Profile factory-render-parse failures
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `--ast` — Include AST mismatch breakdown
 
 **Example**
@@ -576,8 +577,8 @@ Census separated-list shapes: flank-carrying (visible-kind hoist) vs flankless (
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
-- `--all-grammars` — Run all three grammars
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--all-grammars` — Run every stable grammar
 - `--format <fmt>` — Output format: table | json (default: `table`)
 
 **Example**
@@ -610,8 +611,8 @@ Assert the live structural variantChildKinds derivation equals committed node-mo
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
-- `--all-grammars` — Run every grammar (rust, typescript, python)
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--all-grammars` — Run every stable grammar
 
 **Example**
 
@@ -625,7 +626,7 @@ Walk a parsed tree and print kind counts
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `-s, --source <text>` — Source text to parse
 - `--render` — Render each visited node
 

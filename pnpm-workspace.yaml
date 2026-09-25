@@ -1,8 +1,6 @@
 packages:
   - 'packages/*'
-  - 'rust/crates/sittir-rust'
-  - 'rust/crates/sittir-typescript'
-  - 'rust/crates/sittir-python'
+  - 'rust/crates/sittir-*'
 
 # pnpm 10 moved these out of package.json's "pnpm" field (which is no longer read).
 onlyBuiltDependencies:

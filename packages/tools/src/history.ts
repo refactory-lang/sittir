@@ -13,13 +13,14 @@ import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import type { Grammar, Backend } from './run.ts';
+import type { Backend } from './run.ts';
+import type { GrammarName } from '@sittir/codegen/grammars';
 
 /** One row in `validation-history.jsonl`. */
 export interface ValidationRun {
 	/** ISO-8601 timestamp of the run. */
 	ts: string;
-	grammar: Grammar;
+	grammar: GrammarName;
 	backend: Backend;
 	fromPass: number;
 	fromTotal: number;

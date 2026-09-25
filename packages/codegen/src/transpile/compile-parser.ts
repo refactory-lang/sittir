@@ -2,6 +2,7 @@ import { existsSync, statSync, mkdirSync, copyFileSync, readFileSync } from 'nod
 import { join, resolve, dirname } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { pruneOrphanedPlaceholderRules } from './prune-grammar-json.ts';
+import { upstreamPackage } from '../grammars.ts';
 
 export interface CompileOptions {
 	force?: boolean;
@@ -49,8 +50,8 @@ function syncExternalScanner(grammarDir: string, sittirDir: string): void {
 
 	const grammarName = grammarDir.split('/').pop() ?? '';
 	const candidates = [
-		join(grammarDir, 'node_modules', `tree-sitter-${grammarName}`, 'src', 'scanner.c'),
-		join(grammarDir, 'node_modules', `tree-sitter-${grammarName}`, grammarName, 'src', 'scanner.c')
+		join(grammarDir, 'node_modules', upstreamPackage(grammarName), 'src', 'scanner.c'),
+		join(grammarDir, 'node_modules', upstreamPackage(grammarName), grammarName, 'src', 'scanner.c')
 	];
 	const baseScanner = candidates.find((p) => existsSync(p));
 	if (!baseScanner) return;

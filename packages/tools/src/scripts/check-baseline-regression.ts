@@ -51,6 +51,7 @@
  * and calls the same function.
  */
 
+import { stableGrammars } from '@sittir/codegen/grammars';
 import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
@@ -94,7 +95,7 @@ export type RegressionVerdict =
 // truth for "which validators / which grammars exist".
 // ---------------------------------------------------------------------------
 
-const GRAMMARS = ['python', 'rust', 'typescript'] as const;
+const GRAMMARS = stableGrammars();
 
 const VALIDATORS = ['from', 'coverage', 'roundtrip', 'factoryRoundtrip'] as const;
 type ValidatorName = (typeof VALIDATORS)[number];
@@ -457,10 +458,19 @@ function passCountFail(path: string, before: number, after: number): RegressionV
  * conflicting floor on the same numbers. This function owns only the
  * per-grammar, per-validator, and per-grammar parity-fixture floors.
  */
-function checkPassCounts(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
+function* comparedGrammars(
+	base: BackendBaseline,
+	head: BackendBaseline
+): Generator<readonly [string, GrammarEntry, GrammarEntry]> {
 	for (const g of GRAMMARS) {
 		const baseGrammar = base.grammars[g];
 		const headGrammar = head.grammars[g];
+		if (baseGrammar && headGrammar) yield [g, baseGrammar, headGrammar];
+	}
+}
+
+function checkPassCounts(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
+	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
 		for (const vName of VALIDATORS) {
 			const b = baseGrammar.validators[vName] as ValidatorResult;
 			const h = headGrammar.validators[vName] as ValidatorResult;
@@ -497,9 +507,9 @@ function sumByKind(byKind: Readonly<Record<string, number>>): number {
 }
 
 function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	for (const g of GRAMMARS) {
-		const before = base.grammars[g].parityFixtures.leftOutByKind ?? {};
-		const after = head.grammars[g].parityFixtures.leftOutByKind ?? {};
+	for (const [g, baseGE, headGE] of comparedGrammars(base, head)) {
+		const before = baseGE.parityFixtures.leftOutByKind ?? {};
+		const after = headGE.parityFixtures.leftOutByKind ?? {};
 		const beforeSum = sumByKind(before);
 		const afterSum = sumByKind(after);
 		if (afterSum <= beforeSum) continue;
@@ -574,9 +584,7 @@ function parityFixturesSum(p: ParityFixtures): number {
 }
 
 function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	for (const g of GRAMMARS) {
-		const baseGE: GrammarEntry = base.grammars[g];
-		const headGE: GrammarEntry = head.grammars[g];
+	for (const [g, baseGE, headGE] of comparedGrammars(base, head)) {
 		for (const vName of VALIDATORS) {
 			const baseV = baseGE.validators[vName] as ValidatorResult;
 			const headV = headGE.validators[vName] as ValidatorResult;

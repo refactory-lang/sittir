@@ -7,18 +7,19 @@
  * breakdowns.
  *
  * Usage:
- *   profile [--grammar rust|typescript|python] [--top N]
+ *   profile [--grammar <name>] [--top N]
  *
  * Options:
- *   --grammar   one grammar only (default: all three)
+ *   --grammar   one grammar only (default: all stable grammars)
  *   --top       number of top message patterns to show (default: 15)
  */
+
+import { assertGrammar, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 
 // ---------------------------------------------------------------------------
 // Local type mirrors — keeps compile-time safety without TS6307 static imports
 // ---------------------------------------------------------------------------
 
-type Grammar = 'rust' | 'typescript' | 'python';
 
 // ---------------------------------------------------------------------------
 // Dynamic validator module loader — avoids TS6307 cross-project imports
@@ -47,10 +48,10 @@ interface FactoryResult {
 }
 
 interface ValidatorModules {
-	runFrom: (grammar: Grammar, backend?: string) => Promise<FromResult>;
-	runRt: (grammar: Grammar, backend?: string) => Promise<RtResult>;
-	runCoverage: (grammar: Grammar) => CovResult;
-	runFactory: (grammar: Grammar, backend?: string) => Promise<FactoryResult>;
+	runFrom: (grammar: GrammarName, backend?: string) => Promise<FromResult>;
+	runRt: (grammar: GrammarName, backend?: string) => Promise<RtResult>;
+	runCoverage: (grammar: GrammarName) => CovResult;
+	runFactory: (grammar: GrammarName, backend?: string) => Promise<FactoryResult>;
 }
 
 async function loadValidatorModules(): Promise<ValidatorModules> {
@@ -63,7 +64,6 @@ async function loadValidatorModules(): Promise<ValidatorModules> {
 	};
 }
 
-const ALL_GRAMMARS: readonly Grammar[] = ['rust', 'typescript', 'python'];
 
 export interface ProfileOptions {
 	grammar?: string;
@@ -71,7 +71,7 @@ export interface ProfileOptions {
 }
 
 interface Failure {
-	grammar: Grammar;
+	grammar: GrammarName;
 	/** 'from' | 'rt-reparse' | 'rt-ast' | 'cov' | 'factory-reparse' | 'factory-ast' */
 	check: string;
 	kind: string;
@@ -93,7 +93,7 @@ function kindFromRtName(name: string): string {
 }
 
 /** Run all four validators for one grammar and collect Failure records. */
-async function profileGrammar(grammar: Grammar): Promise<Failure[]> {
+async function profileGrammar(grammar: GrammarName): Promise<Failure[]> {
 	const { runFrom, runRt, runCoverage, runFactory } = await loadValidatorModules();
 	const [from, rt, fac] = await Promise.all([runFrom(grammar, 'native'), runRt(grammar, 'native'), runFactory(grammar, 'native')]);
 	const cov = runCoverage(grammar);
@@ -169,7 +169,7 @@ function report(all: Failure[], top: number): void {
 // ---------------------------------------------------------------------------
 
 export async function run(opts: ProfileOptions): Promise<number> {
-	const grammars: readonly Grammar[] = opts.grammar ? [opts.grammar as Grammar] : ALL_GRAMMARS;
+	const grammars: readonly GrammarName[] = opts.grammar ? [assertGrammar(opts.grammar)] : stableGrammars();
 	const top = opts.top;
 	const all: Failure[] = [];
 	for (const g of grammars) {

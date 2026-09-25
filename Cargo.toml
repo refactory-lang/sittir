@@ -1,12 +1,6 @@
 [workspace]
 resolver = "2"
-members = [
-  "rust/crates/sittir-core",
-  "rust/crates/sittir-parity-tests",
-  "rust/crates/sittir-rust",
-  "rust/crates/sittir-typescript",
-  "rust/crates/sittir-python"
-]
+members = ["rust/crates/*"]
 
 # NOTE on workspace-root location (deviation from spec 012 task T002):
 # T002 asked for `/rust/Cargo.toml` as the workspace root with members

@@ -27,16 +27,15 @@
  * sittir dump-ast-mismatches --grammar rust --filter 'Functions with mutable parameters'
  * ```
  *
- * All three grammars at once:
+ * Every stable grammar at once:
  * ```sh
  * sittir dump-ast-mismatches --all-grammars --cluster
  * ```
  */
 
 
-type Grammar = 'rust' | 'python' | 'typescript';
-const GRAMMARS: readonly Grammar[] = ['rust', 'python', 'typescript'];
 
+import { assertGrammar, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 type Mode = 'deep' | 'shallow' | 'diff';
 
 export interface DumpAstMismatchesOptions {
@@ -50,7 +49,7 @@ export interface DumpAstMismatchesOptions {
 }
 
 interface RunOptions {
-	grammar: Grammar;
+	grammar: GrammarName;
 	mode: Mode;
 	filter?: string;
 	cluster: boolean;
@@ -78,7 +77,7 @@ interface Mismatch {
 }
 
 interface SingleRun {
-	grammar: Grammar;
+	grammar: GrammarName;
 	mode: Exclude<Mode, 'diff'>;
 	pass: number;
 	total: number;
@@ -88,14 +87,14 @@ interface SingleRun {
 }
 
 interface DiffRun {
-	grammar: Grammar;
+	grammar: GrammarName;
 	mode: 'diff';
 	deep: SingleRun;
 	shallow: SingleRun;
 	deepOnly: Mismatch[];
 }
 
-async function runSingle(grammar: Grammar, mode: Exclude<Mode, 'diff'>): Promise<SingleRun> {
+async function runSingle(grammar: GrammarName, mode: Exclude<Mode, 'diff'>): Promise<SingleRun> {
 	const { validateReadRenderParse } = await import('./read-render-parse.ts');
 	const result = await validateReadRenderParse(grammar, {
 		backend: 'native',
@@ -120,7 +119,7 @@ async function runSingle(grammar: Grammar, mode: Exclude<Mode, 'diff'>): Promise
 	};
 }
 
-async function runDiff(grammar: Grammar): Promise<DiffRun> {
+async function runDiff(grammar: GrammarName): Promise<DiffRun> {
 	const deep = await runSingle(grammar, 'deep');
 	const shallow = await runSingle(grammar, 'shallow');
 	const shallowKeys = new Set(shallow.mismatches.map((m) => m.name));
@@ -224,7 +223,7 @@ export async function run(opts: DumpAstMismatchesOptions): Promise<number> {
 		process.stderr.write(`invalid --format '${format}', expected one of: list, json\n`);
 		return 2;
 	}
-	const grammars: readonly Grammar[] = opts.allGrammars ? GRAMMARS : [opts.grammar as Grammar];
+	const grammars: readonly GrammarName[] = opts.allGrammars ? stableGrammars() : [assertGrammar(opts.grammar ?? '')];
 	for (const grammar of grammars) {
 		if (grammars.length > 1) console.log(`\n# === ${grammar} ===`);
 		await runGrammar({
