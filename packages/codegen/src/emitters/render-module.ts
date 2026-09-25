@@ -2062,23 +2062,33 @@ function literalSeamedArm(enumName: string, variant: string, write: string, seam
 	];
 }
 
+interface LiteralKindIds {
+	readonly ids: readonly { readonly id: number; readonly variant: string }[];
+	readonly allResolved: boolean;
+}
+
 function literalKindIdsOf(
 	entry: PerSlotChildEnum,
 	kindIdByKind: ReadonlyMap<string, number> | undefined,
 	literalVariantByKey: ReadonlyMap<string, string>,
 	kindEntries: readonly KindEnumEntry[] | undefined
-): readonly { readonly id: number; readonly variant: string }[] {
-	if (kindIdByKind === undefined) return [];
-	const out: { id: number; variant: string }[] = [];
+): LiteralKindIds {
+	if (kindIdByKind === undefined) return { ids: [], allResolved: entry.literals.length === 0 };
+	const ids: { id: number; variant: string }[] = [];
 	const seen = new Set<number>();
+	let allResolved = true;
 	for (const literal of entry.literals) {
 		const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
-		if (id === undefined || variant === undefined || seen.has(id)) continue;
+		if (id === undefined || variant === undefined) {
+			allResolved = false;
+			continue;
+		}
+		if (seen.has(id)) continue;
 		seen.add(id);
-		out.push({ id, variant });
+		ids.push({ id, variant });
 	}
-	return out;
+	return { ids, allResolved };
 }
 
 function prepareFilledSlotOf(entry: PerSlotChildEnum, nodeMap: NodeMap): AssembledNonterminal | undefined {
@@ -2089,9 +2099,9 @@ function prepareFilledSlotOf(entry: PerSlotChildEnum, nodeMap: NodeMap): Assembl
 function fromKindIdImpl(
 	enumName: string,
 	entry: PerSlotChildEnum,
-	literalIds: readonly { readonly id: number; readonly variant: string }[]
+	literalIds: LiteralKindIds
 ): string[] {
-	if (entry.kinds.length > 0 || literalIds.length !== entry.literals.length) {
+	if (entry.kinds.length > 0 || !literalIds.allResolved) {
 		throw new Error(
 			`render-module: ${entry.ownerKind}.${entry.fieldName} is a registered choice option filled at prepare, but ${enumName} has an arm no kind id can build`
 		);
@@ -2100,7 +2110,7 @@ function fromKindIdImpl(
 		`impl ${enumName} {`,
 		'    pub fn from_kind_id(id: u16) -> Option<Self> {',
 		'        match id {',
-		...literalIds.map(({ id, variant }) => `            ${id} => Some(Self::${variant}),`),
+		...literalIds.ids.map(({ id, variant }) => `            ${id} => Some(Self::${variant}),`),
 		'            _ => None,',
 		'        }',
 		'    }',
@@ -2179,7 +2189,7 @@ function emitPerSlotChildEnum(
 	if (kindIdByKind !== undefined) {
 		const kindIdArms: string[] = [];
 		const emittedIds = new Set<number>();
-		for (const { id, variant } of literalIds) {
+		for (const { id, variant } of literalIds.ids) {
 			emittedIds.add(id);
 			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
 		}

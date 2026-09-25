@@ -3963,8 +3963,10 @@ prepare-filled slot, its `from_kind_id` (`fromKindIdImpl`).
 ### `packages/codegen/src/emitters/render-module.ts::literalKindIdsOf`
 
 A per-slot enum's literal arms as kind id → unit variant pairs, first
-occurrence per id: the literal's resolved kind id and the variant name the
-enum gave that literal. Empty without parser kind ids.
+occurrence per id (`ids`: the literal's resolved kind id and the variant name
+the enum gave that literal), and whether every literal resolved to both
+(`allResolved`). Two literals sharing a kind id are one pair, not a failure.
+Empty without parser kind ids.
 
 ### `packages/codegen/src/emitters/render-module.ts::prepareFilledSlotOf`
 
@@ -3977,7 +3979,7 @@ The `from_kind_id(u16) -> Option<Self>` constructor emitted on a per-slot
 enum that backs a prepare-filled slot: one arm per literal kind id
 (`literalKindIdsOf`), `None` for any other id. Every arm of such an enum must
 be a literal a kind id can build; an enum with a node arm, or a literal
-without a resolved kind id, fails codegen, since `prepare` could not build
+that did not resolve (`allResolved`), fails codegen, since `prepare` could not build
 that arm from the option's resolved kind id.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderAnyTransportWithNapiFromValue`

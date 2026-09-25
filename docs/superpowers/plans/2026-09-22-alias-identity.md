@@ -846,6 +846,12 @@ The user's rule: a sub-factory arm exists exactly where a variant label (`varian
 
 **Follow-up:** `emitters/ir.ts`'s `memberKeyFor` derives a supertype member's ir key in the emitter (`supertypeMemberName`). The member's stamped `variant` already carries that name; read it instead.
 
+**Follow-up:** the automatic-variant record is keyed by content (owner, label, reference). An authored writer claiming one site also unclaims any identical arm elsewhere under the same owner. Key it by an identity stamped at the mint (pairs with stamping `mintedBy` at mint time).
+
+**Follow-up:** a registered choice option's resolved arm lives in `ctx.options.spacing`, so the table's name no longer says what it holds. Rename it for what it carries (spacing and choice arms).
+
+**Follow-up:** `optionDefaultFills` finds a slot's option site by searching the render plan by (kind, slot). Stamp the site on the slot where the site is registered and read it.
+
 **Follow-up:** generated arm tests for a parameterless leaf arm (e.g. rust `pub.scope.crate builds the parent`) pass a hand-built node cast `as any`. `ir.visibilityModifier.pub.scope.crate()` with no arguments type-checks and renders `pub(crate)`, so the test generator should call such an arm with no arguments and drop the cast.
 
 ### Task 7b: A built node carries the alias envelope its read shows
@@ -877,6 +883,17 @@ Facts:
 - [x] Test: a node built with the option omitted renders under two different engine option sets to two different results. The same node with the option set explicitly renders the same under both.
 - [x] Remove the workarounds: the typescript `expectTestFailures` entries citing the unfilled option default, and examples/18's explicit `terminator`.
 - [x] Gates as Task 7.
+
+### Task 7e: A keyword literal arm is named by its text
+
+The user's ruling: a literal arm whose token is one of sittir's keyword mints (`<text>_keyword`) is named by its source text, so `junction.andKeyword` becomes `junction.and`. The `_keyword` suffix exists for parser disambiguation, not as a name. This narrows the rule that literal arms take their token kind's name: every non-keyword literal keeps its kind name. Run it right after the push of Task 7c, before retiring the alias-shape hand-written rules.
+
+- [ ] The keyword mint records a fact on the kind it mints: its source text (or that it is a keyword mint). No emitter strips `_keyword` from a name.
+- [ ] `armFactsOf` names a literal arm whose resolved kind carries that fact by the fact's text, through `armNameOf`.
+- [ ] A clash with a node arm of the same name goes through the existing ambiguous-name diagnostic.
+- [ ] Test: a keyword literal arm is named by its text; a non-keyword literal keeps its kind name.
+- [ ] The commit lists every renamed ir path per grammar.
+- [ ] Gates as Task 7.
 
 ### Task 7d: The identifier leaf guard rejects a reserved word the slot does not admit
 
