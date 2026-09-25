@@ -107,58 +107,6 @@ export const exportSpecifier: typeof B.exportSpecifier & {
 	}
 };
 
-const importStatementClauseFrom$double =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'source'> & { source: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { source: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, source: _c(child)(...seated) } as never, options as never);
-	};
-const importStatementClauseFrom$single =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'source'> & { source: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { source: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, source: _c(child)(...seated) } as never, options as never);
-	};
-const importStatementClauseFrom: {
-	double: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildImportStatementClauseFrom>[0], 'source'> & {
-				source: ArgsOf<typeof F.buildStringDouble>;
-			},
-			options?: OptionsArg<typeof F.buildImportStatementClauseFrom>
-		) => ReturnType<typeof F.buildImportStatementClauseFrom>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToImportStatementClauseFrom>[0], 'source'> & {
-				source: ArgsOf<typeof C.coerceToStringDouble>;
-			},
-			options?: OptionsArg<typeof C.coerceToImportStatementClauseFrom>
-		) => ReturnType<typeof C.coerceToImportStatementClauseFrom>;
-	};
-	single: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildImportStatementClauseFrom>[0], 'source'> & {
-				source: ArgsOf<typeof F.buildStringSingle>;
-			},
-			options?: OptionsArg<typeof F.buildImportStatementClauseFrom>
-		) => ReturnType<typeof F.buildImportStatementClauseFrom>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToImportStatementClauseFrom>[0], 'source'> & {
-				source: ArgsOf<typeof C.coerceToStringSingle>;
-			},
-			options?: OptionsArg<typeof C.coerceToImportStatementClauseFrom>
-		) => ReturnType<typeof C.coerceToImportStatementClauseFrom>;
-	};
-} = {
-	double: {
-		strict: importStatementClauseFrom$double(F.buildImportStatementClauseFrom, F.buildStringDouble),
-		coerce: importStatementClauseFrom$double(C.coerceToImportStatementClauseFrom, C.coerceToStringDouble)
-	},
-	single: {
-		strict: importStatementClauseFrom$single(F.buildImportStatementClauseFrom, F.buildStringSingle),
-		coerce: importStatementClauseFrom$single(C.coerceToImportStatementClauseFrom, C.coerceToStringSingle)
-	}
-};
-
 const importStatement$clauseFrom =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(

@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "624247e1181ce8c5ede09ae827cffea9ed064460798b5f01a57fc7d13504db6d",
+  "source_hash": "ab4526ffcc856b123ad7a2f897736965f65d9c01b61e44f0f94801b2e010a15b",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "1fd958abbfc1ec8d7134f1017d428e6feb3eb368763c9330ed7f467b0e11a247",
     "packages/python/.sittir/grammar.js": "48c3361eef8def91cd0d16506ca6b36826e01de668eeeefde8bf981ba2311433",
@@ -23,7 +23,7 @@
     "packages/python/src/factories/bundle.ts": "f45acd00d59f4f0867c97fe92772326650de32439c356388e5ac1c8522588330",
     "packages/python/src/factories/coerce.ts": "bc59faa47efb79d30554d94e4ed9174c9265133d10ca027b2958adbf4e884522",
     "packages/python/src/factories/index.ts": "7057bdcaf4966c1f223ff075321a50893c8c03d88691361a9b8ef91faf41abca",
-    "packages/python/src/factories/overlays/polymorphs.ts": "12f36898a261d90fe3ef7d0252df24d34489aaf56074335fb37677da9b5904c2",
+    "packages/python/src/factories/overlays/polymorphs.ts": "c2ce812c2f1c50307bf58240f46a8f76e30f2ab6149f755d31c8b67dc2b4841b",
     "packages/python/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/python/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/python/src/factories/raw.ts": "39418008f82d1a6ed375256796227bd0a40ebacd7608ab2cfcc18c00da94200a",

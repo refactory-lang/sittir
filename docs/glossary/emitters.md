@@ -14949,7 +14949,25 @@ The strict/coerce expression pair for a parent builder; `coerce` is absent when 
 The strict/coerce expression pair for an arm: a direct child uses its own factories (strict builder doubling as the coerce seat when no coercer exists); a flattened arm references the decorated child const emitted above (`<childKey>.<path>.strict` / `.coerce`).
 
 A flattened arm through a hoisted child references that child's private
-wiring const under the same `<childKey>.<path>` spelling.
+wiring const under the same `<childKey>.<path>` spelling. Whenever the refs
+spell a child's wiring const, they name that child in `set`, so the overlay
+knows which private consts are read.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::OverlayChunk`
+
+One wiring const's emitted lines (its methods and its const), whether it is
+private (a hoisted compound's const), whether it carries methods, and the
+kinds whose wiring consts its text reads (`uses`, collected from the `set`
+of every ref the emitters wrote into it).
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::withoutUnusedPrivateSets`
+
+Drops every private wiring const no other kept chunk reads, to a fixpoint (a
+private const read only by a dropped one goes too). What reads a const is
+exactly what the emitters wrote (`OverlayChunk.uses`): arms, seats, alias
+routes and supertype variant routes all report through their refs' `set`,
+so no reader is listed by hand. The helpers go before the first kept chunk
+that has methods.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::shape`
 
