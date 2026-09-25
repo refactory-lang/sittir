@@ -24,7 +24,7 @@ const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '
 // bare-text call must keep its one-argument arity.
 const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
 	options === undefined ? _s<R>(f)(arg) : _s<R>(f)(arg, options);
-// A spliced group is present as a whole or absent as a whole: the second
+// A flattened group is present as a whole or absent as a whole: the second
 // overload forbids every one of its keys.
 type NoneOf<T> = { [K in keyof T]?: never };
 
@@ -381,7 +381,7 @@ export const forInStatement: typeof B.forInStatement & {
 	}
 };
 
-const catchClause$splice =
+const catchClause$flatten =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config:
@@ -406,13 +406,13 @@ const catchClause$seated: (
 		| ArgsOf<typeof F.buildCatchClause>[0]
 		| (OmitEach<NonNullable<ArgsOf<typeof F.buildCatchClause>[0]>, 'catchClauseGroup'> &
 				(ArgsOf<typeof F.buildCatchClauseGroup>[0] | NoneOf<ArgsOf<typeof F.buildCatchClauseGroup>[0]>))
-) => ReturnType<typeof F.buildCatchClause> = catchClause$splice(F.buildCatchClause, F.buildCatchClauseGroup);
+) => ReturnType<typeof F.buildCatchClause> = catchClause$flatten(F.buildCatchClause, F.buildCatchClauseGroup);
 const catchClause$seatedCoerce: (
 	config:
 		| ArgsOf<typeof C.coerceToCatchClause>[0]
 		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToCatchClause>[0]>, 'catchClauseGroup'> &
 				(ArgsOf<typeof C.coerceToCatchClauseGroup>[0] | NoneOf<ArgsOf<typeof C.coerceToCatchClauseGroup>[0]>))
-) => ReturnType<typeof C.coerceToCatchClause> = catchClause$splice(C.coerceToCatchClause, C.coerceToCatchClauseGroup);
+) => ReturnType<typeof C.coerceToCatchClause> = catchClause$flatten(C.coerceToCatchClause, C.coerceToCatchClauseGroup);
 export const catchClause: typeof B.catchClause & {
 	strict: typeof catchClause$seated;
 	coerce: typeof catchClause$seatedCoerce;

@@ -6396,7 +6396,7 @@
             "name": "match_pattern"
           },
           "annotations": {
-            "spliced": true
+            "flattened": true
           }
         },
         {
@@ -14088,7 +14088,7 @@
               "name": "match_pattern"
             },
             "annotations": {
-              "spliced": true
+              "flattened": true
             }
           },
           {
@@ -14158,7 +14158,7 @@
               "name": "match_pattern"
             },
             "annotations": {
-              "spliced": true
+              "flattened": true
             }
           },
           {

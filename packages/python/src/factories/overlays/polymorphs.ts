@@ -24,7 +24,7 @@ const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '
 // bare-text call must keep its one-argument arity.
 const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
 	options === undefined ? _s<R>(f)(arg) : _s<R>(f)(arg, options);
-// A spliced group is present as a whole or absent as a whole: the second
+// A flattened group is present as a whole or absent as a whole: the second
 // overload forbids every one of its keys.
 type NoneOf<T> = { [K in keyof T]?: never };
 
@@ -1552,7 +1552,7 @@ export const subscript: typeof B.subscript & {
 	coerce: subscript$seatedCoerce
 };
 
-const slice$splice =
+const slice$flatten =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config:
@@ -1581,7 +1581,7 @@ const slice$seated: (
 					| { expression: ArgsOf<typeof F.buildSliceGroup>[0] }
 					| NoneOf<{ expression: ArgsOf<typeof F.buildSliceGroup>[0] }>
 				))
-) => ReturnType<typeof F.buildSlice> = slice$splice(F.buildSlice, F.buildSliceGroup);
+) => ReturnType<typeof F.buildSlice> = slice$flatten(F.buildSlice, F.buildSliceGroup);
 const slice$seatedCoerce: (
 	config:
 		| ArgsOf<typeof C.coerceToSlice>[0]
@@ -1590,7 +1590,7 @@ const slice$seatedCoerce: (
 					| { expression: ArgsOf<typeof C.coerceToSliceGroup>[0] }
 					| NoneOf<{ expression: ArgsOf<typeof C.coerceToSliceGroup>[0] }>
 				))
-) => ReturnType<typeof C.coerceToSlice> = slice$splice(C.coerceToSlice, C.coerceToSliceGroup);
+) => ReturnType<typeof C.coerceToSlice> = slice$flatten(C.coerceToSlice, C.coerceToSliceGroup);
 export const slice: typeof B.slice & {
 	strict: typeof slice$seated;
 	coerce: typeof slice$seatedCoerce;

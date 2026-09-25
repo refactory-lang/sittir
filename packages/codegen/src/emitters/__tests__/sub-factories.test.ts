@@ -9,7 +9,7 @@ import type { NodeMap } from '../../compiler/types.ts';
 import {
 	armConfigKeys,
 	elementsSeatOf,
-	spliceSeatOf,
+	flattenSeatOf,
 	subFactoriesOf,
 	type NodeArm,
 	type SubFactory
@@ -368,17 +368,17 @@ export function clauseNodeMap(): NodeMap {
 	});
 }
 
-describe('spliceSeatOf', () => {
+describe('flattenSeatOf', () => {
 	it('finds the single hoisted config-shaped group in an optional seat', () => {
 		const nodeMap = clauseNodeMap();
-		const seat = spliceSeatOf(nodeMap.nodes.get('clause')!, nodeMap);
+		const seat = flattenSeatOf(nodeMap.nodes.get('clause')!, nodeMap);
 		expect(seat?.group.kind).toBe('_clause_group');
 		expect(seat?.slot.values.length).toBe(1);
 		expect(subFactoriesOf(nodeMap.nodes.get('clause')!, nodeMap).entries).toEqual([]);
 	});
 	it('returns nothing for a choice of arms', () => {
 		const nodeMap = twoChoiceSlotsNodeMap();
-		expect(spliceSeatOf(nodeMap.nodes.get('header')!, nodeMap)).toBeUndefined();
+		expect(flattenSeatOf(nodeMap.nodes.get('header')!, nodeMap)).toBeUndefined();
 	});
 });
 
@@ -412,7 +412,7 @@ describe('elementsSeatOf', () => {
 		const nodeMap = comparisonNodeMap();
 		const seats = elementsSeatOf(nodeMap.nodes.get('comparison')!, nodeMap);
 		expect(seats.map((s) => [s.slot.name, s.group.kind])).toEqual([['comparators', '_comparison_comparator']]);
-		expect(spliceSeatOf(nodeMap.nodes.get('comparison')!, nodeMap)).toBeUndefined();
+		expect(flattenSeatOf(nodeMap.nodes.get('comparison')!, nodeMap)).toBeUndefined();
 	});
 	it('returns nothing for a single-valued seat', () => {
 		const nodeMap = clauseNodeMap();
@@ -420,8 +420,8 @@ describe('elementsSeatOf', () => {
 	});
 });
 
-describe('spliceSeatOf on a direct-shaped group', () => {
-	it('names the one key of the group so the splice calls it positionally', () => {
+describe('flattenSeatOf on a direct-shaped group', () => {
+	it('names the one key of the group so the flatten calls it positionally', () => {
 		const nodeMap = buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'slice' }] },
 			slice: {
@@ -437,13 +437,13 @@ describe('spliceSeatOf on a direct-shaped group', () => {
 				annotations: { hoisted: true }
 			}
 		});
-		const seat = spliceSeatOf(nodeMap.nodes.get('slice')!, nodeMap);
+		const seat = flattenSeatOf(nodeMap.nodes.get('slice')!, nodeMap);
 		expect(seat?.group.kind).toBe('_slice_step');
 		expect(seat?.directKey).toBe('step');
 	});
 });
 
-describe('spliceSeatOf refuses a group whose keys collide with the parent', () => {
+describe('flattenSeatOf refuses a group whose keys collide with the parent', () => {
 	it('leaves a group unseated when one of its keys is also a slot of the parent', () => {
 		const nodeMap = buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'binary' }] },
@@ -464,7 +464,7 @@ describe('spliceSeatOf refuses a group whose keys collide with the parent', () =
 				annotations: { hoisted: true }
 			}
 		});
-		expect(spliceSeatOf(nodeMap.nodes.get('binary')!, nodeMap)).toBeUndefined();
+		expect(flattenSeatOf(nodeMap.nodes.get('binary')!, nodeMap)).toBeUndefined();
 	});
 });
 

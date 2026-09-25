@@ -23,7 +23,7 @@ import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
 import type { PreferencePlaceholder } from '../primitives/preference.ts';
 import { isGroupPlaceholder } from '../primitives/group.ts';
-import { isSplicePlaceholder, type SplicePlaceholder } from '../primitives/splice.ts';
+import { isFlattenPlaceholder, type FlattenPlaceholder } from '../primitives/flatten.ts';
 import { isRegexPlaceholder, type RegexPlaceholder } from '../primitives/regex.ts';
 import type { GroupPlaceholder } from '../primitives/group.ts';
 import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
@@ -90,7 +90,7 @@ export type PatchValue =
 	| ArmDefaultPlaceholder
 	| PreferencePlaceholder
 	| GroupPlaceholder
-	| SplicePlaceholder
+	| FlattenPlaceholder
 	| RegexPlaceholder;
 
 type PatchSet = Record<number | string, PatchValue>;
@@ -100,7 +100,7 @@ export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: 
 	for (const patches of patchSets) {
 		const hasPathKeys = requiresPathMode(patches);
 		const hasPlaceholderAlias = Object.values(patches).some(
-			(v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v) || isRegexPlaceholder(v)
+			(v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v)
 		);
 		if (hasPathKeys || hasPlaceholderAlias) {
 			rule = applyPathPatches(rule, patches);
@@ -625,8 +625,8 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 	if (isGroupPlaceholder(patch)) {
 		return withAnnotations(originalMember, { hoisted: true });
 	}
-	if (isSplicePlaceholder(patch)) {
-		return withAnnotations(originalMember, { spliced: true });
+	if (isFlattenPlaceholder(patch)) {
+		return withAnnotations(originalMember, { flattened: true });
 	}
 	if (isRegexPlaceholder(patch)) {
 		if ((originalMember as { type?: string }).type !== 'PATTERN') {

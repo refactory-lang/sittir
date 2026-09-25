@@ -13951,7 +13951,7 @@
               "parseKind": "slice_group",
               "seat": {
                 "kind": "slice_group",
-                "shape": "splice"
+                "shape": "flatten"
               }
             }
           ]

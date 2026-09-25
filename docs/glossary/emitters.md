@@ -801,7 +801,7 @@ A pattern value contributes `string`; a slot holding only pattern values never t
 The forwarded wrapper (the overloads plus the `$type`-probing body that
 forwards a config or a spread to the target factory) is not emitted when the
 target is a hoisted, config-shaped group: that parent keeps the direct
-signature only, and the overlay's splice seat (`spliceShape`) supplies the
+signature only, and the overlay's flatten seat (`flattenShape`) supplies the
 config form. Group seating is emitted in one place.
 
 #### token interior
@@ -15029,15 +15029,15 @@ the child's argument tuple and spreads it. The arity is the model's
 `parameterless` stamp, the fact the factories emitter reads for a zero-argument
 factory; the overlay never re-derives it.
 
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::spliceShape`
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::flattenShape`
 
-The method behind a splice seat. For a config parent: partition the
+The method behind a flatten seat. For a config parent: partition the
 caller's keys into the group's (`configKeysOf`) and the rest; when any group
 key carries a value, build the group from them and seat it under the slot
 key, otherwise pass the rest through — the type is the parent's own input
 (the direct spelling with the built group under the seat key, and
 `undefined` where the parent's argument is optional) or `OmitEach<parent
-config, seat> & (group config | NoneOf<group config>)`, so the spliced keys
+config, seat> & (group config | NoneOf<group config>)`, so the flattened keys
 come together or not at all. The wrapped `strict` must satisfy the bundle's
 signature too, which is why the parent's own input stays accepted. For a positional parent (a forwarded wrapper such as
 `match_block`) there is nothing to partition: a built value or `undefined`
@@ -15047,7 +15047,7 @@ used to do; it lives here now, once, because the seating is the overlay's.
 
 #### options
 
-Every non-spread seat method (splice, config elements, tuple) takes the
+Every non-spread seat method (flatten, config elements, tuple) takes the
 parent's trailing options argument and hands it to the parent through
 `_fwd`, which appends it only when given: a parent such as `break_statement`
 registers its `terminator` spelling there, and a seat that dropped it would
@@ -15096,14 +15096,14 @@ as a second value. These join the repeated-slot separators in the
 punctuation table the reader consults (`is_slot_separator`), because the
 template prints them itself.
 
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::SPLICE_HELPER`
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::FLATTEN_HELPER`
 
-The `NoneOf<T>` alias a spliced group's second overload uses to forbid every
+The `NoneOf<T>` alias a flattened group's second overload uses to forbid every
 key of the group at once. It is kept apart from `ERASED_HELPERS` because only
-a grammar with a spliced group references it: the overlay prints it at the
+a grammar with a flattened group references it: the overlay prints it at the
 end of the erased-helper block (located from the block's first line and its
 length), only when some emitted wire names `NoneOf<`,
-so a grammar without spliced groups carries no unused alias under the strict
+so a grammar without flattened groups carries no unused alias under the strict
 generated-package lint.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::elementsShape`
@@ -15125,7 +15125,7 @@ A spread seat on a list types its parameter with `listRestParamType`, from the s
 
 One seat's method, its application, and its parameter-type transform.
 Seats compose: `emitPolymorphsOverlay` threads the parent's `strict` (and
-`coerce`) through the splice seat then each elements seat, so a parent with
+`coerce`) through the flatten seat then each elements seat, so a parent with
 both gets `m2(m1(F.parent, F.g1), F.g2)`, and threads the parameter TYPE the
 same way — each `paramFor` takes the type expression the previous seat
 produced rather than a `typeof` reference, which is why `SeatShape.paramFor`
@@ -15163,7 +15163,7 @@ arm (`visibilityModifier.inPath` two hops down through the hoisted `pub`
 form) has a decorated child const to reference. Without it every arm routed
 through a hoisted kind was dropped as a context mismatch.
 
-A wire set also carries the parent's splice seat (`spliceSeatOf`) when the
+A wire set also carries the parent's flatten seat (`flattenSeatOf`) when the
 group's factory is emitted; a parent with a seat and no subs still enters
 the map, because the seat rewrites its `strict`.
 
@@ -15343,7 +15343,7 @@ nothing for a value arm.
 
 The shape-4 seat. A singular slot whose one value is a hoisted kind whose OWN
 factory surface takes rest parameters (`spread`, or a separated list's
-`elements`, which also carries an options bag) has nothing to splice and no
+`elements`, which also carries an options bag) has nothing to flatten and no
 choice to name, so the slot takes the child's whole argument list as a tuple
 and the parent builds it: `ir.structPattern.strict({ type, fields: [a, b] })`.
 Only a config-shaped parent needs one. A parent that takes its sole slot
@@ -15363,7 +15363,7 @@ Folds a kind's seats onto its own factory and names the result
 `<key>$seated`. Every mount route builds on that name instead of the raw
 factory, so a mount carries the parent's seats rather than dropping them:
 python `case_clause` seats its patterns as a tuple AND mounts its suite, and
-`ir.exceptClause.block.strict({ content, suite })` keeps its spliced
+`ir.exceptClause.block.strict({ content, suite })` keeps its flattened
 `content`. Without the name there is nothing a mount could reference, because
 a composed call expression has no `typeof`.
 
@@ -15438,7 +15438,7 @@ arms span two slots emits any of this.
 
 Each chain it builds is recorded by the outer arm's name, so a parent that mounts this kind's arms can mount the chains too (`childChains`).
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::spliceSeatOf`
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::flattenSeatOf`
 
 The shape-2 seat: the parent's one non-multiple slot whose value set is
 exactly one hoisted, config-shaped kind — excluding a labelled value
@@ -15447,20 +15447,20 @@ an arm elsewhere (`ir.exceptClause.exception.as`, `…exception.list`);
 splicing it too would flatten its one key onto the parent and leave the
 arm with no spelling to reach it by. Such an (unlabelled) group is not an
 arm — there is nothing to choose between — and has no name a caller would
-type; its keys are spliced onto the parent's `strict` by the overlay
-(`emitSplice`), present as a whole or absent as a whole. A parent with two such seats gets none and the
+type; its keys are flattened onto the parent's `strict` by the overlay
+(`flattenShape`), present as a whole or absent as a whole. A parent with two such seats gets none and the
 census reports it. A group whose keys collide with one of the parent's own
-slots is not a seat either: the splice could not tell the parent's `left`
+slots is not a seat either: the flatten could not tell the parent's `left`
 from the group's (typescript `_binary_expression_in`), so the group stays
 unseated and the census reports it. A direct-shaped group (one slot, taken positionally by its factory) is a
-splice with one key: the seat records `directKey` and `spliceShape` builds
+flatten with one key: the seat records `directKey` and `flattenShape` builds
 the group from that key's value alone (python `slice.step`, `except_clause.exception`,
 typescript `_import_clause_default_import.import_clause_group`). A forwarded
 group is not a seat: the parent's own builder already takes it whole.
 
 #### declared visible wrappers
 
-A group is spliceable when its kind carries `annotations.hoisted` (a hidden group) or the reference to it carries `annotations.spliced` (a visible wrapper the grammar declares, `isHoistedAt`). A declared seat is never inferred: only `splice()` in `grammar.sittir.ts` puts the annotation on a reference.
+A group is flattenable when its kind carries `annotations.hoisted` (a hidden group) or the reference to it carries `annotations.flattened` (a visible wrapper the grammar declares, `isHoistedAt`). A declared seat is never inferred: only `flatten()` in `grammar.sittir.ts` puts the annotation on a reference.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::elementsSeatOf`
 
@@ -15469,7 +15469,7 @@ kind's own elements — among whose values exactly one is a hoisted,
 config-shaped compound (python `comparison_operator.comparators` holding
 `_comparison_operator_comparator`; rust's `_type_arguments_elements` holding
 `_type_argument` beside the bare types it also admits). A repeated group
-cannot splice, so the slot takes the group's configs among its elements and
+cannot flatten, so the slot takes the group's configs among its elements and
 the overlay builds each one (`elementsShape`); an element that is not a
 config of that group — a built node, a kind id — passes through. A parent
 may have several; each gets its own wire, composed in slot order.
@@ -15486,7 +15486,7 @@ the validator, so all three spell the same call.
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::configKeysOf`
 
 A compound's config keys, the one list both the config-shaped arm merge
-(`armConfigKeys`) and the splice seat partition by.
+(`armConfigKeys`) and the flatten seat partition by.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::seatOf`
 
@@ -15500,8 +15500,8 @@ for that value (a node arm on the child, or a value arm on the leaf's
 text — marked `seated` when the arm's child is config-shaped but the
 wrapper takes its config whole under the slot key rather than merging its
 keys (`seatsConfigChild`), which is how the validator knows to spell the
-call), `splice` when the slot
-is the wire set's splice seat, `elements` when the slot is one of its
+call), `flatten` when the slot
+is the wire set's flatten seat, `elements` when the slot is one of its
 elements seats; `undefined` for a value that is not a hoisted kind, or
 whose parent has no wire set, or that no seating reaches. The validators' `ir-render-parse` and the example emitter consume
 the stamp rather than re-deriving it; the census reports every hoisted kind
@@ -15509,7 +15509,7 @@ no seat names.
 
 #### declared visible wrappers
 
-The gate that a seated child be hoisted reads `isHoistedAt`, so a visible wrapper whose reference is stamped `spliced` gets its `splice` seat recorded in the node model like a hidden group.
+The gate that a seated child be hoisted reads `isHoistedAt`, so a visible wrapper whose reference is stamped `flattened` gets its `flatten` seat recorded in the node model like a hidden group.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::textStorageOf`
 
@@ -15651,7 +15651,7 @@ has no entry for it — and is emitted before the parents that flatten
 through it (post-order).
 
 `NoneOf<T>` (every key of `T` forbidden) and `_built` (the `$type` probe)
-ride in the erased-helper block for the splice methods.
+ride in the erased-helper block for the flatten methods.
 
 Flattened parents emit last as plain route objects (`export const <parent> = { <variant>: … }`). A `leaf` route (`FlattenedVariantRoute.leaf`, a child with no factory of its own) skips `variantRouteOf` entirely and is emitted as the child's own kind-id expression (`empty: TSKindId.Newline`), never seated in `defaultRoutes` and never itself a nested-parent target. Every other route (`variantRouteOf`, shared by flattened routes and alias wires) is, in order of preference: a nested flattened parent's route object; a bundle entry (`B.<key>`) when the kind is bundled and has no overlay entry; the kind's overlay entry itself when that entry already carries `strict`/`coerce` (a seated entry, or a non-hoisted one spread from its bundle); otherwise `{ strict, coerce, ...entry }`, the raw pair merged with the hoisted kind's own sub-factory object. `variantRouteOf` also returns the bare `strict`/`coerce` refs it used to build `.value`, not just the rendered strings, because a route declared `arm.default` (`FlattenedVariantRoute.default`) hoists those refs onto the PARENT's own object (`{ strict: <default's strict>, coerce: <default's coerce>, <variant>: … }`) — so `hoistRoutes` sees a flavor pair at the top of the route object and makes the parent itself callable (`ir.arrayExpression(...)` builds the `list` variant, the default, while `.semi` and `.list` stay reachable). A default nested through another flattened parent only carries through when that inner parent resolved a default of its own.
 

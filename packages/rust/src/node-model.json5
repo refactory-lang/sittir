@@ -14745,7 +14745,7 @@
               "parseKind": "match_pattern",
               "seat": {
                 "kind": "match_pattern",
-                "shape": "splice"
+                "shape": "flatten"
               }
             }
           ]
@@ -15943,7 +15943,7 @@
               "parseKind": "match_pattern",
               "seat": {
                 "kind": "match_pattern",
-                "shape": "splice"
+                "shape": "flatten"
               }
             }
           ]
@@ -16104,7 +16104,7 @@
               "parseKind": "match_pattern",
               "seat": {
                 "kind": "match_pattern",
-                "shape": "splice"
+                "shape": "flatten"
               }
             }
           ]
@@ -16165,7 +16165,7 @@
               "parseKind": "match_block_arms",
               "seat": {
                 "kind": "_match_block_arms",
-                "shape": "splice"
+                "shape": "flatten"
               }
             }
           ]

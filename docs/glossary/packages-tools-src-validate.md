@@ -1330,7 +1330,7 @@ never by stripping underscores, which can land on an unrelated kind (`_number` i
 /** The exact arguments a positional parent takes, when a tuple seat filled its sole slot. */
 ```
 
-### `packages/tools/src/validate/common.ts::isSpliced`
+### `packages/tools/src/validate/common.ts::isFlattened`
 
 ```text
 /** Whether a projected config carries a spliced group's keys in place of the group. */

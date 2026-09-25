@@ -168,7 +168,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly variant?: string;
 	readonly variantOf?: string;
 	readonly default?: true;
-	readonly spliced?: true;
+	readonly flattened?: true;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -701,7 +701,7 @@ export interface ArmFacts {
 	readonly variant?: string;
 	readonly variantOf?: string;
 	readonly default?: true;
-	readonly spliced?: true;
+	readonly flattened?: true;
 }
 
 function literalArmDisplayOf(resolvedKind: string, ctx: DeriveCtx | undefined): string {
@@ -720,7 +720,7 @@ export function armFactsOf(arm: { readonly annotations?: RuleAnnotations; readon
 	return {
 		...(variant === undefined ? {} : { variant, variantOf: annotations.variantOf }),
 		...(annotations.default === true ? { default: true as const } : {}),
-		...(annotations.spliced === true ? { spliced: true as const } : {})
+		...(annotations.flattened === true ? { flattened: true as const } : {})
 	};
 }
 

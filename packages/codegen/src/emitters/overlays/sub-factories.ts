@@ -251,19 +251,19 @@ function subFactoriesInternal(
 }
 
 function isHoistedAt(value: NodeBackedRef, group: AssembledNode | undefined): boolean {
-	return group?.annotations?.hoisted === true || value.spliced === true;
+	return group?.annotations?.hoisted === true || value.flattened === true;
 }
 
-export interface SpliceSeat {
+export interface FlattenSeat {
 	readonly slot: AssembledNonterminal;
 	readonly group: AssembledNode;
 	readonly directKey?: string;
 }
 
-export function spliceSeatOf(node: AssembledNode, nodeMap: NodeMap): SpliceSeat | undefined {
+export function flattenSeatOf(node: AssembledNode, nodeMap: NodeMap): FlattenSeat | undefined {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return undefined;
 	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return undefined;
-	const seats: SpliceSeat[] = [];
+	const seats: FlattenSeat[] = [];
 	for (const slot of node.slots) {
 		if (isMultiple(slot) || slot.values.length !== 1) continue;
 		const value = slot.values[0]!;
@@ -283,10 +283,10 @@ export function spliceSeatOf(node: AssembledNode, nodeMap: NodeMap): SpliceSeat 
 	return seats.length === 1 ? seats[0] : undefined;
 }
 
-export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly SpliceSeat[] {
+export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly FlattenSeat[] {
 	if (!isSlotBearingCompound(node)) return [];
 	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return [];
-	const seats: SpliceSeat[] = [];
+	const seats: FlattenSeat[] = [];
 	for (const slot of node.slots) {
 		if (!isMultiple(slot) || slot.values.length === 0) continue;
 		const groups: AssembledNode[] = [];
@@ -306,17 +306,17 @@ export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly 
  * The shape-4 seat: a singular slot whose one value is a hoisted kind whose
  * OWN factory surface is a rest-parameter one (`spread`, or a separated
  * list's `elements`, which also carries an options bag). Such a child has no
- * config object to splice and no choice to name, so the parent's slot takes
+ * config object to flatten and no choice to name, so the parent's slot takes
  * the child's whole argument list as a tuple and the parent builds it.
  *
  * Only a config-shaped parent needs one: a parent that takes its sole slot
  * positionally already spreads the child's arguments into its own call.
  */
-export function tupleSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly SpliceSeat[] {
+export function tupleSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly FlattenSeat[] {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return [];
 	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return [];
 	if (classifyFactoryShape(node, nodeMap) !== 'config') return [];
-	const seats: SpliceSeat[] = [];
+	const seats: FlattenSeat[] = [];
 	for (const slot of node.slots) {
 		if (isMultiple(slot) || slot.values.length !== 1) continue;
 		const value = slot.values[0]!;
@@ -333,16 +333,16 @@ export function tupleSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly Spl
 
 export interface Seat {
 	readonly kind: string;
-	readonly shape: 'arm' | 'splice' | 'elements' | 'tuple';
+	readonly shape: 'arm' | 'flatten' | 'elements' | 'tuple';
 	readonly mount?: string;
 	readonly seated?: true;
 }
 
 export interface SeatSource {
 	readonly subs: readonly SubFactory[];
-	readonly splice?: SpliceSeat;
-	readonly elements?: readonly SpliceSeat[];
-	readonly tuples?: readonly SpliceSeat[];
+	readonly flatten?: FlattenSeat;
+	readonly elements?: readonly FlattenSeat[];
+	readonly tuples?: readonly FlattenSeat[];
 }
 
 export function seatOf(
@@ -368,8 +368,8 @@ export function seatOf(
 			? { kind: child.kind, shape: 'arm', mount: arm.name, seated: true }
 			: { kind: child.kind, shape: 'arm', mount: arm.name };
 	}
-	if (source.splice !== undefined && source.splice.slot === slot && source.splice.group === child) {
-		return { kind: child.kind, shape: 'splice' };
+	if (source.flatten !== undefined && source.flatten.slot === slot && source.flatten.group === child) {
+		return { kind: child.kind, shape: 'flatten' };
 	}
 	if ((source.elements ?? []).some((e) => e.slot === slot && e.group === child)) {
 		return { kind: child.kind, shape: 'elements' };

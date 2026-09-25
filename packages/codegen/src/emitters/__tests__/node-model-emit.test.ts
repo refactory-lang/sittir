@@ -83,7 +83,7 @@ describe('seats', () => {
 		};
 		expect(clause.slots.flatMap((s) => s.values).find((v) => v.seat)?.seat).toEqual({
 			kind: '_clause_group',
-			shape: 'splice'
+			shape: 'flatten'
 		});
 		const comparison = buildNodeModel(comparisonNodeMap()).nodes.find((n) => n.kind === 'comparison')! as {
 			slots: { name: string; values: { seat?: unknown }[] }[];

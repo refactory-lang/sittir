@@ -27,7 +27,7 @@ const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
 type ListOptions = { readonly separator?: unknown; readonly delimiter?: unknown };
 type ListElement<P> = Exclude<P, ListOptions>;
 type ListOptionsOf<P> = Extract<P, ListOptions>;
-// A spliced group is present as a whole or absent as a whole: the second
+// A flattened group is present as a whole or absent as a whole: the second
 // overload forbids every one of its keys.
 type NoneOf<T> = { [K in keyof T]?: never };
 
@@ -455,7 +455,7 @@ export const rangeExpression: typeof B.rangeExpression & {
 	}
 };
 
-const matchBlock$splice =
+const matchBlock$flatten =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: ArgsOf<PF>[0] | ArgsOf<CF>[0], options?: unknown): ReturnType<PF> =>
 		config === undefined || _built(config)
@@ -463,10 +463,10 @@ const matchBlock$splice =
 			: _fwd<ReturnType<PF>>(parent, _c(child)(config), options);
 const matchBlock$seated: (
 	config: ArgsOf<typeof F.buildMatchBlock>[0] | ArgsOf<typeof F.buildMatchBlockArms>[0]
-) => ReturnType<typeof F.buildMatchBlock> = matchBlock$splice(F.buildMatchBlock, F.buildMatchBlockArms);
+) => ReturnType<typeof F.buildMatchBlock> = matchBlock$flatten(F.buildMatchBlock, F.buildMatchBlockArms);
 const matchBlock$seatedCoerce: (
 	config: ArgsOf<typeof C.coerceToMatchBlock>[0] | ArgsOf<typeof C.coerceToMatchBlockArms>[0]
-) => ReturnType<typeof C.coerceToMatchBlock> = matchBlock$splice(C.coerceToMatchBlock, C.coerceToMatchBlockArms);
+) => ReturnType<typeof C.coerceToMatchBlock> = matchBlock$flatten(C.coerceToMatchBlock, C.coerceToMatchBlockArms);
 export const matchBlock: typeof B.matchBlock & {
 	strict: typeof matchBlock$seated;
 	coerce: typeof matchBlock$seatedCoerce;
@@ -476,7 +476,7 @@ export const matchBlock: typeof B.matchBlock & {
 	coerce: matchBlock$seatedCoerce
 };
 
-const lastMatchArm$splice =
+const lastMatchArm$flatten =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 		parent: PF,
 		child: CF,
@@ -511,7 +511,7 @@ const lastMatchArm$seated: (
 		| ArgsOf<typeof F.buildLastMatchArm>[0]
 		| (OmitEach<NonNullable<ArgsOf<typeof F.buildLastMatchArm>[0]>, 'pattern'> &
 				(ArgsOf<typeof F.buildMatchPattern>[0] | NoneOf<ArgsOf<typeof F.buildMatchPattern>[0]>))
-) => ReturnType<typeof F.buildLastMatchArm> = lastMatchArm$splice(
+) => ReturnType<typeof F.buildLastMatchArm> = lastMatchArm$flatten(
 	F.buildLastMatchArm,
 	F.buildMatchPattern,
 	TSKindId.MatchPattern
@@ -521,7 +521,7 @@ const lastMatchArm$seatedCoerce: (
 		| ArgsOf<typeof C.coerceToLastMatchArm>[0]
 		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToLastMatchArm>[0]>, 'pattern'> &
 				(ArgsOf<typeof C.coerceToMatchPattern>[0] | NoneOf<ArgsOf<typeof C.coerceToMatchPattern>[0]>))
-) => ReturnType<typeof C.coerceToLastMatchArm> = lastMatchArm$splice(
+) => ReturnType<typeof C.coerceToLastMatchArm> = lastMatchArm$flatten(
 	C.coerceToLastMatchArm,
 	C.coerceToMatchPattern,
 	TSKindId.MatchPattern
@@ -1375,7 +1375,7 @@ const implItemSemi: {
 	}
 };
 
-const matchArmWithComma$splice =
+const matchArmWithComma$flatten =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 		parent: PF,
 		child: CF,
@@ -1410,7 +1410,7 @@ const matchArmWithComma$seated: (
 		| ArgsOf<typeof F.buildMatchArmWithComma>[0]
 		| (OmitEach<NonNullable<ArgsOf<typeof F.buildMatchArmWithComma>[0]>, 'pattern'> &
 				(ArgsOf<typeof F.buildMatchPattern>[0] | NoneOf<ArgsOf<typeof F.buildMatchPattern>[0]>))
-) => ReturnType<typeof F.buildMatchArmWithComma> = matchArmWithComma$splice(
+) => ReturnType<typeof F.buildMatchArmWithComma> = matchArmWithComma$flatten(
 	F.buildMatchArmWithComma,
 	F.buildMatchPattern,
 	TSKindId.MatchPattern
@@ -1420,7 +1420,7 @@ const matchArmWithComma$seatedCoerce: (
 		| ArgsOf<typeof C.coerceToMatchArmWithComma>[0]
 		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToMatchArmWithComma>[0]>, 'pattern'> &
 				(ArgsOf<typeof C.coerceToMatchPattern>[0] | NoneOf<ArgsOf<typeof C.coerceToMatchPattern>[0]>))
-) => ReturnType<typeof C.coerceToMatchArmWithComma> = matchArmWithComma$splice(
+) => ReturnType<typeof C.coerceToMatchArmWithComma> = matchArmWithComma$flatten(
 	C.coerceToMatchArmWithComma,
 	C.coerceToMatchPattern,
 	TSKindId.MatchPattern
@@ -1433,7 +1433,7 @@ const matchArmWithComma: {
 	coerce: matchArmWithComma$seatedCoerce
 };
 
-const matchArmBlockEnding$splice =
+const matchArmBlockEnding$flatten =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 		parent: PF,
 		child: CF,
@@ -1468,7 +1468,7 @@ const matchArmBlockEnding$seated: (
 		| ArgsOf<typeof F.buildMatchArmBlockEnding>[0]
 		| (OmitEach<NonNullable<ArgsOf<typeof F.buildMatchArmBlockEnding>[0]>, 'pattern'> &
 				(ArgsOf<typeof F.buildMatchPattern>[0] | NoneOf<ArgsOf<typeof F.buildMatchPattern>[0]>))
-) => ReturnType<typeof F.buildMatchArmBlockEnding> = matchArmBlockEnding$splice(
+) => ReturnType<typeof F.buildMatchArmBlockEnding> = matchArmBlockEnding$flatten(
 	F.buildMatchArmBlockEnding,
 	F.buildMatchPattern,
 	TSKindId.MatchPattern
@@ -1478,7 +1478,7 @@ const matchArmBlockEnding$seatedCoerce: (
 		| ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0]
 		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0]>, 'pattern'> &
 				(ArgsOf<typeof C.coerceToMatchPattern>[0] | NoneOf<ArgsOf<typeof C.coerceToMatchPattern>[0]>))
-) => ReturnType<typeof C.coerceToMatchArmBlockEnding> = matchArmBlockEnding$splice(
+) => ReturnType<typeof C.coerceToMatchArmBlockEnding> = matchArmBlockEnding$flatten(
 	C.coerceToMatchArmBlockEnding,
 	C.coerceToMatchPattern,
 	TSKindId.MatchPattern

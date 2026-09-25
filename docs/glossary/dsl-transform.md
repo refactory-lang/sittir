@@ -1537,9 +1537,9 @@ as one arm fact, not two derivations of the same declaration.
 A `group()` placeholder lowers to `annotations.hoisted` on the addressed
 rule (`withAnnotations`), the declaration link collects `hoistedKinds` from.
 
-#### splice
+#### flatten
 
-A `splice()` patch stamps `annotations.spliced` on the member at its path, the way `group()` stamps `annotations.hoisted`. The two differ in what they seat: `hoisted` makes a sittir-minted hidden group spliceable wherever it is referenced, `spliced` makes one visible reference spliceable without hiding its kind.
+A `flatten()` patch stamps `annotations.flattened` on the member at its path, the way `group()` stamps `annotations.hoisted`. The two differ in what they seat: `hoisted` makes a sittir-minted hidden group spliceable wherever it is referenced, `spliced` makes one visible reference spliceable without hiding its kind.
 
 #### token interior
 

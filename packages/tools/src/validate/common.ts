@@ -639,7 +639,7 @@ const NODE_MODEL_PATHS: Record<string, string> = {
 
 export interface Seat {
 	readonly kind: string;
-	readonly shape: 'arm' | 'splice' | 'elements' | 'tuple';
+	readonly shape: 'arm' | 'flatten' | 'elements' | 'tuple';
 	readonly mount?: string;
 	readonly seated?: true;
 }
@@ -1208,7 +1208,7 @@ function drillReadNode(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
 }
 
 const ARM_ROUTE = Symbol('armRoute');
-const SPLICED = Symbol('spliced');
+const FLATTENED = Symbol('flattened');
 const POSITIONAL = Symbol('positional');
 
 interface ArmRoute {
@@ -1224,8 +1224,8 @@ function positionalOf(config: Record<string, unknown>): readonly unknown[] | und
 	return (config as Record<symbol, unknown>)[POSITIONAL] as readonly unknown[] | undefined;
 }
 
-function isSpliced(config: Record<string, unknown>): boolean {
-	return (config as Record<symbol, unknown>)[SPLICED] === true;
+function isFlattened(config: Record<string, unknown>): boolean {
+	return (config as Record<symbol, unknown>)[FLATTENED] === true;
 }
 
 function readValueKind(value: unknown, opts: NodeToConfigOpts): string | undefined {
@@ -1354,16 +1354,16 @@ function projectSeatedSlot(
 ): void {
 	const key = slotConfigKey(slot);
 	switch (seat.shape) {
-		case 'splice': {
+		case 'flatten': {
 			const group = nodeToConfig(drillReadNode(value as ReadNodeLike, opts), childOpts(opts));
 			const nested = armRouteOf(group);
 			if (nested !== undefined) {
 				throw new Error(
-					`ir surface: ${seat.kind}.${nested.mount} is an arm route inside a group spliced on ${parentKind}; the splice has no spelling for it`
+					`ir surface: ${seat.kind}.${nested.mount} is an arm route inside a group flattened on ${parentKind}; the flatten has no spelling for it`
 				);
 			}
 			Object.assign(out, group);
-			Object.defineProperty(out, SPLICED, { value: true, enumerable: false });
+			Object.defineProperty(out, FLATTENED, { value: true, enumerable: false });
 			return;
 		}
 		case 'elements':
@@ -1427,7 +1427,7 @@ function factoryArgs(
 	if (positional !== undefined) return positional;
 	if (shape === 'direct' || shape === 'forwarded') {
 		const { base, registered } = splitRegisteredSlots(kind, config, opts.factorySlots);
-		const value = isSpliced(base) ? base : directFactoryValue(kind, base, opts.factorySlots, opts.factoryFields);
+		const value = isFlattened(base) ? base : directFactoryValue(kind, base, opts.factorySlots, opts.factoryFields);
 		return registered === undefined ? [value] : [value, registered];
 	}
 	const elements = getChildFactoryArgs(kind, config, opts.factorySlots, opts.factoryFields);

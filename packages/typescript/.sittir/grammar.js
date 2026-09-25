@@ -5096,9 +5096,9 @@ function isGroupPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "group";
 }
 
-// packages/codegen/src/dsl/primitives/splice.ts
-function isSplicePlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "splice";
+// packages/codegen/src/dsl/primitives/flatten.ts
+function isFlattenPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "flatten";
 }
 
 // packages/codegen/src/dsl/primitives/regex.ts
@@ -5131,7 +5131,7 @@ function transform(original, ...patchSets) {
   for (const patches of patchSets) {
     const hasPathKeys = requiresPathMode(patches);
     const hasPlaceholderAlias = Object.values(patches).some(
-      (v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v) || isRegexPlaceholder(v)
+      (v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v)
     );
     if (hasPathKeys || hasPlaceholderAlias) {
       rule2 = applyPathPatches(rule2, patches);
@@ -5554,8 +5554,8 @@ function resolvePatch(patch, originalMember, key, precStack) {
   if (isGroupPlaceholder(patch)) {
     return withAnnotations(originalMember, { hoisted: true });
   }
-  if (isSplicePlaceholder(patch)) {
-    return withAnnotations(originalMember, { spliced: true });
+  if (isFlattenPlaceholder(patch)) {
+    return withAnnotations(originalMember, { flattened: true });
   }
   if (isRegexPlaceholder(patch)) {
     if (originalMember.type !== "PATTERN") {

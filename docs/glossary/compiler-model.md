@@ -343,7 +343,7 @@ arm's name reaches the same ambiguous-name diagnostic as any other clash.
 ### `packages/codegen/src/compiler/model/node-map.ts::armFactsOf`
 
 The per-arm annotations a slot value carries: the declared `variant`/`variantOf`
-pair, `default`, and `spliced`. A `variantOf`-only literal arm has no display of
+pair, `default`, and `flattened`. A `variantOf`-only literal arm has no display of
 its own, so it is named from the resolved catalog kind it carries
 (`resolvedKind`): `armNameOf(variantOf, literalArmDisplayOf(resolvedKind, ctx),
 <owner is a SUPERTYPE>)`, where the owner's classification is read from the

@@ -877,12 +877,12 @@ function isGroupPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "group";
 }
 
-// packages/codegen/src/dsl/primitives/splice.ts
-function isSplicePlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "splice";
+// packages/codegen/src/dsl/primitives/flatten.ts
+function isFlattenPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "flatten";
 }
-function splice() {
-  return { __sittirPlaceholder: "splice" };
+function flatten() {
+  return { __sittirPlaceholder: "flatten" };
 }
 
 // packages/codegen/src/dsl/primitives/regex.ts
@@ -4281,7 +4281,7 @@ function transform(original, ...patchSets) {
   for (const patches of patchSets) {
     const hasPathKeys = requiresPathMode(patches);
     const hasPlaceholderAlias = Object.values(patches).some(
-      (v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v) || isRegexPlaceholder(v)
+      (v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v)
     );
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
@@ -4704,8 +4704,8 @@ function resolvePatch(patch, originalMember, key, precStack) {
   if (isGroupPlaceholder(patch)) {
     return withAnnotations(originalMember, { hoisted: true });
   }
-  if (isSplicePlaceholder(patch)) {
-    return withAnnotations(originalMember, { spliced: true });
+  if (isFlattenPlaceholder(patch)) {
+    return withAnnotations(originalMember, { flattened: true });
   }
   if (isRegexPlaceholder(patch)) {
     if (originalMember.type !== "PATTERN") {
@@ -6112,7 +6112,7 @@ var grammar_sittir_default = grammar(
         },
         last_match_arm: {
           "0": field2("attributes"),
-          "1": splice(),
+          "1": flatten(),
           "4/0": field2("comma")
         },
         match_block: {
@@ -6286,7 +6286,7 @@ var grammar_sittir_default = grammar(
           "2/0": variant("semi"),
           "2/1": variant("body")
         },
-        match_arm: [{ 0: field2("attributes"), 1: splice() }, { "3/0": variant("with_comma"), "3/1": variant("block_ending") }],
+        match_arm: [{ 0: field2("attributes"), 1: flatten() }, { "3/0": variant("with_comma"), "3/1": variant("block_ending") }],
         // `///` and `//!` reach this choice as separate arms: their
         // outer/inner marker fields are alternatives, which enrich
         // distributes over the doc sequence rather than fusing onto one

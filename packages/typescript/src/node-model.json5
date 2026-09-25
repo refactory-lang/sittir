@@ -8297,7 +8297,7 @@
               "parseKind": "catch_clause_group",
               "seat": {
                 "kind": "catch_clause_group",
-                "shape": "splice"
+                "shape": "flatten"
               }
             }
           ]

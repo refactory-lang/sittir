@@ -262,7 +262,7 @@ describe('a hoisted kind in the middle of a nested arm', () => {
 	});
 });
 
-describe('a single hoisted group splices onto its parent', () => {
+describe('a single hoisted group flattens onto its parent', () => {
 	it('wraps strict with a both-or-neither config and keeps the base spread first', () => {
 		const nodeMap = buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'try' }, { type: SYMBOL, name: 'clause' }] },
@@ -287,12 +287,12 @@ describe('a single hoisted group splices onto its parent', () => {
 		});
 		const seatKey = nodeMap.nodes.get('clause')!.slots.find((s) => s.values.length === 1)!.configKey;
 		const out = emitPolymorphsOverlay({ nodeMap });
-		expect(out).toContain('const clause$splice =');
+		expect(out).toContain('const clause$flatten =');
 		expect(out).toContain(
 			`ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, '${seatKey}'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))`
 		);
 		expect(out).toContain('export const clause: typeof B.clause & {');
-		expect(out).toContain('= clause$splice(F.buildClause, F.buildClauseGroup);');
+		expect(out).toContain('= clause$flatten(F.buildClause, F.buildClauseGroup);');
 		expect(out).toContain('strict: clause$seated,');
 		expect(out.indexOf('...B.clause,')).toBeLessThan(out.indexOf('strict: clause$seated,'));
 	});
@@ -411,7 +411,7 @@ describe('a mount route carries the seats of its own parent', () => {
 	});
 });
 
-describe('a visible wrapper declared spliced seats on its parent', () => {
+describe('a visible wrapper declared flattened seats on its parent', () => {
 	const wrapperGrammar = (): NodeMap =>
 		buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'match' }, { type: SYMBOL, name: 'arm' }] },
@@ -422,7 +422,7 @@ describe('a visible wrapper declared spliced seats on its parent', () => {
 						type: FIELD,
 						name: 'pattern',
 						content: { type: SYMBOL, name: 'wrapper' },
-						annotations: { spliced: true }
+						annotations: { flattened: true }
 					},
 					{ type: STRING, value: '=>' },
 					{ type: FIELD, name: 'value', content: { type: PATTERN, value: '[a-z]+' } }
@@ -442,11 +442,11 @@ describe('a visible wrapper declared spliced seats on its parent', () => {
 			nodeMap: wrapperGrammar(),
 			generatedIdTables: { kindIds: { root: 1, arm: 2, wrapper: 3 }, sourceArtifact: 'test' }
 		});
-		expect(out).toContain('const arm$splice =');
+		expect(out).toContain('const arm$flatten =');
 		expect(out).toContain('(parent: PF, child: CF, wrapperId: number) =>');
 		expect(out).toContain('const own = _o(config)["pattern"];');
 		expect(out).toContain('(own as { $type?: unknown }).$type === wrapperId');
-		expect(out).toMatch(/= arm\$splice\(F\.buildArm, F\.buildWrapper, TSKindId\.Wrapper\);/);
+		expect(out).toMatch(/= arm\$flatten\(F\.buildArm, F\.buildWrapper, TSKindId\.Wrapper\);/);
 		expect(out).toContain("import { TSKindId } from '../../types.js';");
 	});
 });
