@@ -3551,9 +3551,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         if let Ok(value) = ImportStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ImportStatement(value));
                         }
-                        if let Ok(value) = DebuggerStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::DebuggerStatement(value));
-                        }
                         if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ExpressionStatement(value));
                         }
@@ -3581,15 +3578,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         if let Ok(value) = WithStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::WithStatement(value));
                         }
-                        if let Ok(value) = BreakStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::BreakStatement(value));
-                        }
-                        if let Ok(value) = ContinueStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ContinueStatement(value));
-                        }
-                        if let Ok(value) = ReturnStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ReturnStatement(value));
-                        }
                         if let Ok(value) = ThrowStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ThrowStatement(value));
                         }
@@ -3602,11 +3590,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         if let Ok(value) = ExportStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ExportStatement(value));
                         }
+                        if let Ok(value) = DebuggerStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::DebuggerStatement(value));
+                        }
                         if let Ok(value) = DeclarationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Declaration(value));
                         }
                         if let Ok(value) = StatementBlockTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StatementBlock(value));
+                        }
+                        if let Ok(value) = BreakStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::BreakStatement(value));
+                        }
+                        if let Ok(value) = ContinueStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ContinueStatement(value));
+                        }
+                        if let Ok(value) = ReturnStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReturnStatement(value));
                         }
                         Err(::napi::Error::from_reason("aliased kind id 198 in StatementTransport decodes as none of its members"))
                     },
@@ -3745,9 +3745,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         if let Ok(value) = ImportStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ImportStatement(value));
                         }
-                        if let Ok(value) = DebuggerStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::DebuggerStatement(value));
-                        }
                         if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ExpressionStatement(value));
                         }
@@ -3775,15 +3772,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         if let Ok(value) = WithStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::WithStatement(value));
                         }
-                        if let Ok(value) = BreakStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::BreakStatement(value));
-                        }
-                        if let Ok(value) = ContinueStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ContinueStatement(value));
-                        }
-                        if let Ok(value) = ReturnStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ReturnStatement(value));
-                        }
                         if let Ok(value) = ThrowStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ThrowStatement(value));
                         }
@@ -3796,11 +3784,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         if let Ok(value) = ExportStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ExportStatement(value));
                         }
+                        if let Ok(value) = DebuggerStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::DebuggerStatement(value));
+                        }
                         if let Ok(value) = DeclarationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Declaration(value));
                         }
                         if let Ok(value) = StatementBlockTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StatementBlock(value));
+                        }
+                        if let Ok(value) = BreakStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::BreakStatement(value));
+                        }
+                        if let Ok(value) = ContinueStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ContinueStatement(value));
+                        }
+                        if let Ok(value) = ReturnStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReturnStatement(value));
                         }
                         Err(::napi::Error::from_reason("aliased kind id 198 in StatementTransport decodes as none of its members"))
                     },
@@ -10052,6 +10052,16 @@ impl ::sittir_core::view::KindOf for ImportStatementTerminatorTransportSlot {
     }
 }
 
+impl ImportStatementTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementTerminatorTransportSlot {
     unsafe fn from_napi_value(
@@ -11287,6 +11297,16 @@ impl ::sittir_core::view::KindOf for ExpressionStatementTerminatorTransportSlot 
     }
 }
 
+impl ExpressionStatementTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementTerminatorTransportSlot {
     unsafe fn from_napi_value(
@@ -11392,6 +11412,16 @@ impl ::sittir_core::view::KindOf for VariableDeclarationTerminatorTransportSlot 
         match self {
             Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => [::sittir_core::types::KindId(170)].iter().any(|k| kinds.contains(k)),
             Self::Literal3_73_65_6d_69 => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl VariableDeclarationTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
         }
     }
 }
@@ -11605,6 +11635,16 @@ impl ::sittir_core::view::KindOf for LexicalDeclarationTerminatorTransportSlot {
         match self {
             Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => [::sittir_core::types::KindId(170)].iter().any(|k| kinds.contains(k)),
             Self::Literal3_73_65_6d_69 => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl LexicalDeclarationTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
         }
     }
 }
@@ -14766,6 +14806,16 @@ impl ::sittir_core::view::KindOf for BreakStatementTerminatorTransportSlot {
     }
 }
 
+impl BreakStatementTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for BreakStatementTerminatorTransportSlot {
     unsafe fn from_napi_value(
@@ -14875,6 +14925,16 @@ impl ::sittir_core::view::KindOf for ContinueStatementTerminatorTransportSlot {
     }
 }
 
+impl ContinueStatementTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ContinueStatementTerminatorTransportSlot {
     unsafe fn from_napi_value(
@@ -14980,6 +15040,16 @@ impl ::sittir_core::view::KindOf for DebuggerStatementTerminatorTransportSlot {
         match self {
             Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => [::sittir_core::types::KindId(170)].iter().any(|k| kinds.contains(k)),
             Self::Literal3_73_65_6d_69 => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl DebuggerStatementTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
         }
     }
 }
@@ -15992,6 +16062,16 @@ impl ::sittir_core::view::KindOf for ReturnStatementTerminatorTransportSlot {
     }
 }
 
+impl ReturnStatementTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementTerminatorTransportSlot {
     unsafe fn from_napi_value(
@@ -16996,6 +17076,16 @@ impl ::sittir_core::view::KindOf for ThrowStatementTerminatorTransportSlot {
         match self {
             Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => [::sittir_core::types::KindId(170)].iter().any(|k| kinds.contains(k)),
             Self::Literal3_73_65_6d_69 => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ThrowStatementTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
         }
     }
 }
@@ -37174,6 +37264,17 @@ impl ::sittir_core::view::KindOf for FunctionSignatureTerminatorTransportSlot {
     }
 }
 
+impl FunctionSignatureTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            175 => Some(Self::Literal85_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            _ => None,
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureTerminatorTransportSlot {
     unsafe fn from_napi_value(
@@ -39040,6 +39141,16 @@ impl ::sittir_core::view::KindOf for ImportAliasTerminatorTransportSlot {
     }
 }
 
+impl ImportAliasTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ImportAliasTerminatorTransportSlot {
     unsafe fn from_napi_value(
@@ -40008,6 +40119,16 @@ impl ::sittir_core::view::KindOf for TypeAliasDeclarationTerminatorTransportSlot
         match self {
             Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => [::sittir_core::types::KindId(170)].iter().any(|k| kinds.contains(k)),
             Self::Literal3_73_65_6d_69 => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl TypeAliasDeclarationTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
         }
     }
 }
@@ -49547,6 +49668,16 @@ impl ::sittir_core::view::KindOf for ExportStatementNamespaceExportTerminatorTra
     }
 }
 
+impl ExportStatementNamespaceExportTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementNamespaceExportTerminatorTransportSlot {
     unsafe fn from_napi_value(
@@ -49656,6 +49787,16 @@ impl ::sittir_core::view::KindOf for ExportStatementTypeExportTerminatorTranspor
     }
 }
 
+impl ExportStatementTypeExportTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementTypeExportTerminatorTransportSlot {
     unsafe fn from_napi_value(
@@ -49761,6 +49902,16 @@ impl ::sittir_core::view::KindOf for ExportStatementEqualsExportTerminatorTransp
         match self {
             Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => [::sittir_core::types::KindId(170)].iter().any(|k| kinds.contains(k)),
             Self::Literal3_73_65_6d_69 => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ExportStatementEqualsExportTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
         }
     }
 }
@@ -52006,6 +52157,17 @@ impl ::sittir_core::view::KindOf for ClassBodyMemberTerminatorTransportSlot {
             Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => [::sittir_core::types::KindId(170)].iter().any(|k| kinds.contains(k)),
             Self::Literal3_73_65_6d_69 => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
             Self::Literal109_63_6f_6d_6d_61 => [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ClassBodyMemberTerminatorTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            14 => Some(Self::Literal109_63_6f_6d_6d_61),
+            _ => None,
         }
     }
 }
@@ -56898,6 +57060,16 @@ impl ::sittir_core::view::KindOf for ExportStatementDefaultFromAutomaticSemicolo
     }
 }
 
+impl ExportStatementDefaultFromAutomaticSemicolonTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
+        }
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultFromAutomaticSemicolonTransportSlot {
     unsafe fn from_napi_value(
@@ -57513,6 +57685,16 @@ impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationDefaultKwV
         match self {
             Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => [::sittir_core::types::KindId(170)].iter().any(|k| kinds.contains(k)),
             Self::Literal3_73_65_6d_69 => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+impl ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot {
+    pub fn from_kind_id(id: u16) -> Option<Self> {
+        match id {
+            170 => Some(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+            20 => Some(Self::Literal3_73_65_6d_69),
+            _ => None,
         }
     }
 }
@@ -63629,7 +63811,7 @@ pub struct ImportStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_attribute"))]
     pub import_attribute: Option<::sittir_core::SlotValue<ImportAttributeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<ImportStatementTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportStatementTerminatorTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ImportStatementTransport {
@@ -63653,6 +63835,7 @@ impl ::sittir_core::render::Render for ImportStatementTransport {
 impl ::sittir_core::prepare::Prepare for ImportStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = ImportStatementTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_IMPORT_STATEMENT_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.import_clause.prepare(ctx)?;
         self.from_clause.prepare(ctx)?;
         self.import_attribute.prepare(ctx)?;
@@ -63921,7 +64104,7 @@ pub struct ExpressionStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionStatementExpressionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<ExpressionStatementTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<ExpressionStatementTerminatorTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ExpressionStatementTransport {
@@ -63945,6 +64128,7 @@ impl ::sittir_core::render::Render for ExpressionStatementTransport {
 impl ::sittir_core::prepare::Prepare for ExpressionStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = ExpressionStatementTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_EXPRESSION_STATEMENT_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.expression.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
         Ok(())
@@ -63981,7 +64165,7 @@ pub struct VariableDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators"))]
     pub declarators: Vec<::sittir_core::SlotValue<VariableDeclaratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<VariableDeclarationTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<VariableDeclarationTerminatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_before"))]
     pub declarators_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_after"))]
@@ -64018,6 +64202,7 @@ impl ::sittir_core::prepare::Prepare for VariableDeclarationTransport {
         self.declarators_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_VARIABLE_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE].arm);
         self.declarators_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_VARIABLE_DECLARATION_DECLARATORS_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.declarators.iter_mut().map(Some), options::SEATS_VARIABLE_DECLARATION_DECLARATORS, ctx);
+        if self.terminator.is_none() { self.terminator = VariableDeclarationTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_VARIABLE_DECLARATION_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.declarators.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
         Ok(())
@@ -64056,7 +64241,7 @@ pub struct LexicalDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators"))]
     pub declarators: Vec<::sittir_core::SlotValue<VariableDeclaratorTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<LexicalDeclarationTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<LexicalDeclarationTerminatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_before"))]
     pub declarators_separator_space_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators_separator_space_after"))]
@@ -64093,6 +64278,7 @@ impl ::sittir_core::prepare::Prepare for LexicalDeclarationTransport {
         self.declarators_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_SEPARATOR_SPACE_BEFORE].arm);
         self.declarators_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_LEXICAL_DECLARATION_DECLARATORS_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.declarators.iter_mut().map(Some), options::SEATS_LEXICAL_DECLARATION_DECLARATORS, ctx);
+        if self.terminator.is_none() { self.terminator = LexicalDeclarationTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_LEXICAL_DECLARATION_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.kind.prepare(ctx)?;
         self.declarators.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
@@ -64755,7 +64941,7 @@ pub struct BreakStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
     pub label: Option<::sittir_core::SlotValue<StatementIdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<BreakStatementTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<BreakStatementTerminatorTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for BreakStatementTransport {
@@ -64779,6 +64965,7 @@ impl ::sittir_core::render::Render for BreakStatementTransport {
 impl ::sittir_core::prepare::Prepare for BreakStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = BreakStatementTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_BREAK_STATEMENT_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.label.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
         Ok(())
@@ -64815,7 +65002,7 @@ pub struct ContinueStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
     pub label: Option<::sittir_core::SlotValue<StatementIdentifierTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<ContinueStatementTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<ContinueStatementTerminatorTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ContinueStatementTransport {
@@ -64839,6 +65026,7 @@ impl ::sittir_core::render::Render for ContinueStatementTransport {
 impl ::sittir_core::prepare::Prepare for ContinueStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = ContinueStatementTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_CONTINUE_STATEMENT_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.label.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
         Ok(())
@@ -64873,7 +65061,7 @@ pub struct DebuggerStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<DebuggerStatementTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<DebuggerStatementTerminatorTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for DebuggerStatementTransport {
@@ -64897,6 +65085,7 @@ impl ::sittir_core::render::Render for DebuggerStatementTransport {
 impl ::sittir_core::prepare::Prepare for DebuggerStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = DebuggerStatementTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_DEBUGGER_STATEMENT_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.terminator.prepare(ctx)?;
         Ok(())
     }
@@ -64932,7 +65121,7 @@ pub struct ReturnStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Option<::sittir_core::SlotValue<ReturnStatementExpressionTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<ReturnStatementTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<ReturnStatementTerminatorTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ReturnStatementTransport {
@@ -64956,6 +65145,7 @@ impl ::sittir_core::render::Render for ReturnStatementTransport {
 impl ::sittir_core::prepare::Prepare for ReturnStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = ReturnStatementTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_RETURN_STATEMENT_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.expression.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
         Ok(())
@@ -64992,7 +65182,7 @@ pub struct ThrowStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ThrowStatementExpressionTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<ThrowStatementTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<ThrowStatementTerminatorTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ThrowStatementTransport {
@@ -65016,6 +65206,7 @@ impl ::sittir_core::render::Render for ThrowStatementTransport {
 impl ::sittir_core::prepare::Prepare for ThrowStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = ThrowStatementTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_THROW_STATEMENT_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.expression.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
         Ok(())
@@ -69954,7 +70145,7 @@ pub struct FunctionSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<::sittir_core::SlotValue<FunctionSignatureReturnTypeTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<FunctionSignatureTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<FunctionSignatureTerminatorTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for FunctionSignatureTransport {
@@ -69978,6 +70169,7 @@ impl ::sittir_core::render::Render for FunctionSignatureTransport {
 impl ::sittir_core::prepare::Prepare for FunctionSignatureTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = FunctionSignatureTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_FUNCTION_SIGNATURE_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.async_marker.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.type_parameters.prepare(ctx)?;
@@ -70833,7 +71025,7 @@ pub struct ImportAliasTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ImportAliasValueTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<ImportAliasTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<ImportAliasTerminatorTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ImportAliasTransport {
@@ -70857,6 +71049,7 @@ impl ::sittir_core::render::Render for ImportAliasTransport {
 impl ::sittir_core::prepare::Prepare for ImportAliasTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = ImportAliasTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_IMPORT_ALIAS_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
@@ -71274,7 +71467,7 @@ pub struct TypeAliasDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<TypeAliasDeclarationTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<TypeAliasDeclarationTerminatorTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for TypeAliasDeclarationTransport {
@@ -71298,6 +71491,7 @@ impl ::sittir_core::render::Render for TypeAliasDeclarationTransport {
 impl ::sittir_core::prepare::Prepare for TypeAliasDeclarationTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = TypeAliasDeclarationTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_TYPE_ALIAS_DECLARATION_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.name.prepare(ctx)?;
         self.type_parameters.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -77274,7 +77468,7 @@ pub struct ExportStatementNamespaceExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<ExportStatementNamespaceExportTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<ExportStatementNamespaceExportTerminatorTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ExportStatementNamespaceExportTransport {
@@ -77298,6 +77492,7 @@ impl ::sittir_core::render::Render for ExportStatementNamespaceExportTransport {
 impl ::sittir_core::prepare::Prepare for ExportStatementNamespaceExportTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = ExportStatementNamespaceExportTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.name.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
         Ok(())
@@ -77336,7 +77531,7 @@ pub struct ExportStatementTypeExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
     pub source: Option<::sittir_core::SlotValue<StringTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<ExportStatementTypeExportTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<ExportStatementTypeExportTerminatorTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ExportStatementTypeExportTransport {
@@ -77360,6 +77555,7 @@ impl ::sittir_core::render::Render for ExportStatementTypeExportTransport {
 impl ::sittir_core::prepare::Prepare for ExportStatementTypeExportTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = ExportStatementTypeExportTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.export_clause.prepare(ctx)?;
         self.source.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
@@ -77397,7 +77593,7 @@ pub struct ExportStatementEqualsExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<ExportStatementEqualsExportTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<ExportStatementEqualsExportTerminatorTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ExportStatementEqualsExportTransport {
@@ -77421,6 +77617,7 @@ impl ::sittir_core::render::Render for ExportStatementEqualsExportTransport {
 impl ::sittir_core::prepare::Prepare for ExportStatementEqualsExportTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = ExportStatementEqualsExportTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.expression.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
         Ok(())
@@ -78353,7 +78550,7 @@ pub struct ClassBodyMemberTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: ::sittir_core::SlotValue<ClassBodyMemberTerminatorTransportSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<ClassBodyMemberTerminatorTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ClassBodyMemberContentTransportSlot>,
 }
@@ -78379,6 +78576,7 @@ impl ::sittir_core::render::Render for ClassBodyMemberTransport {
 impl ::sittir_core::prepare::Prepare for ClassBodyMemberTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = ClassBodyMemberTerminatorTransportSlot::from_kind_id(ctx.options.spacing[options::SITE_CLASS_BODY_MEMBER_TERMINATOR].arm).map(::sittir_core::SlotValue::Transport); }
         self.terminator.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
@@ -79446,7 +79644,7 @@ pub struct ExportStatementDefaultFromTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultFromContentTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
-    pub automatic_semicolon: ::sittir_core::SlotValue<ExportStatementDefaultFromAutomaticSemicolonTransportSlot>,
+    pub automatic_semicolon: Option<::sittir_core::SlotValue<ExportStatementDefaultFromAutomaticSemicolonTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ExportStatementDefaultFromTransport {
@@ -79810,7 +80008,7 @@ pub struct ExportStatementDefaultDeclarationDefaultKwValueTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
-    pub automatic_semicolon: ::sittir_core::SlotValue<ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot>,
+    pub automatic_semicolon: Option<::sittir_core::SlotValue<ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationDefaultKwValueTransport {
@@ -100018,7 +100216,7 @@ fn render_import_statement(node: &ImportStatementTransport, w: &mut dyn ::sittir
     let from_clause = &node.from_clause;
     let import_attribute = View::new(&node.import_attribute, "{}");
     let import_clause = View::new(&node.import_clause, "{}");
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     w.edge(::sittir_core::types::KindId(191), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("import")?;
     w.site_at(options::SITE_IMPORT_STATEMENT_IMPORT_KEYWORD_AFTER);
@@ -100075,7 +100273,7 @@ fn render_import_attribute(node: &ImportAttributeTransport, w: &mut dyn ::sittir
 
 fn render_expression_statement(node: &ExpressionStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     expression.render(w)?;
     terminator.render(w)?;
@@ -100095,7 +100293,7 @@ fn render_variable_declaration(node: &VariableDeclarationTransport, w: &mut dyn 
         head: Some(options::SITE_VARIABLE_DECLARATION_DECLARATORS_START),
         tail: Some(options::SITE_VARIABLE_DECLARATION_DECLARATORS_END),
     };
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     w.edge(::sittir_core::types::KindId(200), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("var")?;
     w.site_at(options::SITE_VARIABLE_DECLARATION_VAR_KEYWORD_AFTER);
@@ -100118,7 +100316,7 @@ fn render_lexical_declaration(node: &LexicalDeclarationTransport, w: &mut dyn ::
         tail: Some(options::SITE_LEXICAL_DECLARATION_DECLARATORS_END),
     };
     let kind = &node.kind;
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     w.edge(::sittir_core::types::KindId(201), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     kind.render(w)?;
     w.site_at(options::SITE_LEXICAL_DECLARATION_KIND_AFTER);
@@ -100297,7 +100495,7 @@ fn render_with_statement(node: &WithStatementTransport, w: &mut dyn ::sittir_cor
 
 fn render_break_statement(node: &BreakStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let label = View::new(&node.label, "{}");
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     w.edge(::sittir_core::types::KindId(214), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("break")?;
     w.site_at(options::SITE_BREAK_STATEMENT_BREAK_KEYWORD_AFTER);
@@ -100309,7 +100507,7 @@ fn render_break_statement(node: &BreakStatementTransport, w: &mut dyn ::sittir_c
 
 fn render_continue_statement(node: &ContinueStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let label = View::new(&node.label, "{}");
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     w.edge(::sittir_core::types::KindId(215), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("continue")?;
     w.site_at(options::SITE_CONTINUE_STATEMENT_CONTINUE_KEYWORD_AFTER);
@@ -100320,7 +100518,7 @@ fn render_continue_statement(node: &ContinueStatementTransport, w: &mut dyn ::si
 }
 
 fn render_debugger_statement(node: &DebuggerStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     w.edge(::sittir_core::types::KindId(216), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("debugger")?;
     w.site_at(options::SITE_DEBUGGER_STATEMENT_DEBUGGER_KEYWORD_AFTER);
@@ -100331,7 +100529,7 @@ fn render_debugger_statement(node: &DebuggerStatementTransport, w: &mut dyn ::si
 
 fn render_return_statement(node: &ReturnStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = View::new(&node.expression, "{}");
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     w.edge(::sittir_core::types::KindId(217), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("return")?;
     w.site_at(options::SITE_RETURN_STATEMENT_RETURN_KEYWORD_AFTER);
@@ -100343,7 +100541,7 @@ fn render_return_statement(node: &ReturnStatementTransport, w: &mut dyn ::sittir
 
 fn render_throw_statement(node: &ThrowStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     w.edge(::sittir_core::types::KindId(218), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("throw")?;
     w.site_at(options::SITE_THROW_STATEMENT_THROW_KEYWORD_AFTER);
@@ -101436,7 +101634,7 @@ fn render_function_signature(node: &FunctionSignatureTransport, w: &mut dyn ::si
     let name = &node.name;
     let parameters = &node.parameters;
     let return_type = View::new(&node.return_type, "{}");
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
     w.edge(::sittir_core::types::KindId(290), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     if async_marker.is_present() {
@@ -101652,7 +101850,7 @@ fn render_internal_module(node: &InternalModuleTransport, w: &mut dyn ::sittir_c
 
 fn render_import_alias(node: &ImportAliasTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(305), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("import")?;
@@ -101761,7 +101959,7 @@ fn render_enum_assignment(node: &EnumAssignmentTransport, w: &mut dyn ::sittir_c
 
 fn render_type_alias_declaration(node: &TypeAliasDeclarationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(312), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
@@ -102744,7 +102942,7 @@ fn render_object_type_content(node: &ObjectTypeContentTransport, w: &mut dyn ::s
 
 fn render_export_statement_namespace_export(node: &ExportStatementNamespaceExportTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     w.edge(::sittir_core::types::KindId(394), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("export")?;
     w.site_at(options::SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_EXPORT_KEYWORD_AFTER);
@@ -102763,7 +102961,7 @@ fn render_export_statement_namespace_export(node: &ExportStatementNamespaceExpor
 fn render_export_statement_type_export(node: &ExportStatementTypeExportTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let export_clause = &node.export_clause;
     let source = View::new(&node.source, "{}");
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     w.edge(::sittir_core::types::KindId(395), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("export")?;
     w.site_at(options::SITE_EXPORT_STATEMENT_TYPE_EXPORT_EXPORT_KEYWORD_AFTER);
@@ -102785,7 +102983,7 @@ fn render_export_statement_type_export(node: &ExportStatementTypeExportTransport
 
 fn render_export_statement_equals_export(node: &ExportStatementEqualsExportTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = &node.expression;
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     w.edge(::sittir_core::types::KindId(396), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("export")?;
     w.site_at(options::SITE_EXPORT_STATEMENT_EQUALS_EXPORT_EXPORT_KEYWORD_AFTER);
@@ -102981,7 +103179,7 @@ fn render_class_body_method_sig(node: &ClassBodyMethodSigTransport, w: &mut dyn 
 
 fn render_class_body_member(node: &ClassBodyMemberTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     w.edge(::sittir_core::types::KindId(401), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     content.render(w)?;
     terminator.render(w)?;
@@ -103238,7 +103436,7 @@ fn render_import_clause_default_import(node: &ImportClauseDefaultImportTransport
 }
 
 fn render_export_statement_default_from(node: &ExportStatementDefaultFromTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let automatic_semicolon = &node.automatic_semicolon;
+    let automatic_semicolon = View::new(&node.automatic_semicolon, "{}");
     let content = &node.content;
     w.edge(::sittir_core::types::KindId(419), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("export")?;
@@ -103323,7 +103521,7 @@ fn render_export_statement_default_declaration_default_kw(node: &ExportStatement
 }
 
 fn render_export_statement_default_declaration_default_kw_value(node: &ExportStatementDefaultDeclarationDefaultKwValueTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let automatic_semicolon = &node.automatic_semicolon;
+    let automatic_semicolon = View::new(&node.automatic_semicolon, "{}");
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(425), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     value.render(w)?;

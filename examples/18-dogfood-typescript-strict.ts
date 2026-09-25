@@ -46,7 +46,7 @@ export function importTypesStrict() {
 			),
 			source: ir.string.single.strict(ir.unescapedSingleStringFragment('@sittir/types')),
 		},
-	}).$with.terminator(TSKindId.Semi);
+	});
 }
 
 /** The JSDoc block that leads `applyFormat`. */
@@ -60,18 +60,12 @@ function param(name: string, type: string) {
 	return ir.requiredParameter.strict({ pattern: id(name), type: ann(type) });
 }
 
-/**
- * `let <name> = <value>;` — `terminator` is passed explicitly because an
- * absent registered choice option gets no render-time default.
- */
+/** `let <name> = <value>;` — the `;` is the terminator option's default. */
 function letStrict(name: string, value: string) {
-	return ir.lexicalDeclaration.strict(
-		{
-			kind: 'let',
-			declarators: [ir.variableDeclarator.plain.strict({ name: id(name), value: id(value) })],
-		},
-		{ terminator: TSKindId.Semi },
-	);
+	return ir.lexicalDeclaration.strict({
+		kind: 'let',
+		declarators: [ir.variableDeclarator.plain.strict({ name: id(name), value: id(value) })],
+	});
 }
 
 /** `function applyFormat(canonicalRender: string, format: FormatRecord): string { … }` */
@@ -98,9 +92,9 @@ export function applyBoundaryStrict() {
 	});
 }
 
-/** `return result;` — `terminator` explicit, as in `letStrict`. */
+/** `return result;` */
 export function returnResultStrict() {
-	return ir.returnStatement.strict(id('result'), { terminator: TSKindId.Semi });
+	return ir.returnStatement.strict(id('result'));
 }
 
 /** `format.boundary` */

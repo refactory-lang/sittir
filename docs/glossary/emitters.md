@@ -3507,8 +3507,8 @@ inherent `write_fmt`, and the render root spells the trait call in full.
  *    string value — they correctly decode a bare string and produce a
  *    non-empty `text` field.
  *
- * 2. Branch / group / polymorph nodes with at least one required (non-Option)
- *    grammar field: `#[napi(object)]`-derived `FromNapiValue` coerces the JS
+ * 2. Branch / group / polymorph nodes with at least one transport-required
+ *    (non-Option, `isTransportRequired`) grammar field: `#[napi(object)]`-derived `FromNapiValue` coerces the JS
  *    string to a boxed String object via `napi_coerce_to_object`; all property
  *    lookups return `undefined`. A required field (`String`, not `Option<String>`)
  *    cannot be `undefined` → deserialization fails → the arm is correctly skipped.
@@ -3955,6 +3955,30 @@ the literal, so the sink reads the arm from its resolved options. The
 choice's seams sit inside the arm in the render rule, and the template
 collapses the choice to one slot, so the enum is where they are written;
 the parent never sees them.
+
+The literal arms' kind ids are computed once (`literalKindIdsOf`) and feed
+both the napi decode's literal arms and, for an enum that backs a
+prepare-filled slot, its `from_kind_id` (`fromKindIdImpl`).
+
+### `packages/codegen/src/emitters/render-module.ts::literalKindIdsOf`
+
+A per-slot enum's literal arms as kind id → unit variant pairs, first
+occurrence per id: the literal's resolved kind id and the variant name the
+enum gave that literal. Empty without parser kind ids.
+
+### `packages/codegen/src/emitters/render-module.ts::prepareFilledSlotOf`
+
+The prepare-filled slot (`isPrepareFilled`) a per-slot enum backs, found by
+the enum's owner kind and field name; `undefined` for any other enum.
+
+### `packages/codegen/src/emitters/render-module.ts::fromKindIdImpl`
+
+The `from_kind_id(u16) -> Option<Self>` constructor emitted on a per-slot
+enum that backs a prepare-filled slot: one arm per literal kind id
+(`literalKindIdsOf`), `None` for any other id. Every arm of such an enum must
+be a literal a kind id can build; an enum with a node arm, or a literal
+without a resolved kind id, fails codegen, since `prepare` could not build
+that arm from the option's resolved kind id.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderAnyTransportWithNapiFromValue`
 
@@ -5202,19 +5226,19 @@ The other named parts of the optional group a slot sits in, or nothing when the 
 
 ### `packages/codegen/src/emitters/factories.ts::registeredSlotSource`
 
-The expression a builder binds a registered slot to: the option, else the registered arm, and, for a slot inside an optional group, only when one of the group's other parts is present.
+The expression a builder binds a registered slot to: the option, else the registered arm, and, for a slot inside an optional group, only when one of the group's other parts is present. A choice-mode slot takes the option alone.
 
 #### body
 
 ```text
 // A choice-mode slot (terminator, quotes/style — arms with kind ids) is a
-// native render option site with its own resolution chain (per-tree >
-// stamp > per-call > tree table > engine > grammar default). Baking its
-// declared default into the built node would pre-empt that chain, so the
-// factory only ever SETS the slot when the caller passes it — never
-// defaults it, same as the config path already left it when the caller
-// omitted the key. Only a spelling-mode slot (no kind ids, no render-time
-// resolution to preserve) gets the eager default.
+// native render option site: when the built node leaves it unset, the
+// transport's prepare fills it from the option chain (per-tree > per-call >
+// engine > grammar default; render-module.ts's optionDefaultFills). Baking
+// the declared default into the built node would pre-empt that chain, so the
+// factory only SETS the slot when the caller passes it. Only a
+// spelling-mode slot (no kind ids, no render-time resolution) gets the
+// eager default.
 ```
 
 ### `packages/codegen/src/emitters/interior.ts::bareInteriorText`
@@ -14784,7 +14808,26 @@ would only be carried to be ignored.
 // tries the entry's own typed struct before falling back to verbatim text.
 ```
 
+### `packages/codegen/src/emitters/render-module.ts::isPrepareFilled`
+
+Whether a slot's value is filled by `prepare` when the caller leaves it out:
+a required, single registered choice option (`registeredOption === 'choice'`,
+e.g. typescript's `terminator`). An optional registered option is not: its
+absence is the grammar's own blank arm.
+
+### `packages/codegen/src/emitters/render-module.ts::isTransportRequired`
+
+Whether a slot's transport field is required (a bare `SlotValue`, `Vec`, or
+`String`) rather than an `Option`: the slot is required and not
+prepare-filled. Every transport-shape decision in this module (field types,
+render bindings, prepare loops, seat targets, napi dispatch order) asks this
+one predicate, so a prepare-filled slot decodes when absent and renders once
+`prepare` has filled it.
+
 ### `packages/codegen/src/emitters/render-module.ts::renderTransportField`
+
+A field's optionality is `isTransportRequired`, unless the caller forces it
+optional.
 
 #### body
 
@@ -16166,8 +16209,10 @@ own facts: each spacing field that carries a per-node value
 (`carriesPerNodeValue`) takes the resolved arm when unset; the seat calls
 (`seatLoops`) write each seated element's gap into that element's own base
 `after` edge; and a separated list takes its `delimiter` and its
-`separator_kind` from their sites when unset. Only then does it walk the
-children (every slot field's `prepare(ctx)?`). The order matters: a seat is
+`separator_kind` from their sites when unset; and a required registered
+choice option the caller left unset is built from its option site's resolved
+arm (`optionDefaultFills`). Only then does it walk the children (every slot
+field's `prepare(ctx)?`). The order matters: a seat is
 a `get_or_insert` on the child's base edge, and the child's own
 `prepare_edges` fills that same edge from its kind's row, so the parent must
 seat before the child sees it. A wire-carried value always wins; a
@@ -16177,6 +16222,17 @@ error, not the render's.
 A list's delimiter is filled from the table like any site, zero included:
 the table's value is the grammar's declared default or a render option, and
 the transport's own value still wins.
+
+### `packages/codegen/src/emitters/render-module.ts::optionDefaultFills`
+
+The `prepare` lines that fill a node's prepare-filled slots (`isPrepareFilled`)
+when the transport arrived without them: the slot's per-slot enum is built
+with `from_kind_id` from `ctx.options.spacing[<site>].arm`, the arm the option
+chain resolved for the slot's choice site (per-tree, engine, then the
+grammar's declared default). The site is the one choice site in the render
+plan for this kind and slot, with no side and no seat. A slot with no such
+site fails codegen: the option would have nothing to resolve from. A value
+the caller set is never replaced.
 
 ### `packages/codegen/src/emitters/render-module.ts::listGapSitesOf`
 

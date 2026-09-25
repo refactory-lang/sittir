@@ -5096,9 +5096,8 @@ describe('export_statement_default_declaration sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.ClassDeclaration);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: an absent registered choice option (terminator) has no render-time default: the transport field is required and prepare never fills it from the site's default arm
-	it.skip('lexical builds the parent', () => {
-		const node = (ir.exportStatement.default.declaration as any).lexical.coerce({
+	it('lexical builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.lexical.coerce({
 			kind: 'let',
 			declarators: [
 				{
@@ -5114,9 +5113,8 @@ describe('export_statement_default_declaration sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.LexicalDeclaration);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: an absent registered choice option (terminator) has no render-time default: the transport field is required and prepare never fills it from the site's default arm
-	it.skip('variable builds the parent', () => {
-		const node = (ir.exportStatement.default.declaration as any).variable.coerce({
+	it('variable builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.variable.coerce({
 			declarators: [
 				{
 					$type: TSKindId.VariableDeclaratorPlain,
@@ -5131,9 +5129,8 @@ describe('export_statement_default_declaration sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.VariableDeclaration);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: an absent registered choice option (terminator) has no render-time default: the transport field is required and prepare never fills it from the site's default arm
-	it.skip('functionSignature builds the parent', () => {
-		const node = (ir.exportStatement.default.declaration as any).functionSignature.coerce({
+	it('functionSignature builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.functionSignature.coerce({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -5174,9 +5171,8 @@ describe('export_statement_default_declaration sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.InternalModule);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: an absent registered choice option (terminator) has no render-time default: the transport field is required and prepare never fills it from the site's default arm
-	it.skip('typeAlias builds the parent', () => {
-		const node = (ir.exportStatement.default.declaration as any).typeAlias.coerce({
+	it('typeAlias builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.typeAlias.coerce({
 			name: {
 				$type: TSKindId._TypeIdentifier,
 				$text: 'test',
@@ -5227,9 +5223,8 @@ describe('export_statement_default_declaration sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.InterfaceDeclaration);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: an absent registered choice option (terminator) has no render-time default: the transport field is required and prepare never fills it from the site's default arm
-	it.skip('importAlias builds the parent', () => {
-		const node = (ir.exportStatement.default.declaration as any).importAlias.coerce({
+	it('importAlias builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.importAlias.coerce({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -5251,9 +5246,8 @@ describe('export_statement_default_declaration sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.AmbientDeclaration);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	// known-failing: a required registered slot on an intermediate child (defaultKw) reached through a nested (multi-level) sub-factory chain has no home in the generated test: .$with only reaches the outer node's own slots, and the recursive subFactoryCallArgs builder produces a nested config expression, not a statement a .$with chain could attach to; an absent registered choice option (terminator) has no render-time default: the transport field is required and prepare never fills it from the site's default arm
-	it.skip('defaultKw.value builds the parent', () => {
-		const node = (ir.exportStatement.default.declaration as any).defaultKw.value.coerce({
+	it('defaultKw.value builds the parent', () => {
+		const node = ir.exportStatement.default.declaration.defaultKw.value.coerce({
 			content: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ExportStatementDefaultDeclaration);

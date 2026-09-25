@@ -5890,7 +5890,6 @@ function immediateClosingDelimiter(original) {
   return { ...original, members: [...seqMembers.slice(0, -1), token.immediate(last.value)] };
 }
 var enrichedBase = enrich(import_grammar.default);
-var UNFILLED_OPTION_DEFAULT = "an absent registered choice option (terminator) has no render-time default: the transport field is required and prepare never fills it from the site's default arm";
 var grammar_sittir_default = grammar(
   enrichedBase,
   wire(
@@ -6521,13 +6520,7 @@ var grammar_sittir_default = grammar(
         debugger_statement: "#170 \u2014 _resolveOneLeaf cannot resolve the _semicolon stub",
         import_require_clause: "#170 \u2014 Missing field _content on ImportRequireClauseTransport._source",
         object_type_content: "#170 (#172-adjacent) \u2014 Missing field _content through export-arm transport",
-        string: "#170 \u2014 StringContentTransportSlot rejects stub ($type property missing)",
-        "export_statement_default_declaration.defaultKw.value": "a required registered slot on an intermediate child (defaultKw) reached through a nested (multi-level) sub-factory chain has no home in the generated test: .$with only reaches the outer node's own slots, and the recursive subFactoryCallArgs builder produces a nested config expression, not a statement a .$with chain could attach to; " + UNFILLED_OPTION_DEFAULT,
-        "export_statement_default_declaration.lexical": UNFILLED_OPTION_DEFAULT,
-        "export_statement_default_declaration.variable": UNFILLED_OPTION_DEFAULT,
-        "export_statement_default_declaration.functionSignature": UNFILLED_OPTION_DEFAULT,
-        "export_statement_default_declaration.typeAlias": UNFILLED_OPTION_DEFAULT,
-        "export_statement_default_declaration.importAlias": UNFILLED_OPTION_DEFAULT
+        string: "#170 \u2014 StringContentTransportSlot rejects stub ($type property missing)"
       },
       rules: {
         _whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),

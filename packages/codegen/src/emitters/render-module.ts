@@ -417,7 +417,7 @@ function emitStruct(
 				const innerSlot = helperSlots.find((s) => s.name === f.name);
 				if (innerSlot !== undefined) {
 					f.backingTransportField = helperSlot.storageName;
-					f.backingInnerRequired = isRequired(innerSlot);
+					f.backingInnerRequired = isTransportRequired(innerSlot);
 					f.backingDirectField = innerSlot.storageName;
 					break;
 				}
@@ -491,7 +491,7 @@ function buildSlotModelSurface(node: AssembledNode | undefined): RenderTemplateS
 	const slots = slotModel.named.map((slot) => ({
 		name: slot.name,
 		view: (isMultiple(slot) ? 'field' : 'scalar') as 'scalar' | 'list' | 'field',
-		required: isRequired(slot),
+		required: isTransportRequired(slot),
 		hasLeadingDelimiter: slot.hasLeadingDelimiter,
 		hasTrailingDelimiter: slot.hasTrailingDelimiter,
 		trailingDelimiter: slot.trailingDelimiter,
@@ -720,18 +720,18 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 					: baseCls;
 			const writeChild = buildSlotWriteCall(slotCls, 'child');
 			if (isMultiple(slot)) {
-				if (isRequired(slot)) {
+				if (isTransportRequired(slot)) {
 					lines.push(`    for child in node.${slotIdent}.iter() {`);
 				} else {
 					lines.push(`    if let Some(items) = &node.${slotIdent} {`);
 					lines.push(`        for child in items.iter() {`);
 				}
 				lines.push(`        ${writeChild}`);
-				if (!isRequired(slot)) {
+				if (!isTransportRequired(slot)) {
 					lines.push(`        }`);
 				}
 				lines.push(`    }`);
-			} else if (isRequired(slot)) {
+			} else if (isTransportRequired(slot)) {
 				lines.push(`    ${buildSlotWriteCall(slotCls, `node.${slotIdent}`)}`);
 			} else {
 				lines.push(`    if let Some(child) = &node.${slotIdent} {`);
@@ -1327,11 +1327,19 @@ function anyTransportPrepareArms(
 	];
 }
 
+function isPrepareFilled(slot: AssembledNonterminal): boolean {
+	return slot.registeredOption === 'choice' && isRequired(slot) && !isMultiple(slot);
+}
+
+function isTransportRequired(slot: AssembledNonterminal): boolean {
+	return isRequired(slot) && !isPrepareFilled(slot);
+}
+
 function nodeTransportHasRequiredField(node: AssembledNode): boolean {
 	if (node.modelType === 'pattern' || isFixedTextLeaf(node) || node.modelType === 'enum') {
 		return true;
 	}
-	return node.slots.some((slot) => isRequired(slot));
+	return node.slots.some((slot) => isTransportRequired(slot));
 }
 
 function isLeafLikeNode(n: AssembledNode): boolean {
@@ -1842,7 +1850,7 @@ function collectSlotEmissionMetadata(
 	if (node) {
 		for (const f of [...slotModel.named, ...slotModel.unnamed]) {
 			const mul = isMultiple(f);
-			const req = isRequired(f);
+			const req = isTransportRequired(f);
 			multipleByName.set(f.name, mul);
 			requiredByName.set(f.name, req);
 			storageByName.set(f.name, f.storageName);
@@ -2054,6 +2062,53 @@ function literalSeamedArm(enumName: string, variant: string, write: string, seam
 	];
 }
 
+function literalKindIdsOf(
+	entry: PerSlotChildEnum,
+	kindIdByKind: ReadonlyMap<string, number> | undefined,
+	literalVariantByKey: ReadonlyMap<string, string>,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): readonly { readonly id: number; readonly variant: string }[] {
+	if (kindIdByKind === undefined) return [];
+	const out: { id: number; variant: string }[] = [];
+	const seen = new Set<number>();
+	for (const literal of entry.literals) {
+		const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
+		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
+		if (id === undefined || variant === undefined || seen.has(id)) continue;
+		seen.add(id);
+		out.push({ id, variant });
+	}
+	return out;
+}
+
+function prepareFilledSlotOf(entry: PerSlotChildEnum, nodeMap: NodeMap): AssembledNonterminal | undefined {
+	const slot = nodeMap.nodes.get(entry.ownerKind)?.slots.find((candidate) => candidate.name === entry.fieldName);
+	return slot !== undefined && isPrepareFilled(slot) ? slot : undefined;
+}
+
+function fromKindIdImpl(
+	enumName: string,
+	entry: PerSlotChildEnum,
+	literalIds: readonly { readonly id: number; readonly variant: string }[]
+): string[] {
+	if (entry.kinds.length > 0 || literalIds.length !== entry.literals.length) {
+		throw new Error(
+			`render-module: ${entry.ownerKind}.${entry.fieldName} is a registered choice option filled at prepare, but ${enumName} has an arm no kind id can build`
+		);
+	}
+	return [
+		`impl ${enumName} {`,
+		'    pub fn from_kind_id(id: u16) -> Option<Self> {',
+		'        match id {',
+		...literalIds.map(({ id, variant }) => `            ${id} => Some(Self::${variant}),`),
+		'            _ => None,',
+		'        }',
+		'    }',
+		'}',
+		''
+	];
+}
+
 function emitPerSlotChildEnum(
 	entry: PerSlotChildEnum,
 	kindIdByKind: ReadonlyMap<string, number> | undefined,
@@ -2119,13 +2174,12 @@ function emitPerSlotChildEnum(
 		)
 	);
 
+	const literalIds = literalKindIdsOf(entry, kindIdByKind, literalVariantByKey, kindEntries);
+	if (prepareFilledSlotOf(entry, nodeMap) !== undefined) lines.push(...fromKindIdImpl(enumName, entry, literalIds));
 	if (kindIdByKind !== undefined) {
 		const kindIdArms: string[] = [];
 		const emittedIds = new Set<number>();
-		for (const literal of entry.literals) {
-			const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
-			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
-			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
+		for (const { id, variant } of literalIds) {
 			emittedIds.add(id);
 			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
 		}
@@ -2678,7 +2732,7 @@ function listGapClassification(plan: RenderPlan, node: AssembledNode): string[] 
 		const token = sites.gap !== undefined ? '' : listGapTokenOf(field);
 		if (token === undefined) continue;
 		const ident = rustFieldIdent(field.storageName);
-		const items = isRequired(field) ? `self.${ident}.iter()` : `self.${ident}.as_deref().unwrap_or(&[]).iter()`;
+		const items = isTransportRequired(field) ? `self.${ident}.iter()` : `self.${ident}.as_deref().unwrap_or(&[]).iter()`;
 		const each = hasOptionalElements(field) ? 'item.as_ref().and_then(|i| i.coord())' : 'item.coord()';
 		const allowedOf = (site: SpacingSite | undefined) =>
 			site === undefined ? '&[]' : `options::allowed(options::${site.constName})`;
@@ -2815,7 +2869,7 @@ function seatTargetStructImpl(
 	}
 	const wrapper = wrapperSlotOf(node);
 	if (wrapper !== undefined && slotElementsReach(wrapper, nodeMap, reaches)) {
-		const held = isRequired(wrapper) ? '::sittir_core::SlotValue::Transport(inner)' : 'Some(::sittir_core::SlotValue::Transport(inner))';
+		const held = isTransportRequired(wrapper) ? '::sittir_core::SlotValue::Transport(inner)' : 'Some(::sittir_core::SlotValue::Transport(inner))';
 		body.push(`        if let ${held} = &mut self.${rustFieldIdent(wrapper.name!)} {`, '            return inner.seat_target(table);', '        }');
 	}
 	return [`impl ::sittir_core::prepare::SeatTarget for ${rustTransportStructName(node)} {`, SEAT_TARGET_SIG, ...body, '        None', '    }', '}', ''];
@@ -2867,13 +2921,30 @@ function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): str
 		const table = `options::${seatTableName(node.display.name, field.name)}`;
 		const items = hasOptionalElements(field) ? 'iter_mut().map(Option::as_mut)' : 'iter_mut().map(Some)';
 		lines.push(
-			isRequired(field)
+			isTransportRequired(field)
 				? `        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ctx);`
 				: `        if let Some(seated_items) = self.${ident}.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.${items}, ${table}, ctx); }`
 		);
 	}
 	return lines;
 }
+function optionDefaultFills(plan: RenderPlan, node: AssembledNode): string[] {
+	const kind = node.display.name;
+	return renderSlotModelOf(node)
+		.named.filter(isPrepareFilled)
+		.map((slot) => {
+			const site = plan.spacingSites.find(
+				(candidate) => candidate.kind === kind && candidate.slot === slot.name && candidate.side === undefined && candidate.seat === undefined
+			);
+			if (site === undefined) {
+				throw new Error(`render-module: ${kind}.${slot.name} is a registered choice option with no option site to fill it from`);
+			}
+			const ident = rustFieldIdent(slot.storageName);
+			const build = `${perSlotEnumName(node.typeName, slot.name)}::from_kind_id(ctx.options.spacing[options::${site.constName}].arm)`;
+			return `        if self.${ident}.is_none() { self.${ident} = ${build}.map(::sittir_core::SlotValue::Transport); }`;
+		});
+}
+
 function prepareStructImpl(
 	structName: string,
 	node: AssembledNode,
@@ -2897,6 +2968,7 @@ function prepareStructImpl(
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
 		if (sep !== undefined) body.push(`        self.separator_kind.get_or_insert(ctx.options.spacing[options::${sep.constName}].arm);`);
+		body.push(...optionDefaultFills(plan, node));
 		for (const f of fillFields) body.push(`        self.${f}.prepare(ctx)?;`);
 	}
 	return [
@@ -3228,7 +3300,7 @@ function renderTransportField(
 	const lines: string[] = [];
 	const rustName = rustFieldIdent(field.storageName);
 	lines.push(`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(`_${field.storageName}`)}))]`);
-	const required = forceOptional ? false : isRequired(field);
+	const required = forceOptional ? false : isTransportRequired(field);
 	const primitive = classifyPrimitiveField(field, nodeMap);
 	const adjacent = slotVerbatimIsImmediate(field, nodeMap);
 	const primitiveType =

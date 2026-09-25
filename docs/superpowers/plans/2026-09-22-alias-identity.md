@@ -870,13 +870,13 @@ Facts:
 - The site exists (`SITE_LEXICAL_DECLARATION_TERMINATOR`, its option row with admitted kind ids, and a `sites[]` default arm), but nothing in transport or render reads it.
 - Reproduces with `ir.returnStatement.strict(id('r')).$render()`. The same factory and transport shapes are at HEAD, where a `.semi`-style arm form filling the slot hid the defect.
 
-- [ ] Transport emitter: a registered-choice slot's field is `Option<SlotValue<…>>`.
-- [ ] Prepare: an absent registered-choice slot is filled from the option chain (per-tree, then engine, then the grammar default), i.e. the site's resolved arm.
-- [ ] A kind-id → slot constructor is generated for each registered-choice slot enum. Prepare uses it to build the value from the resolved arm.
-- [ ] Render reads the filled value; no other change.
-- [ ] Test: a node built with the option omitted renders under two different engine option sets to two different results. The same node with the option set explicitly renders the same under both.
-- [ ] Remove the workarounds: the typescript `expectTestFailures` entries citing the unfilled option default, and examples/18's explicit `terminator`.
-- [ ] Gates as Task 7.
+- [x] Transport emitter: a registered-choice slot's field is `Option<SlotValue<…>>`.
+- [x] Prepare: an absent registered-choice slot is filled from the option chain (per-tree, then engine, then the grammar default), i.e. the site's resolved arm.
+- [x] A kind-id → slot constructor is generated for each registered-choice slot enum. Prepare uses it to build the value from the resolved arm.
+- [x] Render reads the filled value; no other change.
+- [x] Test: a node built with the option omitted renders under two different engine option sets to two different results. The same node with the option set explicitly renders the same under both.
+- [x] Remove the workarounds: the typescript `expectTestFailures` entries citing the unfilled option default, and examples/18's explicit `terminator`.
+- [x] Gates as Task 7.
 
 ### Task 7d: The identifier leaf guard rejects a reserved word the slot does not admit
 

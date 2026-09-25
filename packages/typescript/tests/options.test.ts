@@ -62,3 +62,15 @@ it('an unknown key, an address naming no site, and a value a site does not admit
 		createEngine({ options: { array: { elements: { separator: { comma: { after: TSKindId.Semi } } } } } as never })
 	).toThrow(/does not admit kind id/);
 });
+
+it('an omitted registered choice option renders the arm the options resolve, and a set one renders as set', () => {
+	const semi = createEngine();
+	const automatic = createEngine({ options: { statements: { terminator: TSKindId.AutomaticSemicolon } } });
+	const omitted = ir.returnStatement.strict(ir.identifier('r'));
+	expect(semi.render(omitted).toString()).toBe('return r;');
+	expect(automatic.render(omitted).toString()).toBe('return r\n');
+	expect(automatic.render(omitted, { options: { statements: { terminator: TSKindId.Semi } } }).toString()).toBe('return r;');
+	const set = ir.returnStatement.strict(ir.identifier('r'), { terminator: TSKindId.Semi });
+	expect(semi.render(set).toString()).toBe('return r;');
+	expect(automatic.render(set).toString()).toBe('return r;');
+});
