@@ -662,6 +662,8 @@ export default grammar(
 
 				class_heritage: { '0': variant('extends_clause'), '1': variant('implements_clause') },
 
+				extends_clause: { '1/0': alias('extends_clause_single'), '1/1/0/1': alias('extends_clause_single') },
+
 				import_clause: {
 					'0': variant('namespace_import'),
 					'1': variant('named_imports'),
@@ -817,21 +819,6 @@ export default grammar(
 						members: flatMembers
 					};
 				},
-
-				// Upstream's `_extends_clause_single` (base grammar.js) carries two
-				// fields (value, type_arguments) but is never aliased visible, so it
-				// falls to the render layer's single-slot inline path and silently
-				// drops `type_arguments`. Alias both occurrences (head + repeat) to a
-				// visible kind so it gets its own slot surface, per the
-				// single-slot-vs-visible rule.
-				extends_clause: ($) =>
-					seq(
-						'extends',
-						seq(
-							alias($._extends_clause_single, $.extends_clause_single),
-							repeat(seq(',', alias($._extends_clause_single, $.extends_clause_single)))
-						)
-					),
 
 				ambient_declaration_global: ($) => seq('global', field('body', $.statement_block)),
 				ambient_declaration_module: ($) =>

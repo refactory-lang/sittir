@@ -1041,6 +1041,15 @@ built from the name-neutral `$` and compared as `canonicalRuleText`
 // of itself.
 ```
 
+A site that enrich wrapped in an inferred field (`isEnrichShapedFieldWrapper`,
+the predicate `field()` placeholders use to recognise enrich's own field) is
+read as the author wrote it: the field is dropped and its content is the site.
+An authored alias over `field('x', $._x)` therefore aliases `$._x` in place,
+exactly as upstream's `alias($._x, $.x)` does, instead of minting `_x` over the
+field (which would redefine `_x` as a reference to itself). Enrich's inferred
+facts give way to an authored patch at that site, the same rule as automatic
+arm labels.
+
 An alias over inline content (a pattern, string or token, such as rust's
 unnamed `alias(/[bc]?"/, '"')`) has no rule behind it, so promoting it in
 place would leave the parser a named node the model has no kind for. Its

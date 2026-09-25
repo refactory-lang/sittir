@@ -74,4 +74,16 @@ describe('resolvePatch — ALIAS + enrich-lift', () => {
 		expect(patched.content).toEqual({ type: 'SYMBOL', name: 'authored_rule' });
 		expect(ctx.deposits.size).toBe(0);
 	});
+
+	it('alias() over a field enrich inferred aliases the symbol in place, dropping the field and minting nothing', () => {
+		const { result: patched, ctx } = withWireContext('extends_clause', () => {
+			const g = globalThis as any;
+			const inferred = { type: 'FIELD', name: 'extends_clause_single', content: { type: 'SYMBOL', name: '_extends_clause_single' }, metadata: { fieldSource: 'enriched' } };
+			return transform(g.seq({ type: 'STRING', value: 'extends' }, inferred), { 1: alias('extends_clause_single') } as any) as any;
+		});
+
+		expect(patched.members[1]).toEqual({ type: 'ALIAS', named: true, value: 'extends_clause_single', content: { type: 'SYMBOL', name: '_extends_clause_single' } });
+		expect(ctx.deposits.has('_extends_clause_single')).toBe(false);
+		expect(ctx.deposits.size).toBe(0);
+	});
 });

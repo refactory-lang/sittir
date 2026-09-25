@@ -854,6 +854,8 @@ The user's rule: a sub-factory arm exists exactly where a variant label (`varian
 
 **Follow-up:** generated arm tests for a parameterless leaf arm (e.g. rust `pub.scope.crate builds the parent`) pass a hand-built node cast `as any`. `ir.visibilityModifier.pub.scope.crate()` with no arguments type-checks and renders `pub(crate)`, so the test generator should call such an arm with no arguments and drop the cast.
 
+**Follow-up task: type-name collision renames the visible side.** When a hidden storage kind and a visible kind share a type name, the visible kind should keep the plain name and the underscore storage kind should be renamed. Today the storage kind wins: in the python `_simple_pattern` retirement trial, `_list_pattern` took the enum name `ListPattern` and the visible `list_pattern` became `ListPattern_196` (`tuple_pattern` → `TuplePattern_195`). Census: every typename-collision in `grammar-diagnostics.json` across the three grammars, including Task 7's python `_as_pattern` (`_AsPattern`), and every ir key with a leading underscore (e.g. `_listPattern` in the same trial).
+
 ### Task 7b: A built node carries the alias envelope its read shows
 
 Every alias site is an envelope (the user's rule), and the read materializes it: python `case test():` reads `case_pattern → _simple_pattern {simple_pattern} → _class_pattern`, typescript `a = 1;` reads `assignment_expression._left = {lhs_expression} → _identifier`. A factory or composer at an aliased site builds the content directly (`casePattern.classPattern(...)` → `case_pattern._content = class_pattern`), so built ≠ read; render and the validators still pass because they compare text and parse trees, not the read-vs-built model shape.
@@ -894,6 +896,17 @@ The user's ruling: a literal arm whose token is one of sittir's keyword mints (`
 - [x] Test: a keyword literal arm is named by its text; a non-keyword literal keeps its kind name.
 - [x] The commit lists every renamed ir path per grammar.
 - [x] Gates as Task 7.
+
+### Task 7f: Retire the alias-shape hand-written rules
+
+A hand-written rule is retired when it reduces to enrich plus a patch with the parser unchanged (grammar.json structurally equal apart from where an alias sits; validate rows unchanged; no node-model, kind or ir move). Each rule was trialled; the ones that did not reduce keep their hand-written body with a stated cause, recorded in the unsupported-shape diagnostics plan (Task 4).
+
+- [x] `alias(name)` on a site enrich wrapped in an inferred field reads the site as the author wrote it: the inferred field (`isEnrichShapedFieldWrapper`, the predicate `field()` placeholders use) is dropped and the symbol aliased in place. Test: alias() over an enrich-inferred field gives an ALIAS over the SYMBOL, no FIELD, no `_<name>` deposit.
+- [x] typescript `extends_clause` → `{ '1/0': alias('extends_clause_single'), '1/1/0/1': alias('extends_clause_single') }`. grammar.json and node-types.json byte-identical.
+- [x] Kept, with causes: typescript `arrow_function`; python `string_content`; python `_simple_pattern`/`_wildcard_pattern`/`case_list_pattern`/`case_tuple_pattern` (the user's ruling that the names stay); rust `tuple_type`, `tuple_expression`, `_non_special_token` families; python `print_statement` family.
+- [x] Kept: typescript `class_body`. `alias('semicolon')` would mint `_semicolon`, which upstream already defines. The mint stays for leaves: an in-place leaf alias (`alias('_', $.x)`) reads with the shared anonymous token's grammar symbol, while a minted `alias($._x, $.x)` keeps its own nonterminal, and the reader stamps `$type` from the grammar symbol.
+
+**Follow-up:** typescript `class_body`'s existing in-place `alias(';', $.semicolon)` reads with the shared `';'` grammar symbol. Check whether read and validate handle that node, or whether it needs a distinctly named mint.
 
 ### Task 7d: The identifier leaf guard rejects a reserved word the slot does not admit
 

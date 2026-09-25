@@ -5774,8 +5774,9 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   const result = native(patch.name, content);
   return { ...result, metadata: makeRuleMetadata({ fieldSource: "override" }) };
 }
-function resolveAliasPlaceholder(patch, originalMember, precStack) {
-  const labelled = (site) => relabelledArm(site, originalMember, wireAutomaticVariants());
+function resolveAliasPlaceholder(patch, site, precStack) {
+  const originalMember = isEnrichShapedFieldWrapper(site) ? site.content : site;
+  const labelled = (site2) => relabelledArm(site2, originalMember, wireAutomaticVariants());
   const ruleName = "_" + patch.name;
   const lift = enrichLiftArmOf(originalMember);
   if (lift !== null) return labelled(renameEnrichLift(originalMember, lift, ruleName, patch.name));
@@ -6469,6 +6470,7 @@ var grammar_sittir_default = grammar(
         },
         arrow_function: { "1/0": variant("parameter") },
         class_heritage: { "0": variant("extends_clause"), "1": variant("implements_clause") },
+        extends_clause: { "1/0": alias("extends_clause_single"), "1/1/0/1": alias("extends_clause_single") },
         import_clause: {
           "0": variant("namespace_import"),
           "1": variant("named_imports"),
@@ -6604,19 +6606,6 @@ var grammar_sittir_default = grammar(
             members: flatMembers
           };
         },
-        // Upstream's `_extends_clause_single` (base grammar.js) carries two
-        // fields (value, type_arguments) but is never aliased visible, so it
-        // falls to the render layer's single-slot inline path and silently
-        // drops `type_arguments`. Alias both occurrences (head + repeat) to a
-        // visible kind so it gets its own slot surface, per the
-        // single-slot-vs-visible rule.
-        extends_clause: ($) => seq(
-          "extends",
-          seq(
-            alias($._extends_clause_single, $.extends_clause_single),
-            repeat(seq(",", alias($._extends_clause_single, $.extends_clause_single)))
-          )
-        ),
         ambient_declaration_global: ($) => seq("global", field("body", $.statement_block)),
         ambient_declaration_module: ($) => prec.right(
           seq(
