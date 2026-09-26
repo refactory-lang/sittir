@@ -233,10 +233,15 @@ decides the break:
   leading entry gives exactly one blank line before the owner, whatever the
   seam default was. Consecutive whitespace entries coalesce by rank, as the
   spacing writer already does (the strongest wins).
-- **line-terminated comments:** a comment kind whose token cannot contain a line
-  break forces a line break after it, whatever follows. A line comment otherwise
-  swallows the next token. The fact is stamped once per comment kind (see "Model
-  additions") and never re-derived from text at render.
+- **line-terminated extras:** the break after a line comment is an ordinary
+  kind-edge render option, not a special render rule:
+  - an extra kind whose token cannot contain a line break (`lineTerminated`)
+    gets its `<kind>_after` edge default set to `newline`, stamped once from the
+    fact through the existing render-defaults channel;
+  - that edge admits only line-breaking arms (`newline`, `blankline`, and
+    `dedent` where the grammar indents), so it can't be set to `space`/`tight`,
+    which would let the comment swallow the next token;
+  - users override it the way they override any edge (e.g. `blankline`).
 
 Read → render keeps using source coordinates and stays byte-exact. These rules
 govern detached and built trees.
@@ -251,7 +256,8 @@ for design review:
 3. **`lineTerminated`** on extra kinds (node model, a stamped fact):
    - computed at link from the kind's token rule: can the token's pattern match
      a line break;
-   - consumed only by render emission.
+   - consumed only by the render-defaults stamp (the `<kind>_after` edge default
+     and its admitted arms).
 4. **`innerGaps`** on inner-capable kinds (node model, a derived getter):
    - the ordered gap keys, from the kind's optional/repeat slots, or `interior`
      for a slotless kind;
@@ -265,6 +271,18 @@ for design review:
 
 No annotation is read by the compiler for any of this. Trivia stays outside the
 rule model.
+
+## Source emitter
+
+The factory-source emitter (`packages/tools/src/emit/factory-source.ts`, the
+code that prints a parsed tree as factory calls) prints every trivia entry as its
+kind's builder, never as a bare string:
+- node entries: `ir.lineComment('// note')`, `ir.blockComment('/* x */')`,
+  `ir.lineContinuation()`;
+- whitespace entries: `ir.whitespace.blankline()`.
+
+This holds for leading, trailing and `inner` (`.$trivia.inner(...)` on an
+`Empty<Kind>`), in both the strict and loose spellings.
 
 ## Reader and wrap
 
