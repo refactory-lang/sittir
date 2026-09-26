@@ -458,14 +458,17 @@ const s: readonly import('../src/index.js').Statement[] = parsed.statements();
 - Modify: `rust/crates/sittir-core/src/macros.rs` (`render_with_trivia!`):
   - leading entries join with a space when `same_line`, otherwise a line break;
   - trailing entries start with a space when `same_line`, otherwise a line break;
-  - after any entry whose `line_terminated()` is true, a line break unless
-    `w.ends_line()`.
+  - no special case for line comments: their `<kind>_after` edge default is
+    `newline` (next bullet), so the break comes from the ordinary edge.
 - Modify: `packages/codegen/src/emitters/render-module.ts`:
   - `renderTriviaTransportSupport`: `TransportTrivia` gains
     `inner: Option<BTreeMap<String, Vec<SlotValue<TriviaTransport>>>>`;
   - `TriviaTransport` entries carry `same_line: bool`;
   - `TriviaTransport` implements `fn line_terminated(&self) -> bool`, one arm
     per comment kind from the stamped fact.
+- Modify: the render-defaults stamp (`compiler/model/render-rules.ts` /
+  `site-preferences.ts`): an extra kind with `lineTerminated` gets `<kind>_after`
+  default `newline`, and that edge admits only line-breaking arms.
 - Modify: `packages/codegen/src/emitters/render-body.ts` and `templates.ts`:
   emit an `innerTrivia(gap)` body node at each gap position.
   `render-module.ts` lowers it to
@@ -520,6 +523,37 @@ it('renders a built trailing line comment followed by the next statement on a ne
   `cargo test --workspace --no-default-features`.
 - [ ] **Step 5: Regen, gate and commit.** The trivia row must tighten in every
   grammar. If a row regresses, stop and report old/new/where.
+
+### Task 7b: The source emitter prints trivia as kinds
+
+**Files:**
+- Modify: `packages/tools/src/emit/factory-source.ts` (`triviaSuffix` and the
+  inner-trivia print): every entry prints through its kind's builder (via
+  `printValue` on the wrapped entry), whitespace entries as
+  `ir.whitespace.<item>()`, and inner entries as `.$trivia.inner(...)`.
+- Test: `packages/tools/src/emit/__tests__/factory-source-trivia.test.ts`
+- Docs: glossary entries for `triviaSuffix` and the inner print.
+
+**Interfaces:** Consumes the wrapped trivia entries (Task 4) and the runtime surface
+(Task 5).
+
+- [ ] **Step 1: Write the failing test.**
+
+```ts
+it('prints trivia entries as their kind builders', async () => {
+	const src = await factorySourceOf('rust', 'fn f() {\n    // note\n    a;\n}\n');
+	expect(src).toContain(`.$trivia.leading(ir.lineComment('// note'))`);
+	expect(src).not.toMatch(/\$trivia\.leading\('/);
+});
+it('prints inner trivia on an empty body', async () => {
+	expect(await factorySourceOf('rust', 'fn f() { // TODO\n}\n')).toContain(`.$trivia.inner(ir.lineComment('// TODO'))`);
+});
+```
+
+- [ ] **Step 2:** Run it. Expected: FAIL (bare strings are printed today).
+- [ ] **Step 3:** Implement; regenerate the dogfood examples (`gen:examples`).
+- [ ] **Step 4:** Run it. Expected: PASS. Run the examples type-checks.
+- [ ] **Step 5:** Commit.
 
 ### Task 8: Probes, examples and the validation ratchet
 
