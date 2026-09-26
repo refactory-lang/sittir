@@ -73,6 +73,11 @@ describe('parseCorpus', () => {
 		expect(parseCorpus(text)).toEqual([{ name: 'Dividers', source: 'a\n---\nb\n-----\nc' }]);
 	});
 
+	it('measures a divider by its hyphens, not its line ending', () => {
+		const text = '===\nCRLF\n===\na\n----\nb\n---\r\n(x)\n';
+		expect(parseCorpus(text)).toEqual([{ name: 'CRLF', source: 'a' }]);
+	});
+
 	it('skips :error entries and entries whose expected tree has ERROR or MISSING', () => {
 		const text = corpus(
 			'===',

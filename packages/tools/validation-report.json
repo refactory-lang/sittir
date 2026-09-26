@@ -24,13 +24,13 @@
     "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
-    "ownerKind": "\ufdd1\n",
-    "message": "[assemble] literal \"\ufdd1\\n\" has no anonymous parser symbol \u2014 not minted",
+    "ownerKind": "﷑\n",
+    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
-      "literalText": "\ufdd1\n"
+      "literalText": "﷑\n"
     },
-    "location": "\ufdd1\n"
+    "location": "﷑\n"
   },
   {
     "source": "grammar",
@@ -39,13 +39,13 @@
     "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
-    "ownerKind": "\ufdd0\n",
-    "message": "[assemble] literal \"\ufdd0\\n\" has no anonymous parser symbol \u2014 not minted",
+    "ownerKind": "﷐\n",
+    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
-      "literalText": "\ufdd0\n"
+      "literalText": "﷐\n"
     },
-    "location": "\ufdd0\n"
+    "location": "﷐\n"
   },
   {
     "source": "grammar",
@@ -55,7 +55,7 @@
     "code": "typename-collision",
     "severity": "info",
     "ownerKind": "_parameters",
-    "message": "[assemble] typeName collision: kind '_parameters' renamed 'Parameters' \u2192 '_Parameters' (visible sibling(s): 'parameters')",
+    "message": "[assemble] typeName collision: kind '_parameters' renamed 'Parameters' → '_Parameters' (visible sibling(s): 'parameters')",
     "canProceed": true,
     "details": {
       "typeName": "Parameters",
@@ -74,7 +74,7 @@
     "code": "typename-collision",
     "severity": "info",
     "ownerKind": "_as_pattern",
-    "message": "[assemble] typeName collision: kind '_as_pattern' renamed 'AsPattern' \u2192 '_AsPattern' (visible sibling(s): 'as_pattern')",
+    "message": "[assemble] typeName collision: kind '_as_pattern' renamed 'AsPattern' → '_AsPattern' (visible sibling(s): 'as_pattern')",
     "canProceed": true,
     "details": {
       "typeName": "AsPattern",
@@ -93,7 +93,7 @@
     "code": "typename-collision",
     "severity": "info",
     "ownerKind": "_string_content",
-    "message": "[assemble] typeName collision: kind '_string_content' renamed 'StringContent' \u2192 '_StringContent' (visible sibling(s): 'string_content')",
+    "message": "[assemble] typeName collision: kind '_string_content' renamed 'StringContent' → '_StringContent' (visible sibling(s): 'string_content')",
     "canProceed": true,
     "details": {
       "typeName": "StringContent",
@@ -182,7 +182,7 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-unclassified-symbols",
-    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array \u2014 genuine gap, not an accepted exclusion",
+    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
@@ -200,7 +200,7 @@
     "code": "unclassifiable-shape",
     "severity": "warning",
     "ownerKind": "_let_chain",
-    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]) \u2014 resolved by structural recursion",
+    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]) — resolved by structural recursion",
     "canProceed": true,
     "details": {
       "bucket": "choice-with-structured-arms",
@@ -217,7 +217,7 @@
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "ownerKind": "#!",
-    "message": "[assemble] literal \"#!\" has no anonymous parser symbol \u2014 not minted",
+    "message": "[assemble] literal \"#!\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "#!"
@@ -231,13 +231,13 @@
     "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
-    "ownerKind": "\ufdd0\n",
-    "message": "[assemble] literal \"\ufdd0\\n\" has no anonymous parser symbol \u2014 not minted",
+    "ownerKind": "﷐\n",
+    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
-      "literalText": "\ufdd0\n"
+      "literalText": "﷐\n"
     },
-    "location": "\ufdd0\n"
+    "location": "﷐\n"
   },
   {
     "source": "grammar",
@@ -246,13 +246,13 @@
     "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
-    "ownerKind": "\ufdd1\n",
-    "message": "[assemble] literal \"\ufdd1\\n\" has no anonymous parser symbol \u2014 not minted",
+    "ownerKind": "﷑\n",
+    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
-      "literalText": "\ufdd1\n"
+      "literalText": "﷑\n"
     },
-    "location": "\ufdd1\n"
+    "location": "﷑\n"
   },
   {
     "source": "grammar",
@@ -284,8 +284,8 @@
         "\n\n",
         " ",
         "#!",
-        "\ufdd0\n",
-        "\ufdd1\n"
+        "﷐\n",
+        "﷑\n"
       ]
     },
     "severity": "warning",
@@ -321,8 +321,8 @@
         "\n\n",
         " ",
         "#!",
-        "\ufdd0\n",
-        "\ufdd1\n"
+        "﷐\n",
+        "﷑\n"
       ]
     },
     "scope": "grammar"
@@ -332,7 +332,7 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-unclassified-symbols",
-    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array \u2014 genuine gap, not an accepted exclusion",
+    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
@@ -350,8 +350,8 @@
     "code": "body-pattern-zero-match",
     "severity": "warning",
     "ownerKind": "_visibility_modifier_in_path",
-    "message": "groups: body-pattern '_visibility_modifier_in_path' matched no base-grammar position \u2014 the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape.",
-    "proposal": "The pattern body must remain STRUCTURALLY IDENTICAL to the base-grammar sub-tree it targets. If the base grammar changed (or the entry's body was edited), re-align the body \u2014 or delete the entry if the pattern is obsolete.",
+    "message": "groups: body-pattern '_visibility_modifier_in_path' matched no base-grammar position — the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape.",
+    "proposal": "The pattern body must remain STRUCTURALLY IDENTICAL to the base-grammar sub-tree it targets. If the base grammar changed (or the entry's body was edited), re-align the body — or delete the entry if the pattern is obsolete.",
     "canProceed": true,
     "location": "_visibility_modifier_in_path"
   },
@@ -363,7 +363,7 @@
     "code": "unclassifiable-shape",
     "severity": "warning",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]) \u2014 resolved by structural recursion",
+    "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]) — resolved by structural recursion",
     "canProceed": true,
     "details": {
       "bucket": "choice-with-structured-arms",
@@ -380,7 +380,7 @@
     "code": "union-slot-mixed-row",
     "severity": "warning",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row \u2014 structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true,
     "location": "binary_expression",
     "sClass": "S4"
@@ -393,7 +393,7 @@
     "code": "unclassifiable-shape",
     "severity": "warning",
     "ownerKind": "public_field_definition",
-    "message": "[collect-slots] kind 'public_field_definition': member rule:public_field_definition:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[4]) \u2014 resolved by structural recursion",
+    "message": "[collect-slots] kind 'public_field_definition': member rule:public_field_definition:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[4]) — resolved by structural recursion",
     "canProceed": true,
     "details": {
       "bucket": "choice-with-structured-arms",
@@ -492,7 +492,7 @@
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
     "ownerKind": "#!",
-    "message": "[assemble] literal \"#!\" has no anonymous parser symbol \u2014 not minted",
+    "message": "[assemble] literal \"#!\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
       "literalText": "#!"
@@ -506,13 +506,13 @@
     "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
-    "ownerKind": "\ufdd0\n",
-    "message": "[assemble] literal \"\ufdd0\\n\" has no anonymous parser symbol \u2014 not minted",
+    "ownerKind": "﷐\n",
+    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
-      "literalText": "\ufdd0\n"
+      "literalText": "﷐\n"
     },
-    "location": "\ufdd0\n"
+    "location": "﷐\n"
   },
   {
     "source": "grammar",
@@ -521,13 +521,13 @@
     "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
-    "ownerKind": "\ufdd1\n",
-    "message": "[assemble] literal \"\ufdd1\\n\" has no anonymous parser symbol \u2014 not minted",
+    "ownerKind": "﷑\n",
+    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
     "canProceed": true,
     "details": {
-      "literalText": "\ufdd1\n"
+      "literalText": "﷑\n"
     },
-    "location": "\ufdd1\n"
+    "location": "﷑\n"
   },
   {
     "source": "grammar",
@@ -537,7 +537,7 @@
     "code": "typename-collision",
     "severity": "info",
     "ownerKind": "_identifier",
-    "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' \u2192 '_Identifier' (visible sibling(s): 'identifier')",
+    "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')",
     "canProceed": true,
     "details": {
       "typeName": "Identifier",
@@ -580,8 +580,8 @@
         "\n\n",
         " ",
         "#!",
-        "\ufdd0\n",
-        "\ufdd1\n"
+        "﷐\n",
+        "﷑\n"
       ]
     },
     "severity": "warning",
@@ -602,8 +602,8 @@
         "\n\n",
         " ",
         "#!",
-        "\ufdd0\n",
-        "\ufdd1\n"
+        "﷐\n",
+        "﷑\n"
       ]
     },
     "scope": "grammar"
@@ -613,7 +613,7 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-unclassified-symbols",
-    "message": "4 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array \u2014 genuine gap, not an accepted exclusion",
+    "message": "4 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
@@ -13618,7 +13618,7 @@
     "backend": "native",
     "kind": "debugger_statement",
     "entry": "Ambient declarations",
-    "message": "root._terminator: value 20 \u2260 undefined",
+    "message": "root._terminator: value 20 ≠ undefined",
     "input": "debugger;",
     "start": 617,
     "end": 626,
@@ -13633,7 +13633,7 @@
     "backend": "native",
     "kind": "debugger_statement",
     "entry": "Ambient declarations with for-let",
-    "message": "root._terminator: value 20 \u2260 undefined",
+    "message": "root._terminator: value 20 ≠ undefined",
     "input": "debugger;",
     "start": 617,
     "end": 626,
@@ -13663,7 +13663,7 @@
     "backend": "native",
     "kind": "debugger_statement",
     "entry": "Ambient declarations",
-    "message": "root._terminator: value 20 \u2260 undefined",
+    "message": "root._terminator: value 20 ≠ undefined",
     "input": "debugger;",
     "start": 617,
     "end": 626,
@@ -13678,7 +13678,7 @@
     "backend": "native",
     "kind": "debugger_statement",
     "entry": "Ambient declarations with for-let",
-    "message": "root._terminator: value 20 \u2260 undefined",
+    "message": "root._terminator: value 20 ≠ undefined",
     "input": "debugger;",
     "start": 617,
     "end": 626,

@@ -46,7 +46,7 @@ import {
 	type ValidatorSkip,
 	loadIrSurface,
 	buildFactoryNodeFromReference,
-	grammarModulePath
+	importGrammarModule
 } from './common.ts';
 
 /**
@@ -317,26 +317,25 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	kindNameFromId: ((id: number) => string | undefined) | undefined;
 	importFailure: { message: string } | null;
 }> {
-	const factoryModulePath = grammarModulePath(grammar, 'factories/raw.ts');
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
 	let factoryShapes: Record<string, FactoryShape> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let kindNameFromId: ((id: number) => string | undefined) | undefined = undefined;
-	if (!factoryModulePath) {
-		return {
-			factoryMap,
-			factoryShapes,
-			fieldAliasMap,
-			factoryFields,
-			factorySlots,
-			kindNameFromId,
-			importFailure: null
-		};
-	}
 	try {
-		const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
+		const factoryModule = await importGrammarModule(grammar, 'factories/raw.ts');
+		if (!factoryModule) {
+			return {
+				factoryMap,
+				factoryShapes,
+				fieldAliasMap,
+				factoryFields,
+				factorySlots,
+				kindNameFromId,
+				importFailure: null
+			};
+		}
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata lives in node-model.json5 (PR-K) — pure
 		// data, loaded separately from the factory functions.
@@ -345,42 +344,39 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
 		factorySlots = mapData.factorySlots;
-		const typesModulePath = grammarModulePath(grammar, 'types.ts');
-		if (typesModulePath) {
-			try {
-				const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
-				// KIND_NAMES (not KIND_DISPLAY_NAMES): this validator's `kind`
-				// resolution feeds factoryMap/factoryShapes/factoryFields lookups,
-				// which are keyed by the canonical (wrap-dispatch) catalog name —
-				// the same identity `wrapNode` stamps. KIND_DISPLAY_NAMES is
-				// tree-sitter's raw parse label, which collapses distinct
-				// canonical kinds sharing one display name (python's `block`
-				// (160) and `_match_block` (135) both display as "block") onto
-				// the wrong factory, producing a false `$type` mismatch even
-				// though the wrapped reference and a correctly-selected factory
-				// would agree.
-				const kindNamesMap = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
-				if (kindNamesMap) {
-					kindNameFromId = (id: number) => kindNamesMap.get(id);
-				}
-			} catch (e) {
-				// Without kindNameFromId every walked candidate is rejected (its
-				// numeric $type can't be resolved to a kind name), so the validator
-				// would silently report an empty 0/0 pass. Route this into the same
-				// failure path as a factory-module load failure instead of
-				// continuing with a resolver that can never succeed.
-				const message = `[validate-factory-roundtrip] failed to load ${typesModulePath}: ${(e as Error)?.message ?? e}`;
-				console.error(message);
-				return {
-					factoryMap,
-					factoryShapes,
-					fieldAliasMap,
-					factoryFields,
-					factorySlots,
-					kindNameFromId,
-					importFailure: { message }
-				};
+		try {
+			const typesModule = await importGrammarModule(grammar, 'types.ts');
+			// KIND_NAMES (not KIND_DISPLAY_NAMES): this validator's `kind`
+			// resolution feeds factoryMap/factoryShapes/factoryFields lookups,
+			// which are keyed by the canonical (wrap-dispatch) catalog name —
+			// the same identity `wrapNode` stamps. KIND_DISPLAY_NAMES is
+			// tree-sitter's raw parse label, which collapses distinct
+			// canonical kinds sharing one display name (python's `block`
+			// (160) and `_match_block` (135) both display as "block") onto
+			// the wrong factory, producing a false `$type` mismatch even
+			// though the wrapped reference and a correctly-selected factory
+			// would agree.
+			const kindNamesMap = typesModule?.KIND_NAMES as ReadonlyMap<number, string> | undefined;
+			if (kindNamesMap) {
+				kindNameFromId = (id: number) => kindNamesMap.get(id);
 			}
+		} catch (e) {
+			// Without kindNameFromId every walked candidate is rejected (its
+			// numeric $type can't be resolved to a kind name), so the validator
+			// would silently report an empty 0/0 pass. Route this into the same
+			// failure path as a factory-module load failure instead of
+			// continuing with a resolver that can never succeed.
+			const message = `[validate-factory-roundtrip] failed to load ${grammar} src/types.ts: ${(e as Error)?.message ?? e}`;
+			console.error(message);
+			return {
+				factoryMap,
+				factoryShapes,
+				fieldAliasMap,
+				factoryFields,
+				factorySlots,
+				kindNameFromId,
+				importFailure: { message }
+			};
 		}
 		return {
 			factoryMap,
@@ -392,7 +388,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			importFailure: null
 		};
 	} catch (e) {
-		const message = `[validate-factory-roundtrip] failed to load ${factoryModulePath}: ${(e as Error)?.message ?? e}`;
+		const message = `[validate-factory-roundtrip] failed to load ${grammar} src/factories/raw.ts: ${(e as Error)?.message ?? e}`;
 		console.error(message);
 		return {
 			factoryMap,

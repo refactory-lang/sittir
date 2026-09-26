@@ -69,7 +69,7 @@ export function parseCorpus(content: string, grammar?: string): CorpusEntry[] {
 		const divider = [...body.matchAll(CORPUS_DIVIDER)]
 			.filter((d) => d[2] === firstSuffix)
 			.reduce<RegExpExecArray | RegExpMatchArray | undefined>(
-				(best, d) => (best === undefined || d[0].length >= best[0].length ? d : best),
+				(best, d) => (best === undefined || d[1]!.length >= best[1]!.length ? d : best),
 				undefined
 			);
 		if (divider === undefined) return;
@@ -92,6 +92,11 @@ export function grammarModulePath(grammar: string, file: string): string | undef
 	if (!isGrammar(grammar)) return undefined;
 	const path = join(grammarPackageDir(grammar), 'src', file);
 	return existsSync(path) ? path : undefined;
+}
+
+export async function importGrammarModule(grammar: string, file: string): Promise<Record<string, any> | undefined> {
+	const path = grammarModulePath(grammar, file);
+	return path === undefined ? undefined : ((await import(pathToFileURL(path).href)) as Record<string, any>);
 }
 
 export function loadCorpusEntries(grammar: string): CorpusEntry[] {
@@ -600,10 +605,9 @@ export const WASM_PATHS: Record<string, string> = {
 export async function loadReadTreeNode(
 	grammar: string
 ): Promise<((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null> {
-	const p = grammarModulePath(grammar, 'wrap.ts');
-	if (!p) return null;
 	try {
-		const mod = await import(new URL(p, import.meta.url).pathname);
+		const mod = await importGrammarModule(grammar, 'wrap.ts');
+		if (!mod) return null;
 		return mod.readTreeNode ?? null;
 	} catch (e) {
 		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
@@ -614,10 +618,9 @@ export async function loadReadTreeNode(
 export async function loadWrapNode(
 	grammar: string
 ): Promise<((data: AnyNodeData, tree: TreeHandle) => unknown) | null> {
-	const p = grammarModulePath(grammar, 'wrap.ts');
-	if (!p) return null;
 	try {
-		const mod = await import(new URL(p, import.meta.url).pathname);
+		const mod = await importGrammarModule(grammar, 'wrap.ts');
+		if (!mod) return null;
 		return mod.wrapNode ?? null;
 	} catch (e) {
 		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
@@ -717,7 +720,7 @@ export function readNodeModelFile(grammar: string): string | undefined {
 	const p = grammarModulePath(grammar, 'node-model.json5');
 	if (!p) return undefined;
 	try {
-		return readFileSync(new URL(p, import.meta.url).pathname, 'utf-8');
+		return readFileSync(p, 'utf-8');
 	} catch {
 		return undefined;
 	}
@@ -937,11 +940,9 @@ export interface IrSurface {
 }
 
 export async function loadIrSurface(grammar: string): Promise<IrSurface | undefined> {
-	const p = grammarModulePath(grammar, 'ir.ts');
-	if (!p) return undefined;
+	const mod = (await importGrammarModule(grammar, 'ir.ts')) as { ir?: Record<string, unknown> } | undefined;
+	if (mod?.ir === undefined) return undefined;
 	const model = await loadNodeModel(grammar);
-	const mod = (await import(new URL(p, import.meta.url).pathname)) as { ir?: Record<string, unknown> };
-	if (mod.ir === undefined) return undefined;
 	const entries: Record<string, IrEntry> = {};
 	for (const [kind, irKey] of Object.entries(model.irKeys)) {
 		const entry = mod.ir[irKey];
@@ -951,10 +952,9 @@ export async function loadIrSurface(grammar: string): Promise<IrSurface | undefi
 }
 
 export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined> {
-	const typesModulePath = grammarModulePath(grammar, 'types.ts');
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		return typesModule.KIND_DISPLAY_NAMES as ReadonlyMap<number, string> | undefined;
 	} catch {
 		return undefined;
@@ -964,10 +964,9 @@ export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number
 export async function loadStorageKindNameFromId(
 	grammar: string
 ): Promise<((id: number) => string | undefined) | undefined> {
-	const typesModulePath = grammarModulePath(grammar, 'types.ts');
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		const kindNames = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
 		return kindNames ? (id: number) => kindNames.get(id) : undefined;
 	} catch {
@@ -986,10 +985,9 @@ export async function loadIsLeafKind(grammar: string): Promise<(kindId: number) 
 }
 
 export async function loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined> {
-	const typesModulePath = grammarModulePath(grammar, 'types.ts');
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		const kindNames = typesModule.KIND_DISPLAY_NAMES as ReadonlyMap<number, string> | undefined;
 		if (kindNames) {
 			return (id: number) => kindNames.get(id);
@@ -1011,10 +1009,9 @@ export async function loadKindNameFromId(grammar: string): Promise<((id: number)
 export async function loadCanonicalKindNameFromId(
 	grammar: string
 ): Promise<((id: number) => string | undefined) | undefined> {
-	const typesModulePath = grammarModulePath(grammar, 'types.ts');
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		const kindNames = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
 		if (!kindNames) return undefined;
 		return (id: number) => kindNames.get(id);
@@ -1024,10 +1021,9 @@ export async function loadCanonicalKindNameFromId(
 }
 
 export async function loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined> {
-	const typesModulePath = grammarModulePath(grammar, 'types.ts');
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		return typesModule.kindIdFromName as ((name: string) => number) | undefined;
 	} catch {
 		return undefined;

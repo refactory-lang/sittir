@@ -1,7 +1,16 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import {
+	existsSync,
+	mkdirSync,
+	mkdtempSync,
+	readFileSync,
+	readdirSync,
+	renameSync,
+	rmSync,
+	writeFileSync
+} from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { REPO_ROOT, grammarPackageDir, upstreamPackage } from '@sittir/codegen/grammars';
 import { corpusSourcePath, upstreamCorpusDir } from './layout.ts';
@@ -70,8 +79,10 @@ export function archiveCommit(tarball: Buffer): string {
 
 async function download(repo: GithubRepo, refs: readonly string[]): Promise<{ ref: string; tarball: Buffer }> {
 	for (const ref of refs) {
-		const response = await fetch(`https://codeload.github.com/${repo.owner}/${repo.repo}/tar.gz/${ref}`);
+		const url = `https://codeload.github.com/${repo.owner}/${repo.repo}/tar.gz/${ref}`;
+		const response = await fetch(url);
 		if (response.ok) return { ref, tarball: Buffer.from(await response.arrayBuffer()) };
+		if (response.status !== 404) throw new Error(`corpus: ${url} answered ${response.status} ${response.statusText}`);
 	}
 	throw new Error(`corpus: ${repo.owner}/${repo.repo} has none of the refs ${refs.join(', ')}`);
 }
@@ -89,7 +100,7 @@ function corpusFilesOf(tarball: Buffer): Map<string, string> {
 		const files = new Map<string, string>();
 		for (const rel of readdirSync(corpusDir, { recursive: true, encoding: 'utf8' }).sort()) {
 			if (!rel.endsWith('.txt')) continue;
-			files.set(rel.split('/').join('-'), readFileSync(join(corpusDir, rel), 'utf8'));
+			files.set(rel.split(/[\\/]/).join('-'), readFileSync(join(corpusDir, rel), 'utf8'));
 		}
 		return files;
 	} finally {
@@ -119,9 +130,12 @@ export async function fetchUpstreamCorpus(opts: FetchCorpusOptions): Promise<Cor
 		files: [...files.keys()]
 	};
 	const dir = upstreamCorpusDir(opts.grammar);
+	const staging = `${dir}.incoming`;
+	rmSync(staging, { recursive: true, force: true });
+	mkdirSync(staging, { recursive: true });
+	for (const [name, contents] of files) writeFileSync(join(staging, name), contents);
+	writeFileSync(join(staging, basename(sourcePath)), JSON.stringify(source, null, '\t') + '\n');
 	rmSync(dir, { recursive: true, force: true });
-	mkdirSync(dir, { recursive: true });
-	for (const [name, contents] of files) writeFileSync(join(dir, name), contents);
-	writeFileSync(sourcePath, JSON.stringify(source, null, '\t') + '\n');
+	renameSync(staging, dir);
 	return source;
 }

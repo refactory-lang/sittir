@@ -123,8 +123,9 @@ bytes the parser was tested on:
   closing `===` line. Only headers whose suffix (text after the `=` run)
   equals the first header's suffix count, and only dividers with that
   suffix split input from expected tree.
-- When a body holds several matching `---` dividers, the longest one splits
-  it; on a tie, the last.
+- When a body holds several matching `---` dividers, the one with the most
+  hyphens splits it (the line ending doesn't count); on a tie, the last, as
+  the harness's `max_by_key` returns the last of equal maxima.
 - The input is the bytes from the header's end to the divider, minus one
   trailing `\n` (and a `\r` before it). A typical entry therefore reads as
   `"\n<source>\n"`; the leading newline stays, and a token that needs its
@@ -736,6 +737,15 @@ The absolute path of a generated file under a discovered grammar's
 `undefined` when the name is not a grammar or the file has not been
 generated. Every validator loads a grammar's generated modules through it,
 so a newly bootstrapped grammar validates by name with no list to extend.
+
+### `packages/tools/src/validate/common.ts::importGrammarModule`
+
+Imports a grammar's generated module (`grammarModulePath`) through its
+`file://` URL (`pathToFileURL`), the form ESM `import()` accepts on every
+platform, and returns `undefined` when the file is absent so each caller
+keeps its own missing-module behaviour. The only way the validators and
+`emit-factory-source` import generated modules; `node-model.json5` is data
+and is read with `readFileSync` on the path.
 
 ### `packages/tools/src/validate/common.ts::loadReadTreeNode`
 

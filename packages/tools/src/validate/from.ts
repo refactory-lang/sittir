@@ -27,7 +27,7 @@ import {
 	collectKinds,
 	emitValidatorMetrics,
 	getChildFactoryArgs,
-	grammarModulePath,
+	importGrammarModule,
 	nodeToConfig,
 	loadNodeModel,
 	type TSNode,
@@ -174,10 +174,10 @@ export interface FromValidationResult {
 	trivia: ValidatorSkip[];
 }
 
-function modulePath(grammar: string, file: string): string {
-	const path = grammarModulePath(grammar, file);
-	if (path === undefined) throw new Error(`grammar '${grammar}' has no generated src/${file}`);
-	return path;
+async function importGenerated(grammar: string, file: string): Promise<Record<string, any>> {
+	const mod = await importGrammarModule(grammar, file);
+	if (mod === undefined) throw new Error(`grammar '${grammar}' has no generated src/${file}`);
+	return mod;
 }
 
 function insideExtra(node: TSNode | null): boolean {
@@ -223,7 +223,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let wrapNode: ((data: AnyNodeData, tree: unknown) => unknown) | undefined;
 	const errors: FromValidationError[] = [];
 	try {
-		const fromModule = await import(modulePath(grammar, 'factories/coerce.ts'));
+		const fromModule = await importGenerated(grammar, 'factories/coerce.ts');
 		fromMap = fromModule._fromMap ?? {};
 	} catch (e) {
 		errors.push({
@@ -233,7 +233,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		});
 	}
 	try {
-		const factoryModule = await import(modulePath(grammar, 'factories/raw.ts'));
+		const factoryModule = await importGenerated(grammar, 'factories/raw.ts');
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata (shapes, field-alias, factoryFields,
 		// factorySlots) lives in node-model.json5.
@@ -250,7 +250,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		});
 	}
 	try {
-		const wrapModule = await import(modulePath(grammar, 'wrap.ts'));
+		const wrapModule = await importGenerated(grammar, 'wrap.ts');
 		readTreeNode = wrapModule.readTreeNode;
 		wrapNode = wrapModule.wrapNode;
 	} catch {
