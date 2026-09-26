@@ -226542,8 +226542,7 @@
                 "$span": {
                   "start": 17,
                   "end": 21
-                },
-                "$sameLine": true
+                }
               }
             ],
             "trailing": [
@@ -226798,8 +226797,7 @@
             "$span": {
               "start": 17,
               "end": 21
-            },
-            "$sameLine": true
+            }
           }
         ],
         "trailing": [

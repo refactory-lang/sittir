@@ -543,6 +543,27 @@ fn a_block_comment_before_its_owner_on_the_same_row_is_same_line_leading() {
 }
 
 #[test]
+fn a_comment_that_ends_with_its_line_break_ends_on_the_row_it_closes() {
+    let items = read_rust_kind("///\nfn f(){}", "function_item");
+    let leading = items[0]
+        .trivia_data
+        .as_ref()
+        .and_then(|trivia| trivia.leading.as_ref())
+        .expect("the doc comment leads fn f");
+    assert!(!leading[0].same_line);
+    let json = serde_json::to_value(&leading[0]).expect("serialize");
+    assert!(json.get("$sameLine").is_none());
+
+    let items = read_rust_kind("fn f(){} // x\n", "function_item");
+    let trailing = items[0]
+        .trivia_data
+        .as_ref()
+        .and_then(|trivia| trivia.trailing.as_ref())
+        .expect("the comment trails fn f");
+    assert!(trailing[0].same_line);
+}
+
+#[test]
 fn a_same_line_trailing_entry_counts_the_tokens_before_it() {
     let arguments = read_rust_kind("fn f() { g(a, // c\n b); }", "identifier");
     let a = arguments

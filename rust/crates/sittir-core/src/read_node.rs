@@ -330,19 +330,18 @@ fn node_trivia(
     if is_owner(&node) {
         let (before, prev) = extras_run(node, |n| n.prev_sibling());
         for (extra, _) in before.into_iter().rev() {
-            let trails_prev =
-                prev.is_some_and(|p| p.end_position().row == extra.start_position().row);
+            let trails_prev = prev.is_some_and(|p| end_row(&p) == extra.start_position().row);
             if !trails_prev {
                 leading.push(entry(
                     extra,
-                    extra.end_position().row == node.start_position().row,
+                    end_row(&extra) == node.start_position().row,
                     0,
                 ));
             }
         }
         let (after, next) = extras_run(node, |n| n.next_sibling());
         for (extra, tokens) in after {
-            let same_line = node.end_position().row == extra.start_position().row;
+            let same_line = end_row(&node) == extra.start_position().row;
             if same_line {
                 trailing.push(entry(extra, true, tokens));
             } else if next.is_none() {
@@ -378,6 +377,18 @@ fn node_trivia(
         trailing: some(trailing),
         inner,
     })
+}
+
+/// The row a node ends on: the row of its last byte, so a span that ends
+/// with its line break (a doc comment includes its newline) ends on the row
+/// that break closes, not at column 0 of the next row.
+fn end_row(node: &tree_sitter::Node<'_>) -> usize {
+    let end = node.end_position();
+    if end.column == 0 && node.end_byte() > node.start_byte() {
+        end.row - 1
+    } else {
+        end.row
+    }
 }
 
 /// A node that can own trivia: named and not itself an extra.
