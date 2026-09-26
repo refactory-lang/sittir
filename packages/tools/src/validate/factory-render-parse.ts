@@ -45,7 +45,8 @@ import {
 	type IrSurface,
 	type ValidatorSkip,
 	loadIrSurface,
-	buildFactoryNodeFromReference
+	buildFactoryNodeFromReference,
+	grammarModulePath
 } from './common.ts';
 
 /**
@@ -256,13 +257,6 @@ function compareNodeStorage(
 	return null;
 }
 
-/** Relative path from codegen/src/validate to language package factories.ts */
-const FACTORY_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/factories/raw.ts',
-	typescript: '../../../typescript/src/factories/raw.ts',
-	python: '../../../python/src/factories/raw.ts'
-};
-
 // ---------------------------------------------------------------------------
 // Validation
 // ---------------------------------------------------------------------------
@@ -323,7 +317,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	kindNameFromId: ((id: number) => string | undefined) | undefined;
 	importFailure: { message: string } | null;
 }> {
-	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
+	const factoryModulePath = grammarModulePath(grammar, 'factories/raw.ts');
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
 	let factoryShapes: Record<string, FactoryShape> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
@@ -351,7 +345,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
 		factorySlots = mapData.factorySlots;
-		const typesModulePath = FACTORY_MODULE_PATHS[grammar]?.replace('factories/raw.ts', 'types.ts');
+		const typesModulePath = grammarModulePath(grammar, 'types.ts');
 		if (typesModulePath) {
 			try {
 				const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);

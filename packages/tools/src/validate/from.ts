@@ -27,30 +27,13 @@ import {
 	collectKinds,
 	emitValidatorMetrics,
 	getChildFactoryArgs,
+	grammarModulePath,
 	nodeToConfig,
 	loadNodeModel,
 	type TSNode,
 	type TSTree,
 	type ValidatorSkip
 } from './common.ts';
-
-const FROM_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/factories/coerce.ts',
-	typescript: '../../../typescript/src/factories/coerce.ts',
-	python: '../../../python/src/factories/coerce.ts'
-};
-
-const FACTORY_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/factories/raw.ts',
-	typescript: '../../../typescript/src/factories/raw.ts',
-	python: '../../../python/src/factories/raw.ts'
-};
-
-const WRAP_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/wrap.ts',
-	typescript: '../../../typescript/src/wrap.ts',
-	python: '../../../python/src/wrap.ts'
-};
 
 // ---------------------------------------------------------------------------
 // Structural analysis
@@ -191,6 +174,12 @@ export interface FromValidationResult {
 	trivia: ValidatorSkip[];
 }
 
+function modulePath(grammar: string, file: string): string {
+	const path = grammarModulePath(grammar, file);
+	if (path === undefined) throw new Error(`grammar '${grammar}' has no generated src/${file}`);
+	return path;
+}
+
 function insideExtra(node: TSNode | null): boolean {
 	return node !== null && (node.isExtra || insideExtra(node.parent));
 }
@@ -234,7 +223,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let wrapNode: ((data: AnyNodeData, tree: unknown) => unknown) | undefined;
 	const errors: FromValidationError[] = [];
 	try {
-		const fromModule = await import(new URL(FROM_MODULE_PATHS[grammar]!, import.meta.url).pathname);
+		const fromModule = await import(modulePath(grammar, 'factories/coerce.ts'));
 		fromMap = fromModule._fromMap ?? {};
 	} catch (e) {
 		errors.push({
@@ -244,7 +233,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		});
 	}
 	try {
-		const factoryModule = await import(new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname);
+		const factoryModule = await import(modulePath(grammar, 'factories/raw.ts'));
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata (shapes, field-alias, factoryFields,
 		// factorySlots) lives in node-model.json5.
@@ -261,7 +250,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		});
 	}
 	try {
-		const wrapModule = await import(new URL(WRAP_MODULE_PATHS[grammar]!, import.meta.url).pathname);
+		const wrapModule = await import(modulePath(grammar, 'wrap.ts'));
 		readTreeNode = wrapModule.readTreeNode;
 		wrapNode = wrapModule.wrapNode;
 	} catch {

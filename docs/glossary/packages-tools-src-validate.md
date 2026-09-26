@@ -728,11 +728,14 @@ never by stripping underscores, which can land on an unrelated kind (`_number` i
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/tools/src/validate/common.ts::WRAP_MODULE_PATHS`
+### `packages/tools/src/validate/common.ts::grammarModulePath`
 
-```text
-/** Relative path from codegen validators to grammar source wrap modules. */
-```
+The absolute path of a generated file under a discovered grammar's
+`packages/<grammar>/src/` (`wrap.ts`, `types.ts`, `ir.ts`,
+`node-model.json5`, `factories/raw.ts`, `factories/coerce.ts`), or
+`undefined` when the name is not a grammar or the file has not been
+generated. Every validator loads a grammar's generated modules through it,
+so a newly bootstrapped grammar validates by name with no list to extend.
 
 ### `packages/tools/src/validate/common.ts::loadReadTreeNode`
 
@@ -755,18 +758,6 @@ never by stripping underscores, which can land on an unrelated kind (`_number` i
  * `NativeNodeCoords.embeddedData`) that has no handle+child-index to read
  * through `readTreeNode` itself.
  */
-```
-
-### `packages/tools/src/validate/common.ts::NODE_MODEL_PATHS`
-
-```text
-// ---------------------------------------------------------------------------
-// node-model.json5 — the single on-disk metadata source (PR-K)
-// ---------------------------------------------------------------------------
-```
-
-```text
-/** Relative path from codegen/src/validate to each grammar's node-model.json5. */
 ```
 
 ### `packages/tools/src/validate/common.ts::Seat`
@@ -908,12 +899,6 @@ never by stripping underscores, which can land on an unrelated kind (`_number` i
 // visible symptom is a downstream render/FromNapiValue error on an
 // innocent sibling element, which misdirects investigation toward
 // that sibling instead of the actual failing accessor.
-```
-
-### `packages/tools/src/validate/common.ts::TYPES_MODULE_PATHS`
-
-```text
-/** Relative path from codegen/src/validate to language package types.ts */
 ```
 
 ### `packages/tools/src/validate/common.ts::IrEntry`
