@@ -2341,7 +2341,10 @@ The upstream compile's rule names, external names, diagnostics, and
 ### `packages/codegen/src/compiler/compile.ts::Compilation.upstream`
 
 `compileUpstream` of `RawGrammar.upstream`, run inline in `compileGrammar`
-whenever the grammar evaluated one.
+whenever the grammar evaluated one. `compileGrammar` judges the grammar's
+hand-written rules against it (`diagnoseRuleCauses`) and appends those
+diagnostics to `grammarDiagnostics`, where `assertCompilation` blocks on
+them like any other.
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.ruleCauses`
 

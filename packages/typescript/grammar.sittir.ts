@@ -9,7 +9,18 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
-import { enrich, field, alias, wire, refine, variant, preference, regex } from '../codegen/src/dsl/index.ts';
+import {
+	enrich,
+	field,
+	alias,
+	wire,
+	refine,
+	variant,
+	preference,
+	regex,
+	reauthored,
+	vocabulary
+} from '../codegen/src/dsl/index.ts';
 
 function immediateClosingDelimiter(original: unknown) {
 	const seqMembers = (original as { members: unknown[] }).members;
@@ -175,10 +186,7 @@ export default grammar(
 			groups: {
 				jsx_opening_element_content: ($) =>
 					seq(
-						choice(
-							field('name', choice($._jsx_identifier, $.jsx_namespace_name)),
-							$.jsx_start_opening_element_arm
-						),
+						choice(field('name', choice($._jsx_identifier, $.jsx_namespace_name)), $.jsx_start_opening_element_arm),
 						repeat(field('attribute', $._jsx_attribute))
 					)
 			},
@@ -194,7 +202,10 @@ export default grammar(
 				number_float_scientific: { 'marker:': preference('e') },
 				statements: { terminator: preference(';') },
 				quotes: { style: preference('double') },
-				enum_body_elements: { 'content:/separator/","/after': preference('newline'), 'content:/delimiter': preference('Delimiter.Trailing') },
+				enum_body_elements: {
+					'content:/separator/","/after': preference('newline'),
+					'content:/delimiter': preference('Delimiter.Trailing')
+				},
 				program: { 'statements:/separator': preference('tight'), 'statements:/(_)/after': preference('blankline') },
 
 				_: {
@@ -367,11 +378,8 @@ export default grammar(
 				switch_body: {
 					1: field('cases')
 				},
-				object_type: {
-				},
-				enum_body: {
-				},
-
+				object_type: {},
+				enum_body: {},
 
 				jsx_expression: {
 					1: field('expression')
@@ -657,7 +665,6 @@ export default grammar(
 
 				string: { 0: variant('double'), 1: variant('single') },
 
-
 				update_expression: {
 					0: variant('postfix'),
 					1: variant('prefix')
@@ -707,7 +714,15 @@ export default grammar(
 					'1/2': variant('let_const_kind')
 				}
 			},
-			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
+			externals: ($, previous) => [
+				...(previous ?? []),
+				$._tight,
+				$._space,
+				$._newline,
+				$._blankline,
+				$._indent,
+				$._dedent
+			],
 			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
 			extras: ($, previous) => [...(previous ?? [])],
 			visibleExternals: (_$) => ({
@@ -725,12 +740,21 @@ export default grammar(
 				debugger_statement: '#170 — _resolveOneLeaf cannot resolve the _semicolon stub',
 				import_require_clause: '#170 — Missing field _content on ImportRequireClauseTransport._source',
 				object_type_content: '#170 (#172-adjacent) — Missing field _content through export-arm transport',
-				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)',
+				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)'
+			},
+			expectDiagnostics: {
+				'rule-reauthored-without-cause': [
+					'object_type',
+					'template_literal_type',
+					'template_string',
+					'template_substitution',
+					'template_type'
+				]
 			},
 			rules: {
-				_whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),
+				_whitespace: vocabulary(($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent)),
 
-				string: ($, original) => ({
+				string: reauthored('lexical-interior', ($, original) => ({
 					...original,
 					members: original.members.map((arm) => {
 						const seqMembers = (arm as { members: unknown[] }).members;
@@ -741,11 +765,13 @@ export default grammar(
 							members: [...seqMembers.slice(0, -1), token.immediate(last.value!)]
 						};
 					})
-				}),
+				})),
 
-				template_string: ($, original) => immediateClosingDelimiter(original),
-				template_literal_type: ($, original) => immediateClosingDelimiter(original),
-				template_type: ($) => seq(token.immediate('${'), field('type', choice($.primary_type, $.infer_type)), '}'),
+				template_string: reauthored('lexical-interior', ($, original) => immediateClosingDelimiter(original)),
+				template_literal_type: reauthored('lexical-interior', ($, original) => immediateClosingDelimiter(original)),
+				template_type: reauthored('lexical-interior', ($) =>
+					seq(token.immediate('${'), field('type', choice($.primary_type, $.infer_type)), '}')
+				),
 				// `template_substitution` sits only in string-interior contexts
 				// (template_string / template_literal_type elements), where any
 				// preceding characters are absorbed into a fragment token — no
@@ -758,7 +784,9 @@ export default grammar(
 				// kind left-immediate (its leftmost terminal), so structural
 				// references render seam-free. Parser-neutral by the absorption
 				// argument above.
-				template_substitution: ($) => seq(token.immediate('${'), field('expression', $._expressions), '}'),
+				template_substitution: reauthored('lexical-interior', ($) =>
+					seq(token.immediate('${'), field('expression', $._expressions), '}')
+				),
 
 				// The signature arm of an arrow function is upstream's hidden
 				// `_call_signature`, whose fields inline into the parent. Upstream
@@ -768,7 +796,7 @@ export default grammar(
 				// existing factory, and no per-parent form kind is minted for a
 				// body that has a name of its own. Positions are unchanged, so the
 				// `parameter` polymorph path above stays valid.
-				arrow_function: ($, original) => ({
+				arrow_function: reauthored('alias-shape', ($, original) => ({
 					...original,
 					members: original.members.map((m, i) =>
 						i === 1
@@ -778,23 +806,10 @@ export default grammar(
 								}
 							: m
 					)
-				}),
+				})),
 
-				_reserved_identifier: ($, original) => {
-					const members = original.members;
-					const last = members[members.length - 1];
-					const flatMembers =
-						last && last.type === 'CHOICE' && Array.isArray(last.members)
-							? [...members.slice(0, -1), ...last.members]
-							: members;
-					return {
-						...original,
-						members: flatMembers
-					};
-				},
-
-				ambient_declaration_global: ($) => seq('global', field('body', $.statement_block)),
-				ambient_declaration_module: ($) =>
+				ambient_declaration_global: vocabulary(($) => seq('global', field('body', $.statement_block))),
+				ambient_declaration_module: vocabulary(($) =>
 					prec.right(
 						seq(
 							'module',
@@ -804,8 +819,9 @@ export default grammar(
 							field('type', $.type),
 							optional(field('terminator', $._semicolon))
 						)
-					),
-				object_type: ($) =>
+					)
+				),
+				object_type: reauthored('ambiguity', ($) =>
 					refine(
 						seq(
 							field('opening', choice('{', '{|')),
@@ -816,9 +832,10 @@ export default grammar(
 							curly: { 'opening:': '{', 'closing:': '}' },
 							flow: { 'opening:': '{|', 'closing:': '|}' }
 						}
-					),
+					)
+				),
 
-				object_type_content: ($) => {
+				object_type_content: vocabulary(($) => {
 					const SEP = () => choice(',', ';');
 					const member = choice(
 						$.export_statement,
@@ -828,8 +845,12 @@ export default grammar(
 						$.index_signature,
 						$.method_signature
 					);
-					return seq(optional(SEP()), seq(field('members', member), repeat(seq(SEP(), field('members', member)))), optional(SEP()));
-				}
+					return seq(
+						optional(SEP()),
+						seq(field('members', member), repeat(seq(SEP(), field('members', member)))),
+						optional(SEP())
+					);
+				})
 			},
 			renderAs: (_$) => ({
 				html_comment: /<!--[\s\S]*?-->/,

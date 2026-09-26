@@ -12,6 +12,7 @@ import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../type
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter } from './types.ts';
 import { stampVisibleExternals, type GeneratedIdTables } from './generated-metadata.ts';
 import { compileUpstream, type UpstreamCompilation } from './upstream.ts';
+import { diagnoseRuleCauses } from './diagnostics/rule-causes.ts';
 
 export interface Compilation {
 	readonly grammar: string;
@@ -53,6 +54,10 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 		grammar: cfg.grammar
 	});
 
+	const upstream = evaluated.upstream === undefined ? undefined : compileUpstream(evaluated.upstream);
+	const ruleCauseDiagnostics =
+		upstream === undefined ? [] : diagnoseRuleCauses({ grammar: cfg.grammar, raw: evaluated, upstream });
+
 	return {
 		grammar: cfg.grammar,
 		generatedIdTables,
@@ -62,8 +67,8 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 		nodeMap,
 		diagnostics: compilerDiagnostics,
 		slotGroupingDiagnostics,
-		grammarDiagnostics: diagnostics,
-		upstream: raw.upstream === undefined ? undefined : compileUpstream(raw.upstream)
+		grammarDiagnostics: [...diagnostics, ...ruleCauseDiagnostics],
+		upstream
 	};
 }
 

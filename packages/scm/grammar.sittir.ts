@@ -1,6 +1,6 @@
 // @ts-nocheck — grammar.js is untyped
 import base from 'tree-sitter-scm/grammar.js';
-import { enrich, field, variant, wire } from '../codegen/src/dsl/index.ts';
+import { enrich, field, variant, wire, vocabulary } from '../codegen/src/dsl/index.ts';
 
 const enrichedBase = enrich(base);
 export default grammar(
@@ -25,7 +25,7 @@ export default grammar(
 				}
 			},
 			rules: {
-				_whitespace: ($) => choice($._tight, $._space, $._newline)
+				_whitespace: vocabulary(($) => choice($._tight, $._space, $._newline))
 			}
 		},
 		enrichedBase

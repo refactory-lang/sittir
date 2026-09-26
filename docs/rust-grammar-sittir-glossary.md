@@ -1001,3 +1001,25 @@ arms in place because the choice is a self-referential fold (see
 				// Round-trip will fail for `r##"..."##` etc. Factory-side
 				// benefit: no delimiter-count parameter needed.
 ```
+
+### `expectDiagnostics` (`packages/rust/grammar.sittir.ts`)
+
+The `rule-reauthored-without-cause` floor: `rules:` entries that replace an
+upstream rule (or an enrich mint on it) whose shape no current diagnostic
+provokes. Each stays because deleting it makes the output worse or breaks
+generation; the floor only shrinks.
+
+- `tuple_type` (`'alias-shape'`): without it the visible `tuple_type_elements`
+  kind becomes an enrich-minted `types`. missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
+- `tuple_expression` (`'alias-shape'`): kept: `options:` is coupled to the
+  re-authored shape (`tuple_expression/attributes:/separator` names no site
+  without it). missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
+- `_non_special_token` (`'alias-shape'`): kept: `options:` is coupled to the
+  re-authored shape (`token_tree_punctuation/","/after` names no site without
+  it). missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
+- `impl_item` (`'ambiguity'`): kept: a patch is coupled to the re-authored
+  shape (`impl_item` path `3/0/0/1` does not exist upstream). missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
+- `_primitive_type` (`'ambiguity'`): without it tree-sitter generate reports an
+  unresolved `_pattern` / `_primitive_type` conflict. missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
+- `reference_expression` (`'ambiguity'`): without it tree-sitter generate
+  fails. missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.

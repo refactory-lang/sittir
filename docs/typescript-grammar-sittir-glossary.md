@@ -972,46 +972,21 @@ adds an external here, as python does with `_double_blankline`.
 			// silenced mysteries. Remove an entry + regen when its issue is fixed.
 ```
 
-### `expectDiagnostics` (`packages/typescript/grammar.sittir.ts:1120`)
+### `expectDiagnostics` (`packages/typescript/grammar.sittir.ts`)
 
-```text
-			// PR 3 (2026-07-21 union-slot design): `_export_statement_group2` is an
-			// orphaned duplicate — enrich's raw clause-hoist mint of
-			// `_export_statement_default`'s `from_arm` position, superseded once
-			// the nested `patches:` entry (`_export_statement_default`
-			// → `_export_statement_default_from_arm`) properly splits the SAME
-			// content under its own name (transform.ts's ALIAS-rename deposit now
-			// repoints the live alias there). `_export_statement_group2` is
-			// provably unreachable from `export_statement` but assemble's
-			// diagnostics still scan it like live structure — see
-			// docs/KNOWN_ISSUES.md's "Assemble-time grammar diagnostics scan
-			// every `rules` map entry, including ones unreachable from any
-			// top-level kind" for the principled (reachability-based) fix,
-			// tracked there rather than implemented here.
-```
+The `rule-reauthored-without-cause` floor: `rules:` entries that replace an
+upstream rule whose shape no current diagnostic provokes. Each stays because
+deleting it (so the upstream body stands) makes the output worse; the floor
+only shrinks, and an entry leaves when its detector lands.
 
-### `_reserved_identifier` (`packages/typescript/grammar.sittir.ts:1137`)
-
-```text
-				// _reserved_identifier — upstream shape is
-				// `(_, previous) => choice(...18 TS-specific bare strings,
-				// previous)`, where `previous` is the base JS grammar's own
-				// `_reserved_identifier` (get/set/async/static/export/let),
-				// left NESTED as a sub-CHOICE member rather than flattened.
-				// That nesting blocks classifyHiddenChoiceRule's ENUM
-				// admission (requires flat SYMBOL/STRING/named-ALIAS members
-				// only — mirrors rust's `_non_special_token` REPEAT1 case,
-				// specs/026), so `_reserved_identifier` stays unclassified
-				// (rule.type=CHOICE, "mixed/structural — survive as-is") and
-				// inlines directly into `_property_identifier`'s occurrence
-				// with no node of its own — which is what lets
-				// `_property_identifier`'s alias (`statement_identifier_group1`)
-				// collapse into a text-only leaf when the matched alternative
-				// is one of these bare reserved words, hitting the same
-				// anonymous-token-fusion path the wrap.ts fallback exists for.
-				// Flatten programmatically (not hardcoding the string list,
-				// so this stays correct if upstream's own list ever changes).
-```
+- `object_type` (declared `'ambiguity'`): without it, generate blocks on
+  `storagename-collision` / `content-collision` on `object_type`. missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
+- `template_literal_type`, `template_substitution`, `template_type`
+  (`'lexical-interior'`): without them read-render-parse loses an AST match.
+  missing detector: 'lexical-interior' ← token-interior opacity.
+- `template_string` (`'lexical-interior'`): without it the closing backtick
+  loses its immediacy, which changes the parser and renumbers token kinds.
+  missing detector: 'lexical-interior' ← token-interior opacity.
 
 ### `jsx_namespace_name` (`packages/typescript/grammar.sittir.ts:1194`)
 

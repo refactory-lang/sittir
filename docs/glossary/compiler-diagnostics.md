@@ -522,8 +522,12 @@ patch resolves them, so they are patch-site provocations, not rule causes.
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::diagnoseRuleCauses`
 
 Judges a grammar's hand-authored departures against its upstream compile.
-Every code it emits blocks except where noted, and every message names the
-declaration or deletion that resolves it:
+Both sides are compared by authored names: `compileGrammar` passes the
+evaluated grammar, not the one `collectGrammarDiagnosticsForGrammar` returns,
+because with generated id tables that one has hidden rules and `renderAs:`
+keys collapsed to their display names, while the upstream compile (no id
+tables) never collapses. Every code it emits blocks except where noted, and
+every message names the declaration or deletion that resolves it:
 
 - `rule-cause-missing`: a `rules:` entry with a bare body. Judged without the
   upstream.

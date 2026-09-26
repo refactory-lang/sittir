@@ -9,7 +9,22 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 
-import { enrich, field, alias, variant, arm, flatten, regex, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
+import {
+	enrich,
+	field,
+	alias,
+	variant,
+	arm,
+	flatten,
+	regex,
+	wire,
+	prec,
+	token,
+	grammar,
+	preference,
+	reauthored,
+	vocabulary
+} from '../codegen/src/dsl/dsl-authoring.ts';
 
 declare const string: (value: string) => unknown;
 
@@ -33,7 +48,15 @@ export default grammar(
 				[$._attributed_type_parameter, $._type],
 				[$._attributed_argument]
 			],
-			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
+			externals: ($, previous) => [
+				...(previous ?? []),
+				$._tight,
+				$._space,
+				$._newline,
+				$._blankline,
+				$._indent,
+				$._dedent
+			],
 			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
 			visibleExternals: (_$) => ({
 				_tight: string(''),
@@ -134,7 +157,11 @@ export default grammar(
 				visibility_modifier_pub: { '"pub"/after': preference('tight') },
 				self_parameter: { 'reference:/after': preference('tight') },
 				variadic_parameter: { '"..."/before': preference('space') },
-				closure_parameters: { '"|"/after': preference('tight'), '"|"/before': preference('tight'), after: preference('space') },
+				closure_parameters: {
+					'"|"/after': preference('tight'),
+					'"|"/before': preference('tight'),
+					after: preference('space')
+				},
 
 				source_file: {
 					'statements:/separator': preference('tight'),
@@ -158,7 +185,11 @@ export default grammar(
 				range_expression_prefix: { 'operator:/after': preference('tight') },
 				range_expression_postfix: { 'operator:/before': preference('tight') },
 				unary_expression: { 'operator:/after': preference('tight') },
-				token_tree_punctuation: { '","/after': preference('space'), '"..."/before': preference('space'), '"..."/after': preference('space') },
+				token_tree_punctuation: {
+					'","/after': preference('space'),
+					'"..."/before': preference('space'),
+					'"..."/after': preference('space')
+				},
 
 				_bindings: {
 					'block/"{"/after': 'body/before',
@@ -466,7 +497,10 @@ export default grammar(
 					'2/1': variant('body')
 				},
 
-				match_arm: [{ 0: field('attributes'), 1: flatten() }, { '3/0': variant('with_comma'), '3/1': variant('block_ending') }],
+				match_arm: [
+					{ 0: field('attributes'), 1: flatten() },
+					{ '3/0': variant('with_comma'), '3/1': variant('block_ending') }
+				],
 
 				// `///` and `//!` reach this choice as separate arms: their
 				// outer/inner marker fields are alternatives, which enrich
@@ -518,19 +552,32 @@ export default grammar(
 				// `wildcard_pattern` kind (alias() mints the `_wildcard_pattern` leaf)
 				// gives it a real node, so every `_pattern` list position round-trips
 				// without render-side heuristics.
-				_pattern: { '-1': alias('wildcard_pattern') },
+				_pattern: { '-1': alias('wildcard_pattern') }
+			},
+			expectDiagnostics: {
+				'rule-reauthored-without-cause': [
+					'_non_special_token',
+					'_primitive_type',
+					'impl_item',
+					'reference_expression',
+					'tuple_expression',
+					'tuple_type'
+				]
 			},
 			rules: {
-				_whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),
+				_whitespace: vocabulary(($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent)),
 				// tuple_type's separated list realized as its own kind — the
 				// delimiter is a fact of the list, so the list is a top-level
 				// rule carrying it (hidden rule + visible alias, matching the
 				// `*_elements` family). Every element position is fielded so
 				// the extracted rule classifies separatedList and enrich's
 				// separated-list field wrap has nothing left to target.
-				_tuple_type_elements: ($) =>
-					seq(field('type', $._type), repeat(seq(',', field('type', $._type))), optional(',')),
-				tuple_type: ($) => seq('(', alias($._tuple_type_elements, $.tuple_type_elements), ')'),
+				_tuple_type_elements: vocabulary(($) =>
+					seq(field('type', $._type), repeat(seq(',', field('type', $._type))), optional(','))
+				),
+				tuple_type: reauthored('alias-shape', ($) =>
+					seq('(', alias($._tuple_type_elements, $.tuple_type_elements), ')')
+				),
 
 				// tuple_expression's list is comma-TERMINATED with an optional
 				// bare final element (`(e ',')+ e?`) — the shape that makes
@@ -538,21 +585,23 @@ export default grammar(
 				// structure is mirrored verbatim from the base rule inside the
 				// extracted kind; the separator lift's suffix windows merge it
 				// to one repeat with an optional trailing delimiter.
-				_tuple_expression_elements: ($) =>
+				_tuple_expression_elements: vocabulary(($) =>
 					seq(
 						seq(field('element', $._expression), ','),
 						repeat(seq(field('element', $._expression), ',')),
 						optional(field('element', $._expression))
-					),
-				tuple_expression: ($) =>
+					)
+				),
+				tuple_expression: reauthored('alias-shape', ($) =>
 					seq(
 						'(',
 						field('attributes', repeat($.attribute_item)),
 						alias($._tuple_expression_elements, $.tuple_expression_elements),
 						')'
-					),
+					)
+				),
 
-				_token_tree_punctuation: ($) =>
+				_token_tree_punctuation: vocabulary(($) =>
 					choice(
 						'+',
 						'-',
@@ -598,27 +647,29 @@ export default grammar(
 						'=>',
 						'#',
 						'?'
-					),
+					)
+				),
 
 				// The first seven base alternatives stay; the punctuation choice
 				// becomes a reference to the `_token_tree_punctuation` rule shown
 				// as `token_tree_punctuation`, and the keyword literals become one
 				// `_token_keywords` reference.
-				_non_special_token: ($, original) =>
+				_non_special_token: reauthored('alias-shape', ($, original) =>
 					choice(
 						...original.members.slice(0, 7),
 						prec.right(0, alias($._token_tree_punctuation, $.token_tree_punctuation)),
 						$._token_keywords
-					),
+					)
+				),
 
 				// Enrich mints `_primitive_type` as the storage of upstream's inline
 				// `alias(choice(...primitive types), $.primitive_type)`. As a rule of
 				// its own it is a reduction point, so a bare primitive-type keyword
 				// in a pattern (`fn f((u8))`) reaches it and `_pattern` alike;
 				// `_pattern` is the correct read, so this rule yields.
-				_primitive_type: ($, original) => prec(-1, original),
+				_primitive_type: reauthored('ambiguity', ($, original) => prec(-1, original)),
 
-				_token_keywords: ($) =>
+				_token_keywords: vocabulary(($) =>
 					choice(
 						"'",
 						'as',
@@ -649,13 +700,12 @@ export default grammar(
 						'use',
 						'where',
 						'while'
-					),
+					)
+				),
 
-				where_predicates: ($, previous) => prec.right(0, previous),
+				_range_expression_bare: vocabulary(($) => '..'),
 
-				_range_expression_bare: ($) => '..',
-
-				reference_expression: ($) =>
+				reference_expression: reauthored('ambiguity', ($) =>
 					prec(
 						12,
 						seq(
@@ -663,10 +713,11 @@ export default grammar(
 							optional(choice(seq('raw', 'const'), seq('raw', $.mutable_specifier), $.mutable_specifier)),
 							field('value', $._expression)
 						)
-					),
+					)
+				),
 
-				_impl_item_unsafe_marker: ($) => 'unsafe',
-				impl_item: ($) =>
+				_impl_item_unsafe_marker: vocabulary(($) => 'unsafe'),
+				impl_item: reauthored('ambiguity', ($) =>
 					seq(
 						optional(field('unsafe_marker', $._impl_item_unsafe_marker)),
 						'impl',
@@ -684,6 +735,7 @@ export default grammar(
 						optional(field('where_clause', $.where_clause)),
 						choice($.declaration_list, ';')
 					)
+				)
 			},
 			renderAs: (_$) => ({
 				float_literal: /[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?/,

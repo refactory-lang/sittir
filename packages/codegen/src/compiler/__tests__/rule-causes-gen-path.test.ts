@@ -1,0 +1,16 @@
+import { describe, expect, it } from 'vitest';
+import { compileGrammar } from '../compile.ts';
+import { loadGeneratedIdTables } from '../generated-metadata.ts';
+
+const RULE_CAUSE_CODES = /^(rule-|render-only|vocabulary-|upstream-)/;
+
+describe('rule-cause diagnostics on the gen path (with generated id tables)', () => {
+	for (const grammar of ['python', 'rust']) {
+		it(`${grammar}: renderAs keys are judged by their authored names, so none is reported as not external`, async () => {
+			const compilation = await compileGrammar({ grammar, generatedIdTables: await loadGeneratedIdTables(grammar) });
+			const ruleCauses = compilation.grammarDiagnostics.filter((d) => RULE_CAUSE_CODES.test(d.code));
+			expect(ruleCauses.filter((d) => d.code === 'render-only-not-external')).toEqual([]);
+			expect(ruleCauses.filter((d) => d.canProceed === false)).toEqual([]);
+		}, 120_000);
+	}
+});
