@@ -342,6 +342,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	meta_property_import_meta: { values: ['import.meta'], factory: () => F.buildMetaPropertyImportMeta() },
 	html_comment: { pattern: /^(?:(?:<!--[\s\S]*?-->))$/u, factory: F.buildHtmlComment },
 	jsx_text: { pattern: /^(?:(?:[^{}<>]+))$/u, factory: F.buildJsxText },
+	_template_chars: { pattern: /^(?:(?:[^`\\$]+))$/u, factory: F.buildTemplateChars },
 	statement_identifier: {
 		pattern:
 			/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u,
@@ -377,12 +378,59 @@ const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'number_bigint'
 ]);
 
-function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {
-	for (const kind of kinds) {
-		const entry = _leafRegistry[kind];
-		if (!entry) continue;
-		if (entry.values && entry.values.includes(v)) return entry.factory(v);
-		if (entry.pattern && entry.pattern.test(v)) return entry.factory(v);
+function _buildGuardedText(v: string, kind: string): AnyNodeData | number {
+	const entry = _leafRegistry[kind]!;
+	if (entry.values !== undefined && !entry.values.includes(v)) {
+		throw new Error(`${JSON.stringify(v)} is not the text of ${kind}: expected one of ${JSON.stringify(entry.values)}`);
+	}
+	if (entry.pattern !== undefined && !entry.pattern.test(v)) {
+		throw new Error(`${JSON.stringify(v)} is not a ${kind}: it does not match ${entry.pattern}`);
+	}
+	return entry.factory(v);
+}
+
+const _TEXT_KINDS_BY_RANK: readonly string[] = [
+	'_template_chars',
+	'html_comment',
+	'jsx_text',
+	'regex_pattern',
+	'unescaped_double_string_fragment',
+	'unescaped_single_string_fragment',
+	'import',
+	'empty_statement',
+	'optional_chain',
+	'this',
+	'super',
+	'true',
+	'false',
+	'null',
+	'undefined',
+	'override_modifier',
+	'existential_type',
+	'regex_flags',
+	'number_hex',
+	'number_float_point',
+	'number_float_leading_point',
+	'number_float_scientific',
+	'number_decimal',
+	'number_binary',
+	'number_octal',
+	'identifier',
+	'property_identifier',
+	'shorthand_property_identifier',
+	'shorthand_property_identifier_pattern',
+	'statement_identifier',
+	'type_identifier',
+	'meta_property_new_target',
+	'meta_property_import_meta'
+];
+
+function _resolveBareText(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {
+	for (const kind of _TEXT_KINDS_BY_RANK) {
+		if (!kinds.includes(kind)) continue;
+		const entry = _leafRegistry[kind]!;
+		if (entry.values !== undefined ? entry.values.includes(v) : entry.pattern?.test(v) === true)
+			return entry.factory(v);
 	}
 	return undefined;
 }
@@ -755,7 +803,7 @@ function _resolveOne<T>(
 		if (scalar !== undefined) return scalar as T;
 	}
 	if (typeof v === 'string') {
-		const leaf = _resolveLeafString(v, [...leafKinds, ...branchKinds]);
+		const leaf = _resolveBareText(v, [...leafKinds, ...branchKinds]);
 		if (leaf !== undefined) return leaf as T;
 		if (branchKinds.length === 0 && leafKinds.length === 1) return _resolveOneLeaf<T>(v, leafKinds[0]!);
 		if (branchKinds.length === 0 && leafKinds.length > 1 && leafKinds.every((k) => _AFFIXED_KINDS.has(k))) {
@@ -806,6 +854,10 @@ function _resolveOne<T>(
 		throw new Error(
 			`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(', ')}]: ${JSON.stringify(v)}`
 		);
+	}
+	if (typeof v === 'string') {
+		const texts = _TEXT_KINDS_BY_RANK.filter((kind) => leafKinds.includes(kind) || branchKinds.includes(kind));
+		if (texts.length > 0) throw new Error(`_resolveOne: ${JSON.stringify(v)} matches none of [${texts.join(', ')}]`);
 	}
 	return v as T;
 }
@@ -861,10 +913,7 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
-	if (typeof v === 'string') {
-		const e = _leafRegistry[kind];
-		if (e !== undefined) return e.factory(v) as T;
-	}
+	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as T;
 	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
 		const { kind: k, ...rest } = v;
 		const kn = _kindNameOf(k);

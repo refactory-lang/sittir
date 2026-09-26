@@ -11,7 +11,8 @@ import {
 	admitAliasContent,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
-	numberText
+	numberText,
+	rejectBareText
 } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
@@ -37,7 +38,7 @@ const _leafRe_buildDecimalDigits = /^(?:(?:\d+))$/u;
 const _slotRe_buildIdentityEscape_content = /^(?:(?:[^kdDsSpPwWbfnrtv0-9]))$/u;
 
 export function buildPattern(value: T.Alternation | T.Term): T.Pattern.Built {
-	const _content = value;
+	const _content = rejectBareText(value, 'Pattern.content', 'a built Alternation / Term');
 	return withMethods(
 		withAccessors(
 			{
@@ -59,7 +60,7 @@ export function buildPattern(value: T.Alternation | T.Term): T.Pattern.Built {
 
 export function buildAlternation(...children: T.Term[]): T.Alternation.Built {
 	_assertNonEmpty(children, 'alternation.children');
-	const _term = children;
+	const _term = rejectBareText(children, 'Alternation.term', 'a built Term');
 	return withMethods(
 		withAccessors(
 			{
@@ -79,7 +80,7 @@ export function buildAlternation(...children: T.Term[]): T.Alternation.Built {
 
 export function buildTerm(...children: T.TermGroup[]): T.Term.Built {
 	_assertNonEmpty(children, 'term.children');
-	const _term_group = children;
+	const _term_group = rejectBareText(children, 'Term.termGroup', 'a built TermGroup');
 	return withMethods(
 		withAccessors(
 			{
@@ -120,7 +121,11 @@ export function buildNonBoundaryAssertion(): TSKindId.NonBoundaryAssertion {
 export function buildLookaroundAssertion(
 	value: T.LookaheadAssertion | T.LookbehindAssertion
 ): T.LookaroundAssertion.Built {
-	const _content = value;
+	const _content = rejectBareText(
+		value,
+		'LookaroundAssertion.content',
+		'a built LookaheadAssertion / LookbehindAssertion'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -145,7 +150,7 @@ export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.
 		['=', TSKindId.Eq] as const,
 		['!', TSKindId.Bang] as const
 	]);
-	const _pattern = config.pattern;
+	const _pattern = rejectBareText(config.pattern, 'LookaheadAssertion.pattern', 'a built Pattern');
 	return withMethods(
 		withAccessors(
 			{
@@ -174,7 +179,7 @@ export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): 
 		['=', TSKindId.Eq] as const,
 		['!', TSKindId.Bang] as const
 	]);
-	const _pattern = config.pattern;
+	const _pattern = rejectBareText(config.pattern, 'LookbehindAssertion.pattern', 'a built Pattern');
 	return withMethods(
 		withAccessors(
 			{
@@ -225,7 +230,11 @@ export function buildCharacterClass(
 		| T.ClassRange
 	)[]
 ): T.CharacterClass.Built {
-	const _class_atoms = children;
+	const _class_atoms = rejectBareText(
+		children,
+		'CharacterClass.classAtoms',
+		'buildClassCharacter(…) / buildControlEscape(…) / buildControlLetterEscape(…)'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -272,7 +281,7 @@ export function buildPosixCharacterClass(...args: unknown[]) {
 		: _buildPosixCharacterClass((buildPosixClassName as (...a: unknown[]) => unknown)(...args) as T.PosixClassName);
 }
 function _buildPosixCharacterClass(value: T.PosixClassName): T.PosixCharacterClass.Built {
-	const _posix_class_name = value;
+	const _posix_class_name = rejectBareText(value, 'PosixCharacterClass.posixClassName', 'buildPosixClassName(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -308,10 +317,16 @@ export function buildPosixClassName(text: string): T.PosixClassName.Built {
 }
 
 export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Built {
-	const _start = coerceMixedEnumStorage<NonNullable<T.ClassRange['_start']>>(config.start, [
-		['-', TSKindId.Dash] as const
-	]);
-	const _end = coerceMixedEnumStorage<NonNullable<T.ClassRange['_end']>>(config.end, [['-', TSKindId.Dash] as const]);
+	const _start = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ClassRange['_start']>>(config.start, [['-', TSKindId.Dash] as const]),
+		'ClassRange.start',
+		'buildClassCharacter(…) / buildControlEscape(…)'
+	);
+	const _end = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ClassRange['_end']>>(config.end, [['-', TSKindId.Dash] as const]),
+		'ClassRange.end',
+		'buildClassCharacter(…) / buildControlEscape(…)'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -366,7 +381,7 @@ export function buildAnonymousCapturingGroup(...args: unknown[]) {
 		: _buildAnonymousCapturingGroup((buildPattern as (...a: unknown[]) => unknown)(...args) as T.Pattern);
 }
 function _buildAnonymousCapturingGroup(value: T.Pattern): T.AnonymousCapturingGroup.Built {
-	const _pattern = value;
+	const _pattern = rejectBareText(value, 'AnonymousCapturingGroup.pattern', 'a built Pattern');
 	return withMethods(
 		withAccessors(
 			{
@@ -391,8 +406,8 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 		['(?<', TSKindId.LparenQmarkLt] as const,
 		['(?P<', TSKindId.LparenQmarkpLt] as const
 	]);
-	const _group_name = config.groupName;
-	const _pattern = config.pattern;
+	const _group_name = rejectBareText(config.groupName, 'NamedCapturingGroup.groupName', 'buildGroupName(…)');
+	const _pattern = rejectBareText(config.pattern, 'NamedCapturingGroup.pattern', 'a built Pattern');
 	return withMethods(
 		withAccessors(
 			{
@@ -435,7 +450,7 @@ export function buildNonCapturingGroup(...args: unknown[]) {
 		: _buildNonCapturingGroup((buildPattern as (...a: unknown[]) => unknown)(...args) as T.Pattern);
 }
 function _buildNonCapturingGroup(value: T.Pattern): T.NonCapturingGroup.Built {
-	const _pattern = value;
+	const _pattern = rejectBareText(value, 'NonCapturingGroup.pattern', 'a built Pattern');
 	return withMethods(
 		withAccessors(
 			{
@@ -512,7 +527,7 @@ export function buildOptional(text: string): T.Optional.Built {
 }
 
 export function buildCountQuantifier(value: T.CountQuantifierArm | T.DecimalDigits): T.CountQuantifier.Built {
-	const _content = value;
+	const _content = rejectBareText(value, 'CountQuantifier.content', 'buildDecimalDigits(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -548,7 +563,7 @@ export function buildBackreferenceEscape(...args: unknown[]) {
 		: _buildBackreferenceEscape((buildGroupName as (...a: unknown[]) => unknown)(...args) as T.GroupName);
 }
 function _buildBackreferenceEscape(value: T.GroupName): T.BackreferenceEscape.Built {
-	const _group_name = value;
+	const _group_name = rejectBareText(value, 'BackreferenceEscape.groupName', 'buildGroupName(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -584,7 +599,7 @@ export function buildNamedGroupBackreference(...args: unknown[]) {
 		: _buildNamedGroupBackreference((buildGroupName as (...a: unknown[]) => unknown)(...args) as T.GroupName);
 }
 function _buildNamedGroupBackreference(value: T.GroupName): T.NamedGroupBackreference.Built {
-	const _group_name = value;
+	const _group_name = rejectBareText(value, 'NamedGroupBackreference.groupName', 'buildGroupName(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -621,7 +636,7 @@ export function buildDecimalEscape(text: string): T.DecimalEscape.Built {
 export function buildCharacterClassEscape(
 	value: '\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape
 ): T.CharacterClassEscape.Built {
-	const _content = value;
+	const _content = rejectBareText(value, 'CharacterClassEscape.content', 'buildUnicodeCharacterEscape(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -660,8 +675,16 @@ export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEsc
 export function buildUnicodePropertyValueExpression(
 	config: T.UnicodePropertyValueExpression.Config
 ): T.UnicodePropertyValueExpression.Built {
-	const _unicode_property_value_expression_group = config.unicodePropertyValueExpressionGroup;
-	const _unicode_property = config.unicodeProperty;
+	const _unicode_property_value_expression_group = rejectBareText(
+		config.unicodePropertyValueExpressionGroup,
+		'UnicodePropertyValueExpression.unicodePropertyValueExpressionGroup',
+		'a built UnicodePropertyValueExpressionGroup'
+	);
+	const _unicode_property = rejectBareText(
+		config.unicodeProperty,
+		'UnicodePropertyValueExpression.unicodeProperty',
+		'buildUnicodeProperty(…)'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -783,14 +806,22 @@ export function buildDecimalDigits(text: string | number): T.DecimalDigits.Built
 }
 
 export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.TermGroup['_content']>>(config.content, [
-		['^', TSKindId.StartAssertion] as const,
-		['$', TSKindId.EndAssertion] as const,
-		['\\b', TSKindId.BoundaryAssertion] as const,
-		['\\B', TSKindId.NonBoundaryAssertion] as const,
-		['.', TSKindId.AnyCharacter] as const
-	]);
-	const _quantifier = config.quantifier;
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.TermGroup['_content']>>(config.content, [
+			['^', TSKindId.StartAssertion] as const,
+			['$', TSKindId.EndAssertion] as const,
+			['\\b', TSKindId.BoundaryAssertion] as const,
+			['\\B', TSKindId.NonBoundaryAssertion] as const,
+			['.', TSKindId.AnyCharacter] as const
+		]),
+		'TermGroup.content',
+		'buildPatternCharacter(…) / buildDecimalEscape(…) / buildControlEscape(…) / buildControlLetterEscape(…)'
+	);
+	const _quantifier = rejectBareText(
+		config.quantifier,
+		'TermGroup.quantifier',
+		'buildZeroOrMore(…) / buildOneOrMore(…) / buildOptional(…)'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -830,7 +861,7 @@ export function buildCountQuantifierGroup(...args: unknown[]) {
 		: _buildCountQuantifierGroup((buildDecimalDigits as (...a: unknown[]) => unknown)(...args) as T.DecimalDigits);
 }
 function _buildCountQuantifierGroup(value?: T.DecimalDigits): T.CountQuantifierGroup.Built {
-	const _decimal_digits = value;
+	const _decimal_digits = rejectBareText(value, 'CountQuantifierGroup.decimalDigits', 'buildDecimalDigits(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -851,8 +882,16 @@ function _buildCountQuantifierGroup(value?: T.DecimalDigits): T.CountQuantifierG
 }
 
 export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.CountQuantifierArm.Built {
-	const _decimal_digits = config.decimalDigits;
-	const _count_quantifier_group = config.countQuantifierGroup;
+	const _decimal_digits = rejectBareText(
+		config.decimalDigits,
+		'CountQuantifierArm.decimalDigits',
+		'buildDecimalDigits(…)'
+	);
+	const _count_quantifier_group = rejectBareText(
+		config.countQuantifierGroup,
+		'CountQuantifierArm.countQuantifierGroup',
+		'a built CountQuantifierGroup'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -880,7 +919,11 @@ export function buildCharacterClassEscapeArm(
 	config: T.CharacterClassEscapeArm.Config
 ): T.CharacterClassEscapeArm.Built {
 	const _content = config.content;
-	const _unicode_property_value_expression = config.unicodePropertyValueExpression;
+	const _unicode_property_value_expression = rejectBareText(
+		config.unicodePropertyValueExpression,
+		'CharacterClassEscapeArm.unicodePropertyValueExpression',
+		'a built UnicodePropertyValueExpression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -932,7 +975,9 @@ function _buildUnicodePropertyValueExpressionGroup(
 ): T.UnicodePropertyValueExpressionGroup.Built {
 	const _unicode_property_name = admitAliasContent<
 		NonNullable<T.UnicodePropertyValueExpressionGroup['_unicode_property_name']>
-	>(value, [[[38], (v: unknown) => buildUnicodePropertyName(v as never)]]);
+	>(rejectBareText(value, 'UnicodePropertyValueExpressionGroup.unicodePropertyName', 'a built UnicodePropertyName'), [
+		[[38], (v: unknown) => buildUnicodePropertyName(v as never)]
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -954,8 +999,8 @@ function _buildUnicodePropertyValueExpressionGroup(
 }
 
 export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Config): T.InlineFlagsGroupEnable.Built {
-	const _enabled = config.enabled;
-	const _pattern = config.pattern;
+	const _enabled = rejectBareText(config.enabled, 'InlineFlagsGroupEnable.enabled', 'buildFlags(…)');
+	const _pattern = rejectBareText(config.pattern, 'InlineFlagsGroupEnable.pattern', 'a built Pattern');
 	return withMethods(
 		withAccessors(
 			{
@@ -979,9 +1024,9 @@ export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Con
 }
 
 export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Config): T.InlineFlagsGroupToggle.Built {
-	const _enabled = config.enabled;
-	const _disabled = config.disabled;
-	const _pattern = config.pattern;
+	const _enabled = rejectBareText(config.enabled, 'InlineFlagsGroupToggle.enabled', 'buildFlags(…)');
+	const _disabled = rejectBareText(config.disabled, 'InlineFlagsGroupToggle.disabled', 'buildFlags(…)');
+	const _pattern = rejectBareText(config.pattern, 'InlineFlagsGroupToggle.pattern', 'a built Pattern');
 	return withMethods(
 		withAccessors(
 			{
@@ -1010,8 +1055,8 @@ export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Con
 export function buildInlineFlagsGroupDisable(
 	config: T.InlineFlagsGroupDisable.Config
 ): T.InlineFlagsGroupDisable.Built {
-	const _disabled = config.disabled;
-	const _pattern = config.pattern;
+	const _disabled = rejectBareText(config.disabled, 'InlineFlagsGroupDisable.disabled', 'buildFlags(…)');
+	const _pattern = rejectBareText(config.pattern, 'InlineFlagsGroupDisable.pattern', 'a built Pattern');
 	return withMethods(
 		withAccessors(
 			{
@@ -1056,7 +1101,7 @@ export function buildLazy(value: TSKindId.Qmark): T.Lazy.Built {
 }
 
 export function buildUnicodePropertyName(value: T.UnicodeProperty): T.UnicodePropertyName.Built {
-	const _content = value;
+	const _content = rejectBareText(value, 'UnicodePropertyName.content', 'buildUnicodeProperty(…)');
 	return withMethods(
 		withAccessors(
 			{

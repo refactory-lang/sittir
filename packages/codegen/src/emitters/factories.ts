@@ -118,7 +118,7 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 				case 'verbatim':
 					break;
 			}
-			if (hiddenTextLeaves(slot, nodeMap).length > 0) imports.add('admitHiddenText');
+			if (strictNodeExpectation(slot, nodeMap) !== undefined) imports.add('rejectBareText');
 			if (kindEntries !== undefined && slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
 		}
 		if (kindEntries !== undefined && node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
@@ -196,28 +196,33 @@ function buildLeafReConsts(nodeMap: NodeMap, lines: string[]): Map<string, strin
 	return leafReConsts;
 }
 
-export function hiddenTextLeaves(f: AssembledNonterminal, nodeMap: NodeMap): AssembledPattern[] {
+export function textLeaves(f: AssembledNonterminal, nodeMap: NodeMap): AssembledPattern[] {
 	const leaves = new Set<AssembledPattern>();
 	for (const value of f.values) {
 		const storage = valueStorageOf(value, nodeMap);
 		if (storage === undefined || storage.via !== 'node' || storage.missing) continue;
 		const node = nodeMap.nodes.get(storage.kind);
-		if (node instanceof AssembledPattern && node.parserHidden && node.rawFactoryName !== undefined)
-			leaves.add(node);
+		if (node instanceof AssembledPattern && node.rawFactoryName !== undefined) leaves.add(node);
 	}
 	return [...leaves];
 }
 
-function hiddenTextAdmission(f: AssembledNonterminal, expr: string, nodeMap: NodeMap, typeName: string): string {
-	const leaves = hiddenTextLeaves(f, nodeMap);
-	if (leaves.length === 0) return expr;
-	const table = leaves
-		.map(
-			(leaf) =>
-				`[${JSON.stringify(leaf.kind)}, ${leafReDeclaration(leaf.kind, leaf)?.constName ?? 'undefined'}, ${leaf.rawFactoryName}]`
-		)
-		.join(', ');
-	return `admitHiddenText<NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>>(${expr}, [${table}], '${typeName}.${f.configKey}')`;
+function bareTextRejection(f: AssembledNonterminal, expr: string, nodeMap: NodeMap, typeName: string): string {
+	const expected = strictNodeExpectation(f, nodeMap);
+	if (expected === undefined) return expr;
+	return `rejectBareText(${expr}, '${typeName}.${f.configKey}', ${JSON.stringify(expected)})`;
+}
+
+export function strictNodeExpectation(f: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
+	const leaves = textLeaves(f, nodeMap);
+	if (leaves.length > 0) return leaves.map((leaf) => `${leaf.rawFactoryName}(…)`).join(' / ');
+	const nodeTypes = new Set<string>();
+	for (const value of f.values) {
+		const storage = valueStorageOf(value, nodeMap);
+		if (storage === undefined || storage.via === 'literal') return undefined;
+		if (storage.via === 'node') nodeTypes.add(storage.typeName);
+	}
+	return nodeTypes.size === 0 ? undefined : `a built ${[...nodeTypes].join(' / ')}`;
 }
 
 function factoryTypeDiscriminant(
@@ -475,7 +480,7 @@ function admittedSlotInput(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	typeName: string
 ): string {
-	const admitted = hiddenTextAdmission(f, expr, nodeMap, typeName);
+	const admitted = bareTextRejection(f, expr, nodeMap, typeName);
 	return aliasContentAdmission(f, admitted, nodeMap, kindEntries, `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`);
 }
 
@@ -696,10 +701,6 @@ export function builtTypeSurfaceOf(
 	}
 }
 
-function admitsHiddenText(slots: readonly AssembledNonterminal[], nodeMap: NodeMap): boolean {
-	return slots.some((slot) => hiddenTextLeaves(slot, nodeMap).length > 0);
-}
-
 export function constructionChildElementType(
 	node: { children: readonly AssembledNonterminal[] },
 	nodeMap: NodeMap,
@@ -708,7 +709,7 @@ export function constructionChildElementType(
 	const base = childElementType(node, nodeMap, kindEntries);
 	const aliasTypes = aliasContentTypes(node.children, nodeMap);
 	const type = aliasTypes.length === 0 ? base : `(${[base, ...aliasTypes].join(' | ')})`;
-	return admitsHiddenText(node.children, nodeMap) ? `(${type} | string)` : type;
+	return type;
 }
 
 export function constructionFieldElementType(
@@ -718,15 +719,7 @@ export function constructionFieldElementType(
 ): string {
 	const type = withAliasContentTypes(fieldElementType(f, nodeMap, kindEntries), f, nodeMap);
 	if (numericSlotShape(f) !== undefined) return `${type} | number`;
-	return admitsHiddenText([f], nodeMap) ? `${type} | string` : type;
-}
-
-export function hiddenTextLeafKinds(nodeMap: NodeMap): ReadonlySet<string> {
-	const kinds = new Set<string>();
-	for (const node of nodeMap.nodes.values()) {
-		for (const slot of node.slots) for (const leaf of hiddenTextLeaves(slot, nodeMap)) kinds.add(leaf.kind);
-	}
-	return kinds;
+	return type;
 }
 
 export function fieldElementType(

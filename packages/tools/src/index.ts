@@ -86,5 +86,6 @@ export {
 } from './commands.ts';
 export { run as emitFactorySource, type EmitFactorySourceOptions } from './emit/factory-source.ts';
 export { run as hoistedCensus, type HoistedCensusOptions } from './census/hoisted.ts';
+export { run as textKindOverlap, type TextKindOverlapOptions } from './census/text-kind-overlap.ts';
 export { run as bindingsInventory, type BindingsInventoryOptions } from './inventory/index.ts';
 export { bootstrapGrammar, type BootstrapGrammarOptions } from './bootstrap/grammar.ts';

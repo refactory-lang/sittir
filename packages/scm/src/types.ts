@@ -15,8 +15,7 @@ import type {
 	Terminal,
 	NonEmptyArray,
 	BooleanKeyword as BaseBooleanKeyword,
-	KindEnum,
-	HiddenLeaf
+	KindEnum
 } from '@sittir/types';
 import type * as T from './types.js';
 import type { NodeMethodsOf } from './utils.js';
@@ -635,7 +634,7 @@ export interface NamedNodeGroupAnchoredLast {
 // Leaf node types
 export type Quantifier = TSKindId.Star | TSKindId.Plus | TSKindId.Qmark;
 export type Identifier = Terminal<TSKindId.Identifier, string>;
-export type ImmediateIdentifier = HiddenLeaf<Terminal<TSKindId.ImmediateIdentifier, string>>;
+export type ImmediateIdentifier = Terminal<TSKindId.ImmediateIdentifier, string>;
 export type PredicateType = TSKindId.Qmark | TSKindId.Bang;
 
 // Tree types
@@ -1371,15 +1370,13 @@ export namespace Capture {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			name(value: T.ImmediateIdentifier | string): T.Capture.Built;
+			name(value: T.ImmediateIdentifier): T.Capture.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Capture>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Capture>;
-	export type BuildArgs = [value: T.ImmediateIdentifier | string];
-	export type LooseArgs = [
-		value: LooseValue<T.ImmediateIdentifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.ImmediateIdentifier];
+	export type LooseArgs = [value: LooseValue<T.ImmediateIdentifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.Capture>;
 	export type Kind = 'capture';
 }
@@ -1607,7 +1604,7 @@ export namespace Predicate {
 		readonly $named: true;
 		readonly $with: {
 			content(value: NonNullable<T.Predicate.Config>['content']): T.Predicate.Built;
-			immediateIdentifier(value: T.ImmediateIdentifier | string): T.Predicate.Built;
+			immediateIdentifier(value: T.ImmediateIdentifier): T.Predicate.Built;
 			type(value: NonNullable<T.Predicate.Config>['type']): T.Predicate.Built;
 			parameters(value?: T.Parameters): T.Predicate.Built;
 		};
@@ -1688,7 +1685,7 @@ export namespace NamedNodeArm {
 		readonly $named: true;
 		readonly $with: {
 			supertype(value: T.Identifier): T.NamedNodeArm.Built;
-			name(value: T.ImmediateIdentifier | T.ImmediateString | string): T.NamedNodeArm.Built;
+			name(value: T.ImmediateIdentifier | T.ImmediateString): T.NamedNodeArm.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.NamedNodeArm>;

@@ -249,10 +249,10 @@ export const _fromMap = {
 	float_literal: coerceToFloatLiteral,
 	string_content: coerceToStringContent,
 	raw_string_literal_content: coerceToRawStringLiteralContent,
-	_line_doc_content: coerceToLineDocContent,
-	_block_comment_content: coerceToBlockCommentContent,
 	_raw_string_literal_start: coerceToRawStringLiteralStart,
 	_raw_string_literal_end: coerceToRawStringLiteralEnd,
+	_line_doc_content: coerceToLineDocContent,
+	_block_comment_content: coerceToBlockCommentContent,
 	type_identifier: coerceToTypeIdentifier,
 	field_identifier: coerceToFieldIdentifier,
 	shorthand_field_identifier: coerceToShorthandFieldIdentifier
@@ -317,6 +317,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		factory: (content: string) => _resolveByKind('escape_sequence_unicode_braced', content)
 	},
 	escape_sequence_hex: { factory: (content: string) => _resolveByKind('escape_sequence_hex', content) },
+	_string_open: { pattern: /^(?:(?:[bc]?"))$/u, factory: F.buildStringOpen },
 	line_comment_extra_slashes: { pattern: /^(?:(?:\/\/)(?:.*))$/u, factory: F.buildLineCommentExtraSlashes },
 	line_comment_regular: { pattern: /^(?:(?:.*))$/u, factory: F.buildLineCommentRegular },
 	range_pattern_with_left_bare: { values: ['..'], factory: () => F.buildRangePatternWithLeftBare() },
@@ -326,6 +327,10 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	},
 	string_content: { pattern: /^(?:(?:[^"\\]+))$/u, factory: F.buildStringContent },
 	raw_string_literal_content: { pattern: /^(?:(?:[\s\S]*))$/u, factory: F.buildRawStringLiteralContent },
+	_raw_string_literal_start: { pattern: /^(?:(?:[bc]?r#*"))$/u, factory: F.buildRawStringLiteralStart },
+	_raw_string_literal_end: { pattern: /^(?:(?:"#*))$/u, factory: F.buildRawStringLiteralEnd },
+	_line_doc_content: { pattern: /^(?:(?:.*))$/u, factory: F.buildLineDocContent },
+	_block_comment_content: { pattern: /^(?:(?:[^]*))$/u, factory: F.buildBlockCommentContent },
 	type_identifier: {
 		pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u,
 		factory: (text: string) => F.buildTypeIdentifier(F.buildIdentifier(text) as never)
@@ -350,12 +355,55 @@ const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'escape_sequence_hex'
 ]);
 
-function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {
-	for (const kind of kinds) {
-		const entry = _leafRegistry[kind];
-		if (!entry) continue;
-		if (entry.values && entry.values.includes(v)) return entry.factory(v);
-		if (entry.pattern && entry.pattern.test(v)) return entry.factory(v);
+function _buildGuardedText(v: string, kind: string): AnyNodeData | number {
+	const entry = _leafRegistry[kind]!;
+	if (entry.values !== undefined && !entry.values.includes(v)) {
+		throw new Error(`${JSON.stringify(v)} is not the text of ${kind}: expected one of ${JSON.stringify(entry.values)}`);
+	}
+	if (entry.pattern !== undefined && !entry.pattern.test(v)) {
+		throw new Error(`${JSON.stringify(v)} is not a ${kind}: it does not match ${entry.pattern}`);
+	}
+	return entry.factory(v);
+}
+
+const _TEXT_KINDS_BY_RANK: readonly string[] = [
+	'_raw_string_literal_start',
+	'raw_string_literal_content',
+	'string_content',
+	'_raw_string_literal_end',
+	'float_literal',
+	'_block_comment_content',
+	'_line_doc_content',
+	'line_comment_regular',
+	'empty_statement',
+	'never_type',
+	'mutable_specifier',
+	'remaining_field_pattern',
+	'self',
+	'super',
+	'crate',
+	'range_pattern_with_left_bare',
+	'unit_type',
+	'unit_expression',
+	'integer_literal_decimal',
+	'integer_literal_hex',
+	'integer_literal_binary',
+	'integer_literal_octal',
+	'char_literal_empty',
+	'line_comment_extra_slashes',
+	'field_identifier',
+	'identifier',
+	'shorthand_field_identifier',
+	'type_identifier',
+	'_string_open'
+];
+
+function _resolveBareText(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {
+	for (const kind of _TEXT_KINDS_BY_RANK) {
+		if (!kinds.includes(kind)) continue;
+		const entry = _leafRegistry[kind]!;
+		if (entry.values !== undefined ? entry.values.includes(v) : entry.pattern?.test(v) === true)
+			return entry.factory(v);
 	}
 	return undefined;
 }
@@ -428,6 +476,10 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'label',
 	'continue_expression',
 	'lifetimes',
+	'line_comment_doc_outer',
+	'line_comment_doc_inner',
+	'block_comment_doc_outer',
+	'block_comment_doc_inner',
 	'type_identifier',
 	'field_identifier',
 	'shorthand_field_identifier'
@@ -841,7 +893,7 @@ function _resolveOne<T>(
 		if (scalar !== undefined) return scalar as T;
 	}
 	if (typeof v === 'string') {
-		const leaf = _resolveLeafString(v, [...leafKinds, ...branchKinds]);
+		const leaf = _resolveBareText(v, [...leafKinds, ...branchKinds]);
 		if (leaf !== undefined) return leaf as T;
 		if (branchKinds.length === 0 && leafKinds.length === 1) return _resolveOneLeaf<T>(v, leafKinds[0]!);
 		if (branchKinds.length === 0 && leafKinds.length > 1 && leafKinds.every((k) => _AFFIXED_KINDS.has(k))) {
@@ -892,6 +944,10 @@ function _resolveOne<T>(
 		throw new Error(
 			`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(', ')}]: ${JSON.stringify(v)}`
 		);
+	}
+	if (typeof v === 'string') {
+		const texts = _TEXT_KINDS_BY_RANK.filter((kind) => leafKinds.includes(kind) || branchKinds.includes(kind));
+		if (texts.length > 0) throw new Error(`_resolveOne: ${JSON.stringify(v)} matches none of [${texts.join(', ')}]`);
 	}
 	return v as T;
 }
@@ -947,10 +1003,7 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
-	if (typeof v === 'string') {
-		const e = _leafRegistry[kind];
-		if (e !== undefined) return e.factory(v) as T;
-	}
+	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as T;
 	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
 		const { kind: k, ...rest } = v;
 		const kn = _kindNameOf(k);
@@ -10619,18 +10672,6 @@ export function coerceToRawStringLiteralContent(
 	return F.buildRawStringLiteralContent(input as Parameters<typeof F.buildRawStringLiteralContent>[0]);
 }
 
-export function coerceToLineDocContent(input: T.LineDocContent.Loose): ReturnType<typeof F.buildLineDocContent> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildLineDocContent>;
-	return F.buildLineDocContent(input as Parameters<typeof F.buildLineDocContent>[0]);
-}
-
-export function coerceToBlockCommentContent(
-	input: T.BlockCommentContent.Loose
-): ReturnType<typeof F.buildBlockCommentContent> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildBlockCommentContent>;
-	return F.buildBlockCommentContent(input as Parameters<typeof F.buildBlockCommentContent>[0]);
-}
-
 export function coerceToRawStringLiteralStart(
 	input: T.RawStringLiteralStart.Loose
 ): ReturnType<typeof F.buildRawStringLiteralStart> {
@@ -10643,6 +10684,18 @@ export function coerceToRawStringLiteralEnd(
 ): ReturnType<typeof F.buildRawStringLiteralEnd> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRawStringLiteralEnd>;
 	return F.buildRawStringLiteralEnd(input as Parameters<typeof F.buildRawStringLiteralEnd>[0]);
+}
+
+export function coerceToLineDocContent(input: T.LineDocContent.Loose): ReturnType<typeof F.buildLineDocContent> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildLineDocContent>;
+	return F.buildLineDocContent(input as Parameters<typeof F.buildLineDocContent>[0]);
+}
+
+export function coerceToBlockCommentContent(
+	input: T.BlockCommentContent.Loose
+): ReturnType<typeof F.buildBlockCommentContent> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildBlockCommentContent>;
+	return F.buildBlockCommentContent(input as Parameters<typeof F.buildBlockCommentContent>[0]);
 }
 
 export function resolveTypeIdentifier_content(

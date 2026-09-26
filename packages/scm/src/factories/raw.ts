@@ -8,9 +8,9 @@ import {
 	withMethods,
 	withAccessors,
 	methodsEngine,
-	admitHiddenText,
 	coerceKindEnumStorage,
-	coerceMixedEnumStorage
+	coerceMixedEnumStorage,
+	rejectBareText
 } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
@@ -25,7 +25,7 @@ const _slotRe_buildEscapeSequence_content = /^(?:(?:.))$/u;
 const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
 
 export function buildProgram(...children: T.Definition[]): T.Program.Built {
-	const _definitions = children;
+	const _definitions = rejectBareText(children, 'Program.definitions', 'a built Definition');
 	return withMethods(
 		withAccessors(
 			{
@@ -95,11 +95,11 @@ export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bu
 	);
 }
 
-export function buildCapture(value: T.ImmediateIdentifier | string): ReturnType<typeof _buildCapture>;
+export function buildCapture(value: T.ImmediateIdentifier): ReturnType<typeof _buildCapture>;
 export function buildCapture(text: string): ReturnType<typeof _buildCapture>;
 export function buildCapture(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildCapture(args[0] as T.ImmediateIdentifier | string);
+		return _buildCapture(args[0] as T.ImmediateIdentifier);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -107,17 +107,11 @@ export function buildCapture(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ImmediateIdentifier as const);
 	return prebuilt
-		? _buildCapture(args[0] as T.ImmediateIdentifier | string)
-		: _buildCapture(
-				(buildImmediateIdentifier as (...a: unknown[]) => unknown)(...args) as T.ImmediateIdentifier | string
-			);
+		? _buildCapture(args[0] as T.ImmediateIdentifier)
+		: _buildCapture((buildImmediateIdentifier as (...a: unknown[]) => unknown)(...args) as T.ImmediateIdentifier);
 }
-function _buildCapture(value: T.ImmediateIdentifier | string): T.Capture.Built {
-	const _name = admitHiddenText<NonNullable<T.Capture['_name']>>(
-		value,
-		[['_immediate_identifier', _leafRe_buildImmediateIdentifier, buildImmediateIdentifier]],
-		'Capture.name'
-	);
+function _buildCapture(value: T.ImmediateIdentifier): T.Capture.Built {
+	const _name = rejectBareText(value, 'Capture.name', 'buildImmediateIdentifier(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -126,7 +120,7 @@ function _buildCapture(value: T.ImmediateIdentifier | string): T.Capture.Built {
 				$named: true as const,
 				_name,
 				$with: {
-					name: (value: T.ImmediateIdentifier | string) => buildCapture(value)
+					name: (value: T.ImmediateIdentifier) => buildCapture(value)
 				}
 			},
 			{
@@ -153,7 +147,7 @@ export function buildString(...args: unknown[]) {
 		: _buildString((buildStringContent as (...a: unknown[]) => unknown)(...args) as T.StringContent);
 }
 function _buildString(value?: T.StringContent): T.String.Built {
-	const _string_content = value;
+	const _string_content = rejectBareText(value, 'String.stringContent', 'a built StringContent');
 	return withMethods(
 		withAccessors(
 			{
@@ -191,7 +185,7 @@ export function buildImmediateString(...args: unknown[]) {
 		: _buildImmediateString((buildStringContent as (...a: unknown[]) => unknown)(...args) as T.StringContent);
 }
 function _buildImmediateString(value?: T.StringContent): T.ImmediateString.Built {
-	const _string_content = value;
+	const _string_content = rejectBareText(value, 'ImmediateString.stringContent', 'a built StringContent');
 	return withMethods(
 		withAccessors(
 			{
@@ -232,7 +226,7 @@ export function buildStringContent(...children: ('[^"\\\\\\n]+' | T.EscapeSequen
 
 export function buildParameters(...children: (T.Capture | T.String | T.Identifier)[]): T.Parameters.Built {
 	_assertNonEmpty(children, 'parameters.children');
-	const _elements = children;
+	const _elements = rejectBareText(children, 'Parameters.elements', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -274,12 +268,16 @@ export function buildComment(value: string): T.Comment.Built {
 }
 
 export function buildList(config: T.List.Config): T.List.Built {
-	const _definitions = config.definitions ?? [];
-	const _content = coerceMixedEnumStorage<NonNullable<T.List['_content']>>(config.content ?? [], [
-		['*', TSKindId.Star] as const,
-		['+', TSKindId.Plus] as const,
-		['?', TSKindId.Qmark] as const
-	]);
+	const _definitions = rejectBareText(config.definitions ?? [], 'List.definitions', 'a built Definition');
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.List['_content']>>(config.content ?? [], [
+			['*', TSKindId.Star] as const,
+			['+', TSKindId.Plus] as const,
+			['?', TSKindId.Qmark] as const
+		]),
+		'List.content',
+		'a built Capture'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -303,12 +301,16 @@ export function buildList(config: T.List.Config): T.List.Built {
 }
 
 export function buildGrouping(config: T.Grouping.Config): T.Grouping.Built {
-	const _grouping_group = config.groupingGroup ?? [];
-	const _content = coerceMixedEnumStorage<NonNullable<T.Grouping['_content']>>(config.content ?? [], [
-		['*', TSKindId.Star] as const,
-		['+', TSKindId.Plus] as const,
-		['?', TSKindId.Qmark] as const
-	]);
+	const _grouping_group = rejectBareText(config.groupingGroup ?? [], 'Grouping.groupingGroup', 'a built GroupingGroup');
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Grouping['_content']>>(config.content ?? [], [
+			['*', TSKindId.Star] as const,
+			['+', TSKindId.Plus] as const,
+			['?', TSKindId.Qmark] as const
+		]),
+		'Grouping.content',
+		'a built Capture'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -333,12 +335,16 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Built {
 }
 
 export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.MissingNode.Built {
-	const _name = config.name;
-	const _content = coerceMixedEnumStorage<NonNullable<T.MissingNode['_content']>>(config.content ?? [], [
-		['*', TSKindId.Star] as const,
-		['+', TSKindId.Plus] as const,
-		['?', TSKindId.Qmark] as const
-	]);
+	const _name = rejectBareText(config.name, 'MissingNode.name', 'buildIdentifier(…)');
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.MissingNode['_content']>>(config.content ?? [], [
+			['*', TSKindId.Star] as const,
+			['+', TSKindId.Plus] as const,
+			['?', TSKindId.Qmark] as const
+		]),
+		'MissingNode.content',
+		'a built Capture'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -363,14 +369,22 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 }
 
 export function buildAnonymousNode(config: Partial<T.AnonymousNode.Config> = {}): T.AnonymousNode.Built {
-	const _name = coerceMixedEnumStorage<NonNullable<T.AnonymousNode['_name']>>(config.name ?? buildString(), [
-		['_', TSKindId.Underscore] as const
-	]);
-	const _content = coerceMixedEnumStorage<NonNullable<T.AnonymousNode['_content']>>(config.content ?? [], [
-		['*', TSKindId.Star] as const,
-		['+', TSKindId.Plus] as const,
-		['?', TSKindId.Qmark] as const
-	]);
+	const _name = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.AnonymousNode['_name']>>(config.name ?? buildString(), [
+			['_', TSKindId.Underscore] as const
+		]),
+		'AnonymousNode.name',
+		'a built String'
+	);
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.AnonymousNode['_content']>>(config.content ?? [], [
+			['*', TSKindId.Star] as const,
+			['+', TSKindId.Plus] as const,
+			['?', TSKindId.Qmark] as const
+		]),
+		'AnonymousNode.content',
+		'a built Capture'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -395,17 +409,19 @@ export function buildAnonymousNode(config: Partial<T.AnonymousNode.Config> = {})
 }
 
 export function buildNamedNode(config: Partial<T.NamedNode.Config> = {}): T.NamedNode.Built {
-	const _name = coerceMixedEnumStorage<NonNullable<T.NamedNode['_name']>>(config.name, [
-		['_', TSKindId.Underscore] as const
-	]);
-	const _named_node_arm = config.namedNodeArm;
-	const _named_node_group = config.namedNodeGroup;
+	const _name = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.NamedNode['_name']>>(config.name, [['_', TSKindId.Underscore] as const]),
+		'NamedNode.name',
+		'buildIdentifier(…)'
+	);
+	const _named_node_arm = rejectBareText(config.namedNodeArm, 'NamedNode.namedNodeArm', 'a built NamedNodeArm');
+	const _named_node_group = rejectBareText(config.namedNodeGroup, 'NamedNode.namedNodeGroup', 'a built NamedNodeGroup');
 	const _quantifier = coerceKindEnumStorage<NonNullable<T.NamedNode['_quantifier']>>(config.quantifier ?? [], [
 		['*', TSKindId.Star] as const,
 		['+', TSKindId.Plus] as const,
 		['?', TSKindId.Qmark] as const
 	]);
-	const _capture = config.capture ?? [];
+	const _capture = rejectBareText(config.capture ?? [], 'NamedNode.capture', 'a built Capture');
 	return withMethods(
 		withAccessors(
 			{
@@ -439,8 +455,8 @@ export function buildNamedNode(config: Partial<T.NamedNode.Config> = {}): T.Name
 }
 
 export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldDefinition.Built {
-	const _name = config.name;
-	const _definition = config.definition;
+	const _name = rejectBareText(config.name, 'FieldDefinition.name', 'buildIdentifier(…)');
+	const _definition = rejectBareText(config.definition, 'FieldDefinition.definition', 'a built Definition');
 	return withMethods(
 		withAccessors(
 			{
@@ -479,7 +495,7 @@ export function buildNegatedField(...args: unknown[]) {
 		: _buildNegatedField((buildIdentifier as (...a: unknown[]) => unknown)(...args) as T.Identifier);
 }
 function _buildNegatedField(value: T.Identifier): T.NegatedField.Built {
-	const _identifier = value;
+	const _identifier = rejectBareText(value, 'NegatedField.identifier', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -504,16 +520,16 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Built {
 		['#', TSKindId.Pound] as const,
 		['.', TSKindId.Dot] as const
 	]);
-	const _immediate_identifier = admitHiddenText<NonNullable<T.Predicate['_immediate_identifier']>>(
+	const _immediate_identifier = rejectBareText(
 		config.immediateIdentifier,
-		[['_immediate_identifier', _leafRe_buildImmediateIdentifier, buildImmediateIdentifier]],
-		'Predicate.immediateIdentifier'
+		'Predicate.immediateIdentifier',
+		'buildImmediateIdentifier(…)'
 	);
 	const _type = coerceKindEnumStorage<NonNullable<T.Predicate['_type']>>(config.type, [
 		['?', TSKindId.Qmark] as const,
 		['!', TSKindId.Bang] as const
 	]);
-	const _parameters = config.parameters;
+	const _parameters = rejectBareText(config.parameters, 'Predicate.parameters', 'a built Parameters');
 	return withMethods(
 		withAccessors(
 			{
@@ -526,7 +542,7 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Built {
 				_parameters,
 				$with: {
 					content: (value: NonNullable<T.Predicate.Config>['content']) => buildPredicate({ ...config, content: value }),
-					immediateIdentifier: (value: T.ImmediateIdentifier | string) =>
+					immediateIdentifier: (value: T.ImmediateIdentifier) =>
 						buildPredicate({ ...config, immediateIdentifier: value }),
 					type: (value: NonNullable<T.Predicate.Config>['type']) => buildPredicate({ ...config, type: value }),
 					parameters: (value?: T.Parameters) => buildPredicate({ ...config, parameters: value })
@@ -544,8 +560,8 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Built {
 }
 
 export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.GroupExpressionArm.Built {
-	const _left = config.left;
-	const _right = config.right;
+	const _left = rejectBareText(config.left, 'GroupExpressionArm.left', 'a built Definition / GroupExpressionArm');
+	const _right = rejectBareText(config.right, 'GroupExpressionArm.right', 'a built Definition / GroupExpressionArm');
 	return withMethods(
 		withAccessors(
 			{
@@ -569,8 +585,16 @@ export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.
 }
 
 export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Config): T.NamedNodeExpressionArm.Built {
-	const _left = config.left;
-	const _right = config.right;
+	const _left = rejectBareText(
+		config.left,
+		'NamedNodeExpressionArm.left',
+		'a built Definition / NegatedField / NamedNodeExpressionArm'
+	);
+	const _right = rejectBareText(
+		config.right,
+		'NamedNodeExpressionArm.right',
+		'a built Definition / NegatedField / NamedNodeExpressionArm'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -596,7 +620,11 @@ export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Con
 }
 
 export function buildGroupingGroup(value: T.Definition | T.GroupExpressionArm): T.GroupingGroup.Built {
-	const _group_expression = value;
+	const _group_expression = rejectBareText(
+		value,
+		'GroupingGroup.groupExpression',
+		'a built Definition / GroupExpressionArm'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -617,12 +645,8 @@ export function buildGroupingGroup(value: T.Definition | T.GroupExpressionArm): 
 }
 
 export function buildNamedNodeArm(config: T.NamedNodeArm.Config): T.NamedNodeArm.Built {
-	const _supertype = config.supertype;
-	const _name = admitHiddenText<NonNullable<T.NamedNodeArm['_name']>>(
-		config.name,
-		[['_immediate_identifier', _leafRe_buildImmediateIdentifier, buildImmediateIdentifier]],
-		'NamedNodeArm.name'
-	);
+	const _supertype = rejectBareText(config.supertype, 'NamedNodeArm.supertype', 'buildIdentifier(…)');
+	const _name = rejectBareText(config.name, 'NamedNodeArm.name', 'buildImmediateIdentifier(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -633,8 +657,7 @@ export function buildNamedNodeArm(config: T.NamedNodeArm.Config): T.NamedNodeArm
 				_name,
 				$with: {
 					supertype: (value: T.Identifier) => buildNamedNodeArm({ ...config, supertype: value }),
-					name: (value: T.ImmediateIdentifier | T.ImmediateString | string) =>
-						buildNamedNodeArm({ ...config, name: value })
+					name: (value: T.ImmediateIdentifier | T.ImmediateString) => buildNamedNodeArm({ ...config, name: value })
 				}
 			},
 			{
@@ -650,7 +673,11 @@ export function buildNamedNodeGroupChildren(
 	...children: (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]
 ): T.NamedNodeGroupChildren.Built {
 	_assertNonEmpty(children, 'named_node_group_children.children');
-	const _named_node_expressions = children;
+	const _named_node_expressions = rejectBareText(
+		children,
+		'NamedNodeGroupChildren.namedNodeExpressions',
+		'a built Definition / NegatedField / NamedNodeExpressionArm'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -674,8 +701,16 @@ export function buildNamedNodeGroupChildren(
 export function buildNamedNodeGroupAnchoredLast(
 	config: T.NamedNodeGroupAnchoredLast.Config
 ): T.NamedNodeGroupAnchoredLast.Built {
-	const _named_node_expressions = config.namedNodeExpressions ?? [];
-	const _last = config.last;
+	const _named_node_expressions = rejectBareText(
+		config.namedNodeExpressions ?? [],
+		'NamedNodeGroupAnchoredLast.namedNodeExpressions',
+		'a built Definition / NegatedField / NamedNodeExpressionArm'
+	);
+	const _last = rejectBareText(
+		config.last,
+		'NamedNodeGroupAnchoredLast.last',
+		'a built Definition / NegatedField / NamedNodeExpressionArm'
+	);
 	return withMethods(
 		withAccessors(
 			{
