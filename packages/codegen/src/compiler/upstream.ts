@@ -11,10 +11,10 @@ export interface UpstreamCompilation {
 
 export function compileUpstream(evaluation: UpstreamEvaluation): UpstreamCompilation {
 	if ('failure' in evaluation) return failedUpstream(`evaluate: ${evaluation.failure}`);
-	const { raw } = evaluation;
+	const { raw, ruleNames } = evaluation;
 	try {
 		const { diagnostics } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw });
-		return { ruleNames: new Set(Object.keys(raw.rules)), externalNames: new Set(raw.externals), diagnostics };
+		return { ruleNames: new Set(ruleNames), externalNames: new Set(raw.externals), diagnostics };
 	} catch (error) {
 		return failedUpstream(error instanceof Error ? error.message : String(error));
 	}

@@ -127,7 +127,9 @@ export interface RawGrammar {
 	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
 }
 
-export type UpstreamEvaluation = { readonly raw: RawGrammar } | { readonly failure: string };
+export type UpstreamEvaluation =
+	| { readonly raw: RawGrammar; readonly ruleNames: readonly string[] }
+	| { readonly failure: string };
 
 export interface DesugarDivergenceEvent {
 	readonly site: 'body-pattern-group';

@@ -2307,25 +2307,28 @@ departures to judge, so only it pays for an upstream evaluation.
 
 Evaluates the base `grammar()` received (the same object `wire()` received,
 the grammar's `enrichedBase`) a second time with no wire config, inside the
-same DSL-globals scope, so the upstream is never located by package path. A
-throw becomes a `failure` record rather than failing the grammar's own
-evaluation.
+same DSL-globals scope, so the upstream is never located by package path. It
+also records every rule name the upstream declares: the base's rules plus the
+enrich overrides merged into the upstream options. The evaluated rules alone
+are not that list, because the rule catalog omits hidden rules it finds
+unreachable (typescript's `_reserved_identifier`). A throw becomes a
+`failure` record rather than failing the grammar's own evaluation.
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.upstream`
 
-The base evaluated with no wire config (`{ raw }`) or the reason that
+The base evaluated with no wire config (`{ raw, ruleNames }`) or the reason that
 evaluation failed (`{ failure }`); absent when the grammar does not depart
 from its base (`departsFromUpstream`).
 
 ### `packages/codegen/src/compiler/types.ts::UpstreamEvaluation`
 
-`{ raw }` or `{ failure }`: the outcome of `evaluateUpstream`.
+`{ raw, ruleNames }` or `{ failure }`: the outcome of `evaluateUpstream`.
 
 ### `packages/codegen/src/compiler/upstream.ts::compileUpstream`
 
 Runs the evaluated upstream through `collectGrammarDiagnosticsForGrammar`
-and returns its rule names (post-enrich, so enrich mints count as upstream),
-its externals and its diagnostics. A throw anywhere in link, normalize or
+and returns its declared rule names (post-enrich, so enrich mints count as
+upstream), its externals and its diagnostics. A throw anywhere in link, normalize or
 assemble becomes a `failure` record. The upstream has no generated parser, so
 no id tables are passed and `kindid-unstamped-anon-literal` fires on every
 anonymous literal: that code says nothing about the upstream shape.

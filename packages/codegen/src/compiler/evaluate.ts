@@ -463,7 +463,10 @@ function departsFromUpstream(opts: GrammarOptions): boolean {
 
 function evaluateUpstream(base: GrammarOptions | { grammar: any }, ctx: EvaluateCtx): UpstreamEvaluation {
 	try {
-		return { raw: grammarFn(base, { name: ctx.opts.name, rules: {} }).grammar as RawGrammar };
+		const upstreamOpts: GrammarOptions = { name: ctx.opts.name, rules: {} };
+		const raw = grammarFn(base, upstreamOpts).grammar as RawGrammar;
+		const ruleNames = [...new Set([...Object.keys(ctx.baseRules), ...Object.keys(upstreamOpts.rules)])].sort();
+		return { raw, ruleNames };
 	} catch (error) {
 		return { failure: error instanceof Error ? error.message : String(error) };
 	}
