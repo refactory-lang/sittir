@@ -13,7 +13,7 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { Comment, NamespaceMap } from './types.js';
+import type { CommentBlock, CommentLine, HtmlComment, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import {
 	withMethods as withCommonMethods,
@@ -60,9 +60,17 @@ export const methodsEngine = {
  *  declaration fell back to `AnyNodeData` and lost the type at every
  *  `$trivia` call site. */
 export interface TriviaSetterOf<Self> {
-	(...args: ((Comment | string) | { leading?: (Comment | string)[]; trailing?: (Comment | string)[] })[]): Self;
-	leading(...items: (Comment | string)[]): Self;
-	trailing(...items: (Comment | string)[]): Self;
+	(
+		...args: (
+			| (CommentBlock | CommentLine | HtmlComment | string)
+			| {
+					leading?: (CommentBlock | CommentLine | HtmlComment | string)[];
+					trailing?: (CommentBlock | CommentLine | HtmlComment | string)[];
+			  }
+		)[]
+	): Self;
+	leading(...items: (CommentBlock | CommentLine | HtmlComment | string)[]): Self;
+	trailing(...items: (CommentBlock | CommentLine | HtmlComment | string)[]): Self;
 }
 
 export interface NodeMethodsOf {

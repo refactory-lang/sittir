@@ -13,7 +13,7 @@ import type {
 	OmitEach,
 	OptionsArg
 } from '@sittir/types';
-import type { NamespaceMap } from './types.js';
+import type { Comment, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import {
 	withMethods as withCommonMethods,
@@ -60,11 +60,9 @@ export const methodsEngine = {
  *  declaration fell back to `AnyNodeData` and lost the type at every
  *  `$trivia` call site. */
 export interface TriviaSetterOf<Self> {
-	(
-		...args: ((AnyNodeData | string) | { leading?: (AnyNodeData | string)[]; trailing?: (AnyNodeData | string)[] })[]
-	): Self;
-	leading(...items: (AnyNodeData | string)[]): Self;
-	trailing(...items: (AnyNodeData | string)[]): Self;
+	(...args: ((Comment | string) | { leading?: (Comment | string)[]; trailing?: (Comment | string)[] })[]): Self;
+	leading(...items: (Comment | string)[]): Self;
+	trailing(...items: (Comment | string)[]): Self;
 }
 
 export interface NodeMethodsOf {

@@ -25,6 +25,7 @@ import type { EmittedTemplates } from '../emitters/templates.ts';
 import type { GeneratedIdTables } from './generated-metadata.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import type { OverlayName } from '../emitters/overlays/module.ts';
+import { triviaKinds } from './model/trivia.ts';
 
 export interface GeneratedFiles {
 	grammar: string;
@@ -104,7 +105,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 		const rootKind = rootRuleName(normalized.rules)!;
 		const grammarRoles = withRootRole(extractGrammarRoles(cfg.grammar), rootKind);
-		const triviaKinds = grammarRoles.get('trivia');
+		const triviaKindNames = [...triviaKinds(nodeMap)];
 
 		const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
 
@@ -117,7 +118,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			inlineKinds: [...inlineKinds],
 			synthesizedKinds: evaluateSynthesizedKinds,
 			strict: cfg.strict,
-			triviaKinds,
+			triviaKinds: triviaKindNames,
 			grammarRoles,
 			emitRenderModule: cfg.emitRenderModule,
 			expectTestFailures: raw.expectTestFailures,

@@ -126,65 +126,35 @@ it('classifies inner and same-line trailing', async () => {
 - [ ] **Step 6: Commit.**
   `git commit -m "feat(tools): trivia-placement census" -- packages/cli docs/glossary docs/cli-command-glossary.md`
 
-### Task 2: Model facts `lineTerminated` and `innerGaps`
+### Task 2: Model facts `triviaKinds`, `lineTerminated` and `innerGaps`
+
+Landed. The shape differs from the first draft; later tasks use these interfaces.
 
 **Files:**
-- Modify: `packages/codegen/src/compiler/model/node-map.ts`:
-  - `AbstractAssembledCompound`: add the `innerGaps` getter;
-  - comment-kind leaves: add `lineTerminated`.
-- Modify: `packages/codegen/src/compiler/link.ts`: stamp `lineTerminated` on
-  comment-kind rules (the grammar's `trivia` role, excluding whitespace).
-- Test: `packages/codegen/src/compiler/model/__tests__/trivia-facts.test.ts`
-- Docs: glossary entries for both facts.
+- `packages/codegen/src/compiler/model/trivia.ts`: `triviaKinds(nodeMap)` and `lineTerminated(nodeMap, kind)`, memoised per node map.
+- `packages/codegen/src/compiler/model/node-map.ts`: `AssembledNodeBase.lineEnds`, `AbstractAssembledCompound.innerGaps`, `InnerGap`.
+- `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts`: `trivia-line-end-undetermined`.
+- `packages/codegen/src/compiler/generate.ts`: the TriviaEntry union reads `triviaKinds`, not the scm `trivia` role.
+- Test: `packages/codegen/src/compiler/model/__tests__/trivia-facts.test.ts`.
 
 **Interfaces:**
-- Produces:
-  - `AssembledNodeBase.lineTerminated: boolean`. It is true only for comment
-    kinds whose token pattern cannot match `\n`.
-  - `AbstractAssembledCompound.innerGaps: readonly InnerGap[]`, where
-    `interface InnerGap { readonly key: string; readonly precedingTokens: number }`.
-    `key` is the slot name, or `'interior'`. `precedingTokens` is the count of
-    literal tokens in render order before the gap.
-  - A kind is inner-capable iff `innerGaps.length > 0`.
-
-- [ ] **Step 1: Write the failing test.**
-
-```ts
-it('stamps lineTerminated on line comments only', () => {
-	const map = compileFixtureNodeMap('rust');
-	expect(map.nodes.get('line_comment')!.lineTerminated).toBe(true);
-	expect(map.nodes.get('block_comment')!.lineTerminated).toBe(false);
-});
-it('derives inner gaps from optional/repeat slots in render order', () => {
-	const map = compileFixtureNodeMap('rust');
-	expect((map.nodes.get('block') as AbstractAssembledCompound).innerGaps).toEqual([{ key: 'statements', precedingTokens: 1 }]);
-	expect((map.nodes.get('unit_expression') as AbstractAssembledCompound).innerGaps).toEqual([{ key: 'interior', precedingTokens: 1 }]);
-	expect((map.nodes.get('function_item') as AbstractAssembledCompound).innerGaps).toEqual([]);
-});
-```
-
-  `compileFixtureNodeMap` is the existing helper used by the node-map tests; use
-  the same import those tests use.
-- [ ] **Step 2: Run it.** `pnpm exec vitest run packages/codegen/src/compiler/model/__tests__/trivia-facts.test.ts`.
-  Expected: FAIL (property undefined).
-- [ ] **Step 3: Implement.**
-  - `lineTerminated`: in link, for each rule in the `trivia` role, take its
-    token content. A PATTERN is terminated iff `!new RegExp(pattern).test('\n')`
-    applied to a probe built by the existing anchored-pattern helper, the same
-    one leaf guards use. A STRING/SEQ-of-literals is terminated iff it holds no
-    `\n`. Stamp `lineTerminated: true` on the rule, and `assemble` copies it onto
-    the node. This is the one derivation; render never re-tests text.
-  - `innerGaps`: walk the node's render body once in order, counting literal
-    tokens. At each optional or repeat slot, push `{ key: slot.name,
-    precedingTokens }`, keeping only the first slot per `precedingTokens` value
-    (the spec's first-in-render-order rule). If the node has no slots and at
-    least two literal tokens, return `[{ key: 'interior', precedingTokens: 1 }]`.
-    If any required slot exists, return `[]`.
-- [ ] **Step 4: Run the test.** Expected: PASS.
-- [ ] **Step 5: Regen all three grammars.** Output must be byte-identical: no
-  emitter reads these yet.
-- [ ] **Step 6: Commit** the codegen source, the test and the glossary, with a
-  pathspec.
+- `triviaKinds(nodeMap): ReadonlySet<string>`: the grammar's `extras`, plus every subtype of a supertype in `extras`, transitively. It is the one predicate for trivia kinds; nothing is stamped on nodes.
+- `lineTerminated(nodeMap, kind): boolean | undefined`:
+  - true iff every arm of the kind's token ends in an open pattern that cannot cross a line;
+  - false for literal-only tokens (both python continuations), block comments and `html_comment`.
+  - An external is read through its render-only rule (rust `_line_doc_content: token.immediate(/.*/)`).
+  - `undefined` (an external with no render rule) is the blocking `trivia-line-end-undetermined` diagnostic, remedied by authoring the render rule.
+- `AbstractAssembledCompound.innerGaps: readonly InnerGap[]`, `interface InnerGap { readonly key: string; readonly precedingTokens: number }`:
+  - compounds only;
+  - `precedingTokens` counts unconditional literal tokens;
+  - a gap needs a token on each side, except in a token-less kind (the root).
+  - Slotless leaves have no gaps (see the spec's Risks).
+- Moves: the TriviaEntry union only.
+  - python gains `LineContinuationNewline | LineContinuationNul`;
+  - typescript spells `CommentBlock | CommentLine` and gains `HtmlComment`;
+  - scm types `Comment` where it had `AnyNodeData`;
+  - rust and regex are unchanged.
+- `emitSynonymComment` keeps the scm `comment` role until Task 5 retires it.
 
 ### Task 3: Reader assigns each extra to one owner
 

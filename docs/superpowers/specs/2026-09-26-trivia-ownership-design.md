@@ -337,6 +337,12 @@ This holds for leading, trailing and `inner` (`.$trivia.inner(...)` on an
   counts them per grammar. If any exists, the gap-key rule comes back for a
   decision before code.
 
+- **Slotless leaf interior gaps.** A slotless kind whose tokens simplify merges
+  into one literal (rust `unit_expression` `()`) no longer records where its
+  tokens split, so a comment between them has no gap. It is a read diagnostic and
+  a trivia-row count until the model keeps the split. The census finds 0 such
+  comments in the three corpora.
+
 ## Out of scope
 
 - The reader recording whitespace (blank lines) as trivia entries. Built

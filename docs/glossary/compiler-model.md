@@ -1129,17 +1129,6 @@ can't be unified.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.attachNodeMap`
-
-```text
-/**
-	 * Attach the assembled node map so the `parameterless` getter can resolve
-	 * UnresolvedRef slots by name before `hydrateSlotRefs` runs. Called by
-	 * assemble() after all nodes are populated. Safe to call multiple times
-	 * (idempotent for the same map reference).
-	 */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.parameterless`
 
 ```text
@@ -4479,6 +4468,55 @@ as `Delimiter.None`.
 The separator token an option declared for this list, stamped once resolution
 has run. A list that chooses its separator per instance and has no stamp is a
 build error naming the arms it admits.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.innerGaps`
+
+Where an inner comment can sit in an empty node of this kind: one `InnerGap` per optional or repeat slot, keyed by the slot name, with `precedingTokens` counting the kind's unconditional literal tokens before it in render order.
+
+- A kind with any required slot has no gaps. A filled required slot gives every comment a named neighbour, so leading or trailing always holds it.
+- Tokens under an optional or repeat member, or inside a choice, are conditional and not counted: they are absent from an empty node.
+- A slot is found by its source rule ids, never at the rule root.
+- When several slots share a span, only the first in render order keys it.
+- A gap before the kind's first token or after its last is not inner: tree-sitter gives an extra outside a node's own tokens to the parent. A kind with no unconditional token keeps its gaps. Only the root can hold an extra there (rust `source_file`, python `module`, typescript `program`), and a comment-only file keys to the root's first slot.
+- A compound with no slots and at least two tokens has the one gap `interior` after its first token.
+
+Slotless leaves carry no gaps. A merged literal such as rust `unit_expression` `()` no longer records its token split, so an inner comment there is a read diagnostic and a count in the trivia validation row.
+
+### `packages/codegen/src/compiler/model/node-map.ts::InnerGap`
+
+One inner-comment position of a kind: the empty slot that keys it (or `interior`) and the number of the kind's unconditional literal tokens before it.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.lineEnds`
+
+How this kind's text can end, read from its own rule: `open` for a pattern that accepts a line of arbitrary text but not text across a line break, `closed` for a literal or any other pattern, `empty` for an arm that may end with nothing, and `{ symbol }` for an arm that ends in another kind. A sequence ends as its last member does, falling back through members that can be empty; a choice ends as each of its arms. `lineTerminated` resolves the symbols through the node map.
+
+### `packages/codegen/src/compiler/model/node-map.ts::LineEnd`
+
+One way a kind's text can end: `open`, `closed`, `empty`, or the kind named by `symbol`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::ruleLineEnds`
+
+The rule walk behind `lineEnds`. A pattern is probed with the leaf guards' own anchored regex (`anchoredLeafRegex`): it is `open` when it accepts the probe line and rejects two probe lines joined by a line break.
+
+### `packages/codegen/src/compiler/model/node-map.ts::LineEndCtx`
+
+The kind whose rule `ruleLineEnds` walks, which names its patterns in the anchored-regex error.
+
+### `packages/codegen/src/compiler/model/node-map.ts::GapWalkCtx`
+
+Whether the `innerGaps` walk is under an optional, repeat or choice member, where tokens are conditional.
+
+### `packages/codegen/src/compiler/model/node-map.ts::seqLineEnds`
+
+A sequence's ends: its last member's, plus the ends of the members before it when the last can be empty.
+
+### `packages/codegen/src/compiler/model/trivia.ts::triviaKinds`
+
+The single predicate for which kinds can be trivia entries: the kinds the grammar lists in `extras`, and every subtype of a supertype listed there, transitively. Memoised per node map. The TriviaEntry type union, the runtime's accepted entry kinds, loose classification and the trivia transport read it. No trivia flag is stored on nodes and no scm role decides it.
+
+### `packages/codegen/src/compiler/model/trivia.ts::lineTerminated`
+
+Whether a kind's text always ends its line, so the next token must start on a new line: `true` when every arm ends in an open pattern (`lineEnds`, with symbol arms resolved through the node map), `false` when any arm ends in a literal, a closed pattern or nothing, and `undefined` when an arm ends in a kind with no rule to read. An external token is read through its render-only rule. Examples: rust `line_comment` reaches `_line_doc_content` (`.*`) through its doc arms and is true; block comments, typescript `html_comment` and both python line continuations are false. Memoised per node map and kind. An undetermined trivia kind is the `trivia-line-end-undetermined` grammar diagnostic.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.lexedInterior`
 

@@ -436,6 +436,10 @@ rather than defaulted, since defaulting would make the guard guess.
 
 One `reserved-member-not-literal` warning per reserved-wordset member that `reservedWordset` cannot read as literal text. The word builder's reserved guard cannot reject a word it cannot spell, so the member is named for the author to rewrite as a string or a single-literal symbol.
 
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::triviaLineEndDiagnostics`
+
+One blocking `trivia-line-end-undetermined` error per trivia kind whose `lineTerminated` is undetermined: an arm ends in an external token with no render rule. The remedy is to author the external's render-only rule in `grammar.sittir.ts` (the text it scans), which `lineTerminated` then reads like any token body. No grammar has one today.
+
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::collectGrammarDiagnosticsForGrammar`
 
 Collapses renamed rules first (`collapseRenamedRules`) and uses that grammar throughout, returning it as `raw`, so the diagnostics, link and the caller read one grammar. Builds one `SymbolSource` from it (`symbolSourceOf`: the

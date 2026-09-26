@@ -44,6 +44,47 @@ import {
 	type ParseKindCollisionValue
 } from '../../types/parsekind-collisions.ts';
 import { describeDeriveShape, type DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
+import { RuleWalker } from '../../dsl/rule-walker.ts';
+import { anchoredLeafRegex } from '../../emitters/shared.ts';
+
+const renderRuleWalker = new RuleWalker<RenderRule>();
+const anyRuleWalker = new RuleWalker<AnyRule>();
+const LINE_PROBE = 'a b\t*/ -->#;';
+
+export type LineEnd = 'open' | 'closed' | 'empty' | { readonly symbol: string };
+
+interface LineEndCtx {
+	readonly kind: string;
+}
+
+function ruleLineEnds(rule: AnyRule, ctx: LineEndCtx): LineEnd[] {
+	switch (rule.type) {
+		case STRING:
+			return [rule.value === '' ? 'empty' : 'closed'];
+		case PATTERN: {
+			const anchored = anchoredLeafRegex(ctx.kind, rule.value);
+			return [
+				anchored?.test(LINE_PROBE) === true && !anchored.test(`${LINE_PROBE}\n${LINE_PROBE}`) ? 'open' : 'closed'
+			];
+		}
+		case SYMBOL:
+			return [{ symbol: rule.name }];
+		default:
+			break;
+	}
+	const children = anyRuleWalker.childrenOf(rule);
+	const ends = rule.type === SEQ ? seqLineEnds(children, ctx) : children.flatMap((child) => ruleLineEnds(child, ctx));
+	const optional = 'multiplicity' in rule && (rule.multiplicity === 'optional' || rule.multiplicity === 'array');
+	return optional || children.length === 0 ? [...ends, 'empty'] : ends;
+}
+
+function seqLineEnds(members: readonly AnyRule[], ctx: LineEndCtx): LineEnd[] {
+	const last = members.at(-1);
+	if (last === undefined) return ['empty'];
+	const ends = ruleLineEnds(last, ctx);
+	if (!ends.includes('empty')) return ends;
+	return [...ends.filter((end) => end !== 'empty'), ...seqLineEnds(members.slice(0, -1), ctx)];
+}
 
 function parseKindCollisionKey(diagnostic: ParseKindCollisionDiagnostic): string {
 	return [
@@ -1049,6 +1090,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return this.kindEntry?.id;
 	}
 
+	get lineEnds(): readonly LineEnd[] {
+		return ruleLineEnds(this.rule, { kind: this.kind });
+	}
+
 	get parameterless(): boolean {
 		return false;
 	}
@@ -1582,6 +1627,15 @@ export interface CompoundOpts {
 	aliasTypeId?: number;
 }
 
+interface GapWalkCtx {
+	readonly conditional: boolean;
+}
+
+export interface InnerGap {
+	readonly key: string;
+	readonly precedingTokens: number;
+}
+
 export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRule> extends AssembledNodeBase<R> {
 	readonly simplifiedRule: SimplifiedRule;
 	readonly renderRule: RenderRule;
@@ -1694,6 +1748,38 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 
 	get lexedInterior(): boolean {
 		return this.renderRule.tokenized === true || this.renderRule.lexed === true;
+	}
+
+	get innerGaps(): readonly InnerGap[] {
+		if (this._slots.some(isRequired)) return [];
+		const root = this.renderRule;
+		const slotById = new Map(this._slots.flatMap((slot) => slot.sourceRuleIds.map((id) => [id, slot] as const)));
+		const candidates: InnerGap[] = [];
+		let tokens = 0;
+		const walk = (rule: RenderRule, ctx: GapWalkCtx): void => {
+			const slot = rule === root || rule.id === undefined ? undefined : slotById.get(rule.id);
+			if (slot !== undefined) {
+				if (!candidates.some((gap) => gap.precedingTokens === tokens))
+					candidates.push({ key: slot.name, precedingTokens: tokens });
+				return;
+			}
+			if (rule.type === STRING) {
+				if (!ctx.conditional) tokens += 1;
+				return;
+			}
+			const inner =
+				ctx.conditional ||
+				rule.type === CHOICE ||
+				rule.multiplicity === 'optional' ||
+				rule.multiplicity === 'array' ||
+				rule.optionalElement === true;
+			for (const child of renderRuleWalker.childrenOf(rule)) walk(child, { conditional: inner });
+		};
+		walk(root, { conditional: false });
+		if (this._slots.length === 0) return tokens >= 2 ? [{ key: 'interior', precedingTokens: 1 }] : [];
+		return tokens === 0
+			? candidates
+			: candidates.filter((gap) => gap.precedingTokens > 0 && gap.precedingTokens < tokens);
 	}
 
 	get separator(): string | undefined {
