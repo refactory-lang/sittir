@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { emitKindIdRust } from '../kind-id-rust.ts';
 import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
 import { evaluate } from '../../compiler/evaluate.ts';
@@ -12,13 +11,12 @@ import { loadGrammarJsonAliasMap } from '../../compiler/inline-sets.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import type { GrammarName } from '../../grammars.ts';
 
-const repoRoot = fileURLToPath(new URL('../../../../..', import.meta.url)).replace(/\/$/, '');
 
 async function emittedKindIds(grammar: GrammarName) {
 	const overridesPath = resolveOverridesPath(grammar);
 	const entryPath = existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
 	const raw = await evaluate(entryPath);
-	const generatedIdTables = await loadGeneratedIdTables(grammar, repoRoot);
+	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
 	const linked = link(raw, { generatedIdTables });
 	const nodeMap = assemble(

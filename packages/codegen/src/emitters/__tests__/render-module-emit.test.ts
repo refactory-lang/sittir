@@ -12,7 +12,6 @@
 
 import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
 import { emitRenderModule } from '../render-module.ts';
 import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
@@ -28,7 +27,6 @@ import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 
-const repoRoot = fileURLToPath(new URL('../../../../..', import.meta.url)).replace(/\/$/, '');
 
 // ---------------------------------------------------------------------------
 // classifySlot — exported helper
@@ -134,7 +132,7 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 
 	const raw = await evaluate(entryPath);
-	const generatedIdTables = await loadGeneratedIdTables(grammar, repoRoot);
+	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
 	const linked = link(raw, { generatedIdTables });
 	const normalized = normalizeGrammar(linked);
@@ -320,7 +318,7 @@ async function buildRustFixtureForParity() {
 	const linked = link(raw);
 	const normalized = normalizeGrammar(linked);
 
-	const generatedIdTables = await loadGeneratedIdTables(grammar, repoRoot);
+	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 
 	const renderRules =

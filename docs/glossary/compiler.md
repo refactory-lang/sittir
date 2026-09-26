@@ -3210,6 +3210,14 @@ fallback an unstamped list reports.
  */
 ```
 
+### `packages/codegen/src/compiler/generated-metadata.ts::loadGeneratedIdTables`
+
+The grammar's generated id tables, read from its own package
+(`grammarPackageDir`): the committed `.sittir/src/parser.c` (with its
+`grammar.json`), else the built `.sittir/parser.wasm`; `undefined` when
+neither exists. The location never depends on the working directory, so a
+test or tool run from any package reads the same tables.
+
 ### `packages/codegen/src/compiler/generated-metadata.ts::findEntryForKindName`
 
 ```text

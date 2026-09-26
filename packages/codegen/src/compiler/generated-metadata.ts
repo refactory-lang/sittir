@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { loadWebTreeSitter } from '../engine-loader.ts';
+import { grammarPackageDir } from '../grammars.ts';
 import { type KindParserMetadata } from './types.ts';
 import { isParserHiddenName } from '../dsl/rule-patterns.ts';
 import type * as TS from 'web-tree-sitter';
@@ -51,11 +52,8 @@ export interface TreeSitterLanguageMetadata {
 	fieldNameForId(id: number): string | null;
 }
 
-export async function loadGeneratedIdTables(
-	grammar: string,
-	root = process.cwd()
-): Promise<GeneratedIdTables | undefined> {
-	const parserCPath = join(root, 'packages', grammar, '.sittir', 'src', 'parser.c');
+export async function loadGeneratedIdTables(grammar: string): Promise<GeneratedIdTables | undefined> {
+	const parserCPath = join(grammarPackageDir(grammar), '.sittir', 'src', 'parser.c');
 	if (existsSync(parserCPath)) {
 		const grammarJsonPath = join(dirname(parserCPath), 'grammar.json');
 		const grammarJson = existsSync(grammarJsonPath) ? JSON.parse(readFileSync(grammarJsonPath, 'utf8')) : undefined;
@@ -66,7 +64,7 @@ export async function loadGeneratedIdTables(
 		);
 	}
 
-	const wasmPath = join(root, 'packages', grammar, '.sittir', 'parser.wasm');
+	const wasmPath = join(grammarPackageDir(grammar), '.sittir', 'parser.wasm');
 	if (!existsSync(wasmPath)) return undefined;
 
 	const { Language } = await loadWebTreeSitter();
