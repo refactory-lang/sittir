@@ -37,7 +37,7 @@
 
 ### Task 1: Diagnose the two live invariants
 
-The spec makes the derive-shape postconditions assertions; two fire today. Each needs its grammar-level cause mapped to a §4.2 check before Task 5 turns them into assertions.
+Two derive-shape postconditions fire today: scm `seq-with-nested-seq` in every stage, and rust `choice-with-multiple-arm-shapes` in the raw stage only (enrich resolves it). Each needs its grammar-level cause mapped to a §4.2 check before Task 5 decides their fate.
 
 **Files:**
 - Read only: `packages/codegen/src/compiler/diagnostics/derive-shapes.ts`, `packages/codegen/src/compiler/collect-slots.ts`
@@ -49,7 +49,7 @@ The spec makes the derive-shape postconditions assertions; two fire today. Each 
 - [ ] **Step 1: Reproduce both**
 
 Run: `pnpm exec tsx packages/cli/src/cli.ts tool grammar-diagnostics -g scm` and `-g rust`
-Expected: one `seq-with-nested-seq` (scm) and one `choice-with-multiple-arm-shapes` (rust) in the output, with owner kinds.
+Expected: one `seq-with-nested-seq` (scm) in the output, with its owner kind. rust's `choice-with-multiple-arm-shapes` is absent from the final and enriched stages; it reproduces only by diagnosing the upstream `grammar.js` directly.
 
 - [ ] **Step 2: Trace each to its evaluated rule**
 
@@ -58,6 +58,19 @@ Run: `pnpm exec tsx packages/cli/src/cli.ts tool probe-kind -g <grammar> --kind 
 - [ ] **Step 3: Record the finding and stop for review**
 
 Write under this task: owner, shape, why normalize leaves it, and the check that reports it. Send it to sittir-brainstorm and wait for the ruling before Task 5.
+
+**Findings**
+
+| code | owner | stages | evaluated shape | why normalize leaves it | check that already reports it |
+| --- | --- | --- | --- | --- | --- |
+| `seq-with-nested-seq` | scm `predicate` | raw, enriched, final | `field('name', seq(choice('#','.'), alias($._immediate_identifier), field('type', $.predicate_type)))`: a field over a three-member seq that carries a nested field | no normalize step flattens a fielded seq; normalize keeps `SEQ field=name` as the member | `unclassifiable-shape`, bucket `nested-seq`, same owner and member (`rule:predicate:members.1`); floored in `packages/scm/grammar.sittir.ts` |
+| `choice-with-multiple-arm-shapes` | rust `range_pattern` | raw only | `choice(seq(field('left', …), choice(seq(op, field('right', …)), '..')), seq(op, field('right', …)))`: a top-level choice of two structured seq arms | normalize does not variantize; enrich does (arms minted as `range_pattern_arm2` / `range_pattern_arm3`), so it is gone from the enriched stage | `unclassifiable-shape`, bucket `choice-with-structured-arms`, same owner (`rule:range_pattern:root`) in the raw stage |
+
+Both are second detections of a shape the member-shape classifier already reports on the same owner in the same stage. `fromDeriveShape` maps every derive-shape code to `canProceed: true`, so neither blocks today. No new code is needed.
+
+Consequence for Task 5: scm's shape passes the gate under its `unclassifiable-shape` floor, so making the derive-shape audit an assertion would throw on a floored grammar. The audit re-derives the classifier's verdict from `classifyTopLevelShape`, which the single-classifier rule forbids. Recommendation: delete the audit and its five codes rather than turn them into assertions, leaving `unclassifiable-shape` as the one verdict. The other three audit codes (`seq-member-collision`, `polymorph-classification-gap`, `rule-unexpected`) fire in no stage of any of the five grammars.
+
+**Ruling:** delete the derive-shape audit (`classifyTopLevelShape`, `fromDeriveShape` and its five codes) in Task 5; `unclassifiable-shape` is the one verdict for top-level and member shapes. Task 5's commit amends spec §4.4 to drop the derive-shape postconditions from the invariant list and removes their glossary entries.
 
 ---
 
