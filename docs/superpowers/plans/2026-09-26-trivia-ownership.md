@@ -348,18 +348,18 @@ interface TriviaSetterRuntime<Self> {
 
 ```ts
 it('reads what it set', () => {
-	const b = ir.block().$trivia.inner(ir.lineComment('// TODO'));
+	const b = ir.block().$trivia.inner(ir.lineComment(' TODO'));
 	expect(b.$trivia.inner()).toHaveLength(1);
 });
 it('refuses inner on a non-empty node', () => {
 	const b = ir.block(ir.expressionStatement(ir.identifier('a')));
-	expect(() => (b.$trivia as any).inner(ir.lineComment('// x'))).toThrow(/leading|trailing/);
+	expect(() => (b.$trivia as any).inner(ir.lineComment(' x'))).toThrow(/leading|trailing/);
 });
 it('refuses an unknown gap', () => {
-	expect(() => (ir.block().$trivia as any).innerAt('nope', ir.lineComment('// x'))).toThrow(/gap/);
+	expect(() => (ir.block().$trivia as any).innerAt('nope', ir.lineComment(' x'))).toThrow(/gap/);
 });
 it('refuses adding a child to a node with inner comments', () => {
-	const b = ir.block().$trivia.inner(ir.lineComment('// TODO'));
+	const b = ir.block().$trivia.inner(ir.lineComment(' TODO'));
 	expect(() => b.$with.statements([ir.expressionStatement(ir.identifier('a'))])).toThrow(/leading|trailing/);
 });
 it('accepts whitespace items and whitespace strings', () => {
@@ -436,9 +436,9 @@ export function isEmpty(node: Block): node is EmptyBlock;
 ```ts
 import { ir, isEmpty, type Block } from '../src/index.js';
 declare const parsed: Block;
-ir.block().$trivia.inner(ir.lineComment('// TODO'));
+ir.block().$trivia.inner(ir.lineComment(' TODO'));
 // @ts-expect-error inner is only on EmptyBlock
-parsed.$trivia.inner(ir.lineComment('// x'));
+parsed.$trivia.inner(ir.lineComment(' x'));
 if (isEmpty(parsed)) parsed.$trivia.inner();
 const s: readonly import('../src/index.js').Statement[] = parsed.statements();
 ```
@@ -497,7 +497,7 @@ it('joins a same-line leading block comment with a space', () => {
 	expect(detachedRender(parseRust('fn f() { /* c */ a; }'))).toContain('/* c */ a;');
 });
 it('renders inner comments inside an empty block', () => {
-	const f = ir.functionItem({ name: 'f', body: ir.block().$trivia.inner(ir.lineComment('// TODO')) });
+	const f = ir.functionItem({ name: 'f', body: ir.block().$trivia.inner(ir.lineComment(' TODO')) });
 	expect(f.$render()).toMatch(/\{\n\s+\/\/ TODO\n\}/);
 });
 it('a blankline leading entry gives exactly one blank line', () => {
@@ -506,7 +506,7 @@ it('a blankline leading entry gives exactly one blank line', () => {
 	expect(b.$render()).not.toMatch(/a;\n\n\n/);
 });
 it('renders a built trailing line comment followed by the next statement on a new line', () => {
-	const b = ir.block(ir.expressionStatement(ir.identifier('a')).$trivia.trailing(ir.lineComment('// x')), ir.expressionStatement(ir.identifier('b')));
+	const b = ir.block(ir.expressionStatement(ir.identifier('a')).$trivia.trailing(ir.lineComment(' x')), ir.expressionStatement(ir.identifier('b')));
 	expect(b.$render()).not.toMatch(/\/\/ x b/);
 });
 ```
@@ -542,11 +542,11 @@ it('renders a built trailing line comment followed by the next statement on a ne
 ```ts
 it('prints trivia entries as their kind builders', async () => {
 	const src = await factorySourceOf('rust', 'fn f() {\n    // note\n    a;\n}\n');
-	expect(src).toContain(`.$trivia.leading(ir.lineComment('// note'))`);
+	expect(src).toContain(`.$trivia.leading(ir.lineComment(' note'))`);
 	expect(src).not.toMatch(/\$trivia\.leading\('/);
 });
 it('prints inner trivia on an empty body', async () => {
-	expect(await factorySourceOf('rust', 'fn f() { // TODO\n}\n')).toContain(`.$trivia.inner(ir.lineComment('// TODO'))`);
+	expect(await factorySourceOf('rust', 'fn f() { // TODO\n}\n')).toContain(`.$trivia.inner(ir.lineComment(' TODO'))`);
 });
 ```
 
