@@ -85,3 +85,20 @@ arity disagreement hasn't been traced. The shipped grammar avoids it with
   (or the slot has to split per arm) when variant arms give it different
   multiplicities; alternatively, assemble should reject the shape with a
   diagnostic before the crate is emitted.
+
+## 4. A codegen change silently stales unstable grammars' manifests
+
+Each grammar's `.sittir/generated.manifest.json` records a `source_hash` over
+the codegen source. `regen:all` regenerates only stable grammars, so any
+change under `packages/codegen/src/` leaves an unstable grammar's committed
+manifest stale, with nothing failing at commit time. The first sign is later:
+`loadLanguageForGrammar` runs `assertGeneratedManifestsClean` and every
+validator refuses the grammar. The C++-scanner fix to the crate template did
+exactly this to scm and regex.
+
+- Reproduce: change any file under `packages/codegen/src/`, run
+  `pnpm run regen:all`, then `validate counts scm`.
+- Fix direction: a regen path that refreshes every grammar's manifest (stable
+  or not), or a gate that fails when any committed grammar's manifest is
+  stale. The validator refusing a stale grammar is the right symptom; the gap
+  is that nothing catches it when the codegen change is committed.
