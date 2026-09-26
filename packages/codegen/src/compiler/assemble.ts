@@ -893,15 +893,13 @@ function collectAnonymousNodes(
 	for (const literalText of seen) {
 		if (literalText === '' || /^\s+$/.test(literalText)) continue;
 		const catalogEntry = findEntryForLiteralText(kindEntries, literalText);
-		if (catalogEntry === undefined || catalogEntry.anon !== true) {
-			if (catalogEntry === undefined) {
-				diagnostics.assembleWarnings.record({
-					code: 'kindid-unstamped-anon-literal',
-					message: `[assemble] literal ${JSON.stringify(literalText)} has no anonymous parser symbol — not minted`,
-					ownerKind: literalText,
-					details: { literalText }
-				});
-			}
+		if (catalogEntry === undefined) {
+			diagnostics.assembleWarnings.record({
+				code: 'kindid-unstamped-anon-literal',
+				message: `[assemble] literal ${JSON.stringify(literalText)} has no anonymous parser symbol — not minted`,
+				ownerKind: literalText,
+				details: { literalText }
+			});
 			continue;
 		}
 		if (nodes.has(catalogEntry.kind)) continue;

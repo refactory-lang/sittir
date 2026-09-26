@@ -3,6 +3,7 @@ import {
 	collectGeneratedKindEntries,
 	deriveGeneratedIdTablesFromLanguage,
 	deriveGeneratedIdTablesFromParserCSource,
+	findEntryForLiteralText,
 	type TreeSitterLanguageMetadata
 } from '../generated-metadata.ts';
 
@@ -380,6 +381,48 @@ static const char * const ts_field_names[] = {
 		const underscoreEntry = entries.find((entry) => entry.kind === 'underscore');
 		expect(underscoreEntry?.id).toBe(12);
 		expect(underscoreEntry?.anon).toBe(true);
+	});
+
+	it('finds a string token by its text when every use aliases it to a named kind', async () => {
+		const grammarJson = {
+			rules: {
+				atom: { type: 'ALIAS', content: { type: 'STRING', value: 'x' }, named: true, value: 'identity_escape' }
+			}
+		};
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			`
+#define TOKEN_COUNT 6
+
+enum ts_symbol_identifiers {
+  anon_sym_x = 5,
+};
+
+static const char * const ts_symbol_names[] = {
+  [anon_sym_x] = "identity_escape",
+};
+
+static const TSSymbolMetadata ts_symbol_metadata[] = {
+  [anon_sym_x] = {
+    .visible = true,
+    .named = true,
+  },
+};
+
+enum ts_field_identifiers {
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+};
+`,
+			'parser.c',
+			grammarJson
+		);
+		const entries = collectGeneratedKindEntries(tables);
+		const token = entries.find((entry) => entry.id === 5);
+		expect(token?.anon).toBeUndefined();
+		expect(token?.terminal).toBe(true);
+		expect(findEntryForLiteralText(entries, 'x')).toBe(token);
 	});
 
 	it('stamps a literal rule whose display name differs from its rule name via an UNNAMED alias site elsewhere (no named-alias claimant)', async () => {

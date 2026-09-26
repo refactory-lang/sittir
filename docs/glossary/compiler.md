@@ -3316,7 +3316,11 @@ never land on another kind's row resolves through `findOwnKindEntry`
  * NAMED rule shares the spelling (python's `'type'` keyword vs the `type`
  * rule). Falls back to the literal-rule chain for literals with no anon
  * twin — a named rule whose body is exactly a bare STRING or an unnamed
- * ALIAS (rust `'crate'`/`'self'`, python's `'is not'`/`'not in'`).
+ * ALIAS (rust `'crate'`/`'self'`, python's `'is not'`/`'not in'`). The last
+ * arm is the lexical fact: a terminal row carrying `literalText` is a string
+ * token whatever its namedness, which catches a token every use aliases to a
+ * named kind (regex `'\-'` under `alias('\-', $.identity_escape)`): tree-sitter
+ * stamps it `.named`, so it has no `anon` and the first arm misses it.
  */
 ```
 
@@ -10272,11 +10276,11 @@ A literal ref whose storage name is its literal text (`name === literal`, a dist
 // collectAnonymousNodes — mint anonymous-symbol token/keyword nodes for the
 // string literals occurring in `rules` (`Record<string, RenderRule>`, the
 // normalize view). Minting is catalog-driven: a literal is only ever minted
-// when the parser's generated-id catalog knows it as an anonymous symbol
-// (`findEntryForLiteralText` → an entry with `anon === true`), keyed by that
-// catalog entry's kind name. A literal the catalog has no anonymous entry
-// for is NOT minted; the occurrence-collecting walk over `rules` is a filter
-// only, never itself a source of new kinds.
+// when `findEntryForLiteralText` finds its catalog row and no node holds that
+// row's kind yet, keyed by the row's kind name. A named literal rule's row
+// already has its node, so namedness never gates the mint. A literal the
+// catalog has no row for is NOT minted; the occurrence-collecting walk over
+// `rules` is a filter only, never itself a source of new kinds.
 // ---------------------------------------------------------------------------
 ```
 
@@ -10316,7 +10320,7 @@ A literal ref whose storage name is its literal text (`name === literal`, a dist
 // literal's raw text: tree-sitter often sanitizes or dedupes anonymous
 // literals under a different name (`,` → `comma`) — keying by raw text mints
 // a phantom name with no id row even though the token already has one. This
-// is the ONLY path to minting: a literal with no anonymous catalog entry is
+// is the ONLY path to minting: a literal with no catalog row is
 // never minted (see the `kindid-unstamped-anon-literal` warning below)
 // rather than falling back to raw-text keying.
 ```
@@ -10328,15 +10332,14 @@ A literal ref whose storage name is its literal text (`name === literal`, a dist
 #### body
 
 ```text
-// No anonymous-symbol catalog row for this literal — record the
+// No catalog row for this literal — record the
 // kindid-unstamped-anon-literal warning and do NOT mint it. This is the
 // literal's own body as a NAMED rule (e.g. python's `True`/`False`/`None`/
 // `...`, rust's `mut`) or a literal outside the reachable rules — in both
 // cases the kind already exists (or will) under its own name, never under
 // this raw literal text, so minting here would create an unaddressable
-// phantom. A literal that instead resolves to a named (non-anonymous)
-// catalog entry is skipped silently just above — its kind already exists as
-// a named node, so no warning is needed.
+// phantom. A literal whose row is a named rule's is skipped silently by the
+// node check below — its kind already exists as a node.
 ```
 
 #### body

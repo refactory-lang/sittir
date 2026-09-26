@@ -382,7 +382,8 @@ export function findAnonEntryForLiteralText<T extends KindEntryLike>(
 export function findEntryForLiteralText<T extends KindEntryLike>(entries: readonly T[], text: string): T | undefined {
 	return (
 		findAnonEntryForLiteralText(entries, text) ??
-		entries.find((entry) => entry.literalRule === true && entry.literalText === text)
+		entries.find((entry) => entry.literalRule === true && entry.literalText === text) ??
+		entries.find((entry) => entry.terminal === true && entry.literalText === text)
 	);
 }
 
