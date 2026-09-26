@@ -1,6 +1,6 @@
 {
   "grammar": "regex",
-  "source_hash": "bba1628a85e94628b91e911fbc76c6d55bd92c2f4c79ebb052701d1a75df2468",
+  "source_hash": "a6a50404a41fb296707e74c6b6e2a32b72fa5dbde802cd9bbe8072f5529e4797",
   "files": {
     "packages/regex/.sittir/grammar-diagnostics.json": "1f9f485c7a38a5161c246aec4ca1f2eb4e68ca17900a4cd1acca0e0b59ad53ad",
     "packages/regex/.sittir/grammar.js": "69829575225e74fdef2e9f655732ebdfba7e5822d929e2684fe9a105a40ef93d",
@@ -36,7 +36,7 @@
     "packages/regex/src/render-engine.ts": "6205daf0ce76bc1ea5da005075791bdc92b90ed143582d9afcc48040558bb47c",
     "packages/regex/src/types.ts": "8b35a64d10025cd0f8329fdc48af37c01c8dfb404cb2b4534a90c737c6b257c3",
     "packages/regex/src/utils.ts": "2aebd7b156ccceb45517d1c3a1e77a237a4080d530353883fd4d69400b44064b",
-    "packages/regex/src/wrap.ts": "8807d7b2d7f949c71b017ca543514983eae698017a3bbeb323f16f8c386a6da2",
+    "packages/regex/src/wrap.ts": "b411c57ffbaff1f00309d8003673faf8e8c0cf5d77c54e575b9663630db611a8",
     "rust/crates/sittir-regex/index.d.ts": "2aa719bc6637f20ad088d434237a493faf1efd28311a1cb64706c19485cc2978",
     "rust/crates/sittir-regex/index.js": "6476237a6d6a87ef8d8d90e2d25a069fb6ba02e687ecba666512e47f34b8bb6d",
     "rust/crates/sittir-regex/src/lib.rs": "9c3431747d7cf20b084295a9a1c6ef942bf36e9287feb90ad025b3367cc42c1d",

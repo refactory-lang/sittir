@@ -263,6 +263,30 @@ forward from Task 7, so every commit stays at baseline):
 
 ### Task 4: Wrap carries trivia entries through the per-kind path
 
+**As landed:**
+- The emitted `wrapNode` wraps a node's trivia before dispatch, through
+  `_wrapTrivia` (`drillInAll` over every entry list), so every kind's entries
+  are wrapped, not only alias envelopes. `_aliasEnvelope` keeps the display
+  node's wrapped trivia and wraps only trivia that arrives with the storage
+  re-read.
+- `mapTriviaEntries` in `@sittir/common` is the one walk over leading,
+  trailing and each inner gap. The wrap runtime, the validator's
+  `materializeWrappedValue` and `selfContainedRenderInput` all use it.
+  The validator now materializes trivia entries like slot children; without
+  that, a wrapped storage-less block comment reached the fixture input with an
+  unread `_content` key and 11 rust render fixtures were left out.
+- Parity fixture inputs change shape at the same counts and outputs. Python
+  and TypeScript comment entries become typed nodes, with `_content` projected
+  by the token-interior drill, where they were text. Rust doc-comment entries
+  drop the literal `_inner`/`_outer` marker the variant kind implies.
+- `TriviaEntry` keeps `| string`: the setter still takes verbatim text, and
+  loose strings are Task 5.
+- The test asserts the wrapped surface (`content` is an accessor; each entry
+  renders its own bytes) for leading entries and an inner gap. `content()` on
+  a doc-comment entry returns the doc variant node, not the marker text.
+- The rust S-class trivia ceiling is lowered from 15 to 1, the measured count.
+
+
 **Files:**
 - Modify: `packages/codegen/src/emitters/wrap.ts`. In the `finalize` wrapper
   that destructures `$_trivia` (around the `const { $storageType, $_trivia, … }
@@ -279,7 +303,7 @@ forward from Task 7, so every commit stays at baseline):
 - Produces: wrapped trivia entries with the comment kind's own accessors, e.g.
   `entry.content()` for a `line_comment`.
 
-- [ ] **Step 1: Write the failing test.**
+- [x] **Step 1: Write the failing test.**
 
 ```ts
 it('wraps trivia entries like slot children', () => {
@@ -292,18 +316,18 @@ it('wraps trivia entries like slot children', () => {
 
   Use the helpers this test file already defines for parsing and statement
   access.
-- [ ] **Step 2: Run it.** `pnpm exec vitest run packages/rust/tests/trivia.test.ts`.
+- [x] **Step 2: Run it.** `pnpm exec vitest run packages/rust/tests/trivia.test.ts`.
   Expected: FAIL (`content` is not a function: entries are raw `$text` data).
-- [ ] **Step 3: Implement.**
+- [x] **Step 3: Implement.**
   - In the emitted `finalize` wrapper, replace the pass-through with
     `$_trivia: $_trivia === undefined ? undefined : wrapTriviaData($_trivia, tree)`.
   - Emit `wrapTriviaData` once per grammar in the wrap runtime section. It maps
     every entry through the same `wrapNode(entry, tree)` dispatch slot children
     use. The token-interior drill then fills `_content`.
-- [ ] **Step 4: Run the test.** Expected: PASS.
-- [ ] **Step 5: Regen and gate.** Rows hold. (The rust doc-comment fixtures
+- [x] **Step 4: Run the test.** Expected: PASS.
+- [x] **Step 5: Regen and gate.** Rows hold. (The rust doc-comment fixtures
   that were left out came back in Task 3, with the baseline ratcheted there.)
-- [ ] **Step 6: Commit.**
+- [x] **Step 6: Commit.**
 
 ### Task 5: Runtime `$trivia`: getters, inner, refusals, loose strings
 

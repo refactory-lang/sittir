@@ -13730,6 +13730,20 @@ normalization; a node that already carries slot storage (built or edited) is lef
 #### body
 
 ```text
+// `_wrapTrivia` — a read node's trivia entries (leading, trailing, and
+// each inner gap's, walked by `mapTriviaEntries`) are children like any
+// slot child, so each drills in through `drillInAll` and dispatches
+// through `wrapNode` by its own `$type`: a comment entry exposes its
+// kind's accessors. `wrapNode`
+// wraps the trivia before dispatch, once per node; `_aliasEnvelope`
+// keeps the display node's wrapped trivia and wraps only trivia that
+// arrived with the storage re-read. Text entries have no `$type` and
+// pass through as they are.
+```
+
+#### body
+
+```text
 // Public entry points
 ```
 

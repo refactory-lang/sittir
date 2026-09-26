@@ -51783,7 +51783,17 @@
           },
           "$_trivia": {
             "leading": [
-              "# no escape sequences in these"
+              {
+                "$type": 74,
+                "$source": 0,
+                "$named": true,
+                "$text": "# no escape sequences in these",
+                "$span": {
+                  "start": 18,
+                  "end": 48
+                },
+                "_content": " no escape sequences in these"
+              }
             ]
           },
           "$slotOrder": [
@@ -51959,7 +51969,17 @@
           },
           "$_trivia": {
             "leading": [
-              "# raw f-string"
+              {
+                "$type": 74,
+                "$source": 0,
+                "$named": true,
+                "$text": "# raw f-string",
+                "$span": {
+                  "start": 69,
+                  "end": 83
+                },
+                "_content": " raw f-string"
+              }
             ]
           },
           "$slotOrder": [
@@ -54534,7 +54554,17 @@
           },
           "$_trivia": {
             "leading": [
-              "# nested!"
+              {
+                "$type": 74,
+                "$source": 0,
+                "$named": true,
+                "$text": "# nested!",
+                "$span": {
+                  "start": 1,
+                  "end": 10
+                },
+                "_content": " nested!"
+              }
             ]
           },
           "$slotOrder": [
@@ -56196,8 +56226,16 @@
                                         "$_trivia": {
                                           "trailing": [
                                             {
+                                              "$type": 74,
+                                              "$source": 0,
+                                              "$named": true,
                                               "$text": "# two",
-                                              "$sameLine": true
+                                              "$span": {
+                                                "start": 287,
+                                                "end": 292
+                                              },
+                                              "$sameLine": true,
+                                              "_content": " two"
                                             }
                                           ]
                                         }
@@ -57942,8 +57980,16 @@
                       "$_trivia": {
                         "trailing": [
                           {
+                            "$type": 74,
+                            "$source": 0,
+                            "$named": true,
                             "$text": "# two",
-                            "$sameLine": true
+                            "$span": {
+                              "start": 287,
+                              "end": 292
+                            },
+                            "$sameLine": true,
+                            "_content": " two"
                           }
                         ]
                       }
@@ -60013,8 +60059,16 @@
             "$_trivia": {
               "trailing": [
                 {
+                  "$type": 74,
+                  "$source": 0,
+                  "$named": true,
                   "$text": "# two",
-                  "$sameLine": true
+                  "$span": {
+                    "start": 287,
+                    "end": 292
+                  },
+                  "$sameLine": true,
+                  "_content": " two"
                 }
               ]
             }
@@ -60421,8 +60475,16 @@
                     "$_trivia": {
                       "trailing": [
                         {
+                          "$type": 74,
+                          "$source": 0,
+                          "$named": true,
                           "$text": "# two",
-                          "$sameLine": true
+                          "$span": {
+                            "start": 287,
+                            "end": 292
+                          },
+                          "$sameLine": true,
+                          "_content": " two"
                         }
                       ]
                     }
@@ -60791,8 +60853,16 @@
                   "$_trivia": {
                     "trailing": [
                       {
+                        "$type": 74,
+                        "$source": 0,
+                        "$named": true,
                         "$text": "# two",
-                        "$sameLine": true
+                        "$span": {
+                          "start": 287,
+                          "end": 292
+                        },
+                        "$sameLine": true,
+                        "_content": " two"
                       }
                     ]
                   }
@@ -61491,8 +61561,16 @@
                                     "$_trivia": {
                                       "trailing": [
                                         {
+                                          "$type": 74,
+                                          "$source": 0,
+                                          "$named": true,
                                           "$text": "# two",
-                                          "$sameLine": true
+                                          "$span": {
+                                            "start": 287,
+                                            "end": 292
+                                          },
+                                          "$sameLine": true,
+                                          "_content": " two"
                                         }
                                       ]
                                     }
@@ -87209,7 +87287,17 @@
                   ],
                   "$_trivia": {
                     "trailing": [
-                      "# The rest of your commands go here"
+                      {
+                        "$type": 74,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# The rest of your commands go here",
+                        "$span": {
+                          "start": 292,
+                          "end": 327
+                        },
+                        "_content": " The rest of your commands go here"
+                      }
                     ]
                   },
                   "$slotOrder": [
@@ -90622,8 +90710,16 @@
                       "$_trivia": {
                         "trailing": [
                           {
+                            "$type": 74,
+                            "$source": 0,
+                            "$named": true,
                             "$text": "# Code omitted for brevity",
-                            "$sameLine": true
+                            "$span": {
+                              "start": 63,
+                              "end": 89
+                            },
+                            "$sameLine": true,
+                            "_content": " Code omitted for brevity"
                           }
                         ]
                       },
@@ -90658,7 +90754,17 @@
                   ],
                   "$_trivia": {
                     "leading": [
-                      "# ^ conditional"
+                      {
+                        "$type": 74,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# ^ conditional",
+                        "$span": {
+                          "start": 24,
+                          "end": 39
+                        },
+                        "_content": " ^ conditional"
+                      }
                     ]
                   },
                   "$slotOrder": [
@@ -109682,8 +109788,16 @@
                             "$_trivia": {
                               "trailing": [
                                 {
+                                  "$type": 74,
+                                  "$source": 0,
+                                  "$named": true,
                                   "$text": "# Ignore other keystrokes",
-                                  "$sameLine": true
+                                  "$span": {
+                                    "start": 255,
+                                    "end": 280
+                                  },
+                                  "$sameLine": true,
+                                  "_content": " Ignore other keystrokes"
                                 }
                               ]
                             },
@@ -113180,9 +113294,17 @@
                     "$_trivia": {
                       "trailing": [
                         {
+                          "$type": 74,
+                          "$source": 0,
+                          "$named": true,
                           "$text": "# This is a left click",
+                          "$span": {
+                            "start": 65,
+                            "end": 87
+                          },
                           "$sameLine": true,
-                          "$tokensBetween": 1
+                          "$tokensBetween": 1,
+                          "_content": " This is a left click"
                         }
                       ]
                     },
@@ -113433,8 +113555,16 @@
                             "$_trivia": {
                               "trailing": [
                                 {
+                                  "$type": 74,
+                                  "$source": 0,
+                                  "$named": true,
                                   "$text": "# ignore other clicks",
-                                  "$sameLine": true
+                                  "$span": {
+                                    "start": 150,
+                                    "end": 171
+                                  },
+                                  "$sameLine": true,
+                                  "_content": " ignore other clicks"
                                 }
                               ]
                             },
@@ -123764,9 +123894,17 @@
                     "$_trivia": {
                       "trailing": [
                         {
+                          "$type": 74,
+                          "$source": 0,
+                          "$named": true,
                           "$text": "# no args",
+                          "$span": {
+                            "start": 32,
+                            "end": 41
+                          },
                           "$sameLine": true,
-                          "$tokensBetween": 1
+                          "$tokensBetween": 1,
+                          "_content": " no args"
                         }
                       ]
                     },
@@ -123950,9 +124088,17 @@
                     "$_trivia": {
                       "trailing": [
                         {
+                          "$type": 74,
+                          "$source": 0,
+                          "$named": true,
                           "$text": "# more complex class name",
+                          "$span": {
+                            "start": 84,
+                            "end": 109
+                          },
                           "$sameLine": true,
-                          "$tokensBetween": 1
+                          "$tokensBetween": 1,
+                          "_content": " more complex class name"
                         }
                       ]
                     },
@@ -124223,9 +124369,17 @@
                     "$_trivia": {
                       "trailing": [
                         {
+                          "$type": 74,
+                          "$source": 0,
+                          "$named": true,
                           "$text": "# three args",
+                          "$span": {
+                            "start": 152,
+                            "end": 164
+                          },
                           "$sameLine": true,
-                          "$tokensBetween": 1
+                          "$tokensBetween": 1,
+                          "_content": " three args"
                         }
                       ]
                     },
@@ -124574,9 +124728,17 @@
                     "$_trivia": {
                       "trailing": [
                         {
+                          "$type": 74,
+                          "$source": 0,
+                          "$named": true,
                           "$text": "# kw args",
+                          "$span": {
+                            "start": 213,
+                            "end": 222
+                          },
                           "$sameLine": true,
-                          "$tokensBetween": 1
+                          "$tokensBetween": 1,
+                          "_content": " kw args"
                         }
                       ]
                     },
@@ -124960,9 +125122,17 @@
                     "$_trivia": {
                       "trailing": [
                         {
+                          "$type": 74,
+                          "$source": 0,
+                          "$named": true,
                           "$text": "# positional + kw args",
+                          "$span": {
+                            "start": 275,
+                            "end": 297
+                          },
                           "$sameLine": true,
-                          "$tokensBetween": 1
+                          "$tokensBetween": 1,
+                          "_content": " positional + kw args"
                         }
                       ]
                     },
@@ -125243,9 +125413,17 @@
                     "$_trivia": {
                       "trailing": [
                         {
+                          "$type": 74,
+                          "$source": 0,
+                          "$named": true,
                           "$text": "# three args + trail comma",
+                          "$span": {
+                            "start": 341,
+                            "end": 367
+                          },
                           "$sameLine": true,
-                          "$tokensBetween": 1
+                          "$tokensBetween": 1,
+                          "_content": " three args + trail comma"
                         }
                       ]
                     },
@@ -125604,9 +125782,17 @@
                     "$_trivia": {
                       "trailing": [
                         {
+                          "$type": 74,
+                          "$source": 0,
+                          "$named": true,
                           "$text": "# kw args + trail comma",
+                          "$span": {
+                            "start": 417,
+                            "end": 440
+                          },
                           "$sameLine": true,
-                          "$tokensBetween": 1
+                          "$tokensBetween": 1,
+                          "_content": " kw args + trail comma"
                         }
                       ]
                     },
@@ -126000,9 +126186,17 @@
                     "$_trivia": {
                       "trailing": [
                         {
+                          "$type": 74,
+                          "$source": 0,
+                          "$named": true,
                           "$text": "# positional + kw args + trail comma",
+                          "$span": {
+                            "start": 494,
+                            "end": 530
+                          },
                           "$sameLine": true,
-                          "$tokensBetween": 1
+                          "$tokensBetween": 1,
+                          "_content": " positional + kw args + trail comma"
                         }
                       ]
                     },
@@ -150272,10 +150466,50 @@
           ],
           "$_trivia": {
             "leading": [
-              "# These are not actually valid python; blocks",
-              "# must contain at least one statement. But we",
-              "# allow them because error recovery for empty",
-              "# blocks doesn't work very well otherwise."
+              {
+                "$type": 74,
+                "$source": 0,
+                "$named": true,
+                "$text": "# These are not actually valid python; blocks",
+                "$span": {
+                  "start": 1,
+                  "end": 46
+                },
+                "_content": " These are not actually valid python; blocks"
+              },
+              {
+                "$type": 74,
+                "$source": 0,
+                "$named": true,
+                "$text": "# must contain at least one statement. But we",
+                "$span": {
+                  "start": 47,
+                  "end": 92
+                },
+                "_content": " must contain at least one statement. But we"
+              },
+              {
+                "$type": 74,
+                "$source": 0,
+                "$named": true,
+                "$text": "# allow them because error recovery for empty",
+                "$span": {
+                  "start": 93,
+                  "end": 138
+                },
+                "_content": " allow them because error recovery for empty"
+              },
+              {
+                "$type": 74,
+                "$source": 0,
+                "$named": true,
+                "$text": "# blocks doesn't work very well otherwise.",
+                "$span": {
+                  "start": 139,
+                  "end": 181
+                },
+                "_content": " blocks doesn't work very well otherwise."
+              }
             ]
           },
           "$slotOrder": [
@@ -150590,10 +150824,50 @@
       ],
       "$_trivia": {
         "leading": [
-          "# These are not actually valid python; blocks",
-          "# must contain at least one statement. But we",
-          "# allow them because error recovery for empty",
-          "# blocks doesn't work very well otherwise."
+          {
+            "$type": 74,
+            "$source": 0,
+            "$named": true,
+            "$text": "# These are not actually valid python; blocks",
+            "$span": {
+              "start": 1,
+              "end": 46
+            },
+            "_content": " These are not actually valid python; blocks"
+          },
+          {
+            "$type": 74,
+            "$source": 0,
+            "$named": true,
+            "$text": "# must contain at least one statement. But we",
+            "$span": {
+              "start": 47,
+              "end": 92
+            },
+            "_content": " must contain at least one statement. But we"
+          },
+          {
+            "$type": 74,
+            "$source": 0,
+            "$named": true,
+            "$text": "# allow them because error recovery for empty",
+            "$span": {
+              "start": 93,
+              "end": 138
+            },
+            "_content": " allow them because error recovery for empty"
+          },
+          {
+            "$type": 74,
+            "$source": 0,
+            "$named": true,
+            "$text": "# blocks doesn't work very well otherwise.",
+            "$span": {
+              "start": 139,
+              "end": 181
+            },
+            "_content": " blocks doesn't work very well otherwise."
+          }
         ]
       },
       "$slotOrder": [
@@ -156626,8 +156900,16 @@
             "$_trivia": {
               "trailing": [
                 {
+                  "$type": 74,
+                  "$source": 0,
+                  "$named": true,
                   "$text": "# bye",
-                  "$sameLine": true
+                  "$span": {
+                    "start": 22,
+                    "end": 27
+                  },
+                  "$sameLine": true,
+                  "_content": " bye"
                 }
               ]
             },
@@ -156635,7 +156917,17 @@
           },
           "$_trivia": {
             "leading": [
-              "# hi"
+              {
+                "$type": 74,
+                "$source": 0,
+                "$named": true,
+                "$text": "# hi",
+                "$span": {
+                  "start": 9,
+                  "end": 13
+                },
+                "_content": " hi"
+              }
             ]
           },
           "$slotOrder": [
@@ -156808,7 +157100,17 @@
                   },
                   "$_trivia": {
                     "leading": [
-                      "# four"
+                      {
+                        "$type": 74,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# four",
+                        "$span": {
+                          "start": 41,
+                          "end": 47
+                        },
+                        "_content": " four"
+                      }
                     ]
                   },
                   "$slotOrder": [
@@ -156819,9 +157121,39 @@
               ],
               "$_trivia": {
                 "leading": [
-                  "# one",
-                  "# two",
-                  "# three"
+                  {
+                    "$type": 74,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "# one",
+                    "$span": {
+                      "start": 9,
+                      "end": 14
+                    },
+                    "_content": " one"
+                  },
+                  {
+                    "$type": 74,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "# two",
+                    "$span": {
+                      "start": 15,
+                      "end": 20
+                    },
+                    "_content": " two"
+                  },
+                  {
+                    "$type": 74,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "# three",
+                    "$span": {
+                      "start": 25,
+                      "end": 32
+                    },
+                    "_content": " three"
+                  }
                 ]
               }
             }
@@ -157057,7 +157389,17 @@
           },
           "$_trivia": {
             "leading": [
-              "# one"
+              {
+                "$type": 74,
+                "$source": 0,
+                "$named": true,
+                "$text": "# one",
+                "$span": {
+                  "start": 12,
+                  "end": 17
+                },
+                "_content": " one"
+              }
             ]
           },
           "$slotOrder": [
@@ -157205,8 +157547,28 @@
                   },
                   "$_trivia": {
                     "trailing": [
-                      "# one",
-                      "# two"
+                      {
+                        "$type": 74,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# one",
+                        "$span": {
+                          "start": 13,
+                          "end": 18
+                        },
+                        "_content": " one"
+                      },
+                      {
+                        "$type": 74,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# two",
+                        "$span": {
+                          "start": 21,
+                          "end": 26
+                        },
+                        "_content": " two"
+                      }
                     ]
                   },
                   "$slotOrder": [
@@ -157297,8 +157659,28 @@
                   },
                   "$_trivia": {
                     "trailing": [
-                      "# three",
-                      "# four"
+                      {
+                        "$type": 74,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# three",
+                        "$span": {
+                          "start": 42,
+                          "end": 49
+                        },
+                        "_content": " three"
+                      },
+                      {
+                        "$type": 74,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "# four",
+                        "$span": {
+                          "start": 56,
+                          "end": 62
+                        },
+                        "_content": " four"
+                      }
                     ]
                   },
                   "$slotOrder": [
@@ -157420,8 +157802,16 @@
                             "$_trivia": {
                               "trailing": [
                                 {
+                                  "$type": 74,
+                                  "$source": 0,
+                                  "$named": true,
                                   "$text": "# comment",
-                                  "$sameLine": true
+                                  "$span": {
+                                    "start": 93,
+                                    "end": 102
+                                  },
+                                  "$sameLine": true,
+                                  "_content": " comment"
                                 }
                               ]
                             },
@@ -157491,8 +157881,16 @@
                     "$_trivia": {
                       "trailing": [
                         {
+                          "$type": 74,
+                          "$source": 0,
+                          "$named": true,
                           "$text": "# comment",
-                          "$sameLine": true
+                          "$span": {
+                            "start": 109,
+                            "end": 118
+                          },
+                          "$sameLine": true,
+                          "_content": " comment"
                         }
                       ]
                     },
@@ -157530,7 +157928,17 @@
           ],
           "$_trivia": {
             "trailing": [
-              "# five"
+              {
+                "$type": 74,
+                "$source": 0,
+                "$named": true,
+                "$text": "# five",
+                "$span": {
+                  "start": 120,
+                  "end": 126
+                },
+                "_content": " five"
+              }
             ]
           },
           "$slotOrder": [
@@ -157769,8 +158177,16 @@
                         "$_trivia": {
                           "trailing": [
                             {
+                              "$type": 74,
+                              "$source": 0,
+                              "$named": true,
                               "$text": "# comment",
-                              "$sameLine": true
+                              "$span": {
+                                "start": 93,
+                                "end": 102
+                              },
+                              "$sameLine": true,
+                              "_content": " comment"
                             }
                           ]
                         },
@@ -157840,8 +158256,16 @@
                 "$_trivia": {
                   "trailing": [
                     {
+                      "$type": 74,
+                      "$source": 0,
+                      "$named": true,
                       "$text": "# comment",
-                      "$sameLine": true
+                      "$span": {
+                        "start": 109,
+                        "end": 118
+                      },
+                      "$sameLine": true,
+                      "_content": " comment"
                     }
                   ]
                 },
@@ -157879,7 +158303,17 @@
       ],
       "$_trivia": {
         "trailing": [
-          "# five"
+          {
+            "$type": 74,
+            "$source": 0,
+            "$named": true,
+            "$text": "# five",
+            "$span": {
+              "start": 120,
+              "end": 126
+            },
+            "_content": " five"
+          }
         ]
       },
       "$slotOrder": [
@@ -158029,7 +158463,17 @@
           },
           "$_trivia": {
             "trailing": [
-              "# We need to recognize the newline *preceding* this comment, because there's no newline after it"
+              {
+                "$type": 74,
+                "$source": 0,
+                "$named": true,
+                "$text": "# We need to recognize the newline *preceding* this comment, because there's no newline after it",
+                "$span": {
+                  "start": 13,
+                  "end": 109
+                },
+                "_content": " We need to recognize the newline *preceding* this comment, because there's no newline after it"
+              }
             ]
           },
           "$slotOrder": [
@@ -162556,8 +163000,16 @@
             "$_trivia": {
               "trailing": [
                 {
+                  "$type": 74,
+                  "$source": 0,
+                  "$named": true,
                   "$text": "# ParamSpec",
-                  "$sameLine": true
+                  "$span": {
+                    "start": 100,
+                    "end": 111
+                  },
+                  "$sameLine": true,
+                  "_content": " ParamSpec"
                 }
               ]
             },
@@ -162807,8 +163259,16 @@
             "$_trivia": {
               "trailing": [
                 {
+                  "$type": 74,
+                  "$source": 0,
+                  "$named": true,
                   "$text": "# TypeVarTuple",
-                  "$sameLine": true
+                  "$span": {
+                    "start": 154,
+                    "end": 168
+                  },
+                  "$sameLine": true,
+                  "_content": " TypeVarTuple"
                 }
               ]
             },
@@ -163052,8 +163512,16 @@
             "$_trivia": {
               "trailing": [
                 {
+                  "$type": 74,
+                  "$source": 0,
+                  "$named": true,
                   "$text": "# TypeVar with bound",
-                  "$sameLine": true
+                  "$span": {
+                    "start": 219,
+                    "end": 239
+                  },
+                  "$sameLine": true,
+                  "_content": " TypeVar with bound"
                 }
               ]
             },
@@ -163354,8 +163822,16 @@
             "$_trivia": {
               "trailing": [
                 {
+                  "$type": 74,
+                  "$source": 0,
+                  "$named": true,
                   "$text": "# TypeVar with constraints",
-                  "$sameLine": true
+                  "$span": {
+                    "start": 292,
+                    "end": 318
+                  },
+                  "$sameLine": true,
+                  "_content": " TypeVar with constraints"
                 }
               ]
             },

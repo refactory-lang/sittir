@@ -23,6 +23,7 @@ export type TriviaEntry = AnyNodeData | string;
 export interface NodeTrivia {
 	leading?: readonly TriviaEntry[];
 	trailing?: readonly TriviaEntry[];
+	inner?: Readonly<Partial<Record<string, readonly TriviaEntry[]>>>;
 }
 
 // ---------------------------------------------------------------------------

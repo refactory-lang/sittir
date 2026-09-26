@@ -18447,7 +18447,17 @@
           ],
           "$_trivia": {
             "leading": [
-              "// a comment"
+              {
+                "$type": 152,
+                "$source": 0,
+                "$named": true,
+                "$text": "// a comment",
+                "$span": {
+                  "start": 79,
+                  "end": 91
+                },
+                "_content": " a comment"
+              }
             ]
           },
           "_decorator": []
@@ -19108,7 +19118,17 @@
       ],
       "$_trivia": {
         "leading": [
-          "// a comment"
+          {
+            "$type": 152,
+            "$source": 0,
+            "$named": true,
+            "$text": "// a comment",
+            "$span": {
+              "start": 79,
+              "end": 91
+            },
+            "_content": " a comment"
+          }
         ]
       },
       "_decorator": []
@@ -120178,7 +120198,17 @@
           "_terminator": 20,
           "$_trivia": {
             "leading": [
-              "// above is a signature"
+              {
+                "$type": 152,
+                "$source": 0,
+                "$named": true,
+                "$text": "// above is a signature",
+                "$span": {
+                  "start": 18,
+                  "end": 41
+                },
+                "_content": " above is a signature"
+              }
             ]
           },
           "$slotOrder": [
@@ -120238,7 +120268,17 @@
             ],
             "$_trivia": {
               "leading": [
-                "// above is a function declaration"
+                {
+                  "$type": 152,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "// above is a function declaration",
+                  "$span": {
+                    "start": 67,
+                    "end": 101
+                  },
+                  "_content": " above is a function declaration"
+                }
               ]
             },
             "_statements": []
@@ -120590,7 +120630,17 @@
       "_terminator": 20,
       "$_trivia": {
         "leading": [
-          "// above is a signature"
+          {
+            "$type": 152,
+            "$source": 0,
+            "$named": true,
+            "$text": "// above is a signature",
+            "$span": {
+              "start": 18,
+              "end": 41
+            },
+            "_content": " above is a signature"
+          }
         ]
       },
       "$slotOrder": [
@@ -120732,7 +120782,17 @@
         ],
         "$_trivia": {
           "leading": [
-            "// above is a function declaration"
+            {
+              "$type": 152,
+              "$source": 0,
+              "$named": true,
+              "$text": "// above is a function declaration",
+              "$span": {
+                "start": 67,
+                "end": 101
+              },
+              "_content": " above is a function declaration"
+            }
           ]
         },
         "_statements": []
@@ -120803,7 +120863,17 @@
       ],
       "$_trivia": {
         "leading": [
-          "// above is a function declaration"
+          {
+            "$type": 152,
+            "$source": 0,
+            "$named": true,
+            "$text": "// above is a function declaration",
+            "$span": {
+              "start": 67,
+              "end": 101
+            },
+            "_content": " above is a function declaration"
+          }
         ]
       },
       "_statements": []
@@ -186612,7 +186682,17 @@
           ],
           "$_trivia": {
             "leading": [
-              "// special optional and rest type syntax"
+              {
+                "$type": 152,
+                "$source": 0,
+                "$named": true,
+                "$text": "// special optional and rest type syntax",
+                "$span": {
+                  "start": 75,
+                  "end": 115
+                },
+                "_content": " special optional and rest type syntax"
+              }
             ]
           },
           "$slotOrder": [
@@ -186931,7 +187011,17 @@
           ],
           "$_trivia": {
             "leading": [
-              "// labeled elements"
+              {
+                "$type": 152,
+                "$source": 0,
+                "$named": true,
+                "$text": "// labeled elements",
+                "$span": {
+                  "start": 142,
+                  "end": 161
+                },
+                "_content": " labeled elements"
+              }
             ]
           },
           "$slotOrder": [
@@ -187696,7 +187786,17 @@
       ],
       "$_trivia": {
         "leading": [
-          "// special optional and rest type syntax"
+          {
+            "$type": 152,
+            "$source": 0,
+            "$named": true,
+            "$text": "// special optional and rest type syntax",
+            "$span": {
+              "start": 75,
+              "end": 115
+            },
+            "_content": " special optional and rest type syntax"
+          }
         ]
       },
       "$slotOrder": [
@@ -188032,7 +188132,17 @@
       ],
       "$_trivia": {
         "leading": [
-          "// labeled elements"
+          {
+            "$type": 152,
+            "$source": 0,
+            "$named": true,
+            "$text": "// labeled elements",
+            "$span": {
+              "start": 142,
+              "end": 161
+            },
+            "_content": " labeled elements"
+          }
         ]
       },
       "$slotOrder": [
@@ -228969,7 +229079,17 @@
           ],
           "$_trivia": {
             "leading": [
-              "// These should generate the same AST aside from the parenthesized_type node"
+              {
+                "$type": 152,
+                "$source": 0,
+                "$named": true,
+                "$text": "// These should generate the same AST aside from the parenthesized_type node",
+                "$span": {
+                  "start": 1,
+                  "end": 77
+                },
+                "_content": " These should generate the same AST aside from the parenthesized_type node"
+              }
             ]
           },
           "$slotOrder": [
@@ -229320,7 +229440,17 @@
       ],
       "$_trivia": {
         "leading": [
-          "// These should generate the same AST aside from the parenthesized_type node"
+          {
+            "$type": 152,
+            "$source": 0,
+            "$named": true,
+            "$text": "// These should generate the same AST aside from the parenthesized_type node",
+            "$span": {
+              "start": 1,
+              "end": 77
+            },
+            "_content": " These should generate the same AST aside from the parenthesized_type node"
+          }
         ]
       },
       "$slotOrder": [
@@ -230373,8 +230503,28 @@
           ],
           "$_trivia": {
             "leading": [
-              "// This is a special construct, different from both \"typeof (f<T>)\" and",
-              "// \"(typeof f)<T>\" (which are both invalid)"
+              {
+                "$type": 152,
+                "$source": 0,
+                "$named": true,
+                "$text": "// This is a special construct, different from both \"typeof (f<T>)\" and",
+                "$span": {
+                  "start": 1,
+                  "end": 72
+                },
+                "_content": " This is a special construct, different from both \"typeof (f<T>)\" and"
+              },
+              {
+                "$type": 152,
+                "$source": 0,
+                "$named": true,
+                "$text": "// \"(typeof f)<T>\" (which are both invalid)",
+                "$span": {
+                  "start": 73,
+                  "end": 116
+                },
+                "_content": " \"(typeof f)<T>\" (which are both invalid)"
+              }
             ]
           },
           "$slotOrder": [
@@ -230532,8 +230682,28 @@
       ],
       "$_trivia": {
         "leading": [
-          "// This is a special construct, different from both \"typeof (f<T>)\" and",
-          "// \"(typeof f)<T>\" (which are both invalid)"
+          {
+            "$type": 152,
+            "$source": 0,
+            "$named": true,
+            "$text": "// This is a special construct, different from both \"typeof (f<T>)\" and",
+            "$span": {
+              "start": 1,
+              "end": 72
+            },
+            "_content": " This is a special construct, different from both \"typeof (f<T>)\" and"
+          },
+          {
+            "$type": 152,
+            "$source": 0,
+            "$named": true,
+            "$text": "// \"(typeof f)<T>\" (which are both invalid)",
+            "$span": {
+              "start": 73,
+              "end": 116
+            },
+            "_content": " \"(typeof f)<T>\" (which are both invalid)"
+          }
         ]
       },
       "$slotOrder": [

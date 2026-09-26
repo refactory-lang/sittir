@@ -1,12 +1,12 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { readNode as readNodeFn, dumpMetrics, metricsEnabled, sliceSpan } from '@sittir/common';
+import { readNode as readNodeFn, dumpMetrics, metricsEnabled, sliceSpan, mapTriviaEntries } from '@sittir/common';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
 import type { AnyNodeData, AnyTreeNode, NodeTrivia } from '@sittir/types';
-import type { TreeHandle } from '@sittir/common';
+import type { TreeHandle, TriviaSides } from '@sittir/common';
 import type { SittirEngine } from '@sittir/common/engine';
 import { load } from '../codegen-surface.ts';
 import { grammarPackageDir, isGrammar } from '@sittir/codegen/grammars';
@@ -876,6 +876,12 @@ function materializeWrappedValue(value: unknown, onAccessorThrow?: (rec: Accesso
 	const materialized: Record<string, unknown> = {};
 	for (const [key, raw] of Object.entries(value)) {
 		if (key === '$with' || typeof raw === 'function') continue;
+		if (key === '$_trivia' && raw != null) {
+			materialized.$_trivia = mapTriviaEntries(raw as TriviaSides<unknown>, (entries) =>
+				entries.map((entry) => materializeWrappedValue(entry, onAccessorThrow))
+			);
+			continue;
+		}
 		if (key === '$other') {
 			const resolved = resolveWrappedStorageValue(value, key, onAccessorThrow);
 			if (resolved === undefined) continue;

@@ -6,6 +6,7 @@ import {
 	toTransportData,
 	toEditAt,
 	markEdited as $edited,
+	mapTriviaEntries,
 	projectInterior
 } from '@sittir/common';
 import type { TreeHandle, TokenInterior } from '@sittir/common';
@@ -1585,6 +1586,10 @@ function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData
 	return out as unknown as _NodeData;
 }
 
+function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData['$_trivia'] {
+	return trivia && mapTriviaEntries(trivia, (entries) => drillInAll(entries, tree));
+}
+
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode<T extends _NodeData & { readonly $type: keyof _WrapReturnByKindId }>(
 	data: T,
@@ -1597,8 +1602,9 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// catalog-less kind (the deprecated JS diagnostic lane stamps those
 	// as strings), which never had a table entry to reach.
 	const fn = typeof data.$type === 'number' ? _wrapTable[data.$type] : undefined;
-	if (!fn) return _drillUnknownKindChildren(data, tree);
-	return fn(data, tree);
+	const shown = data.$_trivia == null ? data : { ...data, $_trivia: _wrapTrivia(data.$_trivia, tree) };
+	if (!fn) return _drillUnknownKindChildren(shown, tree);
+	return fn(shown, tree);
 }
 
 /**

@@ -11,7 +11,7 @@
 import { writeSync } from 'node:fs';
 
 import type { AnyNodeData } from '@sittir/types';
-import { spanSlicer, stripStructuralProvenance } from '@sittir/common';
+import { mapTriviaEntries, spanSlicer, stripStructuralProvenance, type TriviaSides } from '@sittir/common';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 
@@ -364,21 +364,16 @@ export function selfContainedRenderInput(
 	};
 	const hasStorage = (record: Record<string, unknown>): boolean =>
 		Object.keys(record).some((key) => key.startsWith('_') || key === '$other');
-	const walkTrivia = (entries: unknown): unknown => {
-		if (!Array.isArray(entries)) return entries;
-		return entries.map((entry) => {
-			if (entry === null || typeof entry !== 'object' || hasStorage(entry as Record<string, unknown>)) return walk(entry);
+	const walkTrivia = (entries: readonly unknown[]): unknown[] =>
+		entries.map((entry) => {
+			if (entry === null || typeof entry !== 'object' || hasStorage(entry as Record<string, unknown>))
+				return walk(entry);
 			const record = entry as Record<string, unknown>;
 			const text = textOf(record);
 			if (text === undefined) return walk(entry);
 			if (record.$sameLine !== true) return text;
 			return { $text: text, $sameLine: true, $tokensBetween: record.$tokensBetween };
 		});
-	};
-	const walkGaps = (gaps: unknown): unknown => {
-		if (gaps === null || typeof gaps !== 'object') return gaps;
-		return Object.fromEntries(Object.entries(gaps).map(([key, entries]) => [key, walkTrivia(entries)]));
-	};
 	const walk = (value: unknown): unknown => {
 		if (Array.isArray(value)) return value.map(walk);
 		if (value === null || typeof value !== 'object') return value;
@@ -386,14 +381,8 @@ export function selfContainedRenderInput(
 		const out: Record<string, unknown> = {};
 		for (const [key, raw] of Object.entries(record)) {
 			if (key === '$nodeHandle' || key === '$childIndex') continue;
-			if (key === '$_trivia' && raw !== null && typeof raw === 'object') {
-				const sides = raw as Record<string, unknown>;
-				out[key] = {
-					...sides,
-					leading: walkTrivia(sides.leading),
-					trailing: walkTrivia(sides.trailing),
-					inner: walkGaps(sides.inner)
-				};
+			if (key === '$_trivia' && raw != null) {
+				out[key] = mapTriviaEntries(raw as TriviaSides<unknown>, walkTrivia);
 			} else {
 				out[key] = key.startsWith('_') || key === '$other' ? walk(raw) : raw;
 			}
