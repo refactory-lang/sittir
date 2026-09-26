@@ -847,12 +847,22 @@ interface ReferenceInlineCtx extends KindCatalogCtx {
 	readonly rules: Readonly<Record<string, Rule<'evaluate'>>>;
 	readonly inlineNames: ReadonlySet<string>;
 	readonly supertypes: ReadonlySet<string>;
+	readonly selfReferencing: Map<string, boolean>;
 }
 
 const selfReferenceWalker = new RuleWalker<Rule<'evaluate'>>({});
 
 function referencesItself(name: string, body: Rule<'evaluate'>): boolean {
 	return selfReferenceWalker.find(body, (rule) => rule.type === SYMBOL && rule.name === name) !== undefined;
+}
+
+function isSelfReferencing(name: string, body: Rule<'evaluate'>, ctx: ReferenceInlineCtx): boolean {
+	let known = ctx.selfReferencing.get(name);
+	if (known === undefined) {
+		known = referencesItself(name, body);
+		ctx.selfReferencing.set(name, known);
+	}
+	return known;
 }
 
 function isModelableKind(name: string, ctx: ReferenceInlineCtx): boolean {
@@ -863,7 +873,7 @@ function inlinesAtReference(name: string, ctx: ReferenceInlineCtx): boolean {
 	const entry = findOwnKindEntry(ctx.kindEntries, name);
 	if (parserSupertypeOf(entry, name, ctx.supertypes)) return false;
 	const target = ctx.rules[name];
-	if (target !== undefined && referencesItself(name, target)) return false;
+	if (target !== undefined && isSelfReferencing(name, target, ctx)) return false;
 	if (ctx.inlineNames.has(name)) return true;
 	if (!parserHiddenOf(entry, name)) return false;
 	if (entry?.terminal === true && isModelableKind(name, ctx)) return false;
@@ -875,7 +885,8 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 		kindEntries: ctx.kindEntries,
 		rules: raw.rules,
 		inlineNames: new Set(raw.inline),
-		supertypes: new Set(raw.supertypes)
+		supertypes: new Set(raw.supertypes),
+		selfReferencing: new Map()
 	};
 	const stampRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
 		if (rule.type === ALIAS) {

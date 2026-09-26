@@ -13,8 +13,7 @@ import type { SlotGroupingDiagnostic } from './slot-grouping.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent } from '../types.ts';
 import { collectGeneratedKindEntries, type GeneratedIdTables } from '../generated-metadata.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
-import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
-import { tokenUseCounts, type ParserSymbolCtx } from '../../dsl/rule-patterns.ts';
+import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions, type CatalogSymbolCtx } from './alias-distributed.ts';
 
 export type { GrammarDiagnostic };
 
@@ -179,9 +178,8 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 	slotGroupingDiagnostics: readonly SlotGroupingDiagnostic[];
 	diagnostics: readonly GrammarDiagnostic[];
 } {
-	const rawGrammar = collapseRenamedRules(input.rawGrammar, {
-		kindEntries: collectGeneratedKindEntries(input.generatedIdTables)
-	});
+	const kindEntries = collectGeneratedKindEntries(input.generatedIdTables);
+	const rawGrammar = collapseRenamedRules(input.rawGrammar, { kindEntries });
 	const compilerDiagnostics = new DiagnosticSink();
 	const slotGroupingCollector = makeSlotGroupingCollector();
 	const linked = link(rawGrammar, {
@@ -207,11 +205,11 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		grammar: rawGrammar.name,
 		contentAliasedTo: linked.contentAliasedTo
 	});
-	const symbols: ParserSymbolCtx = {
+	const symbols: CatalogSymbolCtx = {
 		rules: rawGrammar.rules,
 		externals: new Set(rawGrammar.externals),
 		inline: new Set(rawGrammar.inline),
-		tokenUses: tokenUseCounts(rawGrammar.rules)
+		kindEntries
 	};
 	const orphanedSyntheticGroups = new Set(rawGrammar.orphanedSyntheticGroups ?? []);
 	const kindIdStampDiagnostics: GrammarDiagnostic[] = compilerDiagnostics

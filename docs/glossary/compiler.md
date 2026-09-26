@@ -10763,7 +10763,11 @@ Three structural boundaries override the parser fact, each derived from the rule
 
 ### `packages/codegen/src/compiler/link.ts::ReferenceInlineCtx`
 
-What `inlinesAtReference` reads: the catalog rows, the rule bodies, and the grammar's `inline:` and `supertypes:` names.
+What `inlinesAtReference` reads: the catalog rows, the rule bodies, the grammar's `inline:` and `supertypes:` names, and the per-name self-reference answers already computed (`selfReferencing`, filled by `isSelfReferencing`).
+
+### `packages/codegen/src/compiler/link.ts::isSelfReferencing`
+
+`referencesItself` for a rule, remembered per name in `ReferenceInlineCtx.selfReferencing`, so a rule body is walked once however many references reach it.
 
 ### `packages/codegen/src/compiler/link.ts::referencesItself`
 

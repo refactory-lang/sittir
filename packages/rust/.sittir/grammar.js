@@ -1445,17 +1445,17 @@ function choiceArmsOf(content) {
   if (content.type !== CHOICE) return void 0;
   return content.members.flatMap((m) => choiceArmsOf(m) ?? [m]);
 }
-function terminalContentOf(content, rules, symbols) {
-  if (content.type === SYMBOL) return terminalSymbolOf(content.name, rules, symbols);
+function terminalContentOf(content, isTerminalSymbol) {
+  if (content.type === SYMBOL) return isTerminalSymbol(content.name);
   if (content.type === STRING || content.type === PATTERN || content.type === TOKEN) return true;
   const arms = choiceArmsOf(content);
-  return arms !== void 0 && arms.every((arm2) => terminalContentOf(arm2, rules, symbols));
+  return arms !== void 0 && arms.every((arm2) => terminalContentOf(arm2, isTerminalSymbol));
 }
 function terminalSymbolOf(name, rules, symbols) {
   const cls = parserSymbolClassOf(name, symbols);
   if (cls !== "inlined") return cls === "terminal";
   const body = rules[name];
-  return body !== void 0 && terminalContentOf(body, rules, symbols);
+  return body !== void 0 && terminalContentOf(body, (member) => terminalSymbolOf(member, rules, symbols));
 }
 function lexesAsOneToken(rule) {
   return extractedToken(rule) !== void 0;
@@ -1892,8 +1892,8 @@ function unaliasOverloadedDisplays(rules, ctx) {
     const alias3 = r;
     return alias3.type === ALIAS && alias3.named === true && alias3.value ? alias3 : void 0;
   };
-  const terminalContent = (content) => terminalContentOf(content, rules, ctx.symbols);
   const terminalSymbol = (name) => terminalSymbolOf(name, rules, ctx.symbols);
+  const terminalContent = (content) => terminalContentOf(content, terminalSymbol);
   const storageOf = (content) => {
     const symbol = content.type === SYMBOL ? content.name : void 0;
     return { key: symbol ?? JSON.stringify(content), symbol, terminal: terminalContent(content) };

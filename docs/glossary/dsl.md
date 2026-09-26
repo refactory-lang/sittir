@@ -3827,6 +3827,8 @@ Predicts the parser class tree-sitter's extract_tokens gives a rule name, withou
 A unit test compares the prediction against every alias-site storage in the generated parser.c of each grammar.
 ```
 
+It is a DSL-phase prediction only. Once parser.c exists, the catalog's `terminal` fact (the symbol id below `TOKEN_COUNT`) is the answer; the prediction disagrees with it on rows the anchor test does not cover (variant children such as rust `integer_literal_decimal`, python `pass_statement`).
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::choiceArmsOf`
 
 The arms of a choice, nested choices flattened, or `undefined` for content
@@ -3835,16 +3837,20 @@ that is not a choice.
 ### `packages/codegen/src/dsl/rule-patterns.ts::terminalContentOf`
 
 Whether content the parser sees at a position is a terminal: a symbol by
-`terminalSymbolOf`, a string, pattern or token, or a choice whose every arm
-is terminal.
+the caller's `isTerminalSymbol`, a string, pattern or token, or a choice
+whose every arm is terminal. The symbol test is a parameter so the one body
+walk serves both phases: the DSL phase passes `terminalSymbolOf` (predicted
+from rule shape, since no parser.c exists yet) and the grammar diagnostics
+pass the parser catalog's `terminal` fact
+(`compiler/diagnostics/alias-distributed.ts::isTerminalName`).
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::terminalSymbolOf`
 
-Whether a name is a terminal to the parser: its `parserSymbolClassOf`, except
-that an inlined rule is classified by its body, since the parser substitutes
-it. Shared by enrich's `unaliasOverloadedDisplays` and the
-`display-union-mixed` guard, so the pass and its guard use one
-classification.
+Whether a name is a terminal to the parser, predicted in the DSL phase: its
+`parserSymbolClassOf`, except that an inlined rule is classified by its body,
+since the parser substitutes it. Used by enrich's
+`unaliasOverloadedDisplays`, which runs before parser.c exists. After the
+catalog exists the parser's own fact is used instead (`isTerminalName`).
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::lexesAsOneToken`
 
