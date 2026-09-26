@@ -105,6 +105,17 @@ export function rejectBareText<T>(value: T, where: string, expected: string): T 
 	return value;
 }
 
+export function rejectKeywordText<T>(value: T, where: string, word: number, keywords: readonly string[]): T {
+	if (Array.isArray(value)) {
+		for (const item of value) rejectKeywordText(item, where, word, keywords);
+		return value;
+	}
+	if (isRecord(value) && value.$type === word && typeof value.$text === 'string' && keywords.includes(value.$text)) {
+		throw new Error(`${where}: '${value.$text}' is this slot's keyword`);
+	}
+	return value;
+}
+
 export type AliasBuilder = readonly [storage: readonly number[], build: (content: unknown) => unknown];
 
 export function admitAliasContent<T = unknown>(value: unknown, aliases: readonly AliasBuilder[]): T {

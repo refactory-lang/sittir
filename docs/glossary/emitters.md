@@ -207,6 +207,8 @@ The whole-text guard of every text-leaf factory. For each pattern-model kind tha
 
 The guards themselves (`buildLeafGuards`) always run: a non-empty check on every text leaf whose pattern does not accept the empty string (an empty doc comment is valid text for a `.*` leaf, so the pattern alone decides there) and, where a constant exists, `!_leafRe_<factory>.test(text)`. Neither is conditional on a debug flag; the guard is the factory's contract.
 
+The grammar's word kind also gets `_reservedWords_<factory>`, a set of the `reserved.global` words (`reservedWordset`), when the grammar declares any. Its map key is `reservedGuardKey(kind)`, which no slot guard key can equal because a slot name never contains `\0`.
+
 #### token interior
 
 ```text
@@ -501,34 +503,11 @@ reach.
 
 ### `packages/codegen/src/emitters/factories.ts::buildLeafGuards`
 
-```text
-/**
- * Build the runtime guard statements for a leaf factory.
- *
- * @param node - The leaf `AssembledNode` to generate guards for.
- * @param leafReConsts - Map from kind string to the module-level regex constant name.
- * @returns Array of guard statement strings (each is a complete `if (...) throw` statement).
- * @remarks
- *   Leaf factories accept arbitrary text but receive two categories of runtime guard:
- *
- *   1. **Pattern** — the module-level `_leafRe_*` const (hoisted for zero per-call
- *      regex compilation cost) is used directly if available.
- *
- *   2. **Non-empty** — every leaf gets this guard unconditionally. A named terminal
- *      always has at least one character in the parse tree, so an empty string is
- *      always semantically invalid regardless of pattern, word-kind, or enum constraints.
- *
- *   Reserved-keyword exclusion is intentionally omitted. The earlier heuristic
- *   ("if text matches word-pattern AND is in the collected keyword set, reject")
- *   rejected legitimate constructions: rust `_` in `'_` elided-lifetime identifier,
- *   python `print`/`match`/`exec` in identifier contexts (permitted via the grammar's
- *   `keyword_identifier` alias-to-identifier). Tree-sitter resolves these by grammar
- *   context; the factory has no context and cannot distinguish "this identifier slot
- *   permits the keyword" from "this one doesn't". The pattern check above still
- *   rejects non-identifier-shaped input; tree-sitter reparse in validators catches
- *   semantic misuse.
- */
-```
+The runtime guard statements of a text-leaf factory, each a complete `if (…) throw` statement. Three guards, none conditional on a debug flag:
+
+1. **Non-empty**, on every leaf whose pattern does not accept the empty string.
+2. **Pattern**, where `buildLeafReConsts` hoisted a `_leafRe_<factory>` constant: `!_leafRe_<factory>.test(text)`.
+3. **Reserved word**, on the grammar's word kind only, where `buildLeafReConsts` hoisted a `_reservedWords_<factory>` set: text in the grammar's declared `reserved.global` wordset throws `<kind>: '<text>' is a reserved word`. The set is the grammar's own declaration read through `reservedWordset`, never a collected keyword list: a contextual keyword the grammar admits as an identifier (python `print`, `match`, `exec`) is not in it, and a grammar that declares no wordset (typescript and rust today) gets no guard. The builder has no slot context, so its message cannot name a keyword arm; the slot-side check is `keywordTextRejection`.
 
 ### `packages/codegen/src/emitters/factories.ts::childElementType`
 
@@ -11719,6 +11698,26 @@ The id-table entries for a list of keys, each keyed through `keyOf`
 // (fixtures); genuinely kindless literals skip.
 ```
 
+### `packages/codegen/src/emitters/factories.ts::kindEnumTextEntries`
+
+The text → discriminant rows behind `kindEnumTextMapExpr`, each flagged `keyword` when its text is a keyword: a fixed-text leaf whose model type is `keyword`, an enum member whose kind (or literal's catalog kind) is a keyword kind, or a terminal whose literal's catalog kind is one.
+
+### `packages/codegen/src/emitters/factories.ts::keywordArmTextMapExpr`
+
+The keyword rows of `kindEnumTextEntries` as an emitted `[[text, kindId], …]` literal, or `[]` when the slot declares no keyword arm. It is the table `_keywordOf` searches in a loose resolver; its rows come from `keywordArmTextEntries`, the same rows `seatedKeywordTexts` reads.
+
+### `packages/codegen/src/emitters/factories.ts::keywordArmTextEntries`
+
+The slot's keyword-arm rows: `kindEnumTextEntries` filtered to `keyword`. The single source for both the loose keyword extraction table and the strict keyword-text check.
+
+### `packages/codegen/src/emitters/factories.ts::seatedKeywordTexts`
+
+The keyword-arm texts a strict slot refuses as an identifier: the texts of `keywordArmTextEntries` when the slot's text leaves include the grammar's word kind, else none. A slot whose word leaf cannot be seated has nothing to confuse with its keyword arms.
+
+### `packages/codegen/src/emitters/factories.ts::keywordTextRejection`
+
+Wraps a slot's admitted value in `rejectKeywordText(value, '<Kind>.<configKey>', <word kind id>, [<texts>])` when `seatedKeywordTexts` is non-empty. It runs after `bareTextRejection`, on the built value, so it sees only nodes. Its one job is the message: an identifier spelled as one of the slot's keyword arms is rejected, naming the slot; it does not look up or build the arm.
+
 ### `packages/codegen/src/emitters/factories.ts::slotStorageFromValueExpr`
 
 #### body
@@ -13089,6 +13088,10 @@ admits). A slot of literals only passes its input through; the raw factory's lit
 // for every other input shape.
 ```
 
+### `packages/codegen/src/emitters/from.ts::storedFieldCall`
+
+A slot's resolver expression without keyword extraction: the single-kind fast path or the interned resolver call, wrapped in the kind-enum or mixed-enum storage coercion. `resolveFieldCall` puts keyword extraction in front of it: whole value for a scalar slot, one element at a time (resolved as a scalar) for an array slot.
+
 ### `packages/codegen/src/emitters/from.ts::WrapChildrenEntry`
 
 ```text
@@ -13210,7 +13213,7 @@ ids at wrapper-only slots until arrays started resolving per element.
 
 In `_resolveOne`, a value that is neither a config object nor kinded data hoists into a branch arm only when that arm is the slot's sole branch kind or its declared default arm; a string additionally needs the arm to be string-capable. A bare string never picks an arm by elimination among several — which kind it names is not decided by its text — so a string no leaf accepts throws when any arm could take it.
 
-`_resolveBareText` tests the slot's text leaves in lexical-rank order, counting an envelope arm's leaves (`_ENVELOPE_TEXT_LEAVES`, from `transparentEnvelopeTextLeaves`) as the slot's own. A leaf reached through an envelope is built and then passed to the envelope's coercer, so `left: 'result'` builds the same `_lhs_expression` envelope the strict surface spells.
+`_resolveBareText` tests the slot's text leaves in lexical-rank order, counting an envelope arm's leaves (`_ENVELOPE_TEXT_LEAVES`, from `transparentEnvelopeTextLeaves`) as the slot's own. A text reached through an envelope is passed as text to the envelope's coercer, which runs its own keyword extraction and rank, so `left: 'result'` builds the same `_lhs_expression` envelope the strict surface spells and `left: 'async'` builds the envelope around the keyword arm.
 
 `_listElements` passes an element that is already the list's wrapper kind through untouched and resolves only the others to the wrapper's content; resolving a built wrapper toward an alias content kind would nest it inside that alias.
 
@@ -13300,7 +13303,7 @@ In `_resolveOne`, a value that is neither a config object nor kinded data hoists
 
 #### _TEXT_KINDS_BY_RANK
 
-The emitted from-module lists every registered text kind in `lexicalRank` order. `_resolveBareText(v, kinds)` walks that list, skips kinds the slot does not admit, and builds the first kind whose row accepts the text; the runtime never ranks anything itself. When a slot admits text kinds and none accepts, `_resolveOne` throws `"<text>" matches none of [<kinds>]`. `_resolveOneLeaf` builds a single-leaf slot through `_buildGuardedText`, which throws `"<text>" is not a <kind>` on a mismatch. The keyword-text table (`_KEYWORD_BRANCH_BY_TEXT`) keeps exact identity and is asserted unique at codegen: one keyword text building two branches is an error.
+A mixed-enum slot resolves a bare string by keyword extraction first, then lexical rank, as tree-sitter does. `_keywordOf(v, [[text, kindId], …])` (table from `keywordArmTextMapExpr`) returns the kind id of the slot's keyword arm whose text equals the string, and only a string that is no keyword arm goes on to the resolver below; a slot with no keyword arm emits no `_keywordOf`. An array slot applies the same rule per element: each element is `_keywordOf(e, …) ?? <the slot's scalar resolution of e>`, so an element that is a keyword arm's text is stored as the arm's kind id before the element resolver could build a leaf or a scalar from it. Non-keyword fixed-text arms keep going through the rank. The emitted from-module lists every registered text kind in `lexicalRank` order. `_resolveBareText(v, kinds)` walks that list, skips kinds the slot does not admit, and builds the first kind whose row accepts the text; the runtime never ranks anything itself. When a slot admits text kinds and none accepts, `_resolveOne` throws `"<text>" matches none of [<kinds>]`. `_resolveOneLeaf` builds a single-leaf slot through `_buildGuardedText`, which throws `"<text>" is not a <kind>` on a mismatch. The keyword-text table (`_KEYWORD_BRANCH_BY_TEXT`) keeps exact identity and is asserted unique at codegen: one keyword text building two branches is an error.
 
 ### `packages/codegen/src/emitters/from.ts::FromEmitter`
 
@@ -16311,7 +16314,7 @@ Wraps a slot's stored value in `admitAliasContent` with one row per alias the sl
 
 ### `packages/codegen/src/emitters/factories.ts::admittedSlotInput`
 
-A slot input's admissions in order: hidden-text leaves first, then alias content. Shared by config slots, the positional value, and spread children.
+A slot input's admissions in order: the bare-text rejection, the keyword-text rejection, then alias content. Shared by config slots, the positional value, and spread children.
 
 ### `packages/codegen/src/emitters/factories.ts::constructionFieldElementType`
 
@@ -16324,6 +16327,10 @@ Also emits `admitAliasContent`, the runtime half of `aliasContentAdmission`: it 
 #### rejectBareText
 
 `rejectBareText(value, where, expected)` is the strict surface's bare-text guard: a string throws `<where>: a strict factory takes a built node, not a string; expected <expected>, or use .coerce`. Arrays are checked element-wise and every other value passes through unchanged. The loose surface (`.coerce`) is where text becomes a node. A slot that stores only kind ids (a kind enum with no node value) takes no guard: its strict input is one of its declared fixed values, not a leaf's text, so `coerceKindEnumStorage` maps a matching string to its id and passes any other through.
+
+#### rejectKeywordText
+
+`rejectKeywordText(value, where, word, keywords)` throws `<where>: '<text>' is this slot's keyword` when the value is a word-kind node (`$type === word`) whose `$text` is one of `keywords`. Arrays are checked element-wise and every other value, including another leaf kind with the same text, passes through unchanged. The loose surface never reaches it with a keyword spelling, because its keyword extraction stores the arm's kind id first.
 
 ### `packages/codegen/src/emitters/shared.ts::anchoredLeafRegex`
 

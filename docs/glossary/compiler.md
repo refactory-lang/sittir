@@ -3250,6 +3250,10 @@ fallback an unstamped list reports.
  */
 ```
 
+### `packages/codegen/src/compiler/generated-metadata.ts::reservedWordset`
+
+The one reader of a grammar's declared reserved wordsets. For the named wordset it returns the members' literal texts (`words`): a `STRING` member's value, a `SYMBOL` member's catalog `literalText`. Every other member is listed in `nonLiteral` (a symbol by name, anything else by rule type), which `reservedMemberDiagnostics` reports. An absent wordset reads as empty.
+
 ### `packages/codegen/src/compiler/generated-metadata.ts::findEntryForKindName`
 
 ```text

@@ -15,7 +15,8 @@ import {
 } from './kind-discriminant.ts';
 import type {
 	AssembledNode,
-	AssembledNonterminal
+	AssembledNonterminal,
+	FieldStorageInfo
 } from '../compiler/model/node-map.ts';
 
 type BranchLikeForFrom = AuthoredCompound;
@@ -60,6 +61,7 @@ import {
 	fieldElementType,
 	childElementType,
 	kindEnumTextMapExpr,
+	keywordArmTextMapExpr,
 	delimiterMembersFor,
 	listHasOptions,
 	separatedListSurface,
@@ -905,7 +907,39 @@ function resolveFieldCall(
 	}
 
 	const storageInfo = 'name' in field ? resolveFieldStorageInfo(field as AssembledNonterminal, nodeMap) : undefined;
+	const keywords =
+		storageInfo?.kind === 'mixedEnum'
+			? keywordArmTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries)
+			: '[]';
+	if (keywords === '[]')
+		return storedFieldCall(prop, field, storageInfo, fieldMultiple, nodeMap, intern, elementTypeOverride, kindEntries);
+	if (!fieldMultiple) {
+		const resolved = storedFieldCall(
+			prop,
+			field,
+			storageInfo,
+			false,
+			nodeMap,
+			intern,
+			elementTypeOverride,
+			kindEntries
+		);
+		return `(_keywordOf(${prop}, ${keywords}) ?? ${resolved})`;
+	}
+	const element = storedFieldCall('_e', field, storageInfo, false, nodeMap, intern, elementTypeOverride, kindEntries);
+	return `(${prop} == null ? [] : Array.isArray(${prop}) ? ${prop} : [${prop}]).map((_e: _LooseFieldInput) => _keywordOf(_e, ${keywords}) ?? ${element})`;
+}
 
+function storedFieldCall(
+	prop: string,
+	field: { values: readonly NodeOrTerminal[] },
+	storageInfo: FieldStorageInfo | undefined,
+	fieldMultiple: boolean,
+	nodeMap: NodeMap,
+	intern: KindInterner,
+	elementTypeOverride?: string,
+	kindEntries?: readonly KindEnumEntry[]
+): string {
 	const { leafKinds, branchKinds, tokenKinds } = slotResolverKinds(field, nodeMap);
 
 	const elementType =
@@ -1480,13 +1514,20 @@ function emitResolverHelpers(
 	lines.push('    if (!direct && envelope === undefined) continue;');
 	lines.push('    const entry = _leafRegistry[kind]!;');
 	lines.push('    if (!(entry.values !== undefined ? entry.values.includes(v) : entry.pattern?.test(v) === true)) continue;');
-	lines.push('    return envelope !== undefined && _isFromKind(envelope) ? _resolveByKind(envelope, entry.factory(v)) : entry.factory(v);');
+	lines.push('    return envelope !== undefined && _isFromKind(envelope) ? _resolveByKind(envelope, v) : entry.factory(v);');
 	lines.push('  }');
 	lines.push('  return undefined;');
 	lines.push('}');
 	lines.push('');
 
 	emitResolveByKindHelper(lines);
+
+	lines.push(
+		'function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {'
+	);
+	lines.push('  return typeof v === "string" ? keywords.find(([text]) => text === v)?.[1] : undefined;');
+	lines.push('}');
+	lines.push('');
 
 	lines.push("/** A kind-enum slot's loose input. A stored kind id is already the slot's");
 	lines.push(' *  own discriminant; any other number is a numeric value and resolves as a');

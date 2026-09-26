@@ -1,6 +1,6 @@
 {
   "grammar": "scm",
-  "source_hash": "b41a89b29d2d34159fdc17908deffff41c427d1a6b63fabd0dd7abfc97d344c8",
+  "source_hash": "89f593ec21652d1ae06baf5aaf3c96183d1ccb6879c4a5a0b352d3ab39828e5e",
   "files": {
     "packages/scm/.sittir/grammar-diagnostics.json": "77bab05a338555059f26da0cdf108af1ce270fc0ce31b5a50fec87a33c8b2b93",
     "packages/scm/.sittir/grammar.js": "5cdae9aa7398bf14e77d601b01da6b91091b270be697bb6c2d4e70adb987726a",
@@ -20,7 +20,7 @@
     "packages/scm/src/consts.ts": "88793883baeb2818caa823f43470a2a12e0a9e43b3c1aab7693972cd2684240b",
     "packages/scm/src/engine.ts": "de77a0fc305edbece233e0b016dc71784acfb1c4c27e30514599b5884026371c",
     "packages/scm/src/factories/bundle.ts": "9064f86db9a15039433026a9dbb78a74c86f4d2c10184a87ae908bfcea8cdb3d",
-    "packages/scm/src/factories/coerce.ts": "0167a24eeb042ba063d3d2f9458f1a2fab88a71de96e813f23560380a85c2a4f",
+    "packages/scm/src/factories/coerce.ts": "273e9669cd0f4415a4e72ecb015347588a2a11216b8994a4d7f22ea6996654b5",
     "packages/scm/src/factories/index.ts": "b28cd8d0657486d1d623c202345cb8416a096f6e8cf8ddd0a01efefecd210411",
     "packages/scm/src/factories/overlays/polymorphs.ts": "1fcdb5aa133ad972c68cf7fa15655a91406d1a37d825039841ca36fc42b7eb8e",
     "packages/scm/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
@@ -35,7 +35,7 @@
     "packages/scm/src/options.ts": "3865cb462b84728608aa9d6748b477faedec4ee4a8ba2295793a96c460f24715",
     "packages/scm/src/render-engine.ts": "dee7648ce81f2784685a72b8f82564fcb224910bbcde1127c44fd6ca2e265dbf",
     "packages/scm/src/types.ts": "424fed9b60bc66ed1d95bcda2bd3e33892ca18350d6d9f997731ad3fc03a1c0b",
-    "packages/scm/src/utils.ts": "57091cc64112790c28f040ff059c61c213d507d397b9f349590bad68a3caf1fe",
+    "packages/scm/src/utils.ts": "2aebd7b156ccceb45517d1c3a1e77a237a4080d530353883fd4d69400b44064b",
     "packages/scm/src/wrap.ts": "05ba722ede2c31d5c09ea99af4cf662954e671999b8330b647c42b93d9892e49",
     "rust/crates/sittir-scm/index.d.ts": "44592772a0dc18373a22d6e20ce9183fea1191d56938aa6ea4fea284523bfe61",
     "rust/crates/sittir-scm/index.js": "8205a0432859ea6b53a39948debc97e3851ad4bda59e0409542ed9a243567a6c",

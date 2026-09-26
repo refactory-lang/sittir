@@ -2,7 +2,8 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { loadWebTreeSitter } from '../engine-loader.ts';
-import { type KindParserMetadata } from './types.ts';
+import { type KindParserMetadata, type ReservedWordsets } from './types.ts';
+import { STRING, SYMBOL } from '../types/rule-types.ts';
 import { isParserHiddenName } from '../dsl/rule-patterns.ts';
 import type * as TS from 'web-tree-sitter';
 
@@ -321,6 +322,31 @@ export function findEntryForKindName<T extends KindEntryLike>(entries: readonly 
 		entries.find((entry) => entry.anon !== true && (entry.symbolName === name || entry.parseName === name)) ??
 		undefined
 	);
+}
+
+export interface ReservedWordset {
+	readonly words: readonly string[];
+	readonly nonLiteral: readonly string[];
+}
+
+export function reservedWordset(
+	reserved: ReservedWordsets | undefined,
+	wordset: string,
+	entries: readonly KindEntryLike[]
+): ReservedWordset {
+	const words: string[] = [];
+	const nonLiteral: string[] = [];
+	for (const member of reserved?.[wordset] ?? []) {
+		const text =
+			member.type === STRING
+				? member.value
+				: member.type === SYMBOL
+					? findEntryForKindName(entries, member.name)?.literalText
+					: undefined;
+		if (text === undefined) nonLiteral.push(member.type === SYMBOL ? member.name : member.type);
+		else words.push(text);
+	}
+	return { words, nonLiteral };
 }
 
 const visibleTreeNameCounts = new WeakMap<readonly KindEntryLike[], ReadonlyMap<string, number>>();
