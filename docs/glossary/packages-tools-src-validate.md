@@ -1666,3 +1666,39 @@ and is read with `readFileSync` on the path.
  * when no factory is registered for `kind`.
  */
 ```
+
+### `packages/tools/src/validate/trivia-placement.ts::module`
+
+The trivia placement census behind `sittir tool trivia-placement`. It reads, it never changes behaviour. For every extra child in a grammar's corpus (entries that parse with errors are skipped), it records the parent, the nearest named non-extra siblings on each side, whether the extra starts on the row where its previous sibling ends, the placement rule that applies, and where today's reader puts it. The summary counts extras per rule and those lost today. It also counts rule-1 extras that today's reader makes leading (they move to trailing), rule-4 extras by gap, and kinds whose gap cannot be keyed.
+
+### `packages/tools/src/validate/trivia-placement.ts::placementRows`
+
+Applies the placement rule to every extra under a root, first match wins:
+
+1. The extra starts on the row where the previous named sibling ends: trailing of that sibling.
+2. A named sibling follows: leading of it.
+3. A named sibling precedes: trailing of it.
+4. Otherwise: inner of the parent.
+
+Anonymous tokens and other extras are never siblings for this purpose. `today` mirrors the core reader's `compute_trivia`: leading of the next named sibling, trailing only when none follows, lost when the extra has no named sibling at all. `outsideBlock` marks an own-line extra indented at least as deep as the statements of a `block` that ends its previous sibling (python only). That is where tree-sitter can place a comment outside the block its author wrote it in.
+
+### `packages/tools/src/validate/trivia-placement.ts::gapModel`
+
+Keys a rule-4 extra's gap from the grammar's own `grammar.json`, the rules tree-sitter compiles:
+
+- A parent whose rule references a symbol has slots, and the extra sits in an empty slot's gap (`slot`).
+- A slotless parent has one gap between two tokens (`interior`); with more tokens around the extra, the gap cannot be keyed (`unkeyable`). For a corpus instance, the tokens counted are the parent's own anonymous children.
+
+`unkeyableKinds` lists the visible slotless kinds whose rule can hold more than two tokens: python `import_prefix`, typescript `meta_property_import_meta` and `meta_property_new_target` (with the minted `meta_property_arm1`/`arm2`). None of them holds an extra in any corpus today. An extra in one of them is a read diagnostic and a count in the trivia validation row, and the census names it in `unkeyableInCorpus`.
+
+### `packages/tools/src/validate/trivia-placement.ts::slotlessTokens`
+
+A `grammar.json` rule's token count when it references no symbol, else `undefined`. A string, pattern or token is one token; a sequence sums; a choice takes its widest arm; a repeat of anything that holds a token is unbounded.
+
+### `packages/tools/src/validate/trivia-placement.ts::runTriviaPlacement`
+
+The placement rows for one source text, for probes and tests.
+
+### `packages/tools/src/validate/trivia-placement.ts::computeTriviaPlacementCensus`
+
+The rows and summary for one grammar's whole corpus.
