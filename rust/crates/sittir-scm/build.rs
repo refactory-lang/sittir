@@ -26,5 +26,15 @@ fn main() {
         println!("cargo:rerun-if-changed={}", scanner_path.display());
     }
 
+    let cpp_scanner_path = grammar_src.join("scanner.cc");
+    if cpp_scanner_path.exists() {
+        cc::Build::new()
+            .cpp(true)
+            .include(&grammar_src)
+            .file(&cpp_scanner_path)
+            .compile("sittir-tree-sitter-scm-scanner");
+        println!("cargo:rerun-if-changed={}", cpp_scanner_path.display());
+    }
+
     build.compile("sittir-tree-sitter-scm");
 }

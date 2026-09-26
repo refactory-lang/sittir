@@ -16687,7 +16687,7 @@ tables so both directions agree.
 
 ### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
 
-The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and any scanner), the napi `package.json`, and `src/lib.rs` (the `LanguageFn`, `EngineGrammar`/`ReadModel` impls over the generated render module, and `sittir_core::napi_engine!`). `runCodegenInternal` writes it once, the first time it emits a grammar's render module, so a crate exists only alongside generated code it can compile. Pinned by a test to reproduce `sittir-python` byte-for-byte; a grammar whose crate needs more (typescript's scanner header) is edited after scaffolding.
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json`, and `src/lib.rs` (the `LanguageFn`, `EngineGrammar`/`ReadModel` impls over the generated render module, and `sittir_core::napi_engine!`). `runCodegenInternal` writes it once, the first time it emits a grammar's render module, so a crate exists only alongside generated code it can compile. Pinned by a test to reproduce `sittir-python` byte-for-byte; a grammar whose crate needs more (typescript's scanner header) is edited after scaffolding.
 
 ### `packages/codegen/src/emitters/grammar-runtime.ts::EmitGrammarRuntimeConfig`
 
