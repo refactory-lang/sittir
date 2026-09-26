@@ -164,7 +164,7 @@ interface EmptyBlock extends Block { $trivia: TriviaSetter<EmptyBlock> & InnerTr
 
 export function isEmpty(node: Block): node is EmptyBlock;
 
-ir.block().$trivia.inner(ir.lineComment('// TODO'));   // a factory call with no children returns EmptyBlock
+ir.block().$trivia.inner(ir.lineComment(' TODO'));   // a factory call with no children returns EmptyBlock
 if (isEmpty(parsed)) parsed.$trivia.inner();           // readonly TriviaEntry[]: the default gap's entries
 ```
 
@@ -272,12 +272,24 @@ for design review:
 No annotation is read by the compiler for any of this. Trivia stays outside the
 rule model.
 
+## Comment builders take the interior
+
+A comment kind's builder takes its token interior (the `content` slot), not its
+spelled text: the delimiters are the kind's own literals.
+- `ir.lineComment(' note')` renders `// note`; `ir.blockComment(' x ')` renders
+  `/* x */`.
+- Loose also accepts the full spelled text (`'// note'`): the string is
+  classified to its kind by the anchored-pattern rule and its interior
+  extracted by the kind's token-interior structure. Strict takes the interior
+  only.
+- The source emitter prints the interior form.
+
 ## Source emitter
 
 The factory-source emitter (`packages/tools/src/emit/factory-source.ts`, the
 code that prints a parsed tree as factory calls) prints every trivia entry as its
 kind's builder, never as a bare string:
-- node entries: `ir.lineComment('// note')`, `ir.blockComment('/* x */')`,
+- node entries: `ir.lineComment(' note')`, `ir.blockComment(' x ')`,
   `ir.lineContinuation()`;
 - whitespace entries: `ir.whitespace.blankline()`.
 
