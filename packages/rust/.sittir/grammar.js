@@ -6350,6 +6350,7 @@ var grammar_sittir_default = grammar(
         _pattern: { "-1": alias2("wildcard_pattern") }
       },
       expectDiagnostics: {
+        "unclassifiable-shape": ["_let_chain"],
         "rule-reauthored-without-cause": [
           "_non_special_token",
           "_primitive_type",

@@ -6554,6 +6554,8 @@ var grammar_sittir_default = grammar(
         string: "#170 \u2014 StringContentTransportSlot rejects stub ($type property missing)"
       },
       expectDiagnostics: {
+        "unclassifiable-shape": ["binary_expression", "public_field_definition"],
+        "union-slot-mixed-row": ["binary_expression"],
         "rule-reauthored-without-cause": [
           "object_type",
           "template_literal_type",

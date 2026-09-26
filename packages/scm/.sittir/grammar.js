@@ -5872,6 +5872,9 @@ var grammar_sittir_default = grammar(
           "1/1/1/0": field("last")
         }
       },
+      expectDiagnostics: {
+        "unclassifiable-shape": ["predicate"]
+      },
       rules: {
         _whitespace: vocabulary(($) => choice($._tight, $._space, $._newline))
       }

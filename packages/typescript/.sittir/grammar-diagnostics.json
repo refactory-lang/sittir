@@ -5,7 +5,7 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]) — resolved by structural recursion",
+    "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
     "canProceed": true,
     "details": {
       "bucket": "choice-with-structured-arms",
@@ -19,7 +19,7 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Resolve with variant(name) in patches: splitting the row, until the structured-arm enrich mint gives each structured arm a kind of its own in the union slot.",
     "canProceed": true
   },
   {
@@ -28,7 +28,7 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "public_field_definition",
-    "message": "[collect-slots] kind 'public_field_definition': member rule:public_field_definition:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[4]) — resolved by structural recursion",
+    "message": "[collect-slots] kind 'public_field_definition': member rule:public_field_definition:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[4]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
     "canProceed": true,
     "details": {
       "bucket": "choice-with-structured-arms",
