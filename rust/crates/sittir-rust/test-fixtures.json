@@ -24065,7 +24065,7 @@
         }
       ]
     },
-    "expectedOutput": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe\nextern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}"
+    "expectedOutput": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}"
   },
   {
     "kind": "roundtrip",
@@ -24073,9 +24073,9 @@
     "sourceIn": "\nextern \"C\" fn foo() {}\nextern \"C\" fn printf(\n    *const c_char,\n    ...,\n) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe\nextern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
+    "expectedSourceOut": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
     "expectedReparseTree": "(source_file statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (pointer_type_const type: (type_identifier))) element: (attributed_parameter (variadic_parameter)))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular)))))",
-    "wrappedText": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe\nextern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
+    "wrappedText": "extern \"C\" fn foo() {}\n\nextern \"C\" fn printf(* const c_char, ...,) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
     "wrappedOffset": 0
   },
   {
@@ -24989,7 +24989,7 @@
         "body"
       ]
     },
-    "expectedOutput": "pub unsafe\nextern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}"
+    "expectedOutput": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}"
   },
   {
     "kind": "roundtrip",
@@ -24997,9 +24997,9 @@
     "sourceIn": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "pub unsafe\nextern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
+    "expectedSourceOut": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
     "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters (parameters_elements element: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) element: (attributed_parameter (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_elements element: (attributed_argument (identifier)) element: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular))))",
-    "wrappedText": "pub unsafe\nextern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
+    "wrappedText": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n\n}",
     "wrappedOffset": 0
   },
   {
@@ -84342,7 +84342,7 @@
         }
       ]
     },
-    "expectedOutput": "impl Foo {\n    const\n    default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}"
+    "expectedOutput": "impl Foo {\n    const default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}"
   },
   {
     "kind": "roundtrip",
@@ -84350,9 +84350,9 @@
     "sourceIn": "\nimpl Foo {\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "impl Foo {\n    const\n    default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}",
+    "expectedSourceOut": "impl Foo {\n    const default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}",
     "expectedReparseTree": "(source_file statements: (impl_item_body type: (type_identifier) (declaration_list declarations: (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))))))",
-    "wrappedText": "impl Foo {\n    const\n    default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}",
+    "wrappedText": "impl Foo {\n    const default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}",
     "wrappedOffset": 0
   },
   {
@@ -84637,7 +84637,7 @@
         "declaration_list"
       ]
     },
-    "expectedOutput": "impl Foo {\n    const\n    default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}"
+    "expectedOutput": "impl Foo {\n    const default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}"
   },
   {
     "kind": "roundtrip",
@@ -84645,9 +84645,9 @@
     "sourceIn": "impl Foo {\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}",
     "pattern": "impl_item_body",
     "edits": [],
-    "expectedSourceOut": "impl Foo {\n    const\n    default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}",
+    "expectedSourceOut": "impl Foo {\n    const default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}",
     "expectedReparseTree": "(impl_item_body type: (type_identifier) (declaration_list declarations: (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))))",
-    "wrappedText": "impl Foo {\n    const\n    default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}",
+    "wrappedText": "impl Foo {\n    const default fn bar() -> i32 {\n        // Make 'default' still works as an identifier\n        default.bar();\n    }\n}",
     "wrappedOffset": 0
   },
   {
@@ -84899,7 +84899,7 @@
         "body"
       ]
     },
-    "expectedOutput": "const\ndefault fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n}"
+    "expectedOutput": "const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n}"
   },
   {
     "kind": "roundtrip",
@@ -84907,9 +84907,9 @@
     "sourceIn": "const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "const\ndefault fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n}",
+    "expectedSourceOut": "const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n}",
     "expectedReparseTree": "(function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) statements: (expression_statement (expression_statement_with_semi expression: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))",
-    "wrappedText": "const\ndefault fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n}",
+    "wrappedText": "const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n}",
     "wrappedOffset": 0
   },
   {
@@ -241877,7 +241877,7 @@
         }
       ]
     },
-    "expectedOutput": "type a = extern \"C\" fn(* mut c_void);\n\ntype b = unsafe\nextern \"C\" fn() -> * mut c_void;"
+    "expectedOutput": "type a = extern \"C\" fn(* mut c_void);\n\ntype b = unsafe extern \"C\" fn() -> * mut c_void;"
   },
   {
     "kind": "roundtrip",
@@ -241885,9 +241885,9 @@
     "sourceIn": "\ntype a = extern \"C\" fn(*mut c_void);\ntype b = unsafe extern \"C\" fn() -> *mut c_void;\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "type a = extern \"C\" fn(* mut c_void);\n\ntype b = unsafe\nextern \"C\" fn() -> * mut c_void;",
+    "expectedSourceOut": "type a = extern \"C\" fn(* mut c_void);\n\ntype b = unsafe extern \"C\" fn() -> * mut c_void;",
     "expectedReparseTree": "(source_file statements: (type_item name: (type_identifier) type: (function_type (function_type_fn_form (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content))))) parameters: (parameters (parameters_elements element: (attributed_parameter (pointer_type_mut (mutable_specifier) type: (type_identifier))))))) statements: (type_item name: (type_identifier) type: (function_type (function_type_fn_form (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content))))) parameters: (parameters) return_type: (pointer_type_mut (mutable_specifier) type: (type_identifier)))))",
-    "wrappedText": "type a = extern \"C\" fn(* mut c_void);\n\ntype b = unsafe\nextern \"C\" fn() -> * mut c_void;",
+    "wrappedText": "type a = extern \"C\" fn(* mut c_void);\n\ntype b = unsafe extern \"C\" fn() -> * mut c_void;",
     "wrappedOffset": 0
   },
   {
@@ -242344,7 +242344,7 @@
         "type"
       ]
     },
-    "expectedOutput": "type b = unsafe\nextern \"C\" fn() -> * mut c_void;"
+    "expectedOutput": "type b = unsafe extern \"C\" fn() -> * mut c_void;"
   },
   {
     "kind": "roundtrip",
@@ -242352,9 +242352,9 @@
     "sourceIn": "type b = unsafe extern \"C\" fn() -> *mut c_void;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type b = unsafe\nextern \"C\" fn() -> * mut c_void;",
+    "expectedSourceOut": "type b = unsafe extern \"C\" fn() -> * mut c_void;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (function_type (function_type_fn_form (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content))))) parameters: (parameters) return_type: (pointer_type_mut (mutable_specifier) type: (type_identifier))))",
-    "wrappedText": "type b = unsafe\nextern \"C\" fn() -> * mut c_void;",
+    "wrappedText": "type b = unsafe extern \"C\" fn() -> * mut c_void;",
     "wrappedOffset": 0
   },
   {
@@ -242827,7 +242827,7 @@
         "return_type"
       ]
     },
-    "expectedOutput": "unsafe\nextern \"C\" fn() -> * mut c_void"
+    "expectedOutput": "unsafe extern \"C\" fn() -> * mut c_void"
   },
   {
     "kind": "roundtrip",
@@ -242835,9 +242835,9 @@
     "sourceIn": "unsafe extern \"C\" fn() -> *mut c_void",
     "pattern": "function_type",
     "edits": [],
-    "expectedSourceOut": "unsafe\nextern \"C\" fn() -> * mut c_void",
+    "expectedSourceOut": "unsafe extern \"C\" fn() -> * mut c_void",
     "expectedReparseTree": "(function_type (function_type_fn_form (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content))))) parameters: (parameters) return_type: (pointer_type_mut (mutable_specifier) type: (type_identifier)))",
-    "wrappedText": "type _X = unsafe\nextern \"C\" fn() -> * mut c_void;",
+    "wrappedText": "type _X = unsafe extern \"C\" fn() -> * mut c_void;",
     "wrappedOffset": 10
   },
   {

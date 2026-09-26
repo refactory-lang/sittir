@@ -14,4 +14,11 @@ describe('keyword extraction at an array slot', () => {
 		expect([built._modifier].flat()).toEqual([TSKindId.AsyncKeyword]);
 		expect(readModifiers(built.$render().toString())).toEqual([TSKindId.AsyncKeyword]);
 	});
+
+	it('renders repeated modifiers on one line and reparses them', () => {
+		const built = ir.functionModifiers('async', 'unsafe');
+		const text = built.$render().toString();
+		expect(text).toBe('async unsafe');
+		expect(readModifiers(text)).toEqual([TSKindId.AsyncKeyword, TSKindId.UnsafeKeyword]);
+	});
 });
