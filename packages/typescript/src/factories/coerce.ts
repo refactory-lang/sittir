@@ -3510,7 +3510,103 @@ export function coerceToObject(
 		const stored = (data as unknown as { _properties?: unknown })._properties;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObject(
-			...((children == null ? [] : Array.isArray(children) ? children : [children]).map(
+			...((children == null ? [] : Array.isArray(children) ? children : [children])
+				.map(
+					(_e: _LooseFieldInput) =>
+						_keywordOf(_e, [
+							['declare', TSKindId.DeclareKeyword] as const,
+							['namespace', TSKindId.NamespaceKeyword] as const,
+							['type', TSKindId.TypeKeyword] as const,
+							['public', TSKindId.PublicKeyword] as const,
+							['private', TSKindId.PrivateKeyword] as const,
+							['protected', TSKindId.ProtectedKeyword] as const,
+							['override', TSKindId.OverrideKeyword] as const,
+							['readonly', TSKindId.ReadonlyKeyword] as const,
+							['module', TSKindId.ModuleKeyword] as const,
+							['any', TSKindId.AnyKeyword] as const,
+							['number', TSKindId.NumberKeyword] as const,
+							['boolean', TSKindId.BooleanKeyword] as const,
+							['string', TSKindId.StringKeyword] as const,
+							['symbol', TSKindId.SymbolKeyword] as const,
+							['export', TSKindId.ExportKeyword] as const,
+							['object', TSKindId.ObjectKeyword] as const,
+							['new', TSKindId.NewKeyword] as const,
+							['get', TSKindId.GetKeyword] as const,
+							['set', TSKindId.SetKeyword] as const,
+							['async', TSKindId.AsyncKeyword] as const,
+							['static', TSKindId.StaticKeyword] as const,
+							['let', TSKindId.LetKeyword] as const
+						]) ??
+						coerceMixedEnumStorage(
+							_resolveKindEnum(_e, () =>
+								_resolveOne<
+									| T.Pair
+									| T.SpreadElement
+									| T.MethodDefinition
+									| T.ShorthandPropertyIdentifier
+									| 'declare'
+									| 'namespace'
+									| 'type'
+									| 'public'
+									| 'private'
+									| 'protected'
+									| 'override'
+									| 'readonly'
+									| 'module'
+									| 'any'
+									| 'number'
+									| 'boolean'
+									| 'string'
+									| 'symbol'
+									| 'export'
+									| 'object'
+									| 'new'
+									| 'get'
+									| 'set'
+									| 'async'
+									| 'static'
+									| 'let'
+								>(_e, _K2, _K12)
+							),
+							[
+								['declare', TSKindId.DeclareKeyword] as const,
+								['namespace', TSKindId.NamespaceKeyword] as const,
+								['type', TSKindId.TypeKeyword] as const,
+								['public', TSKindId.PublicKeyword] as const,
+								['private', TSKindId.PrivateKeyword] as const,
+								['protected', TSKindId.ProtectedKeyword] as const,
+								['override', TSKindId.OverrideKeyword] as const,
+								['readonly', TSKindId.ReadonlyKeyword] as const,
+								['module', TSKindId.ModuleKeyword] as const,
+								['any', TSKindId.AnyKeyword] as const,
+								['number', TSKindId.NumberKeyword] as const,
+								['boolean', TSKindId.BooleanKeyword] as const,
+								['string', TSKindId.StringKeyword] as const,
+								['symbol', TSKindId.SymbolKeyword] as const,
+								['export', TSKindId.ExportKeyword] as const,
+								['object', TSKindId.ObjectKeyword] as const,
+								['new', TSKindId.NewKeyword] as const,
+								['get', TSKindId.GetKeyword] as const,
+								['set', TSKindId.SetKeyword] as const,
+								['async', TSKindId.AsyncKeyword] as const,
+								['static', TSKindId.StaticKeyword] as const,
+								['let', TSKindId.LetKeyword] as const
+							]
+						)
+				)
+				.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildObject>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('properties' in head)) return input;
+		const v = (head as Record<string, unknown>)['properties'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildObject(
+		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems])
+			.map(
 				(_e: _LooseFieldInput) =>
 					_keywordOf(_e, [
 						['declare', TSKindId.DeclareKeyword] as const,
@@ -3592,100 +3688,8 @@ export function coerceToObject(
 							['let', TSKindId.LetKeyword] as const
 						]
 					)
-			) as unknown as Parameters<typeof F.buildObject>)
-		);
-	}
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('properties' in head)) return input;
-		const v = (head as Record<string, unknown>)['properties'];
-		return Array.isArray(v) ? v : [v];
-	})();
-	return F.buildObject(
-		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems]).map(
-			(_e: _LooseFieldInput) =>
-				_keywordOf(_e, [
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]) ??
-				coerceMixedEnumStorage(
-					_resolveKindEnum(_e, () =>
-						_resolveOne<
-							| T.Pair
-							| T.SpreadElement
-							| T.MethodDefinition
-							| T.ShorthandPropertyIdentifier
-							| 'declare'
-							| 'namespace'
-							| 'type'
-							| 'public'
-							| 'private'
-							| 'protected'
-							| 'override'
-							| 'readonly'
-							| 'module'
-							| 'any'
-							| 'number'
-							| 'boolean'
-							| 'string'
-							| 'symbol'
-							| 'export'
-							| 'object'
-							| 'new'
-							| 'get'
-							| 'set'
-							| 'async'
-							| 'static'
-							| 'let'
-						>(_e, _K2, _K12)
-					),
-					[
-						['declare', TSKindId.DeclareKeyword] as const,
-						['namespace', TSKindId.NamespaceKeyword] as const,
-						['type', TSKindId.TypeKeyword] as const,
-						['public', TSKindId.PublicKeyword] as const,
-						['private', TSKindId.PrivateKeyword] as const,
-						['protected', TSKindId.ProtectedKeyword] as const,
-						['override', TSKindId.OverrideKeyword] as const,
-						['readonly', TSKindId.ReadonlyKeyword] as const,
-						['module', TSKindId.ModuleKeyword] as const,
-						['any', TSKindId.AnyKeyword] as const,
-						['number', TSKindId.NumberKeyword] as const,
-						['boolean', TSKindId.BooleanKeyword] as const,
-						['string', TSKindId.StringKeyword] as const,
-						['symbol', TSKindId.SymbolKeyword] as const,
-						['export', TSKindId.ExportKeyword] as const,
-						['object', TSKindId.ObjectKeyword] as const,
-						['new', TSKindId.NewKeyword] as const,
-						['get', TSKindId.GetKeyword] as const,
-						['set', TSKindId.SetKeyword] as const,
-						['async', TSKindId.AsyncKeyword] as const,
-						['static', TSKindId.StaticKeyword] as const,
-						['let', TSKindId.LetKeyword] as const
-					]
-				)
-		) as unknown as Parameters<typeof F.buildObject>)
+			)
+			.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildObject>)
 	);
 }
 
@@ -3730,7 +3734,103 @@ export function coerceToObjectPattern(
 		const stored = (data as unknown as { _properties?: unknown })._properties;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObjectPattern(
-			...((children == null ? [] : Array.isArray(children) ? children : [children]).map(
+			...((children == null ? [] : Array.isArray(children) ? children : [children])
+				.map(
+					(_e: _LooseFieldInput) =>
+						_keywordOf(_e, [
+							['declare', TSKindId.DeclareKeyword] as const,
+							['namespace', TSKindId.NamespaceKeyword] as const,
+							['type', TSKindId.TypeKeyword] as const,
+							['public', TSKindId.PublicKeyword] as const,
+							['private', TSKindId.PrivateKeyword] as const,
+							['protected', TSKindId.ProtectedKeyword] as const,
+							['override', TSKindId.OverrideKeyword] as const,
+							['readonly', TSKindId.ReadonlyKeyword] as const,
+							['module', TSKindId.ModuleKeyword] as const,
+							['any', TSKindId.AnyKeyword] as const,
+							['number', TSKindId.NumberKeyword] as const,
+							['boolean', TSKindId.BooleanKeyword] as const,
+							['string', TSKindId.StringKeyword] as const,
+							['symbol', TSKindId.SymbolKeyword] as const,
+							['export', TSKindId.ExportKeyword] as const,
+							['object', TSKindId.ObjectKeyword] as const,
+							['new', TSKindId.NewKeyword] as const,
+							['get', TSKindId.GetKeyword] as const,
+							['set', TSKindId.SetKeyword] as const,
+							['async', TSKindId.AsyncKeyword] as const,
+							['static', TSKindId.StaticKeyword] as const,
+							['let', TSKindId.LetKeyword] as const
+						]) ??
+						coerceMixedEnumStorage(
+							_resolveKindEnum(_e, () =>
+								_resolveOne<
+									| T.PairPattern
+									| T.RestPattern
+									| T.ObjectAssignmentPattern
+									| T.ShorthandPropertyIdentifierPattern
+									| 'declare'
+									| 'namespace'
+									| 'type'
+									| 'public'
+									| 'private'
+									| 'protected'
+									| 'override'
+									| 'readonly'
+									| 'module'
+									| 'any'
+									| 'number'
+									| 'boolean'
+									| 'string'
+									| 'symbol'
+									| 'export'
+									| 'object'
+									| 'new'
+									| 'get'
+									| 'set'
+									| 'async'
+									| 'static'
+									| 'let'
+								>(_e, _K2, _K13)
+							),
+							[
+								['declare', TSKindId.DeclareKeyword] as const,
+								['namespace', TSKindId.NamespaceKeyword] as const,
+								['type', TSKindId.TypeKeyword] as const,
+								['public', TSKindId.PublicKeyword] as const,
+								['private', TSKindId.PrivateKeyword] as const,
+								['protected', TSKindId.ProtectedKeyword] as const,
+								['override', TSKindId.OverrideKeyword] as const,
+								['readonly', TSKindId.ReadonlyKeyword] as const,
+								['module', TSKindId.ModuleKeyword] as const,
+								['any', TSKindId.AnyKeyword] as const,
+								['number', TSKindId.NumberKeyword] as const,
+								['boolean', TSKindId.BooleanKeyword] as const,
+								['string', TSKindId.StringKeyword] as const,
+								['symbol', TSKindId.SymbolKeyword] as const,
+								['export', TSKindId.ExportKeyword] as const,
+								['object', TSKindId.ObjectKeyword] as const,
+								['new', TSKindId.NewKeyword] as const,
+								['get', TSKindId.GetKeyword] as const,
+								['set', TSKindId.SetKeyword] as const,
+								['async', TSKindId.AsyncKeyword] as const,
+								['static', TSKindId.StaticKeyword] as const,
+								['let', TSKindId.LetKeyword] as const
+							]
+						)
+				)
+				.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildObjectPattern>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('properties' in head)) return input;
+		const v = (head as Record<string, unknown>)['properties'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildObjectPattern(
+		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems])
+			.map(
 				(_e: _LooseFieldInput) =>
 					_keywordOf(_e, [
 						['declare', TSKindId.DeclareKeyword] as const,
@@ -3812,100 +3912,8 @@ export function coerceToObjectPattern(
 							['let', TSKindId.LetKeyword] as const
 						]
 					)
-			) as unknown as Parameters<typeof F.buildObjectPattern>)
-		);
-	}
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('properties' in head)) return input;
-		const v = (head as Record<string, unknown>)['properties'];
-		return Array.isArray(v) ? v : [v];
-	})();
-	return F.buildObjectPattern(
-		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems]).map(
-			(_e: _LooseFieldInput) =>
-				_keywordOf(_e, [
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]) ??
-				coerceMixedEnumStorage(
-					_resolveKindEnum(_e, () =>
-						_resolveOne<
-							| T.PairPattern
-							| T.RestPattern
-							| T.ObjectAssignmentPattern
-							| T.ShorthandPropertyIdentifierPattern
-							| 'declare'
-							| 'namespace'
-							| 'type'
-							| 'public'
-							| 'private'
-							| 'protected'
-							| 'override'
-							| 'readonly'
-							| 'module'
-							| 'any'
-							| 'number'
-							| 'boolean'
-							| 'string'
-							| 'symbol'
-							| 'export'
-							| 'object'
-							| 'new'
-							| 'get'
-							| 'set'
-							| 'async'
-							| 'static'
-							| 'let'
-						>(_e, _K2, _K13)
-					),
-					[
-						['declare', TSKindId.DeclareKeyword] as const,
-						['namespace', TSKindId.NamespaceKeyword] as const,
-						['type', TSKindId.TypeKeyword] as const,
-						['public', TSKindId.PublicKeyword] as const,
-						['private', TSKindId.PrivateKeyword] as const,
-						['protected', TSKindId.ProtectedKeyword] as const,
-						['override', TSKindId.OverrideKeyword] as const,
-						['readonly', TSKindId.ReadonlyKeyword] as const,
-						['module', TSKindId.ModuleKeyword] as const,
-						['any', TSKindId.AnyKeyword] as const,
-						['number', TSKindId.NumberKeyword] as const,
-						['boolean', TSKindId.BooleanKeyword] as const,
-						['string', TSKindId.StringKeyword] as const,
-						['symbol', TSKindId.SymbolKeyword] as const,
-						['export', TSKindId.ExportKeyword] as const,
-						['object', TSKindId.ObjectKeyword] as const,
-						['new', TSKindId.NewKeyword] as const,
-						['get', TSKindId.GetKeyword] as const,
-						['set', TSKindId.SetKeyword] as const,
-						['async', TSKindId.AsyncKeyword] as const,
-						['static', TSKindId.StaticKeyword] as const,
-						['let', TSKindId.LetKeyword] as const
-					]
-				)
-		) as unknown as Parameters<typeof F.buildObjectPattern>)
+			)
+			.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildObjectPattern>)
 	);
 }
 

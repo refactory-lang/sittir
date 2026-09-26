@@ -3554,7 +3554,56 @@ export function coerceToUnionPattern(
 		const stored = (data as unknown as { _patterns?: unknown })._patterns;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildUnionPattern(
-			...((children == null ? [] : Array.isArray(children) ? children : [children]).map(
+			...((children == null ? [] : Array.isArray(children) ? children : [children])
+				.map(
+					(_e: _LooseFieldInput) =>
+						_keywordOf(_e, [
+							['True', TSKindId.True] as const,
+							['False', TSKindId.False] as const,
+							['None', TSKindId.None] as const,
+							['_', TSKindId.WildcardPattern] as const
+						]) ??
+						coerceMixedEnumStorage(
+							_resolveKindEnum(_e, () =>
+								_resolveOne<
+									| T.ClassPattern
+									| T.SplatPattern
+									| T.UnionPattern
+									| T.CaseListPattern
+									| T.CaseTuplePattern
+									| T.DictPattern
+									| T.String
+									| T.ConcatenatedString
+									| 'True'
+									| 'False'
+									| 'None'
+									| T.SimplePatternNegative
+									| T.ComplexPattern
+									| T.DottedName
+									| '_'
+								>(_e, _K20, _K21)
+							),
+							[
+								['True', TSKindId.True] as const,
+								['False', TSKindId.False] as const,
+								['None', TSKindId.None] as const,
+								['_', TSKindId.WildcardPattern] as const
+							]
+						)
+				)
+				.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildUnionPattern>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('patterns' in head)) return input;
+		const v = (head as Record<string, unknown>)['patterns'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildUnionPattern(
+		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems])
+			.map(
 				(_e: _LooseFieldInput) =>
 					_keywordOf(_e, [
 						['True', TSKindId.True] as const,
@@ -3589,53 +3638,8 @@ export function coerceToUnionPattern(
 							['_', TSKindId.WildcardPattern] as const
 						]
 					)
-			) as unknown as Parameters<typeof F.buildUnionPattern>)
-		);
-	}
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('patterns' in head)) return input;
-		const v = (head as Record<string, unknown>)['patterns'];
-		return Array.isArray(v) ? v : [v];
-	})();
-	return F.buildUnionPattern(
-		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems]).map(
-			(_e: _LooseFieldInput) =>
-				_keywordOf(_e, [
-					['True', TSKindId.True] as const,
-					['False', TSKindId.False] as const,
-					['None', TSKindId.None] as const,
-					['_', TSKindId.WildcardPattern] as const
-				]) ??
-				coerceMixedEnumStorage(
-					_resolveKindEnum(_e, () =>
-						_resolveOne<
-							| T.ClassPattern
-							| T.SplatPattern
-							| T.UnionPattern
-							| T.CaseListPattern
-							| T.CaseTuplePattern
-							| T.DictPattern
-							| T.String
-							| T.ConcatenatedString
-							| 'True'
-							| 'False'
-							| 'None'
-							| T.SimplePatternNegative
-							| T.ComplexPattern
-							| T.DottedName
-							| '_'
-						>(_e, _K20, _K21)
-					),
-					[
-						['True', TSKindId.True] as const,
-						['False', TSKindId.False] as const,
-						['None', TSKindId.None] as const,
-						['_', TSKindId.WildcardPattern] as const
-					]
-				)
-		) as unknown as Parameters<typeof F.buildUnionPattern>)
+			)
+			.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildUnionPattern>)
 	);
 }
 

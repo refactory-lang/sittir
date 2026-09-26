@@ -927,7 +927,7 @@ function resolveFieldCall(
 		return `(_keywordOf(${prop}, ${keywords}) ?? ${resolved})`;
 	}
 	const element = storedFieldCall('_e', field, storageInfo, false, nodeMap, intern, elementTypeOverride, kindEntries);
-	return `(${prop} == null ? [] : Array.isArray(${prop}) ? ${prop} : [${prop}]).map((_e: _LooseFieldInput) => _keywordOf(_e, ${keywords}) ?? ${element})`;
+	return `(${prop} == null ? [] : Array.isArray(${prop}) ? ${prop} : [${prop}]).map((_e: _LooseFieldInput) => _keywordOf(_e, ${keywords}) ?? ${element}).filter((_e) => _e !== undefined)`;
 }
 
 function storedFieldCall(

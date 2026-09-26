@@ -4022,7 +4022,40 @@ export function coerceToFunctionModifiers(
 		const stored = (data as unknown as { _modifier?: unknown })._modifier;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildFunctionModifiers(
-			...((children == null ? [] : Array.isArray(children) ? children : [children]).map(
+			...((children == null ? [] : Array.isArray(children) ? children : [children])
+				.map(
+					(_e: _LooseFieldInput) =>
+						_keywordOf(_e, [
+							['async', TSKindId.AsyncKeyword] as const,
+							['default', TSKindId.DefaultKeyword] as const,
+							['const', TSKindId.ConstKeyword] as const,
+							['unsafe', TSKindId.UnsafeKeyword] as const
+						]) ??
+						coerceMixedEnumStorage(
+							_resolveKindEnum(_e, () =>
+								_resolveOne<'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier>(_e, _K18, _K19)
+							),
+							[
+								['async', TSKindId.AsyncKeyword] as const,
+								['default', TSKindId.DefaultKeyword] as const,
+								['const', TSKindId.ConstKeyword] as const,
+								['unsafe', TSKindId.UnsafeKeyword] as const
+							]
+						)
+				)
+				.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildFunctionModifiers>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (typeof head !== 'object' || head === null || isNodeData(head) || !('modifier' in head)) return input;
+		const v = (head as Record<string, unknown>)['modifier'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildFunctionModifiers(
+		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems])
+			.map(
 				(_e: _LooseFieldInput) =>
 					_keywordOf(_e, [
 						['async', TSKindId.AsyncKeyword] as const,
@@ -4041,37 +4074,8 @@ export function coerceToFunctionModifiers(
 							['unsafe', TSKindId.UnsafeKeyword] as const
 						]
 					)
-			) as unknown as Parameters<typeof F.buildFunctionModifiers>)
-		);
-	}
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNodeData(head) || !('modifier' in head)) return input;
-		const v = (head as Record<string, unknown>)['modifier'];
-		return Array.isArray(v) ? v : [v];
-	})();
-	return F.buildFunctionModifiers(
-		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems]).map(
-			(_e: _LooseFieldInput) =>
-				_keywordOf(_e, [
-					['async', TSKindId.AsyncKeyword] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['const', TSKindId.ConstKeyword] as const,
-					['unsafe', TSKindId.UnsafeKeyword] as const
-				]) ??
-				coerceMixedEnumStorage(
-					_resolveKindEnum(_e, () =>
-						_resolveOne<'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier>(_e, _K18, _K19)
-					),
-					[
-						['async', TSKindId.AsyncKeyword] as const,
-						['default', TSKindId.DefaultKeyword] as const,
-						['const', TSKindId.ConstKeyword] as const,
-						['unsafe', TSKindId.UnsafeKeyword] as const
-					]
-				)
-		) as unknown as Parameters<typeof F.buildFunctionModifiers>)
+			)
+			.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildFunctionModifiers>)
 	);
 }
 
