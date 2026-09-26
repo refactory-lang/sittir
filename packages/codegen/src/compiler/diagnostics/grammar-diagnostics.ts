@@ -89,7 +89,12 @@ export function fromSlotGrouping(grammar: string, diagnostic: SlotGroupingDiagno
 }
 
 function isBlockingAssembleWarningCode(code: string): boolean {
-	return code === 'storagename-collision' || code === 'nonterminal-separator-unstamped';
+	return (
+		code === 'storagename-collision' ||
+		code === 'nonterminal-separator-unstamped' ||
+		code === 'unclassifiable-shape' ||
+		code === 'union-slot-mixed-row'
+	);
 }
 
 export function isExpectedDiagnostic(
@@ -155,7 +160,7 @@ export function collectGrammarDiagnostics(input: {
 	const slotGroupingMapped = (input.slotGroupingDiagnostics ?? []).map((diagnostic) => {
 		const mapped = fromSlotGrouping(input.grammar, diagnostic);
 		if (
-			diagnostic.code === 'content-collision' &&
+			(diagnostic.code === 'content-collision' || diagnostic.code === 'multi-slot-nested-seq') &&
 			isExpectedDiagnostic(input.expectDiagnostics, diagnostic.code, diagnostic.ownerKind)
 		) {
 			return { ...mapped, canProceed: true };

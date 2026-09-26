@@ -426,7 +426,8 @@ function recordUnclassifiableShape(
 		ownerKind: kindForName,
 		message:
 			`[collect-slots] kind '${kindForName ?? '(unknown)'}': member ${member.id ?? '(no id)'} is not a leaf or a ` +
-			`choice of leaves (${bucket}: ${describeArmShape(member)}) — resolved by structural recursion`,
+			`choice of leaves (${bucket}: ${describeArmShape(member)}). Resolve with rule(name, body) in patches: ` +
+			`naming the structured arm as its own rule`,
 		details: { bucket, shape: describeArmShape(member), ruleId: member.id }
 	});
 }
@@ -476,8 +477,8 @@ function resolveMember(
 								(partition.degenerateNamedArms.length > 0
 									? ` and degenerate arm(s) [${partition.degenerateNamedArms.map(describeArmShape).join(', ')}]`
 									: '') +
-								`. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind ` +
-								`(PR 3 mint) and join one kind-dispatched union slot.`
+								`. Resolve with variant(name) in patches: splitting the row, until the structured-arm ` +
+								`enrich mint gives each structured arm a kind of its own in the union slot.`
 						});
 					} else if (unionRoutingGateB(partition) && ruleId === undefined) {
 						diagnostics?.assembleWarnings.record({

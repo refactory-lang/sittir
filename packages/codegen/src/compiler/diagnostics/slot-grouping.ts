@@ -53,7 +53,7 @@ export function diagnoseRepeatedSeqGrouping(
 			code: 'multi-slot-nested-seq',
 			severity: 'warning',
 			message,
-			canProceed: true,
+			canProceed: false,
 			ownerKind,
 			slotCount,
 			proposal:

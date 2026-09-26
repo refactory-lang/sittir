@@ -537,3 +537,45 @@ describe('grammar diagnostics preflight', () => {
 		});
 	});
 });
+
+describe('unsupported shapes block unless floor-listed for their own code', () => {
+	const warning = (code: string) => ({ code, ownerKind: 'k', message: 'm', details: {} });
+
+	for (const code of ['unclassifiable-shape', 'union-slot-mixed-row']) {
+		it(`${code} blocks, is accepted when the owner is floor-listed for it, and still blocks when listed for another code`, () => {
+			const run = (expectDiagnostics?: Record<string, readonly string[]>) =>
+				collectGrammarDiagnostics({ grammar: 'synth', parseKindCollisions: [], assembleWarnings: [warning(code)], expectDiagnostics })
+					.diagnostics[0];
+			expect(run()).toEqual(expect.objectContaining({ code, canProceed: false }));
+			expect(run({ [code]: ['k'] })).toEqual(expect.objectContaining({ code, canProceed: true }));
+			expect(run({ 'union-slot-routed': ['k'] })).toEqual(expect.objectContaining({ code, canProceed: false }));
+		});
+	}
+
+	it('union-slot-routed stays a census warning: it reports the supported union-slot routing', () => {
+		const [d] = collectGrammarDiagnostics({
+			grammar: 'synth',
+			parseKindCollisions: [],
+			assembleWarnings: [warning('union-slot-routed')]
+		}).diagnostics;
+		expect(d).toEqual(expect.objectContaining({ code: 'union-slot-routed', canProceed: true }));
+	});
+
+	it('multi-slot-nested-seq blocks, and is accepted only when floor-listed for its own code', () => {
+		const record = {
+			code: 'multi-slot-nested-seq' as const,
+			severity: 'warning' as const,
+			message: 'm',
+			canProceed: false,
+			ownerKind: 'k',
+			slotCount: 2,
+			proposal: 'p'
+		};
+		const run = (expectDiagnostics?: Record<string, readonly string[]>) =>
+			collectGrammarDiagnostics({ grammar: 'synth', parseKindCollisions: [], slotGroupingDiagnostics: [record], expectDiagnostics })
+				.diagnostics[0];
+		expect(run()).toEqual(expect.objectContaining({ canProceed: false }));
+		expect(run({ 'multi-slot-nested-seq': ['k'] })).toEqual(expect.objectContaining({ canProceed: true }));
+		expect(run({ 'content-collision': ['k'] })).toEqual(expect.objectContaining({ canProceed: false }));
+	});
+});

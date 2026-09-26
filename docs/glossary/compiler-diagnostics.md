@@ -317,11 +317,11 @@ kind from recursing forever.
 ### `fromSlotGrouping` — `canProceed` forwarding (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts`)
 
 The producer's `canProceed` is forwarded verbatim rather than hardcoded to
-`true`. `content-collision` always pushes `false` when it fires; the
-accepted-floor exception is applied by the caller,
-`collectGrammarDiagnostics`, where the grammar name is known. The other three
-`SlotGroupingShape` codes still always push `true`. Hardcoding `true` here
-would silently swallow the flip.
+`true`. Both `SlotGroupingShape` codes, `content-collision` and
+`multi-slot-nested-seq`, push `false` when they fire; the accepted-floor
+exception is applied by the caller, `collectGrammarDiagnostics`, where the
+grammar's `expectDiagnostics` is known. Hardcoding `true` here would silently
+swallow both.
 
 ### `collectGrammarDiagnostics` — blocking overrides (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts`)
 
@@ -334,21 +334,28 @@ reaching this collector is an assemble-time collision, always genuinely
 blocking. The override forces `canProceed: false` on every instance
 unconditionally.
 
-`isBlockingAssembleWarningCode` names the only two assemble-warning codes that
-block: `storagename-collision`, and `nonterminal-separator-unstamped` — a
-zero-instance guard, where any firing means a nonterminal separator reached the
-slot-value stamp path and would silently render as a hardcoded space (see
-`collect-slots.ts`). `typename-collision`, the only other code sharing
-`fromAssembleWarning`, stays exactly as `fromAssembleWarning` maps it because
-it still has live, accepted, non-blocking instances. The check must stay in the
-caller — flipping `fromAssembleWarning` itself would take `typename-collision`
-with it as a side effect.
+`isBlockingAssembleWarningCode` names the assemble-warning codes that block
+unless the owner is floor-listed for that code in `expectDiagnostics`:
 
-`content-collision`'s producer (`slot-grouping.ts`) always emits
-`canProceed: false` when it fires, so the `expectDiagnostics` exception is
-applied here instead, mirroring the `storagename-collision` override. The other
-three `SlotGroupingShape` codes always push `canProceed: true` at their own
-construction sites, so this override never touches them.
+- `storagename-collision`;
+- `nonterminal-separator-unstamped`, a zero-instance guard: any firing means a
+  nonterminal separator reached the slot-value stamp path and would silently
+  render as a hardcoded space (see `collect-slots.ts`);
+- `unclassifiable-shape` and `union-slot-mixed-row`, shapes collect-slots has
+  no model for. It would otherwise fall back to structural recursion or keep
+  the arms distributed, which is a guess about the node's shape. Each message
+  names the patch form that resolves it.
+
+`union-slot-routed` is deliberately not in the set: it reports the union-slot
+design's supported routing (unnamed nonterminal arms, with any label-routed
+degenerate arms, in one kind-dispatched `content` slot), not a fallback.
+`typename-collision` stays as `fromAssembleWarning` maps it because it has
+live, accepted, non-blocking instances. The check must stay in the caller:
+flipping `fromAssembleWarning` itself would take every code with it.
+
+`content-collision` and `multi-slot-nested-seq` (`slot-grouping.ts`) are
+emitted with `canProceed: false`, so the `expectDiagnostics` exception is
+applied here, per code, mirroring the assemble-warning override.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromParseKindCollision`
 

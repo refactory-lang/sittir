@@ -1009,17 +1009,24 @@ upstream rule (or an enrich mint on it) whose shape no current diagnostic
 provokes. Each stays because deleting it makes the output worse or breaks
 generation; the floor only shrinks.
 
-- `tuple_type` (`'alias-shape'`): without it the visible `tuple_type_elements`
+- `tuple_type` (declared `'alias-shape'`, unverified: no detector): without it the visible `tuple_type_elements`
   kind becomes an enrich-minted `types`. missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
-- `tuple_expression` (`'alias-shape'`): kept: `options:` is coupled to the
+- `tuple_expression` (declared `'alias-shape'`, unverified: no detector): kept: `options:` is coupled to the
   re-authored shape (`tuple_expression/attributes:/separator` names no site
   without it). missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
-- `_non_special_token` (`'alias-shape'`): kept: `options:` is coupled to the
+- `_non_special_token` (declared `'alias-shape'`, unverified: no detector): kept: `options:` is coupled to the
   re-authored shape (`token_tree_punctuation/","/after` names no site without
   it). missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
-- `impl_item` (`'ambiguity'`): kept: a patch is coupled to the re-authored
+- `impl_item` (declared `'ambiguity'`, unverified: no detector): kept: a patch is coupled to the re-authored
   shape (`impl_item` path `3/0/0/1` does not exist upstream). missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
-- `_primitive_type` (`'ambiguity'`): without it tree-sitter generate reports an
+- `_primitive_type` (declared `'ambiguity'`, unverified: no detector): without it tree-sitter generate reports an
   unresolved `_pattern` / `_primitive_type` conflict. missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
-- `reference_expression` (`'ambiguity'`): without it tree-sitter generate
+- `reference_expression` (declared `'ambiguity'`, unverified: no detector): without it tree-sitter generate
   fails. missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
+
+Shape floors (the compiler has no model for these shapes yet; each blocks
+without its entry):
+
+- `unclassifiable-shape` on `_let_chain`: a choice with structured arms beside
+  leaves. Resolve with `rule(name, body)` in `patches:` naming the structured
+  arm as its own rule.

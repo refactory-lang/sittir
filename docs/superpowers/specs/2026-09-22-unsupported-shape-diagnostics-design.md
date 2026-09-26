@@ -21,8 +21,8 @@ Two things drift silently today.
 
 **Shapes.** `collect-slots` meets shapes it has no model for and falls back:
 `unclassifiable-shape` ("not a leaf or a choice of leaves — resolved by
-structural recursion", 3 sites), `union-slot-routed` (4), `union-slot-mixed-row`
-(1), `multi-slot-nested-seq` (1). All four are warnings with `canProceed: true`.
+structural recursion"), `union-slot-mixed-row` ("keeping status quo") and
+`multi-slot-nested-seq`. All three are warnings with `canProceed: true`.
 The fallback is a guess about the node's shape that the validator may or may
 not catch downstream. Only three codes block (`parsekind-noninjective`,
 `storagename-collision`, `nonterminal-separator-unstamped`).
@@ -151,15 +151,19 @@ that an audit's findings are the work list.
 
 ## 3. Shape diagnostics block
 
-The four collect-slots codes flip to `canProceed: false` and drop their
-fallback:
+The three collect-slots codes that report a fallback flip to
+`canProceed: false`:
 
 | code | shape | resolving form |
 | --- | --- | --- |
 | `unclassifiable-shape` | a slot member that is neither a leaf nor a choice of leaves | `rule(...)` naming the structured arm |
-| `union-slot-routed` | an unnamed nonterminal arm routed into a union slot beside labelled arms | `field(...)` on the arm |
-| `union-slot-mixed-row` | a singular mixed row: structured named arm beside leaves | `variant(...)` splitting the row |
-| `multi-slot-nested-seq` | a multi-slot seq in a repeat or optional position | `rule(...)` hoisting the seq |
+| `union-slot-mixed-row` | a mixed row: structured named arm beside union arms | `variant(...)` splitting the row, until the structured-arm enrich mint gives each structured arm its own kind in the union slot |
+| `multi-slot-nested-seq` | a multi-slot seq in a repeat position | a visible `groups:` entry making each repetition one node |
+
+`union-slot-routed` stays a warning: it reports the union-slot design's
+supported routing (unnamed nonterminal arms, with any label-routed arms, in
+one kind-dispatched `content` slot), and blocking it would demand patches
+that undo that design.
 
 `alias-distributed` (alias over a seq or repeat) and `display-union-mixed`
 (a display over terminal and nonterminal storage) join the table with
@@ -182,7 +186,7 @@ floor.
 - `patch-without-cause` is silent on all five grammars after the census,
   and fires in a fixture where `rule(...)` is applied at a path with no
   diagnostic.
-- The four shape codes and the two alias codes report `canProceed: false`;
+- The three shape codes and the two alias codes report `canProceed: false`;
   `expectDiagnostics` lists their current instances per grammar; the
   structural-recursion fallback in `collect-slots` runs only for
   floor-listed instances, and an unlisted instance blocks.

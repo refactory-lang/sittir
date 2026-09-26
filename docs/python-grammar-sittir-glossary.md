@@ -699,14 +699,14 @@ upstream rule whose shape no current diagnostic provokes. Each stays because
 deleting it makes the output worse or breaks generation; the floor only
 shrinks.
 
-- `primary_expression` (`'ambiguity'`): without it `from` and
+- `primary_expression` (declared `'ambiguity'`, unverified: no detector): without it `from` and
   read-render-parse each lose a case. missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
-- `string_content` (`'lexical-interior'`): without it read-render-parse,
+- `string_content` (declared `'lexical-interior'`, unverified: no detector): without it read-render-parse,
   factory-render-parse and ir-render-parse all regress. missing detector: 'lexical-interior' ← token-interior opacity.
-- `format_specifier` (`'lexical-interior'`): without it the `elements` field
+- `format_specifier` (declared `'lexical-interior'`, unverified: no detector): without it the `elements` field
   becomes `contents` and the text token loses its immediacy. missing detector: 'lexical-interior' ← token-interior opacity.
-- `_simple_pattern` (`'alias-shape'`): without it `from` loses a case.
+- `_simple_pattern` (declared `'alias-shape'`, unverified: no detector): without it `from` loses a case.
   missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
-- `print_statement` (`'alias-shape'`): kept: an emitter is coupled to the
+- `print_statement` (declared `'alias-shape'`, unverified: no detector): kept: an emitter is coupled to the
   re-authored shape (without it `emitFieldCarryingFactory` throws on the
   optional-delimiter `argument` field of `print_statement_arm1`). missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.

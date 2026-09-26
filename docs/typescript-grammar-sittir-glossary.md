@@ -979,14 +979,25 @@ upstream rule whose shape no current diagnostic provokes. Each stays because
 deleting it (so the upstream body stands) makes the output worse; the floor
 only shrinks, and an entry leaves when its detector lands.
 
-- `object_type` (declared `'ambiguity'`): without it, generate blocks on
+- `object_type` (declared `'ambiguity'`, unverified: no detector): without it, generate blocks on
   `storagename-collision` / `content-collision` on `object_type`. missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
 - `template_literal_type`, `template_substitution`, `template_type`
-  (`'lexical-interior'`): without them read-render-parse loses an AST match.
+  (declared `'lexical-interior'`, unverified: no detector): without them read-render-parse loses an AST match.
   missing detector: 'lexical-interior' ← token-interior opacity.
-- `template_string` (`'lexical-interior'`): without it the closing backtick
+- `template_string` (declared `'lexical-interior'`, unverified: no detector): without it the closing backtick
   loses its immediacy, which changes the parser and renumbers token kinds.
   missing detector: 'lexical-interior' ← token-interior opacity.
+
+Shape floors (the compiler has no model for these shapes yet; each blocks
+without its entry):
+
+- `unclassifiable-shape` on `binary_expression` and `public_field_definition`:
+  a choice with structured arms beside leaves. Resolve with `rule(name, body)`
+  in `patches:` naming the structured arm as its own rule.
+- `union-slot-mixed-row` on `binary_expression`: a singular row with a
+  structured named arm beside union arms. Resolve with `variant(name)`
+  splitting the row, until the structured-arm enrich mint gives each
+  structured arm its own kind in the union slot.
 
 ### `jsx_namespace_name` (`packages/typescript/grammar.sittir.ts:1194`)
 

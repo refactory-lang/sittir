@@ -23,7 +23,7 @@ describe('diagnoseRepeatedSeqGrouping — multi-slot-nested-seq on link-phase ru
 		);
 		const records = diagnose({ term });
 		expect(records).toHaveLength(1);
-		expect(records[0]).toMatchObject({ code: 'multi-slot-nested-seq', ownerKind: 'term', slotCount: 2 });
+		expect(records[0]).toMatchObject({ code: 'multi-slot-nested-seq', ownerKind: 'term', slotCount: 2, canProceed: false });
 	});
 
 	it('flags a repeated multi-slot seq nested inside a choice arm', () => {

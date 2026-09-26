@@ -37,3 +37,12 @@ list (`repeat(expr)`, then one more `expr` and a trailing `.` anchor). The
 variants name the two forms `children` and `anchored_last`, and
 `field('last')` names the anchored final child so it doesn't merge with the
 repeated children before it.
+
+### `expectDiagnostics` (`packages/scm/grammar.sittir.ts`)
+
+Shape floor (the compiler has no model for this shape yet; it blocks without
+its entry):
+
+- `unclassifiable-shape` on `predicate`: a nested seq that is neither a list
+  nor a leaf. Resolve with `rule(name, body)` in `patches:` naming the nested
+  seq as its own rule.
