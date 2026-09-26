@@ -5,7 +5,6 @@ export default defineConfig({
 	resolve: { alias: sourceAliases() },
 	test: {
 		include: ['tests/**/*.test.ts'],
-		passWithNoTests: true,
 		env: { SITTIR_BACKEND: 'native' }
 	}
 });

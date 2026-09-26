@@ -182,7 +182,7 @@ Fetch a grammar's upstream test corpus at the version its package depends on
 
 **Options**
 
-- `-g, --grammar <name...>` — Grammar(s) to fetch
+- `-g, --grammar <name...>` — Grammar(s) to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 - `--all` — Fetch every grammar on disk
 - `--update` — Refetch even when the installed upstream version differs from the recorded one
 
@@ -646,7 +646,7 @@ List texts a higher-ranked candidate text kind takes from a lower-ranked one in 
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 
 **Example**
 

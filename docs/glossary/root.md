@@ -733,6 +733,10 @@ Every grammar on disk. The set a user-supplied grammar name is checked against (
 
 The grammars whose `package.json` sets `"sittir": { "stable": true }` — the default set wherever a command runs "every grammar": `regen:all`, `validate counts`, censuses, benches, baseline ratchets and the per-grammar test sweeps. A newly bootstrapped grammar is generatable and validatable by name but stays out of the default gates until it is marked stable.
 
+### `packages/codegen/src/grammars.ts::isStableGrammar`
+
+Whether a grammar package on disk is marked stable (`stableGrammars`). A name with no package is not stable.
+
 ### `packages/codegen/src/grammars.ts::upstreamPackage`
 
 The dependency name a grammar package declares for its upstream tree-sitter grammar: `tree-sitter-<name>`. A grammar whose upstream publishes under another name (or not on npm) declares it under this name with an `npm:` alias or a git spec.

@@ -87,6 +87,19 @@ async function download(repo: GithubRepo, refs: readonly string[]): Promise<{ re
 	throw new Error(`corpus: ${repo.owner}/${repo.repo} has none of the refs ${refs.join(', ')}`);
 }
 
+export function flattenCorpusFiles(entries: Iterable<readonly [string, string]>): Map<string, string> {
+	const files = new Map<string, string>();
+	const sources = new Map<string, string>();
+	for (const [rel, text] of entries) {
+		const name = rel.split(/[\\/]/).join('-');
+		const prior = sources.get(name);
+		if (prior !== undefined) throw new Error(`corpus: '${prior}' and '${rel}' both flatten to '${name}'`);
+		sources.set(name, rel);
+		files.set(name, text);
+	}
+	return files;
+}
+
 function corpusFilesOf(tarball: Buffer): Map<string, string> {
 	const scratch = mkdtempSync(join(tmpdir(), 'sittir-corpus-'));
 	try {
@@ -97,12 +110,10 @@ function corpusFilesOf(tarball: Buffer): Map<string, string> {
 		if (root === undefined) throw new Error('corpus: the archive is empty');
 		const corpusDir = join(scratch, root.name, 'test', 'corpus');
 		if (!existsSync(corpusDir)) return new Map();
-		const files = new Map<string, string>();
-		for (const rel of readdirSync(corpusDir, { recursive: true, encoding: 'utf8' }).sort()) {
-			if (!rel.endsWith('.txt')) continue;
-			files.set(rel.split(/[\\/]/).join('-'), readFileSync(join(corpusDir, rel), 'utf8'));
-		}
-		return files;
+		const rels = readdirSync(corpusDir, { recursive: true, encoding: 'utf8' })
+			.filter((rel) => rel.endsWith('.txt'))
+			.sort();
+		return flattenCorpusFiles(rels.map((rel) => [rel, readFileSync(join(corpusDir, rel), 'utf8')] as const));
 	} finally {
 		rmSync(scratch, { recursive: true, force: true });
 	}

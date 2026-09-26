@@ -1,8 +1,9 @@
 export interface EmitConfigConfig {
 	grammar: string;
+	stable: boolean;
 }
 
-export function emitConfig(_config: EmitConfigConfig): string {
+export function emitConfig(config: EmitConfigConfig): string {
 	return [
 		`import { defineConfig } from 'vitest/config';`,
 		`import { sourceAliases } from '../codegen/src/grammars.ts';`,
@@ -11,7 +12,7 @@ export function emitConfig(_config: EmitConfigConfig): string {
 		'  resolve: { alias: sourceAliases() },',
 		'  test: {',
 		"    include: ['tests/**/*.test.ts'],",
-		'    passWithNoTests: true,',
+		...(config.stable ? [] : ['    passWithNoTests: true,']),
 		"    env: { SITTIR_BACKEND: 'native' },",
 		'  },',
 		'});',

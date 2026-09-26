@@ -9354,7 +9354,7 @@ would otherwise fall through to the in-path arm and render `pub(in pub)`.
 
 ### `packages/codegen/src/emitters/config.ts::emitConfig`
 
-Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sourceAliases()`, which maps every workspace package's `exports` entry to its `src/` file — package-scoped test runs resolve to source, never to a stale `dist/` build. `passWithNoTests` lets a freshly bootstrapped grammar with no tests yet run clean.
+Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sourceAliases()`, which maps every workspace package's `exports` entry to its `src/` file — package-scoped test runs resolve to source, never to a stale `dist/` build. `passWithNoTests` is emitted only for a grammar that is not stable (`isStableGrammar`), so a freshly bootstrapped grammar with no tests yet runs clean while a stable package fails if its tests go missing.
 
 ### `packages/codegen/src/emitters/is.ts::module`
 

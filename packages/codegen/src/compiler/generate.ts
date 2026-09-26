@@ -5,6 +5,7 @@ import { compileGrammar, assertCompilation, type Compilation } from './compile.t
 import { emitGrammar } from '../emitters/grammar.ts';
 import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
 import { emitConfig } from '../emitters/config.ts';
+import { isStableGrammar } from '../grammars.ts';
 import { emitIndex } from '../emitters/index-file.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine, emitRenderEngine } from '../emitters/engine.ts';
@@ -162,7 +163,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			options: emitted.options,
 			index: emitIndex({ grammar: cfg.grammar, nodeMap }),
 			tests: emitted.tests,
-			config: emitConfig({ grammar: cfg.grammar }),
+			config: emitConfig({ grammar: cfg.grammar, stable: isStableGrammar(cfg.grammar) }),
 			nodeModel,
 			is: emitted.is,
 			kindIds: generatedIdTables ? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }) : '',

@@ -1,11 +1,11 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
+import { withGrammars } from '../../framework/options.ts';
 
 export const fetchCorpus: CommandModule = {
 	name: 'fetch-corpus',
 	describe: "Fetch a grammar's upstream test corpus at the version its package depends on",
 	register: (program) => {
-		defineCommand(program, fetchCorpus)
-			.option('-g, --grammar <name...>', 'Grammar(s) to fetch')
+		withGrammars(defineCommand(program, fetchCorpus))
 			.option('--all', 'Fetch every grammar on disk')
 			.option('--update', 'Refetch even when the installed upstream version differs from the recorded one')
 			.action(async (opts: { grammar?: string[]; all?: boolean; update?: boolean }) => {

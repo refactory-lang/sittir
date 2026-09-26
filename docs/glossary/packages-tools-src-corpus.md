@@ -35,6 +35,10 @@ global header (`comment=<sha>`), which `git archive` writes as the first
 entry. `SOURCE.json` records it so the pin names a commit even when the
 fetch went through a tag.
 
+### `packages/tools/src/corpus/fetch.ts::flattenCorpusFiles`
+
+Names each corpus file by its path under `test/corpus` with the separators joined by `-`. Two source paths that flatten to the same name (`a/b.txt` and `a-b.txt`) throw, naming both, rather than one silently replacing the other.
+
 ### `packages/tools/src/corpus/fetch.ts::fetchUpstreamCorpus`
 
 Downloads the upstream repo archive at the pinned ref and writes its
