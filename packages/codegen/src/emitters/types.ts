@@ -75,7 +75,9 @@ import {
 	scalarLeafKinds,
 	lexedContentSlot,
 	canonicalSeparatedListField,
-	enumMemberDiscriminant
+	enumMemberDiscriminant,
+	pruneUnusedImports,
+	importLocalName
 } from './shared.ts';
 import {
 	constructorTargetKind,
@@ -370,39 +372,31 @@ export function emitTypes(config: EmitTypesConfig): string {
 	if (/\bT\.[A-Za-z_]/.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as T from './types.js';`);
 	}
-	const usesLooseValue = /\bLooseValue\b/.test(body);
-	const usesLooseConfigOf = /\bLooseConfigOf\b/.test(body);
-	const usesConfigOf = /\bConfigOf\b/.test(body);
-	const usesWidenNumeric = /\bWidenNumeric\b/.test(body);
-	const usesBitflag = /\bBitflag\b/.test(body);
-	const usesKindEnum = /\bKindEnum\b/.test(body);
-	const usesKeywordNs = /\bKeywordNs\b/.test(body);
-	const usesLeafNs = /\bLeafNs\b/.test(body);
-	const usesOmitEach = /\bOmitEach\b/.test(body);
-	const importedNames = [
-		'NodeData as BaseNodeData',
-		'NodeConfig as BaseNodeConfig',
-		'TreeNode as BaseTreeNode',
-		...(usesConfigOf ? ['ConfigOf'] : []),
-		...(usesLooseConfigOf ? ['LooseConfigOf'] : []),
-		...(usesWidenNumeric ? ['WidenNumeric'] : []),
-		...(usesLooseValue ? ['LooseValue'] : []),
-		'NodeKind',
-		'NodeNs',
-		...(usesKeywordNs ? ['KeywordNs'] : []),
-		...(usesLeafNs ? ['LeafNs'] : []),
-		'AnyTreeNodeOf as AnyTreeNode',
-		'Terminal',
-		'NonEmptyArray',
-		'BooleanKeyword as BaseBooleanKeyword',
-		...(usesBitflag ? ['Bitflag'] : []),
-		...(usesKindEnum ? ['KindEnum'] : []),
-		...(usesOmitEach ? ['OmitEach'] : [])
-	];
-	lines[sittirImportIndex] = `import type { ${importedNames.join(', ')} } from '@sittir/types';`;
+	lines[sittirImportIndex] = `import type { ${VOCABULARY_IMPORTS.join(', ')} } from '@sittir/types';`;
 
-	return lines.join('\n');
+	return pruneUnusedImports(lines, VOCABULARY_IMPORTS.map(importLocalName)).join('\n');
 }
+
+const VOCABULARY_IMPORTS = [
+	'NodeData as BaseNodeData',
+	'NodeConfig as BaseNodeConfig',
+	'TreeNode as BaseTreeNode',
+	'ConfigOf',
+	'LooseConfigOf',
+	'WidenNumeric',
+	'LooseValue',
+	'NodeKind',
+	'NodeNs',
+	'KeywordNs',
+	'LeafNs',
+	'AnyTreeNodeOf as AnyTreeNode',
+	'Terminal',
+	'NonEmptyArray',
+	'BooleanKeyword as BaseBooleanKeyword',
+	'Bitflag',
+	'KindEnum',
+	'OmitEach'
+];
 
 function buildGrammarKeySet(grammar: string): Set<string> {
 	const grammarKeys = new Set<string>();

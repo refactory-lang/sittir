@@ -2111,7 +2111,7 @@
       "irKey": "patternCharacter",
       "hidden": false,
       "pattern": "[^\\^\\$\\\\\\.\\*\\+\\?\\(\\)\\[\\]\\|\\r?\\n]",
-      "leafPattern": "/^(?:(?:[^\\^$\\\\.*+?()[\\]|\\r?\\n]))$/u",
+      "leafPattern": "/^(?:(?:[^^$\\\\.*+?()[\\]|\\r?\\n]))$/u",
       "factoryShape": "text"
     },
     {

@@ -36,6 +36,12 @@ pnpm exec tsx packages/cli/src/cli.ts tool bootstrap-grammar --name <name> [--up
 - It writes `package.json`, `tsconfig*.json`, `README.md` and a minimal `grammar.sittir.ts`
   (`grammar(enrichedBase, wire({...}, enrichedBase))` with the three whitespace externals — the same composition as every grammar), inserts a root `tsconfig.json`
   reference, formats with oxfmt and runs `pnpm install`.
+- It then fetches the upstream test corpus into `packages/codegen/fixtures/<name>/upstream/`
+  (verbatim `test/corpus/*.txt` plus `SOURCE.json`), pinned to the installed version: the tag for
+  an npm dependency, the `pnpm-lock.yaml` commit for a git one. The validators read that plus
+  `fixtures/<name>/local.txt` (sittir-authored entries); they throw on an empty corpus. After
+  bumping the upstream, refetch with `tool fetch-corpus --grammar <name> --update` (without
+  `--update` a version change is refused). Never edit files under `upstream/`.
 - It does **not** write the native crate. `gen --all` scaffolds `rust/crates/sittir-<name>` the
   first time it emits the grammar's render module (template: `emitters/native-crate.ts`, pinned to
   reproduce `sittir-python` byte-for-byte). A grammar whose codegen still fails therefore never

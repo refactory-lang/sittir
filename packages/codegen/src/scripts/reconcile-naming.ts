@@ -1,5 +1,4 @@
 import { parseArgs } from 'node:util';
-import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { existsSync } from 'node:fs';
 

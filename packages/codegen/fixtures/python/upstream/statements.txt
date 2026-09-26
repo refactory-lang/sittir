@@ -202,15 +202,17 @@ b + c
 --------------------------------------------------------------------------------
 
 (module
-  (identifier)
-  (binary_operator
-    (identifier)
+  (expression_statement
     (identifier))
-  (tuple_expression
+  (expression_statement
+    (binary_operator
+      (identifier)
+      (identifier)))
+  (expression_statement
     (integer)
     (integer)
     (integer))
-  (tuple_expression
+  (expression_statement
     (integer)
     (integer)
     (integer)))
@@ -288,8 +290,10 @@ if a:
   (if_statement
     condition: (identifier)
     consequence: (block
-      (identifier)
-      (identifier))))
+      (expression_statement
+        (identifier))
+      (expression_statement
+        (identifier)))))
 
 ================================================================================
 If else statements
@@ -317,30 +321,38 @@ if a: b; c
   (if_statement
     condition: (identifier)
     consequence: (block
-      (identifier))
+      (expression_statement
+        (identifier)))
     alternative: (elif_clause
       condition: (identifier)
       consequence: (block
+        (expression_statement
+          (identifier))))
+    alternative: (else_clause
+      body: (block
+        (expression_statement
+          (identifier)))))
+  (if_statement
+    condition: (identifier)
+    consequence: (block
+      (expression_statement
         (identifier)))
     alternative: (else_clause
       body: (block
+        (expression_statement
+          (identifier)))))
+  (if_statement
+    condition: (identifier)
+    consequence: (block
+      (expression_statement
         (identifier))))
   (if_statement
     condition: (identifier)
     consequence: (block
-      (identifier))
-    alternative: (else_clause
-      body: (block
-        (identifier))))
-  (if_statement
-    condition: (identifier)
-    consequence: (block
-      (identifier)))
-  (if_statement
-    condition: (identifier)
-    consequence: (block
-      (identifier)
-      (identifier))))
+      (expression_statement
+        (identifier))
+      (expression_statement
+        (identifier)))))
 
 ================================================================================
 Nested if statements
@@ -363,14 +375,17 @@ g
       (if_statement
         condition: (identifier)
         consequence: (block
-          (identifier))
+          (expression_statement
+            (identifier)))
         alternative: (else_clause
           body: (block
             (if_statement
               condition: (identifier)
               consequence: (block
-                (identifier))))))))
-  (identifier))
+                (expression_statement
+                  (identifier)))))))))
+  (expression_statement
+    (identifier)))
 
 ================================================================================
 While statements
@@ -391,15 +406,19 @@ else:
   (while_statement
     condition: (identifier)
     body: (block
-      (identifier)))
+      (expression_statement
+        (identifier))))
   (while_statement
     condition: (identifier)
     body: (block
-      (identifier))
+      (expression_statement
+        (identifier)))
     alternative: (else_clause
       body: (block
-        (identifier)
-        (identifier)))))
+        (expression_statement
+          (identifier))
+        (expression_statement
+          (identifier))))))
 
 ================================================================================
 For statements
@@ -449,7 +468,8 @@ for x, in [(1,), (2,), (3,)]:
       (tuple
         (integer)))
     body: (block
-      (identifier))))
+      (expression_statement
+        (identifier)))))
 
 ================================================================================
 Try statements
@@ -492,60 +512,75 @@ finally:
 (module
   (try_statement
     body: (block
-      (identifier))
+      (expression_statement
+        (identifier)))
     (except_clause
       value: (identifier)
       (block
-        (identifier)))
+        (expression_statement
+          (identifier))))
     (except_clause
       value: (as_pattern
         (identifier)
         alias: (as_pattern_target
           (identifier)))
       (block
-        (identifier)))
+        (expression_statement
+          (identifier))))
     (except_clause
       value: (identifier)
       value: (identifier)
       (block
-        (identifier)))
+        (expression_statement
+          (identifier))))
     (except_clause
       (block
-        (identifier))))
+        (expression_statement
+          (identifier)))))
   (try_statement
     body: (block
-      (identifier))
+      (expression_statement
+        (identifier)))
     (except_clause
       value: (identifier)
       (block
-        (identifier)
-        (identifier)))
+        (expression_statement
+          (identifier))
+        (expression_statement
+          (identifier))))
     (else_clause
       body: (block
-        (identifier)))
+        (expression_statement
+          (identifier))))
     (finally_clause
       (block
-        (identifier))))
+        (expression_statement
+          (identifier)))))
   (try_statement
     body: (block
-      (identifier))
+      (expression_statement
+        (identifier)))
     (except_clause
       value: (identifier)
       (block
-        (identifier)))
+        (expression_statement
+          (identifier))))
     (except_clause
       value: (as_pattern
         (identifier)
         alias: (as_pattern_target
           (identifier)))
       (block
-        (identifier)))
+        (expression_statement
+          (identifier))))
     (else_clause
       body: (block
-        (identifier)))
+        (expression_statement
+          (identifier))))
     (finally_clause
       (block
-        (identifier)))))
+        (expression_statement
+          (identifier))))))
 
 ================================================================================
 With statements
@@ -572,7 +607,8 @@ with e as f, g as h,:
           (as_pattern_target
             (identifier)))))
     (block
-      (identifier)))
+      (expression_statement
+        (identifier))))
   (with_statement
     (with_clause
       (with_item
@@ -598,7 +634,8 @@ with e as f, g as h,:
           (as_pattern_target
             (identifier)))))
     (block
-      (identifier)))
+      (expression_statement
+        (identifier))))
   (with_statement
     (with_clause
       (with_item
@@ -612,7 +649,8 @@ with e as f, g as h,:
           (as_pattern_target
             (identifier)))))
     (block
-      (identifier))))
+      (expression_statement
+        (identifier)))))
 
 ================================================================================
 Async Function definitions
@@ -652,20 +690,23 @@ async def d(a:str="default", b=c) -> None:
     name: (identifier)
     parameters: (parameters)
     body: (block
-      (identifier)))
+      (expression_statement
+        (identifier))))
   (function_definition
     name: (identifier)
     parameters: (parameters
       (identifier))
     body: (block
-      (identifier)))
+      (expression_statement
+        (identifier))))
   (function_definition
     name: (identifier)
     parameters: (parameters
       (identifier)
       (identifier))
     body: (block
-      (identifier)))
+      (expression_statement
+        (identifier))))
   (function_definition
     name: (identifier)
     parameters: (parameters
@@ -674,7 +715,8 @@ async def d(a:str="default", b=c) -> None:
         type: (type
           (identifier))))
     body: (block
-      (identifier)))
+      (expression_statement
+        (identifier))))
   (function_definition
     name: (identifier)
     parameters: (parameters
@@ -685,7 +727,8 @@ async def d(a:str="default", b=c) -> None:
             object: (identifier)
             attribute: (identifier)))))
     body: (block
-      (identifier)))
+      (expression_statement
+        (identifier))))
   (function_definition
     name: (identifier)
     parameters: (parameters
@@ -700,7 +743,8 @@ async def d(a:str="default", b=c) -> None:
     return_type: (type
       (identifier))
     body: (block
-      (identifier)))
+      (expression_statement
+        (identifier))))
   (function_definition
     name: (identifier)
     parameters: (parameters
@@ -713,7 +757,8 @@ async def d(a:str="default", b=c) -> None:
       (dictionary_splat_pattern
         (identifier)))
     body: (block
-      (identifier)))
+      (expression_statement
+        (identifier))))
   (function_definition
     name: (identifier)
     parameters: (parameters
@@ -841,19 +886,21 @@ def foo():
       (list_splat_pattern
         (identifier)))
     body: (block
-      (call
-        function: (identifier)
-        arguments: (argument_list
-          (parenthesized_expression
-            (list_splat
-              (identifier)))))
-      (call
-        function: (identifier)
-        arguments: (argument_list
-          (parenthesized_expression
+      (expression_statement
+        (call
+          function: (identifier)
+          arguments: (argument_list
             (parenthesized_expression
               (list_splat
-                (identifier))))))))
+                (identifier))))))
+      (expression_statement
+        (call
+          function: (identifier)
+          arguments: (argument_list
+            (parenthesized_expression
+              (parenthesized_expression
+                (list_splat
+                  (identifier)))))))))
   (function_definition
     name: (identifier)
     parameters: (parameters)
@@ -987,7 +1034,8 @@ class A(B, C):
         (identifier)
         (parameters)
         (block
-          (identifier))))))
+          (expression_statement
+            (identifier)))))))
 
 ================================================================================
 Decorated definitions
@@ -1037,7 +1085,8 @@ def spam():
             (identifier)
             (parameters)
             (block
-              (identifier))))
+              (expression_statement
+                (identifier)))))
         (decorated_definition
           (decorator
             (call
@@ -1047,7 +1096,8 @@ def spam():
             (identifier)
             (parameters)
             (block
-              (identifier)))))))
+              (expression_statement
+                (identifier))))))))
   (decorated_definition
     (decorator
       (attribute
@@ -1061,7 +1111,8 @@ def spam():
       (identifier)
       (parameters)
       (block
-        (ellipsis)))))
+        (expression_statement
+          (ellipsis))))))
 
 ================================================================================
 Raise statements
@@ -1135,9 +1186,11 @@ if a:
     (comment)
     (comment)
     (block
-      (identifier)
+      (expression_statement
+        (identifier))
       (comment)
-      (identifier))))
+      (expression_statement
+        (identifier)))))
 
 ================================================================================
 Comments after dedents
@@ -1155,9 +1208,11 @@ c
   (if_statement
     (identifier)
     (block
-      (identifier)))
+      (expression_statement
+        (identifier))))
   (comment)
-  (identifier))
+  (expression_statement
+    (identifier)))
 
 ================================================================================
 Comments at the ends of indented blocks
@@ -1186,13 +1241,15 @@ def a():
   (if_statement
     (identifier)
     (block
-      (identifier)
+      (expression_statement
+        (identifier))
       (comment)
       (comment)))
   (if_statement
     (identifier)
     (block
-      (identifier)
+      (expression_statement
+        (identifier))
       (comment)
       (comment)))
   (function_definition
@@ -1202,9 +1259,11 @@ def a():
       (if_statement
         (identifier)
         (block
-          (identifier)
+          (expression_statement
+            (identifier))
           (comment)))
-      (identifier)
+      (expression_statement
+        (identifier))
       (comment)))
   (comment))
 
@@ -1271,12 +1330,13 @@ exec func in {}
       (string_end))
     (identifier)
     (identifier))
-  (assignment
-    (identifier)
-    (string
-      (string_start)
-      (string_content)
-      (string_end)))
+  (expression_statement
+    (assignment
+      (identifier)
+      (string
+        (string_start)
+        (string_content)
+        (string_end))))
   (exec_statement
     (identifier)
     (dictionary)))
@@ -1308,22 +1368,26 @@ if a:
   (if_statement
     (identifier)
     (block
-      (call
-        (identifier)
-        (argument_list))
-      (call
-        (identifier)
-        (argument_list))
+      (expression_statement
+        (call
+          (identifier)
+          (argument_list)))
+      (expression_statement
+        (call
+          (identifier)
+          (argument_list)))
       (function_definition
         (identifier)
         (parameters)
         (block
-          (call
-            (identifier)
-            (argument_list))))
-      (call
-        (identifier)
-        (argument_list)))))
+          (expression_statement
+            (call
+              (identifier)
+              (argument_list)))))
+      (expression_statement
+        (call
+          (identifier)
+          (argument_list))))))
 
 ================================================================================
 Escaped newline
@@ -1335,22 +1399,23 @@ or len("aa")
 --------------------------------------------------------------------------------
 
 (module
-  (boolean_operator
-    (call
-      (identifier)
-      (argument_list
-        (string
-          (string_start)
-          (string_content)
-          (string_end))))
-    (line_continuation)
-    (call
-      (identifier)
-      (argument_list
-        (string
-          (string_start)
-          (string_content)
-          (string_end))))))
+  (expression_statement
+    (boolean_operator
+      (call
+        (identifier)
+        (argument_list
+          (string
+            (string_start)
+            (string_content)
+            (string_end))))
+      (line_continuation)
+      (call
+        (identifier)
+        (argument_list
+          (string
+            (string_start)
+            (string_content)
+            (string_end)))))))
 
 ================================================================================
 Statements with semicolons
@@ -1363,11 +1428,16 @@ foo; bar;
 --------------------------------------------------------------------------------
 
 (module
-  (identifier)
-  (identifier)
-  (identifier)
-  (identifier)
-  (identifier))
+  (expression_statement
+    (identifier))
+  (expression_statement
+    (identifier))
+  (expression_statement
+    (identifier))
+  (expression_statement
+    (identifier))
+  (expression_statement
+    (identifier)))
 
 ================================================================================
 Type Alias Statements

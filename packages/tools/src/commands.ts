@@ -105,10 +105,10 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		counts;
 	const lines = [
 		`${grammar}/${formatBackendLabel(backend)}:`,
-		`  fromPass=${from.pass}    fromTotal=${from.total}`,
+		`  fromPass=${from.pass}    fromTotal=${from.total}    fromTrivia=${from.trivia.length}`,
 		`  covPass=${coverage.pass}    covTotal=${coverage.total}`,
-		`  read-render-parsePass=${readRenderParse.pass}    read-render-parseTotal=${readRenderParse.total}    read-render-parseAstMatchPass=${readRenderParse.astMatchPass}`,
-		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}`,
+		`  read-render-parsePass=${readRenderParse.pass}    read-render-parseTotal=${readRenderParse.total}    read-render-parseAstMatchPass=${readRenderParse.astMatchPass}    read-render-parseTrivia=${readRenderParse.trivia.length}`,
+		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}    read-render-parse-shallowTrivia=${readRenderParseShallow.trivia.length}`,
 		`  factory-render-parsePass=${factoryRenderParse.pass}    factory-render-parseTotal=${factoryRenderParse.total}    factory-render-parseAstMatchPass=${factoryRenderParse.astMatchPass}`,
 		`  ir-render-parsePass=${irRenderParse.pass}    ir-render-parseTotal=${irRenderParse.total}    ir-render-parseAstMatchPass=${irRenderParse.astMatchPass}`
 	];
@@ -191,7 +191,10 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 		factoryRenderParseAstMatchPass: factoryRenderParse.astMatchPass,
 		irRenderParsePass: irRenderParse.pass,
 		irRenderParseTotal: irRenderParse.total,
-		irRenderParseAstMatchPass: irRenderParse.astMatchPass
+		irRenderParseAstMatchPass: irRenderParse.astMatchPass,
+		fromTrivia: from.trivia.length,
+		readRenderParseTrivia: readRenderParse.trivia.length,
+		readRenderParseShallowTrivia: readRenderParseShallow.trivia.length
 	};
 }
 
@@ -404,8 +407,21 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 		r.entry && r.kind ? `${r.entry} (${r.kind})` : (r.kind ?? r.entry ?? '');
 	const pushSkips = (
 		stage: string,
-		result: { readonly skips?: readonly ValidatorSkip[]; readonly excluded: readonly ValidatorSkip[] }
+		result: {
+			readonly skips?: readonly ValidatorSkip[];
+			readonly excluded: readonly ValidatorSkip[];
+			readonly trivia?: readonly ValidatorSkip[];
+		}
 	): void => {
+		for (const t of result.trivia ?? [])
+			failures.push({
+				...t,
+				stage: `${stage}-trivia`,
+				code: `${stage}-trivia`,
+				severity: 'warning',
+				message: t.reason,
+				label: entryKindLabel(t)
+			});
 		for (const s of result.skips ?? [])
 			failures.push({ ...s, stage: `${stage}-skip`, code: `${stage}-skip`, severity: 'info', message: s.reason, label: entryKindLabel(s) });
 		const excludedByKind = new Map<string, { kind?: string; reason: string; entries: Set<string>; count: number }>();

@@ -39,6 +39,10 @@ export interface ValidationRun {
 	irRenderParsePass?: number;
 	irRenderParseTotal?: number;
 	irRenderParseAstMatchPass?: number;
+	/** Trivia-only losses, kept out of the totals; absent on rows recorded before the trivia row existed. */
+	fromTrivia?: number;
+	readRenderParseTrivia?: number;
+	readRenderParseShallowTrivia?: number;
 	/** Legacy pre-rename fields kept optional for older rows. */
 	rtPass?: number;
 	rtTotal?: number;

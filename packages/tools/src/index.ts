@@ -89,3 +89,4 @@ export { run as hoistedCensus, type HoistedCensusOptions } from './census/hoiste
 export { run as textKindOverlap, type TextKindOverlapOptions } from './census/text-kind-overlap.ts';
 export { run as bindingsInventory, type BindingsInventoryOptions } from './inventory/index.ts';
 export { bootstrapGrammar, type BootstrapGrammarOptions } from './bootstrap/grammar.ts';
+export { fetchUpstreamCorpus, type CorpusSource, type FetchCorpusOptions } from './corpus/fetch.ts';

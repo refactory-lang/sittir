@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import type * as T from '../types.js';
-import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
+import { TSKindId, KIND_NAMES } from '../types.js';
 import type { AnyNodeData, LooseValue } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';
 

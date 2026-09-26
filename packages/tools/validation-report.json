@@ -931,7 +931,7 @@
     "backend": "native",
     "entry": "Print used as an identifier",
     "reason": "parse-error",
-    "input": "print()\nprint(a)\nprint(a, b=c)\nprint(d, e)\nprint(d, *e)\nprint(*f, **g,)\na(print)",
+    "input": "\nprint()\nprint(a)\nprint(a, b=c)\nprint(d, e)\nprint(d, *e)\nprint(*f, **g,)\na(print)\n",
     "stage": "read-render-parse-skip",
     "code": "read-render-parse-skip",
     "severity": "info",
@@ -3323,7 +3323,7 @@
     "backend": "native",
     "entry": "Print used as an identifier",
     "reason": "parse-error",
-    "input": "print()\nprint(a)\nprint(a, b=c)\nprint(d, e)\nprint(d, *e)\nprint(*f, **g,)\na(print)",
+    "input": "\nprint()\nprint(a)\nprint(a, b=c)\nprint(d, e)\nprint(d, *e)\nprint(*f, **g,)\na(print)\n",
     "stage": "read-render-parse-shallow-skip",
     "code": "read-render-parse-shallow-skip",
     "severity": "info",
@@ -5816,6 +5816,21 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
+    "entry": "Block comments",
+    "kind": "block_comment_doc_outer",
+    "reason": "native-read-dropped-extra",
+    "input": "\n/*\n * Block comments\n */\n\n/* Comment with asterisks **/\n\n/** Outer block comment */\n\n\n/*! Inner block comment */\n/**/\n",
+    "stage": "from-trivia",
+    "code": "from-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extra",
+    "label": "Block comments (block_comment_doc_outer)",
+    "sClass": "trivia"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
     "kind": "wildcard_pattern",
     "count": 1,
     "entries": [
@@ -6056,21 +6071,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "count": 2,
-    "entries": [
-      "External Modules",
-      "Raw reference expression conflicts"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "parse-error",
-    "label": "parse-error"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "kind": "range_expression_bare",
     "count": 1,
     "entries": [
@@ -6146,27 +6146,174 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "entry": "External Modules",
-    "reason": "parse-error",
-    "input": "extern {\n  pub fn napi_module_register(mod_: *mut napi_module);\n}\n\nextern \"C\" {}\n\nunsafe extern \"C\" {}",
-    "stage": "read-render-parse-skip",
-    "code": "read-render-parse-skip",
+    "kind": "outer_doc_comment_marker",
+    "count": 1,
+    "entries": [
+      "Block comments"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
     "severity": "info",
-    "message": "parse-error",
-    "label": "External Modules"
+    "message": "no-from-function",
+    "label": "outer_doc_comment_marker"
   },
   {
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "entry": "Raw reference expression conflicts",
-    "reason": "parse-error",
-    "input": "some_call(&raw);\nlet a = &raw const b;",
-    "stage": "read-render-parse-skip",
-    "code": "read-render-parse-skip",
+    "kind": "doc_comment",
+    "count": 1,
+    "entries": [
+      "Block comments"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
     "severity": "info",
-    "message": "parse-error",
-    "label": "Raw reference expression conflicts"
+    "message": "no-from-function",
+    "label": "doc_comment"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "kind": "inner_doc_comment_marker",
+    "count": 1,
+    "entries": [
+      "Block comments"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
+    "severity": "info",
+    "message": "no-from-function",
+    "label": "inner_doc_comment_marker"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "kind": "outer_line_doc_comment_marker",
+    "count": 1,
+    "entries": [
+      "Line comments"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
+    "severity": "info",
+    "message": "no-from-function",
+    "label": "outer_line_doc_comment_marker"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "kind": "inner_line_doc_comment_marker",
+    "count": 1,
+    "entries": [
+      "Line comments"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
+    "severity": "info",
+    "message": "no-from-function",
+    "label": "inner_line_doc_comment_marker"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "entry": "Block comments",
+    "reason": "native-read-dropped-extras",
+    "input": "\n/*\n * Block comments\n */\n\n/* Comment with asterisks **/\n\n/** Outer block comment */\n\n\n/*! Inner block comment */\n/**/\n",
+    "stage": "read-render-parse-trivia",
+    "code": "read-render-parse-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extras",
+    "label": "Block comments",
+    "sClass": "trivia"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "entry": "Nested block comments",
+    "reason": "native-read-dropped-extras",
+    "input": "\n/* /* double nested */ */\n\n// ---\n\n/*/*/* triple nested */*/*/\n\n// ---\n\n/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/\n\n// ---\n",
+    "stage": "read-render-parse-trivia",
+    "code": "read-render-parse-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extras",
+    "label": "Nested block comments",
+    "sClass": "trivia"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "entry": "Line comments",
+    "reason": "native-read-dropped-extras",
+    "input": "\n// Comment\n\n/// Outer line doc comment\n\n//! Inner line doc comment\n",
+    "stage": "read-render-parse-trivia",
+    "code": "read-render-parse-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extras",
+    "label": "Line comments",
+    "sClass": "trivia"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "entry": "Line doc comments",
+    "reason": "native-read-dropped-extras",
+    "input": "//!  - Inner line doc\n//!! - Still an inner line doc (but with a bang at the beginning)\n\n//   - Only a comment\n///  - Outer line doc (exactly 3 slashes)\n///\n//// - Only a comment\n",
+    "stage": "read-render-parse-trivia",
+    "code": "read-render-parse-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extras",
+    "label": "Line doc comments",
+    "sClass": "trivia"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "entry": "Block doc comments",
+    "reason": "native-read-dropped-extras",
+    "input": "\n/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */\n",
+    "stage": "read-render-parse-trivia",
+    "code": "read-render-parse-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extras",
+    "label": "Block doc comments",
+    "sClass": "trivia"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "entry": "Nested doc block comments",
+    "reason": "native-read-dropped-extras",
+    "input": "\n/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */\n",
+    "stage": "read-render-parse-trivia",
+    "code": "read-render-parse-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extras",
+    "label": "Nested doc block comments",
+    "sClass": "trivia"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "entry": "Line doc comment with no EOL",
+    "reason": "native-read-dropped-extras",
+    "input": "\n//! Doc comment",
+    "stage": "read-render-parse-trivia",
+    "code": "read-render-parse-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extras",
+    "label": "Line doc comment with no EOL",
+    "sClass": "trivia"
   },
   {
     "source": "validator",
@@ -6390,13 +6537,14 @@
     "grammar": "rust",
     "backend": "native",
     "kind": "declaration_list",
-    "count": 35,
+    "count": 37,
     "entries": [
       "Associated Type Definitions",
       "Associated Types",
       "Attributes",
       "Constant items",
       "Disable automatically derived trait impls",
+      "External Modules",
       "Functions with custom types for self",
       "Generic Associated Types",
       "Higher-ranked types",
@@ -6425,7 +6573,7 @@
     "grammar": "rust",
     "backend": "native",
     "kind": "visibility_modifier_pub",
-    "count": 30,
+    "count": 32,
     "entries": [
       "Associated Types",
       "Const generics with default",
@@ -6434,6 +6582,7 @@
       "Enums with values specified",
       "Extern crate declarations",
       "Extern function declarations",
+      "External Modules",
       "Generic Associated Types",
       "Generic functions",
       "Impl dyn with parentheses",
@@ -6457,10 +6606,11 @@
     "grammar": "rust",
     "backend": "native",
     "kind": "parameters_elements",
-    "count": 44,
+    "count": 45,
     "entries": [
       "Array Constraint in Where Clause",
       "Extern function declarations",
+      "External Modules",
       "Function declarations",
       "Function parameter names that match built-in type names",
       "Function types",
@@ -6495,10 +6645,11 @@
     "grammar": "rust",
     "backend": "native",
     "kind": "_attributed_parameter",
-    "count": 57,
+    "count": 58,
     "entries": [
       "Array Constraint in Where Clause",
       "Extern function declarations",
+      "External Modules",
       "Function declarations",
       "Function parameter names that match built-in type names",
       "Function types",
@@ -6777,7 +6928,7 @@
     "grammar": "rust",
     "backend": "native",
     "kind": "attribute",
-    "count": 27,
+    "count": 28,
     "entries": [
       "Array expressions",
       "Attribute macros",
@@ -6787,6 +6938,7 @@
       "Enums",
       "Function declarations",
       "Generic structs",
+      "Immediate inner attribute",
       "Inner attributes",
       "Key-Value Attribute Expressions",
       "Match expressions",
@@ -6990,9 +7142,10 @@
     "grammar": "rust",
     "backend": "native",
     "kind": "extern_modifier",
-    "count": 5,
+    "count": 7,
     "entries": [
       "Extern function declarations",
+      "External Modules",
       "Unsafe and extern function types"
     ],
     "stage": "read-render-parse-excluded",
@@ -7529,13 +7682,14 @@
     "grammar": "rust",
     "backend": "native",
     "kind": "attribute_input",
-    "count": 17,
+    "count": 18,
     "entries": [
       "Array expressions",
       "Attribute macros",
       "Attributes",
       "Attributes and Expressions",
       "Derive macro helper attributes",
+      "Immediate inner attribute",
       "Inner attributes",
       "Key-Value Attribute Expressions"
     ],
@@ -8136,6 +8290,43 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
+    "kind": "source_file",
+    "count": 7,
+    "entries": [
+      "Block comments",
+      "Block doc comments",
+      "Line comments",
+      "Line doc comment with no EOL",
+      "Line doc comments",
+      "Nested block comments",
+      "Nested doc block comments"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "empty-render",
+    "label": "source_file"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "kind": "shebang",
+    "count": 2,
+    "entries": [
+      "Empty shebang with code after",
+      "Shebang line containing spaces"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "shebang"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
     "kind": "function_type_fn_form",
     "count": 5,
     "entries": [
@@ -8182,27 +8373,99 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "entry": "External Modules",
-    "reason": "parse-error",
-    "input": "extern {\n  pub fn napi_module_register(mod_: *mut napi_module);\n}\n\nextern \"C\" {}\n\nunsafe extern \"C\" {}",
-    "stage": "read-render-parse-shallow-skip",
-    "code": "read-render-parse-shallow-skip",
-    "severity": "info",
-    "message": "parse-error",
-    "label": "External Modules"
+    "entry": "Block comments",
+    "reason": "native-read-dropped-extras",
+    "input": "\n/*\n * Block comments\n */\n\n/* Comment with asterisks **/\n\n/** Outer block comment */\n\n\n/*! Inner block comment */\n/**/\n",
+    "stage": "read-render-parse-shallow-trivia",
+    "code": "read-render-parse-shallow-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extras",
+    "label": "Block comments",
+    "sClass": "trivia"
   },
   {
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "entry": "Raw reference expression conflicts",
-    "reason": "parse-error",
-    "input": "some_call(&raw);\nlet a = &raw const b;",
-    "stage": "read-render-parse-shallow-skip",
-    "code": "read-render-parse-shallow-skip",
-    "severity": "info",
-    "message": "parse-error",
-    "label": "Raw reference expression conflicts"
+    "entry": "Nested block comments",
+    "reason": "native-read-dropped-extras",
+    "input": "\n/* /* double nested */ */\n\n// ---\n\n/*/*/* triple nested */*/*/\n\n// ---\n\n/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/\n\n// ---\n",
+    "stage": "read-render-parse-shallow-trivia",
+    "code": "read-render-parse-shallow-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extras",
+    "label": "Nested block comments",
+    "sClass": "trivia"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "entry": "Line comments",
+    "reason": "native-read-dropped-extras",
+    "input": "\n// Comment\n\n/// Outer line doc comment\n\n//! Inner line doc comment\n",
+    "stage": "read-render-parse-shallow-trivia",
+    "code": "read-render-parse-shallow-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extras",
+    "label": "Line comments",
+    "sClass": "trivia"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "entry": "Line doc comments",
+    "reason": "native-read-dropped-extras",
+    "input": "//!  - Inner line doc\n//!! - Still an inner line doc (but with a bang at the beginning)\n\n//   - Only a comment\n///  - Outer line doc (exactly 3 slashes)\n///\n//// - Only a comment\n",
+    "stage": "read-render-parse-shallow-trivia",
+    "code": "read-render-parse-shallow-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extras",
+    "label": "Line doc comments",
+    "sClass": "trivia"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "entry": "Block doc comments",
+    "reason": "native-read-dropped-extras",
+    "input": "\n/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */\n",
+    "stage": "read-render-parse-shallow-trivia",
+    "code": "read-render-parse-shallow-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extras",
+    "label": "Block doc comments",
+    "sClass": "trivia"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "entry": "Nested doc block comments",
+    "reason": "native-read-dropped-extras",
+    "input": "\n/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */\n",
+    "stage": "read-render-parse-shallow-trivia",
+    "code": "read-render-parse-shallow-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extras",
+    "label": "Nested doc block comments",
+    "sClass": "trivia"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "entry": "Line doc comment with no EOL",
+    "reason": "native-read-dropped-extras",
+    "input": "\n//! Doc comment",
+    "stage": "read-render-parse-shallow-trivia",
+    "code": "read-render-parse-shallow-trivia",
+    "severity": "warning",
+    "message": "native-read-dropped-extras",
+    "label": "Line doc comment with no EOL",
+    "sClass": "trivia"
   },
   {
     "source": "validator",
@@ -8426,13 +8689,14 @@
     "grammar": "rust",
     "backend": "native",
     "kind": "declaration_list",
-    "count": 35,
+    "count": 37,
     "entries": [
       "Associated Type Definitions",
       "Associated Types",
       "Attributes",
       "Constant items",
       "Disable automatically derived trait impls",
+      "External Modules",
       "Functions with custom types for self",
       "Generic Associated Types",
       "Higher-ranked types",
@@ -8461,7 +8725,7 @@
     "grammar": "rust",
     "backend": "native",
     "kind": "visibility_modifier_pub",
-    "count": 30,
+    "count": 32,
     "entries": [
       "Associated Types",
       "Const generics with default",
@@ -8470,6 +8734,7 @@
       "Enums with values specified",
       "Extern crate declarations",
       "Extern function declarations",
+      "External Modules",
       "Generic Associated Types",
       "Generic functions",
       "Impl dyn with parentheses",
@@ -8493,10 +8758,11 @@
     "grammar": "rust",
     "backend": "native",
     "kind": "parameters_elements",
-    "count": 44,
+    "count": 45,
     "entries": [
       "Array Constraint in Where Clause",
       "Extern function declarations",
+      "External Modules",
       "Function declarations",
       "Function parameter names that match built-in type names",
       "Function types",
@@ -8531,10 +8797,11 @@
     "grammar": "rust",
     "backend": "native",
     "kind": "_attributed_parameter",
-    "count": 57,
+    "count": 58,
     "entries": [
       "Array Constraint in Where Clause",
       "Extern function declarations",
+      "External Modules",
       "Function declarations",
       "Function parameter names that match built-in type names",
       "Function types",
@@ -8813,7 +9080,7 @@
     "grammar": "rust",
     "backend": "native",
     "kind": "attribute",
-    "count": 27,
+    "count": 28,
     "entries": [
       "Array expressions",
       "Attribute macros",
@@ -8823,6 +9090,7 @@
       "Enums",
       "Function declarations",
       "Generic structs",
+      "Immediate inner attribute",
       "Inner attributes",
       "Key-Value Attribute Expressions",
       "Match expressions",
@@ -9026,9 +9294,10 @@
     "grammar": "rust",
     "backend": "native",
     "kind": "extern_modifier",
-    "count": 5,
+    "count": 7,
     "entries": [
       "Extern function declarations",
+      "External Modules",
       "Unsafe and extern function types"
     ],
     "stage": "read-render-parse-shallow-excluded",
@@ -9565,13 +9834,14 @@
     "grammar": "rust",
     "backend": "native",
     "kind": "attribute_input",
-    "count": 17,
+    "count": 18,
     "entries": [
       "Array expressions",
       "Attribute macros",
       "Attributes",
       "Attributes and Expressions",
       "Derive macro helper attributes",
+      "Immediate inner attribute",
       "Inner attributes",
       "Key-Value Attribute Expressions"
     ],
@@ -10172,6 +10442,43 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
+    "kind": "source_file",
+    "count": 7,
+    "entries": [
+      "Block comments",
+      "Block doc comments",
+      "Line comments",
+      "Line doc comment with no EOL",
+      "Line doc comments",
+      "Nested block comments",
+      "Nested doc block comments"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "empty-render",
+    "label": "source_file"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "kind": "shebang",
+    "count": 2,
+    "entries": [
+      "Empty shebang with code after",
+      "Shebang line containing spaces"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "shebang"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
     "kind": "function_type_fn_form",
     "count": 5,
     "entries": [
@@ -10213,36 +10520,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "lifetimes"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "count": 2,
-    "entries": [
-      "External Modules",
-      "Raw reference expression conflicts"
-    ],
-    "stage": "factory-render-parse-excluded",
-    "code": "factory-render-parse-excluded",
-    "severity": "info",
-    "message": "parse-error",
-    "label": "parse-error"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "count": 2,
-    "entries": [
-      "External Modules",
-      "Raw reference expression conflicts"
-    ],
-    "stage": "ir-render-parse-excluded",
-    "code": "ir-render-parse-excluded",
-    "severity": "info",
-    "message": "parse-error",
-    "label": "parse-error"
   },
   {
     "source": "validator",
@@ -10445,7 +10722,7 @@
     "backend": "native",
     "entry": "Object types with automatic semicolon insertion",
     "reason": "parse-error",
-    "input": "type Something = {\n  length: number\n  (string): string\n  [index:string] : number\n}",
+    "input": "\ntype Something = {\n  length: number\n  (string): string\n  [index:string] : number\n}\n",
     "stage": "read-render-parse-skip",
     "code": "read-render-parse-skip",
     "severity": "info",
@@ -10458,7 +10735,7 @@
     "backend": "native",
     "entry": "Interface declarations",
     "reason": "parse-error",
-    "input": "interface A { a: string; }\n\ninterface B extends A { b: string; }\n\ninterface Friend {\n    name: string;\n    favoriteColor?: string;\n}\n\ninterface G<T, U extends B> {\n    x: T;\n    y: U;\n}\n\ninterface X {\n  hook: {\n  }\n  get(key: Key): Promise<T>;\n}\n\ninterface Enum extends Bar, Baz, Foo<A> {\n  public toEnum(): Int;\n}",
+    "input": "\ninterface A { a: string; }\n\ninterface B extends A { b: string; }\n\ninterface Friend {\n    name: string;\n    favoriteColor?: string;\n}\n\ninterface G<T, U extends B> {\n    x: T;\n    y: U;\n}\n\ninterface X {\n  hook: {\n  }\n  get(key: Key): Promise<T>;\n}\n\ninterface Enum extends Bar, Baz, Foo<A> {\n  public toEnum(): Int;\n}\n",
     "stage": "read-render-parse-skip",
     "code": "read-render-parse-skip",
     "severity": "info",
@@ -10470,10 +10747,11 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "class_body_member",
-    "count": 27,
+    "count": 31,
     "entries": [
       "Abstract classes",
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Classes with decorators",
       "Classes with method signatures",
       "Classes with methods with and without trailing semicolons on one line",
@@ -10494,10 +10772,11 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "public_field_definition",
-    "count": 17,
+    "count": 19,
     "entries": [
       "Abstract classes",
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Classes with decorators",
       "Classes with methods with and without trailing semicolons on one line",
       "Classes with property names as strings or numbers",
@@ -10516,11 +10795,12 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "property_identifier",
-    "count": 112,
+    "count": 121,
     "entries": [
       "Abstract classes",
       "Accessibility modifiers as pair keywords",
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Ambient type alias declarations in namespaces",
       "Assertion functions checking a type",
       "Classes with decorator calls that have type arguments",
@@ -10573,9 +10853,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "formal_parameters_elements",
-    "count": 46,
+    "count": 49,
     "entries": [
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Ambient export function declarations",
       "Ambient exports",
       "Ambient module declarations",
@@ -10610,9 +10891,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "object_type_content",
-    "count": 33,
+    "count": 35,
     "entries": [
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Ambient export function declarations",
       "Ambiguity between function signature and function declaration",
       "As expressions",
@@ -10644,9 +10926,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "method_signature",
-    "count": 12,
+    "count": 14,
     "entries": [
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Classes with method signatures",
       "Flow-style ambient class declarations with commas",
       "Import in type",
@@ -10663,9 +10946,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "nested_identifier",
-    "count": 3,
+    "count": 4,
     "entries": [
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Import aliases",
       "Import aliases in modules"
     ],
@@ -10680,9 +10964,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "for_header_lhs",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Ambient declarations"
+      "Ambient declarations",
+      "Ambient declarations with for-let"
     ],
     "stage": "read-render-parse-excluded",
     "code": "read-render-parse-excluded",
@@ -10695,9 +10980,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "else_clause",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Ambient declarations"
+      "Ambient declarations",
+      "Ambient declarations with for-let"
     ],
     "stage": "read-render-parse-excluded",
     "code": "read-render-parse-excluded",
@@ -10710,9 +10996,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "switch_body",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Ambient declarations"
+      "Ambient declarations",
+      "Ambient declarations with for-let"
     ],
     "stage": "read-render-parse-excluded",
     "code": "read-render-parse-excluded",
@@ -10725,9 +11012,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "switch_case",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Ambient declarations"
+      "Ambient declarations",
+      "Ambient declarations with for-let"
     ],
     "stage": "read-render-parse-excluded",
     "code": "read-render-parse-excluded",
@@ -10740,9 +11028,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "switch_default",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Ambient declarations"
+      "Ambient declarations",
+      "Ambient declarations with for-let"
     ],
     "stage": "read-render-parse-excluded",
     "code": "read-render-parse-excluded",
@@ -10755,9 +11044,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "catch_clause",
-    "count": 2,
+    "count": 3,
     "entries": [
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Exception handling"
     ],
     "stage": "read-render-parse-excluded",
@@ -10771,9 +11061,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "catch_clause_group",
-    "count": 2,
+    "count": 3,
     "entries": [
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Exception handling"
     ],
     "stage": "read-render-parse-excluded",
@@ -10787,9 +11078,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "finally_clause",
-    "count": 2,
+    "count": 3,
     "entries": [
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Exception handling"
     ],
     "stage": "read-render-parse-excluded",
@@ -11295,37 +11587,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "implements_clause"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "escape_sequence",
-    "count": 5,
-    "entries": [
-      "Strings mixing text with escapes",
-      "Template strings mixing fragments, escapes, and substitutions"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "escape_sequence"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "template_substitution",
-    "count": 2,
-    "entries": [
-      "Template strings mixing fragments, escapes, and substitutions"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "template_substitution"
   },
   {
     "source": "validator",
@@ -11871,6 +12132,37 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "import_attribute"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "escape_sequence",
+    "count": 5,
+    "entries": [
+      "Strings mixing text with escapes",
+      "Template strings mixing fragments, escapes, and substitutions"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "escape_sequence"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "template_substitution",
+    "count": 2,
+    "entries": [
+      "Template strings mixing fragments, escapes, and substitutions"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "template_substitution"
   },
   {
     "source": "validator",
@@ -11878,7 +12170,7 @@
     "backend": "native",
     "entry": "Object types with automatic semicolon insertion",
     "reason": "parse-error",
-    "input": "type Something = {\n  length: number\n  (string): string\n  [index:string] : number\n}",
+    "input": "\ntype Something = {\n  length: number\n  (string): string\n  [index:string] : number\n}\n",
     "stage": "read-render-parse-shallow-skip",
     "code": "read-render-parse-shallow-skip",
     "severity": "info",
@@ -11891,7 +12183,7 @@
     "backend": "native",
     "entry": "Interface declarations",
     "reason": "parse-error",
-    "input": "interface A { a: string; }\n\ninterface B extends A { b: string; }\n\ninterface Friend {\n    name: string;\n    favoriteColor?: string;\n}\n\ninterface G<T, U extends B> {\n    x: T;\n    y: U;\n}\n\ninterface X {\n  hook: {\n  }\n  get(key: Key): Promise<T>;\n}\n\ninterface Enum extends Bar, Baz, Foo<A> {\n  public toEnum(): Int;\n}",
+    "input": "\ninterface A { a: string; }\n\ninterface B extends A { b: string; }\n\ninterface Friend {\n    name: string;\n    favoriteColor?: string;\n}\n\ninterface G<T, U extends B> {\n    x: T;\n    y: U;\n}\n\ninterface X {\n  hook: {\n  }\n  get(key: Key): Promise<T>;\n}\n\ninterface Enum extends Bar, Baz, Foo<A> {\n  public toEnum(): Int;\n}\n",
     "stage": "read-render-parse-shallow-skip",
     "code": "read-render-parse-shallow-skip",
     "severity": "info",
@@ -11903,10 +12195,11 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "class_body_member",
-    "count": 27,
+    "count": 31,
     "entries": [
       "Abstract classes",
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Classes with decorators",
       "Classes with method signatures",
       "Classes with methods with and without trailing semicolons on one line",
@@ -11927,10 +12220,11 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "public_field_definition",
-    "count": 17,
+    "count": 19,
     "entries": [
       "Abstract classes",
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Classes with decorators",
       "Classes with methods with and without trailing semicolons on one line",
       "Classes with property names as strings or numbers",
@@ -11949,11 +12243,12 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "property_identifier",
-    "count": 112,
+    "count": 121,
     "entries": [
       "Abstract classes",
       "Accessibility modifiers as pair keywords",
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Ambient type alias declarations in namespaces",
       "Assertion functions checking a type",
       "Classes with decorator calls that have type arguments",
@@ -12006,9 +12301,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "formal_parameters_elements",
-    "count": 46,
+    "count": 49,
     "entries": [
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Ambient export function declarations",
       "Ambient exports",
       "Ambient module declarations",
@@ -12043,9 +12339,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "object_type_content",
-    "count": 33,
+    "count": 35,
     "entries": [
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Ambient export function declarations",
       "Ambiguity between function signature and function declaration",
       "As expressions",
@@ -12077,9 +12374,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "method_signature",
-    "count": 12,
+    "count": 14,
     "entries": [
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Classes with method signatures",
       "Flow-style ambient class declarations with commas",
       "Import in type",
@@ -12096,9 +12394,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "nested_identifier",
-    "count": 3,
+    "count": 4,
     "entries": [
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Import aliases",
       "Import aliases in modules"
     ],
@@ -12113,9 +12412,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "for_header_lhs",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Ambient declarations"
+      "Ambient declarations",
+      "Ambient declarations with for-let"
     ],
     "stage": "read-render-parse-shallow-excluded",
     "code": "read-render-parse-shallow-excluded",
@@ -12128,9 +12428,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "else_clause",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Ambient declarations"
+      "Ambient declarations",
+      "Ambient declarations with for-let"
     ],
     "stage": "read-render-parse-shallow-excluded",
     "code": "read-render-parse-shallow-excluded",
@@ -12143,9 +12444,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "switch_body",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Ambient declarations"
+      "Ambient declarations",
+      "Ambient declarations with for-let"
     ],
     "stage": "read-render-parse-shallow-excluded",
     "code": "read-render-parse-shallow-excluded",
@@ -12158,9 +12460,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "switch_case",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Ambient declarations"
+      "Ambient declarations",
+      "Ambient declarations with for-let"
     ],
     "stage": "read-render-parse-shallow-excluded",
     "code": "read-render-parse-shallow-excluded",
@@ -12173,9 +12476,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "switch_default",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Ambient declarations"
+      "Ambient declarations",
+      "Ambient declarations with for-let"
     ],
     "stage": "read-render-parse-shallow-excluded",
     "code": "read-render-parse-shallow-excluded",
@@ -12188,9 +12492,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "catch_clause",
-    "count": 2,
+    "count": 3,
     "entries": [
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Exception handling"
     ],
     "stage": "read-render-parse-shallow-excluded",
@@ -12204,9 +12509,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "catch_clause_group",
-    "count": 2,
+    "count": 3,
     "entries": [
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Exception handling"
     ],
     "stage": "read-render-parse-shallow-excluded",
@@ -12220,9 +12526,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "finally_clause",
-    "count": 2,
+    "count": 3,
     "entries": [
       "Ambient declarations",
+      "Ambient declarations with for-let",
       "Exception handling"
     ],
     "stage": "read-render-parse-shallow-excluded",
@@ -12728,37 +13035,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "implements_clause"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "escape_sequence",
-    "count": 5,
-    "entries": [
-      "Strings mixing text with escapes",
-      "Template strings mixing fragments, escapes, and substitutions"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "escape_sequence"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "template_substitution",
-    "count": 2,
-    "entries": [
-      "Template strings mixing fragments, escapes, and substitutions"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "template_substitution"
   },
   {
     "source": "validator",
@@ -13304,6 +13580,37 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "import_attribute"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "escape_sequence",
+    "count": 5,
+    "entries": [
+      "Strings mixing text with escapes",
+      "Template strings mixing fragments, escapes, and substitutions"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "escape_sequence"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "template_substitution",
+    "count": 2,
+    "entries": [
+      "Template strings mixing fragments, escapes, and substitutions"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "template_substitution"
   },
   {
     "source": "validator",
@@ -13313,12 +13620,27 @@
     "entry": "Ambient declarations",
     "message": "root._terminator: value 20 ≠ undefined",
     "input": "debugger;",
-    "start": 616,
-    "end": 625,
+    "start": 617,
+    "end": 626,
     "stage": "factory-render-parse-ast-mismatch",
     "code": "factory-render-parse-ast-mismatch",
     "severity": "error",
     "label": "Ambient declarations (debugger_statement)"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "debugger_statement",
+    "entry": "Ambient declarations with for-let",
+    "message": "root._terminator: value 20 ≠ undefined",
+    "input": "debugger;",
+    "start": 617,
+    "end": 626,
+    "stage": "factory-render-parse-ast-mismatch",
+    "code": "factory-render-parse-ast-mismatch",
+    "severity": "error",
+    "label": "Ambient declarations with for-let (debugger_statement)"
   },
   {
     "source": "validator",
@@ -13343,12 +13665,27 @@
     "entry": "Ambient declarations",
     "message": "root._terminator: value 20 ≠ undefined",
     "input": "debugger;",
-    "start": 616,
-    "end": 625,
+    "start": 617,
+    "end": 626,
     "stage": "ir-render-parse-ast-mismatch",
     "code": "ir-render-parse-ast-mismatch",
     "severity": "error",
     "label": "Ambient declarations (debugger_statement)"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "debugger_statement",
+    "entry": "Ambient declarations with for-let",
+    "message": "root._terminator: value 20 ≠ undefined",
+    "input": "debugger;",
+    "start": 617,
+    "end": 626,
+    "stage": "ir-render-parse-ast-mismatch",
+    "code": "ir-render-parse-ast-mismatch",
+    "severity": "error",
+    "label": "Ambient declarations with for-let (debugger_statement)"
   },
   {
     "source": "validator",

@@ -17,6 +17,7 @@ const EXPECTED = [
 	'dump-ast-mismatches',
 	'emit-factory-source',
 	'exercise',
+	'fetch-corpus',
 	'field-provenance',
 	'grammar-diagnostics',
 	'hoisted-census',
@@ -39,7 +40,7 @@ const EXPECTED = [
 ];
 
 describe('tool namespace', () => {
-	it('registers exactly the 33 converted tools', () => {
+	it('registers exactly the 34 converted tools', () => {
 		expect(toolModules.map((m) => m.name).sort()).toEqual([...EXPECTED].sort());
 	});
 

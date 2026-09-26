@@ -5,6 +5,7 @@ import { registerNamespace } from '../../framework/command-module.ts';
 import { assembleShapeCensus } from './assemble-shape-census.ts';
 import { bench } from './bench.ts';
 import { bootstrapGrammar } from './bootstrap-grammar.ts';
+import { fetchCorpus } from './fetch-corpus.ts';
 import { benchCodemod } from './bench-codemod.ts';
 import { checkBaseline } from './check-baseline.ts';
 import { checkPerf } from './check-perf.ts';
@@ -42,6 +43,7 @@ export const toolModules: readonly CommandModule[] = [
 	bench,
 	benchCodemod,
 	bootstrapGrammar,
+	fetchCorpus,
 	checkBaseline,
 	checkPerf,
 	classify,

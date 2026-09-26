@@ -115,45 +115,34 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/tools/src/validate/common.ts::parseCorpus`
 
-```text
-/**
- * Parse a tree-sitter test corpus file.
- * Format: `====` header, test name, `====`, source, `----`, expected tree.
- */
-```
+Splits a tree-sitter test corpus file into entries exactly as the
+`tree-sitter test` harness (cli/src/test.rs) does, so the validators see the
+bytes the parser was tested on:
 
-#### body
+- A header is a `===` line, the name line (plus attribute lines), and a
+  closing `===` line. Only headers whose suffix (text after the `=` run)
+  equals the first header's suffix count, and only dividers with that
+  suffix split input from expected tree.
+- When a body holds several matching `---` dividers, the one with the most
+  hyphens splits it (the line ending doesn't count); on a tie, the last, as
+  the harness's `max_by_key` returns the last of equal maxima.
+- The input is the bytes from the header's end to the divider, minus one
+  trailing `\n` (and a `\r` before it). A typical entry therefore reads as
+  `"\n<source>\n"`; the leading newline stays, and a token that needs its
+  line end (a shebang) keeps it.
 
-```text
-// Capture optional `:language(...)` directive lines that may appear
-// between the name and the closing `====` (e.g. `:language(tsx)`).
-// The directive selects which sub-grammar variant to use; when it
-// names a grammar other than the one being validated, the entry is
-// skipped entirely (sittir's validator loads a single parser per
-// grammar — it cannot parse TSX-only entries with the TS parser, so
-// counting them as failures would skew the numbers).
-```
+Entries are dropped, not counted, when they carry `:error`, when their
+expected tree holds `(ERROR` or `(MISSING` (intentional error tests), when
+`:language(x)` names a grammar other than `grammar` (the validator loads a
+single parser per grammar), or when the input is blank.
 
-#### body
+### `packages/tools/src/validate/common.ts::loadCorpusEntries`
 
-```text
-// Entry is declared for a different sub-grammar (e.g.
-// `:language(tsx)` when validating `typescript`). Skip it
-// entirely — don't include in totals.
-```
-
-### `packages/tools/src/validate/common.ts::FIXTURES_DIR`
-
-```text
-// ---------------------------------------------------------------------------
-// Fixtures directory + loader
-// ---------------------------------------------------------------------------
-```
-
-```text
-// The corpus fixtures live in the codegen package; resolve them there explicitly
-// (this validator was relocated from codegen/src/validate to tools/src/validate — R9c).
-```
+A grammar's corpus: every `upstream/*.txt` under
+`packages/codegen/fixtures/<grammar>/` in name order, then that directory's
+`local.txt` (sittir-authored entries). A grammar with no entries throws,
+naming `sittir tool fetch-corpus --grammar <grammar>`; an empty corpus
+would otherwise report a passing 0/0 run.
 
 ### `packages/tools/src/validate/common.ts::treeHandle`
 
@@ -740,11 +729,23 @@ never by stripping underscores, which can land on an unrelated kind (`_number` i
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/tools/src/validate/common.ts::WRAP_MODULE_PATHS`
+### `packages/tools/src/validate/common.ts::grammarModulePath`
 
-```text
-/** Relative path from codegen validators to grammar source wrap modules. */
-```
+The absolute path of a generated file under a discovered grammar's
+`packages/<grammar>/src/` (`wrap.ts`, `types.ts`, `ir.ts`,
+`node-model.json5`, `factories/raw.ts`, `factories/coerce.ts`), or
+`undefined` when the name is not a grammar or the file has not been
+generated. Every validator loads a grammar's generated modules through it,
+so a newly bootstrapped grammar validates by name with no list to extend.
+
+### `packages/tools/src/validate/common.ts::importGrammarModule`
+
+Imports a grammar's generated module (`grammarModulePath`) through its
+`file://` URL (`pathToFileURL`), the form ESM `import()` accepts on every
+platform, and returns `undefined` when the file is absent so each caller
+keeps its own missing-module behaviour. The only way the validators and
+`emit-factory-source` import generated modules; `node-model.json5` is data
+and is read with `readFileSync` on the path.
 
 ### `packages/tools/src/validate/common.ts::loadReadTreeNode`
 
@@ -767,18 +768,6 @@ never by stripping underscores, which can land on an unrelated kind (`_number` i
  * `NativeNodeCoords.embeddedData`) that has no handle+child-index to read
  * through `readTreeNode` itself.
  */
-```
-
-### `packages/tools/src/validate/common.ts::NODE_MODEL_PATHS`
-
-```text
-// ---------------------------------------------------------------------------
-// node-model.json5 — the single on-disk metadata source (PR-K)
-// ---------------------------------------------------------------------------
-```
-
-```text
-/** Relative path from codegen/src/validate to each grammar's node-model.json5. */
 ```
 
 ### `packages/tools/src/validate/common.ts::Seat`
@@ -884,7 +873,7 @@ never by stripping underscores, which can land on an unrelated kind (`_number` i
 ```text
 /**
  * One untested item, named, with the reason it went untested. Every
- * validator result carries two lists of these, so that no item leaves a
+ * validator result carries these lists, so that no item leaves a
  * validator without a record:
  *
  * - `skips`: items counted in `total` but neither passed nor failed. The
@@ -893,6 +882,11 @@ never by stripping underscores, which can land on an unrelated kind (`_number` i
  * - `excluded`: in-domain items dropped before counting (a corpus entry
  *   that does not parse, a candidate with no reparse wrapper or an empty
  *   render, a kind with no from/factory function or no render rule).
+ * - `trivia` (from and read-render-parse only): items lost because the
+ *   native read dropped an extra (a comment with no named non-extra
+ *   sibling to attach to). Kept out of `total`, `pass`, `fail` and `skip`,
+ *   and reported as `<stage>-trivia` at severity `warning`, classified
+ *   `trivia` with its own shrink-only ceiling.
  *
  * Items outside a validator's domain (anonymous nodes, supertypes, pure
  * leaves, kinds outside the grammar's rule set) are not in either list.
@@ -915,12 +909,6 @@ never by stripping underscores, which can land on an unrelated kind (`_number` i
 // visible symptom is a downstream render/FromNapiValue error on an
 // innocent sibling element, which misdirects investigation toward
 // that sibling instead of the actual failing accessor.
-```
-
-### `packages/tools/src/validate/common.ts::TYPES_MODULE_PATHS`
-
-```text
-/** Relative path from codegen/src/validate to language package types.ts */
 ```
 
 ### `packages/tools/src/validate/common.ts::IrEntry`

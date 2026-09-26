@@ -2,7 +2,6 @@ import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { describe, it, expect } from 'vitest';
 import { computeSimplifiedRules, makeSlotGroupingCollector, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
 import type { RenderRule } from '../../types/rule.ts';
-import type { SlotGroupingDiagnostic } from '../diagnostics/slot-grouping.ts';
 
 describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 	it('normal multi-field rule body → SILENT (not in inlineKinds, not in slot position)', () => {

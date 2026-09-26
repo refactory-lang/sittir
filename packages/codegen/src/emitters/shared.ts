@@ -805,6 +805,15 @@ export function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap)
 	return targetNode.argumentOptional(nodeMap) ? targetNode.rawFactoryName : null;
 }
 
+export function registeredSlots(node: {
+	readonly slots: readonly AssembledNonterminal[];
+	readonly configSlots?: readonly AssembledNonterminal[];
+}): readonly AssembledNonterminal[] {
+	if (node.configSlots === undefined) return node.slots.filter((slot) => slot.registeredOption !== undefined);
+	const config = new Set(node.configSlots);
+	return node.slots.filter((slot) => !config.has(slot));
+}
+
 export function classifyFactoryShape(
 	node: AssembledNode,
 	nodeMap: NodeMap,
@@ -824,8 +833,7 @@ export function classifyFactoryShape(
 				// emission, wrap, test generation) needs to agree on that, so
 				// the fallback to 'config' lives here rather than being
 				// special-cased downstream.
-				const hasRegistered = node.slots.some((f) => f.registeredOption !== undefined);
-				if (!hasRegistered) return 'spread';
+				if (registeredSlots(node).length === 0) return 'spread';
 			} else {
 				if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
 				return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
@@ -1089,12 +1097,33 @@ export function slotSeparatorTexts(f: AssembledNonterminal, elidedOnly: boolean)
 	];
 }
 
+const NAMED_IMPORT = /^(import (?:type )?)\{ (.*) \}( from .*)$/;
+
+export function importLocalName(specifier: string): string {
+	return specifier.split(' as ').at(-1)!;
+}
+
+export function pruneUnusedImports(lines: readonly string[], names: readonly string[]): string[] {
+	const body = lines.filter((l) => !l.startsWith('import ')).join('\n');
+	const unused = new Set(names.filter((name) => !new RegExp(`\\b${name}\\b`).test(body)));
+	if (unused.size === 0) return [...lines];
+	return lines.flatMap((l) => {
+		const m = NAMED_IMPORT.exec(l);
+		if (!m) return [l];
+		const specifiers = m[2]!.split(', ');
+		const kept = specifiers.filter((s) => !unused.has(importLocalName(s)));
+		if (kept.length === specifiers.length) return [l];
+		return kept.length === 0 ? [] : [`${m[1]}{ ${kept.join(', ')} }${m[3]}`];
+	});
+}
+
 const LITERAL_IN_CLASS = '+.*?(){}|$/';
 
 export function stripUselessEscapes(pattern: string): string {
 	let out = '';
 	let i = 0;
 	let inClass = false;
+	let classStart = 0;
 	while (i < pattern.length) {
 		const c = pattern[i];
 		if (!inClass) {
@@ -1103,9 +1132,12 @@ export function stripUselessEscapes(pattern: string): string {
 				i += 2;
 				continue;
 			}
-			if (c === '[') inClass = true;
 			out += c;
 			i++;
+			if (c === '[') {
+				inClass = true;
+				classStart = out.length;
+			}
 			continue;
 		}
 		if (c === ']') {
@@ -1118,6 +1150,11 @@ export function stripUselessEscapes(pattern: string): string {
 			const next = pattern[i + 1];
 			if (next === '[') {
 				out += '[';
+				i += 2;
+				continue;
+			}
+			if (next === '^' && out.length > classStart) {
+				out += '^';
 				i += 2;
 				continue;
 			}

@@ -15,7 +15,6 @@ import type { ParsedRoot } from '@sittir/common/engine';
 // instead of re-declaring locally. Single source of truth.
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { TSKindId, KIND_NAMES } from './types.js';
-import { Delimiter } from './types.js';
 import type * as T from './types.js';
 import { withMethods, methodsEngine } from './utils.js';
 
@@ -315,7 +314,7 @@ function _treeEngine(tree: TreeHandle): typeof methodsEngine {
 // would dispatch straight back into the wrap function that called
 // this, with the same data.
 function drillInSelf<T>(entry: T, tree: TreeHandle): T {
-	if (!entry) return undefined as unknown as T;
+	if (entry == null) return undefined as unknown as T;
 	const e = entry as unknown as _NodeData;
 	if (e.$nodeHandle != null && e.$childIndex != null)
 		return readTreeNode(tree, e.$nodeHandle, e.$childIndex) as unknown as T;

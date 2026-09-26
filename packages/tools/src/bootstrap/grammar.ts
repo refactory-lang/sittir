@@ -8,6 +8,7 @@ import {
 	nativeCrateDir,
 	upstreamPackage
 } from '@sittir/codegen/grammars';
+import { fetchUpstreamCorpus } from '../corpus/fetch.ts';
 import { grammarPackageFiles, type GrammarTemplateVars, type TemplateFile } from './templates.ts';
 
 export interface BootstrapGrammarOptions {
@@ -92,7 +93,11 @@ export async function bootstrapGrammar(opts: BootstrapGrammarOptions): Promise<n
 	if (dryRun) return 0;
 
 	run('pnpm', ['exec', 'oxfmt', ...written.filter((path) => /\.(ts|json|md)$/.test(path))]);
-	if (opts.install !== false) run('pnpm', ['install']);
+	if (opts.install !== false) {
+		run('pnpm', ['install']);
+		const corpus = await fetchUpstreamCorpus({ grammar: opts.name });
+		process.stdout.write(`corpus: ${corpus.files.length} file(s) from ${corpus.repository}@${corpus.ref}\n`);
+	}
 	if (opts.generate) {
 		run('pnpm', [
 			'exec',

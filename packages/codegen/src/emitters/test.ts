@@ -36,7 +36,8 @@ import {
 	escForSource
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
-import { valueStorageExpr, kindEnumTextExpr, registeredSlots } from './factories.ts';
+import { valueStorageExpr, kindEnumTextExpr } from './factories.ts';
+import { registeredSlots } from './shared.ts';
 import { seatsConfigChild, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
 import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
