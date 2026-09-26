@@ -78,8 +78,7 @@ import type {
 	DisplayUnions,
 	RuleProvenance
 } from './types.ts';
-import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
-import type { SymbolRuleWithRef } from './evaluate.ts';
+import { buildRuleCatalog, collectReferences } from './rule-catalog.ts';
 import { structureTokenInterior } from './token-interior.ts';
 import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
@@ -769,15 +768,7 @@ export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawG
 	const rename = (name: string): string => renames.get(name) ?? name;
 	const renameKey = (key: string): string => key.split('\u0000').map(rename).join('\u0000');
 	const renameRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
-		if (rule.type === SYMBOL) {
-			const ref = (rule as SymbolRuleWithRef)._ref;
-			const refMoves = ref !== undefined && (renames.has(ref.from) || renames.has(ref.to));
-			if (!renames.has(rule.name) && !refMoves) return rule;
-			const renamed: SymbolRuleWithRef = { ...rule, name: rename(rule.name) };
-			if (!refMoves) return renamed;
-			const withRef: SymbolRuleWithRef = { ...renamed, _ref: { ...ref, from: rename(ref.from), to: rename(ref.to) } };
-			return withRef;
-		}
+		if (rule.type === SYMBOL) return renames.has(rule.name) ? { ...rule, name: rename(rule.name) } : rule;
 		if (rule.type === ALIAS && rule.named && rule.content.type === SYMBOL) {
 			const content = rule.content.name;
 			if (targets.has(rename(content)) && rule.value === rename(content))
@@ -810,10 +801,7 @@ export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawG
 	}
 	const supertypes = raw.supertypes.map(rename);
 	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: supertypes });
-	const references = attachReferenceRuleIds(
-		raw.references.map((ref) => ({ ...ref, from: rename(ref.from), to: rename(ref.to), fromRuleId: undefined })),
-		{ ruleCatalog: identified.ruleCatalog }
-	);
+	const references = collectReferences(identified.rules, { ruleCatalog: identified.ruleCatalog });
 	return {
 		...raw,
 		rules: identified.rules,

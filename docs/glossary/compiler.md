@@ -1781,8 +1781,7 @@ by a plain `generate()` call alike.
 
 ```text
 /**
- * Optional combinator — coerces `content`, stamps every direct symbol
- * ref's `optional` flag (see `walkRefs`), then delegates the one-level
+ * Optional combinator — coerces `content`, then delegates the one-level
  * shape recognitions (`optional(optional(x))`, `optional(repeat(x))`,
  * `optional(repeat1(x))`) to `structuralBuilder.optional`
  * (dsl/builders.ts) — see that entry for the collapse rationale.
@@ -1793,8 +1792,7 @@ by a plain `generate()` call alike.
 
 ```text
 /**
- * Zero-or-more repetition combinator — coerces `content`, stamps every
- * direct symbol ref's `repeated` flag, then delegates the one-level shape
+ * Zero-or-more repetition combinator — coerces `content`, then delegates the one-level shape
  * recognitions to `structuralBuilder.repeat` (dsl/builders.ts) — see that
  * entry for the collapse rationale.
  */
@@ -1804,39 +1802,10 @@ by a plain `generate()` call alike.
 
 ```text
 /**
- * One-or-more repetition combinator — coerces `content`, stamps every
- * direct symbol ref's `repeated` flag, then delegates the one-level shape
+ * One-or-more repetition combinator — coerces `content`, then delegates the one-level shape
  * recognition to `structuralBuilder.repeat1` (dsl/builders.ts) — see that
  * entry for the collapse rationale.
  */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::walkRefs`
-
-```text
-/**
- * Walk a rule tree and call `visit` on every direct symbol reference
- * (`_ref`-bearing SymbolRule<'evaluate'>), including refs nested inside `seq`,
- * `choice`, `optional`, `repeat`, `repeat1`, and `prec` wrappers.
- *
- * Stops at nested `field` boundaries: a `field('y', $.foo)` inside a
- * `field('x', seq(..., field('y', $.foo)))` keeps its own field name
- * — `x` does not propagate over the inner `field`.
- *
- * Also stops at `alias` boundaries — an alias creates a distinct kind
- * with its own surface, so the inner reference doesn't inherit the
- * outer wrapper's modifiers.
- */
-```
-
-```text
-// prec wrappers are stripped by normalize but defensive
-```
-
-#### body
-
-```text
-// Stop — inner refs belong to the inner wrapper.
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::field`
@@ -2488,24 +2457,6 @@ The grammar's `rules:` entries with a bare body, sorted.
  * regressed several python rules — enrich's bare-keyword pass interferes
  * with user field/variant paths. Proper fix needs path-aware composition;
  * deferred.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::seedRefsFromBaseGrammar`
-
-```text
-/**
- * Seed the initial refs array from the base grammar's stored references.
- *
- * @param baseGrammar - The evaluated base grammar object, or `null` for a
- *   fresh grammar with no base.
- * @returns A new mutable array seeded with the base grammar's references, or
- *   an empty array when there is no base.
- * @remarks
- * Seeding with the base references ensures the diagnostic derivations in
- * Link can see the full reference graph, not just the handful of refs
- * introduced by override callbacks. Refs from rules the override replaces
- * are filtered by downstream passes.
  */
 ```
 
@@ -6109,6 +6060,19 @@ collector parameter.
  */
 ```
 
+### `packages/codegen/src/compiler/rule-catalog.ts::collectReferences`
+
+The grammar's reference graph, derived in one walk over the final rules: one
+`SymbolRef` per SYMBOL occurrence, from the rule it sits in, with the
+innermost enclosing `field` name and whether an enclosing `optional` or
+`repeat`/`repeat1` wraps it. The rules are the only source: nothing stamps a
+reference as its rule is built, so wrapper order and discarded `$` accesses
+never reach the graph. `fromRuleId` is the owning rule's root id.
+
+### `packages/codegen/src/compiler/rule-catalog.ts::CollectReferencesCtx`
+
+Ctx for `collectReferences`: the rule catalog whose roots give `fromRuleId`.
+
 ### `packages/codegen/src/compiler/rule-catalog.ts::BuildRuleCatalogCtx`
 
 ```text
@@ -6116,12 +6080,6 @@ collector parameter.
  *  names the grammar's machinery references outside rule bodies (evaluate
  *  passes its declared supertypes) that keep a hidden rule alive even when
  *  no visible rule reaches it — `_whitespace` has no reference anywhere. */
-```
-
-### `packages/codegen/src/compiler/rule-catalog.ts::AttachReferenceRuleIdsCtx`
-
-```text
-/** Ctx for {@link attachReferenceRuleIds}. */
 ```
 
 ### `packages/codegen/src/compiler/generate.ts::engine`
@@ -8138,12 +8096,6 @@ carried through a side channel.
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::SymbolRuleWithRef`
-
-```text
-// Augmented SymbolRule<'evaluate'> that carries a ref for in-place enrichment
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::coerceToRule`
 
 ```text
@@ -8156,7 +8108,7 @@ carried through a side channel.
 
 ```text
 // ---------------------------------------------------------------------------
-// $ proxy — reference tracking
+// $ proxy — each access is a fresh SYMBOL rule
 // ---------------------------------------------------------------------------
 ```
 
@@ -8167,14 +8119,6 @@ carried through a side channel.
 // recomputes the authoritative visibility decision via
 // `isHiddenKind()`, consulting both the leading-underscore
 // convention and tree-sitter's explicit `inline` list.
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::getRef`
-
-```text
-// ---------------------------------------------------------------------------
-// Ref enrichment helpers
-// ---------------------------------------------------------------------------
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::TokenFn`
@@ -10693,7 +10637,7 @@ re-derives a fact the pipeline already stamps.
 
 ### `packages/codegen/src/compiler/link.ts::collapseRenamedRules`
 
-A hidden rule the parser always shows under one tree name (`ts_symbol_names` gives the name; the catalog row is visible, not an alias or anonymous row, and is the only visible row carrying that name — `isRenamedEntry`) is one visible kind. This pass renames it to that tree name everywhere the grammar names it, before anything reads the grammar: rule keys, SYMBOL names and their `_ref` from/to, an identity alias wrapper around the renamed symbol (unwrapped), every name list (externals, extras, supertypes, inline, factoryInline, conflicts, precedences, word, orphanedSyntheticGroups, bodyPatternZeroMatches), the name-keyed side tables (externalRoles, refineForms, groups, renderAs, visibleExternals, options, expectDiagnostics, expectTestFailures), the NUL-joined automaticVariants keys and the desugar divergence events. It rebuilds the rule catalog (keeping each rule's provenance) and re-attaches reference rule ids, since rule ids embed the owner's name. A tree name that another rule or external already uses is an error.
+A hidden rule the parser always shows under one tree name (`ts_symbol_names` gives the name; the catalog row is visible, not an alias or anonymous row, and is the only visible row carrying that name — `isRenamedEntry`) is one visible kind. This pass renames it to that tree name everywhere the grammar names it, before anything reads the grammar: rule keys, SYMBOL names, an identity alias wrapper around the renamed symbol (unwrapped), every name list (externals, extras, supertypes, inline, factoryInline, conflicts, precedences, word, orphanedSyntheticGroups, bodyPatternZeroMatches), the name-keyed side tables (externalRoles, refineForms, groups, renderAs, visibleExternals, options, expectDiagnostics, expectTestFailures), the NUL-joined automaticVariants keys and the desugar divergence events. It rebuilds the rule catalog (keeping each rule's provenance) and re-derives the references from the renamed rules (`collectReferences`), since rule ids embed the owner's name. A tree name that another rule or external already uses is an error.
 
 It runs where the evaluated grammar is first consumed: `collectGrammarDiagnosticsForGrammar` collapses its input and hands the result on as `raw`, and `link` collapses again for callers that link an evaluated grammar directly; a collapsed grammar has no renamed rule left, so the second call returns its input.
 

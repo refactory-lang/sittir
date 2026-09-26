@@ -25,14 +25,13 @@ import type {
 	Rule,
 	SeqRule,
 	StringRule,
-	SymbolRef,
 	SymbolRule,
 	TokenRule
 } from '../types/rule.ts';
 import { normalizeEnumMembers } from '../dsl/rule-metadata.ts';
 import { structuralBuilder } from '../dsl/builders.ts';
 import type { RawGrammar, DesugarDivergenceEvent, RuleProvenance, UpstreamEvaluation } from './types.ts';
-import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
+import { buildRuleCatalog, collectReferences } from './rule-catalog.ts';
 import { isComplexBody } from '../dsl/rule-patterns.ts';
 import { collectOrphanedRules } from '../util/reachable-rules.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
@@ -40,10 +39,6 @@ import { RuleWalker } from '../dsl/rule-walker.ts';
 import type { PatchSite, WireContext, RefineForm } from '../dsl/wire/wire.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
-
-export interface SymbolRuleWithRef extends SymbolRule<'evaluate'> {
-	readonly _ref?: SymbolRef;
-}
 
 function coerceToRule(input: Input): Rule<'evaluate'> {
 	if (input === undefined || input === null) {
@@ -94,63 +89,23 @@ function choice(...members: Input[]): Rule<'evaluate'> {
 }
 
 function optional(content: Input): Rule<'evaluate'> {
-	const resolved = coerceToRule(content);
-	walkRefs(resolved, (ref) => {
-		ref.optional = true;
-	});
-	return structuralBuilder.optional(resolved);
+	return structuralBuilder.optional(coerceToRule(content));
 }
 
 function repeat(content: Input): Rule<'evaluate'> {
-	const resolved = coerceToRule(content);
-	walkRefs(resolved, (ref) => {
-		ref.repeated = true;
-	});
-	return structuralBuilder.repeat(resolved);
+	return structuralBuilder.repeat(coerceToRule(content));
 }
 
 function repeat1(content: Input): Rule<'evaluate'> {
-	const resolved = coerceToRule(content);
-	walkRefs(resolved, (ref) => {
-		ref.repeated = true;
-	});
-	return structuralBuilder.repeat1(resolved);
+	return structuralBuilder.repeat1(coerceToRule(content));
 }
 
-function createProxy(currentRule: string, refs: SymbolRef[]): Record<string, SymbolRuleWithRef> {
-	return new Proxy({} as Record<string, SymbolRuleWithRef>, {
-		get(_target, name: string): SymbolRuleWithRef {
-			const ref: SymbolRef = { refType: 'symbol', from: currentRule, to: name };
-			refs.push(ref);
-			return { ...sym(name), _ref: ref };
+function createProxy(): Record<string, SymbolRule<'evaluate'>> {
+	return new Proxy({} as Record<string, SymbolRule<'evaluate'>>, {
+		get(_target, name: string): SymbolRule<'evaluate'> {
+			return sym(name);
 		}
 	});
-}
-
-function getRef(rule: Rule<'evaluate'>): SymbolRef | undefined {
-	return (rule as SymbolRuleWithRef)._ref;
-}
-
-function walkRefs(rule: Rule<'evaluate'>, visit: (ref: SymbolRef) => void): void {
-	const ref = getRef(rule);
-	if (ref) visit(ref);
-	switch (rule.type) {
-		case SEQ:
-		case CHOICE:
-			for (const m of (rule as { members: Rule<'evaluate'>[] }).members) walkRefs(m, visit);
-			return;
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case 'prec' as never:
-			walkRefs((rule as { content: Rule<'evaluate'> }).content, visit);
-			return;
-		case FIELD:
-		case ALIAS:
-			return;
-		default:
-			return;
-	}
 }
 
 function field(name: string, content?: Input): FieldRule<'evaluate'> {
@@ -162,12 +117,7 @@ function field(name: string, content?: Input): FieldRule<'evaluate'> {
 			_needsContent: true
 		};
 	}
-	const resolved = coerceToRule(content);
-	const built = structuralBuilder.field(name, resolved);
-	walkRefs(built.content, (ref) => {
-		if (ref.fieldName === undefined) ref.fieldName = name;
-	});
-	return built;
+	return structuralBuilder.field(name, coerceToRule(content));
 }
 
 interface TokenFn {
@@ -271,15 +221,15 @@ function string(value: string): StringRule<'evaluate'> {
 
 interface GrammarOptions {
 	name: string;
-	rules: Record<string, ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input>;
-	extras?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[];
-	externals?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[];
-	supertypes?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[];
-	factoryInline?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[];
-	inline?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[];
-	conflicts?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[][];
-	word?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => SymbolRuleWithRef;
-	precedences?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[][];
+	rules: Record<string, ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input>;
+	extras?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[];
+	externals?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[];
+	supertypes?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[];
+	factoryInline?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[];
+	inline?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[];
+	conflicts?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[][];
+	word?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => SymbolRule<'evaluate'>;
+	precedences?: ($: Record<string, SymbolRule<'evaluate'>>, previous?: unknown) => Input[][];
 }
 
 interface MetadataSinks {
@@ -295,7 +245,6 @@ interface MetadataSinks {
 export interface EvaluateCtx {
 	readonly rules: Record<string, Rule<'evaluate'>>;
 	readonly provenanceByKind: Map<string, RuleProvenance>;
-	readonly refs: SymbolRef[];
 	readonly opts: GrammarOptions;
 	readonly baseRules: Record<string, Rule<'evaluate'>>;
 	readonly baseGrammar: unknown;
@@ -322,7 +271,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 
 	mergeEnrichOverridesIntoOptions(optionsOrBase, opts);
 
-	const refs: SymbolRef[] = seedRefsFromBaseGrammar(baseGrammar);
 	const rules: Record<string, Rule<'evaluate'>> = { ...baseRules };
 	const provenanceByKind = new Map<string, RuleProvenance>();
 
@@ -339,7 +287,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const ctx: EvaluateCtx = {
 		rules,
 		provenanceByKind,
-		refs,
 		opts,
 		baseRules,
 		baseGrammar,
@@ -377,7 +324,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const upstream = departsFromUpstream(opts) ? evaluateUpstream(optionsOrBase, ctx) : undefined;
 
 	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: ctx.sinks.supertypes });
-	const references = attachReferenceRuleIds(refs, { ruleCatalog: identified.ruleCatalog });
+	const references = collectReferences(identified.rules, { ruleCatalog: identified.ruleCatalog });
 
 	const grammarResult = {
 		name: opts.name,
@@ -504,11 +451,11 @@ function drainOrphanedSyntheticGroupsMetadata(opts: GrammarOptions): readonly st
 }
 
 function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<string, Rule<'evaluate'>> | undefined {
-	const { rules, refs, provenanceByKind } = ctx;
+	const { rules, provenanceByKind } = ctx;
 	const wireCtx = getWireContext(opts);
 	if (!wireCtx || !wireCtx.renderAs) return undefined;
 
-	const $ = createProxy('_renderAs_', refs);
+	const $ = createProxy();
 	const rawEntries = wireCtx.renderAs($);
 	if (!rawEntries || Object.keys(rawEntries).length === 0) return undefined;
 
@@ -526,11 +473,11 @@ function drainVisibleExternalsMetadata(
 	opts: GrammarOptions,
 	ctx: EvaluateCtx
 ): Record<string, Rule<'evaluate'>> | undefined {
-	const { rules, refs, provenanceByKind } = ctx;
+	const { rules, provenanceByKind } = ctx;
 	const wireCtx = getWireContext(opts);
 	if (!wireCtx || !wireCtx.visibleExternals) return undefined;
 
-	const $ = createProxy('_visibleExternals_', refs);
+	const $ = createProxy();
 	const rawEntries = wireCtx.visibleExternals($);
 	if (!rawEntries || Object.keys(rawEntries).length === 0) return undefined;
 
@@ -558,12 +505,8 @@ function mergeEnrichOverridesIntoOptions(optionsOrBase: GrammarOptions | { gramm
 	}
 }
 
-function seedRefsFromBaseGrammar(baseGrammar: any): SymbolRef[] {
-	return baseGrammar?.references ? [...baseGrammar.references] : [];
-}
-
 function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
-	const { opts, refs, provenanceByKind } = ctx;
+	const { opts, provenanceByKind } = ctx;
 	evaluateRuleFunctions(rules, ctx);
 	const wireCtx = getWireContext(opts);
 	if (wireCtx) {
@@ -573,7 +516,7 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 				if (typeof value !== 'function') continue;
 				const hiddenName = `_${key}`;
 				if (hiddenName in rules) continue;
-				const $ = createProxy(hiddenName, refs);
+				const $ = createProxy();
 				try {
 					const result = (value as ($: unknown, previous: unknown) => unknown).call($, $, undefined);
 					if (result && typeof result === 'object' && typeof (result as { type?: unknown }).type === 'string') {
@@ -585,7 +528,7 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 			}
 		}
 		applyPatternReplacement(rules, ctx, wireCtx);
-		applyVisibleExternalsRewrite(rules, { evaluateCtx: ctx, wireCtx });
+		applyVisibleExternalsRewrite(rules, { wireCtx });
 	}
 }
 
@@ -827,14 +770,13 @@ function rewriteVisibleExternalRefsInArray(
 }
 
 interface ApplyVisibleExternalsCtx {
-	readonly evaluateCtx: EvaluateCtx;
 	readonly wireCtx: WireContext;
 }
 
 function applyVisibleExternalsRewrite(rules: Record<string, Rule<'evaluate'>>, ctx: ApplyVisibleExternalsCtx): void {
-	const { evaluateCtx, wireCtx } = ctx;
+	const { wireCtx } = ctx;
 	if (!wireCtx.visibleExternals) return;
-	const $ = createProxy('_visibleExternals_', evaluateCtx.refs);
+	const $ = createProxy();
 	const rawEntries = wireCtx.visibleExternals($);
 	if (!rawEntries) return;
 	const hiddenToVisible = new Map<string, string>();
@@ -854,9 +796,9 @@ function evaluateMetadataCallbacksInScope(opts: GrammarOptions, ctx: EvaluateCtx
 }
 
 function evaluateRuleFunctions(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
-	const { opts, baseRules, refs, provenanceByKind, isExtension } = ctx;
+	const { opts, baseRules, provenanceByKind, isExtension } = ctx;
 	for (const [name, ruleFn] of Object.entries(opts.rules)) {
-		const $ = createProxy(name, refs);
+		const $ = createProxy();
 		const baseRule = baseRules[name];
 		const result = ruleFn.call($, $, baseRule);
 		rules[name] = coerceToRule(result);
@@ -923,7 +865,7 @@ function appendCallbackMetadataNames(sink: string[], result: unknown): void {
 }
 
 function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void {
-	const { refs, sinks, setWord } = ctx;
+	const { sinks, setWord } = ctx;
 	const baseGrammar = ctx.baseGrammar as {
 		extras?: string[];
 		externals?: string[];
@@ -935,7 +877,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 		word?: string;
 	} | null;
 	if (opts.extras) {
-		const $ = createProxy('_extras_', refs);
+		const $ = createProxy();
 		const baseExtras = baseGrammar?.extras ?? [];
 		const result = opts.extras.call($, $, baseExtras);
 		if (Array.isArray(result)) {
@@ -952,7 +894,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 	}
 
 	if (opts.externals) {
-		const $ = createProxy('_externals_', refs);
+		const $ = createProxy();
 		const baseExternals = baseGrammar?.externals ?? [];
 		const result = opts.externals.call($, $, baseExternals);
 		if (Array.isArray(result)) {
@@ -965,25 +907,25 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 	}
 
 	if (opts.supertypes) {
-		const $ = createProxy('_supertypes_', refs);
+		const $ = createProxy();
 		const baseSupertypes = baseNameSymbols(baseGrammar?.supertypes);
 		appendCallbackMetadataNames(sinks.supertypes, opts.supertypes.call($, $, baseSupertypes));
 	}
 
 	if (opts.factoryInline) {
-		const $ = createProxy('_factory_inline_', refs);
+		const $ = createProxy();
 		const baseFactoryInline = baseGrammar?.factoryInline ?? [];
 		appendCallbackMetadataNames(sinks.factoryInline, opts.factoryInline.call($, $, baseFactoryInline));
 	}
 
 	if (opts.inline) {
-		const $ = createProxy('_inline_', refs);
+		const $ = createProxy();
 		const baseInline = baseNameSymbols(baseGrammar?.inline);
 		appendCallbackMetadataNames(sinks.inline, opts.inline.call($, $, baseInline));
 	}
 
 	if (opts.conflicts) {
-		const $ = createProxy('_conflicts_', refs);
+		const $ = createProxy();
 		const baseConflicts = (baseGrammar?.conflicts ?? []).map((group) => baseNameSymbols(group));
 		const result = opts.conflicts.call($, $, baseConflicts);
 		if (Array.isArray(result)) {
@@ -1003,7 +945,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 	}
 
 	if (opts.precedences) {
-		const $ = createProxy('_precedences_', refs);
+		const $ = createProxy();
 		const basePrecedences = baseGrammar?.precedences ?? [];
 		const result = opts.precedences.call($, $, basePrecedences);
 		if (Array.isArray(result)) {
@@ -1023,7 +965,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 	}
 
 	if (opts.word) {
-		const $ = createProxy('_word_', refs);
+		const $ = createProxy();
 		const w = opts.word.call($, $);
 		setWord(w.name);
 	}

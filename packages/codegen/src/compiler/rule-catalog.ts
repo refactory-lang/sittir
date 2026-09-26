@@ -20,6 +20,7 @@ import type { Rule, RuleId, SymbolRef } from '../types/rule.ts';
 import { classifyByType } from '../dsl/rule-patterns.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { collectOrphanedRules } from '../util/reachable-rules.ts';
+import { RuleWalker } from '../dsl/rule-walker.ts';
 import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
 
 interface BuildResult {
@@ -82,15 +83,44 @@ export function buildRuleCatalog(
 	};
 }
 
-export interface AttachReferenceRuleIdsCtx {
+export interface CollectReferencesCtx {
 	readonly ruleCatalog: RuleCatalog;
 }
 
-export function attachReferenceRuleIds(references: readonly SymbolRef[], ctx: AttachReferenceRuleIdsCtx): SymbolRef[] {
-	return references.map((ref) => {
-		const fromRuleId = ctx.ruleCatalog.rootsByKind.get(ref.from);
-		return fromRuleId ? { ...ref, fromRuleId } : { ...ref };
-	});
+interface ReferenceScope {
+	readonly fieldName?: string;
+	readonly optional: boolean;
+	readonly repeated: boolean;
+}
+
+export function collectReferences(rules: Readonly<Record<string, Rule<'evaluate'>>>, ctx: CollectReferencesCtx): SymbolRef[] {
+	const walker = new RuleWalker<Rule<'evaluate'>>();
+	const references: SymbolRef[] = [];
+	for (const [from, root] of Object.entries(rules)) {
+		const fromRuleId = ctx.ruleCatalog.rootsByKind.get(from);
+		const visit = (rule: Rule<'evaluate'>, scope: ReferenceScope): void => {
+			if (rule.type === SYMBOL) {
+				references.push({
+					refType: 'symbol',
+					from,
+					to: rule.name,
+					...(fromRuleId === undefined ? {} : { fromRuleId }),
+					...(scope.fieldName === undefined ? {} : { fieldName: scope.fieldName }),
+					...(scope.optional ? { optional: true } : {}),
+					...(scope.repeated ? { repeated: true } : {})
+				});
+				return;
+			}
+			const inner: ReferenceScope = {
+				fieldName: rule.type === FIELD ? rule.name : scope.fieldName,
+				optional: scope.optional || rule.type === OPTIONAL,
+				repeated: scope.repeated || rule.type === REPEAT || rule.type === REPEAT1
+			};
+			for (const child of walker.childrenOf(rule)) visit(child, inner);
+		};
+		visit(root, { optional: false, repeated: false });
+	}
+	return references;
 }
 
 interface IdentifyParams {

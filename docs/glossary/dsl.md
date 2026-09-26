@@ -87,7 +87,7 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
  *  tree-sitter's uppercase ones during CLI generation. Calling the injected fn
  *  directly produces a rule in the active runtime's case with no hand-rolled
  *  detection, and inherits the runtime's construction semantics (content
- *  normalization, `_ref.fieldName` stamping). A missing global means enrich
+ *  normalization). A missing global means enrich
  *  was called outside any runtime — a unit test that forgot `installFakeDsl()`.
  *
  *  Accepts alternate names because the two runtimes don't agree on every
@@ -3718,12 +3718,11 @@ unwraps `prec` and a stamp on the wrapper is lost.
  * `{value,trailing,leading}` fact post-lift for the exact same logical
  * rule; a raw string literal used directly inside `seq(...)`/`choice(...)`
  * is still a bare string (not yet coerced to a `STRING` rule node) at the
- * point enrich runs; and sittir's own `evaluate()` runtime stamps every
- * `$.foo` reference with a `_ref: {refType, from, to}` provenance field
- * that tree-sitter's CLI runtime never adds. That last one is exactly what
+ * point enrich runs; and either runtime may stamp provenance fields (an
+ * `id`, a `metadata` bag) the other never adds. Provenance stamps are what
  * broke group-dedupe before this key existed: hashing a rule by its whole
- * object (minus a hand-maintained exclusion list of known-bad fields like
- * `_ref`) meant every NEW provenance stamp added anywhere in the Rule shape
+ * object (minus a hand-maintained exclusion list of known-bad fields) meant
+ * every NEW provenance stamp added anywhere in the Rule shape
  * was a fresh way for the same logical body to hash differently under the
  * two runtimes, re-opening the exact bug — a rust `slice_pattern`/
  * `tuple_struct_pattern` shared group body minted as two silently-empty
@@ -4227,7 +4226,7 @@ Terminal-ness is the grammar-source classification of `parserSymbolClassOf`, so 
 /**
  * @internal — derive the element name a separated-list position exposes from
  * mint-time-visible facts ONLY (`type`/`name`/`members`/`content`), never the
- * per-pipeline decoration stamps (`id`/`_ref`/`metadata`) — the tree-sitter CLI
+ * per-pipeline decoration stamps (`id`/`metadata`) — the tree-sitter CLI
  * bundle and sittir's evaluate() must derive the SAME name for the same body.
  * A single symbol (or choice-of-one, or FIELD wrapper) names the element; a
  * multi-arm choice or compound seq has no single name (`null` — the caller

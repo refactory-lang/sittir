@@ -34,7 +34,7 @@ async function freshEnrichedUpstream(grammar: string, pass: string): Promise<str
 
 describe('evaluating a grammar leaves its upstream untouched', () => {
 	for (const grammar of GRAMMARS) {
-		it.fails(`${grammar}: the frozen upstream base survives enrich and the wired evaluation (fails while field(), optional() and repeat() stamp symbol refs in place)`, async () => {
+		it(`${grammar}: the frozen upstream base survives enrich and the wired evaluation`, async () => {
 			deepFreeze(await evaluate(resolveGrammarJsPath(grammar)));
 			const before = await freshEnrichedUpstream(grammar, 'before');
 			await evaluate(resolveOverridesPath(grammar));
