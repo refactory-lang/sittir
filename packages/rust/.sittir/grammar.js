@@ -5971,6 +5971,7 @@ var grammar_sittir_default = grammar(
         visibility_modifier_pub: { '"pub"/after': preference("tight") },
         self_parameter: { "reference:/after": preference("tight") },
         variadic_parameter: { '"..."/before': preference("space") },
+        function_modifiers: { "modifier:/separator": preference("space") },
         closure_parameters: { '"|"/after': preference("tight"), '"|"/before': preference("tight"), after: preference("space") },
         source_file: {
           "statements:/separator": preference("tight"),
@@ -6014,7 +6015,6 @@ var grammar_sittir_default = grammar(
           "block/statements:/separator": "gap/separator",
           "declaration_list/declarations:/separator": "gap/separator",
           "field_initializer/attribute_item:/separator": "gap/separator",
-          "function_modifiers/modifier:/separator": "gap/separator",
           "last_match_arm/attributes:/separator": "gap/separator",
           "match_arm/attributes:/separator": "gap/separator",
           "match_block_arms/match_arm:/separator": "gap/separator",

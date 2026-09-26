@@ -10,8 +10,20 @@ import type { DeriveShapeDiagnostic } from './derive-shapes.ts';
 import type { AssembleWarning } from '../model/node-map.ts';
 import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
-import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent } from '../types.ts';
-import { collectGeneratedKindEntries, type GeneratedIdTables } from '../generated-metadata.ts';
+import type {
+	RawGrammar,
+	LinkedGrammar,
+	NormalizedGrammar,
+	IncludeFilter,
+	DesugarDivergenceEvent,
+	ReservedWordsets
+} from '../types.ts';
+import {
+	collectGeneratedKindEntries,
+	reservedWordset,
+	type GeneratedIdTables,
+	type KindEntryLike
+} from '../generated-metadata.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions, symbolSourceOf } from './alias-distributed.ts';
 
@@ -131,6 +143,25 @@ export function fromDesugarDivergence(grammar: string, event: DesugarDivergenceE
 	};
 }
 
+export function reservedMemberDiagnostics(
+	grammar: string,
+	reserved: ReservedWordsets | undefined,
+	entries: readonly KindEntryLike[]
+): GrammarDiagnostic[] {
+	return Object.keys(reserved ?? {}).flatMap((wordset) =>
+		reservedWordset(reserved, wordset, entries).nonLiteral.map((member) => ({
+			scope: 'grammar' as const,
+			code: 'reserved-member-not-literal',
+			severity: 'warning' as const,
+			grammar,
+			ownerKind: member,
+			message: `reserved wordset '${wordset}' member '${member}' has no literal text, so the word builder cannot reject it.`,
+			proposal: `List the word as a string, or as a symbol whose rule is a single literal.`,
+			canProceed: true
+		}))
+	);
+}
+
 export function collectGrammarDiagnostics(input: {
 	grammar: string;
 	parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
@@ -236,6 +267,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		...diagnoseDistributedAliases({ grammar: rawGrammar.name, symbols }),
 		...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols }),
 		...kindIdStampDiagnostics,
+		...reservedMemberDiagnostics(rawGrammar.name, nodeMap.reserved, kindEntries),
 		...(rawGrammar.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(rawGrammar.name, name)),
 		...(rawGrammar.desugarDivergences ?? []).map((event) => fromDesugarDivergence(rawGrammar.name, event))
 	];

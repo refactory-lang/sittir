@@ -131,6 +131,7 @@ describe('post-evaluate invariant', () => {
 				'conflicts',
 				'precedences',
 				'word',
+				'reserved',
 				'references',
 				'ruleCatalog',
 				// Documented sidecar — populated by role() accumulator.

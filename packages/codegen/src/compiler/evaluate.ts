@@ -280,6 +280,7 @@ interface GrammarOptions {
 	conflicts?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[][];
 	word?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => SymbolRuleWithRef;
 	precedences?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[][];
+	reserved?: Record<string, ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[]>;
 }
 
 interface MetadataSinks {
@@ -290,6 +291,7 @@ interface MetadataSinks {
 	inline: string[];
 	conflicts: string[][];
 	precedences: string[][];
+	reserved: Record<string, Rule<'evaluate'>[]>;
 }
 
 export interface EvaluateCtx {
@@ -333,9 +335,19 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const inline: string[] = [];
 	const conflicts: string[][] = [];
 	const precedences: string[][] = [];
+	const reserved: Record<string, Rule<'evaluate'>[]> = {};
 	let word: string | null = null;
 
-	const sinks: MetadataSinks = { extras, externals, supertypes, factoryInline, inline, conflicts, precedences };
+	const sinks: MetadataSinks = {
+		extras,
+		externals,
+		supertypes,
+		factoryInline,
+		inline,
+		conflicts,
+		precedences,
+		reserved
+	};
 	const ctx: EvaluateCtx = {
 		rules,
 		provenanceByKind,
@@ -387,6 +399,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		conflicts,
 		precedences,
 		word,
+		reserved,
 		references,
 		ruleCatalog: identified.ruleCatalog,
 		externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
@@ -862,6 +875,7 @@ function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): voi
 		conflicts?: string[][];
 		precedences?: string[][];
 		word?: string;
+		reserved?: Record<string, Rule<'evaluate'>[]>;
 	} | null;
 	if (inherited) {
 		if (!opts.externals && Array.isArray(inherited.externals)) sinks.externals.push(...inherited.externals);
@@ -874,6 +888,7 @@ function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): voi
 		if (!opts.conflicts && Array.isArray(inherited.conflicts)) sinks.conflicts.push(...inherited.conflicts);
 		if (!opts.precedences && Array.isArray(inherited.precedences)) sinks.precedences.push(...inherited.precedences);
 		if (!opts.word && inherited.word) setWord(inherited.word);
+		if (!opts.reserved && inherited.reserved) Object.assign(sinks.reserved, inherited.reserved);
 	}
 }
 
@@ -908,6 +923,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 		conflicts?: string[][];
 		precedences?: string[][];
 		word?: string;
+		reserved?: Record<string, Rule<'evaluate'>[]>;
 	} | null;
 	if (opts.extras) {
 		const $ = createProxy('_extras_', refs);
@@ -974,6 +990,14 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 					);
 				}
 			}
+		}
+	}
+
+	if (opts.reserved) {
+		for (const [wordset, members] of Object.entries(opts.reserved)) {
+			const $ = createProxy('_reserved_', refs);
+			const result = members.call($, $, baseGrammar?.reserved?.[wordset] ?? []);
+			sinks.reserved[wordset] = Array.isArray(result) ? result.map(coerceToRule) : [];
 		}
 	}
 

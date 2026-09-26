@@ -1,4 +1,4 @@
-import { findOwnKindEntry } from '../compiler/generated-metadata.ts';
+import { findOwnKindEntry, reservedWordset } from '../compiler/generated-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isVisibleTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
@@ -121,6 +121,7 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 					break;
 			}
 			if (strictNodeExpectation(slot, nodeMap) !== undefined) imports.add('rejectBareText');
+			if (seatedKeywordTexts(slot, nodeMap, kindEntries).length > 0) imports.add('rejectKeywordText');
 			if (kindEntries !== undefined && slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
 		}
 		if (kindEntries !== undefined && node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
@@ -173,8 +174,19 @@ function leafReDeclaration(kind: string, node: AssembledNode): { constName: stri
 	return { constName: `_leafRe_${node.rawFactoryName!}`, literal };
 }
 
-function buildLeafReConsts(nodeMap: NodeMap, lines: string[]): Map<string, string> {
+function buildLeafReConsts(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	lines: string[]
+): Map<string, string> {
 	const leafReConsts = new Map<string, string>();
+	const word = nodeMap.word ? nodeMap.nodes.get(nodeMap.word) : undefined;
+	const reserved = reservedWordset(nodeMap.reserved, 'global', kindEntries ?? []).words;
+	if (word?.rawFactoryName && reserved.length > 0) {
+		const constName = `_reservedWords_${word.rawFactoryName}`;
+		leafReConsts.set(reservedGuardKey(word.kind), constName);
+		lines.push(`const ${constName}: ReadonlySet<string> = new Set(${JSON.stringify(reserved)});`);
+	}
 	for (const [kind, node] of nodeMap.nodes) {
 		const declaration = leafReDeclaration(kind, node);
 		if (declaration === undefined) continue;
@@ -213,6 +225,28 @@ function bareTextRejection(f: AssembledNonterminal, expr: string, nodeMap: NodeM
 	const expected = strictNodeExpectation(f, nodeMap);
 	if (expected === undefined) return expr;
 	return `rejectBareText(${expr}, '${typeName}.${f.configKey}', ${JSON.stringify(expected)})`;
+}
+
+function keywordTextRejection(
+	f: AssembledNonterminal,
+	expr: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	typeName: string
+): string {
+	const keywords = seatedKeywordTexts(f, nodeMap, kindEntries);
+	if (keywords.length === 0) return expr;
+	const word = kindDiscriminantExpr(nodeMap.word!, nodeMap, kindEntries!);
+	return `rejectKeywordText(${expr}, '${typeName}.${f.configKey}', ${word}, ${JSON.stringify(keywords)})`;
+}
+
+export function seatedKeywordTexts(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string[] {
+	if (kindEntries === undefined || !textLeaves(f, nodeMap).some((leaf) => leaf.kind === nodeMap.word)) return [];
+	return keywordArmTextEntries(f, nodeMap, kindEntries).map((entry) => entry.text);
 }
 
 export function strictNodeExpectation(f: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
@@ -357,10 +391,18 @@ function buildLeafGuards(node: { kind: string; textPattern?: string }, leafReCon
 			`if (!${reConst}.test(text)) throw new Error(\`${node.kind}: text does not match pattern: \${text}\`);`
 		);
 	}
+	const reservedConst = leafReConsts.get(reservedGuardKey(node.kind));
+	if (reservedConst) {
+		guards.push(`if (${reservedConst}.has(text)) throw new Error(\`${node.kind}: '\${text}' is a reserved word\`);`);
+	}
 	if (!anchoredLeafRegex(node.kind, node.textPattern)?.test('')) {
 		guards.unshift(`if (text.length === 0) throw new Error(\`${node.kind}: text must be non-empty\`);`);
 	}
 	return guards;
+}
+
+function reservedGuardKey(kind: string): string {
+	return `${kind}\0\0reserved`;
 }
 
 type FieldCarryingNode = AuthoredCompound;
@@ -417,9 +459,46 @@ export function kindEnumTextMapExpr(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
+	return textMapExpr(kindEnumTextEntries(f, nodeMap, kindEntries));
+}
+
+export function keywordArmTextMapExpr(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	return textMapExpr(keywordArmTextEntries(f, nodeMap, kindEntries));
+}
+
+function keywordArmTextEntries(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): KindEnumTextEntry[] {
+	return kindEnumTextEntries(f, nodeMap, kindEntries).filter((entry) => entry.keyword);
+}
+
+function textMapExpr(entries: readonly KindEnumTextEntry[]): string {
+	return `[${entries.map(({ text, discriminant }) => `[${JSON.stringify(text)}, ${discriminant}] as const`).join(', ')}]`;
+}
+
+interface KindEnumTextEntry {
+	readonly text: string;
+	readonly discriminant: string;
+	readonly keyword: boolean;
+}
+
+function kindEnumTextEntries(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): KindEnumTextEntry[] {
 	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-	if ((storageInfo.kind !== 'kindEnum' && storageInfo.kind !== 'mixedEnum') || !kindEntries) return '[]';
-	const byText: Array<readonly [string, string]> = [];
+	if ((storageInfo.kind !== 'kindEnum' && storageInfo.kind !== 'mixedEnum') || !kindEntries) return [];
+	const isKeywordKind = (kind: string | undefined): boolean =>
+		kind !== undefined && nodeMap.nodes.get(kind)?.modelType === 'keyword';
+	const literalIsKeyword = (text: string): boolean => isKeywordKind(findKindEntryForLiteral(kindEntries, text)?.kind);
+	const byText: KindEnumTextEntry[] = [];
 	for (const value of f.values) {
 		if (isNodeRef(value)) {
 			const kind = storageKindOfRef(value.node);
@@ -435,7 +514,7 @@ export function kindEnumTextMapExpr(
 							? kindDiscriminantExprForLiteral(text, kindEntries)
 							: undefined);
 				if (discriminant === undefined) continue;
-				byText.push([text, discriminant]);
+				byText.push({ text, discriminant, keyword: resolved.modelType === 'keyword' });
 				continue;
 			}
 			if (!resolved || resolved.modelType !== 'enum') continue;
@@ -449,7 +528,7 @@ export function kindEnumTextMapExpr(
 							: hasCatalogEntry(kindEntries, resolved.kind)
 								? kindDiscriminantExpr(resolved.kind, nodeMap, kindEntries)
 								: `kindIdFromName(${JSON.stringify(resolved.kind)})`;
-				byText.push([text, discriminant]);
+				byText.push({ text, discriminant, keyword: rec !== undefined ? isKeywordKind(rec.kind) : literalIsKeyword(text) });
 			}
 			continue;
 		}
@@ -460,9 +539,9 @@ export function kindEnumTextMapExpr(
 				? kindDiscriminantExprForLiteral(value.value, kindEntries)
 				: undefined);
 		if (discriminant === undefined) continue;
-		byText.push([value.value, discriminant]);
+		byText.push({ text: value.value, discriminant, keyword: literalIsKeyword(value.value) });
 	}
-	return `[${byText.map(([text, discriminant]) => `[${JSON.stringify(text)}, ${discriminant}] as const`).join(', ')}]`;
+	return byText;
 }
 
 function slotStorageFromValueExpr(
@@ -482,7 +561,7 @@ function admittedSlotInput(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	typeName: string
 ): string {
-	const admitted = bareTextRejection(f, expr, nodeMap, typeName);
+	const admitted = keywordTextRejection(f, bareTextRejection(f, expr, nodeMap, typeName), nodeMap, kindEntries, typeName);
 	return aliasContentAdmission(f, admitted, nodeMap, kindEntries, `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`);
 }
 
@@ -1745,7 +1824,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(...emitNonEmptyAssertHelper());
 		lines.push('');
 
-		const leafReConsts = buildLeafReConsts(nodeMap, lines);
+		const leafReConsts = buildLeafReConsts(nodeMap, kindEntries, lines);
 		if (leafReConsts.size > 0) lines.push('');
 
 		const refineByKind = new Map<string, RefineKindInfo>();

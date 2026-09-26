@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
 import {
 	AssembledBranch,
-	AssembledKeyword,
 	AssembledList,
 	AssembledPattern,
+	AssembledPunctuation,
 	type AssembledNode,
 	type SeparatedListElementRule
 } from '../../compiler/model/node-map.ts';
@@ -59,7 +59,7 @@ function makeNodeMap() {
 		})
 	);
 	nodes.set('field_pattern', new AssembledBranch('field_pattern', contentRule, contentRule));
-	nodes.set('remaining_field_pattern', new AssembledKeyword('remaining_field_pattern', { type: STRING, value: '..' }));
+	nodes.set('remaining_field_pattern', new AssembledPunctuation('remaining_field_pattern', { type: STRING, value: '..' }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
@@ -72,7 +72,9 @@ describe('from() auto-wrapped array elements', () => {
 		expect(emitted).toContain(
 			'case "_struct_pattern_elements": return (coerceToStructPatternElements as (...args: unknown[]) => unknown)(...children);'
 		);
-		expect(emitted).toContain('_resolveMany<T.FieldPattern | TSKindId.RemainingFieldPattern>(els, ');
+		expect(emitted).toContain(
+			'_resolveManyBranch<T.FieldPattern | TSKindId.RemainingFieldPattern>(els, "field_pattern", '
+		);
 		// The container kind is what produced a container nested in itself.
 		expect(emitted).not.toContain('if (_isFromKind(kind)) return _resolveByKind(kind, e);');
 	});

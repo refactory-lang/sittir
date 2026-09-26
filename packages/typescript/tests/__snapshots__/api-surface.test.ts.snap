@@ -340,6 +340,7 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "propertyName": "object",
   "readTreeNode": "function",
   "rejectBareText": "function",
+  "rejectKeywordText": "function",
   "render": "function",
   "resolveAbstractClassDeclaration_body": "function",
   "resolveAbstractClassDeclaration_decorators": "function",

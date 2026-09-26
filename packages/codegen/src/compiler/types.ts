@@ -95,6 +95,8 @@ export interface DisplayUnionMember {
 
 export type DisplayUnions = ReadonlyMap<string, readonly DisplayUnionMember[]>;
 
+export type ReservedWordsets = Readonly<Record<string, readonly Rule<'evaluate'>[]>>;
+
 export interface RawGrammar {
 	readonly name: string;
 	readonly rules: Record<string, Rule<'evaluate'>>;
@@ -107,6 +109,7 @@ export interface RawGrammar {
 	readonly conflicts: string[][];
 	readonly precedences: string[][];
 	readonly word: string | null;
+	readonly reserved?: ReservedWordsets;
 	readonly references: SymbolRef[];
 	readonly externalRoles?: Map<string, ExternalRole>;
 	readonly refineForms?: Map<string, RefineForm[]>;
@@ -184,6 +187,7 @@ export interface LinkedGrammar {
 	readonly externals?: readonly string[];
 	readonly extras?: readonly string[];
 	readonly word: string | null;
+	readonly reserved?: ReservedWordsets;
 	readonly references: SymbolRef[];
 	readonly derivations: DerivationLog;
 	readonly displayUnions?: DisplayUnions;
@@ -212,6 +216,7 @@ export interface NormalizedGrammar {
 	readonly supertypes: Set<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
+	readonly reserved?: ReservedWordsets;
 	readonly externals?: readonly string[];
 	readonly extras?: readonly string[];
 	readonly derivations: DerivationLog;
@@ -240,6 +245,7 @@ export interface SimplifiedGrammar {
 	readonly factoryInline: ReadonlySet<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
+	readonly reserved?: ReservedWordsets;
 	readonly externals?: readonly string[];
 	readonly extras?: readonly string[];
 	readonly derivations: DerivationLog;
@@ -277,6 +283,7 @@ export interface NodeMap {
 	readonly normalizedRules?: Record<string, RenderRule>;
 	readonly word?: string | null;
 	readonly wordMatcher?: RegExp;
+	readonly reserved?: ReservedWordsets;
 	readonly externals?: ReadonlySet<string>;
 	readonly extras?: ReadonlySet<string>;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;

@@ -319,6 +319,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		normalizedRules: normalized.normalizedRules,
 		word: normalized.word,
 		wordMatcher: normalized.wordMatcher,
+		reserved: normalized.reserved,
 		externals: normalized.externals ? new Set(normalized.externals) : undefined,
 		extras: normalized.extras ? new Set(normalized.extras) : undefined,
 		refineForms: normalized.refineForms,

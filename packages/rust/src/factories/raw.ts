@@ -14,6 +14,7 @@ import {
 	coerceMixedEnumStorage,
 	numberText,
 	rejectBareText,
+	rejectKeywordText,
 	isNodeData
 } from '../utils.js';
 
@@ -392,105 +393,161 @@ export function buildNonSpecialToken(
 		| TSKindId.WhereKeyword
 		| TSKindId.WhileKeyword
 ): T.NonSpecialToken.Built {
-	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.NonSpecialToken['_content']>>(value, [
-			['mut', TSKindId.MutableSpecifier] as const,
-			['self', TSKindId.Self] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['+', TSKindId.Plus] as const,
-			['-', TSKindId.Dash] as const,
-			['*', TSKindId.Star] as const,
-			['/', TSKindId.Slash] as const,
-			['%', TSKindId.Percent] as const,
-			['^', TSKindId.Caret] as const,
-			['!', TSKindId.Bang] as const,
-			['&', TSKindId.Amp] as const,
-			['|', TSKindId.Pipe] as const,
-			['&&', TSKindId.AmpAmp] as const,
-			['||', TSKindId.PipePipe] as const,
-			['<<', TSKindId.LtLt] as const,
-			['>>', TSKindId.GtGt] as const,
-			['+=', TSKindId.PlusEq] as const,
-			['-=', TSKindId.DashEq] as const,
-			['*=', TSKindId.StarEq] as const,
-			['/=', TSKindId.SlashEq] as const,
-			['%=', TSKindId.PercentEq] as const,
-			['^=', TSKindId.CaretEq] as const,
-			['&=', TSKindId.AmpEq] as const,
-			['|=', TSKindId.PipeEq] as const,
-			['<<=', TSKindId.LtLtEq] as const,
-			['>>=', TSKindId.GtGtEq] as const,
-			['=', TSKindId.Eq] as const,
-			['==', TSKindId.EqEq] as const,
-			['!=', TSKindId.BangEq] as const,
-			['>', TSKindId.Gt] as const,
-			['<', TSKindId.Lt] as const,
-			['>=', TSKindId.GtEq] as const,
-			['<=', TSKindId.LtEq] as const,
-			['@', TSKindId.At] as const,
-			['_', TSKindId.Underscore] as const,
-			['.', TSKindId.Dot] as const,
-			['..', TSKindId.DotDot] as const,
-			['...', TSKindId.DotDotDot] as const,
-			['..=', TSKindId.DotDotEq] as const,
-			[',', TSKindId.Comma] as const,
-			[';', TSKindId.Semi] as const,
-			[':', TSKindId.Colon] as const,
-			['::', TSKindId.ColonColon] as const,
-			['->', TSKindId.DashGt] as const,
-			['=>', TSKindId.EqGt] as const,
-			['#', TSKindId.Pound] as const,
-			['?', TSKindId.Qmark] as const,
-			["'", TSKindId.Squote] as const,
-			['as', TSKindId.AsKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['break', TSKindId.BreakKeyword] as const,
-			['const', TSKindId.ConstKeyword] as const,
-			['continue', TSKindId.ContinueKeyword] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['enum', TSKindId.EnumKeyword] as const,
-			['fn', TSKindId.FnKeyword] as const,
-			['for', TSKindId.ForKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const,
-			['if', TSKindId.IfKeyword] as const,
-			['impl', TSKindId.ImplKeyword] as const,
-			['let', TSKindId.LetKeyword] as const,
-			['loop', TSKindId.LoopKeyword] as const,
-			['match', TSKindId.MatchKeyword] as const,
-			['mod', TSKindId.ModKeyword] as const,
-			['pub', TSKindId.PubKeyword] as const,
-			['return', TSKindId.ReturnKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['struct', TSKindId.StructKeyword] as const,
-			['trait', TSKindId.TraitKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['unsafe', TSKindId.UnsafeKeyword] as const,
-			['use', TSKindId.UseKeyword] as const,
-			['where', TSKindId.WhereKeyword] as const,
-			['while', TSKindId.WhileKeyword] as const
-		]),
+	const _content = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.NonSpecialToken['_content']>>(value, [
+				['mut', TSKindId.MutableSpecifier] as const,
+				['self', TSKindId.Self] as const,
+				['super', TSKindId.Super] as const,
+				['crate', TSKindId.Crate] as const,
+				['u8', TSKindId.U8Keyword] as const,
+				['i8', TSKindId.I8Keyword] as const,
+				['u16', TSKindId.U16Keyword] as const,
+				['i16', TSKindId.I16Keyword] as const,
+				['u32', TSKindId.U32Keyword] as const,
+				['i32', TSKindId.I32Keyword] as const,
+				['u64', TSKindId.U64Keyword] as const,
+				['i64', TSKindId.I64Keyword] as const,
+				['u128', TSKindId.U128Keyword] as const,
+				['i128', TSKindId.I128Keyword] as const,
+				['isize', TSKindId.IsizeKeyword] as const,
+				['usize', TSKindId.UsizeKeyword] as const,
+				['f32', TSKindId.F32Keyword] as const,
+				['f64', TSKindId.F64Keyword] as const,
+				['bool', TSKindId.BoolKeyword] as const,
+				['str', TSKindId.StrKeyword] as const,
+				['char', TSKindId.CharKeyword] as const,
+				['+', TSKindId.Plus] as const,
+				['-', TSKindId.Dash] as const,
+				['*', TSKindId.Star] as const,
+				['/', TSKindId.Slash] as const,
+				['%', TSKindId.Percent] as const,
+				['^', TSKindId.Caret] as const,
+				['!', TSKindId.Bang] as const,
+				['&', TSKindId.Amp] as const,
+				['|', TSKindId.Pipe] as const,
+				['&&', TSKindId.AmpAmp] as const,
+				['||', TSKindId.PipePipe] as const,
+				['<<', TSKindId.LtLt] as const,
+				['>>', TSKindId.GtGt] as const,
+				['+=', TSKindId.PlusEq] as const,
+				['-=', TSKindId.DashEq] as const,
+				['*=', TSKindId.StarEq] as const,
+				['/=', TSKindId.SlashEq] as const,
+				['%=', TSKindId.PercentEq] as const,
+				['^=', TSKindId.CaretEq] as const,
+				['&=', TSKindId.AmpEq] as const,
+				['|=', TSKindId.PipeEq] as const,
+				['<<=', TSKindId.LtLtEq] as const,
+				['>>=', TSKindId.GtGtEq] as const,
+				['=', TSKindId.Eq] as const,
+				['==', TSKindId.EqEq] as const,
+				['!=', TSKindId.BangEq] as const,
+				['>', TSKindId.Gt] as const,
+				['<', TSKindId.Lt] as const,
+				['>=', TSKindId.GtEq] as const,
+				['<=', TSKindId.LtEq] as const,
+				['@', TSKindId.At] as const,
+				['_', TSKindId.Underscore] as const,
+				['.', TSKindId.Dot] as const,
+				['..', TSKindId.DotDot] as const,
+				['...', TSKindId.DotDotDot] as const,
+				['..=', TSKindId.DotDotEq] as const,
+				[',', TSKindId.Comma] as const,
+				[';', TSKindId.Semi] as const,
+				[':', TSKindId.Colon] as const,
+				['::', TSKindId.ColonColon] as const,
+				['->', TSKindId.DashGt] as const,
+				['=>', TSKindId.EqGt] as const,
+				['#', TSKindId.Pound] as const,
+				['?', TSKindId.Qmark] as const,
+				["'", TSKindId.Squote] as const,
+				['as', TSKindId.AsKeyword] as const,
+				['async', TSKindId.AsyncKeyword] as const,
+				['await', TSKindId.AwaitKeyword] as const,
+				['break', TSKindId.BreakKeyword] as const,
+				['const', TSKindId.ConstKeyword] as const,
+				['continue', TSKindId.ContinueKeyword] as const,
+				['default', TSKindId.DefaultKeyword] as const,
+				['enum', TSKindId.EnumKeyword] as const,
+				['fn', TSKindId.FnKeyword] as const,
+				['for', TSKindId.ForKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const,
+				['if', TSKindId.IfKeyword] as const,
+				['impl', TSKindId.ImplKeyword] as const,
+				['let', TSKindId.LetKeyword] as const,
+				['loop', TSKindId.LoopKeyword] as const,
+				['match', TSKindId.MatchKeyword] as const,
+				['mod', TSKindId.ModKeyword] as const,
+				['pub', TSKindId.PubKeyword] as const,
+				['return', TSKindId.ReturnKeyword] as const,
+				['static', TSKindId.StaticKeyword] as const,
+				['struct', TSKindId.StructKeyword] as const,
+				['trait', TSKindId.TraitKeyword] as const,
+				['type', TSKindId.TypeKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['unsafe', TSKindId.UnsafeKeyword] as const,
+				['use', TSKindId.UseKeyword] as const,
+				['where', TSKindId.WhereKeyword] as const,
+				['while', TSKindId.WhileKeyword] as const
+			]),
+			'NonSpecialToken.content',
+			'buildIdentifier(…)'
+		),
 		'NonSpecialToken.content',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		[
+			'mut',
+			'self',
+			'super',
+			'crate',
+			'u8',
+			'i8',
+			'u16',
+			'i16',
+			'u32',
+			'i32',
+			'u64',
+			'i64',
+			'u128',
+			'i128',
+			'isize',
+			'usize',
+			'f32',
+			'f64',
+			'bool',
+			'str',
+			'char',
+			'_',
+			'as',
+			'async',
+			'await',
+			'break',
+			'const',
+			'continue',
+			'default',
+			'enum',
+			'fn',
+			'for',
+			'gen',
+			'if',
+			'impl',
+			'let',
+			'loop',
+			'match',
+			'mod',
+			'pub',
+			'return',
+			'static',
+			'struct',
+			'trait',
+			'type',
+			'union',
+			'unsafe',
+			'use',
+			'where',
+			'while'
+		]
 	);
 	return withMethods(
 		withAccessors(
@@ -683,34 +740,63 @@ function _buildInnerAttributeItem(value: T.Attribute): T.InnerAttributeItem.Buil
 }
 
 export function buildAttribute(config: T.Attribute.Config): T.Attribute.Built {
-	const _path = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Attribute['_path']>>(config.path, [
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _path = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.Attribute['_path']>>(config.path, [
+				['self', TSKindId.Self] as const,
+				['u8', TSKindId.U8Keyword] as const,
+				['i8', TSKindId.I8Keyword] as const,
+				['u16', TSKindId.U16Keyword] as const,
+				['i16', TSKindId.I16Keyword] as const,
+				['u32', TSKindId.U32Keyword] as const,
+				['i32', TSKindId.I32Keyword] as const,
+				['u64', TSKindId.U64Keyword] as const,
+				['i64', TSKindId.I64Keyword] as const,
+				['u128', TSKindId.U128Keyword] as const,
+				['i128', TSKindId.I128Keyword] as const,
+				['isize', TSKindId.IsizeKeyword] as const,
+				['usize', TSKindId.UsizeKeyword] as const,
+				['f32', TSKindId.F32Keyword] as const,
+				['f64', TSKindId.F64Keyword] as const,
+				['bool', TSKindId.BoolKeyword] as const,
+				['str', TSKindId.StrKeyword] as const,
+				['char', TSKindId.CharKeyword] as const,
+				['super', TSKindId.Super] as const,
+				['crate', TSKindId.Crate] as const,
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'Attribute.path',
+			'buildIdentifier(…)'
+		),
 		'Attribute.path',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		[
+			'self',
+			'u8',
+			'i8',
+			'u16',
+			'i16',
+			'u32',
+			'i32',
+			'u64',
+			'i64',
+			'u128',
+			'i128',
+			'isize',
+			'usize',
+			'f32',
+			'f64',
+			'bool',
+			'str',
+			'char',
+			'super',
+			'crate',
+			'default',
+			'union',
+			'gen'
+		]
 	);
 	const _input = rejectBareText(config.input, 'Attribute.input', 'a built AttributeInput');
 	return withMethods(
@@ -1978,34 +2064,63 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDecla
 		'UseDeclaration.visibilityModifier',
 		'a built VisibilityModifier'
 	);
-	const _argument = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.UseDeclaration['_argument']>>(config.argument, [
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _argument = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.UseDeclaration['_argument']>>(config.argument, [
+				['self', TSKindId.Self] as const,
+				['u8', TSKindId.U8Keyword] as const,
+				['i8', TSKindId.I8Keyword] as const,
+				['u16', TSKindId.U16Keyword] as const,
+				['i16', TSKindId.I16Keyword] as const,
+				['u32', TSKindId.U32Keyword] as const,
+				['i32', TSKindId.I32Keyword] as const,
+				['u64', TSKindId.U64Keyword] as const,
+				['i64', TSKindId.I64Keyword] as const,
+				['u128', TSKindId.U128Keyword] as const,
+				['i128', TSKindId.I128Keyword] as const,
+				['isize', TSKindId.IsizeKeyword] as const,
+				['usize', TSKindId.UsizeKeyword] as const,
+				['f32', TSKindId.F32Keyword] as const,
+				['f64', TSKindId.F64Keyword] as const,
+				['bool', TSKindId.BoolKeyword] as const,
+				['str', TSKindId.StrKeyword] as const,
+				['char', TSKindId.CharKeyword] as const,
+				['super', TSKindId.Super] as const,
+				['crate', TSKindId.Crate] as const,
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'UseDeclaration.argument',
+			'buildIdentifier(…)'
+		),
 		'UseDeclaration.argument',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		[
+			'self',
+			'u8',
+			'i8',
+			'u16',
+			'i16',
+			'u32',
+			'i32',
+			'u64',
+			'i64',
+			'u128',
+			'i128',
+			'isize',
+			'usize',
+			'f32',
+			'f64',
+			'bool',
+			'str',
+			'char',
+			'super',
+			'crate',
+			'default',
+			'union',
+			'gen'
+		]
 	);
 	return withMethods(
 		withAccessors(
@@ -2032,34 +2147,63 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDecla
 }
 
 export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {}): T.ScopedUseList.Built {
-	const _path = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ScopedUseList['_path']>>(config.path, [
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _path = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.ScopedUseList['_path']>>(config.path, [
+				['self', TSKindId.Self] as const,
+				['u8', TSKindId.U8Keyword] as const,
+				['i8', TSKindId.I8Keyword] as const,
+				['u16', TSKindId.U16Keyword] as const,
+				['i16', TSKindId.I16Keyword] as const,
+				['u32', TSKindId.U32Keyword] as const,
+				['i32', TSKindId.I32Keyword] as const,
+				['u64', TSKindId.U64Keyword] as const,
+				['i64', TSKindId.I64Keyword] as const,
+				['u128', TSKindId.U128Keyword] as const,
+				['i128', TSKindId.I128Keyword] as const,
+				['isize', TSKindId.IsizeKeyword] as const,
+				['usize', TSKindId.UsizeKeyword] as const,
+				['f32', TSKindId.F32Keyword] as const,
+				['f64', TSKindId.F64Keyword] as const,
+				['bool', TSKindId.BoolKeyword] as const,
+				['str', TSKindId.StrKeyword] as const,
+				['char', TSKindId.CharKeyword] as const,
+				['super', TSKindId.Super] as const,
+				['crate', TSKindId.Crate] as const,
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'ScopedUseList.path',
+			'buildIdentifier(…)'
+		),
 		'ScopedUseList.path',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		[
+			'self',
+			'u8',
+			'i8',
+			'u16',
+			'i16',
+			'u32',
+			'i32',
+			'u64',
+			'i64',
+			'u128',
+			'i128',
+			'isize',
+			'usize',
+			'f32',
+			'f64',
+			'bool',
+			'str',
+			'char',
+			'super',
+			'crate',
+			'default',
+			'union',
+			'gen'
+		]
 	);
 	const _list = rejectBareText(config.list ?? buildUseList(), 'ScopedUseList.list', 'a built UseList');
 	return withMethods(
@@ -2189,34 +2333,63 @@ function _buildUseList(value?: T.UseClauses): T.UseList.Built {
 }
 
 export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Built {
-	const _path = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.UseAsClause['_path']>>(config.path, [
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _path = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.UseAsClause['_path']>>(config.path, [
+				['self', TSKindId.Self] as const,
+				['u8', TSKindId.U8Keyword] as const,
+				['i8', TSKindId.I8Keyword] as const,
+				['u16', TSKindId.U16Keyword] as const,
+				['i16', TSKindId.I16Keyword] as const,
+				['u32', TSKindId.U32Keyword] as const,
+				['i32', TSKindId.I32Keyword] as const,
+				['u64', TSKindId.U64Keyword] as const,
+				['i64', TSKindId.I64Keyword] as const,
+				['u128', TSKindId.U128Keyword] as const,
+				['i128', TSKindId.I128Keyword] as const,
+				['isize', TSKindId.IsizeKeyword] as const,
+				['usize', TSKindId.UsizeKeyword] as const,
+				['f32', TSKindId.F32Keyword] as const,
+				['f64', TSKindId.F64Keyword] as const,
+				['bool', TSKindId.BoolKeyword] as const,
+				['str', TSKindId.StrKeyword] as const,
+				['char', TSKindId.CharKeyword] as const,
+				['super', TSKindId.Super] as const,
+				['crate', TSKindId.Crate] as const,
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'UseAsClause.path',
+			'buildIdentifier(…)'
+		),
 		'UseAsClause.path',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		[
+			'self',
+			'u8',
+			'i8',
+			'u16',
+			'i16',
+			'u32',
+			'i32',
+			'u64',
+			'i64',
+			'u128',
+			'i128',
+			'isize',
+			'usize',
+			'f32',
+			'f64',
+			'bool',
+			'str',
+			'char',
+			'super',
+			'crate',
+			'default',
+			'union',
+			'gen'
+		]
 	);
 	const _alias = rejectBareText(config.alias, 'UseAsClause.alias', 'buildIdentifier(…)');
 	return withMethods(
@@ -3218,14 +3391,19 @@ export function buildMutableSpecifier(): TSKindId.MutableSpecifier {
 }
 
 export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroInvocation.Built {
-	const _macro = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.MacroInvocation['_macro']>>(config.macro, [
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _macro = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.MacroInvocation['_macro']>>(config.macro, [
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'MacroInvocation.macro',
+			'buildIdentifier(…)'
+		),
 		'MacroInvocation.macro',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		['default', 'union', 'gen']
 	);
 	const _arguments = rejectBareText(config.arguments, 'MacroInvocation.arguments', 'a built DelimTokenTree');
 	return withMethods(
@@ -3252,39 +3430,75 @@ export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroI
 }
 
 export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.ScopedIdentifier.Built {
-	const _path = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ScopedIdentifier['_path']>>(config.path, [
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _path = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.ScopedIdentifier['_path']>>(config.path, [
+				['self', TSKindId.Self] as const,
+				['u8', TSKindId.U8Keyword] as const,
+				['i8', TSKindId.I8Keyword] as const,
+				['u16', TSKindId.U16Keyword] as const,
+				['i16', TSKindId.I16Keyword] as const,
+				['u32', TSKindId.U32Keyword] as const,
+				['i32', TSKindId.I32Keyword] as const,
+				['u64', TSKindId.U64Keyword] as const,
+				['i64', TSKindId.I64Keyword] as const,
+				['u128', TSKindId.U128Keyword] as const,
+				['i128', TSKindId.I128Keyword] as const,
+				['isize', TSKindId.IsizeKeyword] as const,
+				['usize', TSKindId.UsizeKeyword] as const,
+				['f32', TSKindId.F32Keyword] as const,
+				['f64', TSKindId.F64Keyword] as const,
+				['bool', TSKindId.BoolKeyword] as const,
+				['str', TSKindId.StrKeyword] as const,
+				['char', TSKindId.CharKeyword] as const,
+				['super', TSKindId.Super] as const,
+				['crate', TSKindId.Crate] as const,
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'ScopedIdentifier.path',
+			'buildIdentifier(…)'
+		),
 		'ScopedIdentifier.path',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		[
+			'self',
+			'u8',
+			'i8',
+			'u16',
+			'i16',
+			'u32',
+			'i32',
+			'u64',
+			'i64',
+			'u128',
+			'i128',
+			'isize',
+			'usize',
+			'f32',
+			'f64',
+			'bool',
+			'str',
+			'char',
+			'super',
+			'crate',
+			'default',
+			'union',
+			'gen'
+		]
 	);
-	const _name = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ScopedIdentifier['_name']>>(config.name, [['super', TSKindId.Super] as const]),
+	const _name = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.ScopedIdentifier['_name']>>(config.name, [
+				['super', TSKindId.Super] as const
+			]),
+			'ScopedIdentifier.name',
+			'buildIdentifier(…)'
+		),
 		'ScopedIdentifier.name',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		['super']
 	);
 	return withMethods(
 		withAccessors(
@@ -3313,34 +3527,63 @@ export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.Scop
 export function buildScopedTypeIdentifierInExpressionPosition(
 	config: T.ScopedTypeIdentifierInExpressionPosition.Config
 ): T.ScopedTypeIdentifierInExpressionPosition.Built {
-	const _path = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_path']>>(config.path, [
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _path = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_path']>>(config.path, [
+				['self', TSKindId.Self] as const,
+				['u8', TSKindId.U8Keyword] as const,
+				['i8', TSKindId.I8Keyword] as const,
+				['u16', TSKindId.U16Keyword] as const,
+				['i16', TSKindId.I16Keyword] as const,
+				['u32', TSKindId.U32Keyword] as const,
+				['i32', TSKindId.I32Keyword] as const,
+				['u64', TSKindId.U64Keyword] as const,
+				['i64', TSKindId.I64Keyword] as const,
+				['u128', TSKindId.U128Keyword] as const,
+				['i128', TSKindId.I128Keyword] as const,
+				['isize', TSKindId.IsizeKeyword] as const,
+				['usize', TSKindId.UsizeKeyword] as const,
+				['f32', TSKindId.F32Keyword] as const,
+				['f64', TSKindId.F64Keyword] as const,
+				['bool', TSKindId.BoolKeyword] as const,
+				['str', TSKindId.StrKeyword] as const,
+				['char', TSKindId.CharKeyword] as const,
+				['super', TSKindId.Super] as const,
+				['crate', TSKindId.Crate] as const,
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'ScopedTypeIdentifierInExpressionPosition.path',
+			'buildIdentifier(…)'
+		),
 		'ScopedTypeIdentifierInExpressionPosition.path',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		[
+			'self',
+			'u8',
+			'i8',
+			'u16',
+			'i16',
+			'u32',
+			'i32',
+			'u64',
+			'i64',
+			'u128',
+			'i128',
+			'isize',
+			'usize',
+			'f32',
+			'f64',
+			'bool',
+			'str',
+			'char',
+			'super',
+			'crate',
+			'default',
+			'union',
+			'gen'
+		]
 	);
 	const _name = admitAliasContent<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_name']>>(
 		rejectBareText(config.name, 'ScopedTypeIdentifierInExpressionPosition.name', 'a built TypeIdentifier'),
@@ -3371,34 +3614,63 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 }
 
 export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config): T.ScopedTypeIdentifier.Built {
-	const _path = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ScopedTypeIdentifier['_path']>>(config.path, [
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _path = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.ScopedTypeIdentifier['_path']>>(config.path, [
+				['self', TSKindId.Self] as const,
+				['u8', TSKindId.U8Keyword] as const,
+				['i8', TSKindId.I8Keyword] as const,
+				['u16', TSKindId.U16Keyword] as const,
+				['i16', TSKindId.I16Keyword] as const,
+				['u32', TSKindId.U32Keyword] as const,
+				['i32', TSKindId.I32Keyword] as const,
+				['u64', TSKindId.U64Keyword] as const,
+				['i64', TSKindId.I64Keyword] as const,
+				['u128', TSKindId.U128Keyword] as const,
+				['i128', TSKindId.I128Keyword] as const,
+				['isize', TSKindId.IsizeKeyword] as const,
+				['usize', TSKindId.UsizeKeyword] as const,
+				['f32', TSKindId.F32Keyword] as const,
+				['f64', TSKindId.F64Keyword] as const,
+				['bool', TSKindId.BoolKeyword] as const,
+				['str', TSKindId.StrKeyword] as const,
+				['char', TSKindId.CharKeyword] as const,
+				['super', TSKindId.Super] as const,
+				['crate', TSKindId.Crate] as const,
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'ScopedTypeIdentifier.path',
+			'buildIdentifier(…)'
+		),
 		'ScopedTypeIdentifier.path',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		[
+			'self',
+			'u8',
+			'i8',
+			'u16',
+			'i16',
+			'u32',
+			'i32',
+			'u64',
+			'i64',
+			'u128',
+			'i128',
+			'isize',
+			'usize',
+			'f32',
+			'f64',
+			'bool',
+			'str',
+			'char',
+			'super',
+			'crate',
+			'default',
+			'union',
+			'gen'
+		]
 	);
 	const _name = admitAliasContent<NonNullable<T.ScopedTypeIdentifier['_name']>>(
 		rejectBareText(config.name, 'ScopedTypeIdentifier.name', 'a built TypeIdentifier'),
@@ -3758,33 +4030,60 @@ export function buildYieldExpression(value?: T.Expression): T.YieldExpression.Bu
 }
 
 export function buildCallExpression(config: T.CallExpression.Config): T.CallExpression.Built {
-	const _function = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.CallExpression['_function']>>(config.function, [
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const,
-			['self', TSKindId.Self] as const,
-			['()', TSKindId.UnitExpression] as const
-		]),
+	const _function = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.CallExpression['_function']>>(config.function, [
+				['u8', TSKindId.U8Keyword] as const,
+				['i8', TSKindId.I8Keyword] as const,
+				['u16', TSKindId.U16Keyword] as const,
+				['i16', TSKindId.I16Keyword] as const,
+				['u32', TSKindId.U32Keyword] as const,
+				['i32', TSKindId.I32Keyword] as const,
+				['u64', TSKindId.U64Keyword] as const,
+				['i64', TSKindId.I64Keyword] as const,
+				['u128', TSKindId.U128Keyword] as const,
+				['i128', TSKindId.I128Keyword] as const,
+				['isize', TSKindId.IsizeKeyword] as const,
+				['usize', TSKindId.UsizeKeyword] as const,
+				['f32', TSKindId.F32Keyword] as const,
+				['f64', TSKindId.F64Keyword] as const,
+				['bool', TSKindId.BoolKeyword] as const,
+				['str', TSKindId.StrKeyword] as const,
+				['char', TSKindId.CharKeyword] as const,
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const,
+				['self', TSKindId.Self] as const,
+				['()', TSKindId.UnitExpression] as const
+			]),
+			'CallExpression.function',
+			'buildIdentifier(…)'
+		),
 		'CallExpression.function',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		[
+			'u8',
+			'i8',
+			'u16',
+			'i16',
+			'u32',
+			'i32',
+			'u64',
+			'i64',
+			'u128',
+			'i128',
+			'isize',
+			'usize',
+			'f32',
+			'f64',
+			'bool',
+			'str',
+			'char',
+			'default',
+			'union',
+			'gen',
+			'self'
+		]
 	);
 	const _arguments = rejectBareText(
 		config.arguments ?? buildArguments(),
@@ -6541,34 +6840,63 @@ export function buildUseWildcardGroup(
 		| TSKindId.UnionKeyword
 		| TSKindId.GenKeyword
 ): T.UseWildcardGroup.Built {
-	const _path = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.UseWildcardGroup['_path']>>(value, [
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _path = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.UseWildcardGroup['_path']>>(value, [
+				['self', TSKindId.Self] as const,
+				['u8', TSKindId.U8Keyword] as const,
+				['i8', TSKindId.I8Keyword] as const,
+				['u16', TSKindId.U16Keyword] as const,
+				['i16', TSKindId.I16Keyword] as const,
+				['u32', TSKindId.U32Keyword] as const,
+				['i32', TSKindId.I32Keyword] as const,
+				['u64', TSKindId.U64Keyword] as const,
+				['i64', TSKindId.I64Keyword] as const,
+				['u128', TSKindId.U128Keyword] as const,
+				['i128', TSKindId.I128Keyword] as const,
+				['isize', TSKindId.IsizeKeyword] as const,
+				['usize', TSKindId.UsizeKeyword] as const,
+				['f32', TSKindId.F32Keyword] as const,
+				['f64', TSKindId.F64Keyword] as const,
+				['bool', TSKindId.BoolKeyword] as const,
+				['str', TSKindId.StrKeyword] as const,
+				['char', TSKindId.CharKeyword] as const,
+				['super', TSKindId.Super] as const,
+				['crate', TSKindId.Crate] as const,
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'UseWildcardGroup.path',
+			'buildIdentifier(…)'
+		),
 		'UseWildcardGroup.path',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		[
+			'self',
+			'u8',
+			'i8',
+			'u16',
+			'i16',
+			'u32',
+			'i32',
+			'u64',
+			'i64',
+			'u128',
+			'i128',
+			'isize',
+			'usize',
+			'f32',
+			'f64',
+			'bool',
+			'str',
+			'char',
+			'super',
+			'crate',
+			'default',
+			'union',
+			'gen'
+		]
 	);
 	return withMethods(
 		withAccessors(
@@ -7598,34 +7926,63 @@ export function buildVisibilityModifierPubScopeInPath(
 		| TSKindId.UnionKeyword
 		| TSKindId.GenKeyword
 ): T.VisibilityModifierPubScopeInPath.Built {
-	const _path = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.VisibilityModifierPubScopeInPath['_path']>>(value, [
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _path = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.VisibilityModifierPubScopeInPath['_path']>>(value, [
+				['self', TSKindId.Self] as const,
+				['u8', TSKindId.U8Keyword] as const,
+				['i8', TSKindId.I8Keyword] as const,
+				['u16', TSKindId.U16Keyword] as const,
+				['i16', TSKindId.I16Keyword] as const,
+				['u32', TSKindId.U32Keyword] as const,
+				['i32', TSKindId.I32Keyword] as const,
+				['u64', TSKindId.U64Keyword] as const,
+				['i64', TSKindId.I64Keyword] as const,
+				['u128', TSKindId.U128Keyword] as const,
+				['i128', TSKindId.I128Keyword] as const,
+				['isize', TSKindId.IsizeKeyword] as const,
+				['usize', TSKindId.UsizeKeyword] as const,
+				['f32', TSKindId.F32Keyword] as const,
+				['f64', TSKindId.F64Keyword] as const,
+				['bool', TSKindId.BoolKeyword] as const,
+				['str', TSKindId.StrKeyword] as const,
+				['char', TSKindId.CharKeyword] as const,
+				['super', TSKindId.Super] as const,
+				['crate', TSKindId.Crate] as const,
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'VisibilityModifierPubScopeInPath.path',
+			'buildIdentifier(…)'
+		),
 		'VisibilityModifierPubScopeInPath.path',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		[
+			'self',
+			'u8',
+			'i8',
+			'u16',
+			'i16',
+			'u32',
+			'i32',
+			'u64',
+			'i64',
+			'u128',
+			'i128',
+			'isize',
+			'usize',
+			'f32',
+			'f64',
+			'bool',
+			'str',
+			'char',
+			'super',
+			'crate',
+			'default',
+			'union',
+			'gen'
+		]
 	);
 	return withMethods(
 		withAccessors(
@@ -8858,14 +9215,19 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 }
 
 export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config): T.MacroDefinitionParen.Built {
-	const _name = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.MacroDefinitionParen['_name']>>(config.name, [
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _name = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.MacroDefinitionParen['_name']>>(config.name, [
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'MacroDefinitionParen.name',
+			'buildIdentifier(…)'
+		),
 		'MacroDefinitionParen.name',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		['default', 'union', 'gen']
 	);
 	const _macro_rules = rejectBareText(config.macroRules, 'MacroDefinitionParen.macroRules', 'a built MacroRules');
 	return withMethods(
@@ -8892,14 +9254,19 @@ export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config)
 }
 
 export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Config): T.MacroDefinitionBracket.Built {
-	const _name = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.MacroDefinitionBracket['_name']>>(config.name, [
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _name = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.MacroDefinitionBracket['_name']>>(config.name, [
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'MacroDefinitionBracket.name',
+			'buildIdentifier(…)'
+		),
 		'MacroDefinitionBracket.name',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		['default', 'union', 'gen']
 	);
 	const _macro_rules = rejectBareText(config.macroRules, 'MacroDefinitionBracket.macroRules', 'a built MacroRules');
 	return withMethods(
@@ -8926,14 +9293,19 @@ export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Con
 }
 
 export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config): T.MacroDefinitionBrace.Built {
-	const _name = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.MacroDefinitionBrace['_name']>>(config.name, [
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _name = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.MacroDefinitionBrace['_name']>>(config.name, [
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'MacroDefinitionBrace.name',
+			'buildIdentifier(…)'
+		),
 		'MacroDefinitionBrace.name',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		['default', 'union', 'gen']
 	);
 	const _macro_rules = rejectBareText(config.macroRules, 'MacroDefinitionBrace.macroRules', 'a built MacroRules');
 	return withMethods(
@@ -8964,34 +9336,63 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.
 		['..=', TSKindId.DotDotEq] as const,
 		['..', TSKindId.DotDot] as const
 	]);
-	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right, [
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _right = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right, [
+				['self', TSKindId.Self] as const,
+				['u8', TSKindId.U8Keyword] as const,
+				['i8', TSKindId.I8Keyword] as const,
+				['u16', TSKindId.U16Keyword] as const,
+				['i16', TSKindId.I16Keyword] as const,
+				['u32', TSKindId.U32Keyword] as const,
+				['i32', TSKindId.I32Keyword] as const,
+				['u64', TSKindId.U64Keyword] as const,
+				['i64', TSKindId.I64Keyword] as const,
+				['u128', TSKindId.U128Keyword] as const,
+				['i128', TSKindId.I128Keyword] as const,
+				['isize', TSKindId.IsizeKeyword] as const,
+				['usize', TSKindId.UsizeKeyword] as const,
+				['f32', TSKindId.F32Keyword] as const,
+				['f64', TSKindId.F64Keyword] as const,
+				['bool', TSKindId.BoolKeyword] as const,
+				['str', TSKindId.StrKeyword] as const,
+				['char', TSKindId.CharKeyword] as const,
+				['super', TSKindId.Super] as const,
+				['crate', TSKindId.Crate] as const,
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'RangePatternPrefix.right',
+			'buildIdentifier(…)'
+		),
 		'RangePatternPrefix.right',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		[
+			'self',
+			'u8',
+			'i8',
+			'u16',
+			'i16',
+			'u32',
+			'i32',
+			'u64',
+			'i64',
+			'u128',
+			'i128',
+			'isize',
+			'usize',
+			'f32',
+			'f64',
+			'bool',
+			'str',
+			'char',
+			'super',
+			'crate',
+			'default',
+			'union',
+			'gen'
+		]
 	);
 	return withMethods(
 		withAccessors(
@@ -9025,34 +9426,63 @@ export function buildRangePatternWithLeftWithRight(
 		['..=', TSKindId.DotDotEq] as const,
 		['..', TSKindId.DotDot] as const
 	]);
-	const _right = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right, [
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _right = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right, [
+				['self', TSKindId.Self] as const,
+				['u8', TSKindId.U8Keyword] as const,
+				['i8', TSKindId.I8Keyword] as const,
+				['u16', TSKindId.U16Keyword] as const,
+				['i16', TSKindId.I16Keyword] as const,
+				['u32', TSKindId.U32Keyword] as const,
+				['i32', TSKindId.I32Keyword] as const,
+				['u64', TSKindId.U64Keyword] as const,
+				['i64', TSKindId.I64Keyword] as const,
+				['u128', TSKindId.U128Keyword] as const,
+				['i128', TSKindId.I128Keyword] as const,
+				['isize', TSKindId.IsizeKeyword] as const,
+				['usize', TSKindId.UsizeKeyword] as const,
+				['f32', TSKindId.F32Keyword] as const,
+				['f64', TSKindId.F64Keyword] as const,
+				['bool', TSKindId.BoolKeyword] as const,
+				['str', TSKindId.StrKeyword] as const,
+				['char', TSKindId.CharKeyword] as const,
+				['super', TSKindId.Super] as const,
+				['crate', TSKindId.Crate] as const,
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'RangePatternWithLeftWithRight.right',
+			'buildIdentifier(…)'
+		),
 		'RangePatternWithLeftWithRight.right',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		[
+			'self',
+			'u8',
+			'i8',
+			'u16',
+			'i16',
+			'u32',
+			'i32',
+			'u64',
+			'i64',
+			'u128',
+			'i128',
+			'isize',
+			'usize',
+			'f32',
+			'f64',
+			'bool',
+			'str',
+			'char',
+			'super',
+			'crate',
+			'default',
+			'union',
+			'gen'
+		]
 	);
 	return withMethods(
 		withAccessors(
@@ -9083,34 +9513,63 @@ export function buildRangePatternWithLeftBare(): TSKindId.RangePatternWithLeftBa
 }
 
 export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config): T.RangePatternWithLeft.Built {
-	const _left = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left, [
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		]),
+	const _left = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left, [
+				['self', TSKindId.Self] as const,
+				['u8', TSKindId.U8Keyword] as const,
+				['i8', TSKindId.I8Keyword] as const,
+				['u16', TSKindId.U16Keyword] as const,
+				['i16', TSKindId.I16Keyword] as const,
+				['u32', TSKindId.U32Keyword] as const,
+				['i32', TSKindId.I32Keyword] as const,
+				['u64', TSKindId.U64Keyword] as const,
+				['i64', TSKindId.I64Keyword] as const,
+				['u128', TSKindId.U128Keyword] as const,
+				['i128', TSKindId.I128Keyword] as const,
+				['isize', TSKindId.IsizeKeyword] as const,
+				['usize', TSKindId.UsizeKeyword] as const,
+				['f32', TSKindId.F32Keyword] as const,
+				['f64', TSKindId.F64Keyword] as const,
+				['bool', TSKindId.BoolKeyword] as const,
+				['str', TSKindId.StrKeyword] as const,
+				['char', TSKindId.CharKeyword] as const,
+				['super', TSKindId.Super] as const,
+				['crate', TSKindId.Crate] as const,
+				['default', TSKindId.DefaultKeyword] as const,
+				['union', TSKindId.UnionKeyword] as const,
+				['gen', TSKindId.GenKeyword] as const
+			]),
+			'RangePatternWithLeft.left',
+			'buildIdentifier(…)'
+		),
 		'RangePatternWithLeft.left',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		[
+			'self',
+			'u8',
+			'i8',
+			'u16',
+			'i16',
+			'u32',
+			'i32',
+			'u64',
+			'i64',
+			'u128',
+			'i128',
+			'isize',
+			'usize',
+			'f32',
+			'f64',
+			'bool',
+			'str',
+			'char',
+			'super',
+			'crate',
+			'default',
+			'union',
+			'gen'
+		]
 	);
 	const _content = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.RangePatternWithLeft['_content']>>(config.content, [

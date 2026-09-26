@@ -13,7 +13,8 @@ import {
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
 	numberText,
-	rejectBareText
+	rejectBareText,
+	rejectKeywordText
 } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
@@ -22,6 +23,43 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 	}
 }
 
+const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set([
+	'False',
+	'await',
+	'else',
+	'import',
+	'pass',
+	'None',
+	'break',
+	'except',
+	'in',
+	'raise',
+	'True',
+	'class',
+	'finally',
+	'is',
+	'return',
+	'and',
+	'continue',
+	'for',
+	'lambda',
+	'try',
+	'as',
+	'def',
+	'from',
+	'nonlocal',
+	'while',
+	'assert',
+	'del',
+	'global',
+	'not',
+	'with',
+	'async',
+	'elif',
+	'if',
+	'or',
+	'yield'
+]);
 const _leafRe_buildImportPrefix = /^(?:(?:\.)+)$/u;
 const _leafRe_buildTypeConversion = /^(?:(?:![a-z]))$/u;
 const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
@@ -449,17 +487,22 @@ export function buildExpressionStatement(
 }
 
 export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedExpression.Built {
-	const _name = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.NamedExpression['_name']>>(config.name, [
-			['print', TSKindId.PrintKeyword] as const,
-			['exec', TSKindId.ExecKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['match', TSKindId.MatchKeyword] as const
-		]),
+	const _name = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.NamedExpression['_name']>>(config.name, [
+				['print', TSKindId.PrintKeyword] as const,
+				['exec', TSKindId.ExecKeyword] as const,
+				['async', TSKindId.AsyncKeyword] as const,
+				['await', TSKindId.AwaitKeyword] as const,
+				['type', TSKindId.TypeKeyword] as const,
+				['match', TSKindId.MatchKeyword] as const
+			]),
+			'NamedExpression.name',
+			'buildIdentifier(…)'
+		),
 		'NamedExpression.name',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		['print', 'exec', 'async', 'await', 'type', 'match']
 	);
 	const _value = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.NamedExpression['_value']>>(config.value, []),
@@ -1836,10 +1879,15 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 		['*', TSKindId.Star] as const,
 		['**', TSKindId.StarStar] as const
 	]);
-	const _name = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.SplatPattern['_name']>>(config.name, [['_', TSKindId.Underscore] as const]),
+	const _name = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.SplatPattern['_name']>>(config.name, [['_', TSKindId.Underscore] as const]),
+			'SplatPattern.name',
+			'buildIdentifier(…)'
+		),
 		'SplatPattern.name',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		['_']
 	);
 	return withMethods(
 		withAccessors(
@@ -2177,17 +2225,22 @@ export function buildListSplatPattern(
 		| T.Subscript
 		| T.Attribute
 ): T.ListSplatPattern.Built {
-	const _target = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ListSplatPattern['_target']>>(value, [
-			['print', TSKindId.PrintKeyword] as const,
-			['exec', TSKindId.ExecKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['match', TSKindId.MatchKeyword] as const
-		]),
+	const _target = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.ListSplatPattern['_target']>>(value, [
+				['print', TSKindId.PrintKeyword] as const,
+				['exec', TSKindId.ExecKeyword] as const,
+				['async', TSKindId.AsyncKeyword] as const,
+				['await', TSKindId.AwaitKeyword] as const,
+				['type', TSKindId.TypeKeyword] as const,
+				['match', TSKindId.MatchKeyword] as const
+			]),
+			'ListSplatPattern.target',
+			'buildIdentifier(…)'
+		),
 		'ListSplatPattern.target',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		['print', 'exec', 'async', 'await', 'type', 'match']
 	);
 	return withMethods(
 		withAccessors(
@@ -2232,17 +2285,22 @@ export function buildDictionarySplatPattern(
 		| T.Subscript
 		| T.Attribute
 ): T.DictionarySplatPattern.Built {
-	const _target = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.DictionarySplatPattern['_target']>>(value, [
-			['print', TSKindId.PrintKeyword] as const,
-			['exec', TSKindId.ExecKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['match', TSKindId.MatchKeyword] as const
-		]),
+	const _target = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.DictionarySplatPattern['_target']>>(value, [
+				['print', TSKindId.PrintKeyword] as const,
+				['exec', TSKindId.ExecKeyword] as const,
+				['async', TSKindId.AsyncKeyword] as const,
+				['await', TSKindId.AwaitKeyword] as const,
+				['type', TSKindId.TypeKeyword] as const,
+				['match', TSKindId.MatchKeyword] as const
+			]),
+			'DictionarySplatPattern.target',
+			'buildIdentifier(…)'
+		),
 		'DictionarySplatPattern.target',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		['print', 'exec', 'async', 'await', 'type', 'match']
 	);
 	return withMethods(
 		withAccessors(
@@ -2891,10 +2949,17 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Built {
 }
 
 export function buildGenericType(config: T.GenericType.Config): T.GenericType.Built {
-	const _name = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.GenericType['_name']>>(config.name, [['type', TSKindId.TypeKeyword] as const]),
+	const _name = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.GenericType['_name']>>(config.name, [
+				['type', TSKindId.TypeKeyword] as const
+			]),
+			'GenericType.name',
+			'buildIdentifier(…)'
+		),
 		'GenericType.name',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		['type']
 	);
 	const _type_parameter = rejectBareText(config.typeParameter, 'GenericType.typeParameter', 'a built TypeParameter');
 	return withMethods(
@@ -2995,17 +3060,22 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Built
 }
 
 export function buildKeywordArgument(config: T.KeywordArgument.Config): T.KeywordArgument.Built {
-	const _name = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.KeywordArgument['_name']>>(config.name, [
-			['print', TSKindId.PrintKeyword] as const,
-			['exec', TSKindId.ExecKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['match', TSKindId.MatchKeyword] as const
-		]),
+	const _name = rejectKeywordText(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.KeywordArgument['_name']>>(config.name, [
+				['print', TSKindId.PrintKeyword] as const,
+				['exec', TSKindId.ExecKeyword] as const,
+				['async', TSKindId.AsyncKeyword] as const,
+				['await', TSKindId.AwaitKeyword] as const,
+				['type', TSKindId.TypeKeyword] as const,
+				['match', TSKindId.MatchKeyword] as const
+			]),
+			'KeywordArgument.name',
+			'buildIdentifier(…)'
+		),
 		'KeywordArgument.name',
-		'buildIdentifier(…)'
+		TSKindId.Identifier,
+		['print', 'exec', 'async', 'await', 'type', 'match']
 	);
 	const _value = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.KeywordArgument['_value']>>(config.value, []),
@@ -3733,6 +3803,7 @@ export function buildTypeConversion(text: string): T.TypeConversion.Built {
 export function buildIdentifier(text: string): T.Identifier.Built {
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
 	if (!_leafRe_buildIdentifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
+	if (_reservedWords_buildIdentifier.has(text)) throw new Error(`identifier: '${text}' is a reserved word`);
 	return withMethods(
 		{
 			$type: TSKindId.Identifier as const,
