@@ -2,7 +2,12 @@ import type { AuthoredCompound, SlotBearingCompound } from '../compiler/model/no
 import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
 import { compileAnchoredPattern } from '../types/runtime-shapes.ts';
-import { AssembledAlias, isWordOrVisibleTextLeaf, isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import {
+	AssembledAlias,
+	isWordOrVisibleTextLeaf,
+	isVisibleTextLeaf,
+	isHiddenPunctuationLeaf
+} from '../compiler/model/node-map.ts';
 import type {
 	AssembledNonterminal,
 	NodeOrTerminal,
@@ -29,6 +34,8 @@ import {
 	deriveChildrenCardinality,
 	storageKindOfRef,
 	storageTargetOf,
+	isSurfaceHiddenIn,
+	surfaceHiddenOfRef,
 	AbstractAssembledCompound,
 	AssembledLeaf,
 	AssembledPattern,
@@ -42,15 +49,11 @@ import {
 import { matchesWordShape, wordCharClass } from '../util/word-matcher.ts';
 import { type KindEntryLike, findEntryForLiteralText, findOwnKindEntry } from '../compiler/generated-metadata.ts';
 
-export function isSlotBearingCompound(
-	node: AssembledNode
-): node is SlotBearingCompound {
+export function isSlotBearingCompound(node: AssembledNode): node is SlotBearingCompound {
 	return node instanceof AbstractAssembledCompound;
 }
 
-export function isAuthoredCompound(
-	node: AssembledNode
-): node is AuthoredCompound {
+export function isAuthoredCompound(node: AssembledNode): node is AuthoredCompound {
 	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList);
 }
 
@@ -72,13 +75,14 @@ export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	const out = new Set<string>();
 	for (const [, n] of nodeMap.nodes) {
 		if (n instanceof AssembledSupertype) {
-			for (const name of Object.keys(n.subtypeParseNames ?? {})) if (nodeMap.nodes.get(name)?.parserHidden === true) out.add(name);
+			for (const name of Object.keys(n.subtypeParseNames ?? {}))
+				if (nodeMap.nodes.get(name)?.surfaceHidden === true) out.add(name);
 		}
 		for (const slot of n.slots) {
 			for (const v of slot.values) {
 				if (!isNodeRef(v)) continue;
 				const name = storageKindOfRef(v.node);
-				if (nodeMap.nodes.get(name)?.parserHidden === true) out.add(name);
+				if (nodeMap.nodes.get(name)?.surfaceHidden === true) out.add(name);
 			}
 		}
 	}
@@ -88,7 +92,7 @@ export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 export function collectAliasTargetToSourceMap(nodeMap: NodeMap): Map<string, string> {
 	const out = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!kind.startsWith('_')) continue;
+		if (!node.surfaceHidden) continue;
 		if (!node.userFacing) continue;
 		if (node instanceof AssembledPunctuation) continue;
 		const visible = kind.replace(/^_+/, '');
@@ -152,7 +156,7 @@ export function resolveHiddenKeywordLeaf(
 	kindName: string,
 	nodeMap: NodeMap
 ): AssembledKeyword | AssembledPunctuation | undefined {
-	if (!kindName.startsWith('_')) return undefined;
+	if (!isSurfaceHiddenIn(kindName, nodeMap)) return undefined;
 	const node = nodeMap.nodes.get(kindName);
 	if (node === undefined) return undefined;
 	const target = storageTargetOf(node, nodeMap);
@@ -170,7 +174,7 @@ export function isHiddenInfraSlot(slot: AssembledNonterminal, nodeMap: NodeMap):
 }
 
 function isHiddenInfraKind(kindName: string, nodeMap: NodeMap): boolean {
-	if (!kindName.startsWith('_')) return false;
+	if (!isSurfaceHiddenIn(kindName, nodeMap)) return false;
 	const literal = resolveHiddenKeywordLiteral(kindName, nodeMap);
 	if (literal !== undefined) return true;
 	const node = nodeMap.nodes.get(kindName);
@@ -181,7 +185,14 @@ function isHiddenInfraKind(kindName: string, nodeMap: NodeMap): boolean {
 
 export type TypeComponent =
 	| { kind: 'nodeKind'; value: string; rawKind: string }
-	| { kind: 'literal'; value: string; resolvedKindId?: number; rawKind?: string; immediate?: boolean }
+	| {
+			kind: 'literal';
+			value: string;
+			resolvedKindId?: number;
+			rawKind?: string;
+			immediate?: boolean;
+			enumKind?: string;
+	  }
 	| { kind: 'missing'; value: string; rawKind: string };
 
 export function classifyValueStorage(value: NodeOrTerminal, nodeMap: NodeMap): ValueStorage | undefined {
@@ -232,7 +243,8 @@ function typeComponentOf(storage: NodeValueStorage | TextValueStorage): TypeComp
 			value: storage.text,
 			rawKind: storage.kind,
 			resolvedKindId: storage.kindId,
-			immediate: storage.immediate
+			immediate: storage.immediate,
+			...(storage.enumKind === undefined ? {} : { enumKind: storage.enumKind })
 		};
 	}
 	return { kind: 'literal', value: storage.text, immediate: storage.immediate };
@@ -444,7 +456,11 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 	return { arms, texts, sawNodeArm, verbatim, ownSymbolIds };
 }
 
-function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap, owner?: AssembledNode): FieldStorageInfo {
+function classifyFieldStorageInfo(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap,
+	owner?: AssembledNode
+): FieldStorageInfo {
 	const keywordKind = keywordPresenceKind(field, nodeMap);
 	if (keywordKind === 'boolean') {
 		const text = keywordPresenceValue(field, nodeMap);
@@ -474,8 +490,20 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap,
 		collapsesMultiplicity: false
 	});
 	const walked = enumArmsOf(field, nodeMap);
-	if (owner instanceof AbstractAssembledCompound && owner.lexedInterior && !walked.verbatim && !walked.sawNodeArm && walked.texts.length > 0) {
-		return { kind: 'verbatim', texts: [...walked.texts], enumKinds: [], enumKindsById: new Map(), collapsesMultiplicity: false };
+	if (
+		owner instanceof AbstractAssembledCompound &&
+		owner.lexedInterior &&
+		!walked.verbatim &&
+		!walked.sawNodeArm &&
+		walked.texts.length > 0
+	) {
+		return {
+			kind: 'verbatim',
+			texts: [...walked.texts],
+			enumKinds: [],
+			enumKindsById: new Map(),
+			collapsesMultiplicity: false
+		};
 	}
 	if (walked.verbatim || walked.arms.length === 0) return verbatim();
 	const enumKindsById = new Map<string, number>();
@@ -508,7 +536,7 @@ export function keywordRefWireIdentity(
 ): { kindName: string | undefined; kindId: number | undefined } {
 	const ownKind = storageKindOfRef(value.node);
 	const aliased = value.parseKind !== undefined && value.parseKind.name !== ownKind;
-	if (!aliased && ownKind.startsWith('_')) {
+	if (!aliased && surfaceHiddenOfRef(value.node)) {
 		return {
 			kindName: node.resolvedKind ?? value.parseKind?.name,
 			kindId: node.resolvedKindId ?? value.parseKindId ?? value.storageKindId
@@ -561,6 +589,10 @@ export function kindEnumAltIdPairs(
 		}
 	}
 	return out;
+}
+
+export function reclaimsAnonymousChild(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
+	return slot.isUnnamed && resolveFieldStorageInfo(slot, nodeMap).enumKinds.length > 0;
 }
 
 export function resolveFieldStorageInfo(
@@ -633,7 +665,7 @@ export function resolveSingleFieldFactorySlot(
 	_nodeMap: NodeMap
 ): AssembledNonterminal | undefined {
 	if (!isSlotBearingCompound(node)) return undefined;
-	if (node.kind.startsWith('_') && !node.userFacing) return undefined;
+	if (node.surfaceHidden && !node.userFacing) return undefined;
 	const slot = node.soleSlot;
 	return slot !== undefined && !isMultiple(slot) ? slot : undefined;
 }
@@ -673,7 +705,10 @@ function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMap): Chi
 	if (shape === 'spread') return 'spread';
 	if (shape !== 'direct' && shape !== 'forwarded') return null;
 	const directSlot = resolveDirectFactorySlot(node, nodeMap);
-	if (directSlot !== undefined && slotKindNames(directSlot).every((k) => nodeMap.nodes.get(k) instanceof AssembledEnum)) {
+	if (
+		directSlot !== undefined &&
+		slotKindNames(directSlot).every((k) => nodeMap.nodes.get(k) instanceof AssembledEnum)
+	) {
 		return null;
 	}
 	return 'direct';
@@ -878,7 +913,7 @@ export function warnSkippedParserSymbol(
 }
 
 function isHiddenStructuralFactoryKind(kind: string, node: AssembledNode): boolean {
-	return kind.startsWith('_') && !(node instanceof AssembledPunctuation);
+	return node.surfaceHidden && !(node instanceof AssembledPunctuation);
 }
 
 export interface FactoryDispatchContext extends ParserSymbolDispatchContext {
@@ -984,7 +1019,7 @@ export type FromEmission =
 	| 'skip-no-from-surface';
 
 export function classifyFromEmission(kind: string, node: AssembledNode, context: FromDispatchContext): FromEmission {
-	if (kind.startsWith('_') && !node.userFacing) return 'skip-hidden-kind';
+	if (node.surfaceHidden && !node.userFacing) return 'skip-hidden-kind';
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return 'skip-no-raw-factory';
 	const parserSymbolEmission = classifyParserSymbolEmission(kind, { kindEntries: context.kindEntries });
 	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;
@@ -1018,7 +1053,7 @@ export function isWrapChildrenKind(
 	const compound = node instanceof AbstractAssembledCompound;
 	if (!compound && !(node instanceof AssembledList)) return false;
 	if (!node.rawFactoryName) return false;
-	if (kind.startsWith('_') && !node.userFacing) return false;
+	if (node.surfaceHidden && !node.userFacing) return false;
 	if (!kindEntries || !hasCatalogEntry(kindEntries, kind)) return false;
 	return node instanceof AssembledList || classifyChildFactorySurface(node, nodeMap) !== null;
 }

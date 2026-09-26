@@ -506,7 +506,7 @@ pub enum AnyTransport {
     Literal75_74_69_6c_64_65,
     Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
     Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64,
-    Literal78_5f_65_6d_70_74_79_5f_6d_65_6d_62_65_72,
+    Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72,
     Literal79_75_6e_64_65_66_69_6e_65_64,
     Literal80_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
     Literal81_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
@@ -1033,7 +1033,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Literal75_74_69_6c_64_65 => Ok(()),
             AnyTransport::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => Ok(()),
             AnyTransport::Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            AnyTransport::Literal78_5f_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => Ok(()),
+            AnyTransport::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => Ok(()),
             AnyTransport::Literal79_75_6e_64_65_66_69_6e_65_64 => Ok(()),
             AnyTransport::Literal80_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => Ok(()),
             AnyTransport::Literal81_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => Ok(()),
@@ -1506,7 +1506,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 297 => Ok(AnyTransport::ExtendsClause(
                     ExtendsClauseTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _extends_clause_single (_EXTENDS_CLAUSE_SINGLE)
+                // kind: extends_clause_single (EXTENDS_CLAUSE_SINGLE)
                 298 => Ok(AnyTransport::ExtendsClauseSingle(
                     ExtendsClauseSingleTransport::from_napi_value(env, napi_val)?
                 )),
@@ -1594,11 +1594,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 321 => Ok(AnyTransport::TypeAnnotation(
                     TypeAnnotationTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _type_query_member_expression_in_type_annotation (_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)
+                // kind: type_query_member_expression_in_type_annotation (TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)
                 322 => Ok(AnyTransport::TypeQueryMemberExpressionInTypeAnnotation(
                     TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _type_query_call_expression_in_type_annotation (_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION)
+                // kind: type_query_call_expression_in_type_annotation (TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION)
                 323 => Ok(AnyTransport::TypeQueryCallExpressionInTypeAnnotation(
                     TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                 )),
@@ -1658,19 +1658,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 340 => Ok(AnyTransport::TypePredicateAnnotation(
                     TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _type_query_member_expression (_TYPE_QUERY_MEMBER_EXPRESSION)
+                // kind: type_query_member_expression (TYPE_QUERY_MEMBER_EXPRESSION)
                 341 => Ok(AnyTransport::TypeQueryMemberExpression(
                     TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _type_query_subscript_expression (_TYPE_QUERY_SUBSCRIPT_EXPRESSION)
+                // kind: type_query_subscript_expression (TYPE_QUERY_SUBSCRIPT_EXPRESSION)
                 342 => Ok(AnyTransport::TypeQuerySubscriptExpression(
                     TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _type_query_call_expression (_TYPE_QUERY_CALL_EXPRESSION)
+                // kind: type_query_call_expression (TYPE_QUERY_CALL_EXPRESSION)
                 343 => Ok(AnyTransport::TypeQueryCallExpression(
                     TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _type_query_instantiation_expression (_TYPE_QUERY_INSTANTIATION_EXPRESSION)
+                // kind: type_query_instantiation_expression (TYPE_QUERY_INSTANTIATION_EXPRESSION)
                 344 => Ok(AnyTransport::TypeQueryInstantiationExpression(
                     TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
                 )),
@@ -1918,7 +1918,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 398 => Ok(AnyTransport::BinaryExpressionIn(
                     BinaryExpressionInTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _empty_member (_EMPTY_MEMBER)
+                // kind: empty_member (EMPTY_MEMBER)
                 399 => Ok(AnyTransport::EmptyMember(
                     EmptyMemberTransport::from_napi_value(env, napi_val)?
                 )),
@@ -27512,21 +27512,111 @@ fn augmented_assignment_expression_operator_transport_slot_to_any(t: AugmentedAs
 impl ::sittir_core::render::Render for AugmentedAssignmentExpressionOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal35_70_6c_75_73_5f_65_71 => w.text("+="),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal36_64_61_73_68_5f_65_71 => w.text("-="),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal37_73_74_61_72_5f_65_71 => w.text("*="),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal38_73_6c_61_73_68_5f_65_71 => w.text("/="),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal39_70_65_72_63_65_6e_74_5f_65_71 => w.text("%="),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal40_63_61_72_65_74_5f_65_71 => w.text("^="),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal41_61_6d_70_5f_65_71 => w.text("&="),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal42_70_69_70_65_5f_65_71 => w.text("|="),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal43_67_74_5f_67_74_5f_65_71 => w.text(">>="),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal44_67_74_5f_67_74_5f_67_74_5f_65_71 => w.text(">>>="),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal45_6c_74_5f_6c_74_5f_65_71 => w.text("<<="),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal46_73_74_61_72_5f_73_74_61_72_5f_65_71 => w.text("**="),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal47_61_6d_70_5f_61_6d_70_5f_65_71 => w.text("&&="),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal48_70_69_70_65_5f_70_69_70_65_5f_65_71 => w.text("||="),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal49_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71 => w.text("??="),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal35_70_6c_75_73_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PLUS_EQ_BEFORE);
+                let written = w.text("+=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PLUS_EQ_AFTER);
+                Ok(())
+            }
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal36_64_61_73_68_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_DASH_EQ_BEFORE);
+                let written = w.text("-=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_DASH_EQ_AFTER);
+                Ok(())
+            }
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal37_73_74_61_72_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_STAR_EQ_BEFORE);
+                let written = w.text("*=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_STAR_EQ_AFTER);
+                Ok(())
+            }
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal38_73_6c_61_73_68_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_SLASH_EQ_BEFORE);
+                let written = w.text("/=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_SLASH_EQ_AFTER);
+                Ok(())
+            }
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal39_70_65_72_63_65_6e_74_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PERCENT_EQ_BEFORE);
+                let written = w.text("%=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PERCENT_EQ_AFTER);
+                Ok(())
+            }
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal40_63_61_72_65_74_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_CARET_EQ_BEFORE);
+                let written = w.text("^=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_CARET_EQ_AFTER);
+                Ok(())
+            }
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal41_61_6d_70_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_AMP_EQ_BEFORE);
+                let written = w.text("&=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_AMP_EQ_AFTER);
+                Ok(())
+            }
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal42_70_69_70_65_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PIPE_EQ_BEFORE);
+                let written = w.text("|=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PIPE_EQ_AFTER);
+                Ok(())
+            }
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal43_67_74_5f_67_74_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_GT_GT_EQ_BEFORE);
+                let written = w.text(">>=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_GT_GT_EQ_AFTER);
+                Ok(())
+            }
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal44_67_74_5f_67_74_5f_67_74_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_GT_GT_GT_EQ_BEFORE);
+                let written = w.text(">>>=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_GT_GT_GT_EQ_AFTER);
+                Ok(())
+            }
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal45_6c_74_5f_6c_74_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_LT_LT_EQ_BEFORE);
+                let written = w.text("<<=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_LT_LT_EQ_AFTER);
+                Ok(())
+            }
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal46_73_74_61_72_5f_73_74_61_72_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_STAR_STAR_EQ_BEFORE);
+                let written = w.text("**=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_STAR_STAR_EQ_AFTER);
+                Ok(())
+            }
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal47_61_6d_70_5f_61_6d_70_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_AMP_AMP_EQ_BEFORE);
+                let written = w.text("&&=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_AMP_AMP_EQ_AFTER);
+                Ok(())
+            }
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal48_70_69_70_65_5f_70_69_70_65_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PIPE_PIPE_EQ_BEFORE);
+                let written = w.text("||=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PIPE_PIPE_EQ_AFTER);
+                Ok(())
+            }
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal49_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71 => {
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_QMARK_QMARK_EQ_BEFORE);
+                let written = w.text("??=");
+                written?;
+                w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_QMARK_QMARK_EQ_AFTER);
+                Ok(())
+            }
         }
     }
 }
@@ -27917,13 +28007,55 @@ fn unary_expression_operator_transport_slot_to_any(t: UnaryExpressionOperatorTra
 impl ::sittir_core::render::Render for UnaryExpressionOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UnaryExpressionOperatorTransportSlot::Literal74_62_61_6e_67 => w.text("!"),
-            UnaryExpressionOperatorTransportSlot::Literal75_74_69_6c_64_65 => w.text("~"),
-            UnaryExpressionOperatorTransportSlot::Literal59_64_61_73_68 => w.text("-"),
-            UnaryExpressionOperatorTransportSlot::Literal58_70_6c_75_73 => w.text("+"),
-            UnaryExpressionOperatorTransportSlot::Literal1_74_79_70_65_6f_66_5f_6b_65_79_77_6f_72_64 => w.text("typeof"),
-            UnaryExpressionOperatorTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => w.text("void"),
-            UnaryExpressionOperatorTransportSlot::Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => w.text("delete"),
+            UnaryExpressionOperatorTransportSlot::Literal74_62_61_6e_67 => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_BANG_BEFORE);
+                let written = w.text("!");
+                written?;
+                w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_BANG_AFTER);
+                Ok(())
+            }
+            UnaryExpressionOperatorTransportSlot::Literal75_74_69_6c_64_65 => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_TILDE_BEFORE);
+                let written = w.text("~");
+                written?;
+                w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_TILDE_AFTER);
+                Ok(())
+            }
+            UnaryExpressionOperatorTransportSlot::Literal59_64_61_73_68 => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_DASH_BEFORE);
+                let written = w.text("-");
+                written?;
+                w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_DASH_AFTER);
+                Ok(())
+            }
+            UnaryExpressionOperatorTransportSlot::Literal58_70_6c_75_73 => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_PLUS_BEFORE);
+                let written = w.text("+");
+                written?;
+                w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_PLUS_AFTER);
+                Ok(())
+            }
+            UnaryExpressionOperatorTransportSlot::Literal1_74_79_70_65_6f_66_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_TYPEOF_KEYWORD_BEFORE);
+                let written = w.text("typeof");
+                written?;
+                w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_TYPEOF_KEYWORD_AFTER);
+                Ok(())
+            }
+            UnaryExpressionOperatorTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_VOID_KEYWORD_BEFORE);
+                let written = w.text("void");
+                written?;
+                w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_VOID_KEYWORD_AFTER);
+                Ok(())
+            }
+            UnaryExpressionOperatorTransportSlot::Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_DELETE_KEYWORD_BEFORE);
+                let written = w.text("delete");
+                written?;
+                w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_DELETE_KEYWORD_AFTER);
+                Ok(())
+            }
         }
     }
 }
@@ -30639,7 +30771,7 @@ pub enum ClassBodyContentTransportSlot {
     ClassBodyMethodSig(ClassBodyMethodSigTransport),
     ClassStaticBlock(ClassStaticBlockTransport),
     ClassBodyMember(ClassBodyMemberTransport),
-    Literal78_5f_65_6d_70_74_79_5f_6d_65_6d_62_65_72,
+    Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72,
 }
 
 impl ::sittir_core::prepare::Prepare for ClassBodyContentTransportSlot {
@@ -30649,7 +30781,7 @@ impl ::sittir_core::prepare::Prepare for ClassBodyContentTransportSlot {
             ClassBodyContentTransportSlot::ClassBodyMethodSig(t) => t.prepare(ctx),
             ClassBodyContentTransportSlot::ClassStaticBlock(t) => t.prepare(ctx),
             ClassBodyContentTransportSlot::ClassBodyMember(t) => t.prepare(ctx),
-            ClassBodyContentTransportSlot::Literal78_5f_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => Ok(()),
+            ClassBodyContentTransportSlot::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => Ok(()),
         }
     }
 }
@@ -30661,7 +30793,7 @@ impl ::sittir_core::view::KindOf for ClassBodyContentTransportSlot {
             Self::ClassBodyMethodSig(inner) => inner.kind_in(kinds),
             Self::ClassStaticBlock(inner) => inner.kind_in(kinds),
             Self::ClassBodyMember(inner) => inner.kind_in(kinds),
-            Self::Literal78_5f_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => [::sittir_core::types::KindId(399)].iter().any(|k| kinds.contains(k)),
+            Self::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => [::sittir_core::types::KindId(399)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -30675,7 +30807,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyContentTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    399 => Ok(Self::Literal78_5f_65_6d_70_74_79_5f_6d_65_6d_62_65_72),
+                    399 => Ok(Self::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72),
                     400 => Ok(Self::ClassBodyMethod(
                         ClassBodyMethodTransport::from_napi_value(env, napi_val)?
                     )),
@@ -30699,7 +30831,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ClassBodyContentTransportSlot")
                 )?;
                 match kind_id {
-                    399 => Ok(Self::Literal78_5f_65_6d_70_74_79_5f_6d_65_6d_62_65_72),
+                    399 => Ok(Self::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72),
                     400 => Ok(Self::ClassBodyMethod(
                         ClassBodyMethodTransport::from_napi_value(env, napi_val)?
                     )),
@@ -30758,7 +30890,7 @@ fn class_body_content_transport_slot_to_any(t: ClassBodyContentTransportSlot) ->
         ClassBodyContentTransportSlot::ClassBodyMethodSig(inner) => AnyTransport::ClassBodyMethodSig(inner),
         ClassBodyContentTransportSlot::ClassStaticBlock(inner) => AnyTransport::ClassStaticBlock(inner),
         ClassBodyContentTransportSlot::ClassBodyMember(inner) => AnyTransport::ClassBodyMember(inner),
-        ClassBodyContentTransportSlot::Literal78_5f_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => AnyTransport::Literal78_5f_65_6d_70_74_79_5f_6d_65_6d_62_65_72,
+        ClassBodyContentTransportSlot::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => AnyTransport::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72,
     }
 }
 
@@ -30769,7 +30901,7 @@ impl ::sittir_core::render::Render for ClassBodyContentTransportSlot {
             ClassBodyContentTransportSlot::ClassBodyMethodSig(inner) => inner.render(w),
             ClassBodyContentTransportSlot::ClassStaticBlock(inner) => inner.render(w),
             ClassBodyContentTransportSlot::ClassBodyMember(inner) => inner.render(w),
-            ClassBodyContentTransportSlot::Literal78_5f_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => w.text(";"),
+            ClassBodyContentTransportSlot::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => w.text(";"),
         }
     }
 }
@@ -43710,16 +43842,76 @@ impl ::sittir_core::render::Render for TypePredicateNameTransportSlot {
         match self {
             TypePredicateNameTransportSlot::Identifier(inner) => inner.render(w),
             TypePredicateNameTransportSlot::Literal88_74_68_69_73 => w.text("this"),
-            TypePredicateNameTransportSlot::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64 => w.text("any"),
-            TypePredicateNameTransportSlot::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64 => w.text("number"),
-            TypePredicateNameTransportSlot::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64 => w.text("boolean"),
-            TypePredicateNameTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => w.text("string"),
-            TypePredicateNameTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => w.text("symbol"),
-            TypePredicateNameTransportSlot::Literal89_75_6e_69_71_75_65 => w.text("unique symbol"),
-            TypePredicateNameTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => w.text("void"),
-            TypePredicateNameTransportSlot::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64 => w.text("unknown"),
-            TypePredicateNameTransportSlot::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64 => w.text("never"),
-            TypePredicateNameTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => w.text("object"),
+            TypePredicateNameTransportSlot::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_ANY_KEYWORD_BEFORE);
+                let written = w.text("any");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_ANY_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypePredicateNameTransportSlot::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_NUMBER_KEYWORD_BEFORE);
+                let written = w.text("number");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_NUMBER_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypePredicateNameTransportSlot::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_BOOLEAN_KEYWORD_BEFORE);
+                let written = w.text("boolean");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_BOOLEAN_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypePredicateNameTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_STRING_KEYWORD_BEFORE);
+                let written = w.text("string");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_STRING_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypePredicateNameTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_SYMBOL_KEYWORD_BEFORE);
+                let written = w.text("symbol");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_SYMBOL_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypePredicateNameTransportSlot::Literal89_75_6e_69_71_75_65 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_UNIQUE_BEFORE);
+                let written = w.text("unique symbol");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_UNIQUE_AFTER);
+                Ok(())
+            }
+            TypePredicateNameTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_VOID_KEYWORD_BEFORE);
+                let written = w.text("void");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_VOID_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypePredicateNameTransportSlot::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_UNKNOWN_KEYWORD_BEFORE);
+                let written = w.text("unknown");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_UNKNOWN_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypePredicateNameTransportSlot::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_NEVER_KEYWORD_BEFORE);
+                let written = w.text("never");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_NEVER_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypePredicateNameTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_OBJECT_KEYWORD_BEFORE);
+                let written = w.text("object");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_OBJECT_KEYWORD_AFTER);
+                Ok(())
+            }
             TypePredicateNameTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -44904,16 +45096,76 @@ impl ::sittir_core::render::Render for TypeQuerySubscriptExpressionIndexTranspor
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBinary(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberOctal(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBigint(inner) => inner.render(w),
-            TypeQuerySubscriptExpressionIndexTransportSlot::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64 => w.text("any"),
-            TypeQuerySubscriptExpressionIndexTransportSlot::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64 => w.text("number"),
-            TypeQuerySubscriptExpressionIndexTransportSlot::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64 => w.text("boolean"),
-            TypeQuerySubscriptExpressionIndexTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => w.text("string"),
-            TypeQuerySubscriptExpressionIndexTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => w.text("symbol"),
-            TypeQuerySubscriptExpressionIndexTransportSlot::Literal89_75_6e_69_71_75_65 => w.text("unique symbol"),
-            TypeQuerySubscriptExpressionIndexTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => w.text("void"),
-            TypeQuerySubscriptExpressionIndexTransportSlot::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64 => w.text("unknown"),
-            TypeQuerySubscriptExpressionIndexTransportSlot::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64 => w.text("never"),
-            TypeQuerySubscriptExpressionIndexTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => w.text("object"),
+            TypeQuerySubscriptExpressionIndexTransportSlot::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_ANY_KEYWORD_BEFORE);
+                let written = w.text("any");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_ANY_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypeQuerySubscriptExpressionIndexTransportSlot::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_NUMBER_KEYWORD_BEFORE);
+                let written = w.text("number");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_NUMBER_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypeQuerySubscriptExpressionIndexTransportSlot::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_BOOLEAN_KEYWORD_BEFORE);
+                let written = w.text("boolean");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_BOOLEAN_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypeQuerySubscriptExpressionIndexTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_STRING_KEYWORD_BEFORE);
+                let written = w.text("string");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_STRING_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypeQuerySubscriptExpressionIndexTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_SYMBOL_KEYWORD_BEFORE);
+                let written = w.text("symbol");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_SYMBOL_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypeQuerySubscriptExpressionIndexTransportSlot::Literal89_75_6e_69_71_75_65 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_UNIQUE_BEFORE);
+                let written = w.text("unique symbol");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_UNIQUE_AFTER);
+                Ok(())
+            }
+            TypeQuerySubscriptExpressionIndexTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_VOID_KEYWORD_BEFORE);
+                let written = w.text("void");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_VOID_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypeQuerySubscriptExpressionIndexTransportSlot::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_UNKNOWN_KEYWORD_BEFORE);
+                let written = w.text("unknown");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_UNKNOWN_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypeQuerySubscriptExpressionIndexTransportSlot::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_NEVER_KEYWORD_BEFORE);
+                let written = w.text("never");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_NEVER_KEYWORD_AFTER);
+                Ok(())
+            }
+            TypeQuerySubscriptExpressionIndexTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => {
+                w.site_at(options::SITE_PREDEFINED_TYPE_OBJECT_KEYWORD_BEFORE);
+                let written = w.text("object");
+                written?;
+                w.site_at(options::SITE_PREDEFINED_TYPE_OBJECT_KEYWORD_AFTER);
+                Ok(())
+            }
             TypeQuerySubscriptExpressionIndexTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -50101,8 +50353,20 @@ fn literal_type_negative_number_operator_transport_slot_to_any(t: LiteralTypeNeg
 impl ::sittir_core::render::Render for LiteralTypeNegativeNumberOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LiteralTypeNegativeNumberOperatorTransportSlot::Literal59_64_61_73_68 => w.text("-"),
-            LiteralTypeNegativeNumberOperatorTransportSlot::Literal58_70_6c_75_73 => w.text("+"),
+            LiteralTypeNegativeNumberOperatorTransportSlot::Literal59_64_61_73_68 => {
+                w.site_at(options::SITE_NUMBER_OPERATOR_DASH_BEFORE);
+                let written = w.text("-");
+                written?;
+                w.site_at(options::SITE_NUMBER_OPERATOR_DASH_AFTER);
+                Ok(())
+            }
+            LiteralTypeNegativeNumberOperatorTransportSlot::Literal58_70_6c_75_73 => {
+                w.site_at(options::SITE_NUMBER_OPERATOR_PLUS_BEFORE);
+                let written = w.text("+");
+                written?;
+                w.site_at(options::SITE_NUMBER_OPERATOR_PLUS_AFTER);
+                Ok(())
+            }
         }
     }
 }
@@ -56293,8 +56557,20 @@ fn update_expression_postfix_operator_transport_slot_to_any(t: UpdateExpressionP
 impl ::sittir_core::render::Render for UpdateExpressionPostfixOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UpdateExpressionPostfixOperatorTransportSlot::Literal111_70_6c_75_73_5f_70_6c_75_73 => w.text("++"),
-            UpdateExpressionPostfixOperatorTransportSlot::Literal112_64_61_73_68_5f_64_61_73_68 => w.text("--"),
+            UpdateExpressionPostfixOperatorTransportSlot::Literal111_70_6c_75_73_5f_70_6c_75_73 => {
+                w.site_at(options::SITE_OPERATOR_PLUS_PLUS_BEFORE);
+                let written = w.text("++");
+                written?;
+                w.site_at(options::SITE_OPERATOR_PLUS_PLUS_AFTER);
+                Ok(())
+            }
+            UpdateExpressionPostfixOperatorTransportSlot::Literal112_64_61_73_68_5f_64_61_73_68 => {
+                w.site_at(options::SITE_OPERATOR_DASH_DASH_BEFORE);
+                let written = w.text("--");
+                written?;
+                w.site_at(options::SITE_OPERATOR_DASH_DASH_AFTER);
+                Ok(())
+            }
         }
     }
 }
@@ -56397,8 +56673,20 @@ fn update_expression_prefix_operator_transport_slot_to_any(t: UpdateExpressionPr
 impl ::sittir_core::render::Render for UpdateExpressionPrefixOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UpdateExpressionPrefixOperatorTransportSlot::Literal111_70_6c_75_73_5f_70_6c_75_73 => w.text("++"),
-            UpdateExpressionPrefixOperatorTransportSlot::Literal112_64_61_73_68_5f_64_61_73_68 => w.text("--"),
+            UpdateExpressionPrefixOperatorTransportSlot::Literal111_70_6c_75_73_5f_70_6c_75_73 => {
+                w.site_at(options::SITE_OPERATOR_PLUS_PLUS_BEFORE);
+                let written = w.text("++");
+                written?;
+                w.site_at(options::SITE_OPERATOR_PLUS_PLUS_AFTER);
+                Ok(())
+            }
+            UpdateExpressionPrefixOperatorTransportSlot::Literal112_64_61_73_68_5f_64_61_73_68 => {
+                w.site_at(options::SITE_OPERATOR_DASH_DASH_BEFORE);
+                let written = w.text("--");
+                written?;
+                w.site_at(options::SITE_OPERATOR_DASH_DASH_AFTER);
+                Ok(())
+            }
         }
     }
 }
@@ -81769,7 +82057,7 @@ impl ::sittir_core::view::KindOf for TernaryQmarkTransport {
 }
 
 impl ::sittir_core::options::Edged for TernaryQmarkTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(126) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(172) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -105482,7 +105770,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal75_74_69_6c_64_65 => w.text("~"),
             AnyTransport::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => w.text("void"),
             AnyTransport::Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => w.text("delete"),
-            AnyTransport::Literal78_5f_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => w.text(";"),
+            AnyTransport::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => w.text(";"),
             AnyTransport::Literal79_75_6e_64_65_66_69_6e_65_64 => w.text("undefined"),
             AnyTransport::Literal80_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => w.text("static"),
             AnyTransport::Literal81_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => w.text("override"),

@@ -456,7 +456,7 @@ sees no literal there; the slot types as `string` and its guard is the pattern.
  * The generated kind-catalog row for this node — `{ kind, id, parseId?,
  * symbolName?, anon? }` — resolved once from `opts.kindEntries` at
  * construction (`findOwnKindEntry`, the row whose model kind is this node's
- * kind) and read as a stamp thereafter: display stamping and `parserHidden`
+ * kind) and read as a stamp thereafter: display stamping and `surfaceHidden`
  * both read it.
  *
  * Absent exactly where the grammar issues no parser symbol for the kind:
@@ -612,13 +612,15 @@ sees no literal there; the slot types as `string` and its guard is the pattern.
 /** A node is hidden when it has no factory (supertype, group, token). */
 ```
 
-This is factory absence, not parser visibility: whether the parser issues the
-kind as a visible node is `parserHidden`.
+This is factory absence, not parser visibility: whether the kind is hidden on
+the generated surface is `surfaceHidden`.
 
-### `packages/codegen/src/compiler/model/node-map.ts::parserHidden`
+### `packages/codegen/src/compiler/model/node-map.ts::surfaceHidden`
 
-Whether the parser treats this kind as hidden (never a visible CST node of
-its own), read off the node's catalog row. Three cases:
+Whether this kind is hidden on the generated surface: `surfaceHiddenOf` over
+the node's catalog row, i.e. parser-hidden (never a visible CST node of its
+own) and not a supertype. A supertype is invisible to the parser but stays
+the user-facing polymorph parent. The parser-hidden part has three cases:
 
 - a plain row: the row's `hidden`;
 - an alias row (`{ kind: '_x', symbolName: 'x', alias: true, hidden: true }`):
@@ -1910,6 +1912,10 @@ reads it back out after `assemble()` runs), so its owner is
  *  expanded, so type unions, factory unions and tables agree. */
 ```
 
+Each expanded member records the enum it came through as `enumKind`: a
+member arm reached through an enum reference takes that enum's token seams
+(`literalArmSeamSites`), not the seams of the slot's owner.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.value`
 
 ```text
@@ -3196,6 +3202,13 @@ display. A supertype with no row is stamped `supertype`.
 	 */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.singleElementNeedsTrailing`
+
+A terminated list whose trailing delimiter is optional: one element is valid
+only with `delimiter: Delimiter.Trailing`. The list factory asserts it, and
+the generated list test passes that option when it builds one element, so
+both read this one fact.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::LeftImmediateCtx`
 
 ```text
@@ -4052,8 +4065,9 @@ derives a display from a kind name.
 
 ### `packages/codegen/src/compiler/model/display-name.ts::displayNameOfEntry`
 
-The display of a catalog row: the parser's own symbol for it (`symbolName`,
-or the kind of an anonymous row) through `displayOfParserName`. A hidden rule
+The display of a catalog row: the parser's own symbol for it (the alias
+fold's `parseName`, else `symbolName`, or the kind of an anonymous row)
+through `displayOfParserName`. A hidden rule
 whose parser symbol is its own spelling (typescript `_ternary_qmark`, shown
 as `"?"`) is shown as that anonymous token, so it displays as the anonymous
 row carrying the same literal (`qmark`), or by its own kind when there is no
@@ -4521,7 +4535,8 @@ the kind is a plain AssembledEnvelope.
 A display kind the parser only ever issues under an alias symbol, whose node
 is either the storage node itself or a container of it: its simplified body
 is a single SYMBOL, its catalog row is an `alias_sym`, and its storage is not
-hidden (or is itself only an alias row). The per-node choice between storage
+surface-hidden (`surfaceHiddenOf`: a supertype storage such as python
+`expression` counts as visible, an alias row is never hidden). The per-node choice between storage
 and container is made by the reader from the node's grammar symbol.
 ```
 
@@ -4540,3 +4555,11 @@ aliased values whose parse id differs from their storage id, and from the restam
 holds. A redirect is kept only when it is unambiguous — the display has exactly one storage in the slot and is not
 itself a storage there. `identifier` over a dozen keyword storages beside `identifier` itself redirects nowhere; the
 read's own storage id decides.
+
+### `packages/codegen/src/compiler/model/node-map.ts::surfaceHiddenOfRef`
+
+Whether a slot value's node is hidden on the surface: the node's own `surfaceHidden`, or for an unresolved reference `surfaceHiddenOf` by name.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isSurfaceHiddenIn`
+
+Whether a kind is hidden on the surface, read from its node in the map (`surfaceHidden`), or by name through `surfaceHiddenOf` when the map has no node for it. Emitters ask this instead of testing a name's leading underscore.

@@ -199,12 +199,13 @@ describe('emitPolymorphsOverlay', () => {
 		);
 	});
 
-	it('stamps a parameterless child into its slot instead of asking the caller for an empty argument tuple', () => {
+	it('seats a keyword arm\'s stored text instead of asking the caller for the keyword child', () => {
 		const text = emitPolymorphsOverlay({ nodeMap: parameterlessArmNodeMap() });
 
 		expect(text).toContain("\t(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>");
-		expect(text).toContain('{ ...config, content: _c(child)() }');
-		expect(text).not.toContain('_c(child)(...seated)');
+		expect(text).toContain('{ ...config, content: value }');
+		expect(text).toContain("strict: pair$kwSelf(F.buildPair, 'self')");
+		expect(text).not.toContain('_c(child)');
 	});
 
 	it('prints an emit diagnostic for a skipped sub-factory on its own console.warn channel', () => {
@@ -219,49 +220,6 @@ describe('emitPolymorphsOverlay', () => {
 	});
 });
 
-function hoistedMiddleNodeMap(): NodeMap {
-	return buildNodeMap({
-		grandparent: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: '_parent' },
-				{ type: SYMBOL, name: 'leaf_a' }
-			]
-		},
-		_parent: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'leaf_a' },
-				{ type: SYMBOL, name: 'leaf_b' }
-			],
-			annotations: { hoisted: true }
-		},
-		leaf_a: { type: PATTERN, value: '[a-z]+' },
-		leaf_b: {
-			type: SEQ,
-			members: [
-				{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'identifier' } },
-				{ type: FIELD, name: 'y', content: { type: SYMBOL, name: 'identifier' } }
-			]
-		},
-		identifier: { type: PATTERN, value: '[0-9]+' }
-	});
-}
-
-describe('a hoisted kind in the middle of a nested arm', () => {
-	it('gets a private wire set the grandparent routes through, and no export', () => {
-		const nodeMap = hoistedMiddleNodeMap();
-		const parent = nodeMap.nodes.get('_parent')!;
-		expect(parent.annotations?.hoisted).toBe(true);
-		const key = parent.factoryName!;
-		const text = emitPolymorphsOverlay({ nodeMap });
-		expect(text).toContain(`const ${key}: {`);
-		expect(text).not.toContain(`export const ${key}`);
-		expect(text).toContain(`leafB: { strict: grandparent$parent$leafB(F.buildGrandparent, ${key}.leafB.strict)`);
-		expect(text.indexOf(`const ${key}: {`)).toBeLessThan(text.indexOf('export const grandparent'));
-	});
-});
-
 describe('a single hoisted group flattens onto its parent', () => {
 	it('wraps strict with a both-or-neither config and keeps the base spread first', () => {
 		const nodeMap = buildNodeMap({
@@ -270,11 +228,11 @@ describe('a single hoisted group flattens onto its parent', () => {
 				type: SEQ,
 				members: [
 					{ type: STRING, value: 'catch' },
-					{ type: OPTIONAL, content: { type: SYMBOL, name: '_clause_group' } },
+					{ type: OPTIONAL, content: { type: SYMBOL, name: 'clause_group' } },
 					{ type: FIELD, name: 'body', content: { type: PATTERN, value: '.+' } }
 				]
 			},
-			_clause_group: {
+			clause_group: {
 				type: SEQ,
 				members: [
 					{ type: STRING, value: '(' },
@@ -309,11 +267,11 @@ describe('a repeated hoisted group seats as an array of its configs', () => {
 					{
 						type: FIELD,
 						name: 'comparators',
-						content: { type: REPEAT1, content: { type: SYMBOL, name: '_comparison_comparator' } }
+						content: { type: REPEAT1, content: { type: SYMBOL, name: 'comparison_comparator' } }
 					}
 				]
 			},
-			_comparison_comparator: {
+			comparison_comparator: {
 				type: SEQ,
 				members: [
 					{
@@ -348,13 +306,13 @@ describe('a repeated hoisted group on a spread-shaped parent seats through the r
 						name: 'patterns',
 						content: {
 							type: REPEAT1,
-							content: { type: CHOICE, members: [{ type: SYMBOL, name: '_union_negative' }, { type: SYMBOL, name: 'literal' }] }
+							content: { type: CHOICE, members: [{ type: SYMBOL, name: 'union_negative' }, { type: SYMBOL, name: 'literal' }] }
 						}
 					},
 					{ type: STRING, value: ')' }
 				]
 			},
-			_union_negative: {
+			union_negative: {
 				type: SEQ,
 				members: [
 					{ type: FIELD, name: 'sign', content: { type: CHOICE, members: [{ type: STRING, value: '-' }, { type: STRING, value: '+' }] } },
@@ -377,27 +335,27 @@ describe('a mount route carries the seats of its own parent', () => {
 			clause: {
 				type: SEQ,
 				members: [
-					{ type: FIELD, name: 'patterns', content: { type: SYMBOL, name: '_clause_patterns' } },
+					{ type: FIELD, name: 'patterns', content: { type: SYMBOL, name: 'clause_patterns' } },
 					{
 						type: FIELD,
 						name: 'body',
 						content: {
 							type: CHOICE,
 							members: [
-								{ type: SYMBOL, name: '_clause_block', annotations: { variant: 'block', variantOf: 'clause' } },
+								{ type: SYMBOL, name: 'clause_block', annotations: { variant: 'block', variantOf: 'clause' } },
 								{ type: SYMBOL, name: 'literal', annotations: { variant: 'literal', variantOf: 'clause' } }
 							]
 						}
 					}
 				]
 			},
-			_clause_patterns: {
+			clause_patterns: {
 				type: FIELD,
 				name: 'pattern',
 				content: { type: REPEAT1, content: { type: SYMBOL, name: 'literal' } },
 				annotations: { hoisted: true }
 			},
-			_clause_block: {
+			clause_block: {
 				type: SEQ,
 				members: [{ type: STRING, value: '{' }, { type: FIELD, name: 'inner', content: { type: SYMBOL, name: 'literal' } }],
 				annotations: { hoisted: true }

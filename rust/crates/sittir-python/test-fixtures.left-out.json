@@ -1,5 +1,4 @@
 {
-  "_parameters": 1,
   "argument_list": 2,
   "assignment_eq": 1,
   "call": 2,
@@ -10,6 +9,7 @@
   "list_comprehension": 1,
   "module": 5,
   "parameters": 1,
+  "parameters_elements": 1,
   "tuple": 2,
   "tuple_pattern": 1
 }

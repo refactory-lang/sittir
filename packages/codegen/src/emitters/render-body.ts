@@ -278,6 +278,19 @@ export function refersTo(body: Body, name: string): boolean {
 	});
 }
 
+export function writesTokenSeam(body: Body, text: string): boolean {
+	return body.some((node) => {
+		switch (node.kind) {
+			case 'tokenSeam':
+				return node.text === text;
+			case 'if':
+				return node.arms.some((arm) => writesTokenSeam(arm.body, text)) || (node.fallback !== undefined && writesTokenSeam(node.fallback, text));
+			default:
+				return false;
+		}
+	});
+}
+
 export function mentions(body: Body, name: string): boolean {
 	const word = new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
 	return body.some((node) => {

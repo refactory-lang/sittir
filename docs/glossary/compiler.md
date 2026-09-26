@@ -1678,6 +1678,8 @@ entries are `canProceed:false` without ever being `severity:'fail'` — but
 both are now reachable from ONE compile instead of two independent ones.
 ```
 
+`generatedIdTables` is the id tables after `stampVisibleExternals`; generation reads them from the compilation instead of loading and stamping a second copy.
+
 ### `packages/codegen/src/compiler/compile.ts::compileGrammar`
 
 ```text
@@ -1688,6 +1690,9 @@ shapes, slots, content aliases, kind ids) — from that single pass. The CLI
 preflight and a library call to `generate()` consume the same
 `Compilation`, so both see the same checks and `evaluate()` (which
 installs the DSL on `globalThis`) runs once per generation.
+
+The `raw` it returns is the grammar `collectGrammarDiagnosticsForGrammar`
+handed on, with renamed rules already collapsed.
 
 Calls `hydrateSlotRefs` (assemble.ts) before returning — the last mutation
 performed on the graph (UnresolvedRef → AssembledNode), so
@@ -2949,49 +2954,7 @@ which one fails; this is the only place `globalThis` is touched.
 
 ### `packages/codegen/src/compiler/evaluate.ts::canonicalizeRawGrammar`
 
-```text
-/**
- * Evaluate's exit gate. `hidden` is stamped ONLY on top-level rules
- * (`hidden = isParserHiddenName(name)`, one stamp per entry in
- * `raw.rules`); a SYMBOL reference never carries `hidden` —
- * reference-level classification is `inline` alone. `isParserHiddenName`
- * (`dsl/rule-patterns.ts`) is the single source both stamps read: `inline`
- * gets stamped on every rule reference in the grammar, and
- * `RawGrammar.visibleInlineNames` gets recorded here (the grammar's
- * `inline:` array entries that do NOT start with `_` — link reports these
- * as the `inline-array-visible-name` diagnostic, since the parser inlines
- * them regardless of the leading-underscore convention, so they never
- * surface as their own nodes). Every rule link resolves afterward has its
- * `hidden`/`inline` facts already settled.
- *
- * For a SYMBOL reference: a local `hidden = isParserHiddenName(rule.name)`
- * feeds only the `inline` computation below, never the returned rule (a
- * reference's own `hidden` field is never set); a reference is a
- * `boundary` — never eligible to inline — when its name is a declared
- * supertype, OR when it is not itself in the grammar's `inline:` array and
- * its target rule's shape is {@link isNonInlinableLeafShape} (an enum
- * choice, SUPERTYPE, PATTERN, or STRING body — splicing one of those into
- * every occurrence site would duplicate a whole leaf class rather than
- * fold a single reference). `inline = !boundary && (hidden ||
- * inlineNames.has(name))`. For a named ALIAS wrapping a bare SYMBOL:
- * forces that symbol's `inline` to `false` regardless of what the
- * name-based computation would give — an alias confers a real visible CST
- * kind that must materialize, not flatten, however the ALIAS was built
- * (`structuralAlias`, an enrich-injected alias, a hand-built rule
- * literal). Runs bottom-up over every node in every rule
- * (`RuleWalker.map`), so it corrects a symbol's `inline` no matter how
- * deep under an ALIAS it sits.
- */
-```
-
-### body
-
-```text
-// A hidden-only grammar has no visible roots, so an empty seed set would
-// prune EVERY rule as "orphaned" — but nothing is orphaned relative to a
-// nonexistent root set, and evaluate() does not decide visibility policy
-// (classification happens at Assemble). Keep every top-level rule.
-```
+Evaluate's exit gate. It records `RawGrammar.visibleInlineNames`: the grammar's `inline:` entries that do not start with `_`, which link reports as `inline-array-visible-name` because the parser inlines them whatever their spelling. Evaluate has no parser catalog, so it stamps no `hidden` or `inline` fact; link stamps both from the catalog (`stampParserVisibility`).
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::classifyIntrinsic`
 
@@ -3742,7 +3705,7 @@ ordinary union.
  * `alias(symbol(X), $.target)` usage — derived from ONE traversal so the
  * hidden-aliased set and the visible-alias-target map can never drift:
  *
- * - `parentAliasedKinds`: hidden (`_`-prefixed) source kinds `X`. These produce
+ * - `parentAliasedKinds`: parser-hidden (`isParserHiddenKind`) source kinds `X`. These produce
  *   REAL runtime CST nodes (tree-sitter exposes them under the alias target,
  *   e.g. `_with_clause_bare` → `with_clause_bare`). Even when normalized to a
  *   `repeat1` body (making `isHiddenRepeatHelper` fire) they must NOT be
@@ -6375,6 +6338,65 @@ collector parameter.
  */
 ```
 
+### `packages/codegen/src/compiler/generated-metadata.ts::isRenamedEntry`
+
+Whether a catalog row is a hidden rule the parser shows under another name: not an alias, anonymous or literal row, not declared in the grammar's `visibleExternals` (`visibleExternal`, so a declared whitespace external keeps its own kind), visible in the parser, not an alias fold (`parseId` unset, so its `symbolName` is its own symbol's), its `symbolName` differs from its grammar name, and exactly one visible row carries that tree name (`visibleTreeNameCount`). Such a row's model kind is its tree name.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::visibleTreeNameCount`
+
+How many visible, named rows show a tree name, counted once per entry list (cached by list identity).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::modelKindOfEntry`
+
+The model kind a catalog row names: an alias row's display name, a renamed row's tree name (`isRenamedEntry`), otherwise its grammar name. The inverse of `findEntryForKindName`; the id → name tables and the `TSKindId` member names read it so both directions agree.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::parserHiddenOf`
+
+Whether a kind is hidden in the parser: its catalog row's `hidden` fact (never for an alias row), or, for a name with no row (a sittir mint), the leading-underscore spelling.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::isParserHiddenKind`
+
+`parserHiddenOf` for a kind name, looked up by its own row (`findOwnKindEntry`).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::surfaceHiddenOf`
+
+Whether a kind is hidden on the generated surface, from the two parser symbol flags in `ts_symbol_metadata`:
+
+- parser-hidden (`.visible = false`, `parserHiddenOf`) and not a supertype. Tree-sitter compiles every supertype as an invisible symbol, but a supertype is the user-facing polymorph parent, so it keeps its namespace, `ir` key and type;
+- or a grammar rule the parser issues as an anonymous token (`.named = false`, the row's `anon`, on a `literalRule` row): typescript `_ternary_qmark`, python `_not_in`/`_is_not`. Its node stays in the model, so an enum slot keeps its own kind id, but it has no factory or `ir` key. Keyword and punctuation leaves minted from anonymous literals are not rules and stay on the surface. This is the one predicate every surface emitter and the link `hidden` stamps read; link's inline decision reads the plain parser fact.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::isSurfaceHiddenKind`
+
+`surfaceHiddenOf` for a kind name, looked up by its own row (`findOwnKindEntry`).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::findOwnKindEntry`
+
+The catalog row whose model kind is exactly `kind` (`findEntryForKindName`, then `modelKindOfEntry` must agree), or `undefined` for a name with no row. A kind that some row names as its model kind but that the resolution chain misses throws: a rowless fallback (the leading-underscore name rule) is only for synthetic grammars and sittir mints, never for a kind the catalog owns.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::stampVisibleExternals`
+
+Marks the rows named in the grammar's `visibleExternals` with `parser.visibleExternal`, returning new tables (idempotent; tables without such rows pass through). `compileGrammar` stamps once and hands the stamped tables to generation on `Compilation.generatedIdTables`; link stamps again at entry so a caller that passes raw tables sees the same fact. Consumers read the stamp, never the grammar's list: `isRenamedEntry` excludes the rows, so `collapseRenamedRules` keeps their kinds, and the slot-preservation check accepts a declared token written as a seam (`rendersAsDeclaredTokenSeam`).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::collectSymbolFlags`
+
+Reads `ts_symbol_metadata[]` from `parser.c`: each symbol's `.visible` and `.named` flags (keyed by C symbol name) and the set of symbols flagged `.supertype`. The catalog `hidden` fact derives from `.visible`, `anon` from `.named`, and `supertype` from `.supertype`; the C-name prefix only names a row, never classifies it.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::GeneratedKindEntry`
+
+One catalog row. Beyond the id tables, it carries:
+
+- `parseName`: set only on an alias fold (`joinIdNames`), the display name tree-sitter issues under `parseId`. The row keeps its own `symbolName`, so the storage id still names the row's own symbol and the parse id names the display;
+- `supertype`: the symbol is a tree-sitter supertype (`collectSymbolFlags`), read by `surfaceHiddenOf`;
+- `visibleExternal`: the row is declared in the grammar's `visibleExternals` (`stampVisibleExternals`).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::ParserSymbolFacts`
+
+The per-symbol facts read from `parser.c` beside the name tables: the symbols in `ts_non_terminal_alias_map`, each symbol's `.visible` flag and the symbols flagged `.supertype` (`collectSymbolFlags`).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::collectSymbolVisibility`
+
+Reads `.visible` for every symbol in `ts_symbol_metadata`. A catalog row's `hidden` is `.visible === false`; the parser, not the name, decides.
+
 ### `packages/codegen/src/compiler/inline-sets.ts::GrammarJsonNode`
 
 ```text
@@ -7597,6 +7619,10 @@ source, one derivation.
  * recorded (a real regex body has no anon token by design).
  */
 ```
+
+### `packages/codegen/src/compiler/link.ts::KindCatalogCtx`
+
+The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exists: `collapseRenamedRules` and `stampParserVisibility` shape the grammar `LinkCtx` is built from, so they take this slice. `StampKindIdsCtx` extends it, and `LinkCtx` satisfies it.
 
 ### `packages/codegen/src/compiler/link.ts::StampKindIdsCtx`
 
@@ -9701,6 +9727,10 @@ Whether a rule, under its `TOKEN`/`IMMEDIATE_TOKEN`/`PREC` wrappers, is a single
 				   on, since that's what tree-sitter really emits. */
 ```
 
+#### parseName
+
+The fold records the alias's display name as `parseName` beside `parseId` and leaves the row's parser metadata (its own `symbolName`) untouched, so a consumer names the storage id by the row's own symbol and the parse id by `parseName`.
+
 #### lexicalRank
 
 Each row's parser metadata carries the symbol's `lexicalRank` from `collectLexicalRanks`, looked up by the symbol's grammar name (`grammarNameOfSymbol`); `createParserMetadata` stamps it and a symbol with no rule, external or alias display gets none.
@@ -10775,11 +10805,23 @@ minted display would be a second kind claiming the same id.
 ```text
 memberRef: a member's own `literal` stamp decides how it resolves: a literal
 member through its anonymous token row (`findEntryForLiteralText`), a rule
-member through its kind row (`findEntryForKindName`). Nothing is tried in
+member through its kind row (`findEntryForKindName`), named by the row's
+model kind (`modelKindOfEntry`), since a renamed row is found through its
+old spelling. Nothing is tried in
 order. A literal member keeps `.literal`, which isEnumChoiceRule /
 literalTextOf read to recognize a literal-carrying SYMBOL — dropping it
 re-derives a fact the pipeline already stamps.
 ```
+
+### `packages/codegen/src/compiler/link.ts::collapseRenamedRules`
+
+A hidden rule the parser always shows under one tree name (`ts_symbol_names` gives the name; the catalog row is visible, not an alias or anonymous row, and is the only visible row carrying that name — `isRenamedEntry`) is one visible kind. This pass renames it to that tree name everywhere the grammar names it, before anything reads the grammar: rule keys, SYMBOL names and their `_ref` from/to, an identity alias wrapper around the renamed symbol (unwrapped), every name list (externals, extras, supertypes, inline, factoryInline, conflicts, precedences, word, visibleInlineNames, orphanedSyntheticGroups, bodyPatternZeroMatches), the name-keyed side tables (externalRoles, refineForms, groups, renderAs, visibleExternals, options, expectDiagnostics, expectTestFailures), the NUL-joined automaticVariants keys and the desugar divergence events. It rebuilds the rule catalog (keeping each rule's provenance) and re-attaches reference rule ids, since rule ids embed the owner's name. A tree name that another rule or external already uses is an error.
+
+It runs where the evaluated grammar is first consumed: `collectGrammarDiagnosticsForGrammar` collapses its input and hands the result on as `raw`, and `link` collapses again for callers that link an evaluated grammar directly; a collapsed grammar has no renamed rule left, so the second call returns its input.
+
+### `packages/codegen/src/compiler/link.ts::stampParserVisibility`
+
+Stamps each rule's `hidden` and each reference's `inline` from the parser catalog (`isParserHiddenKind`: the symbol's `.visible` in `ts_symbol_metadata`; a name with no row falls back to the leading-underscore spelling). A reference inlines when its target is hidden or in the grammar's `inline:` array, unless it is a boundary: a declared supertype, or a target outside the `inline:` array whose shape is a non-inlinable leaf (`isNonInlinableLeafShape`). A named ALIAS keeps its wrapped SYMBOL un-inlined, since the alias confers a node that must materialize.
 
 ### `packages/codegen/src/compiler/collect-slots.ts::SlotDeriveCtx`
 

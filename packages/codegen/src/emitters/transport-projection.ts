@@ -9,6 +9,7 @@ export interface TransportLiteral {
 	readonly text: string;
 	readonly resolvedKindId?: number;
 	readonly immediate?: boolean;
+	readonly enumKind?: string;
 }
 
 export interface TransportProjection {

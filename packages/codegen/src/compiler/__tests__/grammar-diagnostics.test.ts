@@ -12,7 +12,7 @@ import type { SimplifiedRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import type { GeneratedIdTables } from '../generated-metadata.ts';
 
-function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = []): RawGrammar {
+function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = [], supertypes: string[] = []): RawGrammar {
 	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);
 	return {
 		name: 'synth',
@@ -20,7 +20,7 @@ function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = []):
 		ruleCatalog,
 		extras: [],
 		externals: [],
-		supertypes: [],
+		supertypes,
 		factoryInline: [],
 		inline,
 		conflicts: [],
@@ -262,7 +262,8 @@ describe('grammar diagnostics preflight', () => {
 
 	it("collectGrammarDiagnosticsForGrammar surfaces link's kindid-inline-excluded-symbols and kindid-unclassified-symbols diagnostics", () => {
 		// 'known' has a kindId; 'inline_only_kind' is a stamp miss declared in
-		// the grammar's own inline: array; 'gap_kind' is a stamp miss that is
+		// the grammar's own inline: array and as a supertype, so its reference
+		// stays a boundary instead of splicing; 'gap_kind' is a stamp miss that is
 		// neither inline nor stamped, reachable from the root ('host', the
 		// first declared rule) — a genuine, unaccepted gap.
 		const rawGrammar = buildRawGrammar(
@@ -276,9 +277,10 @@ describe('grammar diagnostics preflight', () => {
 					]
 				},
 				known: { type: 'PATTERN', value: 'x' },
-				inline_only_kind: { type: 'PATTERN', value: 'y' },
+				inline_only_kind: { type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'known' }] },
 				gap_kind: { type: 'PATTERN', value: 'z' }
 			},
+			['inline_only_kind'],
 			['inline_only_kind']
 		);
 		const generatedIdTables: GeneratedIdTables = { kindIds: { known: 1 }, sourceArtifact: 'test' };

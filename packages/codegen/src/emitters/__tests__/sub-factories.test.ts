@@ -291,8 +291,8 @@ export function twoChoiceSlotsNodeMap(): NodeMap {
 					content: {
 						type: CHOICE,
 						members: [
-							{ type: SYMBOL, name: '_header_lhs', annotations: { variant: 'lhs', variantOf: 'header' } },
-							{ type: SYMBOL, name: '_header_kind', annotations: { variant: 'kind', variantOf: 'header' } }
+							{ type: SYMBOL, name: 'header_lhs', annotations: { variant: 'lhs', variantOf: 'header' } },
+							{ type: SYMBOL, name: 'header_kind', annotations: { variant: 'kind', variantOf: 'header' } }
 						]
 					}
 				},
@@ -309,12 +309,12 @@ export function twoChoiceSlotsNodeMap(): NodeMap {
 				}
 			]
 		},
-		_header_lhs: {
+		header_lhs: {
 			type: SEQ,
 			members: [{ type: FIELD, name: 'left', content: { type: PATTERN, value: '[a-z]+' } }],
 			annotations: { hoisted: true, variant: 'lhs', variantOf: 'header' }
 		},
-		_header_kind: {
+		header_kind: {
 			type: SEQ,
 			members: [
 				{ type: FIELD, name: 'kind', content: { type: STRING, value: 'const' } },
@@ -334,8 +334,8 @@ describe('hoisted arms in a parent with two choice slots', () => {
 		const names = set.entries.map((e) => e.name);
 		expect(names).toContain('lhs');
 		expect(names).toContain('kind');
-		expect(nodeArmOf(set.entries, 'kind').child.kind).toBe('_header_kind');
-		expect(nodeArmOf(set.entries, 'lhs').child.kind).toBe('_header_lhs');
+		expect(nodeArmOf(set.entries, 'kind').child.kind).toBe('header_kind');
+		expect(nodeArmOf(set.entries, 'lhs').child.kind).toBe('header_lhs');
 		for (const name of ['lhs', 'kind']) {
 			const entry = set.entries.find((e) => e.name === name)!;
 			expect(entry.slot.name).toBe('content');
@@ -351,11 +351,11 @@ export function clauseNodeMap(): NodeMap {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: 'catch' },
-				{ type: OPTIONAL, content: { type: SYMBOL, name: '_clause_group' } },
+				{ type: OPTIONAL, content: { type: SYMBOL, name: 'clause_group' } },
 				{ type: FIELD, name: 'body', content: { type: PATTERN, value: '.+' } }
 			]
 		},
-		_clause_group: {
+		clause_group: {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: '(' },
@@ -372,7 +372,7 @@ describe('flattenSeatOf', () => {
 	it('finds the single hoisted config-shaped group in an optional seat', () => {
 		const nodeMap = clauseNodeMap();
 		const seat = flattenSeatOf(nodeMap.nodes.get('clause')!, nodeMap);
-		expect(seat?.group.kind).toBe('_clause_group');
+		expect(seat?.group.kind).toBe('clause_group');
 		expect(seat?.slot.values.length).toBe(1);
 		expect(subFactoriesOf(nodeMap.nodes.get('clause')!, nodeMap).entries).toEqual([]);
 	});
@@ -389,10 +389,10 @@ export function comparisonNodeMap(): NodeMap {
 			type: SEQ,
 			members: [
 				{ type: FIELD, name: 'left', content: { type: PATTERN, value: '[a-z]+' } },
-				{ type: FIELD, name: 'comparators', content: { type: REPEAT1, content: { type: SYMBOL, name: '_comparison_comparator' } } }
+				{ type: FIELD, name: 'comparators', content: { type: REPEAT1, content: { type: SYMBOL, name: 'comparison_comparator' } } }
 			]
 		},
-		_comparison_comparator: {
+		comparison_comparator: {
 			type: SEQ,
 			members: [
 				{
@@ -411,7 +411,7 @@ describe('elementsSeatOf', () => {
 	it('finds a repeated hoisted config-shaped group', () => {
 		const nodeMap = comparisonNodeMap();
 		const seats = elementsSeatOf(nodeMap.nodes.get('comparison')!, nodeMap);
-		expect(seats.map((s) => [s.slot.name, s.group.kind])).toEqual([['comparators', '_comparison_comparator']]);
+		expect(seats.map((s) => [s.slot.name, s.group.kind])).toEqual([['comparators', 'comparison_comparator']]);
 		expect(flattenSeatOf(nodeMap.nodes.get('comparison')!, nodeMap)).toBeUndefined();
 	});
 	it('returns nothing for a single-valued seat', () => {
@@ -428,17 +428,17 @@ describe('flattenSeatOf on a direct-shaped group', () => {
 				type: SEQ,
 				members: [
 					{ type: FIELD, name: 'start', content: { type: PATTERN, value: '[0-9]+' } },
-					{ type: OPTIONAL, content: { type: SYMBOL, name: '_slice_step' } }
+					{ type: OPTIONAL, content: { type: SYMBOL, name: 'slice_step' } }
 				]
 			},
-			_slice_step: {
+			slice_step: {
 				type: SEQ,
 				members: [{ type: STRING, value: ':' }, { type: FIELD, name: 'step', content: { type: PATTERN, value: '[0-9]+' } }],
 				annotations: { hoisted: true }
 			}
 		});
 		const seat = flattenSeatOf(nodeMap.nodes.get('slice')!, nodeMap);
-		expect(seat?.group.kind).toBe('_slice_step');
+		expect(seat?.group.kind).toBe('slice_step');
 		expect(seat?.directKey).toBe('step');
 	});
 });

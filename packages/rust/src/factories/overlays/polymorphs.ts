@@ -52,6 +52,107 @@ export const expressionStatement: typeof B.expressionStatement & {
 	}
 };
 
+const nonSpecialToken$string =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$rawString =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$float =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$mutableSpecifier =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const nonSpecialToken$self =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const nonSpecialToken$super =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const nonSpecialToken$crate =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+export const nonSpecialToken: typeof B.nonSpecialToken & {
+	string: {
+		strict: (...args: ArgsOf<typeof F.buildStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (...args: ArgsOf<typeof C.coerceToStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+	};
+	rawString: {
+		strict: (...args: ArgsOf<typeof F.buildRawStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (...args: ArgsOf<typeof C.coerceToRawStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+	};
+	float: {
+		strict: (...args: ArgsOf<typeof F.buildFloatLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (...args: ArgsOf<typeof C.coerceToFloatLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+	};
+	identifier: {
+		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildNonSpecialToken>;
+	};
+	mutableSpecifier: {
+		strict: (options?: OptionsArg<typeof F.buildNonSpecialToken>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (options?: OptionsArg<typeof C.coerceToNonSpecialToken>) => ReturnType<typeof C.coerceToNonSpecialToken>;
+	};
+	self: {
+		strict: (options?: OptionsArg<typeof F.buildNonSpecialToken>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (options?: OptionsArg<typeof C.coerceToNonSpecialToken>) => ReturnType<typeof C.coerceToNonSpecialToken>;
+	};
+	super: {
+		strict: (options?: OptionsArg<typeof F.buildNonSpecialToken>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (options?: OptionsArg<typeof C.coerceToNonSpecialToken>) => ReturnType<typeof C.coerceToNonSpecialToken>;
+	};
+	crate: {
+		strict: (options?: OptionsArg<typeof F.buildNonSpecialToken>) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: (options?: OptionsArg<typeof C.coerceToNonSpecialToken>) => ReturnType<typeof C.coerceToNonSpecialToken>;
+	};
+} = {
+	...B.nonSpecialToken,
+	string: {
+		strict: nonSpecialToken$string(F.buildNonSpecialToken, F.buildStringLiteral),
+		coerce: nonSpecialToken$string(F.buildNonSpecialToken, C.coerceToStringLiteral)
+	},
+	rawString: {
+		strict: nonSpecialToken$rawString(F.buildNonSpecialToken, F.buildRawStringLiteral),
+		coerce: nonSpecialToken$rawString(F.buildNonSpecialToken, C.coerceToRawStringLiteral)
+	},
+	float: {
+		strict: nonSpecialToken$float(F.buildNonSpecialToken, F.buildFloatLiteral),
+		coerce: nonSpecialToken$float(F.buildNonSpecialToken, C.coerceToFloatLiteral)
+	},
+	identifier: {
+		strict: nonSpecialToken$identifier(F.buildNonSpecialToken, F.buildIdentifier),
+		coerce: nonSpecialToken$identifier(F.buildNonSpecialToken, C.coerceToIdentifier)
+	},
+	mutableSpecifier: {
+		strict: nonSpecialToken$mutableSpecifier(F.buildNonSpecialToken, TSKindId.MutableSpecifier),
+		coerce: nonSpecialToken$mutableSpecifier(C.coerceToNonSpecialToken, TSKindId.MutableSpecifier)
+	},
+	self: {
+		strict: nonSpecialToken$self(F.buildNonSpecialToken, TSKindId.Self),
+		coerce: nonSpecialToken$self(C.coerceToNonSpecialToken, TSKindId.Self)
+	},
+	super: {
+		strict: nonSpecialToken$super(F.buildNonSpecialToken, TSKindId.Super),
+		coerce: nonSpecialToken$super(C.coerceToNonSpecialToken, TSKindId.Super)
+	},
+	crate: {
+		strict: nonSpecialToken$crate(F.buildNonSpecialToken, TSKindId.Crate),
+		coerce: nonSpecialToken$crate(C.coerceToNonSpecialToken, TSKindId.Crate)
+	}
+};
+
 const attribute$input =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'input'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -83,33 +184,45 @@ export const attribute: typeof B.attribute & {
 };
 
 const visibilityModifierPubScope$self =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
 const visibilityModifierPubScope$super =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
 const visibilityModifierPubScope$crate =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
 const visibilityModifierPubScope$inPath =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const visibilityModifierPubScope: {
 	self: {
-		strict: (...args: ArgsOf<typeof F.buildSelf>) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubScope>
+		) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubScope>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubScope>;
 	};
 	super: {
-		strict: (...args: ArgsOf<typeof F.buildSuper>) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSuper>) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubScope>
+		) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubScope>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubScope>;
 	};
 	crate: {
-		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
+		strict: (
+			options?: OptionsArg<typeof F.buildVisibilityModifierPubScope>
+		) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifierPubScope>
+		) => ReturnType<typeof C.coerceToVisibilityModifierPubScope>;
 	};
 	inPath: {
 		strict: (
@@ -121,16 +234,16 @@ const visibilityModifierPubScope: {
 	};
 } = {
 	self: {
-		strict: visibilityModifierPubScope$self(F.buildVisibilityModifierPubScope, F.buildSelf),
-		coerce: visibilityModifierPubScope$self(F.buildVisibilityModifierPubScope, C.coerceToSelf)
+		strict: visibilityModifierPubScope$self(F.buildVisibilityModifierPubScope, TSKindId.Self),
+		coerce: visibilityModifierPubScope$self(C.coerceToVisibilityModifierPubScope, TSKindId.Self)
 	},
 	super: {
-		strict: visibilityModifierPubScope$super(F.buildVisibilityModifierPubScope, F.buildSuper),
-		coerce: visibilityModifierPubScope$super(F.buildVisibilityModifierPubScope, C.coerceToSuper)
+		strict: visibilityModifierPubScope$super(F.buildVisibilityModifierPubScope, TSKindId.Super),
+		coerce: visibilityModifierPubScope$super(C.coerceToVisibilityModifierPubScope, TSKindId.Super)
 	},
 	crate: {
-		strict: visibilityModifierPubScope$crate(F.buildVisibilityModifierPubScope, F.buildCrate),
-		coerce: visibilityModifierPubScope$crate(F.buildVisibilityModifierPubScope, C.coerceToCrate)
+		strict: visibilityModifierPubScope$crate(F.buildVisibilityModifierPubScope, TSKindId.Crate),
+		coerce: visibilityModifierPubScope$crate(C.coerceToVisibilityModifierPubScope, TSKindId.Crate)
 	},
 	inPath: {
 		strict: visibilityModifierPubScope$inPath(
@@ -232,9 +345,9 @@ const visibilityModifierPub: {
 };
 
 const visibilityModifier$crate =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
 const visibilityModifier$pub =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -261,8 +374,10 @@ const visibilityModifier$pub$scope$inPath =
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const visibilityModifier: typeof B.visibilityModifier & {
 	crate: {
-		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildVisibilityModifier>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof F.buildVisibilityModifier>;
+		strict: (options?: OptionsArg<typeof F.buildVisibilityModifier>) => ReturnType<typeof F.buildVisibilityModifier>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifier>
+		) => ReturnType<typeof C.coerceToVisibilityModifier>;
 	};
 	pub: {
 		strict: (...args: ArgsOf<typeof F.buildVisibilityModifierPub>) => ReturnType<typeof F.buildVisibilityModifier>;
@@ -311,8 +426,8 @@ export const visibilityModifier: typeof B.visibilityModifier & {
 } = {
 	...B.visibilityModifier,
 	crate: {
-		strict: visibilityModifier$crate(F.buildVisibilityModifier, F.buildCrate),
-		coerce: visibilityModifier$crate(F.buildVisibilityModifier, C.coerceToCrate)
+		strict: visibilityModifier$crate(F.buildVisibilityModifier, TSKindId.Crate),
+		coerce: visibilityModifier$crate(C.coerceToVisibilityModifier, TSKindId.Crate)
 	},
 	pub: {
 		strict: visibilityModifier$pub(F.buildVisibilityModifier, F.buildVisibilityModifierPub),
@@ -1736,9 +1851,9 @@ const rangePatternWithLeft$withRight =
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
 const rangePatternWithLeft$bare =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, content: _c(child)() } as never, options as never);
+		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
 const rangePatternWithLeft$withRight$dotDotDot =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -1858,8 +1973,8 @@ const rangePatternWithLeft: {
 		}
 	},
 	bare: {
-		strict: rangePatternWithLeft$bare(F.buildRangePatternWithLeft, F.buildRangePatternWithLeftBare),
-		coerce: rangePatternWithLeft$bare(C.coerceToRangePatternWithLeft, C.coerceToRangePatternWithLeftBare)
+		strict: rangePatternWithLeft$bare(F.buildRangePatternWithLeft, TSKindId.RangePatternWithLeftBare),
+		coerce: rangePatternWithLeft$bare(C.coerceToRangePatternWithLeft, TSKindId.RangePatternWithLeftBare)
 	}
 };
 
@@ -2143,4 +2258,30 @@ export const declarationStatement: {
 	use: B.useDeclaration,
 	externCrate: B.externCrateDeclaration,
 	static: B.staticItem
+};
+
+export const tokenPattern: {
+	readonly tree: typeof tokenTreePattern;
+	readonly repetition: typeof B.tokenRepetitionPattern;
+	readonly binding: typeof B.tokenBindingPattern;
+	readonly metavariable: typeof B.metavariable;
+	readonly nonSpecial: typeof nonSpecialToken;
+} = {
+	tree: tokenTreePattern,
+	repetition: B.tokenRepetitionPattern,
+	binding: B.tokenBindingPattern,
+	metavariable: B.metavariable,
+	nonSpecial: nonSpecialToken
+};
+
+export const tokens: {
+	readonly tokenTree: typeof tokenTree;
+	readonly tokenRepetition: typeof B.tokenRepetition;
+	readonly metavariable: typeof B.metavariable;
+	readonly nonSpecialToken: typeof nonSpecialToken;
+} = {
+	tokenTree: tokenTree,
+	tokenRepetition: B.tokenRepetition,
+	metavariable: B.metavariable,
+	nonSpecialToken: nonSpecialToken
 };

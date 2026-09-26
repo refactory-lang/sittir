@@ -137,9 +137,11 @@ static const char * const ts_field_names[] = {
 		expect(newlineEntry).toBeDefined();
 		expect(newlineEntry?.id).toBe(101);
 		// The alias's display name ("newline") survives on the surviving
-		// `_newline` row instead of being dropped — this is what lets
-		// `kindIdFromName('newline')` resolve at runtime.
-		expect(newlineEntry?.symbolName).toBe('newline');
+		// `_newline` row as the parse name beside the parse id, instead of
+		// being dropped — this is what lets `kindIdFromName('newline')`
+		// resolve at runtime.
+		expect(newlineEntry?.parseName).toBe('newline');
+		expect(newlineEntry?.parseId).toBe(291);
 
 		// No separate `alias_sym_newline`-derived entry — it was merged
 		// into `_newline`, not kept as its own catalog row.
@@ -295,6 +297,21 @@ static const char * const ts_symbol_names[] = {
   [anon_sym__] = "_",
 };
 
+static const TSSymbolMetadata ts_symbol_metadata[] = {
+  [sym__wildcard_pattern] = {
+    .visible = false,
+    .named = true,
+  },
+  [sym__kw_pass] = {
+    .visible = false,
+    .named = true,
+  },
+  [anon_sym__] = {
+    .visible = true,
+    .named = false,
+  },
+};
+
 enum ts_field_identifiers {
 };
 
@@ -403,6 +420,17 @@ enum ts_symbol_identifiers {
 static const char * const ts_symbol_names[] = {
   [sym_true_keyword] = "true_keyword",
   [anon_sym_true] = "true",
+};
+
+static const TSSymbolMetadata ts_symbol_metadata[] = {
+  [sym_true_keyword] = {
+    .visible = true,
+    .named = true,
+  },
+  [anon_sym_true] = {
+    .visible = true,
+    .named = false,
+  },
 };
 
 enum ts_field_identifiers {

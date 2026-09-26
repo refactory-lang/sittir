@@ -533,13 +533,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // contexts (parameters, for_in_clause, lambda params) produce.
 ```
 
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.python._parameters`
+### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.python.parameters_elements`
 
 ```text
-// Kind-specific: `_parameters` is the paren-LESS parameter interior
-// (aliased as `parameter_list` in lambda contexts) — the visible
-// `parameters` wrapper above expects the rendering to carry its own
-// parens, so the interior needs them supplied here.
+// Kind-specific: `parameters_elements` is the paren-LESS parameter
+// interior (the tree name the grammar's `_parameters` rule shows as) —
+// the visible `parameters` wrapper above expects the rendering to carry
+// its own parens, so the interior needs them supplied here.
 ```
 
 ### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.python.list_splat`

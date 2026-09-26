@@ -27,7 +27,7 @@ export function displayNameOfEntry(entry: KindEntryLike, kindEntries: readonly K
 	if (entry.anon !== true && entry.hidden === true && entry.literalText !== undefined && entry.symbolName === entry.literalText) {
 		return displayOfParserName((findAnonEntryForLiteralText(kindEntries, entry.literalText) ?? entry).kind);
 	}
-	return displayOfParserName(entry.anon === true ? entry.kind : (entry.symbolName ?? entry.kind));
+	return displayOfParserName(entry.anon === true ? entry.kind : (entry.parseName ?? entry.symbolName ?? entry.kind));
 }
 
 export function displayOfParserName(name: string): string {

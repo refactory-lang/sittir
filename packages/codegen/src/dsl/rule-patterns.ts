@@ -1049,10 +1049,10 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): 
 	const candidates = new Set<string>();
 	for (const rule of Object.values(rules)) {
 		walker.fold(rule, candidates, (acc, r) => {
-			if (r.type === ALIAS && r.named && r.content.type === SYMBOL && r.content.name.startsWith('_')) {
+			if (r.type === ALIAS && r.named && r.content.type === SYMBOL && rules[r.content.name]?.hidden === true) {
 				acc.add(r.content.name);
 			}
-			if (r.type === SYMBOL && (r as { aliasedTo?: string }).aliasedTo !== undefined && r.name.startsWith('_')) {
+			if (r.type === SYMBOL && (r as { aliasedTo?: string }).aliasedTo !== undefined && rules[r.name]?.hidden === true) {
 				acc.add(r.name);
 			}
 			return acc;

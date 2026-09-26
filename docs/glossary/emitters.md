@@ -824,6 +824,14 @@ tested against a slot value.
 // other branch threads args[1] through as options.
 ```
 
+#### overload order
+
+The public wrapper declares its zero-parameter overloads first. TypeScript
+resolves `Parameters<typeof f>` against the last overload, so a
+parameterless form declared last would make the wrapper's parameter type
+`[]` for every consumer that reads it (python `buildSuiteEmpty` in the
+coerce layer).
+
 ### `packages/codegen/src/emitters/factories.ts::childrenSetterRestType`
 
 ```text
@@ -2678,6 +2686,13 @@ A lexed kind with a bare content slot is a leaf factory for the role synonyms; i
  */
 ```
 
+The rule is one fact, whether the model has a node for the kind: a kind
+with a node names its member by the node's `typeName`, so `TSKindId.X` and
+type `X` agree; a nodeless row keeps its grammar spelling, leading
+underscore included (`_ImportListRepeat1`). Nothing reads the row's `anon`
+flag, so a literal rule gains the underscore-free name exactly when
+assemble mints a node for it.
+
 #### body
 
 ```text
@@ -2725,10 +2740,7 @@ A lexed kind with a bare content slot is a leaf factory for the role synonyms; i
 #### body
 
 ```text
-/* Disambiguate member-name collisions. Two different catalog keys can
-		   produce the same PascalCase member (e.g. `_literal` typeName `Literal`
-		   and anon token `literal` → `Literal`). Append the numeric id to the
-		   second occurrence so the enum compiles. */
+A row's member is named from its model kind (`modelKindOfEntry`, so a renamed row and an alias row take their tree name). The rows are collected first, because a row's model kind depends on the whole list. Two kinds that name one member are a codegen error.
 ```
 
 ### `packages/codegen/src/emitters/kind-discriminant.ts::findKindEntry`
@@ -2943,6 +2955,10 @@ A lexed kind with a bare content slot is a leaf factory for the role synonyms; i
 // (the reader stays grammar-agnostic; wrap is the model-driven boundary —
 // see `wrap.ts::_keepModelledSlots`.)
 ```
+
+#### keeps_anonymous_children
+
+The kinds with an unnamed slot that stores terminal kinds (`reclaimsAnonymousChild`). The reader keeps such a node's anonymous children as `$other` even when it has no named child, so the wrap layer can reclaim the slot's value from `$other` (rust `non_special_token > "'"`).
 
 #### token interior
 
@@ -3801,6 +3817,13 @@ used to mint it, so an arm that is a kind reference to punctuation (the
 `optional_chain` arm of `member_expression`'s `dot` slot) finds the `?.` sites
 named for its text rather than for its kind name.
 
+A literal reached through an enum reference (`enumKind`, stamped by
+`textStoragesOf`) looks its sites up under that enum kind instead of the
+owner: the arm is one of the enum's tokens and carries the enum's seams.
+rust `non_special_token`'s punctuation arms therefore write
+`token_tree_punctuation`'s seams (no space before `,`), exactly as they
+did when the enum was its own arm.
+
 ### `packages/codegen/src/emitters/render-module.ts::emitPerSlotChildEnum`
 
 ```text
@@ -4573,7 +4596,7 @@ values that may be absent, which is the elidable-list form.
 
 ```text
 /**
- * Collect hidden source kinds (`parserHidden` nodes) referenced via any field
+ * Collect hidden source kinds (`surfaceHidden` nodes) referenced via any field
  * / child value slot across the node map, and every hidden subtype a
  * supertype aliases to a visible name (its `subtypeParseNames`). These are
  * the kinds whose factory stamps `$type: '_X'` at construction — emission
@@ -4829,6 +4852,9 @@ machines.
  *  a genuinely anonymous literal has no `rawKind` and is keyed by its
  *  text. `immediate` passes through from the stamp. */
 ```
+
+An expanded enum member keeps the enum it came through as `enumKind` on
+the literal component, for `literalArmSeamSites`.
 
 ### `packages/codegen/src/emitters/shared.ts::childTypeComponents`
 
@@ -5348,6 +5374,11 @@ The body node for a whitespace-only literal that is a token the source
 holds, not inter-node whitespace the writer invents: a token seam merges
 into the seam text around it like any other seam, but survives a render's
 end where a plain seam is dropped. `literalBody`'s sole caller.
+
+### `packages/codegen/src/emitters/render-body.ts::writesTokenSeam`
+
+Whether a body writes `text` as a token seam anywhere, including inside
+either arm of a conditional.
 
 ### `packages/codegen/src/emitters/render-body.ts::literalBody`
 
@@ -5987,6 +6018,19 @@ build error naming the kind and the slots.
  */
 ```
 
+A slot whose every value is a declared whitespace token that the body
+writes as a token seam also counts as preserved
+(`rendersAsDeclaredTokenSeam`): the seam writes the slot's only possible
+text, so there is nothing to reference.
+
+### `packages/codegen/src/emitters/templates.ts::rendersAsDeclaredTokenSeam`
+
+Whether a slot value is a kind declared in the grammar's `visibleExternals`
+(the catalog `visibleExternal` stamp), is a fixed-text leaf, and the body
+writes its text as a token seam (`writesTokenSeam`). python `suite_empty`'s
+`_newline` slot is the case: the body writes the newline behind the token
+mark instead of referencing the slot.
+
 #### body
 
 ```text
@@ -6229,6 +6273,16 @@ its parent, or `undefined` when the kind has no public path.
 // TS sees a lone `T[]` argument failing to match the first rest slot's `T`.
 ```
 
+
+It returns whether it passed `{ delimiter: Delimiter.Trailing }`
+(`singleElementNeedsTrailing`); `emitTests` adds the `Delimiter` import only
+when some list test used it.
+
+### `packages/codegen/src/emitters/test.ts::subFactoryChildrenArgs`
+
+The child arguments a sub-factory test passes when the child is built from
+its children: a stub for the sole slot's first kind, one element even when
+the slot's repeat may be empty, so the built parent renders non-empty text.
 ### `packages/codegen/src/emitters/test.ts::pickSampleForPattern`
 
 ```text
@@ -7782,15 +7836,7 @@ two agree. The delimiter is stamped the same way, `Delimiter.None` included.
 
 ### `packages/codegen/src/emitters/wrap.ts::computeCollidedReclaimKinds`
 
-```text
-/**
- * Option-B reclamation collision guard. Across a kind's kindEnum slots, find
- * member kinds claimed by more than one slot — a `$other` token of that kind
- * would be ambiguous between them. Warn and return the colliding set so the
- * caller can SUPPRESS the auto-reclaim for those members (they fall back to
- * normal field population / explicit fielding — option C).
- */
-```
+Collision guard for the `$other` reclaim. Across a kind's reclaiming slots (`reclaimsAnonymousChild`), a member kind claimed by more than one slot would be ambiguous between them: it warns and returns those members so the caller leaves them out of every slot's reclaim list.
 
 ### `packages/codegen/src/emitters/wrap.ts::emitFieldStorageLines`
 
@@ -7810,12 +7856,9 @@ two agree. The delimiter is stamped the same way, `Delimiter.None` included.
 #### body
 
 ```text
-// Option-B reclamation guard (pre-pass): each kindEnum slot reclaims its
-// member tokens from `$other` by kindId. If two kindEnum slots on THIS kind
-// claim the same member kind, a `$other` token is ambiguous between them (the
-// `??` fallback would award it to whichever slot is read first). Detect such
-// members up front, warn, and SUPPRESS the auto-reclaim for them — those slots
-// fall back to normal field population / explicit fielding (option C).
+// Reclaim guard (pre-pass): each reclaiming slot takes its terminal members
+// from `$other` by kind id; a member two slots claim is left out of both
+// (computeCollidedReclaimKinds).
 ```
 
 #### body
@@ -7835,9 +7878,8 @@ two agree. The delimiter is stamped the same way, `Delimiter.None` included.
 #### body
 
 ```text
-// Option B: for kindEnum slots, build the numeric-kindId list for the
-// `$other` reclamation fallback (anonymous discriminant tokens). Only
-// catalog-resolvable members (real parser symbols) can appear in $other.
+// A reclaiming slot (`reclaimsAnonymousChild`) gets the kind-id list for its
+// `$other` fallback; only catalog-resolvable members can appear in $other.
 ```
 
 ### `packages/codegen/src/emitters/wrap.ts::emitFieldAccessorLines`
@@ -11692,6 +11734,18 @@ omits the key.
 // Emitting both would produce a duplicate identifier TS2300 error.
 ```
 
+### `packages/codegen/src/emitters/consts.ts::modelKindKeyOf`
+
+Maps a catalog key to the model kind its row names (`modelKindOfEntry`),
+so the `TREE_SITTER_KIND_ID_*` maps are keyed by the kind the model and
+`TSKindId` use: a renamed row (rust `_token_tree_punctuation`) appears
+under its tree name, not its grammar name. A key with no row maps to itself.
+
+### `packages/codegen/src/emitters/consts.ts::collectIdEntries`
+
+The id-table entries for a list of keys, each keyed through `keyOf`
+(identity for fields; `modelKindKeyOf` for kinds).
+
 ### `packages/codegen/src/emitters/consts.ts::bitflagMemberName`
 
 #### body
@@ -15274,10 +15328,14 @@ validator's spelling cannot disagree.
 The per-kind derivation behind `subFactoriesOf`. Walks every one of the
 parent's non-multiple slots — not one chosen slot — and, within each,
 every labelled value (`armValuesOf`, the values carrying a stamped
-`variant`): a node-backed value whose child has its own emitted factory
-becomes a direct `DIRECT` node arm; anything else — a node-backed value
-with no emitted factory, or a literal — becomes a value arm when it
-carries text storage, otherwise is skipped. Each direct node arm then
+`variant`): the arm follows the slot's stored representation. A value
+the slot stores as text or a kind id (`textStorageOf`) becomes a value
+arm that seats that id, whether or not its kind has a factory of its
+own; otherwise a node-backed value whose child has its own emitted
+factory becomes a direct `DIRECT` node arm, and anything else is
+skipped. Choosing by factory presence instead would flip an arm's
+signature whenever a kind gains a factory while its slot still stores
+an id. Each direct node arm then
 contributes every arm of its child's own set, nested ones included
 (`nestedArmsOf`), and `settle` resolves the collected direct and nested
 arms into the final wire set. A node with no labelled value in any slot
@@ -16700,10 +16758,6 @@ Wraps a config type in `WidenNumeric` for the numeric text slots of a node, so t
 // replaced).
 ```
 
-### `packages/codegen/src/emitters/kind-discriminant.ts::modelKindOfEntry`
+### `packages/codegen/src/emitters/shared.ts::reclaimsAnonymousChild`
 
-```text
-The model kind a catalog row names: an alias row's display name, otherwise
-its parser name. The inverse of findEntryForKindName, used for the id → name
-tables so both directions agree.
-```
+Whether a slot takes an anonymous child from `$other`: it is unnamed and stores terminal (enum or literal) kinds. A fielded slot does not: the reader keys a field's child by field id, anonymous or not. The one predicate behind the wrap reclaim (`readTerminalFromOther<ElementType>(data, ids)` after the slot's storage keys), its collision guard, and the reader's `keeps_anonymous_children` table.

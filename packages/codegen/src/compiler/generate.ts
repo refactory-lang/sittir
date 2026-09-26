@@ -73,9 +73,10 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	});
 
 	try {
-		const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
 		const compilation =
-			cfg.compilation ?? (await compileGrammar({ grammar: cfg.grammar, include: cfg.include, generatedIdTables }));
+			cfg.compilation ??
+			(await compileGrammar({ grammar: cfg.grammar, include: cfg.include, generatedIdTables: await loadGeneratedIdTables(cfg.grammar) }));
+		const { generatedIdTables } = compilation;
 		const { raw, linked, normalized, nodeMap } = compilation;
 		tracePhaseRules('evaluate', raw.rules);
 		tracePhaseRules('link', linked.rules);

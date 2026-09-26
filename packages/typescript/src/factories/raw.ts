@@ -893,7 +893,7 @@ export function buildBreakStatement(...args: unknown[]) {
 	const prebuilt =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId._StatementIdentifier as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementIdentifier as const);
 	return prebuilt
 		? _buildBreakStatement(args[0] as T.StatementIdentifier | T.StatementIdentifier.Types, args[1] as never)
 		: _buildBreakStatement(
@@ -986,7 +986,7 @@ export function buildContinueStatement(...args: unknown[]) {
 	const prebuilt =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId._StatementIdentifier as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementIdentifier as const);
 	return prebuilt
 		? _buildContinueStatement(args[0] as T.StatementIdentifier | T.StatementIdentifier.Types, args[1] as never)
 		: _buildContinueStatement(
@@ -8001,6 +8001,10 @@ export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.
 	);
 }
 
+export function buildEmptyMember(): TSKindId.EmptyMember {
+	return TSKindId.EmptyMember;
+}
+
 export function buildClassBodyMethod(
 	config: T.ClassBodyMethod.Config,
 	options?: T.ClassBodyMethod.Options
@@ -9336,6 +9340,14 @@ export function buildTemplateChars(text: string): T.TemplateChars.Built {
 	);
 }
 
+export function buildAutomaticSemicolon(): TSKindId.AutomaticSemicolon {
+	return TSKindId.AutomaticSemicolon;
+}
+
+export function buildFunctionSignatureAutomaticSemicolon(): TSKindId.FunctionSignatureAutomaticSemicolon {
+	return TSKindId.FunctionSignatureAutomaticSemicolon;
+}
+
 export function buildTernaryQmark(text: string): T.TernaryQmark.Built {
 	if (text.length === 0) throw new Error(`_ternary_qmark: text must be non-empty`);
 	return withMethods(
@@ -9419,7 +9431,7 @@ export function buildStatementIdentifier(
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._StatementIdentifier as const,
+				$type: TSKindId.StatementIdentifier as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -9518,7 +9530,7 @@ export function buildShorthandPropertyIdentifier(
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._ShorthandPropertyIdentifier as const,
+				$type: TSKindId.ShorthandPropertyIdentifier as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -9617,7 +9629,7 @@ export function buildShorthandPropertyIdentifierPattern(
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._ShorthandPropertyIdentifierPattern as const,
+				$type: TSKindId.ShorthandPropertyIdentifierPattern as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -9716,7 +9728,7 @@ export function buildPropertyIdentifier(
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._PropertyIdentifier as const,
+				$type: TSKindId.PropertyIdentifier as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -9763,7 +9775,7 @@ export function buildTypeIdentifier(value: T.Identifier): T.TypeIdentifier.Built
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._TypeIdentifier as const,
+				$type: TSKindId.TypeIdentifier as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -9784,7 +9796,7 @@ export function buildInterfaceBody(value: T.ObjectType): T.InterfaceBody.Built {
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._InterfaceBody as const,
+				$type: TSKindId.InterfaceBody as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -9905,7 +9917,7 @@ export type FluentKindMap = {
 	instantiation_expression: T.InstantiationExpression.Built;
 	import_require_clause: T.ImportRequireClause.Built;
 	extends_clause: T.ExtendsClause.Built;
-	_extends_clause_single: T.ExtendsClauseSingle.Built;
+	extends_clause_single: T.ExtendsClauseSingle.Built;
 	implements_clause: T.ImplementsClause.Built;
 	ambient_declaration: T.AmbientDeclaration.Built;
 	abstract_class_declaration: T.AbstractClassDeclaration.Built;
@@ -9926,8 +9938,8 @@ export type FluentKindMap = {
 	adding_type_annotation: T.AddingTypeAnnotation.Built;
 	opting_type_annotation: T.OptingTypeAnnotation.Built;
 	type_annotation: T.TypeAnnotation.Built;
-	_type_query_member_expression_in_type_annotation: T.TypeQueryMemberExpressionInTypeAnnotation.Built;
-	_type_query_call_expression_in_type_annotation: T.TypeQueryCallExpressionInTypeAnnotation.Built;
+	type_query_member_expression_in_type_annotation: T.TypeQueryMemberExpressionInTypeAnnotation.Built;
+	type_query_call_expression_in_type_annotation: T.TypeQueryCallExpressionInTypeAnnotation.Built;
 	asserts: T.Asserts.Built;
 	asserts_annotation: T.AssertsAnnotation.Built;
 	tuple_parameter: T.TupleParameter.Built;
@@ -9942,10 +9954,10 @@ export type FluentKindMap = {
 	generic_type: T.GenericType.Built;
 	type_predicate: T.TypePredicate.Built;
 	type_predicate_annotation: T.TypePredicateAnnotation.Built;
-	_type_query_member_expression: T.TypeQueryMemberExpression.Built;
-	_type_query_subscript_expression: T.TypeQuerySubscriptExpression.Built;
-	_type_query_call_expression: T.TypeQueryCallExpression.Built;
-	_type_query_instantiation_expression: T.TypeQueryInstantiationExpression.Built;
+	type_query_member_expression: T.TypeQueryMemberExpression.Built;
+	type_query_subscript_expression: T.TypeQuerySubscriptExpression.Built;
+	type_query_call_expression: T.TypeQueryCallExpression.Built;
+	type_query_instantiation_expression: T.TypeQueryInstantiationExpression.Built;
 	type_query: T.TypeQuery.Built;
 	index_type_query: T.IndexTypeQuery.Built;
 	lookup_type: T.LookupType.Built;
@@ -9996,6 +10008,7 @@ export type FluentKindMap = {
 	number_octal: T.NumberOctal.Built;
 	number_bigint: T.NumberBigint.Built;
 	binary_expression_in: T.BinaryExpressionIn.Built;
+	empty_member: T.EmptyMember;
 	class_body_method: T.ClassBodyMethod.Built;
 	class_body_method_sig: T.ClassBodyMethodSig.Built;
 	class_body_member: T.ClassBodyMember.Built;
@@ -10033,6 +10046,8 @@ export type FluentKindMap = {
 	html_comment: T.HtmlComment;
 	jsx_text: T.JsxText;
 	_template_chars: T.TemplateChars;
+	_automatic_semicolon: T.AutomaticSemicolon;
+	_function_signature_automatic_semicolon: T.FunctionSignatureAutomaticSemicolon;
 	_ternary_qmark: T.TernaryQmark;
 	__error_recovery: T.ErrorRecovery;
 	statement_identifier: T.StatementIdentifier.Built;
@@ -10148,7 +10163,7 @@ export const _factoryMap = {
 	instantiation_expression: buildInstantiationExpression,
 	import_require_clause: buildImportRequireClause,
 	extends_clause: buildExtendsClause,
-	_extends_clause_single: buildExtendsClauseSingle,
+	extends_clause_single: buildExtendsClauseSingle,
 	implements_clause: buildImplementsClause,
 	ambient_declaration: buildAmbientDeclaration,
 	abstract_class_declaration: buildAbstractClassDeclaration,
@@ -10169,8 +10184,8 @@ export const _factoryMap = {
 	adding_type_annotation: buildAddingTypeAnnotation,
 	opting_type_annotation: buildOptingTypeAnnotation,
 	type_annotation: buildTypeAnnotation,
-	_type_query_member_expression_in_type_annotation: buildTypeQueryMemberExpressionInTypeAnnotation,
-	_type_query_call_expression_in_type_annotation: buildTypeQueryCallExpressionInTypeAnnotation,
+	type_query_member_expression_in_type_annotation: buildTypeQueryMemberExpressionInTypeAnnotation,
+	type_query_call_expression_in_type_annotation: buildTypeQueryCallExpressionInTypeAnnotation,
 	asserts: buildAsserts,
 	asserts_annotation: buildAssertsAnnotation,
 	tuple_parameter: buildTupleParameter,
@@ -10185,10 +10200,10 @@ export const _factoryMap = {
 	generic_type: buildGenericType,
 	type_predicate: buildTypePredicate,
 	type_predicate_annotation: buildTypePredicateAnnotation,
-	_type_query_member_expression: buildTypeQueryMemberExpression,
-	_type_query_subscript_expression: buildTypeQuerySubscriptExpression,
-	_type_query_call_expression: buildTypeQueryCallExpression,
-	_type_query_instantiation_expression: buildTypeQueryInstantiationExpression,
+	type_query_member_expression: buildTypeQueryMemberExpression,
+	type_query_subscript_expression: buildTypeQuerySubscriptExpression,
+	type_query_call_expression: buildTypeQueryCallExpression,
+	type_query_instantiation_expression: buildTypeQueryInstantiationExpression,
 	type_query: buildTypeQuery,
 	index_type_query: buildIndexTypeQuery,
 	lookup_type: buildLookupType,
@@ -10239,6 +10254,7 @@ export const _factoryMap = {
 	number_octal: buildNumberOctal,
 	number_bigint: buildNumberBigint,
 	binary_expression_in: buildBinaryExpressionIn,
+	empty_member: buildEmptyMember,
 	class_body_method: buildClassBodyMethod,
 	class_body_method_sig: buildClassBodyMethodSig,
 	class_body_member: buildClassBodyMember,
@@ -10276,6 +10292,8 @@ export const _factoryMap = {
 	html_comment: buildHtmlComment,
 	jsx_text: buildJsxText,
 	_template_chars: buildTemplateChars,
+	_automatic_semicolon: buildAutomaticSemicolon,
+	_function_signature_automatic_semicolon: buildFunctionSignatureAutomaticSemicolon,
 	_ternary_qmark: buildTernaryQmark,
 	__error_recovery: buildErrorRecovery,
 	statement_identifier: buildStatementIdentifier,

@@ -35,7 +35,8 @@ import {
 	findEntryForKindName,
 	findEntryForLiteralText,
 	type GeneratedIdTables,
-	type GeneratedKindEntry
+	type GeneratedKindEntry,
+	isSurfaceHiddenKind
 } from './generated-metadata.ts';
 import type {
 	AssembledNode,
@@ -56,6 +57,7 @@ import {
 	AssembleDiagnosticsCollector,
 	nameNode,
 	isNodeRef,
+	surfaceHiddenOfRef,
 	storageKindOfRef,
 	isUnresolvedRef,
 	buildParseKindRuleSignatures,
@@ -216,7 +218,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				if (simplifiedRule.type !== STRING) {
 					throw new Error(`[assemble] literal kind '${kind}' must be a single literal; found ${simplifiedRule.type}`);
 				}
-				const named = !kind.startsWith('_') && findEntryForKindName(kindEntries, kind)?.anon !== true;
+				const named = !isSurfaceHiddenKind(kind, kindEntries) && findEntryForKindName(kindEntries, kind)?.anon !== true;
 				nodes.set(
 					kind,
 					modelType === 'keyword'
@@ -270,8 +272,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		for (const slot of n.slots) {
 			for (const v of slot.values) {
 				if (!isNodeRef(v)) continue;
-				const name = storageKindOfRef(v.node);
-				if (name.startsWith('_')) aliasSourceKinds.add(name);
+				if (surfaceHiddenOfRef(v.node)) aliasSourceKinds.add(storageKindOfRef(v.node));
 			}
 		}
 	}
@@ -711,7 +712,7 @@ function markUserFacing(node: AssembledNode, ctx: _UserFacingCtx): void {
 		node.userFacing = ctx.variantChildKinds.has(kind);
 		return;
 	}
-	if (!kind.startsWith('_')) {
+	if (!node.surfaceHidden) {
 		node.userFacing = true;
 		return;
 	}
@@ -728,8 +729,8 @@ function resolveCollidingNames(nodes: Map<string, AssembledNode>, ctx: AssembleC
 	}
 	for (const [typeName, group] of byType) {
 		if (group.length < 2) continue;
-		const visible = group.filter((n) => !n.kind.startsWith('_'));
-		const hidden = group.filter((n) => n.kind.startsWith('_'));
+		const visible = group.filter((n) => !n.surfaceHidden);
+		const hidden = group.filter((n) => n.surfaceHidden);
 		if (visible.length >= 1 && hidden.length >= 1) {
 			renameCollidingHiddenKinds(visible, hidden, typeName, diagnostics);
 		} else if (visible.length >= 2) {
@@ -842,8 +843,8 @@ function partitionNodesIntoIrKeyPhases(nodes: Map<string, AssembledNode>): {
 		else phase2.push(node);
 	}
 	const hiddenSort = (a: AssembledNode, b: AssembledNode) => {
-		const aHidden = a.kind.startsWith('_') ? 1 : 0;
-		const bHidden = b.kind.startsWith('_') ? 1 : 0;
+		const aHidden = a.surfaceHidden ? 1 : 0;
+		const bHidden = b.surfaceHidden ? 1 : 0;
 		return aHidden - bHidden;
 	};
 	phase1.sort(hiddenSort);

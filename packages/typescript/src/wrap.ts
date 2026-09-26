@@ -393,13 +393,16 @@ function projectMixedEnumStorage<T>(
 // so there is no double-render. A final `?? readTerminalFromOther(...)` only
 // fires when the nominal storage keys are all empty (the unfielded case);
 // when the token IS field-tagged the chain short-circuits before reaching it.
-function readTerminalFromOther(data: _NodeData, allowedKindIds: readonly number[]): _NodeData | number | undefined {
+function readTerminalFromOther<T = _NodeData | number>(
+	data: _NodeData,
+	allowedKindIds: readonly number[]
+): T | undefined {
 	const other = (data as { $other?: readonly unknown[] }).$other;
 	if (!Array.isArray(other)) return undefined;
 	for (const e of other) {
 		const id =
 			typeof e === 'number' ? e : typeof e === 'object' && e !== null ? (e as { $type?: unknown }).$type : undefined;
-		if (typeof id === 'number' && allowedKindIds.includes(id)) return e as _NodeData | number;
+		if (typeof id === 'number' && allowedKindIds.includes(id)) return e as T;
 	}
 	return undefined;
 }
@@ -932,9 +935,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'readonly_type',
 		'constructor_type',
 		'infer_type',
-		'_type_query_member_expression_in_type_annotation',
 		'type_query_member_expression_in_type_annotation',
-		'_type_query_call_expression_in_type_annotation',
 		'type_query_call_expression_in_type_annotation'
 	]),
 	_tuple_type_member: new Set([
@@ -977,9 +978,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'readonly_type',
 		'constructor_type',
 		'infer_type',
-		'_type_query_member_expression_in_type_annotation',
 		'type_query_member_expression_in_type_annotation',
-		'_type_query_call_expression_in_type_annotation',
 		'type_query_call_expression_in_type_annotation'
 	]),
 	primary_type: new Set([
@@ -1365,13 +1364,12 @@ export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle) {
 			...data,
 			$type: TSKindId.ExportSpecifier as const,
 			_export_kind: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._export_kind ?? readTerminalFromOther(data, [TSKindId.TypeKeyword, TSKindId.TypeofKeyword]),
-					'export_kind',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'export_kind', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._export_kind, 'export_kind', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'export_kind',
+					span: (data as _NodeData).$span
+				}),
 				{ type: 7, typeof: 8 }
 			),
 			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
@@ -1519,13 +1517,12 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
 			...data,
 			$type: TSKindId.ImportStatement as const,
 			_import_clause: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._import_clause ?? readTerminalFromOther(data, [TSKindId.TypeKeyword, TSKindId.TypeofKeyword]),
-					'import_clause',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'import_clause', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._import_clause, 'import_clause', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'import_clause',
+					span: (data as _NodeData).$span
+				}),
 				{ type: 7, typeof: 8 }
 			),
 			_from_clause: normalizeSingularWrapSlot(data._from_clause, 'from_clause', true, data.$type, {
@@ -1541,13 +1538,12 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
 				span: (data as _NodeData).$span
 			}),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -1702,13 +1698,12 @@ export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle) {
 			...data,
 			$type: TSKindId.ImportAttribute as const,
 			_attribute_kind: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._attribute_kind ?? readTerminalFromOther(data, [TSKindId.WithKeyword, TSKindId.AssertKeyword]),
-					'attribute_kind',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'attribute_kind', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._attribute_kind, 'attribute_kind', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'attribute_kind',
+					span: (data as _NodeData).$span
+				}),
 				{ with: 11, assert: 12 }
 			),
 			_object: normalizeSingularWrapSlot(data._object, 'object', true, data.$type, {
@@ -1901,13 +1896,12 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
 				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123 }
 			),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -1944,13 +1938,12 @@ export function wrapVariableDeclaration(data: T.VariableDeclaration, tree: TreeH
 				{ tree, nodeType: data.$type, slotName: 'declarators', span: (data as _NodeData).$span }
 			),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -1981,13 +1974,12 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
 			...data,
 			$type: TSKindId.LexicalDeclaration as const,
 			_kind: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._kind ?? readTerminalFromOther(data, [TSKindId.LetKeyword, TSKindId.ConstKeyword]),
-					'kind',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'kind', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._kind, 'kind', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'kind',
+					span: (data as _NodeData).$span
+				}),
 				{ let: 50, const: 128 }
 			),
 			_declarators: normalizeRepeatedWrapSlot(
@@ -1997,13 +1989,12 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
 				{ tree, nodeType: data.$type, slotName: 'declarators', span: (data as _NodeData).$span }
 			),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -2455,13 +2446,12 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle) {
 				span: (data as _NodeData).$span
 			}),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -2588,13 +2578,12 @@ export function wrapBreakStatement(data: T.BreakStatement, tree: TreeHandle) {
 				span: (data as _NodeData).$span
 			}),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -2631,13 +2620,12 @@ export function wrapContinueStatement(data: T.ContinueStatement, tree: TreeHandl
 				span: (data as _NodeData).$span
 			}),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -2668,13 +2656,12 @@ export function wrapDebuggerStatement(data: T.DebuggerStatement, tree: TreeHandl
 			...data,
 			$type: TSKindId.DebuggerStatement as const,
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -2709,13 +2696,12 @@ export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle) {
 				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123 }
 			),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -2755,13 +2741,12 @@ export function wrapThrowStatement(data: T.ThrowStatement, tree: TreeHandle) {
 				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123 }
 			),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -4807,13 +4792,12 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 				{ 9: 190 }
 			),
 			_separator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._separator ?? readTerminalFromOther(data, [TSKindId.Dot, TSKindId.OptionalChain]),
-					'separator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'separator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._separator, 'separator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'separator',
+					span: (data as _NodeData).$span
+				}),
 				{ '.': 60, '?.': 247 },
 				{ 64: 247 }
 			),
@@ -5238,30 +5222,12 @@ export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExp
 				}
 			),
 			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ??
-						readTerminalFromOther(data, [
-							TSKindId.PlusEq,
-							TSKindId.DashEq,
-							TSKindId.StarEq,
-							TSKindId.SlashEq,
-							TSKindId.PercentEq,
-							TSKindId.CaretEq,
-							TSKindId.AmpEq,
-							TSKindId.PipeEq,
-							TSKindId.GtGtEq,
-							TSKindId.GtGtGtEq,
-							TSKindId.LtLtEq,
-							TSKindId.StarStarEq,
-							TSKindId.AmpAmpEq,
-							TSKindId.PipePipeEq,
-							TSKindId.QmarkQmarkEq
-						]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'operator',
+					span: (data as _NodeData).$span
+				}),
 				{
 					'+=': 66,
 					'-=': 67,
@@ -5473,39 +5439,12 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123 }
 			),
 			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ??
-						readTerminalFromOther(data, [
-							TSKindId.AmpAmp,
-							TSKindId.PipePipe,
-							TSKindId.GtGt,
-							TSKindId.GtGtGt,
-							TSKindId.LtLt,
-							TSKindId.Amp,
-							TSKindId.Caret,
-							TSKindId.Pipe,
-							TSKindId.Plus,
-							TSKindId.Dash,
-							TSKindId.Star,
-							TSKindId.Slash,
-							TSKindId.Percent,
-							TSKindId.StarStar,
-							TSKindId.Lt,
-							TSKindId.LtEq,
-							TSKindId.EqEq,
-							TSKindId.EqEqEq,
-							TSKindId.BangEq,
-							TSKindId.BangEqEq,
-							TSKindId.GtEq,
-							TSKindId.Gt,
-							TSKindId.QmarkQmark,
-							TSKindId.InstanceofKeyword
-						]),
-					'operator',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._operator, 'operator', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'operator',
+					span: (data as _NodeData).$span
+				}),
 				{
 					'&&': 82,
 					'||': 83,
@@ -5587,22 +5526,12 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
 			...data,
 			$type: TSKindId.UnaryExpression as const,
 			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ??
-						readTerminalFromOther(data, [
-							TSKindId.Bang,
-							TSKindId.Tilde,
-							TSKindId.Dash,
-							TSKindId.Plus,
-							TSKindId.TypeofKeyword,
-							TSKindId.VoidKeyword,
-							TSKindId.DeleteKeyword
-						]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'operator',
+					span: (data as _NodeData).$span
+				}),
 				{ '!': 105, '~': 106, '-': 91, '+': 90, typeof: 8, void: 107, delete: 108 }
 			),
 			_argument: projectMixedEnumStorage(
@@ -7269,7 +7198,62 @@ export function wrapRestPattern(
 						data._let_keyword ??
 						data._object_pattern ??
 						data._array_pattern ??
-						data._non_null_expression,
+						data._non_null_expression ??
+						readTerminalFromOther<
+							| T.MemberExpression
+							| T.SubscriptExpression
+							| TSKindId.Undefined
+							| T.Identifier
+							| TSKindId.DeclareKeyword
+							| TSKindId.NamespaceKeyword
+							| TSKindId.TypeKeyword
+							| TSKindId.PublicKeyword
+							| TSKindId.PrivateKeyword
+							| TSKindId.ProtectedKeyword
+							| TSKindId.OverrideKeyword
+							| TSKindId.ReadonlyKeyword
+							| TSKindId.ModuleKeyword
+							| TSKindId.AnyKeyword
+							| TSKindId.NumberKeyword
+							| TSKindId.BooleanKeyword
+							| TSKindId.StringKeyword
+							| TSKindId.SymbolKeyword
+							| TSKindId.ExportKeyword
+							| TSKindId.ObjectKeyword
+							| TSKindId.NewKeyword
+							| TSKindId.GetKeyword
+							| TSKindId.SetKeyword
+							| TSKindId.AsyncKeyword
+							| TSKindId.StaticKeyword
+							| TSKindId.LetKeyword
+							| T.ObjectPattern
+							| T.ArrayPattern
+							| T.NonNullExpression
+						>(data, [
+							TSKindId.Undefined,
+							TSKindId.DeclareKeyword,
+							TSKindId.NamespaceKeyword,
+							TSKindId.TypeKeyword,
+							TSKindId.PublicKeyword,
+							TSKindId.PrivateKeyword,
+							TSKindId.ProtectedKeyword,
+							TSKindId.OverrideKeyword,
+							TSKindId.ReadonlyKeyword,
+							TSKindId.ModuleKeyword,
+							TSKindId.AnyKeyword,
+							TSKindId.NumberKeyword,
+							TSKindId.BooleanKeyword,
+							TSKindId.StringKeyword,
+							TSKindId.SymbolKeyword,
+							TSKindId.ExportKeyword,
+							TSKindId.ObjectKeyword,
+							TSKindId.NewKeyword,
+							TSKindId.GetKeyword,
+							TSKindId.SetKeyword,
+							TSKindId.AsyncKeyword,
+							TSKindId.StaticKeyword,
+							TSKindId.LetKeyword
+						]),
 					'lhs_expression',
 					true,
 					data.$type,
@@ -7367,14 +7351,12 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 			...data,
 			$type: TSKindId.MethodDefinition as const,
 			_accessibility_modifier: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.PublicKeyword, TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword]),
-					'accessibility_modifier',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._accessibility_modifier, 'accessibility_modifier', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'accessibility_modifier',
+					span: (data as _NodeData).$span
+				}),
 				{ public: 32, private: 33, protected: 34 }
 			),
 			_static_marker: coerceBooleanKeywordStorage(
@@ -7410,13 +7392,12 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 				})
 			),
 			_accessor_kind: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.GetKeyword, TSKindId.SetKeyword, TSKindId.Star]),
-					'accessor_kind',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'accessor_kind', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._accessor_kind, 'accessor_kind', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'accessor_kind',
+					span: (data as _NodeData).$span
+				}),
 				{ get: 46, set: 47, '*': 3 }
 			),
 			_name: projectMixedEnumStorage(
@@ -7936,14 +7917,12 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
 				})
 			),
 			_accessibility_modifier: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.PublicKeyword, TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword]),
-					'accessibility_modifier',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._accessibility_modifier, 'accessibility_modifier', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'accessibility_modifier',
+					span: (data as _NodeData).$span
+				}),
 				{ public: 32, private: 33, protected: 34 }
 			),
 			_static_marker: coerceBooleanKeywordStorage(
@@ -8019,13 +7998,12 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
 				}
 			),
 			_optionality_marker: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._optionality_marker ?? readTerminalFromOther(data, [TSKindId.Qmark, TSKindId.Bang]),
-					'optionality_marker',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'optionality_marker', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._optionality_marker, 'optionality_marker', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'optionality_marker',
+					span: (data as _NodeData).$span
+				}),
 				{ '?': 126, '!': 105 }
 			),
 			_type: normalizeSingularWrapSlot(data._type, 'type', false, data.$type, {
@@ -8218,14 +8196,12 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
 			...data,
 			$type: TSKindId.MethodSignature as const,
 			_accessibility_modifier: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.PublicKeyword, TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword]),
-					'accessibility_modifier',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._accessibility_modifier, 'accessibility_modifier', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'accessibility_modifier',
+					span: (data as _NodeData).$span
+				}),
 				{ public: 32, private: 33, protected: 34 }
 			),
 			_static_marker: coerceBooleanKeywordStorage(
@@ -8261,13 +8237,12 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
 				})
 			),
 			_accessor_kind: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.GetKeyword, TSKindId.SetKeyword, TSKindId.Star]),
-					'accessor_kind',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'accessor_kind', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._accessor_kind, 'accessor_kind', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'accessor_kind',
+					span: (data as _NodeData).$span
+				}),
 				{ get: 46, set: 47, '*': 3 }
 			),
 			_name: projectMixedEnumStorage(
@@ -8440,14 +8415,12 @@ export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tre
 			...data,
 			$type: TSKindId.AbstractMethodSignature as const,
 			_accessibility_modifier: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.PublicKeyword, TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword]),
-					'accessibility_modifier',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._accessibility_modifier, 'accessibility_modifier', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'accessibility_modifier',
+					span: (data as _NodeData).$span
+				}),
 				{ public: 32, private: 33, protected: 34 }
 			),
 			_override_modifier: coerceBooleanKeywordStorage(
@@ -8459,13 +8432,12 @@ export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tre
 				})
 			),
 			_accessor_kind: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.GetKeyword, TSKindId.SetKeyword, TSKindId.Star]),
-					'accessor_kind',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'accessor_kind', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._accessor_kind, 'accessor_kind', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'accessor_kind',
+					span: (data as _NodeData).$span
+				}),
 				{ get: 46, set: 47, '*': 3 }
 			),
 			_name: projectMixedEnumStorage(
@@ -8654,18 +8626,12 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
 				span: (data as _NodeData).$span
 			}),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ??
-						readTerminalFromOther(data, [
-							TSKindId.AutomaticSemicolon,
-							TSKindId.Semi,
-							TSKindId.FunctionSignatureAutomaticSemicolon
-						]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -9339,13 +9305,12 @@ export function wrapImportAlias(data: T.ImportAlias, tree: TreeHandle) {
 				span: (data as _NodeData).$span
 			}),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -9711,13 +9676,12 @@ export function wrapTypeAliasDeclaration(data: T.TypeAliasDeclaration, tree: Tre
 				[354]
 			),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -9774,7 +9738,11 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 			_accessibility_modifier: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.PublicKeyword, TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword]),
+						readTerminalFromOther<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(data, [
+							TSKindId.PublicKeyword,
+							TSKindId.PrivateKeyword,
+							TSKindId.ProtectedKeyword
+						]),
 					'accessibility_modifier',
 					false,
 					data.$type,
@@ -9916,7 +9884,11 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 			_accessibility_modifier: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.PublicKeyword, TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword]),
+						readTerminalFromOther<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(data, [
+							TSKindId.PublicKeyword,
+							TSKindId.PrivateKeyword,
+							TSKindId.ProtectedKeyword
+						]),
 					'accessibility_modifier',
 					false,
 					data.$type,
@@ -10367,9 +10339,7 @@ export function wrapType(data: T.Type & { readonly $other?: T.Type | readonly T.
 		'_readonly_type',
 		'_constructor_type',
 		'_infer_type',
-		'__type_query_member_expression_in_type_annotation',
 		'_type_query_member_expression_in_type_annotation',
-		'__type_query_call_expression_in_type_annotation',
 		'_type_query_call_expression_in_type_annotation',
 		'_identifier',
 		'_this',
@@ -10397,9 +10367,7 @@ export function wrapType(data: T.Type & { readonly $other?: T.Type | readonly T.
 		'readonly_type',
 		'constructor_type',
 		'infer_type',
-		'_type_query_member_expression_in_type_annotation',
 		'type_query_member_expression_in_type_annotation',
-		'_type_query_call_expression_in_type_annotation',
 		'type_query_call_expression_in_type_annotation',
 		'identifier',
 		'this',
@@ -10429,9 +10397,7 @@ export function wrapType(data: T.Type & { readonly $other?: T.Type | readonly T.
 			'readonly_type',
 			'constructor_type',
 			'infer_type',
-			'_type_query_member_expression_in_type_annotation',
 			'type_query_member_expression_in_type_annotation',
-			'_type_query_call_expression_in_type_annotation',
 			'type_query_call_expression_in_type_annotation',
 			'identifier',
 			'this',
@@ -10637,10 +10603,6 @@ export function wrapTupleTypeMember(
 		'_optional_type',
 		'_rest_type',
 		'_type',
-		'__type_query_member_expression_in_type_annotation',
-		'_type_query_member_expression_in_type_annotation',
-		'__type_query_call_expression_in_type_annotation',
-		'_type_query_call_expression_in_type_annotation',
 		'_identifier',
 		'_this',
 		'_parenthesized_type',
@@ -10663,7 +10625,9 @@ export function wrapTupleTypeMember(
 		'_function_type',
 		'_readonly_type',
 		'_constructor_type',
-		'_infer_type'
+		'_infer_type',
+		'_type_query_member_expression_in_type_annotation',
+		'_type_query_call_expression_in_type_annotation'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'tuple_parameter',
@@ -10671,10 +10635,6 @@ export function wrapTupleTypeMember(
 		'optional_type',
 		'rest_type',
 		'type',
-		'_type_query_member_expression_in_type_annotation',
-		'type_query_member_expression_in_type_annotation',
-		'_type_query_call_expression_in_type_annotation',
-		'type_query_call_expression_in_type_annotation',
 		'identifier',
 		'this',
 		'parenthesized_type',
@@ -10697,7 +10657,9 @@ export function wrapTupleTypeMember(
 		'function_type',
 		'readonly_type',
 		'constructor_type',
-		'infer_type'
+		'infer_type',
+		'type_query_member_expression_in_type_annotation',
+		'type_query_call_expression_in_type_annotation'
 	]) as T.TupleTypeMember | readonly T.TupleTypeMember[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -10707,10 +10669,6 @@ export function wrapTupleTypeMember(
 			'optional_type',
 			'rest_type',
 			'type',
-			'_type_query_member_expression_in_type_annotation',
-			'type_query_member_expression_in_type_annotation',
-			'_type_query_call_expression_in_type_annotation',
-			'type_query_call_expression_in_type_annotation',
 			'identifier',
 			'this',
 			'parenthesized_type',
@@ -10733,7 +10691,9 @@ export function wrapTupleTypeMember(
 			'function_type',
 			'readonly_type',
 			'constructor_type',
-			'infer_type'
+			'infer_type',
+			'type_query_member_expression_in_type_annotation',
+			'type_query_call_expression_in_type_annotation'
 		]);
 	if (
 		filtered === undefined &&
@@ -11340,7 +11300,7 @@ export function wrapTypeQueryMemberExpression(
 					data._content ??
 						data._dot ??
 						data._qmark_dot ??
-						readTerminalFromOther(data, [TSKindId.Dot, TSKindId.QmarkDot]),
+						readTerminalFromOther<'.' | '?.'>(data, [TSKindId.Dot, TSKindId.QmarkDot]),
 					'content',
 					true,
 					data.$type,
@@ -11965,7 +11925,16 @@ export function wrapLiteralType(
 						data._true ??
 						data._false ??
 						data._null ??
-						data._undefined,
+						data._undefined ??
+						readTerminalFromOther<
+							| T.LiteralTypeNegativeNumber
+							| T.Number
+							| T.String
+							| TSKindId.True
+							| TSKindId.False
+							| TSKindId.Null
+							| TSKindId.Undefined
+						>(data, [TSKindId.True, TSKindId.False, TSKindId.Null, TSKindId.Undefined]),
 					'content',
 					true,
 					data.$type,
@@ -12112,13 +12081,12 @@ export function wrapObjectType(data: T.ObjectType, tree: TreeHandle) {
 			...data,
 			$type: TSKindId.ObjectType as const,
 			_opening: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._opening ?? readTerminalFromOther(data, [TSKindId.Lbrace, TSKindId.LbracePipe]),
-					'opening',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'opening', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._opening, 'opening', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'opening',
+					span: (data as _NodeData).$span
+				}),
 				{ '{': 5, '{|': 146 }
 			),
 			_members: normalizeSingularWrapSlot(data._members, 'members', false, data.$type, {
@@ -12128,13 +12096,12 @@ export function wrapObjectType(data: T.ObjectType, tree: TreeHandle) {
 				span: (data as _NodeData).$span
 			}),
 			_closing: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._closing ?? readTerminalFromOther(data, [TSKindId.Rbrace, TSKindId.PipeRbrace]),
-					'closing',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'closing', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._closing, 'closing', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'closing',
+					span: (data as _NodeData).$span
+				}),
 				{ '}': 6, '|}': 147 }
 			),
 
@@ -12226,14 +12193,12 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 			...data,
 			$type: TSKindId.PropertySignature as const,
 			_accessibility_modifier: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._accessibility_modifier ??
-						readTerminalFromOther(data, [TSKindId.PublicKeyword, TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword]),
-					'accessibility_modifier',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'accessibility_modifier', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._accessibility_modifier, 'accessibility_modifier', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'accessibility_modifier',
+					span: (data as _NodeData).$span
+				}),
 				{ public: 32, private: 33, protected: 34 }
 			),
 			_static_marker: coerceBooleanKeywordStorage(
@@ -12522,7 +12487,7 @@ export function wrapConstraint(
 					data._content ??
 						data._extends_keyword ??
 						data._colon ??
-						readTerminalFromOther(data, [TSKindId.ExtendsKeyword, TSKindId.Colon]),
+						readTerminalFromOther<'extends' | ':'>(data, [TSKindId.ExtendsKeyword, TSKindId.Colon]),
 					'content',
 					true,
 					data.$type,
@@ -13884,13 +13849,12 @@ export function wrapAmbientDeclarationModule(data: T.AmbientDeclarationModule, t
 				[354]
 			),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -14014,13 +13978,12 @@ export function wrapExportStatementNamespaceExport(data: T.ExportStatementNamesp
 				span: (data as _NodeData).$span
 			}),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -14063,13 +14026,12 @@ export function wrapExportStatementTypeExport(data: T.ExportStatementTypeExport,
 				span: (data as _NodeData).$span
 			}),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -14114,13 +14076,12 @@ export function wrapExportStatementEqualsExport(data: T.ExportStatementEqualsExp
 				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123 }
 			),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -14204,13 +14165,12 @@ export function wrapLiteralTypeNegativeNumber(data: T.LiteralTypeNegativeNumber,
 			...data,
 			$type: TSKindId.LiteralTypeNegativeNumber as const,
 			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.Dash, TSKindId.Plus]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'operator',
+					span: (data as _NodeData).$span
+				}),
 				{ '-': 91, '+': 90 }
 			),
 			_argument: normalizeSingularWrapSlot(data._argument, 'argument', true, data.$type, {
@@ -14638,13 +14598,12 @@ export function wrapClassBodyMethod(data: T.ClassBodyMethod, tree: TreeHandle) {
 				span: (data as _NodeData).$span
 			}),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
-					'terminator',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20 }
 			),
 
@@ -14686,14 +14645,12 @@ export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHan
 				span: (data as _NodeData).$span
 			}),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ??
-						readTerminalFromOther(data, [TSKindId.FunctionSignatureAutomaticSemicolon, TSKindId.Comma]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 175, ',': 14 }
 			),
 
@@ -14730,13 +14687,12 @@ export function wrapClassBodyMember(data: T.ClassBodyMember, tree: TreeHandle) {
 				span: (data as _NodeData).$span
 			}),
 			_terminator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi, TSKindId.Comma]),
-					'terminator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'terminator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'terminator',
+					span: (data as _NodeData).$span
+				}),
 				{ '\n': 170, ';': 20, ',': 14 }
 			),
 
@@ -14770,13 +14726,12 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
 			...data,
 			$type: TSKindId.IndexSignatureColon as const,
 			_sign: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._sign ?? readTerminalFromOther(data, [TSKindId.Dash, TSKindId.Plus]),
-					'sign',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'sign', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._sign, 'sign', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'sign',
+					span: (data as _NodeData).$span
+				}),
 				{ '-': 91, '+': 90 }
 			),
 			_readonly_marker: coerceBooleanKeywordStorage(
@@ -14918,13 +14873,12 @@ export function wrapIndexSignatureMappedTypeClause(data: T.IndexSignatureMappedT
 			...data,
 			$type: TSKindId.IndexSignatureMappedTypeClause as const,
 			_sign: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._sign ?? readTerminalFromOther(data, [TSKindId.Dash, TSKindId.Plus]),
-					'sign',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'sign', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._sign, 'sign', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'sign',
+					span: (data as _NodeData).$span
+				}),
 				{ '-': 91, '+': 90 }
 			),
 			_readonly_marker: coerceBooleanKeywordStorage(
@@ -15025,13 +14979,12 @@ export function wrapImportSpecifierName(data: T.ImportSpecifierName, tree: TreeH
 			...data,
 			$type: TSKindId.ImportSpecifierName as const,
 			_import_kind: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._import_kind ?? readTerminalFromOther(data, [TSKindId.TypeKeyword, TSKindId.TypeofKeyword]),
-					'import_kind',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'import_kind', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._import_kind, 'import_kind', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'import_kind',
+					span: (data as _NodeData).$span
+				}),
 				{ type: 7, typeof: 8 }
 			),
 			_name: projectMixedEnumStorage(
@@ -15071,13 +15024,12 @@ export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandl
 			...data,
 			$type: TSKindId.ImportSpecifierAs as const,
 			_import_kind: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._import_kind ?? readTerminalFromOther(data, [TSKindId.TypeKeyword, TSKindId.TypeofKeyword]),
-					'import_kind',
-					false,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'import_kind', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._import_kind, 'import_kind', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'import_kind',
+					span: (data as _NodeData).$span
+				}),
 				{ type: 7, typeof: 8 }
 			),
 			_name: projectMixedEnumStorage(
@@ -15426,7 +15378,15 @@ export function wrapParenthesizedExpressionTyped(
 						data._update_expression_postfix ??
 						data._update_expression_prefix ??
 						data._new_expression ??
-						data._yield_expression,
+						data._yield_expression ??
+						readTerminalFromOther<T.Expression>(data, [
+							TSKindId.Undefined,
+							TSKindId.This,
+							TSKindId.Super,
+							TSKindId.True,
+							TSKindId.False,
+							TSKindId.Null
+						]),
 					'expression',
 					true,
 					data.$type,
@@ -15707,13 +15667,12 @@ export function wrapUpdateExpressionPostfix(data: T.UpdateExpressionPostfix, tre
 				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123 }
 			),
 			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.PlusPlus, TSKindId.DashDash]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'operator',
+					span: (data as _NodeData).$span
+				}),
 				{ '++': 166, '--': 167 }
 			),
 
@@ -15744,13 +15703,12 @@ export function wrapUpdateExpressionPrefix(data: T.UpdateExpressionPrefix, tree:
 			...data,
 			$type: TSKindId.UpdateExpressionPrefix as const,
 			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.PlusPlus, TSKindId.DashDash]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'operator',
+					span: (data as _NodeData).$span
+				}),
 				{ '++': 166, '--': 167 }
 			),
 			_argument: projectMixedEnumStorage(
@@ -15908,12 +15866,15 @@ export function wrapImportClauseDefaultImport(
 			..._omitWrapKeys(data, ['_type_keyword']),
 			$type: TSKindId.ImportClauseDefaultImport as const,
 			_identifier: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._identifier ?? data._type_keyword, 'identifier', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'identifier',
-					span: (data as _NodeData).$span
-				}),
+				normalizeSingularWrapSlot(
+					data._identifier ??
+						data._type_keyword ??
+						readTerminalFromOther<T.Identifier | TSKindId.TypeKeyword>(data, [TSKindId.TypeKeyword]),
+					'identifier',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'identifier', span: (data as _NodeData).$span }
+				),
 				{ type: 7 }
 			),
 			_import_clause_group: normalizeSingularWrapSlot(
@@ -16004,7 +15965,10 @@ export function wrapExportStatementDefaultFrom(
 				normalizeSingularWrapSlot(
 					data._automatic_semicolon ??
 						data._semi ??
-						readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
+						readTerminalFromOther<TSKindId.AutomaticSemicolon | TSKindId.Semi>(data, [
+							TSKindId.AutomaticSemicolon,
+							TSKindId.Semi
+						]),
 					'automatic_semicolon',
 					true,
 					data.$type,
@@ -16258,7 +16222,10 @@ export function wrapExportStatementDefaultDeclarationDefaultKwValue(
 				normalizeSingularWrapSlot(
 					data._automatic_semicolon ??
 						data._semi ??
-						readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),
+						readTerminalFromOther<TSKindId.AutomaticSemicolon | TSKindId.Semi>(data, [
+							TSKindId.AutomaticSemicolon,
+							TSKindId.Semi
+						]),
 					'automatic_semicolon',
 					true,
 					data.$type,
@@ -16391,13 +16358,12 @@ export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle) {
 				{ undefined: 124 }
 			),
 			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.InKeyword, TSKindId.OfKeyword]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'operator',
+					span: (data as _NodeData).$span
+				}),
 				{ in: 142, of: 150 }
 			),
 			_right: projectMixedEnumStorage(
@@ -16455,13 +16421,12 @@ export function wrapForHeaderVarKind(data: T.ForHeaderVarKind, tree: TreeHandle)
 				{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123 }
 			),
 			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.InKeyword, TSKindId.OfKeyword]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'operator',
+					span: (data as _NodeData).$span
+				}),
 				{ in: 142, of: 150 }
 			),
 			_right: projectMixedEnumStorage(
@@ -16511,13 +16476,12 @@ export function wrapForHeaderLetConstKind(data: T.ForHeaderLetConstKind, tree: T
 			...data,
 			$type: TSKindId.ForHeaderLetConstKind as const,
 			_kind: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._kind ?? readTerminalFromOther(data, [TSKindId.LetKeyword, TSKindId.ConstKeyword]),
-					'kind',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'kind', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._kind, 'kind', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'kind',
+					span: (data as _NodeData).$span
+				}),
 				{ let: 50, const: 128 }
 			),
 			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
@@ -16535,13 +16499,12 @@ export function wrapForHeaderLetConstKind(data: T.ForHeaderLetConstKind, tree: T
 				})
 			),
 			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.InKeyword, TSKindId.OfKeyword]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'operator',
+					span: (data as _NodeData).$span
+				}),
 				{ in: 142, of: 150 }
 			),
 			_right: projectMixedEnumStorage(
@@ -16590,11 +16553,11 @@ export function wrapForHeaderLetConstKind(data: T.ForHeaderLetConstKind, tree: T
 export function wrapStatementIdentifier(data: T.StatementIdentifier, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_content']);
 	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId._StatementIdentifier as const }, _treeEngine(tree));
+		return withMethods({ ...data, $type: TSKindId.StatementIdentifier as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId._StatementIdentifier as const,
+			$type: TSKindId.StatementIdentifier as const,
 			_content: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
 					tree,
@@ -16668,11 +16631,11 @@ export function wrapStatementIdentifier(data: T.StatementIdentifier, tree: TreeH
 export function wrapShorthandPropertyIdentifier(data: T.ShorthandPropertyIdentifier, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_content']);
 	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId._ShorthandPropertyIdentifier as const }, _treeEngine(tree));
+		return withMethods({ ...data, $type: TSKindId.ShorthandPropertyIdentifier as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId._ShorthandPropertyIdentifier as const,
+			$type: TSKindId.ShorthandPropertyIdentifier as const,
 			_content: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
 					tree,
@@ -16746,11 +16709,11 @@ export function wrapShorthandPropertyIdentifier(data: T.ShorthandPropertyIdentif
 export function wrapShorthandPropertyIdentifierPattern(data: T.ShorthandPropertyIdentifierPattern, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_content']);
 	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId._ShorthandPropertyIdentifierPattern as const }, _treeEngine(tree));
+		return withMethods({ ...data, $type: TSKindId.ShorthandPropertyIdentifierPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId._ShorthandPropertyIdentifierPattern as const,
+			$type: TSKindId.ShorthandPropertyIdentifierPattern as const,
 			_content: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
 					tree,
@@ -16824,11 +16787,11 @@ export function wrapShorthandPropertyIdentifierPattern(data: T.ShorthandProperty
 export function wrapPropertyIdentifier(data: T.PropertyIdentifier, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_content']);
 	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId._PropertyIdentifier as const }, _treeEngine(tree));
+		return withMethods({ ...data, $type: TSKindId.PropertyIdentifier as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId._PropertyIdentifier as const,
+			$type: TSKindId.PropertyIdentifier as const,
 			_content: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
 					tree,
@@ -16904,7 +16867,7 @@ export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId._TypeIdentifier as const,
+			$type: TSKindId.TypeIdentifier as const,
 			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -16930,7 +16893,7 @@ export function wrapInterfaceBody(data: T.InterfaceBody, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId._InterfaceBody as const,
+			$type: TSKindId.InterfaceBody as const,
 			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -17212,6 +17175,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.NumberOctal]: (d, t) => wrapNumberOctal(d as unknown as T.NumberOctal, t),
 	[TSKindId.NumberBigint]: (d, t) => wrapNumberBigint(d as unknown as T.NumberBigint, t),
 	[TSKindId.BinaryExpressionIn]: (d, t) => wrapBinaryExpressionIn(d as unknown as T.BinaryExpressionIn, t),
+	[TSKindId.EmptyMember]: (d) => ({ ...d, $type: TSKindId.EmptyMember as const }),
 	[TSKindId.ClassBodyMethod]: (d, t) => wrapClassBodyMethod(d as unknown as T.ClassBodyMethod, t),
 	[TSKindId.ClassBodyMethodSig]: (d, t) => wrapClassBodyMethodSig(d as unknown as T.ClassBodyMethodSig, t),
 	[TSKindId.ClassBodyMember]: (d, t) => wrapClassBodyMember(d as unknown as T.ClassBodyMember, t),
@@ -17269,18 +17233,23 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.HtmlComment]: (d) => ({ ...d, $type: TSKindId.HtmlComment as const }),
 	[TSKindId.JsxText]: (d) => ({ ...d, $type: TSKindId.JsxText as const }),
 	[TSKindId.TemplateChars]: (d) => ({ ...d, $type: TSKindId.TemplateChars as const }),
+	[TSKindId.AutomaticSemicolon]: (d) => ({ ...d, $type: TSKindId.AutomaticSemicolon as const }),
+	[TSKindId.FunctionSignatureAutomaticSemicolon]: (d) => ({
+		...d,
+		$type: TSKindId.FunctionSignatureAutomaticSemicolon as const
+	}),
 	[TSKindId.TernaryQmark]: (d) => ({ ...d, $type: TSKindId.TernaryQmark as const }),
 	[TSKindId.ErrorRecovery]: (d) => ({ ...d, $type: TSKindId.ErrorRecovery as const }),
-	[TSKindId._StatementIdentifier]: (d, t) =>
+	[TSKindId.StatementIdentifier]: (d, t) =>
 		wrapStatementIdentifier(_aliasEnvelope(d, t) as unknown as T.StatementIdentifier, t),
-	[TSKindId._ShorthandPropertyIdentifier]: (d, t) =>
+	[TSKindId.ShorthandPropertyIdentifier]: (d, t) =>
 		wrapShorthandPropertyIdentifier(_aliasEnvelope(d, t) as unknown as T.ShorthandPropertyIdentifier, t),
-	[TSKindId._ShorthandPropertyIdentifierPattern]: (d, t) =>
+	[TSKindId.ShorthandPropertyIdentifierPattern]: (d, t) =>
 		wrapShorthandPropertyIdentifierPattern(_aliasEnvelope(d, t) as unknown as T.ShorthandPropertyIdentifierPattern, t),
-	[TSKindId._PropertyIdentifier]: (d, t) =>
+	[TSKindId.PropertyIdentifier]: (d, t) =>
 		wrapPropertyIdentifier(_aliasEnvelope(d, t) as unknown as T.PropertyIdentifier, t),
-	[TSKindId._TypeIdentifier]: (d, t) => wrapTypeIdentifier(_aliasEnvelope(d, t) as unknown as T.TypeIdentifier, t),
-	[TSKindId._InterfaceBody]: (d, t) => wrapInterfaceBody(_aliasEnvelope(d, t) as unknown as T.InterfaceBody, t)
+	[TSKindId.TypeIdentifier]: (d, t) => wrapTypeIdentifier(_aliasEnvelope(d, t) as unknown as T.TypeIdentifier, t),
+	[TSKindId.InterfaceBody]: (d, t) => wrapInterfaceBody(_aliasEnvelope(d, t) as unknown as T.InterfaceBody, t)
 };
 
 function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
@@ -17553,6 +17522,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.NumberOctal]: ReturnType<typeof wrapNumberOctal>;
 	[TSKindId.NumberBigint]: ReturnType<typeof wrapNumberBigint>;
 	[TSKindId.BinaryExpressionIn]: ReturnType<typeof wrapBinaryExpressionIn>;
+	[TSKindId.EmptyMember]: _NodeData & { readonly $type: TSKindId.EmptyMember };
 	[TSKindId.ClassBodyMethod]: ReturnType<typeof wrapClassBodyMethod>;
 	[TSKindId.ClassBodyMethodSig]: ReturnType<typeof wrapClassBodyMethodSig>;
 	[TSKindId.ClassBodyMember]: ReturnType<typeof wrapClassBodyMember>;
@@ -17594,14 +17564,18 @@ interface _WrapReturnByKindId {
 	[TSKindId.HtmlComment]: _NodeData & { readonly $type: TSKindId.HtmlComment };
 	[TSKindId.JsxText]: _NodeData & { readonly $type: TSKindId.JsxText };
 	[TSKindId.TemplateChars]: _NodeData & { readonly $type: TSKindId.TemplateChars };
+	[TSKindId.AutomaticSemicolon]: _NodeData & { readonly $type: TSKindId.AutomaticSemicolon };
+	[TSKindId.FunctionSignatureAutomaticSemicolon]: _NodeData & {
+		readonly $type: TSKindId.FunctionSignatureAutomaticSemicolon;
+	};
 	[TSKindId.TernaryQmark]: _NodeData & { readonly $type: TSKindId.TernaryQmark };
 	[TSKindId.ErrorRecovery]: _NodeData & { readonly $type: TSKindId.ErrorRecovery };
-	[TSKindId._StatementIdentifier]: ReturnType<typeof wrapStatementIdentifier>;
-	[TSKindId._ShorthandPropertyIdentifier]: ReturnType<typeof wrapShorthandPropertyIdentifier>;
-	[TSKindId._ShorthandPropertyIdentifierPattern]: ReturnType<typeof wrapShorthandPropertyIdentifierPattern>;
-	[TSKindId._PropertyIdentifier]: ReturnType<typeof wrapPropertyIdentifier>;
-	[TSKindId._TypeIdentifier]: ReturnType<typeof wrapTypeIdentifier>;
-	[TSKindId._InterfaceBody]: ReturnType<typeof wrapInterfaceBody>;
+	[TSKindId.StatementIdentifier]: ReturnType<typeof wrapStatementIdentifier>;
+	[TSKindId.ShorthandPropertyIdentifier]: ReturnType<typeof wrapShorthandPropertyIdentifier>;
+	[TSKindId.ShorthandPropertyIdentifierPattern]: ReturnType<typeof wrapShorthandPropertyIdentifierPattern>;
+	[TSKindId.PropertyIdentifier]: ReturnType<typeof wrapPropertyIdentifier>;
+	[TSKindId.TypeIdentifier]: ReturnType<typeof wrapTypeIdentifier>;
+	[TSKindId.InterfaceBody]: ReturnType<typeof wrapInterfaceBody>;
 }
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

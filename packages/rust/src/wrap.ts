@@ -393,13 +393,16 @@ function projectMixedEnumStorage<T>(
 // so there is no double-render. A final `?? readTerminalFromOther(...)` only
 // fires when the nominal storage keys are all empty (the unfielded case);
 // when the token IS field-tagged the chain short-circuits before reaching it.
-function readTerminalFromOther(data: _NodeData, allowedKindIds: readonly number[]): _NodeData | number | undefined {
+function readTerminalFromOther<T = _NodeData | number>(
+	data: _NodeData,
+	allowedKindIds: readonly number[]
+): T | undefined {
 	const other = (data as { $other?: readonly unknown[] }).$other;
 	if (!Array.isArray(other)) return undefined;
 	for (const e of other) {
 		const id =
 			typeof e === 'number' ? e : typeof e === 'object' && e !== null ? (e as { $type?: unknown }).$type : undefined;
-		if (typeof id === 'number' && allowedKindIds.includes(id)) return e as _NodeData | number;
+		if (typeof id === 'number' && allowedKindIds.includes(id)) return e as T;
 	}
 	return undefined;
 }
@@ -541,126 +544,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'token_repetition_pattern',
 		'token_binding_pattern',
 		'metavariable',
-		'_non_special_token',
-		'non_special_token',
-		'_literal',
-		'literal',
-		'string_literal',
-		'raw_string_literal',
-		'char_literal',
-		'char_literal_escaped',
-		'char_literal_plain',
-		'char_literal_empty',
-		'boolean_literal',
-		'true_keyword',
-		'false_keyword',
-		'integer_literal',
-		'integer_literal_decimal',
-		'integer_literal_hex',
-		'integer_literal_binary',
-		'integer_literal_octal',
-		'float_literal',
-		'identifier',
-		'mutable_specifier',
-		'self',
-		'super',
-		'crate',
-		'_primitive_type',
-		'primitive_type',
-		'u8_keyword',
-		'i8_keyword',
-		'u16_keyword',
-		'i16_keyword',
-		'u32_keyword',
-		'i32_keyword',
-		'u64_keyword',
-		'i64_keyword',
-		'u128_keyword',
-		'i128_keyword',
-		'isize_keyword',
-		'usize_keyword',
-		'f32_keyword',
-		'f64_keyword',
-		'bool_keyword',
-		'str_keyword',
-		'char_keyword',
-		'_token_tree_punctuation',
-		'token_tree_punctuation',
-		'plus',
-		'dash',
-		'star',
-		'slash',
-		'percent',
-		'caret',
-		'bang',
-		'amp',
-		'pipe',
-		'amp_amp',
-		'pipe_pipe',
-		'lt_lt',
-		'gt_gt',
-		'plus_eq',
-		'dash_eq',
-		'star_eq',
-		'slash_eq',
-		'percent_eq',
-		'caret_eq',
-		'amp_eq',
-		'pipe_eq',
-		'lt_lt_eq',
-		'gt_gt_eq',
-		'eq',
-		'eq_eq',
-		'bang_eq',
-		'gt',
-		'lt',
-		'gt_eq',
-		'lt_eq',
-		'at',
-		'underscore',
-		'dot',
-		'dot_dot',
-		'dot_dot_dot',
-		'dot_dot_eq',
-		'comma',
-		'semi',
-		'colon',
-		'colon_colon',
-		'dash_gt',
-		'eq_gt',
-		'pound',
-		'qmark',
-		'_token_keywords',
-		'token_keywords',
-		'squote',
-		'as_keyword',
-		'async_keyword',
-		'await_keyword',
-		'break_keyword',
-		'const_keyword',
-		'continue_keyword',
-		'default_keyword',
-		'enum_keyword',
-		'fn_keyword',
-		'for_keyword',
-		'gen_keyword',
-		'if_keyword',
-		'impl_keyword',
-		'let_keyword',
-		'loop_keyword',
-		'match_keyword',
-		'mod_keyword',
-		'pub_keyword',
-		'return_keyword',
-		'static_keyword',
-		'struct_keyword',
-		'trait_keyword',
-		'type_keyword',
-		'union_keyword',
-		'unsafe_keyword',
-		'use_keyword',
-		'where_keyword',
-		'while_keyword'
+		'non_special_token'
 	]),
 	token_tree_pattern: new Set(['token_tree_pattern_paren', 'token_tree_pattern_bracket', 'token_tree_pattern_brace']),
 	_tokens: new Set([
@@ -670,248 +554,9 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'token_tree_brace',
 		'token_repetition',
 		'metavariable',
-		'_non_special_token',
-		'non_special_token',
-		'_literal',
-		'literal',
-		'string_literal',
-		'raw_string_literal',
-		'char_literal',
-		'char_literal_escaped',
-		'char_literal_plain',
-		'char_literal_empty',
-		'boolean_literal',
-		'true_keyword',
-		'false_keyword',
-		'integer_literal',
-		'integer_literal_decimal',
-		'integer_literal_hex',
-		'integer_literal_binary',
-		'integer_literal_octal',
-		'float_literal',
-		'identifier',
-		'mutable_specifier',
-		'self',
-		'super',
-		'crate',
-		'_primitive_type',
-		'primitive_type',
-		'u8_keyword',
-		'i8_keyword',
-		'u16_keyword',
-		'i16_keyword',
-		'u32_keyword',
-		'i32_keyword',
-		'u64_keyword',
-		'i64_keyword',
-		'u128_keyword',
-		'i128_keyword',
-		'isize_keyword',
-		'usize_keyword',
-		'f32_keyword',
-		'f64_keyword',
-		'bool_keyword',
-		'str_keyword',
-		'char_keyword',
-		'_token_tree_punctuation',
-		'token_tree_punctuation',
-		'plus',
-		'dash',
-		'star',
-		'slash',
-		'percent',
-		'caret',
-		'bang',
-		'amp',
-		'pipe',
-		'amp_amp',
-		'pipe_pipe',
-		'lt_lt',
-		'gt_gt',
-		'plus_eq',
-		'dash_eq',
-		'star_eq',
-		'slash_eq',
-		'percent_eq',
-		'caret_eq',
-		'amp_eq',
-		'pipe_eq',
-		'lt_lt_eq',
-		'gt_gt_eq',
-		'eq',
-		'eq_eq',
-		'bang_eq',
-		'gt',
-		'lt',
-		'gt_eq',
-		'lt_eq',
-		'at',
-		'underscore',
-		'dot',
-		'dot_dot',
-		'dot_dot_dot',
-		'dot_dot_eq',
-		'comma',
-		'semi',
-		'colon',
-		'colon_colon',
-		'dash_gt',
-		'eq_gt',
-		'pound',
-		'qmark',
-		'_token_keywords',
-		'token_keywords',
-		'squote',
-		'as_keyword',
-		'async_keyword',
-		'await_keyword',
-		'break_keyword',
-		'const_keyword',
-		'continue_keyword',
-		'default_keyword',
-		'enum_keyword',
-		'fn_keyword',
-		'for_keyword',
-		'gen_keyword',
-		'if_keyword',
-		'impl_keyword',
-		'let_keyword',
-		'loop_keyword',
-		'match_keyword',
-		'mod_keyword',
-		'pub_keyword',
-		'return_keyword',
-		'static_keyword',
-		'struct_keyword',
-		'trait_keyword',
-		'type_keyword',
-		'union_keyword',
-		'unsafe_keyword',
-		'use_keyword',
-		'where_keyword',
-		'while_keyword'
+		'non_special_token'
 	]),
 	token_tree: new Set(['token_tree_paren', 'token_tree_bracket', 'token_tree_brace']),
-	_non_special_token: new Set([
-		'_literal',
-		'literal',
-		'string_literal',
-		'raw_string_literal',
-		'char_literal',
-		'char_literal_escaped',
-		'char_literal_plain',
-		'char_literal_empty',
-		'boolean_literal',
-		'true_keyword',
-		'false_keyword',
-		'integer_literal',
-		'integer_literal_decimal',
-		'integer_literal_hex',
-		'integer_literal_binary',
-		'integer_literal_octal',
-		'float_literal',
-		'identifier',
-		'mutable_specifier',
-		'self',
-		'super',
-		'crate',
-		'_primitive_type',
-		'primitive_type',
-		'u8_keyword',
-		'i8_keyword',
-		'u16_keyword',
-		'i16_keyword',
-		'u32_keyword',
-		'i32_keyword',
-		'u64_keyword',
-		'i64_keyword',
-		'u128_keyword',
-		'i128_keyword',
-		'isize_keyword',
-		'usize_keyword',
-		'f32_keyword',
-		'f64_keyword',
-		'bool_keyword',
-		'str_keyword',
-		'char_keyword',
-		'_token_tree_punctuation',
-		'token_tree_punctuation',
-		'plus',
-		'dash',
-		'star',
-		'slash',
-		'percent',
-		'caret',
-		'bang',
-		'amp',
-		'pipe',
-		'amp_amp',
-		'pipe_pipe',
-		'lt_lt',
-		'gt_gt',
-		'plus_eq',
-		'dash_eq',
-		'star_eq',
-		'slash_eq',
-		'percent_eq',
-		'caret_eq',
-		'amp_eq',
-		'pipe_eq',
-		'lt_lt_eq',
-		'gt_gt_eq',
-		'eq',
-		'eq_eq',
-		'bang_eq',
-		'gt',
-		'lt',
-		'gt_eq',
-		'lt_eq',
-		'at',
-		'underscore',
-		'dot',
-		'dot_dot',
-		'dot_dot_dot',
-		'dot_dot_eq',
-		'comma',
-		'semi',
-		'colon',
-		'colon_colon',
-		'dash_gt',
-		'eq_gt',
-		'pound',
-		'qmark',
-		'_token_keywords',
-		'token_keywords',
-		'squote',
-		'as_keyword',
-		'async_keyword',
-		'await_keyword',
-		'break_keyword',
-		'const_keyword',
-		'continue_keyword',
-		'default_keyword',
-		'enum_keyword',
-		'fn_keyword',
-		'for_keyword',
-		'gen_keyword',
-		'if_keyword',
-		'impl_keyword',
-		'let_keyword',
-		'loop_keyword',
-		'match_keyword',
-		'mod_keyword',
-		'pub_keyword',
-		'return_keyword',
-		'static_keyword',
-		'struct_keyword',
-		'trait_keyword',
-		'type_keyword',
-		'union_keyword',
-		'unsafe_keyword',
-		'use_keyword',
-		'where_keyword',
-		'while_keyword'
-	]),
 	mod_item: new Set(['mod_item_external', 'mod_item_inline']),
 	foreign_mod_item: new Set(['foreign_mod_item_semi', 'foreign_mod_item_body']),
 	struct_item: new Set(['struct_item_brace', 'struct_item_tuple', 'struct_item_unit']),
@@ -967,7 +612,6 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'dynamic_type',
 		'bounded_type',
 		'removed_trait_bound',
-		'_primitive_type',
 		'primitive_type',
 		'u8_keyword',
 		'i8_keyword',
@@ -1174,255 +818,14 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	]),
 	delim_token_tree: new Set(['delim_token_tree_paren', 'delim_token_tree_bracket', 'delim_token_tree_brace']),
 	_delim_tokens: new Set([
-		'_non_special_token',
 		'non_special_token',
-		'_literal',
-		'literal',
-		'string_literal',
-		'raw_string_literal',
-		'char_literal',
-		'char_literal_escaped',
-		'char_literal_plain',
-		'char_literal_empty',
-		'boolean_literal',
-		'true_keyword',
-		'false_keyword',
-		'integer_literal',
-		'integer_literal_decimal',
-		'integer_literal_hex',
-		'integer_literal_binary',
-		'integer_literal_octal',
-		'float_literal',
-		'identifier',
-		'mutable_specifier',
-		'self',
-		'super',
-		'crate',
-		'_primitive_type',
-		'primitive_type',
-		'u8_keyword',
-		'i8_keyword',
-		'u16_keyword',
-		'i16_keyword',
-		'u32_keyword',
-		'i32_keyword',
-		'u64_keyword',
-		'i64_keyword',
-		'u128_keyword',
-		'i128_keyword',
-		'isize_keyword',
-		'usize_keyword',
-		'f32_keyword',
-		'f64_keyword',
-		'bool_keyword',
-		'str_keyword',
-		'char_keyword',
-		'_token_tree_punctuation',
-		'token_tree_punctuation',
-		'plus',
-		'dash',
-		'star',
-		'slash',
-		'percent',
-		'caret',
-		'bang',
-		'amp',
-		'pipe',
-		'amp_amp',
-		'pipe_pipe',
-		'lt_lt',
-		'gt_gt',
-		'plus_eq',
-		'dash_eq',
-		'star_eq',
-		'slash_eq',
-		'percent_eq',
-		'caret_eq',
-		'amp_eq',
-		'pipe_eq',
-		'lt_lt_eq',
-		'gt_gt_eq',
-		'eq',
-		'eq_eq',
-		'bang_eq',
-		'gt',
-		'lt',
-		'gt_eq',
-		'lt_eq',
-		'at',
-		'underscore',
-		'dot',
-		'dot_dot',
-		'dot_dot_dot',
-		'dot_dot_eq',
-		'comma',
-		'semi',
-		'colon',
-		'colon_colon',
-		'dash_gt',
-		'eq_gt',
-		'pound',
-		'qmark',
-		'_token_keywords',
-		'token_keywords',
-		'squote',
-		'as_keyword',
-		'async_keyword',
-		'await_keyword',
-		'break_keyword',
-		'const_keyword',
-		'continue_keyword',
-		'default_keyword',
-		'enum_keyword',
-		'fn_keyword',
-		'for_keyword',
-		'gen_keyword',
-		'if_keyword',
-		'impl_keyword',
-		'let_keyword',
-		'loop_keyword',
-		'match_keyword',
-		'mod_keyword',
-		'pub_keyword',
-		'return_keyword',
-		'static_keyword',
-		'struct_keyword',
-		'trait_keyword',
-		'type_keyword',
-		'union_keyword',
-		'unsafe_keyword',
-		'use_keyword',
-		'where_keyword',
-		'while_keyword',
 		'dollar',
 		'delim_token_tree',
 		'delim_token_tree_paren',
 		'delim_token_tree_bracket',
 		'delim_token_tree_brace'
 	]),
-	_non_delim_token: new Set([
-		'_non_special_token',
-		'non_special_token',
-		'_literal',
-		'literal',
-		'string_literal',
-		'raw_string_literal',
-		'char_literal',
-		'char_literal_escaped',
-		'char_literal_plain',
-		'char_literal_empty',
-		'boolean_literal',
-		'true_keyword',
-		'false_keyword',
-		'integer_literal',
-		'integer_literal_decimal',
-		'integer_literal_hex',
-		'integer_literal_binary',
-		'integer_literal_octal',
-		'float_literal',
-		'identifier',
-		'mutable_specifier',
-		'self',
-		'super',
-		'crate',
-		'_primitive_type',
-		'primitive_type',
-		'u8_keyword',
-		'i8_keyword',
-		'u16_keyword',
-		'i16_keyword',
-		'u32_keyword',
-		'i32_keyword',
-		'u64_keyword',
-		'i64_keyword',
-		'u128_keyword',
-		'i128_keyword',
-		'isize_keyword',
-		'usize_keyword',
-		'f32_keyword',
-		'f64_keyword',
-		'bool_keyword',
-		'str_keyword',
-		'char_keyword',
-		'_token_tree_punctuation',
-		'token_tree_punctuation',
-		'plus',
-		'dash',
-		'star',
-		'slash',
-		'percent',
-		'caret',
-		'bang',
-		'amp',
-		'pipe',
-		'amp_amp',
-		'pipe_pipe',
-		'lt_lt',
-		'gt_gt',
-		'plus_eq',
-		'dash_eq',
-		'star_eq',
-		'slash_eq',
-		'percent_eq',
-		'caret_eq',
-		'amp_eq',
-		'pipe_eq',
-		'lt_lt_eq',
-		'gt_gt_eq',
-		'eq',
-		'eq_eq',
-		'bang_eq',
-		'gt',
-		'lt',
-		'gt_eq',
-		'lt_eq',
-		'at',
-		'underscore',
-		'dot',
-		'dot_dot',
-		'dot_dot_dot',
-		'dot_dot_eq',
-		'comma',
-		'semi',
-		'colon',
-		'colon_colon',
-		'dash_gt',
-		'eq_gt',
-		'pound',
-		'qmark',
-		'_token_keywords',
-		'token_keywords',
-		'squote',
-		'as_keyword',
-		'async_keyword',
-		'await_keyword',
-		'break_keyword',
-		'const_keyword',
-		'continue_keyword',
-		'default_keyword',
-		'enum_keyword',
-		'fn_keyword',
-		'for_keyword',
-		'gen_keyword',
-		'if_keyword',
-		'impl_keyword',
-		'let_keyword',
-		'loop_keyword',
-		'match_keyword',
-		'mod_keyword',
-		'pub_keyword',
-		'return_keyword',
-		'static_keyword',
-		'struct_keyword',
-		'trait_keyword',
-		'type_keyword',
-		'union_keyword',
-		'unsafe_keyword',
-		'use_keyword',
-		'where_keyword',
-		'while_keyword',
-		'dollar'
-	]),
+	_non_delim_token: new Set(['non_special_token', 'dollar']),
 	reference_expression: new Set([
 		'reference_expression_raw_const',
 		'reference_expression_raw_mut',
@@ -1582,7 +985,6 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'or_pattern_prefix',
 		'const_block',
 		'macro_invocation',
-		'_wildcard_pattern',
 		'wildcard_pattern'
 	]),
 	field_pattern: new Set(['field_pattern_shorthand', 'field_pattern_named']),
@@ -2292,74 +1694,20 @@ export function wrapTokenPattern(
 		'_token_repetition_pattern',
 		'_token_binding_pattern',
 		'_metavariable',
-		'__non_special_token',
 		'_non_special_token',
-		'__literal',
-		'_literal',
-		'_string_literal',
-		'_raw_string_literal',
-		'_char_literal',
-		'_boolean_literal',
-		'_integer_literal',
-		'_float_literal',
-		'_identifier',
-		'_mutable_specifier',
-		'_self',
-		'_super',
-		'_crate',
-		'__primitive_type',
-		'_primitive_type',
-		'__token_tree_punctuation',
-		'_token_tree_punctuation',
-		'__token_keywords',
-		'_token_keywords',
 		'_token_tree_pattern_paren',
 		'_token_tree_pattern_bracket',
-		'_token_tree_pattern_brace',
-		'_char_literal_escaped',
-		'_char_literal_plain',
-		'_char_literal_empty',
-		'_integer_literal_decimal',
-		'_integer_literal_hex',
-		'_integer_literal_binary',
-		'_integer_literal_octal'
+		'_token_tree_pattern_brace'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'token_tree_pattern',
 		'token_repetition_pattern',
 		'token_binding_pattern',
 		'metavariable',
-		'_non_special_token',
 		'non_special_token',
-		'_literal',
-		'literal',
-		'string_literal',
-		'raw_string_literal',
-		'char_literal',
-		'boolean_literal',
-		'integer_literal',
-		'float_literal',
-		'identifier',
-		'mutable_specifier',
-		'self',
-		'super',
-		'crate',
-		'_primitive_type',
-		'primitive_type',
-		'_token_tree_punctuation',
-		'token_tree_punctuation',
-		'_token_keywords',
-		'token_keywords',
 		'token_tree_pattern_paren',
 		'token_tree_pattern_bracket',
-		'token_tree_pattern_brace',
-		'char_literal_escaped',
-		'char_literal_plain',
-		'char_literal_empty',
-		'integer_literal_decimal',
-		'integer_literal_hex',
-		'integer_literal_binary',
-		'integer_literal_octal'
+		'token_tree_pattern_brace'
 	]) as T.TokenPattern | readonly T.TokenPattern[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -2368,37 +1716,10 @@ export function wrapTokenPattern(
 			'token_repetition_pattern',
 			'token_binding_pattern',
 			'metavariable',
-			'_non_special_token',
 			'non_special_token',
-			'_literal',
-			'literal',
-			'string_literal',
-			'raw_string_literal',
-			'char_literal',
-			'boolean_literal',
-			'integer_literal',
-			'float_literal',
-			'identifier',
-			'mutable_specifier',
-			'self',
-			'super',
-			'crate',
-			'_primitive_type',
-			'primitive_type',
-			'_token_tree_punctuation',
-			'token_tree_punctuation',
-			'_token_keywords',
-			'token_keywords',
 			'token_tree_pattern_paren',
 			'token_tree_pattern_bracket',
-			'token_tree_pattern_brace',
-			'char_literal_escaped',
-			'char_literal_plain',
-			'char_literal_empty',
-			'integer_literal_decimal',
-			'integer_literal_hex',
-			'integer_literal_binary',
-			'integer_literal_octal'
+			'token_tree_pattern_brace'
 		]);
 	if (
 		filtered === undefined &&
@@ -2471,30 +1792,12 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
 				span: (data as _NodeData).$span
 			}),
 			_type: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._type ??
-						readTerminalFromOther(data, [
-							TSKindId.BlockKeyword,
-							TSKindId.ExprKeyword,
-							TSKindId.Expr2021Keyword,
-							TSKindId.IdentKeyword,
-							TSKindId.ItemKeyword,
-							TSKindId.LifetimeKeyword,
-							TSKindId.LiteralKeyword,
-							TSKindId.MetaKeyword,
-							TSKindId.PatKeyword,
-							TSKindId.PatParamKeyword,
-							TSKindId.PathKeyword,
-							TSKindId.StmtKeyword,
-							TSKindId.TtKeyword,
-							TSKindId.TyKeyword,
-							TSKindId.VisKeyword
-						]),
-					'type',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'type', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'type',
+					span: (data as _NodeData).$span
+				}),
 				{
 					block: 12,
 					expr: 13,
@@ -2540,114 +1843,12 @@ export function wrapTokenRepetitionPattern(data: T.TokenRepetitionPattern, tree:
 		{
 			...data,
 			$type: TSKindId.TokenRepetitionPattern as const,
-			_token_patterns: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._token_patterns, false, 'token_patterns', {
-					tree,
-					nodeType: data.$type,
-					slotName: 'token_patterns',
-					span: (data as _NodeData).$span
-				}),
-				{
-					true: 118,
-					false: 119,
-					mut: 58,
-					self: 126,
-					super: 127,
-					crate: 128,
-					u8: 59,
-					i8: 60,
-					u16: 61,
-					i16: 62,
-					u32: 63,
-					i32: 64,
-					u64: 65,
-					i64: 66,
-					u128: 67,
-					i128: 68,
-					isize: 69,
-					usize: 70,
-					f32: 71,
-					f64: 72,
-					bool: 73,
-					str: 74,
-					char: 75,
-					'+': 9,
-					'-': 76,
-					'*': 10,
-					'/': 87,
-					'%': 88,
-					'^': 80,
-					'!': 30,
-					'&': 55,
-					'|': 79,
-					'&&': 77,
-					'||': 78,
-					'<<': 85,
-					'>>': 86,
-					'+=': 89,
-					'-=': 90,
-					'*=': 91,
-					'/=': 92,
-					'%=': 93,
-					'^=': 96,
-					'&=': 94,
-					'|=': 95,
-					'<<=': 97,
-					'>>=': 98,
-					'=': 39,
-					'==': 81,
-					'!=': 82,
-					'>': 45,
-					'<': 44,
-					'>=': 84,
-					'<=': 83,
-					'@': 116,
-					_: 133,
-					'.': 110,
-					'..': 101,
-					'...': 50,
-					'..=': 134,
-					',': 131,
-					';': 2,
-					':': 4,
-					'::': 48,
-					'->': 132,
-					'=>': 3,
-					'#': 27,
-					'?': 11,
-					"'": 51,
-					as: 49,
-					async: 113,
-					await: 111,
-					break: 108,
-					const: 36,
-					continue: 109,
-					default: 52,
-					enum: 34,
-					fn: 40,
-					for: 43,
-					gen: 53,
-					if: 102,
-					impl: 56,
-					let: 46,
-					loop: 106,
-					match: 104,
-					mod: 135,
-					pub: 136,
-					return: 99,
-					static: 37,
-					struct: 137,
-					trait: 42,
-					type: 38,
-					union: 33,
-					unsafe: 112,
-					use: 47,
-					where: 41,
-					while: 105
-				},
-				undefined,
-				[331, 336, 365, 366]
-			),
+			_token_patterns: normalizeRepeatedWrapSlot(data._token_patterns, false, 'token_patterns', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'token_patterns',
+				span: (data as _NodeData).$span
+			}),
 			_separator: normalizeSingularWrapSlot(data._separator, 'separator', false, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -2655,13 +1856,12 @@ export function wrapTokenRepetitionPattern(data: T.TokenRepetitionPattern, tree:
 				span: (data as _NodeData).$span
 			}),
 			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.Plus, TSKindId.Star, TSKindId.Qmark]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'operator',
+					span: (data as _NodeData).$span
+				}),
 				{ '+': 9, '*': 10, '?': 11 }
 			),
 
@@ -2738,13 +1938,2172 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.TokenRepetition as const,
-			_tokens: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._tokens, false, 'tokens', {
+			_tokens: normalizeRepeatedWrapSlot(data._tokens, false, 'tokens', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'tokens',
+				span: (data as _NodeData).$span
+			}),
+			_separator: normalizeSingularWrapSlot(data._separator, 'separator', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'separator',
+				span: (data as _NodeData).$span
+			}),
+			_operator: projectKindEnumStorage(
+				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
 					tree,
 					nodeType: data.$type,
-					slotName: 'tokens',
+					slotName: 'operator',
 					span: (data as _NodeData).$span
 				}),
+				{ '+': 9, '*': 10, '?': 11 }
+			),
+
+			tokens() {
+				return drillInAll<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(
+					this._tokens as readonly (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[] | undefined,
+					tree
+				);
+			},
+			separator() {
+				return drillIn<string | undefined>(this._separator, tree);
+			},
+			operator() {
+				return this._operator;
+			},
+			$with: {
+				tokens: (...v: NonNullable<T.TokenRepetition['_tokens']>[number][]) =>
+					wrapTokenRepetition({ ...$edited(data), _tokens: v }, tree),
+				separator: (v: NonNullable<T.TokenRepetition['_separator']>) =>
+					wrapTokenRepetition({ ...$edited(data), _separator: v }, tree),
+				operator: (v: NonNullable<T.TokenRepetition['_operator']>) =>
+					wrapTokenRepetition({ ...$edited(data), _operator: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapNonSpecialToken(
+	data: T.NonSpecialToken & {
+		readonly _string_literal?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _raw_string_literal?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _char_literal_escaped?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _char_literal_plain?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _char_literal_empty?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _boolean_literal?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _integer_literal_decimal?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _integer_literal_hex?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _integer_literal_binary?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _integer_literal_octal?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _float_literal?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _identifier?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _mutable_specifier?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _self?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _super?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _crate?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _primitive_type?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _token_tree_punctuation?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+		readonly _token_keywords?:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword;
+	},
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, [
+		'_content',
+		'_string_literal',
+		'_raw_string_literal',
+		'_char_literal_escaped',
+		'_char_literal_plain',
+		'_char_literal_empty',
+		'_boolean_literal',
+		'_integer_literal_decimal',
+		'_integer_literal_hex',
+		'_integer_literal_binary',
+		'_integer_literal_octal',
+		'_float_literal',
+		'_identifier',
+		'_mutable_specifier',
+		'_self',
+		'_super',
+		'_crate',
+		'_primitive_type',
+		'_token_tree_punctuation',
+		'_token_keywords'
+	]);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.NonSpecialToken as const }, _treeEngine(tree));
+	const _node = withMethods(
+		{
+			..._omitWrapKeys(data, [
+				'_boolean_literal',
+				'_char_literal_empty',
+				'_char_literal_escaped',
+				'_char_literal_plain',
+				'_crate',
+				'_float_literal',
+				'_identifier',
+				'_integer_literal_binary',
+				'_integer_literal_decimal',
+				'_integer_literal_hex',
+				'_integer_literal_octal',
+				'_mutable_specifier',
+				'_primitive_type',
+				'_raw_string_literal',
+				'_self',
+				'_string_literal',
+				'_super',
+				'_token_keywords',
+				'_token_tree_punctuation'
+			]),
+			$type: TSKindId.NonSpecialToken as const,
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ??
+						data._string_literal ??
+						data._raw_string_literal ??
+						data._char_literal_escaped ??
+						data._char_literal_plain ??
+						data._char_literal_empty ??
+						data._boolean_literal ??
+						data._integer_literal_decimal ??
+						data._integer_literal_hex ??
+						data._integer_literal_binary ??
+						data._integer_literal_octal ??
+						data._float_literal ??
+						data._identifier ??
+						data._mutable_specifier ??
+						data._self ??
+						data._super ??
+						data._crate ??
+						data._primitive_type ??
+						data._token_tree_punctuation ??
+						data._token_keywords ??
+						readTerminalFromOther<
+							| T.Literal
+							| T.Identifier
+							| TSKindId.MutableSpecifier
+							| TSKindId.Self
+							| TSKindId.Super
+							| TSKindId.Crate
+							| TSKindId.U8Keyword
+							| TSKindId.I8Keyword
+							| TSKindId.U16Keyword
+							| TSKindId.I16Keyword
+							| TSKindId.U32Keyword
+							| TSKindId.I32Keyword
+							| TSKindId.U64Keyword
+							| TSKindId.I64Keyword
+							| TSKindId.U128Keyword
+							| TSKindId.I128Keyword
+							| TSKindId.IsizeKeyword
+							| TSKindId.UsizeKeyword
+							| TSKindId.F32Keyword
+							| TSKindId.F64Keyword
+							| TSKindId.BoolKeyword
+							| TSKindId.StrKeyword
+							| TSKindId.CharKeyword
+							| TSKindId.Plus
+							| TSKindId.Dash
+							| TSKindId.Star
+							| TSKindId.Slash
+							| TSKindId.Percent
+							| TSKindId.Caret
+							| TSKindId.Bang
+							| TSKindId.Amp
+							| TSKindId.Pipe
+							| TSKindId.AmpAmp
+							| TSKindId.PipePipe
+							| TSKindId.LtLt
+							| TSKindId.GtGt
+							| TSKindId.PlusEq
+							| TSKindId.DashEq
+							| TSKindId.StarEq
+							| TSKindId.SlashEq
+							| TSKindId.PercentEq
+							| TSKindId.CaretEq
+							| TSKindId.AmpEq
+							| TSKindId.PipeEq
+							| TSKindId.LtLtEq
+							| TSKindId.GtGtEq
+							| TSKindId.Eq
+							| TSKindId.EqEq
+							| TSKindId.BangEq
+							| TSKindId.Gt
+							| TSKindId.Lt
+							| TSKindId.GtEq
+							| TSKindId.LtEq
+							| TSKindId.At
+							| TSKindId.Underscore
+							| TSKindId.Dot
+							| TSKindId.DotDot
+							| TSKindId.DotDotDot
+							| TSKindId.DotDotEq
+							| TSKindId.Comma
+							| TSKindId.Semi
+							| TSKindId.Colon
+							| TSKindId.ColonColon
+							| TSKindId.DashGt
+							| TSKindId.EqGt
+							| TSKindId.Pound
+							| TSKindId.Qmark
+							| TSKindId.Squote
+							| TSKindId.AsKeyword
+							| TSKindId.AsyncKeyword
+							| TSKindId.AwaitKeyword
+							| TSKindId.BreakKeyword
+							| TSKindId.ConstKeyword
+							| TSKindId.ContinueKeyword
+							| TSKindId.DefaultKeyword
+							| TSKindId.EnumKeyword
+							| TSKindId.FnKeyword
+							| TSKindId.ForKeyword
+							| TSKindId.GenKeyword
+							| TSKindId.IfKeyword
+							| TSKindId.ImplKeyword
+							| TSKindId.LetKeyword
+							| TSKindId.LoopKeyword
+							| TSKindId.MatchKeyword
+							| TSKindId.ModKeyword
+							| TSKindId.PubKeyword
+							| TSKindId.ReturnKeyword
+							| TSKindId.StaticKeyword
+							| TSKindId.StructKeyword
+							| TSKindId.TraitKeyword
+							| TSKindId.TypeKeyword
+							| TSKindId.UnionKeyword
+							| TSKindId.UnsafeKeyword
+							| TSKindId.UseKeyword
+							| TSKindId.WhereKeyword
+							| TSKindId.WhileKeyword
+						>(data, [
+							TSKindId.TrueKeyword,
+							TSKindId.FalseKeyword,
+							TSKindId.MutableSpecifier,
+							TSKindId.Self,
+							TSKindId.Super,
+							TSKindId.Crate,
+							TSKindId.U8Keyword,
+							TSKindId.I8Keyword,
+							TSKindId.U16Keyword,
+							TSKindId.I16Keyword,
+							TSKindId.U32Keyword,
+							TSKindId.I32Keyword,
+							TSKindId.U64Keyword,
+							TSKindId.I64Keyword,
+							TSKindId.U128Keyword,
+							TSKindId.I128Keyword,
+							TSKindId.IsizeKeyword,
+							TSKindId.UsizeKeyword,
+							TSKindId.F32Keyword,
+							TSKindId.F64Keyword,
+							TSKindId.BoolKeyword,
+							TSKindId.StrKeyword,
+							TSKindId.CharKeyword,
+							TSKindId.Plus,
+							TSKindId.Dash,
+							TSKindId.Star,
+							TSKindId.Slash,
+							TSKindId.Percent,
+							TSKindId.Caret,
+							TSKindId.Bang,
+							TSKindId.Amp,
+							TSKindId.Pipe,
+							TSKindId.AmpAmp,
+							TSKindId.PipePipe,
+							TSKindId.LtLt,
+							TSKindId.GtGt,
+							TSKindId.PlusEq,
+							TSKindId.DashEq,
+							TSKindId.StarEq,
+							TSKindId.SlashEq,
+							TSKindId.PercentEq,
+							TSKindId.CaretEq,
+							TSKindId.AmpEq,
+							TSKindId.PipeEq,
+							TSKindId.LtLtEq,
+							TSKindId.GtGtEq,
+							TSKindId.Eq,
+							TSKindId.EqEq,
+							TSKindId.BangEq,
+							TSKindId.Gt,
+							TSKindId.Lt,
+							TSKindId.GtEq,
+							TSKindId.LtEq,
+							TSKindId.At,
+							TSKindId.Underscore,
+							TSKindId.Dot,
+							TSKindId.DotDot,
+							TSKindId.DotDotDot,
+							TSKindId.DotDotEq,
+							TSKindId.Comma,
+							TSKindId.Semi,
+							TSKindId.Colon,
+							TSKindId.ColonColon,
+							TSKindId.DashGt,
+							TSKindId.EqGt,
+							TSKindId.Pound,
+							TSKindId.Qmark,
+							TSKindId.Squote,
+							TSKindId.AsKeyword,
+							TSKindId.AsyncKeyword,
+							TSKindId.AwaitKeyword,
+							TSKindId.BreakKeyword,
+							TSKindId.ConstKeyword,
+							TSKindId.ContinueKeyword,
+							TSKindId.DefaultKeyword,
+							TSKindId.EnumKeyword,
+							TSKindId.FnKeyword,
+							TSKindId.ForKeyword,
+							TSKindId.GenKeyword,
+							TSKindId.IfKeyword,
+							TSKindId.ImplKeyword,
+							TSKindId.LetKeyword,
+							TSKindId.LoopKeyword,
+							TSKindId.MatchKeyword,
+							TSKindId.ModKeyword,
+							TSKindId.PubKeyword,
+							TSKindId.ReturnKeyword,
+							TSKindId.StaticKeyword,
+							TSKindId.StructKeyword,
+							TSKindId.TraitKeyword,
+							TSKindId.TypeKeyword,
+							TSKindId.UnionKeyword,
+							TSKindId.UnsafeKeyword,
+							TSKindId.UseKeyword,
+							TSKindId.WhereKeyword,
+							TSKindId.WhileKeyword
+						]),
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
 				{
 					true: 118,
 					false: 119,
@@ -2846,155 +4205,115 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle) {
 				undefined,
 				[331, 336, 365, 366]
 			),
-			_separator: normalizeSingularWrapSlot(data._separator, 'separator', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'separator',
-				span: (data as _NodeData).$span
-			}),
-			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.Plus, TSKindId.Star, TSKindId.Qmark]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
-				{ '+': 9, '*': 10, '?': 11 }
-			),
 
-			tokens() {
-				return drillInAll<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(
-					this._tokens as readonly (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[] | undefined,
-					tree
-				);
-			},
-			separator() {
-				return drillIn<string | undefined>(this._separator, tree);
-			},
-			operator() {
-				return this._operator;
+			content() {
+				return drillIn<
+					| T.Literal
+					| T.Identifier
+					| TSKindId.MutableSpecifier
+					| TSKindId.Self
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Plus
+					| TSKindId.Dash
+					| TSKindId.Star
+					| TSKindId.Slash
+					| TSKindId.Percent
+					| TSKindId.Caret
+					| TSKindId.Bang
+					| TSKindId.Amp
+					| TSKindId.Pipe
+					| TSKindId.AmpAmp
+					| TSKindId.PipePipe
+					| TSKindId.LtLt
+					| TSKindId.GtGt
+					| TSKindId.PlusEq
+					| TSKindId.DashEq
+					| TSKindId.StarEq
+					| TSKindId.SlashEq
+					| TSKindId.PercentEq
+					| TSKindId.CaretEq
+					| TSKindId.AmpEq
+					| TSKindId.PipeEq
+					| TSKindId.LtLtEq
+					| TSKindId.GtGtEq
+					| TSKindId.Eq
+					| TSKindId.EqEq
+					| TSKindId.BangEq
+					| TSKindId.Gt
+					| TSKindId.Lt
+					| TSKindId.GtEq
+					| TSKindId.LtEq
+					| TSKindId.At
+					| TSKindId.Underscore
+					| TSKindId.Dot
+					| TSKindId.DotDot
+					| TSKindId.DotDotDot
+					| TSKindId.DotDotEq
+					| TSKindId.Comma
+					| TSKindId.Semi
+					| TSKindId.Colon
+					| TSKindId.ColonColon
+					| TSKindId.DashGt
+					| TSKindId.EqGt
+					| TSKindId.Pound
+					| TSKindId.Qmark
+					| TSKindId.Squote
+					| TSKindId.AsKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.BreakKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.ContinueKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.EnumKeyword
+					| TSKindId.FnKeyword
+					| TSKindId.ForKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.IfKeyword
+					| TSKindId.ImplKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.LoopKeyword
+					| TSKindId.MatchKeyword
+					| TSKindId.ModKeyword
+					| TSKindId.PubKeyword
+					| TSKindId.ReturnKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.StructKeyword
+					| TSKindId.TraitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.UnsafeKeyword
+					| TSKindId.UseKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.WhileKeyword
+				>(this._content, tree);
 			},
 			$with: {
-				tokens: (...v: NonNullable<T.TokenRepetition['_tokens']>[number][]) =>
-					wrapTokenRepetition({ ...$edited(data), _tokens: v }, tree),
-				separator: (v: NonNullable<T.TokenRepetition['_separator']>) =>
-					wrapTokenRepetition({ ...$edited(data), _separator: v }, tree),
-				operator: (v: NonNullable<T.TokenRepetition['_operator']>) =>
-					wrapTokenRepetition({ ...$edited(data), _operator: v }, tree)
+				content: (v: NonNullable<T.NonSpecialToken['_content']>) =>
+					wrapNonSpecialToken({ ...$edited(data), _content: v }, tree)
 			}
 		},
 		_treeEngine(tree)
 	);
 	return _node;
-}
-
-export function wrapNonSpecialToken(
-	data: T.NonSpecialToken & { readonly $other?: T.NonSpecialToken | readonly T.NonSpecialToken[] },
-	tree: TreeHandle
-) {
-	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, [
-		'__literal',
-		'_literal',
-		'_string_literal',
-		'_raw_string_literal',
-		'_char_literal',
-		'_boolean_literal',
-		'_integer_literal',
-		'_float_literal',
-		'_identifier',
-		'_mutable_specifier',
-		'_self',
-		'_super',
-		'_crate',
-		'__primitive_type',
-		'_primitive_type',
-		'__token_tree_punctuation',
-		'_token_tree_punctuation',
-		'__token_keywords',
-		'_token_keywords',
-		'_char_literal_escaped',
-		'_char_literal_plain',
-		'_char_literal_empty',
-		'_integer_literal_decimal',
-		'_integer_literal_hex',
-		'_integer_literal_binary',
-		'_integer_literal_octal'
-	]);
-	const kindKeyed = _firstKindKeyedWrapChild(node, [
-		'_literal',
-		'literal',
-		'string_literal',
-		'raw_string_literal',
-		'char_literal',
-		'boolean_literal',
-		'integer_literal',
-		'float_literal',
-		'identifier',
-		'mutable_specifier',
-		'self',
-		'super',
-		'crate',
-		'_primitive_type',
-		'primitive_type',
-		'_token_tree_punctuation',
-		'token_tree_punctuation',
-		'_token_keywords',
-		'token_keywords',
-		'char_literal_escaped',
-		'char_literal_plain',
-		'char_literal_empty',
-		'integer_literal_decimal',
-		'integer_literal_hex',
-		'integer_literal_binary',
-		'integer_literal_octal'
-	]) as T.NonSpecialToken | readonly T.NonSpecialToken[] | undefined;
-	const filtered =
-		kindKeyed ??
-		_filterWrapChildrenByKind(node.$other, [
-			'_literal',
-			'literal',
-			'string_literal',
-			'raw_string_literal',
-			'char_literal',
-			'boolean_literal',
-			'integer_literal',
-			'float_literal',
-			'identifier',
-			'mutable_specifier',
-			'self',
-			'super',
-			'crate',
-			'_primitive_type',
-			'primitive_type',
-			'_token_tree_punctuation',
-			'token_tree_punctuation',
-			'_token_keywords',
-			'token_keywords',
-			'char_literal_escaped',
-			'char_literal_plain',
-			'char_literal_empty',
-			'integer_literal_decimal',
-			'integer_literal_hex',
-			'integer_literal_binary',
-			'integer_literal_octal'
-		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
-		return drillInSelf<T.NonSpecialToken>(node as T.NonSpecialToken, tree);
-	}
-	return drillIn<T.NonSpecialToken>(
-		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
-			tree,
-			nodeType: node.$type,
-			slotName: 'children',
-			span: (node as _NodeData).$span
-		}),
-		tree
-	);
 }
 
 export function wrapAttributeItem(data: T.AttributeItem, tree: TreeHandle) {
@@ -4985,7 +6304,7 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle) {
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133 },
+				{ true: 118, false: 119, '..': 316, _: 427 },
 				undefined,
 				[331]
 			),
@@ -5624,7 +6943,7 @@ export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandl
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133 },
+				{ true: 118, false: 119, '..': 316, _: 427 },
 				undefined,
 				[331]
 			),
@@ -5669,7 +6988,7 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle) {
 					slotName: 'name',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133, self: 126 },
+				{ true: 118, false: 119, '..': 316, _: 427, self: 126 },
 				undefined,
 				[331]
 			),
@@ -5766,7 +7085,10 @@ export function wrapVisibilityModifier(
 			$type: TSKindId.VisibilityModifier as const,
 			_content: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
-					data._content ?? data._crate ?? data._visibility_modifier_pub,
+					data._content ??
+						data._crate ??
+						data._visibility_modifier_pub ??
+						readTerminalFromOther<TSKindId.Crate | T.VisibilityModifierPub>(data, [TSKindId.Crate]),
 					'content',
 					true,
 					data.$type,
@@ -5807,7 +7129,6 @@ export function wrapType(data: T.Type & { readonly $other?: T.Type | readonly T.
 		'_dynamic_type',
 		'_bounded_type',
 		'_removed_trait_bound',
-		'__primitive_type',
 		'_primitive_type',
 		'_identifier',
 		'_pointer_type_const',
@@ -5830,7 +7151,6 @@ export function wrapType(data: T.Type & { readonly $other?: T.Type | readonly T.
 		'dynamic_type',
 		'bounded_type',
 		'removed_trait_bound',
-		'_primitive_type',
 		'primitive_type',
 		'identifier',
 		'pointer_type_const',
@@ -5855,7 +7175,6 @@ export function wrapType(data: T.Type & { readonly $other?: T.Type | readonly T.
 			'dynamic_type',
 			'bounded_type',
 			'removed_trait_bound',
-			'_primitive_type',
 			'primitive_type',
 			'identifier',
 			'pointer_type_const',
@@ -6770,12 +8089,6 @@ export function wrapExpressionExceptRange(
 		'_yield_expression',
 		'__literal',
 		'_literal',
-		'_string_literal',
-		'_raw_string_literal',
-		'_char_literal',
-		'_boolean_literal',
-		'_integer_literal',
-		'_float_literal',
 		'_identifier',
 		'_u8_keyword',
 		'_i8_keyword',
@@ -6828,13 +8141,17 @@ export function wrapExpressionExceptRange(
 		'_reference_expression_raw_mut',
 		'_reference_expression_mut',
 		'_reference_expression_bare',
+		'_string_literal',
+		'_raw_string_literal',
 		'_char_literal_escaped',
 		'_char_literal_plain',
 		'_char_literal_empty',
+		'_boolean_literal',
 		'_integer_literal_decimal',
 		'_integer_literal_hex',
 		'_integer_literal_binary',
 		'_integer_literal_octal',
+		'_float_literal',
 		'_array_expression_semi',
 		'_array_expression_list',
 		'_closure_expression_block',
@@ -6853,12 +8170,6 @@ export function wrapExpressionExceptRange(
 		'yield_expression',
 		'_literal',
 		'literal',
-		'string_literal',
-		'raw_string_literal',
-		'char_literal',
-		'boolean_literal',
-		'integer_literal',
-		'float_literal',
 		'identifier',
 		'u8_keyword',
 		'i8_keyword',
@@ -6911,13 +8222,17 @@ export function wrapExpressionExceptRange(
 		'reference_expression_raw_mut',
 		'reference_expression_mut',
 		'reference_expression_bare',
+		'string_literal',
+		'raw_string_literal',
 		'char_literal_escaped',
 		'char_literal_plain',
 		'char_literal_empty',
+		'boolean_literal',
 		'integer_literal_decimal',
 		'integer_literal_hex',
 		'integer_literal_binary',
 		'integer_literal_octal',
+		'float_literal',
 		'array_expression_semi',
 		'array_expression_list',
 		'closure_expression_block',
@@ -6938,12 +8253,6 @@ export function wrapExpressionExceptRange(
 			'yield_expression',
 			'_literal',
 			'literal',
-			'string_literal',
-			'raw_string_literal',
-			'char_literal',
-			'boolean_literal',
-			'integer_literal',
-			'float_literal',
 			'identifier',
 			'u8_keyword',
 			'i8_keyword',
@@ -6996,13 +8305,17 @@ export function wrapExpressionExceptRange(
 			'reference_expression_raw_mut',
 			'reference_expression_mut',
 			'reference_expression_bare',
+			'string_literal',
+			'raw_string_literal',
 			'char_literal_escaped',
 			'char_literal_plain',
 			'char_literal_empty',
+			'boolean_literal',
 			'integer_literal_decimal',
 			'integer_literal_hex',
 			'integer_literal_binary',
 			'integer_literal_octal',
+			'float_literal',
 			'array_expression_semi',
 			'array_expression_list',
 			'closure_expression_block',
@@ -7043,12 +8356,6 @@ export function wrapExpression(
 		'_yield_expression',
 		'__literal',
 		'_literal',
-		'_string_literal',
-		'_raw_string_literal',
-		'_char_literal',
-		'_boolean_literal',
-		'_integer_literal',
-		'_float_literal',
 		'_identifier',
 		'_u8_keyword',
 		'_i8_keyword',
@@ -7102,13 +8409,17 @@ export function wrapExpression(
 		'_reference_expression_raw_mut',
 		'_reference_expression_mut',
 		'_reference_expression_bare',
+		'_string_literal',
+		'_raw_string_literal',
 		'_char_literal_escaped',
 		'_char_literal_plain',
 		'_char_literal_empty',
+		'_boolean_literal',
 		'_integer_literal_decimal',
 		'_integer_literal_hex',
 		'_integer_literal_binary',
 		'_integer_literal_octal',
+		'_float_literal',
 		'_array_expression_semi',
 		'_array_expression_list',
 		'_closure_expression_block',
@@ -7127,12 +8438,6 @@ export function wrapExpression(
 		'yield_expression',
 		'_literal',
 		'literal',
-		'string_literal',
-		'raw_string_literal',
-		'char_literal',
-		'boolean_literal',
-		'integer_literal',
-		'float_literal',
 		'identifier',
 		'u8_keyword',
 		'i8_keyword',
@@ -7186,13 +8491,17 @@ export function wrapExpression(
 		'reference_expression_raw_mut',
 		'reference_expression_mut',
 		'reference_expression_bare',
+		'string_literal',
+		'raw_string_literal',
 		'char_literal_escaped',
 		'char_literal_plain',
 		'char_literal_empty',
+		'boolean_literal',
 		'integer_literal_decimal',
 		'integer_literal_hex',
 		'integer_literal_binary',
 		'integer_literal_octal',
+		'float_literal',
 		'array_expression_semi',
 		'array_expression_list',
 		'closure_expression_block',
@@ -7213,12 +8522,6 @@ export function wrapExpression(
 			'yield_expression',
 			'_literal',
 			'literal',
-			'string_literal',
-			'raw_string_literal',
-			'char_literal',
-			'boolean_literal',
-			'integer_literal',
-			'float_literal',
 			'identifier',
 			'u8_keyword',
 			'i8_keyword',
@@ -7272,13 +8575,17 @@ export function wrapExpression(
 			'reference_expression_raw_mut',
 			'reference_expression_mut',
 			'reference_expression_bare',
+			'string_literal',
+			'raw_string_literal',
 			'char_literal_escaped',
 			'char_literal_plain',
 			'char_literal_empty',
+			'boolean_literal',
 			'integer_literal_decimal',
 			'integer_literal_hex',
 			'integer_literal_binary',
 			'integer_literal_octal',
+			'float_literal',
 			'array_expression_semi',
 			'array_expression_list',
 			'closure_expression_block',
@@ -7390,71 +8697,17 @@ export function wrapDelimTokens(
 ) {
 	if (typeof data === 'number') return data;
 	const node = _keepModelledSlots(data, [
-		'__non_special_token',
 		'_non_special_token',
-		'__literal',
-		'_literal',
-		'_string_literal',
-		'_raw_string_literal',
-		'_char_literal',
-		'_boolean_literal',
-		'_integer_literal',
-		'_float_literal',
-		'_identifier',
-		'_mutable_specifier',
-		'_self',
-		'_super',
-		'_crate',
-		'__primitive_type',
-		'_primitive_type',
-		'__token_tree_punctuation',
-		'_token_tree_punctuation',
-		'__token_keywords',
-		'_token_keywords',
 		'_dollar',
 		'_delim_token_tree',
-		'_char_literal_escaped',
-		'_char_literal_plain',
-		'_char_literal_empty',
-		'_integer_literal_decimal',
-		'_integer_literal_hex',
-		'_integer_literal_binary',
-		'_integer_literal_octal',
 		'_delim_token_tree_paren',
 		'_delim_token_tree_bracket',
 		'_delim_token_tree_brace'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
-		'_non_special_token',
 		'non_special_token',
-		'_literal',
-		'literal',
-		'string_literal',
-		'raw_string_literal',
-		'char_literal',
-		'boolean_literal',
-		'integer_literal',
-		'float_literal',
-		'identifier',
-		'mutable_specifier',
-		'self',
-		'super',
-		'crate',
-		'_primitive_type',
-		'primitive_type',
-		'_token_tree_punctuation',
-		'token_tree_punctuation',
-		'_token_keywords',
-		'token_keywords',
 		'dollar',
 		'delim_token_tree',
-		'char_literal_escaped',
-		'char_literal_plain',
-		'char_literal_empty',
-		'integer_literal_decimal',
-		'integer_literal_hex',
-		'integer_literal_binary',
-		'integer_literal_octal',
 		'delim_token_tree_paren',
 		'delim_token_tree_bracket',
 		'delim_token_tree_brace'
@@ -7462,36 +8715,9 @@ export function wrapDelimTokens(
 	const filtered =
 		kindKeyed ??
 		_filterWrapChildrenByKind(node.$other, [
-			'_non_special_token',
 			'non_special_token',
-			'_literal',
-			'literal',
-			'string_literal',
-			'raw_string_literal',
-			'char_literal',
-			'boolean_literal',
-			'integer_literal',
-			'float_literal',
-			'identifier',
-			'mutable_specifier',
-			'self',
-			'super',
-			'crate',
-			'_primitive_type',
-			'primitive_type',
-			'_token_tree_punctuation',
-			'token_tree_punctuation',
-			'_token_keywords',
-			'token_keywords',
 			'dollar',
 			'delim_token_tree',
-			'char_literal_escaped',
-			'char_literal_plain',
-			'char_literal_empty',
-			'integer_literal_decimal',
-			'integer_literal_hex',
-			'integer_literal_binary',
-			'integer_literal_octal',
 			'delim_token_tree_paren',
 			'delim_token_tree_bracket',
 			'delim_token_tree_brace'
@@ -7518,101 +8744,12 @@ export function wrapNonDelimToken(
 	tree: TreeHandle
 ) {
 	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, [
-		'__non_special_token',
-		'_non_special_token',
-		'__literal',
-		'_literal',
-		'_string_literal',
-		'_raw_string_literal',
-		'_char_literal',
-		'_boolean_literal',
-		'_integer_literal',
-		'_float_literal',
-		'_identifier',
-		'_mutable_specifier',
-		'_self',
-		'_super',
-		'_crate',
-		'__primitive_type',
-		'_primitive_type',
-		'__token_tree_punctuation',
-		'_token_tree_punctuation',
-		'__token_keywords',
-		'_token_keywords',
-		'_dollar',
-		'_char_literal_escaped',
-		'_char_literal_plain',
-		'_char_literal_empty',
-		'_integer_literal_decimal',
-		'_integer_literal_hex',
-		'_integer_literal_binary',
-		'_integer_literal_octal'
-	]);
-	const kindKeyed = _firstKindKeyedWrapChild(node, [
-		'_non_special_token',
-		'non_special_token',
-		'_literal',
-		'literal',
-		'string_literal',
-		'raw_string_literal',
-		'char_literal',
-		'boolean_literal',
-		'integer_literal',
-		'float_literal',
-		'identifier',
-		'mutable_specifier',
-		'self',
-		'super',
-		'crate',
-		'_primitive_type',
-		'primitive_type',
-		'_token_tree_punctuation',
-		'token_tree_punctuation',
-		'_token_keywords',
-		'token_keywords',
-		'dollar',
-		'char_literal_escaped',
-		'char_literal_plain',
-		'char_literal_empty',
-		'integer_literal_decimal',
-		'integer_literal_hex',
-		'integer_literal_binary',
-		'integer_literal_octal'
-	]) as T.NonDelimToken | readonly T.NonDelimToken[] | undefined;
-	const filtered =
-		kindKeyed ??
-		_filterWrapChildrenByKind(node.$other, [
-			'_non_special_token',
-			'non_special_token',
-			'_literal',
-			'literal',
-			'string_literal',
-			'raw_string_literal',
-			'char_literal',
-			'boolean_literal',
-			'integer_literal',
-			'float_literal',
-			'identifier',
-			'mutable_specifier',
-			'self',
-			'super',
-			'crate',
-			'_primitive_type',
-			'primitive_type',
-			'_token_tree_punctuation',
-			'token_tree_punctuation',
-			'_token_keywords',
-			'token_keywords',
-			'dollar',
-			'char_literal_escaped',
-			'char_literal_plain',
-			'char_literal_empty',
-			'integer_literal_decimal',
-			'integer_literal_hex',
-			'integer_literal_binary',
-			'integer_literal_octal'
-		]);
+	const node = _keepModelledSlots(data, ['_non_special_token', '_dollar']);
+	const kindKeyed = _firstKindKeyedWrapChild(node, ['non_special_token', 'dollar']) as
+		| T.NonDelimToken
+		| readonly T.NonDelimToken[]
+		| undefined;
+	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['non_special_token', 'dollar']);
 	if (
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
@@ -7976,7 +9113,13 @@ export function wrapRangeExpression(
 						data._range_expression_binary ??
 						data._range_expression_postfix ??
 						data._range_expression_prefix ??
-						data._range_expression_bare,
+						data._range_expression_bare ??
+						readTerminalFromOther<
+							| T.RangeExpressionBinary
+							| T.RangeExpressionPostfix
+							| T.RangeExpressionPrefix
+							| TSKindId.RangeExpressionBare
+						>(data, [TSKindId.RangeExpressionBare]),
 					'content',
 					true,
 					data.$type,
@@ -8010,13 +9153,12 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
 			...data,
 			$type: TSKindId.UnaryExpression as const,
 			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.Dash, TSKindId.Star, TSKindId.Bang]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'operator',
+					span: (data as _NodeData).$span
+				}),
 				{ '-': 76, '*': 10, '!': 30 }
 			),
 			_operand: projectMixedEnumStorage(
@@ -8141,33 +9283,12 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 				[331]
 			),
 			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ??
-						readTerminalFromOther(data, [
-							TSKindId.AmpAmp,
-							TSKindId.PipePipe,
-							TSKindId.Amp,
-							TSKindId.Pipe,
-							TSKindId.Caret,
-							TSKindId.EqEq,
-							TSKindId.BangEq,
-							TSKindId.Lt,
-							TSKindId.LtEq,
-							TSKindId.Gt,
-							TSKindId.GtEq,
-							TSKindId.LtLt,
-							TSKindId.GtGt,
-							TSKindId.Plus,
-							TSKindId.Dash,
-							TSKindId.Star,
-							TSKindId.Slash,
-							TSKindId.Percent
-						]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'operator',
+					span: (data as _NodeData).$span
+				}),
 				{
 					'&&': 77,
 					'||': 78,
@@ -8291,25 +9412,12 @@ export function wrapCompoundAssignmentExpr(data: T.CompoundAssignmentExpr, tree:
 				[331]
 			),
 			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ??
-						readTerminalFromOther(data, [
-							TSKindId.PlusEq,
-							TSKindId.DashEq,
-							TSKindId.StarEq,
-							TSKindId.SlashEq,
-							TSKindId.PercentEq,
-							TSKindId.AmpEq,
-							TSKindId.PipeEq,
-							TSKindId.CaretEq,
-							TSKindId.LtLtEq,
-							TSKindId.GtGtEq
-						]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'operator',
+					span: (data as _NodeData).$span
+				}),
 				{ '+=': 89, '-=': 90, '*=': 91, '/=': 92, '%=': 93, '&=': 94, '|=': 95, '^=': 96, '<<=': 97, '>>=': 98 }
 			),
 			_right: projectMixedEnumStorage(
@@ -8982,7 +10090,7 @@ export function wrapLetCondition(data: T.LetCondition, tree: TreeHandle) {
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133 },
+				{ true: 118, false: 119, '..': 316, _: 427 },
 				undefined,
 				[331]
 			),
@@ -9072,8 +10180,15 @@ export function wrapCondition(
 	const node = _keepModelledSlots(data, [
 		'__expression',
 		'_expression',
+		'_let_condition',
+		'__let_chain',
+		'_let_chain',
+		'_u8_keyword',
 		'_unary_expression',
-		'_reference_expression',
+		'_reference_expression_raw_const',
+		'_reference_expression_raw_mut',
+		'_reference_expression_mut',
+		'_reference_expression_bare',
 		'_try_expression',
 		'_binary_expression',
 		'_assignment_expression',
@@ -9082,16 +10197,17 @@ export function wrapCondition(
 		'_call_expression',
 		'_return_expression',
 		'_yield_expression',
-		'__literal',
-		'_literal',
 		'_string_literal',
 		'_raw_string_literal',
-		'_char_literal',
+		'_char_literal_escaped',
+		'_char_literal_plain',
+		'_char_literal_empty',
 		'_boolean_literal',
-		'_integer_literal',
+		'_integer_literal_decimal',
+		'_integer_literal_hex',
+		'_integer_literal_binary',
+		'_integer_literal_octal',
 		'_float_literal',
-		'_identifier',
-		'_u8_keyword',
 		'_i8_keyword',
 		'_u16_keyword',
 		'_i16_keyword',
@@ -9116,7 +10232,8 @@ export function wrapCondition(
 		'_generic_function',
 		'_await_expression',
 		'_field_expression',
-		'_array_expression',
+		'_array_expression_semi',
+		'_array_expression_list',
 		'_tuple_expression',
 		'_macro_invocation',
 		'_unit_expression',
@@ -9124,7 +10241,8 @@ export function wrapCondition(
 		'_continue_expression',
 		'_index_expression',
 		'_metavariable',
-		'_closure_expression',
+		'_closure_expression_block',
+		'_closure_expression_expr',
 		'_parenthesized_expression',
 		'_struct_expression',
 		'_unsafe_block',
@@ -9138,31 +10256,20 @@ export function wrapCondition(
 		'_loop_expression',
 		'_for_expression',
 		'_const_block',
-		'_range_expression',
-		'_let_condition',
-		'__let_chain',
-		'_let_chain',
-		'_reference_expression_raw_const',
-		'_reference_expression_raw_mut',
-		'_reference_expression_mut',
-		'_reference_expression_bare',
-		'_char_literal_escaped',
-		'_char_literal_plain',
-		'_char_literal_empty',
-		'_integer_literal_decimal',
-		'_integer_literal_hex',
-		'_integer_literal_binary',
-		'_integer_literal_octal',
-		'_array_expression_semi',
-		'_array_expression_list',
-		'_closure_expression_block',
-		'_closure_expression_expr'
+		'_range_expression'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'_expression',
 		'expression',
+		'let_condition',
+		'_let_chain',
+		'let_chain',
+		'u8_keyword',
 		'unary_expression',
-		'reference_expression',
+		'reference_expression_raw_const',
+		'reference_expression_raw_mut',
+		'reference_expression_mut',
+		'reference_expression_bare',
 		'try_expression',
 		'binary_expression',
 		'assignment_expression',
@@ -9171,16 +10278,17 @@ export function wrapCondition(
 		'call_expression',
 		'return_expression',
 		'yield_expression',
-		'_literal',
-		'literal',
 		'string_literal',
 		'raw_string_literal',
-		'char_literal',
+		'char_literal_escaped',
+		'char_literal_plain',
+		'char_literal_empty',
 		'boolean_literal',
-		'integer_literal',
+		'integer_literal_decimal',
+		'integer_literal_hex',
+		'integer_literal_binary',
+		'integer_literal_octal',
 		'float_literal',
-		'identifier',
-		'u8_keyword',
 		'i8_keyword',
 		'u16_keyword',
 		'i16_keyword',
@@ -9205,7 +10313,8 @@ export function wrapCondition(
 		'generic_function',
 		'await_expression',
 		'field_expression',
-		'array_expression',
+		'array_expression_semi',
+		'array_expression_list',
 		'tuple_expression',
 		'macro_invocation',
 		'unit_expression',
@@ -9213,7 +10322,8 @@ export function wrapCondition(
 		'continue_expression',
 		'index_expression',
 		'metavariable',
-		'closure_expression',
+		'closure_expression_block',
+		'closure_expression_expr',
 		'parenthesized_expression',
 		'struct_expression',
 		'unsafe_block',
@@ -9227,33 +10337,22 @@ export function wrapCondition(
 		'loop_expression',
 		'for_expression',
 		'const_block',
-		'range_expression',
-		'let_condition',
-		'_let_chain',
-		'let_chain',
-		'reference_expression_raw_const',
-		'reference_expression_raw_mut',
-		'reference_expression_mut',
-		'reference_expression_bare',
-		'char_literal_escaped',
-		'char_literal_plain',
-		'char_literal_empty',
-		'integer_literal_decimal',
-		'integer_literal_hex',
-		'integer_literal_binary',
-		'integer_literal_octal',
-		'array_expression_semi',
-		'array_expression_list',
-		'closure_expression_block',
-		'closure_expression_expr'
+		'range_expression'
 	]) as T.Condition | readonly T.Condition[] | undefined;
 	const filtered =
 		kindKeyed ??
 		_filterWrapChildrenByKind(node.$other, [
 			'_expression',
 			'expression',
+			'let_condition',
+			'_let_chain',
+			'let_chain',
+			'u8_keyword',
 			'unary_expression',
-			'reference_expression',
+			'reference_expression_raw_const',
+			'reference_expression_raw_mut',
+			'reference_expression_mut',
+			'reference_expression_bare',
 			'try_expression',
 			'binary_expression',
 			'assignment_expression',
@@ -9262,16 +10361,17 @@ export function wrapCondition(
 			'call_expression',
 			'return_expression',
 			'yield_expression',
-			'_literal',
-			'literal',
 			'string_literal',
 			'raw_string_literal',
-			'char_literal',
+			'char_literal_escaped',
+			'char_literal_plain',
+			'char_literal_empty',
 			'boolean_literal',
-			'integer_literal',
+			'integer_literal_decimal',
+			'integer_literal_hex',
+			'integer_literal_binary',
+			'integer_literal_octal',
 			'float_literal',
-			'identifier',
-			'u8_keyword',
 			'i8_keyword',
 			'u16_keyword',
 			'i16_keyword',
@@ -9296,7 +10396,8 @@ export function wrapCondition(
 			'generic_function',
 			'await_expression',
 			'field_expression',
-			'array_expression',
+			'array_expression_semi',
+			'array_expression_list',
 			'tuple_expression',
 			'macro_invocation',
 			'unit_expression',
@@ -9304,7 +10405,8 @@ export function wrapCondition(
 			'continue_expression',
 			'index_expression',
 			'metavariable',
-			'closure_expression',
+			'closure_expression_block',
+			'closure_expression_expr',
 			'parenthesized_expression',
 			'struct_expression',
 			'unsafe_block',
@@ -9318,25 +10420,7 @@ export function wrapCondition(
 			'loop_expression',
 			'for_expression',
 			'const_block',
-			'range_expression',
-			'let_condition',
-			'_let_chain',
-			'let_chain',
-			'reference_expression_raw_const',
-			'reference_expression_raw_mut',
-			'reference_expression_mut',
-			'reference_expression_bare',
-			'char_literal_escaped',
-			'char_literal_plain',
-			'char_literal_empty',
-			'integer_literal_decimal',
-			'integer_literal_hex',
-			'integer_literal_binary',
-			'integer_literal_octal',
-			'array_expression_semi',
-			'array_expression_list',
-			'closure_expression_block',
-			'closure_expression_expr'
+			'range_expression'
 		]);
 	if (
 		filtered === undefined &&
@@ -9557,7 +10641,7 @@ export function wrapMatchPattern(data: T.MatchPattern, tree: TreeHandle) {
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133 },
+				{ true: 118, false: 119, '..': 316, _: 427 },
 				undefined,
 				[331]
 			),
@@ -9698,7 +10782,7 @@ export function wrapForExpression(data: T.ForExpression, tree: TreeHandle) {
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133 },
+				{ true: 118, false: 119, '..': 316, _: 427 },
 				undefined,
 				[331]
 			),
@@ -9812,7 +10896,7 @@ export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandl
 					slotName: 'parameters',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133 },
+				{ true: 118, false: 119, '..': 316, _: 427 },
 				undefined,
 				[331]
 			),
@@ -10180,7 +11264,8 @@ export function wrapBreakExpression(
 						data._loop_expression ??
 						data._for_expression ??
 						data._const_block ??
-						data._range_expression,
+						data._range_expression ??
+						readTerminalFromOther<T.Expression>(data, [TSKindId.TrueKeyword, TSKindId.FalseKeyword, TSKindId.Self]),
 					'expression',
 					false,
 					data.$type,
@@ -10549,13 +11634,6 @@ export function wrapPattern(
 	const node = _keepModelledSlots(data, [
 		'__literal_pattern',
 		'_literal_pattern',
-		'_string_literal',
-		'_raw_string_literal',
-		'_char_literal',
-		'_boolean_literal',
-		'_integer_literal',
-		'_float_literal',
-		'_negative_literal',
 		'_u8_keyword',
 		'_i8_keyword',
 		'_u16_keyword',
@@ -10592,15 +11670,19 @@ export function wrapPattern(
 		'_or_pattern',
 		'_const_block',
 		'_macro_invocation',
-		'__wildcard_pattern',
 		'_wildcard_pattern',
+		'_string_literal',
+		'_raw_string_literal',
 		'_char_literal_escaped',
 		'_char_literal_plain',
 		'_char_literal_empty',
+		'_boolean_literal',
 		'_integer_literal_decimal',
 		'_integer_literal_hex',
 		'_integer_literal_binary',
 		'_integer_literal_octal',
+		'_float_literal',
+		'_negative_literal',
 		'_range_pattern_with_left',
 		'_range_pattern_prefix',
 		'_or_pattern_binary',
@@ -10609,13 +11691,6 @@ export function wrapPattern(
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'_literal_pattern',
 		'literal_pattern',
-		'string_literal',
-		'raw_string_literal',
-		'char_literal',
-		'boolean_literal',
-		'integer_literal',
-		'float_literal',
-		'negative_literal',
 		'u8_keyword',
 		'i8_keyword',
 		'u16_keyword',
@@ -10652,15 +11727,19 @@ export function wrapPattern(
 		'or_pattern',
 		'const_block',
 		'macro_invocation',
-		'_wildcard_pattern',
 		'wildcard_pattern',
+		'string_literal',
+		'raw_string_literal',
 		'char_literal_escaped',
 		'char_literal_plain',
 		'char_literal_empty',
+		'boolean_literal',
 		'integer_literal_decimal',
 		'integer_literal_hex',
 		'integer_literal_binary',
 		'integer_literal_octal',
+		'float_literal',
+		'negative_literal',
 		'range_pattern_with_left',
 		'range_pattern_prefix',
 		'or_pattern_binary',
@@ -10671,13 +11750,6 @@ export function wrapPattern(
 		_filterWrapChildrenByKind(node.$other, [
 			'_literal_pattern',
 			'literal_pattern',
-			'string_literal',
-			'raw_string_literal',
-			'char_literal',
-			'boolean_literal',
-			'integer_literal',
-			'float_literal',
-			'negative_literal',
 			'u8_keyword',
 			'i8_keyword',
 			'u16_keyword',
@@ -10714,15 +11786,19 @@ export function wrapPattern(
 			'or_pattern',
 			'const_block',
 			'macro_invocation',
-			'_wildcard_pattern',
 			'wildcard_pattern',
+			'string_literal',
+			'raw_string_literal',
 			'char_literal_escaped',
 			'char_literal_plain',
 			'char_literal_empty',
+			'boolean_literal',
 			'integer_literal_decimal',
 			'integer_literal_hex',
 			'integer_literal_binary',
 			'integer_literal_octal',
+			'float_literal',
+			'negative_literal',
 			'range_pattern_with_left',
 			'range_pattern_prefix',
 			'or_pattern_binary',
@@ -10948,7 +12024,7 @@ export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle) {
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133 },
+				{ true: 118, false: 119, '..': 316, _: 427 },
 				undefined,
 				[331]
 			),
@@ -11007,7 +12083,7 @@ export function wrapRefPattern(data: T.RefPattern, tree: TreeHandle) {
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133 },
+				{ true: 118, false: 119, '..': 316, _: 427 },
 				undefined,
 				[331]
 			),
@@ -11043,7 +12119,7 @@ export function wrapCapturedPattern(data: T.CapturedPattern, tree: TreeHandle) {
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133 },
+				{ true: 118, false: 119, '..': 316, _: 427 },
 				undefined,
 				[331]
 			),
@@ -11088,7 +12164,7 @@ export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle)
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133 },
+				{ true: 118, false: 119, '..': 316, _: 427 },
 				undefined,
 				[331]
 			),
@@ -14350,7 +15426,59 @@ export function wrapVisibilityModifierPubScopeInPath(
 						data._scoped_identifier ??
 						data._default_keyword ??
 						data._union_keyword ??
-						data._gen_keyword,
+						data._gen_keyword ??
+						readTerminalFromOther<
+							| TSKindId.Self
+							| TSKindId.U8Keyword
+							| TSKindId.I8Keyword
+							| TSKindId.U16Keyword
+							| TSKindId.I16Keyword
+							| TSKindId.U32Keyword
+							| TSKindId.I32Keyword
+							| TSKindId.U64Keyword
+							| TSKindId.I64Keyword
+							| TSKindId.U128Keyword
+							| TSKindId.I128Keyword
+							| TSKindId.IsizeKeyword
+							| TSKindId.UsizeKeyword
+							| TSKindId.F32Keyword
+							| TSKindId.F64Keyword
+							| TSKindId.BoolKeyword
+							| TSKindId.StrKeyword
+							| TSKindId.CharKeyword
+							| T.Metavariable
+							| TSKindId.Super
+							| TSKindId.Crate
+							| T.Identifier
+							| T.ScopedIdentifier
+							| TSKindId.DefaultKeyword
+							| TSKindId.UnionKeyword
+							| TSKindId.GenKeyword
+						>(data, [
+							TSKindId.Self,
+							TSKindId.U8Keyword,
+							TSKindId.I8Keyword,
+							TSKindId.U16Keyword,
+							TSKindId.I16Keyword,
+							TSKindId.U32Keyword,
+							TSKindId.I32Keyword,
+							TSKindId.U64Keyword,
+							TSKindId.I64Keyword,
+							TSKindId.U128Keyword,
+							TSKindId.I128Keyword,
+							TSKindId.IsizeKeyword,
+							TSKindId.UsizeKeyword,
+							TSKindId.F32Keyword,
+							TSKindId.F64Keyword,
+							TSKindId.BoolKeyword,
+							TSKindId.StrKeyword,
+							TSKindId.CharKeyword,
+							TSKindId.Super,
+							TSKindId.Crate,
+							TSKindId.DefaultKeyword,
+							TSKindId.UnionKeyword,
+							TSKindId.GenKeyword
+						]),
 					'path',
 					true,
 					data.$type,
@@ -14445,7 +15573,15 @@ export function wrapVisibilityModifierPubScope(
 			$type: TSKindId.VisibilityModifierPubScope as const,
 			_content: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
-					data._content ?? data._self ?? data._super ?? data._crate ?? data._visibility_modifier_pub_scope_in_path,
+					data._content ??
+						data._self ??
+						data._super ??
+						data._crate ??
+						data._visibility_modifier_pub_scope_in_path ??
+						readTerminalFromOther<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
+							data,
+							[TSKindId.Self, TSKindId.Super, TSKindId.Crate]
+						),
 					'content',
 					true,
 					data.$type,
@@ -14647,7 +15783,7 @@ export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle) {
 					slotName: 'left',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133 },
+				{ true: 118, false: 119, '..': 316, _: 427 },
 				undefined,
 				[331]
 			),
@@ -14658,7 +15794,7 @@ export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle) {
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133 },
+				{ true: 118, false: 119, '..': 316, _: 427 },
 				undefined,
 				[331]
 			),
@@ -14693,7 +15829,7 @@ export function wrapOrPatternPrefix(data: T.OrPatternPrefix, tree: TreeHandle) {
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133 },
+				{ true: 118, false: 119, '..': 316, _: 427 },
 				undefined,
 				[331]
 			),
@@ -14830,13 +15966,12 @@ export function wrapRangeExpressionBinary(data: T.RangeExpressionBinary, tree: T
 				[331]
 			),
 			_operator: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.DotDot, TSKindId.DotDotDot, TSKindId.DotDotEq]),
-					'operator',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
-				),
+				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'operator',
+					span: (data as _NodeData).$span
+				}),
 				{ '..': 101, '...': 50, '..=': 134 }
 			),
 			_end: projectMixedEnumStorage(
@@ -15187,7 +16322,7 @@ export function wrapLineCommentDocOuter(data: T.LineCommentDocOuter, tree: TreeH
 			}),
 
 			doc() {
-				return drillIn<T.LineDocContent>(this._doc, tree);
+				return drillIn<T.DocComment>(this._doc, tree);
 			},
 			$with: {
 				doc: (v: NonNullable<T.LineCommentDocOuter['_doc']>) =>
@@ -15213,7 +16348,7 @@ export function wrapLineCommentDocInner(data: T.LineCommentDocInner, tree: TreeH
 			}),
 
 			doc() {
-				return drillIn<T.LineDocContent>(this._doc, tree);
+				return drillIn<T.DocComment>(this._doc, tree);
 			},
 			$with: {
 				doc: (v: NonNullable<T.LineCommentDocInner['_doc']>) =>
@@ -15283,114 +16418,12 @@ export function wrapTokenTreePatternParen(data: T.TokenTreePatternParen, tree: T
 		{
 			...data,
 			$type: TSKindId.TokenTreePatternParen as const,
-			_token_patterns: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._token_patterns, false, 'token_patterns', {
-					tree,
-					nodeType: data.$type,
-					slotName: 'token_patterns',
-					span: (data as _NodeData).$span
-				}),
-				{
-					true: 118,
-					false: 119,
-					mut: 58,
-					self: 126,
-					super: 127,
-					crate: 128,
-					u8: 59,
-					i8: 60,
-					u16: 61,
-					i16: 62,
-					u32: 63,
-					i32: 64,
-					u64: 65,
-					i64: 66,
-					u128: 67,
-					i128: 68,
-					isize: 69,
-					usize: 70,
-					f32: 71,
-					f64: 72,
-					bool: 73,
-					str: 74,
-					char: 75,
-					'+': 9,
-					'-': 76,
-					'*': 10,
-					'/': 87,
-					'%': 88,
-					'^': 80,
-					'!': 30,
-					'&': 55,
-					'|': 79,
-					'&&': 77,
-					'||': 78,
-					'<<': 85,
-					'>>': 86,
-					'+=': 89,
-					'-=': 90,
-					'*=': 91,
-					'/=': 92,
-					'%=': 93,
-					'^=': 96,
-					'&=': 94,
-					'|=': 95,
-					'<<=': 97,
-					'>>=': 98,
-					'=': 39,
-					'==': 81,
-					'!=': 82,
-					'>': 45,
-					'<': 44,
-					'>=': 84,
-					'<=': 83,
-					'@': 116,
-					_: 133,
-					'.': 110,
-					'..': 101,
-					'...': 50,
-					'..=': 134,
-					',': 131,
-					';': 2,
-					':': 4,
-					'::': 48,
-					'->': 132,
-					'=>': 3,
-					'#': 27,
-					'?': 11,
-					"'": 51,
-					as: 49,
-					async: 113,
-					await: 111,
-					break: 108,
-					const: 36,
-					continue: 109,
-					default: 52,
-					enum: 34,
-					fn: 40,
-					for: 43,
-					gen: 53,
-					if: 102,
-					impl: 56,
-					let: 46,
-					loop: 106,
-					match: 104,
-					mod: 135,
-					pub: 136,
-					return: 99,
-					static: 37,
-					struct: 137,
-					trait: 42,
-					type: 38,
-					union: 33,
-					unsafe: 112,
-					use: 47,
-					where: 41,
-					while: 105
-				},
-				undefined,
-				[331, 336, 365, 366]
-			),
+			_token_patterns: normalizeRepeatedWrapSlot(data._token_patterns, false, 'token_patterns', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'token_patterns',
+				span: (data as _NodeData).$span
+			}),
 
 			tokenPatterns() {
 				return drillInAll<
@@ -15424,114 +16457,12 @@ export function wrapTokenTreePatternBracket(data: T.TokenTreePatternBracket, tre
 		{
 			...data,
 			$type: TSKindId.TokenTreePatternBracket as const,
-			_token_patterns: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._token_patterns, false, 'token_patterns', {
-					tree,
-					nodeType: data.$type,
-					slotName: 'token_patterns',
-					span: (data as _NodeData).$span
-				}),
-				{
-					true: 118,
-					false: 119,
-					mut: 58,
-					self: 126,
-					super: 127,
-					crate: 128,
-					u8: 59,
-					i8: 60,
-					u16: 61,
-					i16: 62,
-					u32: 63,
-					i32: 64,
-					u64: 65,
-					i64: 66,
-					u128: 67,
-					i128: 68,
-					isize: 69,
-					usize: 70,
-					f32: 71,
-					f64: 72,
-					bool: 73,
-					str: 74,
-					char: 75,
-					'+': 9,
-					'-': 76,
-					'*': 10,
-					'/': 87,
-					'%': 88,
-					'^': 80,
-					'!': 30,
-					'&': 55,
-					'|': 79,
-					'&&': 77,
-					'||': 78,
-					'<<': 85,
-					'>>': 86,
-					'+=': 89,
-					'-=': 90,
-					'*=': 91,
-					'/=': 92,
-					'%=': 93,
-					'^=': 96,
-					'&=': 94,
-					'|=': 95,
-					'<<=': 97,
-					'>>=': 98,
-					'=': 39,
-					'==': 81,
-					'!=': 82,
-					'>': 45,
-					'<': 44,
-					'>=': 84,
-					'<=': 83,
-					'@': 116,
-					_: 133,
-					'.': 110,
-					'..': 101,
-					'...': 50,
-					'..=': 134,
-					',': 131,
-					';': 2,
-					':': 4,
-					'::': 48,
-					'->': 132,
-					'=>': 3,
-					'#': 27,
-					'?': 11,
-					"'": 51,
-					as: 49,
-					async: 113,
-					await: 111,
-					break: 108,
-					const: 36,
-					continue: 109,
-					default: 52,
-					enum: 34,
-					fn: 40,
-					for: 43,
-					gen: 53,
-					if: 102,
-					impl: 56,
-					let: 46,
-					loop: 106,
-					match: 104,
-					mod: 135,
-					pub: 136,
-					return: 99,
-					static: 37,
-					struct: 137,
-					trait: 42,
-					type: 38,
-					union: 33,
-					unsafe: 112,
-					use: 47,
-					where: 41,
-					while: 105
-				},
-				undefined,
-				[331, 336, 365, 366]
-			),
+			_token_patterns: normalizeRepeatedWrapSlot(data._token_patterns, false, 'token_patterns', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'token_patterns',
+				span: (data as _NodeData).$span
+			}),
 
 			tokenPatterns() {
 				return drillInAll<
@@ -15565,114 +16496,12 @@ export function wrapTokenTreePatternBrace(data: T.TokenTreePatternBrace, tree: T
 		{
 			...data,
 			$type: TSKindId.TokenTreePatternBrace as const,
-			_token_patterns: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._token_patterns, false, 'token_patterns', {
-					tree,
-					nodeType: data.$type,
-					slotName: 'token_patterns',
-					span: (data as _NodeData).$span
-				}),
-				{
-					true: 118,
-					false: 119,
-					mut: 58,
-					self: 126,
-					super: 127,
-					crate: 128,
-					u8: 59,
-					i8: 60,
-					u16: 61,
-					i16: 62,
-					u32: 63,
-					i32: 64,
-					u64: 65,
-					i64: 66,
-					u128: 67,
-					i128: 68,
-					isize: 69,
-					usize: 70,
-					f32: 71,
-					f64: 72,
-					bool: 73,
-					str: 74,
-					char: 75,
-					'+': 9,
-					'-': 76,
-					'*': 10,
-					'/': 87,
-					'%': 88,
-					'^': 80,
-					'!': 30,
-					'&': 55,
-					'|': 79,
-					'&&': 77,
-					'||': 78,
-					'<<': 85,
-					'>>': 86,
-					'+=': 89,
-					'-=': 90,
-					'*=': 91,
-					'/=': 92,
-					'%=': 93,
-					'^=': 96,
-					'&=': 94,
-					'|=': 95,
-					'<<=': 97,
-					'>>=': 98,
-					'=': 39,
-					'==': 81,
-					'!=': 82,
-					'>': 45,
-					'<': 44,
-					'>=': 84,
-					'<=': 83,
-					'@': 116,
-					_: 133,
-					'.': 110,
-					'..': 101,
-					'...': 50,
-					'..=': 134,
-					',': 131,
-					';': 2,
-					':': 4,
-					'::': 48,
-					'->': 132,
-					'=>': 3,
-					'#': 27,
-					'?': 11,
-					"'": 51,
-					as: 49,
-					async: 113,
-					await: 111,
-					break: 108,
-					const: 36,
-					continue: 109,
-					default: 52,
-					enum: 34,
-					fn: 40,
-					for: 43,
-					gen: 53,
-					if: 102,
-					impl: 56,
-					let: 46,
-					loop: 106,
-					match: 104,
-					mod: 135,
-					pub: 136,
-					return: 99,
-					static: 37,
-					struct: 137,
-					trait: 42,
-					type: 38,
-					union: 33,
-					unsafe: 112,
-					use: 47,
-					where: 41,
-					while: 105
-				},
-				undefined,
-				[331, 336, 365, 366]
-			),
+			_token_patterns: normalizeRepeatedWrapSlot(data._token_patterns, false, 'token_patterns', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'token_patterns',
+				span: (data as _NodeData).$span
+			}),
 
 			tokenPatterns() {
 				return drillInAll<
@@ -15706,114 +16535,12 @@ export function wrapTokenTreeParen(data: T.TokenTreeParen, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.TokenTreeParen as const,
-			_tokens: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._tokens, false, 'tokens', {
-					tree,
-					nodeType: data.$type,
-					slotName: 'tokens',
-					span: (data as _NodeData).$span
-				}),
-				{
-					true: 118,
-					false: 119,
-					mut: 58,
-					self: 126,
-					super: 127,
-					crate: 128,
-					u8: 59,
-					i8: 60,
-					u16: 61,
-					i16: 62,
-					u32: 63,
-					i32: 64,
-					u64: 65,
-					i64: 66,
-					u128: 67,
-					i128: 68,
-					isize: 69,
-					usize: 70,
-					f32: 71,
-					f64: 72,
-					bool: 73,
-					str: 74,
-					char: 75,
-					'+': 9,
-					'-': 76,
-					'*': 10,
-					'/': 87,
-					'%': 88,
-					'^': 80,
-					'!': 30,
-					'&': 55,
-					'|': 79,
-					'&&': 77,
-					'||': 78,
-					'<<': 85,
-					'>>': 86,
-					'+=': 89,
-					'-=': 90,
-					'*=': 91,
-					'/=': 92,
-					'%=': 93,
-					'^=': 96,
-					'&=': 94,
-					'|=': 95,
-					'<<=': 97,
-					'>>=': 98,
-					'=': 39,
-					'==': 81,
-					'!=': 82,
-					'>': 45,
-					'<': 44,
-					'>=': 84,
-					'<=': 83,
-					'@': 116,
-					_: 133,
-					'.': 110,
-					'..': 101,
-					'...': 50,
-					'..=': 134,
-					',': 131,
-					';': 2,
-					':': 4,
-					'::': 48,
-					'->': 132,
-					'=>': 3,
-					'#': 27,
-					'?': 11,
-					"'": 51,
-					as: 49,
-					async: 113,
-					await: 111,
-					break: 108,
-					const: 36,
-					continue: 109,
-					default: 52,
-					enum: 34,
-					fn: 40,
-					for: 43,
-					gen: 53,
-					if: 102,
-					impl: 56,
-					let: 46,
-					loop: 106,
-					match: 104,
-					mod: 135,
-					pub: 136,
-					return: 99,
-					static: 37,
-					struct: 137,
-					trait: 42,
-					type: 38,
-					union: 33,
-					unsafe: 112,
-					use: 47,
-					where: 41,
-					while: 105
-				},
-				undefined,
-				[331, 336, 365, 366]
-			),
+			_tokens: normalizeRepeatedWrapSlot(data._tokens, false, 'tokens', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'tokens',
+				span: (data as _NodeData).$span
+			}),
 
 			tokens() {
 				return drillInAll<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(
@@ -15837,114 +16564,12 @@ export function wrapTokenTreeBracket(data: T.TokenTreeBracket, tree: TreeHandle)
 		{
 			...data,
 			$type: TSKindId.TokenTreeBracket as const,
-			_tokens: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._tokens, false, 'tokens', {
-					tree,
-					nodeType: data.$type,
-					slotName: 'tokens',
-					span: (data as _NodeData).$span
-				}),
-				{
-					true: 118,
-					false: 119,
-					mut: 58,
-					self: 126,
-					super: 127,
-					crate: 128,
-					u8: 59,
-					i8: 60,
-					u16: 61,
-					i16: 62,
-					u32: 63,
-					i32: 64,
-					u64: 65,
-					i64: 66,
-					u128: 67,
-					i128: 68,
-					isize: 69,
-					usize: 70,
-					f32: 71,
-					f64: 72,
-					bool: 73,
-					str: 74,
-					char: 75,
-					'+': 9,
-					'-': 76,
-					'*': 10,
-					'/': 87,
-					'%': 88,
-					'^': 80,
-					'!': 30,
-					'&': 55,
-					'|': 79,
-					'&&': 77,
-					'||': 78,
-					'<<': 85,
-					'>>': 86,
-					'+=': 89,
-					'-=': 90,
-					'*=': 91,
-					'/=': 92,
-					'%=': 93,
-					'^=': 96,
-					'&=': 94,
-					'|=': 95,
-					'<<=': 97,
-					'>>=': 98,
-					'=': 39,
-					'==': 81,
-					'!=': 82,
-					'>': 45,
-					'<': 44,
-					'>=': 84,
-					'<=': 83,
-					'@': 116,
-					_: 133,
-					'.': 110,
-					'..': 101,
-					'...': 50,
-					'..=': 134,
-					',': 131,
-					';': 2,
-					':': 4,
-					'::': 48,
-					'->': 132,
-					'=>': 3,
-					'#': 27,
-					'?': 11,
-					"'": 51,
-					as: 49,
-					async: 113,
-					await: 111,
-					break: 108,
-					const: 36,
-					continue: 109,
-					default: 52,
-					enum: 34,
-					fn: 40,
-					for: 43,
-					gen: 53,
-					if: 102,
-					impl: 56,
-					let: 46,
-					loop: 106,
-					match: 104,
-					mod: 135,
-					pub: 136,
-					return: 99,
-					static: 37,
-					struct: 137,
-					trait: 42,
-					type: 38,
-					union: 33,
-					unsafe: 112,
-					use: 47,
-					where: 41,
-					while: 105
-				},
-				undefined,
-				[331, 336, 365, 366]
-			),
+			_tokens: normalizeRepeatedWrapSlot(data._tokens, false, 'tokens', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'tokens',
+				span: (data as _NodeData).$span
+			}),
 
 			tokens() {
 				return drillInAll<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(
@@ -15968,114 +16593,12 @@ export function wrapTokenTreeBrace(data: T.TokenTreeBrace, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.TokenTreeBrace as const,
-			_tokens: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(data._tokens, false, 'tokens', {
-					tree,
-					nodeType: data.$type,
-					slotName: 'tokens',
-					span: (data as _NodeData).$span
-				}),
-				{
-					true: 118,
-					false: 119,
-					mut: 58,
-					self: 126,
-					super: 127,
-					crate: 128,
-					u8: 59,
-					i8: 60,
-					u16: 61,
-					i16: 62,
-					u32: 63,
-					i32: 64,
-					u64: 65,
-					i64: 66,
-					u128: 67,
-					i128: 68,
-					isize: 69,
-					usize: 70,
-					f32: 71,
-					f64: 72,
-					bool: 73,
-					str: 74,
-					char: 75,
-					'+': 9,
-					'-': 76,
-					'*': 10,
-					'/': 87,
-					'%': 88,
-					'^': 80,
-					'!': 30,
-					'&': 55,
-					'|': 79,
-					'&&': 77,
-					'||': 78,
-					'<<': 85,
-					'>>': 86,
-					'+=': 89,
-					'-=': 90,
-					'*=': 91,
-					'/=': 92,
-					'%=': 93,
-					'^=': 96,
-					'&=': 94,
-					'|=': 95,
-					'<<=': 97,
-					'>>=': 98,
-					'=': 39,
-					'==': 81,
-					'!=': 82,
-					'>': 45,
-					'<': 44,
-					'>=': 84,
-					'<=': 83,
-					'@': 116,
-					_: 133,
-					'.': 110,
-					'..': 101,
-					'...': 50,
-					'..=': 134,
-					',': 131,
-					';': 2,
-					':': 4,
-					'::': 48,
-					'->': 132,
-					'=>': 3,
-					'#': 27,
-					'?': 11,
-					"'": 51,
-					as: 49,
-					async: 113,
-					await: 111,
-					break: 108,
-					const: 36,
-					continue: 109,
-					default: 52,
-					enum: 34,
-					fn: 40,
-					for: 43,
-					gen: 53,
-					if: 102,
-					impl: 56,
-					let: 46,
-					loop: 106,
-					match: 104,
-					mod: 135,
-					pub: 136,
-					return: 99,
-					static: 37,
-					struct: 137,
-					trait: 42,
-					type: 38,
-					union: 33,
-					unsafe: 112,
-					use: 47,
-					where: 41,
-					while: 105
-				},
-				undefined,
-				[331, 336, 365, 366]
-			),
+			_tokens: normalizeRepeatedWrapSlot(data._tokens, false, 'tokens', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'tokens',
+				span: (data as _NodeData).$span
+			}),
 
 			tokens() {
 				return drillInAll<T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken>(
@@ -16108,107 +16631,7 @@ export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeH
 					slotName: 'delim_tokens',
 					span: (data as _NodeData).$span
 				}),
-				{
-					true: 118,
-					false: 119,
-					mut: 58,
-					self: 126,
-					super: 127,
-					crate: 128,
-					u8: 59,
-					i8: 60,
-					u16: 61,
-					i16: 62,
-					u32: 63,
-					i32: 64,
-					u64: 65,
-					i64: 66,
-					u128: 67,
-					i128: 68,
-					isize: 69,
-					usize: 70,
-					f32: 71,
-					f64: 72,
-					bool: 73,
-					str: 74,
-					char: 75,
-					'+': 9,
-					'-': 76,
-					'*': 10,
-					'/': 87,
-					'%': 88,
-					'^': 80,
-					'!': 30,
-					'&': 55,
-					'|': 79,
-					'&&': 77,
-					'||': 78,
-					'<<': 85,
-					'>>': 86,
-					'+=': 89,
-					'-=': 90,
-					'*=': 91,
-					'/=': 92,
-					'%=': 93,
-					'^=': 96,
-					'&=': 94,
-					'|=': 95,
-					'<<=': 97,
-					'>>=': 98,
-					'=': 39,
-					'==': 81,
-					'!=': 82,
-					'>': 45,
-					'<': 44,
-					'>=': 84,
-					'<=': 83,
-					'@': 116,
-					_: 133,
-					'.': 110,
-					'..': 101,
-					'...': 50,
-					'..=': 134,
-					',': 131,
-					';': 2,
-					':': 4,
-					'::': 48,
-					'->': 132,
-					'=>': 3,
-					'#': 27,
-					'?': 11,
-					"'": 51,
-					as: 49,
-					async: 113,
-					await: 111,
-					break: 108,
-					const: 36,
-					continue: 109,
-					default: 52,
-					enum: 34,
-					fn: 40,
-					for: 43,
-					gen: 53,
-					if: 102,
-					impl: 56,
-					let: 46,
-					loop: 106,
-					match: 104,
-					mod: 135,
-					pub: 136,
-					return: 99,
-					static: 37,
-					struct: 137,
-					trait: 42,
-					type: 38,
-					union: 33,
-					unsafe: 112,
-					use: 47,
-					where: 41,
-					while: 105,
-					$: 5
-				},
-				undefined,
-				[331, 336, 365, 366]
+				{ $: 5 }
 			),
 
 			delimTokens() {
@@ -16242,107 +16665,7 @@ export function wrapDelimTokenTreeBracket(data: T.DelimTokenTreeBracket, tree: T
 					slotName: 'delim_tokens',
 					span: (data as _NodeData).$span
 				}),
-				{
-					true: 118,
-					false: 119,
-					mut: 58,
-					self: 126,
-					super: 127,
-					crate: 128,
-					u8: 59,
-					i8: 60,
-					u16: 61,
-					i16: 62,
-					u32: 63,
-					i32: 64,
-					u64: 65,
-					i64: 66,
-					u128: 67,
-					i128: 68,
-					isize: 69,
-					usize: 70,
-					f32: 71,
-					f64: 72,
-					bool: 73,
-					str: 74,
-					char: 75,
-					'+': 9,
-					'-': 76,
-					'*': 10,
-					'/': 87,
-					'%': 88,
-					'^': 80,
-					'!': 30,
-					'&': 55,
-					'|': 79,
-					'&&': 77,
-					'||': 78,
-					'<<': 85,
-					'>>': 86,
-					'+=': 89,
-					'-=': 90,
-					'*=': 91,
-					'/=': 92,
-					'%=': 93,
-					'^=': 96,
-					'&=': 94,
-					'|=': 95,
-					'<<=': 97,
-					'>>=': 98,
-					'=': 39,
-					'==': 81,
-					'!=': 82,
-					'>': 45,
-					'<': 44,
-					'>=': 84,
-					'<=': 83,
-					'@': 116,
-					_: 133,
-					'.': 110,
-					'..': 101,
-					'...': 50,
-					'..=': 134,
-					',': 131,
-					';': 2,
-					':': 4,
-					'::': 48,
-					'->': 132,
-					'=>': 3,
-					'#': 27,
-					'?': 11,
-					"'": 51,
-					as: 49,
-					async: 113,
-					await: 111,
-					break: 108,
-					const: 36,
-					continue: 109,
-					default: 52,
-					enum: 34,
-					fn: 40,
-					for: 43,
-					gen: 53,
-					if: 102,
-					impl: 56,
-					let: 46,
-					loop: 106,
-					match: 104,
-					mod: 135,
-					pub: 136,
-					return: 99,
-					static: 37,
-					struct: 137,
-					trait: 42,
-					type: 38,
-					union: 33,
-					unsafe: 112,
-					use: 47,
-					where: 41,
-					while: 105,
-					$: 5
-				},
-				undefined,
-				[331, 336, 365, 366]
+				{ $: 5 }
 			),
 
 			delimTokens() {
@@ -16376,107 +16699,7 @@ export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeH
 					slotName: 'delim_tokens',
 					span: (data as _NodeData).$span
 				}),
-				{
-					true: 118,
-					false: 119,
-					mut: 58,
-					self: 126,
-					super: 127,
-					crate: 128,
-					u8: 59,
-					i8: 60,
-					u16: 61,
-					i16: 62,
-					u32: 63,
-					i32: 64,
-					u64: 65,
-					i64: 66,
-					u128: 67,
-					i128: 68,
-					isize: 69,
-					usize: 70,
-					f32: 71,
-					f64: 72,
-					bool: 73,
-					str: 74,
-					char: 75,
-					'+': 9,
-					'-': 76,
-					'*': 10,
-					'/': 87,
-					'%': 88,
-					'^': 80,
-					'!': 30,
-					'&': 55,
-					'|': 79,
-					'&&': 77,
-					'||': 78,
-					'<<': 85,
-					'>>': 86,
-					'+=': 89,
-					'-=': 90,
-					'*=': 91,
-					'/=': 92,
-					'%=': 93,
-					'^=': 96,
-					'&=': 94,
-					'|=': 95,
-					'<<=': 97,
-					'>>=': 98,
-					'=': 39,
-					'==': 81,
-					'!=': 82,
-					'>': 45,
-					'<': 44,
-					'>=': 84,
-					'<=': 83,
-					'@': 116,
-					_: 133,
-					'.': 110,
-					'..': 101,
-					'...': 50,
-					'..=': 134,
-					',': 131,
-					';': 2,
-					':': 4,
-					'::': 48,
-					'->': 132,
-					'=>': 3,
-					'#': 27,
-					'?': 11,
-					"'": 51,
-					as: 49,
-					async: 113,
-					await: 111,
-					break: 108,
-					const: 36,
-					continue: 109,
-					default: 52,
-					enum: 34,
-					fn: 40,
-					for: 43,
-					gen: 53,
-					if: 102,
-					impl: 56,
-					let: 46,
-					loop: 106,
-					match: 104,
-					mod: 135,
-					pub: 136,
-					return: 99,
-					static: 37,
-					struct: 137,
-					trait: 42,
-					type: 38,
-					union: 33,
-					unsafe: 112,
-					use: 47,
-					where: 41,
-					while: 105,
-					$: 5
-				},
-				undefined,
-				[331, 336, 365, 366]
+				{ $: 5 }
 			),
 
 			delimTokens() {
@@ -16586,7 +16809,7 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 118, false: 119, '..': 316, _: 133 },
+				{ true: 118, false: 119, '..': 316, _: 427 },
 				undefined,
 				[331]
 			),
@@ -16770,7 +16993,7 @@ export function wrapRangePatternPrefix(
 					data._content ??
 						data._dot_dot_eq ??
 						data._dot_dot ??
-						readTerminalFromOther(data, [TSKindId.DotDotEq, TSKindId.DotDot]),
+						readTerminalFromOther<'..=' | '..'>(data, [TSKindId.DotDotEq, TSKindId.DotDot]),
 					'content',
 					true,
 					data.$type,
@@ -16883,7 +17106,7 @@ export function wrapRangePatternWithLeftWithRight(
 						data._dot_dot_dot ??
 						data._dot_dot_eq ??
 						data._dot_dot ??
-						readTerminalFromOther(data, [TSKindId.DotDotDot, TSKindId.DotDotEq, TSKindId.DotDot]),
+						readTerminalFromOther<'...' | '..=' | '..'>(data, [TSKindId.DotDotDot, TSKindId.DotDotEq, TSKindId.DotDot]),
 					'content',
 					true,
 					data.$type,
@@ -17033,7 +17256,12 @@ export function wrapRangePatternWithLeft(
 			),
 			_content: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
-					data._content ?? data._range_pattern_with_left_with_right ?? data._range_pattern_with_left_bare,
+					data._content ??
+						data._range_pattern_with_left_with_right ??
+						data._range_pattern_with_left_bare ??
+						readTerminalFromOther<T.RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare>(data, [
+							TSKindId.RangePatternWithLeftBare
+						]),
 					'content',
 					true,
 					data.$type,
@@ -17356,7 +17584,6 @@ export function wrapAttributedParameter(
 		readonly _variadic_parameter?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
 		readonly _underscore?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
 		readonly _type_identifier?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
-		readonly _primitive_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
 		readonly _abstract_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
 		readonly _reference_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
 		readonly _metavariable?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
@@ -17378,6 +17605,7 @@ export function wrapAttributedParameter(
 		readonly _dynamic_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
 		readonly _bounded_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
 		readonly _removed_trait_bound?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
+		readonly _primitive_type?: T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type;
 	},
 	tree: TreeHandle
 ) {
@@ -17389,7 +17617,6 @@ export function wrapAttributedParameter(
 		'_variadic_parameter',
 		'_underscore',
 		'_type_identifier',
-		'_primitive_type',
 		'_abstract_type',
 		'_reference_type',
 		'_metavariable',
@@ -17405,7 +17632,8 @@ export function wrapAttributedParameter(
 		'_never_type',
 		'_dynamic_type',
 		'_bounded_type',
-		'_removed_trait_bound'
+		'_removed_trait_bound',
+		'_primitive_type'
 	]);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.AttributedParameter as const }, _treeEngine(tree));
@@ -17450,7 +17678,6 @@ export function wrapAttributedParameter(
 						data._variadic_parameter ??
 						data._underscore ??
 						data._type_identifier ??
-						data._primitive_type ??
 						data._abstract_type ??
 						data._reference_type ??
 						data._metavariable ??
@@ -17466,7 +17693,32 @@ export function wrapAttributedParameter(
 						data._never_type ??
 						data._dynamic_type ??
 						data._bounded_type ??
-						data._removed_trait_bound,
+						data._removed_trait_bound ??
+						data._primitive_type ??
+						readTerminalFromOther<T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type>(
+							data,
+							[
+								TSKindId.Underscore,
+								TSKindId.NeverType,
+								TSKindId.U8Keyword,
+								TSKindId.I8Keyword,
+								TSKindId.U16Keyword,
+								TSKindId.I16Keyword,
+								TSKindId.U32Keyword,
+								TSKindId.I32Keyword,
+								TSKindId.U64Keyword,
+								TSKindId.I64Keyword,
+								TSKindId.U128Keyword,
+								TSKindId.I128Keyword,
+								TSKindId.IsizeKeyword,
+								TSKindId.UsizeKeyword,
+								TSKindId.F32Keyword,
+								TSKindId.F64Keyword,
+								TSKindId.BoolKeyword,
+								TSKindId.StrKeyword,
+								TSKindId.CharKeyword
+							]
+						),
 					'content',
 					true,
 					data.$type,
@@ -17897,7 +18149,8 @@ export function wrapAttributedArgument(
 						data._loop_expression ??
 						data._for_expression ??
 						data._const_block ??
-						data._range_expression,
+						data._range_expression ??
+						readTerminalFromOther<T.Expression>(data, [TSKindId.TrueKeyword, TSKindId.FalseKeyword, TSKindId.Self]),
 					'expression',
 					true,
 					data.$type,
@@ -18002,7 +18255,6 @@ export function wrapAttributedOrderedField(data: T.AttributedOrderedField, tree:
 export function wrapTypeArgument(
 	data: T.TypeArgument & {
 		readonly _type_identifier?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
-		readonly _primitive_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
 		readonly _abstract_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
 		readonly _reference_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
 		readonly _metavariable?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
@@ -18019,6 +18271,7 @@ export function wrapTypeArgument(
 		readonly _dynamic_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
 		readonly _bounded_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
 		readonly _removed_trait_bound?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
+		readonly _primitive_type?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
 		readonly _type_binding?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
 		readonly _lifetime?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
 		readonly _string_literal?: T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block;
@@ -18040,7 +18293,6 @@ export function wrapTypeArgument(
 		'_content',
 		'_trait_bounds',
 		'_type_identifier',
-		'_primitive_type',
 		'_abstract_type',
 		'_reference_type',
 		'_metavariable',
@@ -18057,6 +18309,7 @@ export function wrapTypeArgument(
 		'_dynamic_type',
 		'_bounded_type',
 		'_removed_trait_bound',
+		'_primitive_type',
 		'_type_binding',
 		'_lifetime',
 		'_string_literal',
@@ -18113,7 +18366,6 @@ export function wrapTypeArgument(
 				normalizeSingularWrapSlot(
 					data._content ??
 						data._type_identifier ??
-						data._primitive_type ??
 						data._abstract_type ??
 						data._reference_type ??
 						data._metavariable ??
@@ -18130,6 +18382,7 @@ export function wrapTypeArgument(
 						data._dynamic_type ??
 						data._bounded_type ??
 						data._removed_trait_bound ??
+						data._primitive_type ??
 						data._type_binding ??
 						data._lifetime ??
 						data._string_literal ??
@@ -18143,7 +18396,29 @@ export function wrapTypeArgument(
 						data._integer_literal_binary ??
 						data._integer_literal_octal ??
 						data._float_literal ??
-						data._block,
+						data._block ??
+						readTerminalFromOther<T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>(data, [
+							TSKindId.NeverType,
+							TSKindId.U8Keyword,
+							TSKindId.I8Keyword,
+							TSKindId.U16Keyword,
+							TSKindId.I16Keyword,
+							TSKindId.U32Keyword,
+							TSKindId.I32Keyword,
+							TSKindId.U64Keyword,
+							TSKindId.I64Keyword,
+							TSKindId.U128Keyword,
+							TSKindId.I128Keyword,
+							TSKindId.IsizeKeyword,
+							TSKindId.UsizeKeyword,
+							TSKindId.F32Keyword,
+							TSKindId.F64Keyword,
+							TSKindId.BoolKeyword,
+							TSKindId.StrKeyword,
+							TSKindId.CharKeyword,
+							TSKindId.TrueKeyword,
+							TSKindId.FalseKeyword
+						]),
 					'content',
 					true,
 					data.$type,
@@ -18252,7 +18527,7 @@ export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId._TypeIdentifier as const,
+			$type: TSKindId.TypeIdentifier as const,
 			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -18278,7 +18553,7 @@ export function wrapFieldIdentifier(data: T.FieldIdentifier, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId._FieldIdentifier as const,
+			$type: TSKindId.FieldIdentifier as const,
 			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -18304,7 +18579,7 @@ export function wrapShorthandFieldIdentifier(data: T.ShorthandFieldIdentifier, t
 	const _node = withMethods(
 		{
 			...data,
-			$type: TSKindId._ShorthandFieldIdentifier as const,
+			$type: TSKindId.ShorthandFieldIdentifier as const,
 			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -18494,6 +18769,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.EscapeSequence]: (d, t) => wrapEscapeSequence(d as unknown as T.EscapeSequence, t),
 	[TSKindId.BooleanLiteral]: (d) => ({ ...d, $type: TSKindId.BooleanLiteral as const }),
 	[TSKindId.LineComment]: (d, t) => wrapLineComment(d as unknown as T.LineComment, t),
+	[TSKindId.InnerLineDocCommentMarker]: (d) => ({ ...d, $type: TSKindId.InnerLineDocCommentMarker as const }),
+	[TSKindId.OuterLineDocCommentMarker]: (d) => ({ ...d, $type: TSKindId.OuterLineDocCommentMarker as const }),
 	[TSKindId.BlockComment]: (d, t) => wrapBlockComment(d as unknown as T.BlockComment, t),
 	[TSKindId.Identifier]: (d) => ({ ...d, $type: TSKindId.Identifier as const }),
 	[TSKindId.Shebang]: (d, t) => wrapShebang(d as unknown as T.Shebang, t),
@@ -18537,6 +18814,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 		wrapTupleExpressionElements(d as unknown as T.TupleExpressionElements, t),
 	[TSKindId.TokenTreePunctuation]: (d) => ({ ...d, $type: TSKindId.TokenTreePunctuation as const }),
 	[TSKindId.TokenKeywords]: (d) => ({ ...d, $type: TSKindId.TokenKeywords as const }),
+	[TSKindId.RangeExpressionBare]: (d) => ({ ...d, $type: TSKindId.RangeExpressionBare as const }),
 	[TSKindId.ImplItemUnsafeMarker]: (d) => ({ ...d, $type: TSKindId.ImplItemUnsafeMarker as const }),
 	[TSKindId.IntegerLiteralDecimal]: (d, t) => wrapIntegerLiteralDecimal(d as unknown as T.IntegerLiteralDecimal, t),
 	[TSKindId.IntegerLiteralHex]: (d, t) => wrapIntegerLiteralHex(d as unknown as T.IntegerLiteralHex, t),
@@ -18633,14 +18911,16 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.FloatLiteral]: (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
 	[TSKindId.StringContent]: (d) => ({ ...d, $type: TSKindId.StringContent as const }),
 	[TSKindId.RawStringLiteralContent]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralContent as const }),
+	[TSKindId.OuterDocCommentMarker]: (d) => ({ ...d, $type: TSKindId.OuterDocCommentMarker as const }),
+	[TSKindId.InnerDocCommentMarker]: (d) => ({ ...d, $type: TSKindId.InnerDocCommentMarker as const }),
 	[TSKindId.RawStringLiteralStart]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralStart as const }),
 	[TSKindId.RawStringLiteralEnd]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralEnd as const }),
-	[TSKindId.LineDocContent]: (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
+	[TSKindId.DocComment]: (d) => ({ ...d, $type: TSKindId.DocComment as const }),
 	[TSKindId.BlockCommentContent]: (d) => ({ ...d, $type: TSKindId.BlockCommentContent as const }),
 	[TSKindId.ErrorSentinel]: (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const }),
-	[TSKindId._TypeIdentifier]: (d, t) => wrapTypeIdentifier(_aliasEnvelope(d, t) as unknown as T.TypeIdentifier, t),
-	[TSKindId._FieldIdentifier]: (d, t) => wrapFieldIdentifier(_aliasEnvelope(d, t) as unknown as T.FieldIdentifier, t),
-	[TSKindId._ShorthandFieldIdentifier]: (d, t) =>
+	[TSKindId.TypeIdentifier]: (d, t) => wrapTypeIdentifier(_aliasEnvelope(d, t) as unknown as T.TypeIdentifier, t),
+	[TSKindId.FieldIdentifier]: (d, t) => wrapFieldIdentifier(_aliasEnvelope(d, t) as unknown as T.FieldIdentifier, t),
+	[TSKindId.ShorthandFieldIdentifier]: (d, t) =>
 		wrapShorthandFieldIdentifier(_aliasEnvelope(d, t) as unknown as T.ShorthandFieldIdentifier, t)
 };
 
@@ -18841,6 +19121,8 @@ interface _WrapReturnByKindId {
 	[TSKindId.EscapeSequence]: ReturnType<typeof wrapEscapeSequence>;
 	[TSKindId.BooleanLiteral]: _NodeData & { readonly $type: TSKindId.BooleanLiteral };
 	[TSKindId.LineComment]: ReturnType<typeof wrapLineComment>;
+	[TSKindId.InnerLineDocCommentMarker]: _NodeData & { readonly $type: TSKindId.InnerLineDocCommentMarker };
+	[TSKindId.OuterLineDocCommentMarker]: _NodeData & { readonly $type: TSKindId.OuterLineDocCommentMarker };
 	[TSKindId.BlockComment]: ReturnType<typeof wrapBlockComment>;
 	[TSKindId.Identifier]: _NodeData & { readonly $type: TSKindId.Identifier };
 	[TSKindId.Shebang]: ReturnType<typeof wrapShebang>;
@@ -18879,6 +19161,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.TupleExpressionElements]: ReturnType<typeof wrapTupleExpressionElements>;
 	[TSKindId.TokenTreePunctuation]: _NodeData & { readonly $type: TSKindId.TokenTreePunctuation };
 	[TSKindId.TokenKeywords]: _NodeData & { readonly $type: TSKindId.TokenKeywords };
+	[TSKindId.RangeExpressionBare]: _NodeData & { readonly $type: TSKindId.RangeExpressionBare };
 	[TSKindId.ImplItemUnsafeMarker]: _NodeData & { readonly $type: TSKindId.ImplItemUnsafeMarker };
 	[TSKindId.IntegerLiteralDecimal]: ReturnType<typeof wrapIntegerLiteralDecimal>;
 	[TSKindId.IntegerLiteralHex]: ReturnType<typeof wrapIntegerLiteralHex>;
@@ -18963,14 +19246,16 @@ interface _WrapReturnByKindId {
 	[TSKindId.FloatLiteral]: _NodeData & { readonly $type: TSKindId.FloatLiteral };
 	[TSKindId.StringContent]: _NodeData & { readonly $type: TSKindId.StringContent };
 	[TSKindId.RawStringLiteralContent]: _NodeData & { readonly $type: TSKindId.RawStringLiteralContent };
+	[TSKindId.OuterDocCommentMarker]: _NodeData & { readonly $type: TSKindId.OuterDocCommentMarker };
+	[TSKindId.InnerDocCommentMarker]: _NodeData & { readonly $type: TSKindId.InnerDocCommentMarker };
 	[TSKindId.RawStringLiteralStart]: _NodeData & { readonly $type: TSKindId.RawStringLiteralStart };
 	[TSKindId.RawStringLiteralEnd]: _NodeData & { readonly $type: TSKindId.RawStringLiteralEnd };
-	[TSKindId.LineDocContent]: _NodeData & { readonly $type: TSKindId.LineDocContent };
+	[TSKindId.DocComment]: _NodeData & { readonly $type: TSKindId.DocComment };
 	[TSKindId.BlockCommentContent]: _NodeData & { readonly $type: TSKindId.BlockCommentContent };
 	[TSKindId.ErrorSentinel]: _NodeData & { readonly $type: TSKindId.ErrorSentinel };
-	[TSKindId._TypeIdentifier]: ReturnType<typeof wrapTypeIdentifier>;
-	[TSKindId._FieldIdentifier]: ReturnType<typeof wrapFieldIdentifier>;
-	[TSKindId._ShorthandFieldIdentifier]: ReturnType<typeof wrapShorthandFieldIdentifier>;
+	[TSKindId.TypeIdentifier]: ReturnType<typeof wrapTypeIdentifier>;
+	[TSKindId.FieldIdentifier]: ReturnType<typeof wrapFieldIdentifier>;
+	[TSKindId.ShorthandFieldIdentifier]: ReturnType<typeof wrapShorthandFieldIdentifier>;
 }
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

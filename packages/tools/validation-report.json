@@ -457,7 +457,7 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [_import_list, _parenthesized_import_list] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [import_list, parenthesized_import_list] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -496,63 +496,6 @@
       "literalText": "﷐\n"
     },
     "location": "﷐\n"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_parameters",
-    "message": "[assemble] typeName collision: kind '_parameters' renamed 'Parameters' → '_Parameters' (visible sibling(s): 'parameters')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Parameters",
-      "newType": "_Parameters",
-      "visibleKinds": [
-        "parameters"
-      ]
-    },
-    "location": "_parameters"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_as_pattern",
-    "message": "[assemble] typeName collision: kind '_as_pattern' renamed 'AsPattern' → '_AsPattern' (visible sibling(s): 'as_pattern')",
-    "canProceed": true,
-    "details": {
-      "typeName": "AsPattern",
-      "newType": "_AsPattern",
-      "visibleKinds": [
-        "as_pattern"
-      ]
-    },
-    "location": "_as_pattern"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_string_content",
-    "message": "[assemble] typeName collision: kind '_string_content' renamed 'StringContent' → '_StringContent' (visible sibling(s): 'string_content')",
-    "canProceed": true,
-    "details": {
-      "typeName": "StringContent",
-      "newType": "_StringContent",
-      "visibleKinds": [
-        "string_content"
-      ]
-    },
-    "location": "_string_content"
   },
   {
     "source": "grammar",
@@ -646,36 +589,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "wildcard_pattern",
-    "count": 1,
-    "entries": [
-      "Async closure"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "wildcard_pattern"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "attributed_parameter",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "attributed_parameter"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "kind": "primitive_type",
     "count": 1,
     "entries": [
@@ -686,36 +599,6 @@
     "severity": "info",
     "message": "no-from-function",
     "label": "primitive_type"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "non_special_token",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "non_special_token"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "string_open",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "string_open"
   },
   {
     "source": "validator",
@@ -736,81 +619,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "attributed_argument",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "attributed_argument"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "tuple_type_elements",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "tuple_type_elements"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "tuple_expression_elements",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "tuple_expression_elements"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "type_argument",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "type_argument"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "attributed_type_parameter",
-    "count": 1,
-    "entries": [
-      "Function declarations"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "attributed_type_parameter"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "kind": "boolean_literal",
     "count": 1,
     "entries": [
@@ -821,66 +629,6 @@
     "severity": "info",
     "message": "no-from-function",
     "label": "boolean_literal"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "attributed_field_declaration",
-    "count": 1,
-    "entries": [
-      "Structs"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "attributed_field_declaration"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "attributed_ordered_field",
-    "count": 1,
-    "entries": [
-      "Structs"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "attributed_ordered_field"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "attributed_enum_variant",
-    "count": 1,
-    "entries": [
-      "Enums"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "attributed_enum_variant"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "match_block_arms",
-    "count": 1,
-    "entries": [
-      "Inner attributes"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "match_block_arms"
   },
   {
     "source": "validator",
@@ -901,21 +649,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "range_expression_bare",
-    "count": 1,
-    "entries": [
-      "Range expressions"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "range_expression_bare"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "kind": "let_chain",
     "count": 1,
     "entries": [
@@ -926,36 +659,6 @@
     "severity": "info",
     "message": "no-from-function",
     "label": "let_chain"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "raw_string_literal_start",
-    "count": 1,
-    "entries": [
-      "Raw string literals"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "raw_string_literal_start"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "raw_string_literal_end",
-    "count": 1,
-    "entries": [
-      "Raw string literals"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "raw_string_literal_end"
   },
   {
     "source": "validator",
@@ -1324,7 +1027,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_parameter",
+    "kind": "attributed_parameter",
     "count": 57,
     "entries": [
       "Array Constraint in Where Clause",
@@ -1356,7 +1059,34 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_parameter"
+    "label": "attributed_parameter"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "kind": "non_special_token",
+    "count": 125,
+    "entries": [
+      "Array expressions",
+      "Attribute macros",
+      "Attributes",
+      "Attributes and Expressions",
+      "Derive macro helper attributes",
+      "Function declarations",
+      "Inline const or Const blocks as pattern",
+      "Inner attributes",
+      "Key-Value Attribute Expressions",
+      "Macro definition",
+      "Macro invocation - arbitrary tokens",
+      "Match expressions",
+      "Struct patterns"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "non_special_token"
   },
   {
     "source": "validator",
@@ -1396,7 +1126,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_argument",
+    "kind": "attributed_argument",
     "count": 53,
     "entries": [
       "Array expressions",
@@ -1424,13 +1154,13 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_argument"
+    "label": "attributed_argument"
   },
   {
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_tuple_type_elements",
+    "kind": "tuple_type_elements",
     "count": 8,
     "entries": [
       "Function declarations",
@@ -1446,13 +1176,13 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_tuple_type_elements"
+    "label": "tuple_type_elements"
   },
   {
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_tuple_expression_elements",
+    "kind": "tuple_expression_elements",
     "count": 6,
     "entries": [
       "Attributes and Expressions",
@@ -1464,7 +1194,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_tuple_expression_elements"
+    "label": "tuple_expression_elements"
   },
   {
     "source": "validator",
@@ -1548,7 +1278,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_type_argument",
+    "kind": "type_argument",
     "count": 65,
     "entries": [
       "Array Constraint in Where Clause",
@@ -1581,7 +1311,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_type_argument"
+    "label": "type_argument"
   },
   {
     "source": "validator",
@@ -1688,7 +1418,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_type_parameter",
+    "kind": "attributed_type_parameter",
     "count": 45,
     "entries": [
       "Array Constraint in Where Clause",
@@ -1714,7 +1444,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_type_parameter"
+    "label": "attributed_type_parameter"
   },
   {
     "source": "validator",
@@ -2071,7 +1801,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_field_declaration",
+    "kind": "attributed_field_declaration",
     "count": 15,
     "entries": [
       "Derive macro helper attributes",
@@ -2084,7 +1814,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_field_declaration"
+    "label": "attributed_field_declaration"
   },
   {
     "source": "validator",
@@ -2147,7 +1877,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_ordered_field",
+    "kind": "attributed_ordered_field",
     "count": 9,
     "entries": [
       "Const generics with default",
@@ -2160,7 +1890,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_ordered_field"
+    "label": "attributed_ordered_field"
   },
   {
     "source": "validator",
@@ -2217,7 +1947,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_enum_variant",
+    "kind": "attributed_enum_variant",
     "count": 8,
     "entries": [
       "Derive macro helper attributes",
@@ -2228,7 +1958,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_enum_variant"
+    "label": "attributed_enum_variant"
   },
   {
     "source": "validator",
@@ -2402,7 +2132,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_match_block_arms",
+    "kind": "match_block_arms",
     "count": 13,
     "entries": [
       "Captured patterns",
@@ -2419,7 +2149,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_match_block_arms"
+    "label": "match_block_arms"
   },
   {
     "source": "validator",
@@ -3360,7 +3090,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_parameter",
+    "kind": "attributed_parameter",
     "count": 57,
     "entries": [
       "Array Constraint in Where Clause",
@@ -3392,7 +3122,34 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_parameter"
+    "label": "attributed_parameter"
+  },
+  {
+    "source": "validator",
+    "grammar": "rust",
+    "backend": "native",
+    "kind": "non_special_token",
+    "count": 125,
+    "entries": [
+      "Array expressions",
+      "Attribute macros",
+      "Attributes",
+      "Attributes and Expressions",
+      "Derive macro helper attributes",
+      "Function declarations",
+      "Inline const or Const blocks as pattern",
+      "Inner attributes",
+      "Key-Value Attribute Expressions",
+      "Macro definition",
+      "Macro invocation - arbitrary tokens",
+      "Match expressions",
+      "Struct patterns"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "non_special_token"
   },
   {
     "source": "validator",
@@ -3432,7 +3189,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_argument",
+    "kind": "attributed_argument",
     "count": 53,
     "entries": [
       "Array expressions",
@@ -3460,13 +3217,13 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_argument"
+    "label": "attributed_argument"
   },
   {
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_tuple_type_elements",
+    "kind": "tuple_type_elements",
     "count": 8,
     "entries": [
       "Function declarations",
@@ -3482,13 +3239,13 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_tuple_type_elements"
+    "label": "tuple_type_elements"
   },
   {
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_tuple_expression_elements",
+    "kind": "tuple_expression_elements",
     "count": 6,
     "entries": [
       "Attributes and Expressions",
@@ -3500,7 +3257,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_tuple_expression_elements"
+    "label": "tuple_expression_elements"
   },
   {
     "source": "validator",
@@ -3584,7 +3341,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_type_argument",
+    "kind": "type_argument",
     "count": 65,
     "entries": [
       "Array Constraint in Where Clause",
@@ -3617,7 +3374,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_type_argument"
+    "label": "type_argument"
   },
   {
     "source": "validator",
@@ -3724,7 +3481,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_type_parameter",
+    "kind": "attributed_type_parameter",
     "count": 45,
     "entries": [
       "Array Constraint in Where Clause",
@@ -3750,7 +3507,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_type_parameter"
+    "label": "attributed_type_parameter"
   },
   {
     "source": "validator",
@@ -4107,7 +3864,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_field_declaration",
+    "kind": "attributed_field_declaration",
     "count": 15,
     "entries": [
       "Derive macro helper attributes",
@@ -4120,7 +3877,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_field_declaration"
+    "label": "attributed_field_declaration"
   },
   {
     "source": "validator",
@@ -4183,7 +3940,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_ordered_field",
+    "kind": "attributed_ordered_field",
     "count": 9,
     "entries": [
       "Const generics with default",
@@ -4196,7 +3953,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_ordered_field"
+    "label": "attributed_ordered_field"
   },
   {
     "source": "validator",
@@ -4253,7 +4010,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_attributed_enum_variant",
+    "kind": "attributed_enum_variant",
     "count": 8,
     "entries": [
       "Derive macro helper attributes",
@@ -4264,7 +4021,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_attributed_enum_variant"
+    "label": "attributed_enum_variant"
   },
   {
     "source": "validator",
@@ -4438,7 +4195,7 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "_match_block_arms",
+    "kind": "match_block_arms",
     "count": 13,
     "entries": [
       "Captured patterns",
@@ -4455,7 +4212,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_match_block_arms"
+    "label": "match_block_arms"
   },
   {
     "source": "validator",
@@ -5076,21 +4833,6 @@
   },
   {
     "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "_non_special_token",
-    "count": 1,
-    "entries": [
-      "non_special_token"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_non_special_token"
-  },
-  {
-    "source": "validator",
     "grammar": "typescript",
     "backend": "native",
     "kind": "automatic_semicolon",
@@ -5168,21 +4910,6 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "extends_clause_single",
-    "count": 1,
-    "entries": [
-      "Classes with methods with and without trailing semicolons on one line"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "extends_clause_single"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
     "count": 2,
     "entries": [
       "Interface declarations",
@@ -5193,81 +4920,6 @@
     "severity": "info",
     "message": "parse-error",
     "label": "parse-error"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "type_query_member_expression",
-    "count": 1,
-    "entries": [
-      "Type query and index type query types"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "type_query_member_expression"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "type_query_call_expression",
-    "count": 1,
-    "entries": [
-      "Type query and index type query types"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "type_query_call_expression"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "type_query_instantiation_expression",
-    "count": 1,
-    "entries": [
-      "Typeof instantiation expressions"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "type_query_instantiation_expression"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "type_query_member_expression_in_type_annotation",
-    "count": 1,
-    "entries": [
-      "Import in type"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "type_query_member_expression_in_type_annotation"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "type_query_call_expression_in_type_annotation",
-    "count": 1,
-    "entries": [
-      "Import in type"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "type_query_call_expression_in_type_annotation"
   },
   {
     "source": "validator",
@@ -6034,7 +5686,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "_extends_clause_single",
+    "kind": "extends_clause_single",
     "count": 13,
     "entries": [
       "Classes with extensions",
@@ -6048,7 +5700,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_extends_clause_single"
+    "label": "extends_clause_single"
   },
   {
     "source": "validator",
@@ -6502,7 +6154,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "_type_query_member_expression",
+    "kind": "type_query_member_expression",
     "count": 3,
     "entries": [
       "Type query and index type query types",
@@ -6513,13 +6165,13 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_type_query_member_expression"
+    "label": "type_query_member_expression"
   },
   {
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "_type_query_call_expression",
+    "kind": "type_query_call_expression",
     "count": 1,
     "entries": [
       "Type query and index type query types"
@@ -6528,7 +6180,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_type_query_call_expression"
+    "label": "type_query_call_expression"
   },
   {
     "source": "validator",
@@ -6676,7 +6328,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "_type_query_instantiation_expression",
+    "kind": "type_query_instantiation_expression",
     "count": 1,
     "entries": [
       "Typeof instantiation expressions"
@@ -6685,7 +6337,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_type_query_instantiation_expression"
+    "label": "type_query_instantiation_expression"
   },
   {
     "source": "validator",
@@ -7467,7 +7119,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "_extends_clause_single",
+    "kind": "extends_clause_single",
     "count": 13,
     "entries": [
       "Classes with extensions",
@@ -7481,7 +7133,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_extends_clause_single"
+    "label": "extends_clause_single"
   },
   {
     "source": "validator",
@@ -7935,7 +7587,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "_type_query_member_expression",
+    "kind": "type_query_member_expression",
     "count": 3,
     "entries": [
       "Type query and index type query types",
@@ -7946,13 +7598,13 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_type_query_member_expression"
+    "label": "type_query_member_expression"
   },
   {
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "_type_query_call_expression",
+    "kind": "type_query_call_expression",
     "count": 1,
     "entries": [
       "Type query and index type query types"
@@ -7961,7 +7613,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_type_query_call_expression"
+    "label": "type_query_call_expression"
   },
   {
     "source": "validator",
@@ -8109,7 +7761,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "_type_query_instantiation_expression",
+    "kind": "type_query_instantiation_expression",
     "count": 1,
     "entries": [
       "Typeof instantiation expressions"
@@ -8118,7 +7770,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_type_query_instantiation_expression"
+    "label": "type_query_instantiation_expression"
   },
   {
     "source": "validator",
@@ -8244,36 +7896,6 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "parameters_elements",
-    "count": 1,
-    "entries": [
-      "Await expressions"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "parameters_elements"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "comparison_operator_comparator",
-    "count": 1,
-    "entries": [
-      "Await expressions"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "comparison_operator_comparator"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
     "count": 1,
     "entries": [
       "Print used as an identifier"
@@ -8283,111 +7905,6 @@
     "severity": "info",
     "message": "parse-error",
     "label": "parse-error"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "string_fragment",
-    "count": 1,
-    "entries": [
-      "Exec used as an identifier"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "string_fragment"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "print_arguments",
-    "count": 1,
-    "entries": [
-      "Async / await used as identifiers"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "print_arguments"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "yield_from_clause",
-    "count": 1,
-    "entries": [
-      "Yield expressions"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "yield_from_clause"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "patterns",
-    "count": 1,
-    "entries": [
-      "lambdas"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "patterns"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "collection_elements",
-    "count": 1,
-    "entries": [
-      "lambdas"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "collection_elements"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "not_escape_sequence",
-    "count": 1,
-    "entries": [
-      "Strings"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "not_escape_sequence"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "match_block",
-    "count": 1,
-    "entries": [
-      "Matching specific values"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "match_block"
   },
   {
     "source": "validator",
@@ -8408,111 +7925,6 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "wildcard_pattern",
-    "count": 1,
-    "entries": [
-      "Adding a wild card"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "wildcard_pattern"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "case_as_pattern",
-    "count": 1,
-    "entries": [
-      "As patterns"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "case_as_pattern"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "key_value_pattern",
-    "count": 1,
-    "entries": [
-      "Dict mappings"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "key_value_pattern"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "names",
-    "count": 1,
-    "entries": [
-      "Import statements"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "names"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "import_list",
-    "count": 1,
-    "entries": [
-      "Import-from statements"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "import_list"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "parenthesized_import_list",
-    "count": 1,
-    "entries": [
-      "Import-from statements"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "parenthesized_import_list"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "print_chevron_arguments",
-    "count": 1,
-    "entries": [
-      "Print statements with redirection"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "print_chevron_arguments"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
     "entry": "Print used as an identifier",
     "reason": "parse-error",
     "input": "print()\nprint(a)\nprint(a, b=c)\nprint(d, e)\nprint(d, *e)\nprint(*f, **g,)\na(print)",
@@ -8527,24 +7939,20 @@
     "grammar": "python",
     "backend": "native",
     "kind": "_simple_statements",
-    "count": 435,
+    "count": 421,
     "entries": [
-      "A function called match",
       "Actually not match",
       "Adding a wild card",
       "Arbitrary indentation between brackets",
       "As patterns",
       "Assert statements",
       "Assignments",
-      "Assignments with type annotations",
       "Async / await used as identifiers",
       "Async Function definitions",
       "Async context managers and iterators",
-      "Attribute references",
       "Augmented assignments",
       "Await expressions",
       "Binary Addition / Subtraction With Floats",
-      "Bitwise operators",
       "Boolean operators",
       "Builtin classes",
       "Call expressions",
@@ -8561,18 +7969,15 @@
       "Comparison operators",
       "Complex case patterns on classes",
       "Complex case patterns on complex numbers",
-      "Concatenated strings",
       "Conditional if expressions",
       "Constants and enums",
       "Control-flow statements",
       "Decorated definitions",
       "Default Tuple Arguments",
-      "Delete statements",
       "Dict mappings",
       "Dictionaries",
       "Dictionary comprehensions",
       "Empty blocks",
-      "Escaped newline",
       "Exec statements",
       "Exec used as an identifier",
       "Expression statements",
@@ -8597,8 +8002,6 @@
       "Lists",
       "Literals",
       "Match is match but not pattern matching",
-      "Match kwargs",
-      "Match kwargs 2",
       "Match match, case case",
       "Matching multiple values",
       "Matching objects",
@@ -8610,7 +8013,6 @@
       "Named expressions",
       "Nested if statements",
       "Newline tokens followed by comments",
-      "Operator precedence",
       "Or patterns",
       "Other primitives",
       "Positional arguments",
@@ -8620,7 +8022,6 @@
       "Print used as a parameter",
       "Raise statements",
       "Raw strings",
-      "Raw strings with escaped quotes",
       "Return statements",
       "Scientific Notation Floats",
       "Set comprehensions",
@@ -8634,11 +8035,8 @@
       "Subscript slice expressions",
       "Template Strings",
       "Try statements",
-      "Tuples with splats",
-      "Tuples with yield",
       "Type Alias Statements",
       "Type expressions",
-      "Unicode escape sequences",
       "Walrus match (Issue #150)",
       "While statements",
       "With statements",
@@ -9050,7 +8448,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_comparison_operator_comparator",
+    "kind": "comparison_operator_comparator",
     "count": 14,
     "entries": [
       "Await expressions",
@@ -9060,7 +8458,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_comparison_operator_comparator"
+    "label": "comparison_operator_comparator"
   },
   {
     "source": "validator",
@@ -9284,7 +8682,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_print_arguments",
+    "kind": "print_arguments",
     "count": 16,
     "entries": [
       "Adding a wild card",
@@ -9300,7 +8698,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_print_arguments"
+    "label": "print_arguments"
   },
   {
     "source": "validator",
@@ -9515,7 +8913,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_yield_from_clause",
+    "kind": "yield_from_clause",
     "count": 3,
     "entries": [
       "Yield expressions"
@@ -9524,7 +8922,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_yield_from_clause"
+    "label": "yield_from_clause"
   },
   {
     "source": "validator",
@@ -9585,7 +8983,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_patterns",
+    "kind": "patterns",
     "count": 4,
     "entries": [
       "Default Tuple Arguments",
@@ -9597,13 +8995,13 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_patterns"
+    "label": "patterns"
   },
   {
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_collection_elements",
+    "kind": "collection_elements",
     "count": 35,
     "entries": [
       "Actually not match",
@@ -9629,7 +9027,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_collection_elements"
+    "label": "collection_elements"
   },
   {
     "source": "validator",
@@ -9962,6 +9360,39 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
+    "kind": "match_block",
+    "count": 19,
+    "entries": [
+      "Adding a wild card",
+      "As patterns",
+      "Builtin classes",
+      "Case terminating in comma",
+      "Comma separated cases",
+      "Complex case patterns on classes",
+      "Complex case patterns on complex numbers",
+      "Constants and enums",
+      "Dict mappings",
+      "If guards",
+      "Literals",
+      "Match match, case case",
+      "Matching multiple values",
+      "Matching objects",
+      "Matching specific values",
+      "Maybe sequence pattern right hand side precedence validation",
+      "Multiple match patterns",
+      "Or patterns",
+      "Positional arguments"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "match_block"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
     "kind": "match_block_block",
     "count": 19,
     "entries": [
@@ -10191,7 +9622,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_as_pattern",
+    "kind": "case_as_pattern",
     "count": 4,
     "entries": [
       "As patterns",
@@ -10201,7 +9632,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_as_pattern"
+    "label": "case_as_pattern"
   },
   {
     "source": "validator",
@@ -10351,7 +9782,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_key_value_pattern",
+    "kind": "key_value_pattern",
     "count": 15,
     "entries": [
       "Builtin classes",
@@ -10361,7 +9792,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_key_value_pattern"
+    "label": "key_value_pattern"
   },
   {
     "source": "validator",
@@ -10397,7 +9828,22 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_import_list",
+    "kind": "names",
+    "count": 3,
+    "entries": [
+      "Import statements"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "names"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "import_list",
     "count": 13,
     "entries": [
       "Future import statements",
@@ -10408,7 +9854,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_import_list"
+    "label": "import_list"
   },
   {
     "source": "validator",
@@ -10444,7 +9890,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_parenthesized_import_list",
+    "kind": "parenthesized_import_list",
     "count": 2,
     "entries": [
       "Future import statements",
@@ -10454,7 +9900,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_parenthesized_import_list"
+    "label": "parenthesized_import_list"
   },
   {
     "source": "validator",
@@ -10520,7 +9966,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_print_chevron_arguments",
+    "kind": "print_chevron_arguments",
     "count": 1,
     "entries": [
       "Print statements with redirection"
@@ -10529,7 +9975,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_print_chevron_arguments"
+    "label": "print_chevron_arguments"
   },
   {
     "source": "validator",
@@ -10919,24 +10365,20 @@
     "grammar": "python",
     "backend": "native",
     "kind": "_simple_statements",
-    "count": 435,
+    "count": 421,
     "entries": [
-      "A function called match",
       "Actually not match",
       "Adding a wild card",
       "Arbitrary indentation between brackets",
       "As patterns",
       "Assert statements",
       "Assignments",
-      "Assignments with type annotations",
       "Async / await used as identifiers",
       "Async Function definitions",
       "Async context managers and iterators",
-      "Attribute references",
       "Augmented assignments",
       "Await expressions",
       "Binary Addition / Subtraction With Floats",
-      "Bitwise operators",
       "Boolean operators",
       "Builtin classes",
       "Call expressions",
@@ -10953,18 +10395,15 @@
       "Comparison operators",
       "Complex case patterns on classes",
       "Complex case patterns on complex numbers",
-      "Concatenated strings",
       "Conditional if expressions",
       "Constants and enums",
       "Control-flow statements",
       "Decorated definitions",
       "Default Tuple Arguments",
-      "Delete statements",
       "Dict mappings",
       "Dictionaries",
       "Dictionary comprehensions",
       "Empty blocks",
-      "Escaped newline",
       "Exec statements",
       "Exec used as an identifier",
       "Expression statements",
@@ -10989,8 +10428,6 @@
       "Lists",
       "Literals",
       "Match is match but not pattern matching",
-      "Match kwargs",
-      "Match kwargs 2",
       "Match match, case case",
       "Matching multiple values",
       "Matching objects",
@@ -11002,7 +10439,6 @@
       "Named expressions",
       "Nested if statements",
       "Newline tokens followed by comments",
-      "Operator precedence",
       "Or patterns",
       "Other primitives",
       "Positional arguments",
@@ -11012,7 +10448,6 @@
       "Print used as a parameter",
       "Raise statements",
       "Raw strings",
-      "Raw strings with escaped quotes",
       "Return statements",
       "Scientific Notation Floats",
       "Set comprehensions",
@@ -11026,11 +10461,8 @@
       "Subscript slice expressions",
       "Template Strings",
       "Try statements",
-      "Tuples with splats",
-      "Tuples with yield",
       "Type Alias Statements",
       "Type expressions",
-      "Unicode escape sequences",
       "Walrus match (Issue #150)",
       "While statements",
       "With statements",
@@ -11442,7 +10874,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_comparison_operator_comparator",
+    "kind": "comparison_operator_comparator",
     "count": 14,
     "entries": [
       "Await expressions",
@@ -11452,7 +10884,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_comparison_operator_comparator"
+    "label": "comparison_operator_comparator"
   },
   {
     "source": "validator",
@@ -11676,7 +11108,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_print_arguments",
+    "kind": "print_arguments",
     "count": 16,
     "entries": [
       "Adding a wild card",
@@ -11692,7 +11124,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_print_arguments"
+    "label": "print_arguments"
   },
   {
     "source": "validator",
@@ -11907,7 +11339,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_yield_from_clause",
+    "kind": "yield_from_clause",
     "count": 3,
     "entries": [
       "Yield expressions"
@@ -11916,7 +11348,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_yield_from_clause"
+    "label": "yield_from_clause"
   },
   {
     "source": "validator",
@@ -11977,7 +11409,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_patterns",
+    "kind": "patterns",
     "count": 4,
     "entries": [
       "Default Tuple Arguments",
@@ -11989,13 +11421,13 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_patterns"
+    "label": "patterns"
   },
   {
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_collection_elements",
+    "kind": "collection_elements",
     "count": 35,
     "entries": [
       "Actually not match",
@@ -12021,7 +11453,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_collection_elements"
+    "label": "collection_elements"
   },
   {
     "source": "validator",
@@ -12354,6 +11786,39 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
+    "kind": "match_block",
+    "count": 19,
+    "entries": [
+      "Adding a wild card",
+      "As patterns",
+      "Builtin classes",
+      "Case terminating in comma",
+      "Comma separated cases",
+      "Complex case patterns on classes",
+      "Complex case patterns on complex numbers",
+      "Constants and enums",
+      "Dict mappings",
+      "If guards",
+      "Literals",
+      "Match match, case case",
+      "Matching multiple values",
+      "Matching objects",
+      "Matching specific values",
+      "Maybe sequence pattern right hand side precedence validation",
+      "Multiple match patterns",
+      "Or patterns",
+      "Positional arguments"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "match_block"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
     "kind": "match_block_block",
     "count": 19,
     "entries": [
@@ -12583,7 +12048,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_as_pattern",
+    "kind": "case_as_pattern",
     "count": 4,
     "entries": [
       "As patterns",
@@ -12593,7 +12058,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_as_pattern"
+    "label": "case_as_pattern"
   },
   {
     "source": "validator",
@@ -12743,7 +12208,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_key_value_pattern",
+    "kind": "key_value_pattern",
     "count": 15,
     "entries": [
       "Builtin classes",
@@ -12753,7 +12218,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_key_value_pattern"
+    "label": "key_value_pattern"
   },
   {
     "source": "validator",
@@ -12789,7 +12254,22 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_import_list",
+    "kind": "names",
+    "count": 3,
+    "entries": [
+      "Import statements"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "names"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "import_list",
     "count": 13,
     "entries": [
       "Future import statements",
@@ -12800,7 +12280,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_import_list"
+    "label": "import_list"
   },
   {
     "source": "validator",
@@ -12836,7 +12316,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_parenthesized_import_list",
+    "kind": "parenthesized_import_list",
     "count": 2,
     "entries": [
       "Future import statements",
@@ -12846,7 +12326,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_parenthesized_import_list"
+    "label": "parenthesized_import_list"
   },
   {
     "source": "validator",
@@ -12912,7 +12392,7 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
-    "kind": "_print_chevron_arguments",
+    "kind": "print_chevron_arguments",
     "count": 1,
     "entries": [
       "Print statements with redirection"
@@ -12921,7 +12401,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "_print_chevron_arguments"
+    "label": "print_chevron_arguments"
   },
   {
     "source": "validator",
@@ -13320,66 +12800,6 @@
     "severity": "info",
     "message": "parse-error",
     "label": "parse-error"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "_case_as_pattern",
-    "count": 1,
-    "entries": [
-      "case_as_pattern"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_case_as_pattern"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "_match_block",
-    "count": 1,
-    "entries": [
-      "match_block"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_match_block"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "_names",
-    "count": 1,
-    "entries": [
-      "names"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_names"
-  },
-  {
-    "source": "validator",
-    "grammar": "python",
-    "backend": "native",
-    "kind": "_parameters_elements",
-    "count": 1,
-    "entries": [
-      "parameters_elements"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_parameters_elements"
   },
   {
     "source": "validator",

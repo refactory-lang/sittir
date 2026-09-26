@@ -17,7 +17,7 @@ describe('a text leaf slot takes a built node strictly and its text loosely', ()
 	});
 
 	it('runs the leaf guard on unmatched text when coercing', () => {
-		expect(() => ir.stringLiteral.coerce({ stringOpen: 'x', elements: [] })).toThrow(/"x" is not a _string_open/);
+		expect(() => ir.stringLiteral.coerce({ stringOpen: 'x', elements: [] })).toThrow(/"x" is not a string_open/);
 	});
 	it('rejects bare text strictly in a node slot', () => {
 		// @ts-expect-error a strict node slot takes a built node, not text

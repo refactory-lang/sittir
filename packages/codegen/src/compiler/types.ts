@@ -68,6 +68,8 @@ export interface KindParserMetadata {
 	readonly hidden: boolean;
 	readonly keyword?: true;
 	readonly aliasedNonTerminal?: true;
+	readonly supertype?: true;
+	readonly visibleExternal?: true;
 	readonly lexicalRank?: number;
 }
 

@@ -8,7 +8,7 @@ import { TSKindId } from '../src/types.js';
 describe('a call whose function is a macro invocation', () => {
 	it('keeps each `arguments` on its own owner', () => {
 		const node = ir.callExpression({
-			function: ir.macroInvocation({ macro: ir.identifier('m'), arguments: ir.delimTokenTree.paren.strict(ir.identifier('x')) }),
+			function: ir.macroInvocation({ macro: ir.identifier('m'), arguments: ir.delimTokenTree.paren.strict(ir.nonSpecialToken.strict(ir.identifier('x'))) }),
 			arguments: ir.arguments(ir.identifier('y'))
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);

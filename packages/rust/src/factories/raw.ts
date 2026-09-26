@@ -34,7 +34,7 @@ const _leafRe_buildStringContent = /^(?:(?:[^"\\]+))$/u;
 const _leafRe_buildRawStringLiteralContent = /^(?:(?:[\s\S]*))$/u;
 const _leafRe_buildRawStringLiteralStart = /^(?:(?:[bc]?r#*"))$/u;
 const _leafRe_buildRawStringLiteralEnd = /^(?:(?:"#*))$/u;
-const _leafRe_buildLineDocContent = /^(?:(?:.*))$/u;
+const _leafRe_buildDocComment = /^(?:(?:.*))$/u;
 const _leafRe_buildBlockCommentContent = /^(?:(?:[^]*))$/u;
 const _slotRe_buildShebang_content = /^(?:[\r\f\t\v ]*(?:[^[\n].*)?)$/u;
 const _slotRe_buildMetavariable_name = /^(?:[a-zA-Z_]\w*)$/u;
@@ -210,7 +210,7 @@ export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): 
 
 export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Config): T.TokenRepetitionPattern.Built {
 	const _token_patterns = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.TokenRepetitionPattern['_token_patterns']>>(config.tokenPatterns ?? [], []),
+		config.tokenPatterns ?? [],
 		'TokenRepetitionPattern.tokenPatterns',
 		'a built TokenTreePattern / TokenRepetitionPattern / TokenBindingPattern / Metavariable / NonSpecialToken'
 	);
@@ -230,8 +230,15 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 				_separator,
 				_operator,
 				$with: {
-					tokenPatterns: (value?: NonNullable<T.TokenRepetitionPattern.Config>['tokenPatterns']) =>
-						buildTokenRepetitionPattern({ ...config, tokenPatterns: value }),
+					tokenPatterns: (
+						...values: (
+							| T.TokenTreePattern
+							| T.TokenRepetitionPattern
+							| T.TokenBindingPattern
+							| T.Metavariable
+							| T.NonSpecialToken
+						)[]
+					) => buildTokenRepetitionPattern({ ...config, tokenPatterns: values }),
 					separator: (value?: string) => buildTokenRepetitionPattern({ ...config, separator: value }),
 					operator: (value: NonNullable<T.TokenRepetitionPattern.Config>['operator']) =>
 						buildTokenRepetitionPattern({ ...config, operator: value })
@@ -249,7 +256,7 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 
 export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenRepetition.Built {
 	const _tokens = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.TokenRepetition['_tokens']>>(config.tokens ?? [], []),
+		config.tokens ?? [],
 		'TokenRepetition.tokens',
 		'a built TokenTree / TokenRepetition / Metavariable / NonSpecialToken'
 	);
@@ -269,8 +276,8 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenR
 				_separator,
 				_operator,
 				$with: {
-					tokens: (value?: NonNullable<T.TokenRepetition.Config>['tokens']) =>
-						buildTokenRepetition({ ...config, tokens: value }),
+					tokens: (...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
+						buildTokenRepetition({ ...config, tokens: values }),
 					separator: (value?: string) => buildTokenRepetition({ ...config, separator: value }),
 					operator: (value: NonNullable<T.TokenRepetition.Config>['operator']) =>
 						buildTokenRepetition({ ...config, operator: value })
@@ -280,6 +287,323 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenR
 				tokens: () => _tokens,
 				separator: () => _separator,
 				operator: () => _operator
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildNonSpecialToken(
+	value:
+		| T.Literal
+		| T.Identifier
+		| TSKindId.MutableSpecifier
+		| TSKindId.Self
+		| TSKindId.Super
+		| TSKindId.Crate
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| TSKindId.Plus
+		| TSKindId.Dash
+		| TSKindId.Star
+		| TSKindId.Slash
+		| TSKindId.Percent
+		| TSKindId.Caret
+		| TSKindId.Bang
+		| TSKindId.Amp
+		| TSKindId.Pipe
+		| TSKindId.AmpAmp
+		| TSKindId.PipePipe
+		| TSKindId.LtLt
+		| TSKindId.GtGt
+		| TSKindId.PlusEq
+		| TSKindId.DashEq
+		| TSKindId.StarEq
+		| TSKindId.SlashEq
+		| TSKindId.PercentEq
+		| TSKindId.CaretEq
+		| TSKindId.AmpEq
+		| TSKindId.PipeEq
+		| TSKindId.LtLtEq
+		| TSKindId.GtGtEq
+		| TSKindId.Eq
+		| TSKindId.EqEq
+		| TSKindId.BangEq
+		| TSKindId.Gt
+		| TSKindId.Lt
+		| TSKindId.GtEq
+		| TSKindId.LtEq
+		| TSKindId.At
+		| TSKindId.Underscore
+		| TSKindId.Dot
+		| TSKindId.DotDot
+		| TSKindId.DotDotDot
+		| TSKindId.DotDotEq
+		| TSKindId.Comma
+		| TSKindId.Semi
+		| TSKindId.Colon
+		| TSKindId.ColonColon
+		| TSKindId.DashGt
+		| TSKindId.EqGt
+		| TSKindId.Pound
+		| TSKindId.Qmark
+		| TSKindId.Squote
+		| TSKindId.AsKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.BreakKeyword
+		| TSKindId.ConstKeyword
+		| TSKindId.ContinueKeyword
+		| TSKindId.DefaultKeyword
+		| TSKindId.EnumKeyword
+		| TSKindId.FnKeyword
+		| TSKindId.ForKeyword
+		| TSKindId.GenKeyword
+		| TSKindId.IfKeyword
+		| TSKindId.ImplKeyword
+		| TSKindId.LetKeyword
+		| TSKindId.LoopKeyword
+		| TSKindId.MatchKeyword
+		| TSKindId.ModKeyword
+		| TSKindId.PubKeyword
+		| TSKindId.ReturnKeyword
+		| TSKindId.StaticKeyword
+		| TSKindId.StructKeyword
+		| TSKindId.TraitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.UnsafeKeyword
+		| TSKindId.UseKeyword
+		| TSKindId.WhereKeyword
+		| TSKindId.WhileKeyword
+): T.NonSpecialToken.Built {
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.NonSpecialToken['_content']>>(value, [
+			['mut', TSKindId.MutableSpecifier] as const,
+			['self', TSKindId.Self] as const,
+			['super', TSKindId.Super] as const,
+			['crate', TSKindId.Crate] as const,
+			['u8', TSKindId.U8Keyword] as const,
+			['i8', TSKindId.I8Keyword] as const,
+			['u16', TSKindId.U16Keyword] as const,
+			['i16', TSKindId.I16Keyword] as const,
+			['u32', TSKindId.U32Keyword] as const,
+			['i32', TSKindId.I32Keyword] as const,
+			['u64', TSKindId.U64Keyword] as const,
+			['i64', TSKindId.I64Keyword] as const,
+			['u128', TSKindId.U128Keyword] as const,
+			['i128', TSKindId.I128Keyword] as const,
+			['isize', TSKindId.IsizeKeyword] as const,
+			['usize', TSKindId.UsizeKeyword] as const,
+			['f32', TSKindId.F32Keyword] as const,
+			['f64', TSKindId.F64Keyword] as const,
+			['bool', TSKindId.BoolKeyword] as const,
+			['str', TSKindId.StrKeyword] as const,
+			['char', TSKindId.CharKeyword] as const,
+			['+', TSKindId.Plus] as const,
+			['-', TSKindId.Dash] as const,
+			['*', TSKindId.Star] as const,
+			['/', TSKindId.Slash] as const,
+			['%', TSKindId.Percent] as const,
+			['^', TSKindId.Caret] as const,
+			['!', TSKindId.Bang] as const,
+			['&', TSKindId.Amp] as const,
+			['|', TSKindId.Pipe] as const,
+			['&&', TSKindId.AmpAmp] as const,
+			['||', TSKindId.PipePipe] as const,
+			['<<', TSKindId.LtLt] as const,
+			['>>', TSKindId.GtGt] as const,
+			['+=', TSKindId.PlusEq] as const,
+			['-=', TSKindId.DashEq] as const,
+			['*=', TSKindId.StarEq] as const,
+			['/=', TSKindId.SlashEq] as const,
+			['%=', TSKindId.PercentEq] as const,
+			['^=', TSKindId.CaretEq] as const,
+			['&=', TSKindId.AmpEq] as const,
+			['|=', TSKindId.PipeEq] as const,
+			['<<=', TSKindId.LtLtEq] as const,
+			['>>=', TSKindId.GtGtEq] as const,
+			['=', TSKindId.Eq] as const,
+			['==', TSKindId.EqEq] as const,
+			['!=', TSKindId.BangEq] as const,
+			['>', TSKindId.Gt] as const,
+			['<', TSKindId.Lt] as const,
+			['>=', TSKindId.GtEq] as const,
+			['<=', TSKindId.LtEq] as const,
+			['@', TSKindId.At] as const,
+			['_', TSKindId.Underscore] as const,
+			['.', TSKindId.Dot] as const,
+			['..', TSKindId.DotDot] as const,
+			['...', TSKindId.DotDotDot] as const,
+			['..=', TSKindId.DotDotEq] as const,
+			[',', TSKindId.Comma] as const,
+			[';', TSKindId.Semi] as const,
+			[':', TSKindId.Colon] as const,
+			['::', TSKindId.ColonColon] as const,
+			['->', TSKindId.DashGt] as const,
+			['=>', TSKindId.EqGt] as const,
+			['#', TSKindId.Pound] as const,
+			['?', TSKindId.Qmark] as const,
+			["'", TSKindId.Squote] as const,
+			['as', TSKindId.AsKeyword] as const,
+			['async', TSKindId.AsyncKeyword] as const,
+			['await', TSKindId.AwaitKeyword] as const,
+			['break', TSKindId.BreakKeyword] as const,
+			['const', TSKindId.ConstKeyword] as const,
+			['continue', TSKindId.ContinueKeyword] as const,
+			['default', TSKindId.DefaultKeyword] as const,
+			['enum', TSKindId.EnumKeyword] as const,
+			['fn', TSKindId.FnKeyword] as const,
+			['for', TSKindId.ForKeyword] as const,
+			['gen', TSKindId.GenKeyword] as const,
+			['if', TSKindId.IfKeyword] as const,
+			['impl', TSKindId.ImplKeyword] as const,
+			['let', TSKindId.LetKeyword] as const,
+			['loop', TSKindId.LoopKeyword] as const,
+			['match', TSKindId.MatchKeyword] as const,
+			['mod', TSKindId.ModKeyword] as const,
+			['pub', TSKindId.PubKeyword] as const,
+			['return', TSKindId.ReturnKeyword] as const,
+			['static', TSKindId.StaticKeyword] as const,
+			['struct', TSKindId.StructKeyword] as const,
+			['trait', TSKindId.TraitKeyword] as const,
+			['type', TSKindId.TypeKeyword] as const,
+			['union', TSKindId.UnionKeyword] as const,
+			['unsafe', TSKindId.UnsafeKeyword] as const,
+			['use', TSKindId.UseKeyword] as const,
+			['where', TSKindId.WhereKeyword] as const,
+			['while', TSKindId.WhileKeyword] as const
+		]),
+		'NonSpecialToken.content',
+		'buildIdentifier(…)'
+	);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.NonSpecialToken as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (
+						value: NonNullable<
+							| T.Literal
+							| T.Identifier
+							| TSKindId.MutableSpecifier
+							| TSKindId.Self
+							| TSKindId.Super
+							| TSKindId.Crate
+							| TSKindId.U8Keyword
+							| TSKindId.I8Keyword
+							| TSKindId.U16Keyword
+							| TSKindId.I16Keyword
+							| TSKindId.U32Keyword
+							| TSKindId.I32Keyword
+							| TSKindId.U64Keyword
+							| TSKindId.I64Keyword
+							| TSKindId.U128Keyword
+							| TSKindId.I128Keyword
+							| TSKindId.IsizeKeyword
+							| TSKindId.UsizeKeyword
+							| TSKindId.F32Keyword
+							| TSKindId.F64Keyword
+							| TSKindId.BoolKeyword
+							| TSKindId.StrKeyword
+							| TSKindId.CharKeyword
+							| TSKindId.Plus
+							| TSKindId.Dash
+							| TSKindId.Star
+							| TSKindId.Slash
+							| TSKindId.Percent
+							| TSKindId.Caret
+							| TSKindId.Bang
+							| TSKindId.Amp
+							| TSKindId.Pipe
+							| TSKindId.AmpAmp
+							| TSKindId.PipePipe
+							| TSKindId.LtLt
+							| TSKindId.GtGt
+							| TSKindId.PlusEq
+							| TSKindId.DashEq
+							| TSKindId.StarEq
+							| TSKindId.SlashEq
+							| TSKindId.PercentEq
+							| TSKindId.CaretEq
+							| TSKindId.AmpEq
+							| TSKindId.PipeEq
+							| TSKindId.LtLtEq
+							| TSKindId.GtGtEq
+							| TSKindId.Eq
+							| TSKindId.EqEq
+							| TSKindId.BangEq
+							| TSKindId.Gt
+							| TSKindId.Lt
+							| TSKindId.GtEq
+							| TSKindId.LtEq
+							| TSKindId.At
+							| TSKindId.Underscore
+							| TSKindId.Dot
+							| TSKindId.DotDot
+							| TSKindId.DotDotDot
+							| TSKindId.DotDotEq
+							| TSKindId.Comma
+							| TSKindId.Semi
+							| TSKindId.Colon
+							| TSKindId.ColonColon
+							| TSKindId.DashGt
+							| TSKindId.EqGt
+							| TSKindId.Pound
+							| TSKindId.Qmark
+							| TSKindId.Squote
+							| TSKindId.AsKeyword
+							| TSKindId.AsyncKeyword
+							| TSKindId.AwaitKeyword
+							| TSKindId.BreakKeyword
+							| TSKindId.ConstKeyword
+							| TSKindId.ContinueKeyword
+							| TSKindId.DefaultKeyword
+							| TSKindId.EnumKeyword
+							| TSKindId.FnKeyword
+							| TSKindId.ForKeyword
+							| TSKindId.GenKeyword
+							| TSKindId.IfKeyword
+							| TSKindId.ImplKeyword
+							| TSKindId.LetKeyword
+							| TSKindId.LoopKeyword
+							| TSKindId.MatchKeyword
+							| TSKindId.ModKeyword
+							| TSKindId.PubKeyword
+							| TSKindId.ReturnKeyword
+							| TSKindId.StaticKeyword
+							| TSKindId.StructKeyword
+							| TSKindId.TraitKeyword
+							| TSKindId.TypeKeyword
+							| TSKindId.UnionKeyword
+							| TSKindId.UnsafeKeyword
+							| TSKindId.UseKeyword
+							| TSKindId.WhereKeyword
+							| TSKindId.WhileKeyword
+						>
+					) => buildNonSpecialToken(value)
+				}
+			},
+			{
+				content: () => _content
 			}
 		),
 		methodsEngine
@@ -4956,6 +5280,14 @@ export function buildLineComment(
 	);
 }
 
+export function buildInnerLineDocCommentMarker(): TSKindId.InnerLineDocCommentMarker {
+	return TSKindId.InnerLineDocCommentMarker;
+}
+
+export function buildOuterLineDocCommentMarker(): TSKindId.OuterLineDocCommentMarker {
+	return TSKindId.OuterLineDocCommentMarker;
+}
+
 export function buildBlockComment(
 	value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent
 ): T.BlockComment.Built {
@@ -6310,7 +6642,7 @@ function _buildTupleTypeElements(
 	elements: NonEmptyArray<T.Type | T.TypeIdentifier.Types>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TupleTypeElements.Built {
-	_assertNonEmpty(elements, '_tuple_type_elements.elements');
+	_assertNonEmpty(elements, 'tuple_type_elements.elements');
 	const _type = admitAliasContent<NonEmptyArray<T.Type>>(elements, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -6361,9 +6693,9 @@ function _buildTupleExpressionElements(
 	elements: NonEmptyArray<T.Expression>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TupleExpressionElements.Built {
-	_assertNonEmpty(elements, '_tuple_expression_elements.elements');
+	_assertNonEmpty(elements, 'tuple_expression_elements.elements');
 	if (elements.length === 1 && ((options.delimiter ?? Delimiter.None) & Delimiter.Trailing) === 0) {
-		throw new Error('_tuple_expression_elements: a single element requires a trailing delimiter (delimiter: 2)');
+		throw new Error('tuple_expression_elements: a single element requires a trailing delimiter (delimiter: 2)');
 	}
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
@@ -6387,6 +6719,10 @@ function _buildTupleExpressionElements(
 		),
 		methodsEngine
 	);
+}
+
+export function buildRangeExpressionBare(): TSKindId.RangeExpressionBare {
+	return TSKindId.RangeExpressionBare;
 }
 
 export function buildIntegerLiteralDecimal(
@@ -7676,8 +8012,8 @@ export function buildPointerTypeMut(value: T.Type | T.TypeIdentifier.Types): T.P
 }
 
 export function buildStringOpen(text: string): T.StringOpen.Built {
-	if (text.length === 0) throw new Error(`_string_open: text must be non-empty`);
-	if (!_leafRe_buildStringOpen.test(text)) throw new Error(`_string_open: text does not match pattern: ${text}`);
+	if (text.length === 0) throw new Error(`string_open: text must be non-empty`);
+	if (!_leafRe_buildStringOpen.test(text)) throw new Error(`string_open: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.StringOpen as const,
@@ -7989,23 +8325,23 @@ export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSl
 	);
 }
 
-export function buildLineCommentDocOuter(value: T.LineDocContent): ReturnType<typeof _buildLineCommentDocOuter>;
+export function buildLineCommentDocOuter(value: T.DocComment): ReturnType<typeof _buildLineCommentDocOuter>;
 export function buildLineCommentDocOuter(text: string): ReturnType<typeof _buildLineCommentDocOuter>;
 export function buildLineCommentDocOuter(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildLineCommentDocOuter(args[0] as T.LineDocContent);
+		return _buildLineCommentDocOuter(args[0] as T.DocComment);
 	}
 	const prebuilt =
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.LineDocContent as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.DocComment as const);
 	return prebuilt
-		? _buildLineCommentDocOuter(args[0] as T.LineDocContent)
-		: _buildLineCommentDocOuter((buildLineDocContent as (...a: unknown[]) => unknown)(...args) as T.LineDocContent);
+		? _buildLineCommentDocOuter(args[0] as T.DocComment)
+		: _buildLineCommentDocOuter((buildDocComment as (...a: unknown[]) => unknown)(...args) as T.DocComment);
 }
-function _buildLineCommentDocOuter(value: T.LineDocContent): T.LineCommentDocOuter.Built {
-	const _doc = rejectBareText(value, 'LineCommentDocOuter.doc', 'buildLineDocContent(…)');
+function _buildLineCommentDocOuter(value: T.DocComment): T.LineCommentDocOuter.Built {
+	const _doc = rejectBareText(value, 'LineCommentDocOuter.doc', 'buildDocComment(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -8014,7 +8350,7 @@ function _buildLineCommentDocOuter(value: T.LineDocContent): T.LineCommentDocOut
 				$named: true as const,
 				_doc,
 				$with: {
-					doc: (value: T.LineDocContent) => buildLineCommentDocOuter(value)
+					doc: (value: T.DocComment) => buildLineCommentDocOuter(value)
 				}
 			},
 			{
@@ -8025,23 +8361,23 @@ function _buildLineCommentDocOuter(value: T.LineDocContent): T.LineCommentDocOut
 	);
 }
 
-export function buildLineCommentDocInner(value: T.LineDocContent): ReturnType<typeof _buildLineCommentDocInner>;
+export function buildLineCommentDocInner(value: T.DocComment): ReturnType<typeof _buildLineCommentDocInner>;
 export function buildLineCommentDocInner(text: string): ReturnType<typeof _buildLineCommentDocInner>;
 export function buildLineCommentDocInner(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildLineCommentDocInner(args[0] as T.LineDocContent);
+		return _buildLineCommentDocInner(args[0] as T.DocComment);
 	}
 	const prebuilt =
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.LineDocContent as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.DocComment as const);
 	return prebuilt
-		? _buildLineCommentDocInner(args[0] as T.LineDocContent)
-		: _buildLineCommentDocInner((buildLineDocContent as (...a: unknown[]) => unknown)(...args) as T.LineDocContent);
+		? _buildLineCommentDocInner(args[0] as T.DocComment)
+		: _buildLineCommentDocInner((buildDocComment as (...a: unknown[]) => unknown)(...args) as T.DocComment);
 }
-function _buildLineCommentDocInner(value: T.LineDocContent): T.LineCommentDocInner.Built {
-	const _doc = rejectBareText(value, 'LineCommentDocInner.doc', 'buildLineDocContent(…)');
+function _buildLineCommentDocInner(value: T.DocComment): T.LineCommentDocInner.Built {
+	const _doc = rejectBareText(value, 'LineCommentDocInner.doc', 'buildDocComment(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -8050,7 +8386,7 @@ function _buildLineCommentDocInner(value: T.LineDocContent): T.LineCommentDocInn
 				$named: true as const,
 				_doc,
 				$with: {
-					doc: (value: T.LineDocContent) => buildLineCommentDocInner(value)
+					doc: (value: T.DocComment) => buildLineCommentDocInner(value)
 				}
 			},
 			{
@@ -8954,6 +9290,10 @@ export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructIt
 	);
 }
 
+export function buildWildcardPattern(): TSKindId.WildcardPattern {
+	return TSKindId.WildcardPattern;
+}
+
 export function buildAttributedFieldDeclaration(
 	config: T.AttributedFieldDeclaration.Config
 ): T.AttributedFieldDeclaration.Built {
@@ -9280,10 +9620,18 @@ export function buildRawStringLiteralContent(text: string): T.RawStringLiteralCo
 	);
 }
 
+export function buildOuterDocCommentMarker(): TSKindId.OuterDocCommentMarker {
+	return TSKindId.OuterDocCommentMarker;
+}
+
+export function buildInnerDocCommentMarker(): TSKindId.InnerDocCommentMarker {
+	return TSKindId.InnerDocCommentMarker;
+}
+
 export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStart.Built {
-	if (text.length === 0) throw new Error(`_raw_string_literal_start: text must be non-empty`);
+	if (text.length === 0) throw new Error(`raw_string_literal_start: text must be non-empty`);
 	if (!_leafRe_buildRawStringLiteralStart.test(text))
-		throw new Error(`_raw_string_literal_start: text does not match pattern: ${text}`);
+		throw new Error(`raw_string_literal_start: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.RawStringLiteralStart as const,
@@ -9296,9 +9644,9 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 }
 
 export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Built {
-	if (text.length === 0) throw new Error(`_raw_string_literal_end: text must be non-empty`);
+	if (text.length === 0) throw new Error(`raw_string_literal_end: text must be non-empty`);
 	if (!_leafRe_buildRawStringLiteralEnd.test(text))
-		throw new Error(`_raw_string_literal_end: text does not match pattern: ${text}`);
+		throw new Error(`raw_string_literal_end: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.RawStringLiteralEnd as const,
@@ -9310,12 +9658,11 @@ export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bu
 	);
 }
 
-export function buildLineDocContent(text: string): T.LineDocContent.Built {
-	if (!_leafRe_buildLineDocContent.test(text))
-		throw new Error(`_line_doc_content: text does not match pattern: ${text}`);
+export function buildDocComment(text: string): T.DocComment.Built {
+	if (!_leafRe_buildDocComment.test(text)) throw new Error(`doc_comment: text does not match pattern: ${text}`);
 	return withMethods(
 		{
-			$type: TSKindId.LineDocContent as const,
+			$type: TSKindId.DocComment as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -9356,7 +9703,7 @@ export function buildTypeIdentifier(value: T.Identifier): T.TypeIdentifier.Built
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._TypeIdentifier as const,
+				$type: TSKindId.TypeIdentifier as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -9377,7 +9724,7 @@ export function buildFieldIdentifier(value: T.Identifier): T.FieldIdentifier.Bui
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._FieldIdentifier as const,
+				$type: TSKindId.FieldIdentifier as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -9398,7 +9745,7 @@ export function buildShorthandFieldIdentifier(value: T.Identifier): T.ShorthandF
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._ShorthandFieldIdentifier as const,
+				$type: TSKindId.ShorthandFieldIdentifier as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -9422,6 +9769,7 @@ export type FluentKindMap = {
 	token_binding_pattern: T.TokenBindingPattern.Built;
 	token_repetition_pattern: T.TokenRepetitionPattern.Built;
 	token_repetition: T.TokenRepetition.Built;
+	non_special_token: T.NonSpecialToken.Built;
 	attribute_item: T.AttributeItem.Built;
 	inner_attribute_item: T.InnerAttributeItem.Built;
 	attribute: T.Attribute.Built;
@@ -9544,6 +9892,8 @@ export type FluentKindMap = {
 	string_literal: T.StringLiteral.Built;
 	raw_string_literal: T.RawStringLiteral.Built;
 	line_comment: T.LineComment.Built;
+	inner_line_doc_comment_marker: T.InnerLineDocCommentMarker;
+	outer_line_doc_comment_marker: T.OuterLineDocCommentMarker;
 	block_comment: T.BlockComment.Built;
 	identifier: T.Identifier;
 	shebang: T.Shebang.Built;
@@ -9568,8 +9918,9 @@ export type FluentKindMap = {
 	patterns: T.Patterns.Built;
 	struct_pattern_elements: T.StructPatternElements.Built;
 	use_wildcard_group: T.UseWildcardGroup.Built;
-	_tuple_type_elements: T.TupleTypeElements.Built;
-	_tuple_expression_elements: T.TupleExpressionElements.Built;
+	tuple_type_elements: T.TupleTypeElements.Built;
+	tuple_expression_elements: T.TupleExpressionElements.Built;
+	range_expression_bare: T.RangeExpressionBare;
 	integer_literal_decimal: T.IntegerLiteralDecimal.Built;
 	integer_literal_hex: T.IntegerLiteralHex.Built;
 	integer_literal_binary: T.IntegerLiteralBinary.Built;
@@ -9605,7 +9956,7 @@ export type FluentKindMap = {
 	or_pattern_prefix: T.OrPatternPrefix.Built;
 	pointer_type_const: T.PointerTypeConst.Built;
 	pointer_type_mut: T.PointerTypeMut.Built;
-	_string_open: T.StringOpen;
+	string_open: T.StringOpen;
 	range_expression_binary: T.RangeExpressionBinary.Built;
 	range_expression_postfix: T.RangeExpressionPostfix.Built;
 	range_expression_prefix: T.RangeExpressionPrefix.Built;
@@ -9641,20 +9992,23 @@ export type FluentKindMap = {
 	struct_item_brace: T.StructItemBrace.Built;
 	struct_item_tuple: T.StructItemTuple.Built;
 	struct_item_unit: T.StructItemUnit.Built;
-	_attributed_field_declaration: T.AttributedFieldDeclaration.Built;
-	_attributed_enum_variant: T.AttributedEnumVariant.Built;
-	_attributed_parameter: T.AttributedParameter.Built;
-	_attributed_type_parameter: T.AttributedTypeParameter.Built;
-	_attributed_argument: T.AttributedArgument.Built;
-	_attributed_ordered_field: T.AttributedOrderedField.Built;
-	_type_argument: T.TypeArgument.Built;
-	_match_block_arms: T.MatchBlockArms.Built;
+	wildcard_pattern: T.WildcardPattern;
+	attributed_field_declaration: T.AttributedFieldDeclaration.Built;
+	attributed_enum_variant: T.AttributedEnumVariant.Built;
+	attributed_parameter: T.AttributedParameter.Built;
+	attributed_type_parameter: T.AttributedTypeParameter.Built;
+	attributed_argument: T.AttributedArgument.Built;
+	attributed_ordered_field: T.AttributedOrderedField.Built;
+	type_argument: T.TypeArgument.Built;
+	match_block_arms: T.MatchBlockArms.Built;
 	float_literal: T.FloatLiteral;
 	string_content: T.StringContent;
 	raw_string_literal_content: T.RawStringLiteralContent;
-	_raw_string_literal_start: T.RawStringLiteralStart;
-	_raw_string_literal_end: T.RawStringLiteralEnd;
-	_line_doc_content: T.LineDocContent;
+	outer_doc_comment_marker: T.OuterDocCommentMarker;
+	inner_doc_comment_marker: T.InnerDocCommentMarker;
+	raw_string_literal_start: T.RawStringLiteralStart;
+	raw_string_literal_end: T.RawStringLiteralEnd;
+	doc_comment: T.DocComment;
 	_block_comment_content: T.BlockCommentContent;
 	_error_sentinel: T.ErrorSentinel;
 	type_identifier: T.TypeIdentifier.Built;
@@ -9670,6 +10024,7 @@ export const _factoryMap = {
 	token_binding_pattern: buildTokenBindingPattern,
 	token_repetition_pattern: buildTokenRepetitionPattern,
 	token_repetition: buildTokenRepetition,
+	non_special_token: buildNonSpecialToken,
 	attribute_item: buildAttributeItem,
 	inner_attribute_item: buildInnerAttributeItem,
 	attribute: buildAttribute,
@@ -9792,6 +10147,8 @@ export const _factoryMap = {
 	string_literal: buildStringLiteral,
 	raw_string_literal: buildRawStringLiteral,
 	line_comment: buildLineComment,
+	inner_line_doc_comment_marker: buildInnerLineDocCommentMarker,
+	outer_line_doc_comment_marker: buildOuterLineDocCommentMarker,
 	block_comment: buildBlockComment,
 	identifier: buildIdentifier,
 	shebang: buildShebang,
@@ -9816,8 +10173,9 @@ export const _factoryMap = {
 	patterns: buildPatterns,
 	struct_pattern_elements: buildStructPatternElements,
 	use_wildcard_group: buildUseWildcardGroup,
-	_tuple_type_elements: buildTupleTypeElements,
-	_tuple_expression_elements: buildTupleExpressionElements,
+	tuple_type_elements: buildTupleTypeElements,
+	tuple_expression_elements: buildTupleExpressionElements,
+	range_expression_bare: buildRangeExpressionBare,
 	integer_literal_decimal: buildIntegerLiteralDecimal,
 	integer_literal_hex: buildIntegerLiteralHex,
 	integer_literal_binary: buildIntegerLiteralBinary,
@@ -9853,7 +10211,7 @@ export const _factoryMap = {
 	or_pattern_prefix: buildOrPatternPrefix,
 	pointer_type_const: buildPointerTypeConst,
 	pointer_type_mut: buildPointerTypeMut,
-	_string_open: buildStringOpen,
+	string_open: buildStringOpen,
 	range_expression_binary: buildRangeExpressionBinary,
 	range_expression_postfix: buildRangeExpressionPostfix,
 	range_expression_prefix: buildRangeExpressionPrefix,
@@ -9889,20 +10247,23 @@ export const _factoryMap = {
 	struct_item_brace: buildStructItemBrace,
 	struct_item_tuple: buildStructItemTuple,
 	struct_item_unit: buildStructItemUnit,
-	_attributed_field_declaration: buildAttributedFieldDeclaration,
-	_attributed_enum_variant: buildAttributedEnumVariant,
-	_attributed_parameter: buildAttributedParameter,
-	_attributed_type_parameter: buildAttributedTypeParameter,
-	_attributed_argument: buildAttributedArgument,
-	_attributed_ordered_field: buildAttributedOrderedField,
-	_type_argument: buildTypeArgument,
-	_match_block_arms: buildMatchBlockArms,
+	wildcard_pattern: buildWildcardPattern,
+	attributed_field_declaration: buildAttributedFieldDeclaration,
+	attributed_enum_variant: buildAttributedEnumVariant,
+	attributed_parameter: buildAttributedParameter,
+	attributed_type_parameter: buildAttributedTypeParameter,
+	attributed_argument: buildAttributedArgument,
+	attributed_ordered_field: buildAttributedOrderedField,
+	type_argument: buildTypeArgument,
+	match_block_arms: buildMatchBlockArms,
 	float_literal: buildFloatLiteral,
 	string_content: buildStringContent,
 	raw_string_literal_content: buildRawStringLiteralContent,
-	_raw_string_literal_start: buildRawStringLiteralStart,
-	_raw_string_literal_end: buildRawStringLiteralEnd,
-	_line_doc_content: buildLineDocContent,
+	outer_doc_comment_marker: buildOuterDocCommentMarker,
+	inner_doc_comment_marker: buildInnerDocCommentMarker,
+	raw_string_literal_start: buildRawStringLiteralStart,
+	raw_string_literal_end: buildRawStringLiteralEnd,
+	doc_comment: buildDocComment,
 	_block_comment_content: buildBlockCommentContent,
 	_error_sentinel: buildErrorSentinel,
 	type_identifier: buildTypeIdentifier,

@@ -2,13 +2,6 @@
 
 /** All branch (non-leaf) node kind strings. */
 const NODE_KINDS = [
-	'_extends_clause_single',
-	'_type_query_call_expression',
-	'_type_query_call_expression_in_type_annotation',
-	'_type_query_instantiation_expression',
-	'_type_query_member_expression',
-	'_type_query_member_expression_in_type_annotation',
-	'_type_query_subscript_expression',
 	'abstract_class_declaration',
 	'abstract_method_signature',
 	'adding_type_annotation',
@@ -63,6 +56,7 @@ const NODE_KINDS = [
 	'export_statement_type_export',
 	'expression_statement',
 	'extends_clause',
+	'extends_clause_single',
 	'extends_type_clause',
 	'finally_clause',
 	'flow_maybe_type',
@@ -166,6 +160,12 @@ const NODE_KINDS = [
 	'type_predicate',
 	'type_predicate_annotation',
 	'type_query',
+	'type_query_call_expression',
+	'type_query_call_expression_in_type_annotation',
+	'type_query_instantiation_expression',
+	'type_query_member_expression',
+	'type_query_member_expression_in_type_annotation',
+	'type_query_subscript_expression',
 	'types',
 	'unary_expression',
 	'union_type',
@@ -181,6 +181,8 @@ const LEAF_KINDS = [
 	'__for_header_operator',
 	'__number_operator',
 	'_augmented_assignment_expression_operator',
+	'_automatic_semicolon',
+	'_function_signature_automatic_semicolon',
 	'_kind',
 	'_kw_abstract_marker',
 	'_kw_accessor_marker',
@@ -216,6 +218,7 @@ const LEAF_KINDS = [
 	'delete_keyword',
 	'do_keyword',
 	'else_keyword',
+	'empty_member',
 	'empty_statement',
 	'enum_keyword',
 	'existential_type',
@@ -297,6 +300,8 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
+	'_automatic_semicolon',
+	'_function_signature_automatic_semicolon',
 	'_kw_abstract_marker',
 	'_kw_accessor_marker',
 	'_kw_async_marker',
@@ -326,6 +331,7 @@ export const KEYWORDS = [
 	'delete_keyword',
 	'do_keyword',
 	'else_keyword',
+	'empty_member',
 	'empty_statement',
 	'enum_keyword',
 	'existential_type',
@@ -395,11 +401,8 @@ export const KEYWORDS = [
 
 /** Operator/punctuation tokens. */
 export const OPERATORS = [
-	'_automatic_semicolon',
 	'_blankline',
 	'_dedent',
-	'_empty_member',
-	'_function_signature_automatic_semicolon',
 	'_indent',
 	'_newline',
 	'_space',
@@ -781,7 +784,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	instantiation_expression: 295,
 	import_require_clause: 296,
 	extends_clause: 297,
-	_extends_clause_single: 298,
+	extends_clause_single: 298,
 	implements_clause: 299,
 	ambient_declaration: 300,
 	abstract_class_declaration: 301,
@@ -805,8 +808,8 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	adding_type_annotation: 319,
 	opting_type_annotation: 320,
 	type_annotation: 321,
-	_type_query_member_expression_in_type_annotation: 322,
-	_type_query_call_expression_in_type_annotation: 323,
+	type_query_member_expression_in_type_annotation: 322,
+	type_query_call_expression_in_type_annotation: 323,
 	asserts: 324,
 	asserts_annotation: 325,
 	type: 326,
@@ -824,10 +827,10 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	generic_type: 338,
 	type_predicate: 339,
 	type_predicate_annotation: 340,
-	_type_query_member_expression: 341,
-	_type_query_subscript_expression: 342,
-	_type_query_call_expression: 343,
-	_type_query_instantiation_expression: 344,
+	type_query_member_expression: 341,
+	type_query_subscript_expression: 342,
+	type_query_call_expression: 343,
+	type_query_instantiation_expression: 344,
 	type_query: 345,
 	index_type_query: 346,
 	lookup_type: 347,
@@ -882,7 +885,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	export_statement_equals_export: 396,
 	literal_type_negative_number: 397,
 	binary_expression_in: 398,
-	_empty_member: 399,
+	empty_member: 399,
 	class_body_method: 400,
 	class_body_method_sig: 401,
 	class_body_member: 402,
@@ -941,13 +944,13 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	object_type_content_repeat1: 455,
 	string_double_repeat1: 456,
 	string_single_repeat1: 457,
-	_interface_body: 458,
-	_property_identifier: 460,
-	_shorthand_property_identifier: 461,
-	_shorthand_property_identifier_pattern: 462,
-	_statement_identifier: 463,
-	_this_type: 464,
-	_type_identifier: 465
+	interface_body: 458,
+	property_identifier: 460,
+	shorthand_property_identifier: 461,
+	shorthand_property_identifier_pattern: 462,
+	statement_identifier: 463,
+	this_type: 464,
+	type_identifier: 465
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -1248,7 +1251,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[295]: 'instantiation_expression',
 	[296]: 'import_require_clause',
 	[297]: 'extends_clause',
-	[298]: '_extends_clause_single',
+	[298]: 'extends_clause_single',
 	[299]: 'implements_clause',
 	[300]: 'ambient_declaration',
 	[301]: 'abstract_class_declaration',
@@ -1272,8 +1275,8 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[319]: 'adding_type_annotation',
 	[320]: 'opting_type_annotation',
 	[321]: 'type_annotation',
-	[322]: '_type_query_member_expression_in_type_annotation',
-	[323]: '_type_query_call_expression_in_type_annotation',
+	[322]: 'type_query_member_expression_in_type_annotation',
+	[323]: 'type_query_call_expression_in_type_annotation',
 	[324]: 'asserts',
 	[325]: 'asserts_annotation',
 	[326]: 'type',
@@ -1291,10 +1294,10 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[338]: 'generic_type',
 	[339]: 'type_predicate',
 	[340]: 'type_predicate_annotation',
-	[341]: '_type_query_member_expression',
-	[342]: '_type_query_subscript_expression',
-	[343]: '_type_query_call_expression',
-	[344]: '_type_query_instantiation_expression',
+	[341]: 'type_query_member_expression',
+	[342]: 'type_query_subscript_expression',
+	[343]: 'type_query_call_expression',
+	[344]: 'type_query_instantiation_expression',
 	[345]: 'type_query',
 	[346]: 'index_type_query',
 	[347]: 'lookup_type',
@@ -1349,7 +1352,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[396]: 'export_statement_equals_export',
 	[397]: 'literal_type_negative_number',
 	[398]: 'binary_expression_in',
-	[399]: '_empty_member',
+	[399]: 'empty_member',
 	[400]: 'class_body_method',
 	[401]: 'class_body_method_sig',
 	[402]: 'class_body_member',
@@ -1408,13 +1411,13 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[455]: 'object_type_content_repeat1',
 	[456]: 'string_double_repeat1',
 	[457]: 'string_single_repeat1',
-	[458]: '_interface_body',
-	[460]: '_property_identifier',
-	[461]: '_shorthand_property_identifier',
-	[462]: '_shorthand_property_identifier_pattern',
-	[463]: '_statement_identifier',
-	[464]: '_this_type',
-	[465]: '_type_identifier'
+	[458]: 'interface_body',
+	[460]: 'property_identifier',
+	[461]: 'shorthand_property_identifier',
+	[462]: 'shorthand_property_identifier_pattern',
+	[463]: 'statement_identifier',
+	[464]: 'this_type',
+	[465]: 'type_identifier'
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -1790,7 +1793,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	},
 	{ name: 'import_require_clause', id: 296, enumName: 'ImportRequireClause', cName: 'sym_import_require_clause' },
 	{ name: 'extends_clause', id: 297, enumName: 'ExtendsClause', cName: 'sym_extends_clause' },
-	{ name: '_extends_clause_single', id: 298, enumName: 'ExtendsClauseSingle', cName: 'sym__extends_clause_single' },
+	{ name: 'extends_clause_single', id: 298, enumName: 'ExtendsClauseSingle', cName: 'sym__extends_clause_single' },
 	{ name: 'implements_clause', id: 299, enumName: 'ImplementsClause', cName: 'sym_implements_clause' },
 	{ name: 'ambient_declaration', id: 300, enumName: 'AmbientDeclaration', cName: 'sym_ambient_declaration' },
 	{
@@ -1825,13 +1828,13 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: 'opting_type_annotation', id: 320, enumName: 'OptingTypeAnnotation', cName: 'sym_opting_type_annotation' },
 	{ name: 'type_annotation', id: 321, enumName: 'TypeAnnotation', cName: 'sym_type_annotation' },
 	{
-		name: '_type_query_member_expression_in_type_annotation',
+		name: 'type_query_member_expression_in_type_annotation',
 		id: 322,
 		enumName: 'TypeQueryMemberExpressionInTypeAnnotation',
 		cName: 'sym__type_query_member_expression_in_type_annotation'
 	},
 	{
-		name: '_type_query_call_expression_in_type_annotation',
+		name: 'type_query_call_expression_in_type_annotation',
 		id: 323,
 		enumName: 'TypeQueryCallExpressionInTypeAnnotation',
 		cName: 'sym__type_query_call_expression_in_type_annotation'
@@ -1864,25 +1867,25 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'sym_type_predicate_annotation'
 	},
 	{
-		name: '_type_query_member_expression',
+		name: 'type_query_member_expression',
 		id: 341,
 		enumName: 'TypeQueryMemberExpression',
 		cName: 'sym__type_query_member_expression'
 	},
 	{
-		name: '_type_query_subscript_expression',
+		name: 'type_query_subscript_expression',
 		id: 342,
 		enumName: 'TypeQuerySubscriptExpression',
 		cName: 'sym__type_query_subscript_expression'
 	},
 	{
-		name: '_type_query_call_expression',
+		name: 'type_query_call_expression',
 		id: 343,
 		enumName: 'TypeQueryCallExpression',
 		cName: 'sym__type_query_call_expression'
 	},
 	{
-		name: '_type_query_instantiation_expression',
+		name: 'type_query_instantiation_expression',
 		id: 344,
 		enumName: 'TypeQueryInstantiationExpression',
 		cName: 'sym__type_query_instantiation_expression'
@@ -1986,7 +1989,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'sym_literal_type_negative_number'
 	},
 	{ name: 'binary_expression_in', id: 398, enumName: 'BinaryExpressionIn', cName: 'sym_binary_expression_in' },
-	{ name: '_empty_member', id: 399, enumName: 'EmptyMember', cName: 'sym__empty_member' },
+	{ name: 'empty_member', id: 399, enumName: 'EmptyMember', cName: 'sym__empty_member' },
 	{ name: 'class_body_method', id: 400, enumName: 'ClassBodyMethod', cName: 'sym_class_body_method' },
 	{ name: 'class_body_method_sig', id: 401, enumName: 'ClassBodyMethodSig', cName: 'sym_class_body_method_sig' },
 	{ name: 'class_body_member', id: 402, enumName: 'ClassBodyMember', cName: 'sym_class_body_member' },
@@ -2245,33 +2248,28 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		enumName: 'AuxStringSingleRepeat1',
 		cName: 'aux_sym_string_single_repeat1'
 	},
-	{ name: '_interface_body', id: 458, enumName: 'AliasInterfaceBody', cName: 'alias_sym_interface_body' },
+	{ name: 'interface_body', id: 458, enumName: 'AliasInterfaceBody', cName: 'alias_sym_interface_body' },
+	{ name: 'property_identifier', id: 460, enumName: 'AliasPropertyIdentifier', cName: 'alias_sym_property_identifier' },
 	{
-		name: '_property_identifier',
-		id: 460,
-		enumName: 'AliasPropertyIdentifier',
-		cName: 'alias_sym_property_identifier'
-	},
-	{
-		name: '_shorthand_property_identifier',
+		name: 'shorthand_property_identifier',
 		id: 461,
 		enumName: 'AliasShorthandPropertyIdentifier',
 		cName: 'alias_sym_shorthand_property_identifier'
 	},
 	{
-		name: '_shorthand_property_identifier_pattern',
+		name: 'shorthand_property_identifier_pattern',
 		id: 462,
 		enumName: 'AliasShorthandPropertyIdentifierPattern',
 		cName: 'alias_sym_shorthand_property_identifier_pattern'
 	},
 	{
-		name: '_statement_identifier',
+		name: 'statement_identifier',
 		id: 463,
 		enumName: 'AliasStatementIdentifier',
 		cName: 'alias_sym_statement_identifier'
 	},
-	{ name: '_this_type', id: 464, enumName: 'AliasThisType', cName: 'alias_sym_this_type' },
-	{ name: '_type_identifier', id: 465, enumName: 'AliasTypeIdentifier', cName: 'alias_sym_type_identifier' }
+	{ name: 'this_type', id: 464, enumName: 'AliasThisType', cName: 'alias_sym_this_type' },
+	{ name: 'type_identifier', id: 465, enumName: 'AliasTypeIdentifier', cName: 'alias_sym_type_identifier' }
 ] as const;
 
 export enum TSFieldId {

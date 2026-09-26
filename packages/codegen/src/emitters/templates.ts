@@ -1,15 +1,5 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
-import {
-	CHOICE,
-	DEDENT,
-	INDENT,
-	NEWLINE,
-	PATTERN,
-	SEQ,
-	STRING,
-	SUPERTYPE,
-	SYMBOL,
-} from '../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import { isNonterminalRuleType, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -24,23 +14,60 @@ import {
 	patternLeadingEdgeClass,
 	patternTrailingEdgeClass,
 	storageKindOfValue,
-	fixedTextOfKind
+	fixedTextOfKind,
+	isNodeRef,
+	isSurfaceHiddenIn,
+	surfaceHiddenOfRef,
+	isUnresolvedRef,
+	isFixedTextLeaf
 } from '../compiler/model/node-map.ts';
-import type {
-	AssembledNode,
-	AssembledNonterminal,
-	NodeOrTerminal,
-	SeamEdgeClass
-} from '../compiler/model/node-map.ts';
+import type { AssembledNode, AssembledNonterminal, NodeOrTerminal, SeamEdgeClass } from '../compiler/model/node-map.ts';
 import type { Rule, RuleBase, RenderRule, Multiplicity, SeamOrigin } from '../types/rule.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import type { WhitespaceArm } from '../dsl/primitives/spacing.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission, literalMergePairs, wordCharAsciiTable } from './shared.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
-import { flanksOf, isSeamChoice, punctuationTokenOfNode, seamChoiceDefault, seamPartOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
+import {
+	flanksOf,
+	isSeamChoice,
+	punctuationTokenOfNode,
+	seamChoiceDefault,
+	seamPartOf,
+	spacedSeparatorOf,
+	type RenderRules
+} from '../compiler/model/render-rules.ts';
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
-import { ADJACENT, adjacentInto, DEDENT as DEDENT_BODY, DYNAMIC_EDGE, EMPTY, INDENT as INDENT_BODY, MARKER_EDGE, SPACE, branches, concat, edgeChar, equalBodies, equalNodes, gate, gateOptionalSlotSeams, isExpression, isPlainText, mentions, opensAsTag, refersTo, duplicateSlots, literalBody, seam, slot as slotRef, text, weight, type Body } from './render-body.ts';
+import {
+	ADJACENT,
+	adjacentInto,
+	DEDENT as DEDENT_BODY,
+	DYNAMIC_EDGE,
+	EMPTY,
+	INDENT as INDENT_BODY,
+	MARKER_EDGE,
+	SPACE,
+	branches,
+	concat,
+	edgeChar,
+	equalBodies,
+	equalNodes,
+	gate,
+	gateOptionalSlotSeams,
+	isExpression,
+	isPlainText,
+	mentions,
+	opensAsTag,
+	refersTo,
+	duplicateSlots,
+	literalBody,
+	seam,
+	slot as slotRef,
+	text,
+	weight,
+	writesTokenSeam,
+	type Body
+} from './render-body.ts';
 
 export interface EmitTemplatesConfig {
 	grammar: string;
@@ -126,7 +153,9 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			})(),
 			isLiteralMergePair: (() => {
 				const pairs = new Set(
-					literalMergePairs(getTransportProjection(config.nodeMap).literals, config.kindEntries ?? []).map(([a, b]) => a * 128 + b)
+					literalMergePairs(getTransportProjection(config.nodeMap).literals, config.kindEntries ?? []).map(
+						([a, b]) => a * 128 + b
+					)
 				);
 				return (l: string, r: string) =>
 					l.charCodeAt(0) < 128 && r.charCodeAt(0) < 128 && pairs.has(l.charCodeAt(0) * 128 + r.charCodeAt(0));
@@ -137,7 +166,10 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				const combos = new Set<string>();
 				const lefts = new Set<string>();
 				const rights = new Set<string>();
-				for (const [a, b] of literalMergePairs(getTransportProjection(config.nodeMap).literals, config.kindEntries ?? [])) {
+				for (const [a, b] of literalMergePairs(
+					getTransportProjection(config.nodeMap).literals,
+					config.kindEntries ?? []
+				)) {
 					combos.add(`${cls(a)}\0${cls(b)}`);
 					lefts.add(String.fromCharCode(a));
 					rights.add(String.fromCharCode(b));
@@ -184,7 +216,10 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		if (!(node instanceof AbstractAssembledCompound)) return [slotName];
 		const slot = node.slots.find((candidate) => candidate.name === slotName);
 		const tokens = (slot?.values ?? []).flatMap((value) => {
-			const token = punctuationTokenOfNode(this.#ctx.nodeMap.nodes.get(storageKindOfValue(value) ?? ''), this.#kindEntries);
+			const token = punctuationTokenOfNode(
+				this.#ctx.nodeMap.nodes.get(storageKindOfValue(value) ?? ''),
+				this.#kindEntries
+			);
 			return token === undefined ? [] : [token];
 		});
 		return [slotName, ...tokens];
@@ -196,7 +231,8 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		this.#ctx.visitingHelpers.clear();
 		this.#ctx.emittedSlotNames.clear();
 		const emitted = emitOne(node, this.#ctx);
-		const body = emitted === undefined ? undefined : gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot));
+		const body =
+			emitted === undefined ? undefined : gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot));
 
 		if (body === undefined) {
 			this.#bodies.set(node.kind, EMPTY);
@@ -294,10 +330,7 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): Body | undefined {
 	}
 }
 
-export function emitBranchTemplate(
-	node: SlotBearingCompound,
-	ctx: EmitCtx
-): Body {
+export function emitBranchTemplate(node: SlotBearingCompound, ctx: EmitCtx): Body {
 	const top = ctx.rules[node.kind] ?? node.renderRule;
 	const ctxWithSlots: EmitCtx = {
 		...ctx,
@@ -388,12 +421,22 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 				partIndices.push(i);
 			});
 			if (parts.length === 0) return EMPTY;
-			const ORIGIN_RANK: Record<SeamOrigin, number> = { preference: 4, 'literal-default': 3, 'word-default': 2, cascade: 1, fallback: 0 };
+			const ORIGIN_RANK: Record<SeamOrigin, number> = {
+				preference: 4,
+				'literal-default': 3,
+				'word-default': 2,
+				cascade: 1,
+				fallback: 0
+			};
 			const ARM_RANK: Record<string, number> = { indent: 3, dedent: 3, newline: 2, blankline: 2, tight: 1, space: 0 };
 			const seamChoiceBetween = (
 				leftPartIdx: number,
 				rightPartIdx: number
-			): { readonly origin: SeamOrigin; readonly arm: WhitespaceArm | undefined; readonly label: string | undefined } => {
+			): {
+				readonly origin: SeamOrigin;
+				readonly arm: WhitespaceArm | undefined;
+				readonly label: string | undefined;
+			} => {
 				const from = partIndices[leftPartIdx]! + 1;
 				const to = partIndices[rightPartIdx]!;
 				let bestOrigin: SeamOrigin = 'fallback';
@@ -416,7 +459,12 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 				}
 				return { origin: bestOrigin, arm: bestArm, label: bestLabel };
 			};
-			const recordSeam = (l: string, r: string, resolution: SeamBoundaryRecord['resolution'], origin: SeamOrigin): void => {
+			const recordSeam = (
+				l: string,
+				r: string,
+				resolution: SeamBoundaryRecord['resolution'],
+				origin: SeamOrigin
+			): void => {
 				ctx.seamBoundaries?.push({ kind: ctx.currentKind ?? '(unknown)', left: l, right: r, resolution, origin });
 			};
 			const stampSeam = (rightPartIdx: number, resolution: 'glued' | 'spaced'): void => {
@@ -460,7 +508,12 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 					const stamped = rule.members[partIndices[rightPartIdx]!]!.staticSeamBefore;
 					if (stamped !== undefined) {
 						const spaced = stamped === 'spaced';
-						recordSeam(l, r, spaced ? 'static-spaced' : 'static-glued', seamChoiceBetween(lastRealPartIdx, rightPartIdx).origin);
+						recordSeam(
+							l,
+							r,
+							spaced ? 'static-spaced' : 'static-glued',
+							seamChoiceBetween(lastRealPartIdx, rightPartIdx).origin
+						);
 						body = joinStaticSeam(body, segment, spaced, seams);
 						seams = EMPTY;
 						lastRealPartIdx = rightPartIdx;
@@ -547,7 +600,7 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 			recovered === undefined &&
 			rule.type === SYMBOL &&
 			(rule as { fieldName?: string }).fieldName === undefined &&
-			!rule.name.startsWith('_')
+			!isSurfaceHiddenIn(rule.name, ctx.nodeMap)
 		) {
 			const exactName = rule.name.toLowerCase();
 			const byExactName = ctx.ownerSlots[exactName];
@@ -590,7 +643,10 @@ function hasFlankSignal(rule: RenderRule, slot?: AssembledNonterminal): boolean 
 	if (sep?.trailing !== undefined || sep?.leading !== undefined) return true;
 	if (slot === undefined) return false;
 	const multiVal = slot.values.find((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
-	if (multiVal && ((multiVal as { trailing?: boolean }).trailing === true || (multiVal as { leading?: boolean }).leading === true)) {
+	if (
+		multiVal &&
+		((multiVal as { trailing?: boolean }).trailing === true || (multiVal as { leading?: boolean }).leading === true)
+	) {
 		return true;
 	}
 	return slot.hasTrailingDelimiter || slot.hasLeadingDelimiter;
@@ -669,7 +725,13 @@ function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonter
 				)?.separator
 			: undefined;
 	const sep = allImmediate ? '' : (ruleSep ?? slotValueSep ?? '');
-	if (!hasFlankSignal(rule, slot) && !allImmediate && !isNonterminalSeparatorRule(rule) && slot !== undefined && ctx !== undefined) {
+	if (
+		!hasFlankSignal(rule, slot) &&
+		!allImmediate &&
+		!isNonterminalSeparatorRule(rule) &&
+		slot !== undefined &&
+		ctx !== undefined
+	) {
 		ctx.seamBoundaries?.push({
 			kind: ctx.currentKind ?? '(unknown)',
 			left: '·',
@@ -993,9 +1055,7 @@ function withFieldOnCarriers(rule: RenderRule, fieldName: string): RenderRule {
 	switch (rule.type) {
 		case SYMBOL:
 		case PATTERN:
-			return (rule as { fieldName?: string }).fieldName === undefined
-				? ({ ...rule, fieldName } as RenderRule)
-				: rule;
+			return (rule as { fieldName?: string }).fieldName === undefined ? ({ ...rule, fieldName } as RenderRule) : rule;
 		case SEQ:
 		case CHOICE:
 			return { ...rule, members: rule.members.map((m) => withFieldOnCarriers(m, fieldName)) } as RenderRule;
@@ -1044,7 +1104,8 @@ function emitKindGatedLiterals(
 		restoreEmittedSlotNames(ctx, beforeSlots);
 		const at = body.findIndex((n) => n.kind === 'slot');
 		if (at < 0) {
-			if (kinds.length !== 1 || !isLiteralOnly(body)) return bail(`slotless arm not a lone literal kind: ${JSON.stringify(body).slice(0, 160)}`);
+			if (kinds.length !== 1 || !isLiteralOnly(body))
+				return bail(`slotless arm not a lone literal kind: ${JSON.stringify(body).slice(0, 160)}`);
 			arms.push({ prefix: undefined, residual: EMPTY, kinds });
 			continue;
 		}
@@ -1058,7 +1119,8 @@ function emitKindGatedLiterals(
 	}
 	if (key === undefined) return bail('no arm carries the slot');
 	const prefix = arms.find((a) => a.prefix !== undefined)!.prefix!;
-	if (!arms.every((a) => a.prefix === undefined || equalBodies(a.prefix, prefix))) return bail(`prefixes differ: ${JSON.stringify(arms.map((a) => a.prefix)).slice(0, 300)}`);
+	if (!arms.every((a) => a.prefix === undefined || equalBodies(a.prefix, prefix)))
+		return bail(`prefixes differ: ${JSON.stringify(arms.map((a) => a.prefix)).slice(0, 300)}`);
 	const gated: { kinds: string[]; body: Body }[] = [];
 	for (const arm of arms) {
 		if (arm.residual.length === 0) continue;
@@ -1310,6 +1372,12 @@ export function assertNoDuplicateSlots(node: AssembledNode, body: Body): void {
 	}
 }
 
+function rendersAsDeclaredTokenSeam(value: NodeOrTerminal, body: Body): boolean {
+	if (!isNodeRef(value) || isUnresolvedRef(value.node)) return false;
+	const node = value.node;
+	return node.kindEntry?.visibleExternal === true && isFixedTextLeaf(node) && writesTokenSeam(body, node.text);
+}
+
 function assertSlotPreservation(node: AssembledNode, body: Body): void {
 	const slots = node.slots;
 	if (slots.length === 0) return;
@@ -1320,7 +1388,9 @@ function assertSlotPreservation(node: AssembledNode, body: Body): void {
 		if (slot.values.length > 0 && slot.values.every((v) => v.multiplicity !== 'single')) continue;
 		const slotKinds = kindsOf(slot);
 		if (slotKinds.length > 0 && slotKinds.every((k) => mentions(body, k))) continue;
-		if (slot.isUnnamed && slotKinds.length > 0 && slotKinds.every((k) => k.startsWith('_'))) continue;
+		if (slot.isUnnamed && slotKinds.length > 0 && slot.values.every((v) => !isNodeRef(v) || surfaceHiddenOfRef(v.node)))
+			continue;
+		if (slot.values.length > 0 && slot.values.every((v) => rendersAsDeclaredTokenSeam(v, body))) continue;
 		const name = slot.storageName;
 		if (seen.has(name)) continue;
 		seen.add(name);

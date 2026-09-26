@@ -101,6 +101,7 @@ export const simplePattern: {
 	readonly none: typeof F.buildNone;
 	readonly complex: typeof F.complexPattern;
 	readonly dottedName: typeof F.dottedName;
+	readonly wildcard: typeof F.buildWildcardPattern;
 } = {
 	class: F.classPattern,
 	splat: F.splatPattern,
@@ -114,7 +115,8 @@ export const simplePattern: {
 	false: F.buildFalse,
 	none: F.buildNone,
 	complex: F.complexPattern,
-	dottedName: F.dottedName
+	dottedName: F.dottedName,
+	wildcard: F.buildWildcardPattern
 };
 
 export const pattern: {
@@ -241,11 +243,15 @@ export const fExpression: {
 	yield: F.yield_
 };
 
+export const whitespace: {
+	readonly newline: typeof F.buildNewline;
+} = {
+	newline: F.buildNewline
+};
+
 export const simpleStatement: typeof F.simpleStatement = F.simpleStatement;
 
 export const compoundStatement: typeof F.compoundStatement = F.compoundStatement;
-
-export const matchBlock: typeof F.matchBlock = F.matchBlock;
 
 export const parameter: typeof F.parameter = F.parameter;
 
@@ -270,6 +276,7 @@ export const ir: {
 	readonly elifClause: typeof F.elifClause;
 	readonly elseClause: typeof F.elseClause;
 	readonly matchStatement: typeof F.matchStatement;
+	readonly matchBlock: typeof F.matchBlock;
 	readonly caseClause: typeof F.caseClause;
 	readonly forStatement: typeof F.forStatement;
 	readonly whileStatement: typeof F.whileStatement;
@@ -297,7 +304,7 @@ export const ir: {
 	readonly expressionList: typeof F.expressionList;
 	readonly dottedName: typeof F.dottedName;
 	readonly casePattern: typeof F.casePattern;
-	readonly _asPattern: typeof F._asPattern;
+	readonly caseAsPattern: typeof F.caseAsPattern;
 	readonly unionPattern: typeof F.unionPattern;
 	readonly dictPattern: typeof F.dictPattern;
 	readonly keyValuePattern: typeof F.keyValuePattern;
@@ -305,7 +312,7 @@ export const ir: {
 	readonly splatPattern: typeof F.splatPattern;
 	readonly classPattern: typeof F.classPattern;
 	readonly complexPattern: typeof F.complexPattern;
-	readonly _parameters: typeof F._parameters;
+	readonly parametersElements: typeof F.parametersElements;
 	readonly patterns: typeof F.patterns;
 	readonly tuplePattern: typeof F.tuplePattern;
 	readonly listPattern: typeof F.listPattern;
@@ -392,16 +399,19 @@ export const ir: {
 	readonly breakStatement: typeof F.buildBreakStatement;
 	readonly continueStatement: typeof F.buildContinueStatement;
 	readonly ellipsis: typeof F.buildEllipsis;
+	readonly notEscapeSequence: typeof F.buildNotEscapeSequence;
 	readonly true: typeof F.buildTrue;
 	readonly false: typeof F.buildFalse;
 	readonly none: typeof F.buildNone;
 	readonly positionalSeparator: typeof F.buildPositionalSeparator;
 	readonly keywordSeparator: typeof F.buildKeywordSeparator;
+	readonly wildcardPattern: typeof F.buildWildcardPattern;
+	readonly newline: typeof F.buildNewline;
 	readonly importPrefix: typeof F.buildImportPrefix;
 	readonly typeConversion: typeof F.buildTypeConversion;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly stringStart: typeof F.buildStringStart;
-	readonly _stringContent: typeof F.build_StringContent;
+	readonly stringFragment: typeof F.buildStringFragment;
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
 	readonly stringEnd: typeof F.buildStringEnd;
 	readonly as: typeof F.asPattern;
@@ -447,6 +457,7 @@ export const ir: {
 	readonly unary: typeof F.unaryOperator;
 	readonly union: typeof F.unionPattern;
 	readonly while: typeof F.whileStatement;
+	readonly wildcard: typeof F.buildWildcardPattern;
 	readonly with: typeof F.withStatement;
 	readonly statement: typeof statement;
 	readonly namedExpressionLhs: typeof namedExpressionLhs;
@@ -459,9 +470,9 @@ export const ir: {
 	readonly leftHandSide: typeof leftHandSide;
 	readonly rightHandSide: typeof rightHandSide;
 	readonly fExpression: typeof fExpression;
+	readonly whitespace: typeof whitespace;
 	readonly simpleStatement: typeof simpleStatement;
 	readonly compoundStatement: typeof compoundStatement;
-	readonly matchBlock: typeof matchBlock;
 	readonly parameter: typeof parameter;
 	readonly synonym: typeof synonym;
 } = {
@@ -486,6 +497,7 @@ export const ir: {
 	elifClause: F.elifClause,
 	elseClause: F.elseClause,
 	matchStatement: F.matchStatement,
+	matchBlock: F.matchBlock,
 	caseClause: F.caseClause,
 	forStatement: F.forStatement,
 	whileStatement: F.whileStatement,
@@ -513,7 +525,7 @@ export const ir: {
 	expressionList: F.expressionList,
 	dottedName: F.dottedName,
 	casePattern: F.casePattern,
-	_asPattern: F._asPattern,
+	caseAsPattern: F.caseAsPattern,
 	unionPattern: F.unionPattern,
 	dictPattern: F.dictPattern,
 	keyValuePattern: F.keyValuePattern,
@@ -521,7 +533,7 @@ export const ir: {
 	splatPattern: F.splatPattern,
 	classPattern: F.classPattern,
 	complexPattern: F.complexPattern,
-	_parameters: F._parameters,
+	parametersElements: F.parametersElements,
 	patterns: F.patterns,
 	tuplePattern: F.tuplePattern,
 	listPattern: F.listPattern,
@@ -610,18 +622,21 @@ export const ir: {
 	breakStatement: F.buildBreakStatement,
 	continueStatement: F.buildContinueStatement,
 	ellipsis: F.buildEllipsis,
+	notEscapeSequence: F.buildNotEscapeSequence,
 	true: F.buildTrue,
 	false: F.buildFalse,
 	none: F.buildNone,
 	positionalSeparator: F.buildPositionalSeparator,
 	keywordSeparator: F.buildKeywordSeparator,
+	wildcardPattern: F.buildWildcardPattern,
+	newline: F.buildNewline,
 
 	// Leaf node factories
 	importPrefix: F.buildImportPrefix,
 	typeConversion: F.buildTypeConversion,
 	identifier: F.buildIdentifier,
 	stringStart: F.buildStringStart,
-	_stringContent: F.build_StringContent,
+	stringFragment: F.buildStringFragment,
 	escapeInterpolation: F.buildEscapeInterpolation,
 	stringEnd: F.buildStringEnd,
 
@@ -669,6 +684,7 @@ export const ir: {
 	unary: F.unaryOperator,
 	union: F.unionPattern,
 	while: F.whileStatement,
+	wildcard: F.buildWildcardPattern,
 	with: F.withStatement,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
@@ -683,9 +699,9 @@ export const ir: {
 	leftHandSide,
 	rightHandSide,
 	fExpression,
+	whitespace,
 	simpleStatement,
 	compoundStatement,
-	matchBlock,
 	parameter,
 	synonym
 };

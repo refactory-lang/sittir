@@ -138,13 +138,6 @@ export interface AsPatternTargetTransport {
 export interface AsPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _case_pattern: SlotValue<Box<CasePatternTransport>>
-  _identifier: SlotValue<IdentifierTransport>
-}
-
-export interface AsPatternTransport {
-  '$_trivia'?: TransportTrivia
-  '$_edges'?: Edges
   _expression: SlotValue<Box<ExpressionTransport>>
   _alias: SlotValue<Box<AsPatternTargetTransport>>
 }
@@ -228,6 +221,13 @@ export interface CallTransport {
   '$_edges'?: Edges
   _function: SlotValue<Box<PrimaryExpressionTransport>>
   _arguments: SlotValue<Box<CallArgumentsTransportSlot>>
+}
+
+export interface CaseAsPatternTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _case_pattern: SlotValue<Box<CasePatternTransport>>
+  _identifier: SlotValue<IdentifierTransport>
 }
 
 export interface CaseClauseTransport {
@@ -715,7 +715,7 @@ export interface ImportListTransport {
 export interface ImportStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _import_list: SlotValue<ImportListTransport>
+  _names: SlotValue<NamesTransport>
 }
 
 export interface IntegerBinaryTransport {
@@ -778,7 +778,7 @@ export interface KeywordPatternTransport {
 export interface LambdaParametersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _parameters: SlotValue<_ParametersTransport>
+  _parameters_elements: SlotValue<ParametersElementsTransport>
 }
 
 export interface LambdaTransport {
@@ -842,6 +842,12 @@ export interface MatchBlockBlockTransport {
   _alternative_separator_space?: number
 }
 
+export interface MatchBlockTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _content: SlotValue<MatchBlockContentTransportSlot>
+}
+
 export interface MatchStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
@@ -870,6 +876,12 @@ export interface NamedExpressionTransport {
   _value: SlotValue<Box<ExpressionTransport>>
 }
 
+export interface NamesTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _content: SlotValue<ImportListTransport>
+}
+
 export interface NonlocalStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
@@ -891,19 +903,19 @@ export interface PairTransport {
   _value: SlotValue<Box<ExpressionTransport>>
 }
 
-export interface ParametersTransport {
-  '$_trivia'?: TransportTrivia
-  '$_edges'?: Edges
-  _elements?: SlotValue<_ParametersTransport>
-}
-
-export interface ParametersTransport {
+export interface ParametersElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _parameter: Array<SlotValue<ParameterTransport>>
   _delimiter?: number
   _parameter_separator_space_before?: number
   _parameter_separator_space_after?: number
+}
+
+export interface ParametersTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _elements?: SlotValue<ParametersElementsTransport>
 }
 
 export interface ParenthesizedExpressionTransport {

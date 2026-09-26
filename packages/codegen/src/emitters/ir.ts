@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { isVisibleTextLeaf, isHiddenPunctuationLeaf, isSurfaceHiddenIn } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import {
@@ -9,10 +9,8 @@ import {
 	AssembledPattern
 } from '../compiler/model/node-map.ts';
 import { isValidIdent, irNamespacesChildFactory, compareOrdinal, lexedContentSlot } from './shared.ts';
-import { isHiddenKind } from '../dsl/rule-patterns.ts';
 import { supertypeMemberName } from '../dsl/arm-names.ts';
-import { collectKindEntries, collectCatalogKinds, hasCatalogEntry,
-} from './kind-discriminant.ts';
+import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
 import { bundleEntries, flattenedVariantParents } from './overlays/module.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
@@ -92,7 +90,7 @@ export function emitIr(config: EmitIrConfig): string {
 		const memberTypeEntries: string[] = [];
 		const usedMemberKeys = new Set<string>();
 		for (const subKind of sup.subtypeNames) {
-			if (subKind.startsWith('_')) continue;
+			if (isSurfaceHiddenIn(subKind, nodeMap)) continue;
 			const sub = nodeMap.nodes.get(subKind);
 			if (!sub) continue;
 			const flattenedKey = flattenedKeyByKind.get(subKind);
@@ -107,7 +105,8 @@ export function emitIr(config: EmitIrConfig): string {
 			if (sub.factoryInline) continue;
 			if (!sub.rawFactoryName) continue;
 			if (sub instanceof AssembledSupertype || isHiddenPunctuationLeaf(sub)) continue;
-			if ((sub instanceof AbstractAssembledCompound || sub instanceof AssembledList) && !bundleKeyByKind.has(subKind)) continue;
+			if ((sub instanceof AbstractAssembledCompound || sub instanceof AssembledList) && !bundleKeyByKind.has(subKind))
+				continue;
 			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
 			const memberKey = memberKeyFor(subKind, kind);
 			if (!isValidIdent(memberKey) || usedMemberKeys.has(memberKey)) continue;
@@ -161,7 +160,10 @@ export function emitIr(config: EmitIrConfig): string {
 			continue;
 		}
 		needsAttachProps = true;
-		groupBlocks.push(`export const ${key}: typeof ${sameNamedKind} & typeof F.${key} = attachProps(${sameNamedKind}, F.${key});`, '');
+		groupBlocks.push(
+			`export const ${key}: typeof ${sameNamedKind} & typeof F.${key} = attachProps(${sameNamedKind}, F.${key});`,
+			''
+		);
 	}
 	if (groupBlocks.length > 0) {
 		body.push('// Supertype-grouped sub-namespaces — tree-shakeable top-level consts.');
@@ -171,11 +173,12 @@ export function emitIr(config: EmitIrConfig): string {
 
 	const flatKeys = new Set<string>();
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') || node.factoryInline) continue;
+		if (node.surfaceHidden || node.factoryInline) continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
 		const isStructuralFactory =
-			(node instanceof AbstractAssembledCompound && node.annotations?.hoisted !== true) || node instanceof AssembledList;
+			(node instanceof AbstractAssembledCompound && node.annotations?.hoisted !== true) ||
+			node instanceof AssembledList;
 		const isLeafFactoryNode = isVisibleTextLeaf(node) || node instanceof AssembledPattern;
 		if (!isStructuralFactory && !isLeafFactoryNode) {
 			continue;
@@ -189,14 +192,17 @@ export function emitIr(config: EmitIrConfig): string {
 		if (!(node instanceof AssembledSupertype)) continue;
 		const sup = node;
 		for (const subKind of sup.subtypeNames) {
-			if (subKind.startsWith('_')) continue;
+			if (isSurfaceHiddenIn(subKind, nodeMap)) continue;
 			const sub = nodeMap.nodes.get(subKind);
 			if (!sub?.rawFactoryName || sub.factoryInline || sub.annotations?.tokenForm === true) continue;
 			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
 			const alias = memberKeyFor(subKind, kind);
 			if (!isValidIdent(alias) || flatKeys.has(alias) || usedGroupNames.has(alias)) continue;
 			let bundle: string | undefined;
-			if ((sub instanceof AbstractAssembledCompound && sub.annotations?.hoisted !== true) || sub instanceof AssembledList) {
+			if (
+				(sub instanceof AbstractAssembledCompound && sub.annotations?.hoisted !== true) ||
+				sub instanceof AssembledList
+			) {
 				if (!sub.fromFunctionName) continue;
 				bundle = bundleRef(sub);
 			} else if (isVisibleTextLeaf(sub) || sub instanceof AssembledPattern) {
@@ -228,7 +234,12 @@ export function emitIr(config: EmitIrConfig): string {
 
 	irValueLines.push('  // Keyword factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!isVisibleTextLeaf(node) || !isFlatLeafOrKeyword(kind, node, kindEntries) || node.annotations?.tokenForm === true) continue;
+		if (
+			!isVisibleTextLeaf(node) ||
+			!isFlatLeafOrKeyword(kind, node, kindEntries) ||
+			node.annotations?.tokenForm === true
+		)
+			continue;
 		if (usedGroupNames.has(node.irKey!)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 		irTypeMembers.push(`  readonly ${node.irKey}: typeof F.${node.rawFactoryName};`);
@@ -263,7 +274,12 @@ export function emitIr(config: EmitIrConfig): string {
 			irTypeMembers.push('  readonly synonym: typeof synonym;');
 		}
 	}
-	if (needsAttachProps) lines.splice(lines.indexOf("import * as F from './factories/index.js';") + 1, 0, "import { attachProps } from './utils.js';");
+	if (needsAttachProps)
+		lines.splice(
+			lines.indexOf("import * as F from './factories/index.js';") + 1,
+			0,
+			"import { attachProps } from './utils.js';"
+		);
 	body.push('export const ir: {');
 	body.push(...irTypeMembers);
 	body.push('} = {');
@@ -279,7 +295,7 @@ function isFlatLeafOrKeyword(
 	kindEntries: ReturnType<typeof collectKindEntries> | undefined
 ): boolean {
 	if (!node.userFacing || node.factoryInline) return false;
-	if (isVisibleTextLeaf(node) ? isHiddenKind(kind) : !(node instanceof AssembledPattern)) return false;
+	if (isVisibleTextLeaf(node) ? node.surfaceHidden : !(node instanceof AssembledPattern)) return false;
 	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey)) return false;
 	return !kindEntries || hasCatalogEntry(kindEntries, kind);
 }
@@ -321,13 +337,22 @@ function roleReturnType(node: AssembledNode): string {
 	return `ReturnType<typeof ${roleFactoryRef(node)}>`;
 }
 
-function resolveRoleNodes(role: Role, grammarRoles: GrammarRoles, nodeMap: NodeMap, includePolymorphParents = false): AssembledNode[] {
+function resolveRoleNodes(
+	role: Role,
+	grammarRoles: GrammarRoles,
+	nodeMap: NodeMap,
+	includePolymorphParents = false
+): AssembledNode[] {
 	const kindNames = grammarRoles.get(role);
 	const nodes: AssembledNode[] = [];
 	const seen = new Set<string>();
 	for (const kind of kindNames) {
 		const node = nodeMap.nodes.get(kind) ?? nodeMap.nodes.get(`_${kind}`);
-		if (node && (node.rawFactoryName || (includePolymorphParents && isPolymorphTextParent(node))) && !seen.has(node.kind)) {
+		if (
+			node &&
+			(node.rawFactoryName || (includePolymorphParents && isPolymorphTextParent(node))) &&
+			!seen.has(node.kind)
+		) {
 			seen.add(node.kind);
 			nodes.push(node);
 		}
@@ -481,7 +506,9 @@ function emitSynonymComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 			}
 			return node === undefined ? [] : [node];
 		})
-		.filter((node, i, all) => node.rawFactoryName !== undefined && all.findIndex((other) => other.kind === node.kind) === i);
+		.filter(
+			(node, i, all) => node.rawFactoryName !== undefined && all.findIndex((other) => other.kind === node.kind) === i
+		);
 	if (nodes.length === 0) return;
 
 	const leafNodes = nodes.filter(isLeafFactory);
@@ -504,9 +531,7 @@ function emitSynonymComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 			fns.push(`    },`);
 			fns.push(`    {`);
 			fns.push(`      line(text: string): ${returnType(lineNode)} { return ${ref(lineNode)}(text); },`);
-			fns.push(
-				`      block(text: string): ${returnType(blockNode)} { return ${ref(blockNode)}(text); },`
-			);
+			fns.push(`      block(text: string): ${returnType(blockNode)} { return ${ref(blockNode)}(text); },`);
 			fns.push(`    }`);
 			fns.push(`  ),`);
 			return;

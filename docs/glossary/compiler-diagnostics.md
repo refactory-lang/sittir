@@ -471,7 +471,7 @@ rather than defaulted, since defaulting would make the guard guess.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::collectGrammarDiagnosticsForGrammar`
 
-Builds one `ParserSymbolCtx` from the raw grammar (rules, externals, inline,
+Collapses renamed rules first (`collapseRenamedRules`) and uses that grammar throughout, returning it as `raw`, so the diagnostics, link and the caller read one grammar. Builds one `ParserSymbolCtx` from it (rules, externals, inline,
 token use counts), the same inputs enrich classifies with, and hands it to
 both alias diagnostics so they cannot disagree with the pass they guard.
 

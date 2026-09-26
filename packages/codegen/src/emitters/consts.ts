@@ -7,7 +7,8 @@ import {
 	AssembledPattern,
 	AssembledEnum
 } from '../compiler/model/node-map.ts';
-import type { GeneratedIdEntry, GeneratedIdTable, GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import type { GeneratedIdEntry, GeneratedIdTable, GeneratedIdTables, GeneratedKindEntry } from '../compiler/generated-metadata.ts';
+import { collectGeneratedKindEntries, modelKindOfEntry } from '../compiler/generated-metadata.ts';
 import {
 	keywordPresenceKind,
 	keywordPresenceValues,
@@ -100,6 +101,7 @@ export function emitConsts(config: EmitConstsConfig): string {
 		kinds: generatedIdTables
 			? collectCatalogKinds(generatedIdTables)
 			: [...new Set([...nodeKinds, ...leafKinds, ...keywords, ...operators])],
+		kindKeyOf: generatedIdTables ? modelKindKeyOf(collectGeneratedKindEntries(generatedIdTables)) : undefined,
 		fields: collectFieldNames(nodeMap),
 		sourceArtifact: generatedIdTables?.sourceArtifact
 	});
@@ -152,6 +154,7 @@ interface TreeSitterIdConstConfig {
 	readonly kindIds?: GeneratedIdTable;
 	readonly fieldIds?: GeneratedIdTable;
 	readonly kinds: readonly string[];
+	readonly kindKeyOf?: (catalogKey: string) => string;
 	readonly fields: readonly string[];
 	readonly sourceArtifact?: string;
 }
@@ -163,8 +166,13 @@ interface IdEnumEntry {
 	readonly memberName: string;
 }
 
+function modelKindKeyOf(rows: readonly GeneratedKindEntry[]): (catalogKey: string) => string {
+	const byCatalogKey = new Map(rows.map((row) => [row.kind, modelKindOfEntry(row, rows)] as const));
+	return (catalogKey) => byCatalogKey.get(catalogKey) ?? catalogKey;
+}
+
 function emitTreeSitterIdConsts(lines: string[], config: TreeSitterIdConstConfig): void {
-	const kindEntries = collectIdEntries(config.kinds, config.kindIds);
+	const kindEntries = collectIdEntries(config.kinds, config.kindIds, config.kindKeyOf);
 	const fieldEntries = collectIdEntries(config.fields, config.fieldIds);
 	if (kindEntries.length === 0 && fieldEntries.length === 0) return;
 
@@ -270,7 +278,11 @@ function emitIdMaps(
 	lines.push('] as const;');
 }
 
-function collectIdEntries(keys: readonly string[], ids: GeneratedIdTable | undefined): IdEnumEntry[] {
+function collectIdEntries(
+	keys: readonly string[],
+	ids: GeneratedIdTable | undefined,
+	keyOf: (key: string) => string = (key) => key
+): IdEnumEntry[] {
 	const idMap = toIdMap(ids);
 	const usedNames = new Map<string, string>();
 	const result: IdEnumEntry[] = [];
@@ -293,7 +305,7 @@ function collectIdEntries(keys: readonly string[], ids: GeneratedIdTable | undef
 		const memberName = existingKey === undefined || existingKey === key ? baseName : `${baseName}_${entry.id ?? ''}`;
 		usedNames.set(memberName, key);
 		if (existingKey === undefined) usedNames.set(baseName, key);
-		result.push({ key, id: entry.id ?? -1, cName: cSymbol, memberName });
+		result.push({ key: keyOf(key), id: entry.id ?? -1, cName: cSymbol, memberName });
 	}
 
 	return result;

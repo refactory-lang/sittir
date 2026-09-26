@@ -3,8 +3,6 @@
 /** All branch (non-leaf) node kind strings. */
 const NODE_KINDS = [
 	'_let_chain',
-	'_tuple_expression_elements',
-	'_tuple_type_elements',
 	'abstract_type',
 	'arguments',
 	'arguments_elements',
@@ -81,6 +79,7 @@ const NODE_KINDS = [
 	'metavariable',
 	'mut_pattern',
 	'negative_literal',
+	'non_special_token',
 	'ordered_field_declaration_list',
 	'ordered_field_declaration_list_elements',
 	'parameter',
@@ -119,10 +118,12 @@ const NODE_KINDS = [
 	'try_block',
 	'try_expression',
 	'tuple_expression',
+	'tuple_expression_elements',
 	'tuple_pattern',
 	'tuple_pattern_elements',
 	'tuple_struct_pattern',
 	'tuple_type',
+	'tuple_type_elements',
 	'type_arguments',
 	'type_arguments_elements',
 	'type_binding',
@@ -167,14 +168,7 @@ const LEAF_KINDS = [
 	'_kw_static_marker',
 	'_kw_unsafe',
 	'_kw_unsafe_marker',
-	'_line_doc_content',
-	'_primitive_type',
-	'_raw_string_literal_end',
-	'_raw_string_literal_start',
-	'_string_open',
 	'_token_keywords',
-	'_token_tree_punctuation',
-	'_wildcard_pattern',
 	'as_keyword',
 	'async_keyword',
 	'await_keyword',
@@ -188,6 +182,7 @@ const LEAF_KINDS = [
 	'continue_keyword',
 	'crate',
 	'default_keyword',
+	'doc_comment',
 	'dyn_keyword',
 	'else_keyword',
 	'empty_statement',
@@ -213,6 +208,8 @@ const LEAF_KINDS = [
 	'if_keyword',
 	'impl_keyword',
 	'in_keyword',
+	'inner_doc_comment_marker',
+	'inner_line_doc_comment_marker',
 	'isize_keyword',
 	'item_keyword',
 	'let_keyword',
@@ -227,13 +224,19 @@ const LEAF_KINDS = [
 	'move_keyword',
 	'mutable_specifier',
 	'never_type',
+	'outer_doc_comment_marker',
+	'outer_line_doc_comment_marker',
 	'pat_keyword',
 	'pat_param_keyword',
 	'path_keyword',
+	'primitive_type',
 	'pub_keyword',
+	'range_expression_bare',
 	'range_pattern_with_left_bare',
 	'raw_keyword',
 	'raw_string_literal_content',
+	'raw_string_literal_end',
+	'raw_string_literal_start',
 	'ref_keyword',
 	'remaining_field_pattern',
 	'return_keyword',
@@ -242,8 +245,10 @@ const LEAF_KINDS = [
 	'stmt_keyword',
 	'str_keyword',
 	'string_content',
+	'string_open',
 	'struct_keyword',
 	'super',
+	'token_tree_punctuation',
 	'trait_keyword',
 	'true_keyword',
 	'try_keyword',
@@ -265,6 +270,7 @@ const LEAF_KINDS = [
 	'vis_keyword',
 	'where_keyword',
 	'while_keyword',
+	'wildcard_pattern',
 	'yield_keyword'
 ] as const;
 
@@ -283,7 +289,6 @@ export const KEYWORDS = [
 	'_kw_static_marker',
 	'_kw_unsafe',
 	'_kw_unsafe_marker',
-	'_wildcard_pattern',
 	'as_keyword',
 	'async_keyword',
 	'await_keyword',
@@ -317,6 +322,8 @@ export const KEYWORDS = [
 	'if_keyword',
 	'impl_keyword',
 	'in_keyword',
+	'inner_doc_comment_marker',
+	'inner_line_doc_comment_marker',
 	'isize_keyword',
 	'item_keyword',
 	'let_keyword',
@@ -329,10 +336,13 @@ export const KEYWORDS = [
 	'move_keyword',
 	'mutable_specifier',
 	'never_type',
+	'outer_doc_comment_marker',
+	'outer_line_doc_comment_marker',
 	'pat_keyword',
 	'pat_param_keyword',
 	'path_keyword',
 	'pub_keyword',
+	'range_expression_bare',
 	'range_pattern_with_left_bare',
 	'raw_keyword',
 	'ref_keyword',
@@ -365,6 +375,7 @@ export const KEYWORDS = [
 	'vis_keyword',
 	'where_keyword',
 	'while_keyword',
+	'wildcard_pattern',
 	'yield_keyword'
 ] as const;
 
@@ -373,12 +384,7 @@ export const OPERATORS = [
 	'_blankline',
 	'_dedent',
 	'_indent',
-	'_inner_block_doc_comment_marker',
-	'_inner_line_doc_comment_marker',
 	'_newline',
-	'_outer_block_doc_comment_marker',
-	'_outer_line_doc_comment_marker',
-	'_range_expression_bare',
 	'_space',
 	'_tight',
 	'amp',
@@ -598,20 +604,20 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	escape_sequence_unicode_braced: 147,
 	escape_sequence_hex: 148,
 	raw_keyword: 149,
-	_string_open: 150,
+	string_open: 150,
 	line_comment_extra_slashes_token1: 151,
 	line_comment_extra_slashes_token2: 152,
 	line_comment_regular: 153,
 	macro_rules_bang: 154,
 	string_content: 155,
-	_raw_string_literal_start: 156,
+	raw_string_literal_start: 156,
 	raw_string_literal_content: 157,
-	_raw_string_literal_end: 158,
+	raw_string_literal_end: 158,
 	float_literal: 159,
-	_outer_block_doc_comment_marker: 160,
-	_inner_block_doc_comment_marker: 161,
+	outer_doc_comment_marker: 160,
+	inner_doc_comment_marker: 161,
 	_block_comment_content: 162,
-	_line_doc_content: 163,
+	doc_comment: 163,
 	_error_sentinel: 164,
 	_tight: 165,
 	_space: 166,
@@ -632,7 +638,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	fragment_specifier: 181,
 	token_tree: 182,
 	token_repetition: 183,
-	_non_special_token: 184,
+	non_special_token: 184,
 	attribute_item: 185,
 	inner_attribute_item: 186,
 	attribute: 187,
@@ -781,10 +787,10 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	escape_sequence: 330,
 	boolean_literal: 331,
 	line_comment: 332,
-	_inner_line_doc_comment_marker: 333,
-	_outer_line_doc_comment_marker: 334,
+	inner_line_doc_comment_marker: 333,
+	outer_line_doc_comment_marker: 334,
 	block_comment: 335,
-	_primitive_type: 336,
+	primitive_type: 336,
 	_kw_ref_marker: 337,
 	_kw_unsafe_marker: 338,
 	_kw_static_marker: 339,
@@ -811,11 +817,11 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_kw_default: 360,
 	_kw_const: 361,
 	_kw_unsafe: 362,
-	_tuple_type_elements: 363,
-	_tuple_expression_elements: 364,
-	_token_tree_punctuation: 365,
+	tuple_type_elements: 363,
+	tuple_expression_elements: 364,
+	token_tree_punctuation: 365,
 	_token_keywords: 366,
-	_range_expression_bare: 367,
+	range_expression_bare: 367,
 	_impl_item_unsafe_marker: 368,
 	array_expression_semi: 369,
 	array_expression_list: 370,
@@ -875,15 +881,15 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	struct_item_brace: 424,
 	struct_item_tuple: 425,
 	struct_item_unit: 426,
-	_wildcard_pattern: 427,
-	_attributed_field_declaration: 428,
-	_attributed_enum_variant: 429,
-	_attributed_parameter: 430,
-	_attributed_type_parameter: 431,
-	_attributed_argument: 432,
-	_attributed_ordered_field: 433,
-	_type_argument: 434,
-	_match_block_arms: 435,
+	wildcard_pattern: 427,
+	attributed_field_declaration: 428,
+	attributed_enum_variant: 429,
+	attributed_parameter: 430,
+	attributed_type_parameter: 431,
+	attributed_argument: 432,
+	attributed_ordered_field: 433,
+	type_argument: 434,
+	match_block_arms: 435,
 	source_file_repeat1: 436,
 	token_repetition_pattern_repeat1: 437,
 	token_repetition_repeat1: 438,
@@ -914,9 +920,9 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_tuple_expression_elements_repeat1: 463,
 	delim_token_tree_paren_repeat1: 464,
 	_match_block_arms_repeat1: 465,
-	_field_identifier: 466,
-	_shorthand_field_identifier: 468,
-	_type_identifier: 469
+	field_identifier: 466,
+	shorthand_field_identifier: 468,
+	type_identifier: 469
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -1069,20 +1075,20 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[147]: 'escape_sequence_unicode_braced',
 	[148]: 'escape_sequence_hex',
 	[149]: 'raw_keyword',
-	[150]: '_string_open',
+	[150]: 'string_open',
 	[151]: 'line_comment_extra_slashes_token1',
 	[152]: 'line_comment_extra_slashes_token2',
 	[153]: 'line_comment_regular',
 	[154]: 'macro_rules_bang',
 	[155]: 'string_content',
-	[156]: '_raw_string_literal_start',
+	[156]: 'raw_string_literal_start',
 	[157]: 'raw_string_literal_content',
-	[158]: '_raw_string_literal_end',
+	[158]: 'raw_string_literal_end',
 	[159]: 'float_literal',
-	[160]: '_outer_block_doc_comment_marker',
-	[161]: '_inner_block_doc_comment_marker',
+	[160]: 'outer_doc_comment_marker',
+	[161]: 'inner_doc_comment_marker',
 	[162]: '_block_comment_content',
-	[163]: '_line_doc_content',
+	[163]: 'doc_comment',
 	[164]: '_error_sentinel',
 	[165]: '_tight',
 	[166]: '_space',
@@ -1103,7 +1109,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[181]: 'fragment_specifier',
 	[182]: 'token_tree',
 	[183]: 'token_repetition',
-	[184]: '_non_special_token',
+	[184]: 'non_special_token',
 	[185]: 'attribute_item',
 	[186]: 'inner_attribute_item',
 	[187]: 'attribute',
@@ -1252,10 +1258,10 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[330]: 'escape_sequence',
 	[331]: 'boolean_literal',
 	[332]: 'line_comment',
-	[333]: '_inner_line_doc_comment_marker',
-	[334]: '_outer_line_doc_comment_marker',
+	[333]: 'inner_line_doc_comment_marker',
+	[334]: 'outer_line_doc_comment_marker',
 	[335]: 'block_comment',
-	[336]: '_primitive_type',
+	[336]: 'primitive_type',
 	[337]: '_kw_ref_marker',
 	[338]: '_kw_unsafe_marker',
 	[339]: '_kw_static_marker',
@@ -1282,11 +1288,11 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[360]: '_kw_default',
 	[361]: '_kw_const',
 	[362]: '_kw_unsafe',
-	[363]: '_tuple_type_elements',
-	[364]: '_tuple_expression_elements',
-	[365]: '_token_tree_punctuation',
+	[363]: 'tuple_type_elements',
+	[364]: 'tuple_expression_elements',
+	[365]: 'token_tree_punctuation',
 	[366]: '_token_keywords',
-	[367]: '_range_expression_bare',
+	[367]: 'range_expression_bare',
 	[368]: '_impl_item_unsafe_marker',
 	[369]: 'array_expression_semi',
 	[370]: 'array_expression_list',
@@ -1346,15 +1352,15 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[424]: 'struct_item_brace',
 	[425]: 'struct_item_tuple',
 	[426]: 'struct_item_unit',
-	[427]: '_wildcard_pattern',
-	[428]: '_attributed_field_declaration',
-	[429]: '_attributed_enum_variant',
-	[430]: '_attributed_parameter',
-	[431]: '_attributed_type_parameter',
-	[432]: '_attributed_argument',
-	[433]: '_attributed_ordered_field',
-	[434]: '_type_argument',
-	[435]: '_match_block_arms',
+	[427]: 'wildcard_pattern',
+	[428]: 'attributed_field_declaration',
+	[429]: 'attributed_enum_variant',
+	[430]: 'attributed_parameter',
+	[431]: 'attributed_type_parameter',
+	[432]: 'attributed_argument',
+	[433]: 'attributed_ordered_field',
+	[434]: 'type_argument',
+	[435]: 'match_block_arms',
 	[436]: 'source_file_repeat1',
 	[437]: 'token_repetition_pattern_repeat1',
 	[438]: 'token_repetition_repeat1',
@@ -1385,9 +1391,9 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[463]: '_tuple_expression_elements_repeat1',
 	[464]: 'delim_token_tree_paren_repeat1',
 	[465]: '_match_block_arms_repeat1',
-	[466]: '_field_identifier',
-	[468]: '_shorthand_field_identifier',
-	[469]: '_type_identifier'
+	[466]: 'field_identifier',
+	[468]: 'shorthand_field_identifier',
+	[469]: 'type_identifier'
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -1555,7 +1561,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	},
 	{ name: 'escape_sequence_hex', id: 148, enumName: 'EscapeSequenceHex', cName: 'sym_escape_sequence_hex' },
 	{ name: 'raw_keyword', id: 149, enumName: 'AnonRaw', cName: 'anon_sym_raw' },
-	{ name: '_string_open', id: 150, enumName: 'StringOpen', cName: 'sym__string_open' },
+	{ name: 'string_open', id: 150, enumName: 'StringOpen', cName: 'sym__string_open' },
 	{
 		name: 'line_comment_extra_slashes_token1',
 		id: 151,
@@ -1572,7 +1578,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: 'macro_rules_bang', id: 154, enumName: 'AnonMacroRulesBang', cName: 'anon_sym_macro_rules_BANG' },
 	{ name: 'string_content', id: 155, enumName: 'StringContent', cName: 'sym_string_content' },
 	{
-		name: '_raw_string_literal_start',
+		name: 'raw_string_literal_start',
 		id: 156,
 		enumName: 'RawStringLiteralStart',
 		cName: 'sym__raw_string_literal_start'
@@ -1583,22 +1589,22 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		enumName: 'RawStringLiteralContent',
 		cName: 'sym_raw_string_literal_content'
 	},
-	{ name: '_raw_string_literal_end', id: 158, enumName: 'RawStringLiteralEnd', cName: 'sym__raw_string_literal_end' },
+	{ name: 'raw_string_literal_end', id: 158, enumName: 'RawStringLiteralEnd', cName: 'sym__raw_string_literal_end' },
 	{ name: 'float_literal', id: 159, enumName: 'FloatLiteral', cName: 'sym_float_literal' },
 	{
-		name: '_outer_block_doc_comment_marker',
+		name: 'outer_doc_comment_marker',
 		id: 160,
 		enumName: 'OuterBlockDocCommentMarker',
 		cName: 'sym__outer_block_doc_comment_marker'
 	},
 	{
-		name: '_inner_block_doc_comment_marker',
+		name: 'inner_doc_comment_marker',
 		id: 161,
 		enumName: 'InnerBlockDocCommentMarker',
 		cName: 'sym__inner_block_doc_comment_marker'
 	},
 	{ name: '_block_comment_content', id: 162, enumName: 'BlockCommentContent', cName: 'sym__block_comment_content' },
-	{ name: '_line_doc_content', id: 163, enumName: 'LineDocContent', cName: 'sym__line_doc_content' },
+	{ name: 'doc_comment', id: 163, enumName: 'LineDocContent', cName: 'sym__line_doc_content' },
 	{ name: '_error_sentinel', id: 164, enumName: 'ErrorSentinel', cName: 'sym__error_sentinel' },
 	{ name: '_tight', id: 165, enumName: 'Tight', cName: 'sym__tight' },
 	{ name: '_space', id: 166, enumName: 'Space', cName: 'sym__space' },
@@ -1624,7 +1630,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: 'fragment_specifier', id: 181, enumName: 'FragmentSpecifier', cName: 'sym_fragment_specifier' },
 	{ name: 'token_tree', id: 182, enumName: 'TokenTree', cName: 'sym_token_tree' },
 	{ name: 'token_repetition', id: 183, enumName: 'TokenRepetition', cName: 'sym_token_repetition' },
-	{ name: '_non_special_token', id: 184, enumName: 'NonSpecialToken', cName: 'sym__non_special_token' },
+	{ name: 'non_special_token', id: 184, enumName: 'NonSpecialToken', cName: 'sym__non_special_token' },
 	{ name: 'attribute_item', id: 185, enumName: 'AttributeItem', cName: 'sym_attribute_item' },
 	{ name: 'inner_attribute_item', id: 186, enumName: 'InnerAttributeItem', cName: 'sym_inner_attribute_item' },
 	{ name: 'attribute', id: 187, enumName: 'Attribute', cName: 'sym_attribute' },
@@ -1819,19 +1825,19 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: 'boolean_literal', id: 331, enumName: 'BooleanLiteral', cName: 'sym_boolean_literal' },
 	{ name: 'line_comment', id: 332, enumName: 'LineComment', cName: 'sym_line_comment' },
 	{
-		name: '_inner_line_doc_comment_marker',
+		name: 'inner_line_doc_comment_marker',
 		id: 333,
 		enumName: 'InnerLineDocCommentMarker',
 		cName: 'sym__inner_line_doc_comment_marker'
 	},
 	{
-		name: '_outer_line_doc_comment_marker',
+		name: 'outer_line_doc_comment_marker',
 		id: 334,
 		enumName: 'OuterLineDocCommentMarker',
 		cName: 'sym__outer_line_doc_comment_marker'
 	},
 	{ name: 'block_comment', id: 335, enumName: 'BlockComment', cName: 'sym_block_comment' },
-	{ name: '_primitive_type', id: 336, enumName: 'PrimitiveType', cName: 'sym__primitive_type' },
+	{ name: 'primitive_type', id: 336, enumName: 'PrimitiveType', cName: 'sym__primitive_type' },
 	{ name: '_kw_ref_marker', id: 337, enumName: 'KwRefMarker', cName: 'sym__kw_ref_marker' },
 	{ name: '_kw_unsafe_marker', id: 338, enumName: 'KwUnsafeMarker', cName: 'sym__kw_unsafe_marker' },
 	{ name: '_kw_static_marker', id: 339, enumName: 'KwStaticMarker', cName: 'sym__kw_static_marker' },
@@ -1883,16 +1889,16 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: '_kw_default', id: 360, enumName: 'KwDefault', cName: 'sym__kw_default' },
 	{ name: '_kw_const', id: 361, enumName: 'KwConst', cName: 'sym__kw_const' },
 	{ name: '_kw_unsafe', id: 362, enumName: 'KwUnsafe', cName: 'sym__kw_unsafe' },
-	{ name: '_tuple_type_elements', id: 363, enumName: 'TupleTypeElements', cName: 'sym__tuple_type_elements' },
+	{ name: 'tuple_type_elements', id: 363, enumName: 'TupleTypeElements', cName: 'sym__tuple_type_elements' },
 	{
-		name: '_tuple_expression_elements',
+		name: 'tuple_expression_elements',
 		id: 364,
 		enumName: 'TupleExpressionElements',
 		cName: 'sym__tuple_expression_elements'
 	},
-	{ name: '_token_tree_punctuation', id: 365, enumName: 'TokenTreePunctuation', cName: 'sym__token_tree_punctuation' },
+	{ name: 'token_tree_punctuation', id: 365, enumName: 'TokenTreePunctuation', cName: 'sym__token_tree_punctuation' },
 	{ name: '_token_keywords', id: 366, enumName: 'TokenKeywords', cName: 'sym__token_keywords' },
-	{ name: '_range_expression_bare', id: 367, enumName: 'RangeExpressionBare', cName: 'sym__range_expression_bare' },
+	{ name: 'range_expression_bare', id: 367, enumName: 'RangeExpressionBare', cName: 'sym__range_expression_bare' },
 	{
 		name: '_impl_item_unsafe_marker',
 		id: 368,
@@ -2057,35 +2063,35 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: 'struct_item_brace', id: 424, enumName: 'StructItemBrace', cName: 'sym_struct_item_brace' },
 	{ name: 'struct_item_tuple', id: 425, enumName: 'StructItemTuple', cName: 'sym_struct_item_tuple' },
 	{ name: 'struct_item_unit', id: 426, enumName: 'StructItemUnit', cName: 'sym_struct_item_unit' },
-	{ name: '_wildcard_pattern', id: 427, enumName: 'WildcardPattern', cName: 'sym__wildcard_pattern' },
+	{ name: 'wildcard_pattern', id: 427, enumName: 'WildcardPattern', cName: 'sym__wildcard_pattern' },
 	{
-		name: '_attributed_field_declaration',
+		name: 'attributed_field_declaration',
 		id: 428,
 		enumName: 'AttributedFieldDeclaration',
 		cName: 'sym__attributed_field_declaration'
 	},
 	{
-		name: '_attributed_enum_variant',
+		name: 'attributed_enum_variant',
 		id: 429,
 		enumName: 'AttributedEnumVariant',
 		cName: 'sym__attributed_enum_variant'
 	},
-	{ name: '_attributed_parameter', id: 430, enumName: 'AttributedParameter', cName: 'sym__attributed_parameter' },
+	{ name: 'attributed_parameter', id: 430, enumName: 'AttributedParameter', cName: 'sym__attributed_parameter' },
 	{
-		name: '_attributed_type_parameter',
+		name: 'attributed_type_parameter',
 		id: 431,
 		enumName: 'AttributedTypeParameter',
 		cName: 'sym__attributed_type_parameter'
 	},
-	{ name: '_attributed_argument', id: 432, enumName: 'AttributedArgument', cName: 'sym__attributed_argument' },
+	{ name: 'attributed_argument', id: 432, enumName: 'AttributedArgument', cName: 'sym__attributed_argument' },
 	{
-		name: '_attributed_ordered_field',
+		name: 'attributed_ordered_field',
 		id: 433,
 		enumName: 'AttributedOrderedField',
 		cName: 'sym__attributed_ordered_field'
 	},
-	{ name: '_type_argument', id: 434, enumName: 'TypeArgument', cName: 'sym__type_argument' },
-	{ name: '_match_block_arms', id: 435, enumName: 'MatchBlockArms', cName: 'sym__match_block_arms' },
+	{ name: 'type_argument', id: 434, enumName: 'TypeArgument', cName: 'sym__type_argument' },
+	{ name: 'match_block_arms', id: 435, enumName: 'MatchBlockArms', cName: 'sym__match_block_arms' },
 	{ name: 'source_file_repeat1', id: 436, enumName: 'AuxSourceFileRepeat1', cName: 'aux_sym_source_file_repeat1' },
 	{
 		name: 'token_repetition_pattern_repeat1',
@@ -2236,14 +2242,14 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		enumName: 'AuxMatchBlockArmsRepeat1',
 		cName: 'aux_sym__match_block_arms_repeat1'
 	},
-	{ name: '_field_identifier', id: 466, enumName: 'AliasFieldIdentifier', cName: 'alias_sym_field_identifier' },
+	{ name: 'field_identifier', id: 466, enumName: 'AliasFieldIdentifier', cName: 'alias_sym_field_identifier' },
 	{
-		name: '_shorthand_field_identifier',
+		name: 'shorthand_field_identifier',
 		id: 468,
 		enumName: 'AliasShorthandFieldIdentifier',
 		cName: 'alias_sym_shorthand_field_identifier'
 	},
-	{ name: '_type_identifier', id: 469, enumName: 'AliasTypeIdentifier', cName: 'alias_sym_type_identifier' }
+	{ name: 'type_identifier', id: 469, enumName: 'AliasTypeIdentifier', cName: 'alias_sym_type_identifier' }
 ] as const;
 
 export enum TSFieldId {
@@ -2653,28 +2659,6 @@ export const _COMPOUND_ASSIGNMENT_EXPR_OPERATORS = [
 ] as const;
 export type CompoundAssignmentExprOperatorValue = (typeof _COMPOUND_ASSIGNMENT_EXPR_OPERATORS)[number];
 
-/** Valid values for `_primitive_type` nodes. */
-export const _PRIMITIVE_TYPES = [
-	'u8',
-	'i8',
-	'u16',
-	'i16',
-	'u32',
-	'i32',
-	'u64',
-	'i64',
-	'u128',
-	'i128',
-	'isize',
-	'usize',
-	'f32',
-	'f64',
-	'bool',
-	'str',
-	'char'
-] as const;
-export type PrimitiveTypeValue = (typeof _PRIMITIVE_TYPES)[number];
-
 /** Valid values for `_token_keywords` nodes. */
 export const _TOKEN_KEYWORDSS = [
 	"'",
@@ -2709,8 +2693,54 @@ export const _TOKEN_KEYWORDSS = [
 ] as const;
 export type TokenKeywordsValue = (typeof _TOKEN_KEYWORDSS)[number];
 
-/** Valid values for `_token_tree_punctuation` nodes. */
-export const _TOKEN_TREE_PUNCTUATIONS = [
+/** Valid values for `boolean_literal` nodes. */
+export const BOOLEAN_LITERALS = ['true', 'false'] as const;
+export type BooleanLiteralValue = (typeof BOOLEAN_LITERALS)[number];
+
+/** Valid values for `fragment_specifier` nodes. */
+export const FRAGMENT_SPECIFIERS = [
+	'block',
+	'expr',
+	'expr_2021',
+	'ident',
+	'item',
+	'lifetime',
+	'literal',
+	'meta',
+	'pat',
+	'pat_param',
+	'path',
+	'stmt',
+	'tt',
+	'ty',
+	'vis'
+] as const;
+export type FragmentSpecifierValue = (typeof FRAGMENT_SPECIFIERS)[number];
+
+/** Valid values for `primitive_type` nodes. */
+export const PRIMITIVE_TYPES = [
+	'u8',
+	'i8',
+	'u16',
+	'i16',
+	'u32',
+	'i32',
+	'u64',
+	'i64',
+	'u128',
+	'i128',
+	'isize',
+	'usize',
+	'f32',
+	'f64',
+	'bool',
+	'str',
+	'char'
+] as const;
+export type PrimitiveTypeValue = (typeof PRIMITIVE_TYPES)[number];
+
+/** Valid values for `token_tree_punctuation` nodes. */
+export const TOKEN_TREE_PUNCTUATIONS = [
 	'+',
 	'-',
 	'*',
@@ -2756,28 +2786,4 @@ export const _TOKEN_TREE_PUNCTUATIONS = [
 	'#',
 	'?'
 ] as const;
-export type TokenTreePunctuationValue = (typeof _TOKEN_TREE_PUNCTUATIONS)[number];
-
-/** Valid values for `boolean_literal` nodes. */
-export const BOOLEAN_LITERALS = ['true', 'false'] as const;
-export type BooleanLiteralValue = (typeof BOOLEAN_LITERALS)[number];
-
-/** Valid values for `fragment_specifier` nodes. */
-export const FRAGMENT_SPECIFIERS = [
-	'block',
-	'expr',
-	'expr_2021',
-	'ident',
-	'item',
-	'lifetime',
-	'literal',
-	'meta',
-	'pat',
-	'pat_param',
-	'path',
-	'stmt',
-	'tt',
-	'ty',
-	'vis'
-] as const;
-export type FragmentSpecifierValue = (typeof FRAGMENT_SPECIFIERS)[number];
+export type TokenTreePunctuationValue = (typeof TOKEN_TREE_PUNCTUATIONS)[number];

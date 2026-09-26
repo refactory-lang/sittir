@@ -217,11 +217,15 @@ export const type: {
 	readonly readonly: typeof F.readonlyType;
 	readonly constructor: typeof F.constructorType;
 	readonly infer: typeof F.inferType;
+	readonly queryMemberExpressionInAnnotation: typeof F.typeQueryMemberExpressionInTypeAnnotation;
+	readonly queryCallExpressionInAnnotation: typeof F.typeQueryCallExpressionInTypeAnnotation;
 } = {
 	function: F.functionType,
 	readonly: F.readonlyType,
 	constructor: F.constructorType,
-	infer: F.inferType
+	infer: F.inferType,
+	queryMemberExpressionInAnnotation: F.typeQueryMemberExpressionInTypeAnnotation,
+	queryCallExpressionInAnnotation: F.typeQueryCallExpressionInTypeAnnotation
 };
 
 export const tupleTypeMember: {
@@ -478,8 +482,11 @@ export const ir: {
 	readonly undefined: typeof F.buildUndefined;
 	readonly overrideModifier: typeof F.buildOverrideModifier;
 	readonly existentialType: typeof F.buildExistentialType;
+	readonly emptyMember: typeof F.buildEmptyMember;
 	readonly metaPropertyNewTarget: typeof F.buildMetaPropertyNewTarget;
 	readonly metaPropertyImportMeta: typeof F.buildMetaPropertyImportMeta;
+	readonly automaticSemicolon: typeof F.buildAutomaticSemicolon;
+	readonly functionSignatureAutomaticSemicolon: typeof F.buildFunctionSignatureAutomaticSemicolon;
 	readonly unescapedDoubleStringFragment: typeof F.buildUnescapedDoubleStringFragment;
 	readonly unescapedSingleStringFragment: typeof F.buildUnescapedSingleStringFragment;
 	readonly regexPattern: typeof F.buildRegexPattern;
@@ -531,6 +538,8 @@ export const ir: {
 	readonly parenthesized: typeof F.parenthesizedType;
 	readonly privateIdentifier: typeof F.privatePropertyIdentifier;
 	readonly query: typeof F.typeQuery;
+	readonly queryCallExpressionInAnnotation: typeof F.typeQueryCallExpressionInTypeAnnotation;
+	readonly queryMemberExpressionInAnnotation: typeof F.typeQueryMemberExpressionInTypeAnnotation;
 	readonly readonly: typeof F.readonlyType;
 	readonly required: typeof F.requiredParameter;
 	readonly rest: typeof F.restPattern;
@@ -762,8 +771,11 @@ export const ir: {
 	undefined: F.buildUndefined,
 	overrideModifier: F.buildOverrideModifier,
 	existentialType: F.buildExistentialType,
+	emptyMember: F.buildEmptyMember,
 	metaPropertyNewTarget: F.buildMetaPropertyNewTarget,
 	metaPropertyImportMeta: F.buildMetaPropertyImportMeta,
+	automaticSemicolon: F.buildAutomaticSemicolon,
+	functionSignatureAutomaticSemicolon: F.buildFunctionSignatureAutomaticSemicolon,
 
 	// Leaf node factories
 	unescapedDoubleStringFragment: F.buildUnescapedDoubleStringFragment,
@@ -819,6 +831,8 @@ export const ir: {
 	parenthesized: F.parenthesizedType,
 	privateIdentifier: F.privatePropertyIdentifier,
 	query: F.typeQuery,
+	queryCallExpressionInAnnotation: F.typeQueryCallExpressionInTypeAnnotation,
+	queryMemberExpressionInAnnotation: F.typeQueryMemberExpressionInTypeAnnotation,
 	readonly: F.readonlyType,
 	required: F.requiredParameter,
 	rest: F.restPattern,

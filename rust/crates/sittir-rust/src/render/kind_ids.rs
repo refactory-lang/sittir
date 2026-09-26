@@ -167,10 +167,10 @@ pub const _RAW_STRING_LITERAL_START: KindId = KindId(156);
 pub const RAW_STRING_LITERAL_CONTENT: KindId = KindId(157);
 pub const _RAW_STRING_LITERAL_END: KindId = KindId(158);
 pub const FLOAT_LITERAL: KindId = KindId(159);
-pub const _OUTER_BLOCK_DOC_COMMENT_MARKER: KindId = KindId(160);
-pub const _INNER_BLOCK_DOC_COMMENT_MARKER: KindId = KindId(161);
+pub const _OUTER_DOC_COMMENT_MARKER: KindId = KindId(160);
+pub const _INNER_DOC_COMMENT_MARKER: KindId = KindId(161);
 pub const _BLOCK_COMMENT_CONTENT: KindId = KindId(162);
-pub const _LINE_DOC_CONTENT: KindId = KindId(163);
+pub const _DOC_COMMENT: KindId = KindId(163);
 pub const _ERROR_SENTINEL: KindId = KindId(164);
 pub const _TIGHT: KindId = KindId(165);
 pub const _SPACE: KindId = KindId(166);
@@ -764,7 +764,8 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         281 => "base_field_initializer", // "base_field_initializer"
         282 => "if_expression", // "if_expression"
         283 => "let_condition", // "let_condition"
-        284 => "let_chain", // "_let_chain"
+        284 => "_let_chain", // "_let_chain"
+        467 => "let_chain", // "_let_chain"
         285 => "_condition", // "_condition"
         286 => "else_clause", // "else_clause"
         287 => "match_expression", // "match_expression"
@@ -965,6 +966,13 @@ pub fn is_text_kind(kind: KindId) -> bool {
 /// the alias, so the wrap layer can seat it as the envelope's content.
 pub fn is_alias_envelope(kind: KindId) -> bool {
     matches!(kind.0, 466 | 468 | 469)
+}
+
+/// Whether a node of this kind keeps its anonymous children as `$other`
+/// when it has no named child: an unnamed slot of the kind stores terminal
+/// kinds, and the wrap layer reclaims that slot's value from `$other`.
+pub fn keeps_anonymous_children(kind: KindId) -> bool {
+    matches!(kind.0, 184 | 230 | 261 | 299 | 382 | 383 | 420 | 421 | 423 | 430 | 432 | 434)
 }
 
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every

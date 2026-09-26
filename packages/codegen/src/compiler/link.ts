@@ -52,6 +52,11 @@ import {
 	findAnonEntryForLiteralText,
 	findEntryForLiteralText,
 	findEntryForPatternValue,
+	isParserHiddenKind,
+	isRenamedEntry,
+	isSurfaceHiddenKind,
+	stampVisibleExternals,
+	modelKindOfEntry,
 	type GeneratedIdTables,
 	type GeneratedKindEntry
 } from './generated-metadata.ts';
@@ -66,8 +71,11 @@ import type {
 	LinkedRefineForm,
 	NarrowedField,
 	DisplayUnionMember,
-	DisplayUnions
+	DisplayUnions,
+	RuleProvenance
 } from './types.ts';
+import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
+import type { SymbolRuleWithRef } from './evaluate.ts';
 import { structureTokenInterior } from './token-interior.ts';
 import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
@@ -81,11 +89,10 @@ import {
 	composeTokenText,
 	deriveComplexAliasTargetHidden,
 	isEnumChoiceRule,
-	isHiddenKind,
 	hiddenChoiceClass,
 	isKindChoice,
 	isNamedArmChoice,
-	isParserHiddenName,
+	isNonInlinableLeafShape,
 	rulesEqual,
 	separatorOf
 } from '../dsl/rule-patterns.ts';
@@ -137,13 +144,15 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	}
 }
 
-export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
+export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const include = ctx?.include;
+	const kindEntries = collectGeneratedKindEntries(stampVisibleExternals(ctx?.generatedIdTables, evaluated));
+	const catalogCtx: KindCatalogCtx = { kindEntries };
+	const raw = stampParserVisibility(collapseRenamedRules(evaluated, catalogCtx), catalogCtx);
 	const supertypes = new Set(raw.supertypes);
 	const factoryInline = new Set(raw.factoryInline);
 	const externalRoles = buildExternalRolesMap(raw.externalRoles);
 	const references = [...raw.references];
-	const kindEntries = collectGeneratedKindEntries(ctx?.generatedIdTables);
 
 	const includeRules = new Set(include?.rules ?? (['promoted'] as const));
 	const applyPromotedRules = includeRules.has('promoted');
@@ -221,7 +230,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		}
 	}
 
-	const { parentAliasedKinds, visibleAliasTargets } = collectAliasedByParents(rawRules);
+	const { parentAliasedKinds, visibleAliasTargets } = collectAliasedByParents(rawRules, linkCtx);
 
 	classifyAndLogHiddenRules(rules, linkCtx);
 
@@ -239,7 +248,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const stampMisses: KindIdStampMisses = { symbols: new Set(), literals: new Set(), aliasTargets: new Set() };
 	const aliasBodies = new Map<string, AliasRule<'link'>>();
 	for (const [name, rule] of Object.entries(rules)) {
-		if (!name.startsWith('_')) continue;
+		if (rule.hidden !== true) continue;
 		const body = topLevelAliasOf(rule);
 		if (body !== undefined) aliasBodies.set(name, body);
 	}
@@ -338,8 +347,11 @@ export interface KindIdStampMisses {
 	readonly aliasTargets: Set<string>;
 }
 
-export interface StampKindIdsCtx {
+export interface KindCatalogCtx {
 	readonly kindEntries: readonly GeneratedKindEntry[];
+}
+
+export interface StampKindIdsCtx extends KindCatalogCtx {
 	readonly misses: KindIdStampMisses;
 	readonly aliasBodies?: ReadonlyMap<string, AliasRule<'link'>>;
 	readonly topLevelAliasBodies?: ReadonlyMap<string, Rule<'link'>>;
@@ -472,7 +484,7 @@ export function canonicalizeRuleLiterals(
 						type: SYMBOL,
 						name: entry.kind,
 						literal: rule.value,
-						inline: isHiddenKind(entry.kind),
+						inline: isParserHiddenKind(entry.kind, kindEntries),
 						kindId: entry.parseId ?? entry.id,
 						metadata: makeRuleMetadata({ symbolSource: 'link' }),
 						...(rule.annotations === undefined ? {} : { annotations: rule.annotations })
@@ -644,9 +656,9 @@ function reportVaporizedKinds(
 }
 
 function classifyAndLogHiddenRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
-	const { inline, supertypes, derivations, applyPromotedRules } = ctx;
+	const { inline, supertypes, derivations, applyPromotedRules, kindEntries } = ctx;
 	for (const [name, rule] of Object.entries(rules)) {
-		if (isHiddenKind(name, inline) || supertypes.has(name)) {
+		if (isParserHiddenKind(name, kindEntries) || inline?.includes(name) === true || supertypes.has(name)) {
 			const { rule: reclassified, classification } = classifyHiddenRule(rule, ctx, name, rules);
 			const classified = reclassified === rule ? reclassified : withKindFacts(reclassified, rule);
 			if (classified !== rule && classification !== undefined) {
@@ -742,11 +754,151 @@ function topLevelAliasOf(rule: Rule<'link'>): AliasRule<'link'> | undefined {
 	return undefined;
 }
 
+const renameWalker = new RuleWalker<Rule<'evaluate'>>({});
+
+export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
+	const renames = new Map<string, string>();
+	for (const name of [...Object.keys(raw.rules), ...raw.externals]) {
+		const entry = findEntryForKindName(ctx.kindEntries, name);
+		if (
+			entry === undefined ||
+			entry.kind !== name ||
+			entry.symbolName === undefined ||
+			!isRenamedEntry(entry, ctx.kindEntries)
+		)
+			continue;
+		renames.set(name, entry.symbolName);
+	}
+	if (renames.size === 0) return raw;
+	const targets = new Map<string, string>();
+	for (const [from, to] of renames) {
+		const taken =
+			targets.get(to) ?? ((to in raw.rules || raw.externals.includes(to)) && !renames.has(to) ? to : undefined);
+		if (taken !== undefined)
+			throw new Error(`link: '${from}' collapses into its tree name '${to}', which '${taken}' already names`);
+		targets.set(to, from);
+	}
+	const rename = (name: string): string => renames.get(name) ?? name;
+	const renameKey = (key: string): string => key.split('\u0000').map(rename).join('\u0000');
+	const renameRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
+		if (rule.type === SYMBOL) {
+			const ref = (rule as SymbolRuleWithRef)._ref;
+			const refMoves = ref !== undefined && (renames.has(ref.from) || renames.has(ref.to));
+			if (!renames.has(rule.name) && !refMoves) return rule;
+			const renamed: SymbolRuleWithRef = { ...rule, name: rename(rule.name) };
+			if (!refMoves) return renamed;
+			const withRef: SymbolRuleWithRef = { ...renamed, _ref: { ...ref, from: rename(ref.from), to: rename(ref.to) } };
+			return withRef;
+		}
+		if (rule.type === ALIAS && rule.named && rule.content.type === SYMBOL) {
+			const content = rule.content.name;
+			if (targets.has(rename(content)) && rule.value === rename(content))
+				return { ...rule.content, name: rename(content) };
+		}
+		return rule;
+	};
+	const renameRule = (rule: Rule<'evaluate'>): Rule<'evaluate'> => renameRef(renameWalker.map(rule, renameRef));
+	const renameRecord = <T>(record: Readonly<Record<string, T>> | undefined): Record<string, T> | undefined =>
+		record === undefined ? undefined : Object.fromEntries(Object.entries(record).map(([key, v]) => [rename(key), v]));
+	const renameRuleRecord = (
+		record: Readonly<Record<string, Rule<'evaluate'>>> | undefined
+	): Record<string, Rule<'evaluate'>> | undefined =>
+		record === undefined
+			? undefined
+			: Object.fromEntries(Object.entries(record).map(([key, rule]) => [rename(key), renameRule(rule)]));
+	const renameGroupArms = (arms: Readonly<Record<string, string>> | undefined): Record<string, string> | undefined =>
+		arms === undefined
+			? undefined
+			: Object.fromEntries(Object.entries(arms).map(([key, arm]) => [rename(key), rename(arm)]));
+	const renameMap = <T>(map: ReadonlyMap<string, T> | undefined): Map<string, T> | undefined =>
+		map === undefined ? undefined : new Map([...map].map(([key, v]) => [rename(key), v]));
+
+	const rules: Record<string, Rule<'evaluate'>> = {};
+	for (const [name, rule] of Object.entries(raw.rules)) rules[rename(name)] = renameRule(rule);
+	const provenanceByKind = new Map<string, RuleProvenance>();
+	for (const [kind, id] of raw.ruleCatalog.rootsByKind) {
+		const provenance = raw.ruleCatalog.byId.get(id)?.provenance;
+		if (provenance !== undefined) provenanceByKind.set(rename(kind), provenance);
+	}
+	const supertypes = raw.supertypes.map(rename);
+	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: supertypes });
+	const references = attachReferenceRuleIds(
+		raw.references.map((ref) => ({ ...ref, from: rename(ref.from), to: rename(ref.to), fromRuleId: undefined })),
+		{ ruleCatalog: identified.ruleCatalog }
+	);
+	return {
+		...raw,
+		rules: identified.rules,
+		ruleCatalog: identified.ruleCatalog,
+		references,
+		extras: raw.extras.map(rename),
+		externals: raw.externals.map(rename),
+		supertypes,
+		factoryInline: raw.factoryInline.map(rename),
+		inline: raw.inline.map(rename),
+		conflicts: raw.conflicts.map((group) => group.map(rename)),
+		precedences: raw.precedences.map((group) => group.map(rename)),
+		word: raw.word === null ? null : rename(raw.word),
+		externalRoles: renameMap(raw.externalRoles),
+		refineForms: renameMap(raw.refineForms),
+		groups:
+			raw.groups === undefined
+				? undefined
+				: Object.fromEntries(Object.entries(raw.groups).map(([key, arms]) => [rename(key), renameGroupArms(arms)])),
+		renderAs: renameRuleRecord(raw.renderAs),
+		visibleExternals: renameRuleRecord(raw.visibleExternals),
+		options: renameRecord(raw.options),
+		expectDiagnostics: renameRecord(raw.expectDiagnostics),
+		expectTestFailures: renameRecord(raw.expectTestFailures),
+		orphanedSyntheticGroups: raw.orphanedSyntheticGroups?.map(rename),
+		visibleInlineNames: raw.visibleInlineNames?.map(rename),
+		bodyPatternZeroMatches: raw.bodyPatternZeroMatches?.map(rename),
+		desugarDivergences: raw.desugarDivergences?.map((event) => ({ ...event, name: rename(event.name) })),
+		automaticVariants:
+			raw.automaticVariants === undefined
+				? undefined
+				: {
+						keys: new Set([...raw.automaticVariants.keys].map(renameKey)),
+						supertypeOwners: new Set([...raw.automaticVariants.supertypeOwners].map(rename))
+					}
+	};
+}
+
+const visibilityWalker = new RuleWalker<Rule<'evaluate'>>({});
+
+function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
+	const inlineNames = new Set(raw.inline);
+	const supertypes = new Set(raw.supertypes);
+	const stampRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
+		if (rule.type === ALIAS) {
+			return rule.content.type === SYMBOL && rule.content.inline !== false
+				? { ...rule, content: { ...rule.content, inline: false } }
+				: rule;
+		}
+		if (rule.type !== SYMBOL) return rule;
+		const target = raw.rules[rule.name];
+		const boundary =
+			supertypes.has(rule.name) ||
+			(!inlineNames.has(rule.name) && target !== undefined && isNonInlinableLeafShape(target));
+		const inline = !boundary && (isParserHiddenKind(rule.name, ctx.kindEntries) || inlineNames.has(rule.name));
+		return rule.inline === inline ? rule : { ...rule, inline };
+	};
+	const rules: Record<string, Rule<'evaluate'>> = {};
+	for (const [name, rule] of Object.entries(raw.rules)) {
+		rules[name] = {
+			...stampRef(visibilityWalker.map(rule, stampRef)),
+			hidden: isSurfaceHiddenKind(name, ctx.kindEntries)
+		};
+	}
+	return { ...raw, rules };
+}
+
 const aliasedRefWalker = new RuleWalker<Rule<'link'>>();
 
 function stampLinkMintedVisibility(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
 	for (const [name, rule] of Object.entries(rules)) {
-		if (!(name in ctx.rules) && rule.hidden === undefined) rules[name] = { ...rule, hidden: name.startsWith('_') };
+		if (!(name in ctx.rules) && rule.hidden === undefined)
+			rules[name] = { ...rule, hidden: isSurfaceHiddenKind(name, ctx.kindEntries) };
 	}
 }
 
@@ -786,7 +938,8 @@ function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): vo
 		const body = rules[r.name];
 		if (body === undefined) return r;
 		const { hidden: _sourceKindHidden, ...spliced } = body;
-		const annotations = r.annotations === undefined ? spliced.annotations : { ...spliced.annotations, ...r.annotations };
+		const annotations =
+			r.annotations === undefined ? spliced.annotations : { ...spliced.annotations, ...r.annotations };
 		return rebaseRuleIds(
 			{ ...spliced, inlinedFrom: r.name, ...(annotations === undefined ? {} : { annotations }) } as Rule<'link'>,
 			r.id ?? body.id
@@ -838,10 +991,7 @@ function cyclicInlineTargets(rules: Record<string, Rule<'link'>>): ReadonlySet<s
 	return cyclic;
 }
 
-function collectDisplayUnions(
-	rules: Record<string, Rule<'link'>>,
-	ctx: StampKindIdsCtx
-): DisplayUnions {
+function collectDisplayUnions(rules: Record<string, Rule<'link'>>, ctx: StampKindIdsCtx): DisplayUnions {
 	const { kindEntries } = ctx;
 	const unions = new Map<string, DisplayUnionMember[]>();
 	const add = (entry: { display: string } & DisplayUnionMember): void => {
@@ -865,7 +1015,11 @@ function collectDisplayUnions(
 			return;
 		}
 		if (content.type === SYMBOL) {
-			add(content.literal === undefined ? { display, storage: storageNameOf(content), literal: false } : { display, storage: content.literal, literal: true });
+			add(
+				content.literal === undefined
+					? { display, storage: storageNameOf(content), literal: false }
+					: { display, storage: content.literal, literal: true }
+			);
 		} else if (content.type === STRING) add({ display, storage: content.value, literal: true });
 	};
 	const visit = (rule: Rule<'link'>): void => {
@@ -883,7 +1037,8 @@ function collectDisplayUnions(
 		else if ('content' in rule && rule.content !== undefined) visit((rule as { content: Rule<'link'> }).content);
 	};
 	for (const rule of Object.values(rules)) visit(rule);
-	for (const display of unions.keys()) if (rules[display] !== undefined) add({ display, storage: display, literal: false });
+	for (const display of unions.keys())
+		if (rules[display] !== undefined) add({ display, storage: display, literal: false });
 	return unions;
 }
 
@@ -900,14 +1055,18 @@ function mintDisplayUnionRules(
 				type: SYMBOL,
 				name: literalEntry.kind,
 				literal: member.storage,
-				inline: isHiddenKind(literalEntry.kind),
+				inline: isParserHiddenKind(literalEntry.kind, kindEntries),
 				kindId: literalEntry.parseId ?? literalEntry.id,
 				metadata: makeRuleMetadata({ symbolSource: 'link' })
 			} as Rule<'link'>;
 		}
 		const nameEntry = findEntryForKindName(kindEntries, member.storage);
 		if (nameEntry !== undefined) {
-			return { type: SYMBOL, name: nameEntry.kind, kindId: nameEntry.parseId ?? nameEntry.id } as Rule<'link'>;
+			return {
+				type: SYMBOL,
+				name: modelKindOfEntry(nameEntry, kindEntries),
+				kindId: nameEntry.parseId ?? nameEntry.id
+			} as Rule<'link'>;
 		}
 		return undefined;
 	};
@@ -939,12 +1098,15 @@ function mintDisplayUnionRules(
 function collectHiddenNamedArmChoices(rawRules: Record<string, Rule<'evaluate'>>): ReadonlySet<string> {
 	const out = new Set<string>();
 	for (const [name, rule] of Object.entries(rawRules)) {
-		if (isParserHiddenName(name) && isNamedArmChoice(rule)) out.add(name);
+		if (rule.hidden === true && isNamedArmChoice(rule)) out.add(name);
 	}
 	return out;
 }
 
-function collectAliasedByParents(rawRules: Record<string, Rule<'evaluate'>>): {
+function collectAliasedByParents(
+	rawRules: Record<string, Rule<'evaluate'>>,
+	ctx: KindCatalogCtx
+): {
 	parentAliasedKinds: ReadonlySet<string>;
 	visibleAliasTargets: ReadonlyMap<string, readonly string[]>;
 } {
@@ -954,7 +1116,7 @@ function collectAliasedByParents(rawRules: Record<string, Rule<'evaluate'>>): {
 		if (rule.type === ALIAS) {
 			if (rule.named && rule.content.type === SYMBOL) {
 				const source = rule.content.name;
-				if (source.startsWith('_')) {
+				if (isParserHiddenKind(source, ctx.kindEntries)) {
 					parentAliasedKinds.add(source);
 				} else if (typeof rule.value === 'string' && !rule.value.startsWith('_')) {
 					const arr = visibleAliasTargets.get(rule.value);
@@ -988,7 +1150,7 @@ function collectTopLevelAliasBodies(
 	const out = new Map<string, Rule<'link'>>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!(name in resolvedRules)) continue;
-		if (!name.startsWith('_')) continue;
+		if (rule.hidden !== true) continue;
 		const content = extractTopLevelNamedAliasContent(rule as Rule<'link'>);
 		if (!content) continue;
 		if (complexAliasTargetHidden && content.type === SYMBOL && complexAliasTargetHidden.has(content.name)) {
@@ -1568,7 +1730,11 @@ function classifyHiddenChoiceRule(
 		}
 		return undefined;
 	});
-	if (!supertypes.has(name) && shape === 'enum' && enumMembers.every((m): m is StringRule<'link'> | SymbolRule<'link'> => m !== undefined)) {
+	if (
+		!supertypes.has(name) &&
+		shape === 'enum' &&
+		enumMembers.every((m): m is StringRule<'link'> | SymbolRule<'link'> => m !== undefined)
+	) {
 		const allStrings = enumMembers.every((m): m is StringRule<'link'> => m.type === STRING);
 		return {
 			rule: allStrings
