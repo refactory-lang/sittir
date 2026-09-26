@@ -30,6 +30,7 @@ import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVaria
 import { polymorphVisibleName } from '../arm-names.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
+import { ruleCauseOf, type RuleCauseDeclaration } from '../primitives/rule-cause.ts';
 
 export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
 
@@ -52,6 +53,8 @@ export interface WireContext {
 	readonly options?: OptionsConfig;
 	currentRuleKind: string | null;
 	readonly authoredRuleNames: ReadonlySet<string>;
+	readonly ruleCauses: ReadonlyMap<string, RuleCauseDeclaration>;
+	readonly undeclaredRules: ReadonlySet<string>;
 	readonly extraRuleNames: ReadonlySet<string>;
 	readonly precedenceRankedNames: ReadonlySet<string>;
 	readonly flattenedParents: Set<string>;
@@ -171,6 +174,8 @@ export function withWireContext<T>(
 		options: undefined,
 		currentRuleKind: ruleKind,
 		authoredRuleNames: new Set(),
+		ruleCauses: new Map(),
+		undeclaredRules: new Set(),
 		extraRuleNames: new Set(),
 		precedenceRankedNames: new Set(),
 		flattenedParents: new Set(),
@@ -348,6 +353,7 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		options: cfg.options,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
+		...declaredRuleCauses(cfg.rules ?? {}),
 		extraRuleNames: extraRuleNames(cfg, baseArg),
 		precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
 		flattenedParents: new Set(),
@@ -426,6 +432,17 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		configurable: true
 	});
 	return wired;
+}
+
+function declaredRuleCauses(rules: Record<string, RuleFn>): Pick<WireContext, 'ruleCauses' | 'undeclaredRules'> {
+	const ruleCauses = new Map<string, RuleCauseDeclaration>();
+	const undeclaredRules = new Set<string>();
+	for (const [name, fn] of Object.entries(rules)) {
+		const declaration = ruleCauseOf(fn);
+		if (declaration === undefined) undeclaredRules.add(name);
+		else ruleCauses.set(name, declaration);
+	}
+	return { ruleCauses, undeclaredRules };
 }
 
 function renamingReserved(reserved: unknown, context: WireContext): unknown {

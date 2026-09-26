@@ -372,6 +372,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const renderAs = drainRenderAsMetadata(opts, ctx);
 	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
 	const optionsBlock = drainOptionsMetadata(opts);
+	const { ruleCauses, undeclaredRules } = drainRuleCausesMetadata(opts);
 
 	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: ctx.sinks.supertypes });
 	const references = attachReferenceRuleIds(refs, { ruleCatalog: identified.ruleCatalog });
@@ -397,6 +398,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		options: optionsBlock,
 		expectDiagnostics,
 		expectTestFailures,
+		ruleCauses,
+		undeclaredRules,
 		orphanedSyntheticGroups,
 		automaticVariants: wireCtx?.automaticVariants,
 		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined,
@@ -437,6 +440,16 @@ function drainExpectDiagnosticsMetadata(opts: GrammarOptions): Record<string, re
 	}
 	if (Object.keys(e).length === 0) return undefined;
 	return e;
+}
+
+function drainRuleCausesMetadata(opts: GrammarOptions): Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules'> {
+	const wireCtx = getWireContext(opts);
+	if (!wireCtx) return {};
+	const undeclaredRules = [...wireCtx.undeclaredRules].sort();
+	return {
+		ruleCauses: wireCtx.ruleCauses.size > 0 ? Object.fromEntries(wireCtx.ruleCauses) : undefined,
+		undeclaredRules: undeclaredRules.length > 0 ? undeclaredRules : undefined
+	};
 }
 
 function drainOptionsMetadata(opts: GrammarOptions): OptionsConfig | undefined {

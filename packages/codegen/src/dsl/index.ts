@@ -12,6 +12,8 @@ export { preference } from './primitives/preference.ts';
 export { field } from './primitives/field.ts';
 export { refine } from './primitives/refine.ts';
 export { wire } from './wire/wire.ts';
+export { reauthored, vocabulary } from './primitives/rule-cause.ts';
+export type { RuleCause, RuleCauseDeclaration } from './primitives/rule-cause.ts';
 export type {
 	WireConfig,
 	WiredOpts,

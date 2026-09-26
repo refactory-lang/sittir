@@ -257,6 +257,28 @@ grammar's `$`. Inside `transform()` it resolves to a reference
 
 Whether a patch value is a `rule()` placeholder.
 
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::reauthored`
+
+`reauthored(cause, body)` declares a `rules:` entry that replaces the upstream
+rule of the same name, and why: `'lexical-interior'` (upstream's token is
+opaque where the grammar addresses its interior), `'alias-shape'` (an alias or
+hoist restructuring the patch forms cannot express) or `'ambiguity'` (a
+precedence or ambiguity fix). It returns `body` itself, tagged; the rule-cause
+diagnostics judge the declaration against the upstream compile.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::vocabulary`
+
+`vocabulary(body)` declares a `rules:` entry sittir adds and that replaces no
+upstream rule: the `_whitespace` vocabulary and every helper rule a
+re-authoring introduces. It returns `body` itself, tagged.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::ruleCauseOf`
+
+The declaration `reauthored` or `vocabulary` tagged onto a rule function, or
+`undefined` for a bare body. The tag is a non-enumerable symbol-keyed
+property, so a tagged function is still a plain `RuleFn` to `wire()` and to
+tree-sitter's CLI.
+
 ### `packages/codegen/src/dsl/primitives/alias.ts::module`
 
 ```text

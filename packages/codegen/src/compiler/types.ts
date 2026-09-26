@@ -8,6 +8,7 @@ import type { ExternalRole } from '../types/ir.ts';
 export type { ExternalRole };
 export type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import type { RuleCauseDeclaration } from '../dsl/primitives/rule-cause.ts';
 
 export type RuleProvenance = 'grammar-authored' | 'override-authored-or-replaced' | 'evaluate-synthesized';
 
@@ -116,6 +117,8 @@ export interface RawGrammar {
 	readonly options?: OptionsConfig;
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Readonly<Record<string, string>>;
+	readonly ruleCauses?: Readonly<Record<string, RuleCauseDeclaration>>;
+	readonly undeclaredRules?: readonly string[];
 	readonly orphanedSyntheticGroups?: readonly string[];
 	readonly automaticVariants?: AutomaticVariants;
 

@@ -895,6 +895,21 @@ body-pattern substitution.
 // ---------------------------------------------------------------------------
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.ruleCauses`
+
+The `rules:` entries' declarations by name (`reauthored` or `vocabulary`),
+read from each rule function with `ruleCauseOf`. Together with
+`undeclaredRules` it partitions `authoredRuleNames`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.undeclaredRules`
+
+The `rules:` entries whose function carries no declaration (bare bodies).
+
+### `packages/codegen/src/dsl/wire/wire.ts::declaredRuleCauses`
+
+Partitions the config's `rules:` functions into `ruleCauses` and
+`undeclaredRules` for the wire context.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::deposits`
 
 ```text

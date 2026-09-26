@@ -2291,6 +2291,22 @@ by a plain `generate()` call alike.
  */
 ```
 
+### `packages/codegen/src/compiler/evaluate.ts::drainRuleCausesMetadata`
+
+Copies `WireContext.ruleCauses` and `WireContext.undeclaredRules` onto
+`RawGrammar.ruleCauses` / `RawGrammar.undeclaredRules` (the latter sorted);
+each is omitted when empty, and both when the grammar was not wired.
+
+### `packages/codegen/src/compiler/types.ts::RawGrammar.ruleCauses`
+
+The grammar's `rules:` entries that carry a `reauthored` or `vocabulary`
+declaration, by rule name. With `undeclaredRules` it names every hand-written
+rule, which is what the hand-written rule ratchet counts.
+
+### `packages/codegen/src/compiler/types.ts::RawGrammar.undeclaredRules`
+
+The grammar's `rules:` entries with a bare body, sorted.
+
 ### `packages/codegen/src/compiler/evaluate.ts::drainRenderAsMetadata`
 
 ```text

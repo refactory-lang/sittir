@@ -158,6 +158,10 @@ describe('post-evaluate invariant', () => {
 				// `expectTestFailures:` — read by emitTests (emitters/test.ts)
 				// for describe.skip emission.
 				'expectTestFailures',
+				// `rules:` entries' reauthored / vocabulary declarations and the
+				// bare bodies — read by the rule-cause diagnostics.
+				'ruleCauses',
+				'undeclaredRules',
 				// Enrich-synthesized clause-hoist names orphaned by an override
 				// redeclaring their recorded owner — read by
 				// collectGrammarDiagnosticsForGrammar to suppress phantom diagnostics.
