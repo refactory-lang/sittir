@@ -37,6 +37,7 @@ export interface GeneratedKindEntry {
 	readonly keyword?: boolean;
 	readonly aliasedNonTerminal?: boolean;
 	readonly supertype?: boolean;
+	readonly terminal?: boolean;
 	readonly visibleExternal?: boolean;
 	readonly lexicalRank?: number;
 }
@@ -96,6 +97,7 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 	const fieldNames = collectNameTable(parser, source, 'static const char * const ts_field_names[]');
 	const symbolFacts: ParserSymbolFacts = {
 		aliasedNonTerminals: collectAliasedNonTerminals(parser, source),
+		tokenCount: collectTokenCount(source),
 		...collectSymbolFlags(parser, source)
 	};
 	const symbolTextFacts = resolveSymbolTextFacts(symbolNames, collectGrammarFacts(grammarJson));
@@ -250,6 +252,7 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 			keyword: entry.parser?.keyword || undefined,
 			aliasedNonTerminal: entry.parser?.aliasedNonTerminal || undefined,
 			supertype: entry.parser?.supertype || undefined,
+			terminal: entry.parser?.terminal || undefined,
 			visibleExternal: entry.parser?.visibleExternal || undefined,
 			lexicalRank: entry.parser?.lexicalRank
 		}));
@@ -264,6 +267,7 @@ export interface KindEntryLike {
 	readonly alias?: boolean;
 	readonly hidden?: boolean;
 	readonly supertype?: boolean;
+	readonly terminal?: boolean;
 	readonly visibleExternal?: boolean;
 	readonly parseId?: number;
 	readonly parseName?: string;
@@ -332,6 +336,14 @@ export function isSurfaceHiddenKind(kind: string, entries: readonly KindEntryLik
 
 export function isParserHiddenKind(kind: string, entries: readonly KindEntryLike[]): boolean {
 	return parserHiddenOf(findOwnKindEntry(entries, kind), kind);
+}
+
+export function parserSupertypeOf(
+	entry: KindEntryLike | undefined,
+	kind: string,
+	declaredSupertypes: ReadonlySet<string>
+): boolean {
+	return entry === undefined ? declaredSupertypes.has(kind) : entry.supertype === true;
 }
 
 const modelKindOwners = new WeakMap<readonly KindEntryLike[], ReadonlyMap<string, KindEntryLike>>();
@@ -477,6 +489,12 @@ interface ParserSymbolFacts {
 	readonly visible: ReadonlyMap<string, boolean>;
 	readonly named: ReadonlyMap<string, boolean>;
 	readonly supertypes: ReadonlySet<string>;
+	readonly tokenCount: number | undefined;
+}
+
+function collectTokenCount(source: string): number | undefined {
+	const match = /^#define TOKEN_COUNT (\d+)$/m.exec(source);
+	return match === null ? undefined : Number(match[1]);
 }
 
 function collectSymbolFlags(
@@ -620,6 +638,7 @@ function createParserMetadata(
 		alias: entry.cName.startsWith('alias_sym_'),
 		hidden: symbolFacts?.visible.get(entry.cName) === false,
 		...(symbolFacts?.supertypes.has(entry.cName) ? { supertype: true as const } : {}),
+		...(symbolFacts?.tokenCount !== undefined && entry.id < symbolFacts.tokenCount ? { terminal: true as const } : {}),
 		...(keywordTextOf(entry.cName, symbolTextFacts) === undefined ? {} : { keyword: true as const }),
 		...(symbolFacts?.aliasedNonTerminals.has(entry.cName) ? { aliasedNonTerminal: true as const } : {}),
 		...(lexicalRank === undefined ? {} : { lexicalRank })

@@ -52,7 +52,10 @@ import {
 	findAnonEntryForLiteralText,
 	findEntryForLiteralText,
 	findEntryForPatternValue,
+	findOwnKindEntry,
 	isParserHiddenKind,
+	parserHiddenOf,
+	parserSupertypeOf,
 	isRenamedEntry,
 	isSurfaceHiddenKind,
 	stampVisibleExternals,
@@ -91,8 +94,8 @@ import {
 	isEnumChoiceRule,
 	hiddenChoiceClass,
 	isKindChoice,
+	isLiteralChoiceContent,
 	isNamedArmChoice,
-	isNonInlinableLeafShape,
 	rulesEqual,
 	separatorOf
 } from '../dsl/rule-patterns.ts';
@@ -234,8 +237,6 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const { parentAliasedKinds, visibleAliasTargets } = collectAliasedByParents(rawRules, linkCtx);
 
 	classifyAndLogHiddenRules(rules, linkCtx);
-
-	markSupertypeRefsNonInline(rules);
 
 	applyOverridePolymorphs(rules, derivations, raw.automaticVariants);
 
@@ -725,30 +726,6 @@ function foldAliasLiteralsIntoEnumRules(rules: Record<string, Rule<'link'>>): vo
 	}
 }
 
-function markSupertypeRefsNonInline(rules: Record<string, Rule<'link'>>): void {
-	const nonInlineKinds = new Set<string>();
-	for (const [name, rule] of Object.entries(rules)) {
-		if (rule.type === SUPERTYPE || referencesSelf(rule, name)) nonInlineKinds.add(name);
-	}
-	if (nonInlineKinds.size === 0) return;
-	const walk = (rule: Rule<'link'>): Rule<'link'> => {
-		if (rule.type === SYMBOL) {
-			return nonInlineKinds.has(rule.name) && rule.inline !== false ? { ...rule, inline: false } : rule;
-		}
-		const xs = rule as { members?: readonly Rule<'link'>[]; content?: Rule<'link'> };
-		if (xs.members) return { ...rule, members: xs.members.map(walk) } as Rule<'link'>;
-		if (xs.content) return { ...rule, content: walk(xs.content) } as Rule<'link'>;
-		return rule;
-	};
-	for (const name of Object.keys(rules)) rules[name] = walk(rules[name]!);
-}
-
-const selfRefWalker = new RuleWalker<Rule<'link'>>();
-
-function referencesSelf(rule: Rule<'link'>, self: string): boolean {
-	return selfRefWalker.find(rule, (r) => r.type === SYMBOL && r.name === self) !== undefined;
-}
-
 function topLevelAliasOf(rule: Rule<'link'>): AliasRule<'link'> | undefined {
 	if (rule.type === ALIAS && rule.named) return rule;
 	if (rule.type === TOKEN) return topLevelAliasOf(rule.content);
@@ -866,9 +843,40 @@ export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawG
 
 const visibilityWalker = new RuleWalker<Rule<'evaluate'>>({});
 
+interface ReferenceInlineCtx extends KindCatalogCtx {
+	readonly rules: Readonly<Record<string, Rule<'evaluate'>>>;
+	readonly inlineNames: ReadonlySet<string>;
+	readonly supertypes: ReadonlySet<string>;
+}
+
+const selfReferenceWalker = new RuleWalker<Rule<'evaluate'>>({});
+
+function referencesItself(name: string, body: Rule<'evaluate'>): boolean {
+	return selfReferenceWalker.find(body, (rule) => rule.type === SYMBOL && rule.name === name) !== undefined;
+}
+
+function isModelableKind(name: string, ctx: ReferenceInlineCtx): boolean {
+	return ctx.rules[name] !== undefined || findOwnKindEntry(ctx.kindEntries, name)?.visibleExternal === true;
+}
+
+function inlinesAtReference(name: string, ctx: ReferenceInlineCtx): boolean {
+	const entry = findOwnKindEntry(ctx.kindEntries, name);
+	if (parserSupertypeOf(entry, name, ctx.supertypes)) return false;
+	const target = ctx.rules[name];
+	if (target !== undefined && referencesItself(name, target)) return false;
+	if (ctx.inlineNames.has(name)) return true;
+	if (!parserHiddenOf(entry, name)) return false;
+	if (entry?.terminal === true && isModelableKind(name, ctx)) return false;
+	return !(target !== undefined && isLiteralChoiceContent(target));
+}
+
 function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
-	const inlineNames = new Set(raw.inline);
-	const supertypes = new Set(raw.supertypes);
+	const inlineCtx: ReferenceInlineCtx = {
+		kindEntries: ctx.kindEntries,
+		rules: raw.rules,
+		inlineNames: new Set(raw.inline),
+		supertypes: new Set(raw.supertypes)
+	};
 	const stampRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
 		if (rule.type === ALIAS) {
 			return rule.content.type === SYMBOL && rule.content.inline !== false
@@ -876,11 +884,7 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 				: rule;
 		}
 		if (rule.type !== SYMBOL) return rule;
-		const target = raw.rules[rule.name];
-		const boundary =
-			supertypes.has(rule.name) ||
-			(!inlineNames.has(rule.name) && target !== undefined && isNonInlinableLeafShape(target));
-		const inline = !boundary && (isParserHiddenKind(rule.name, ctx.kindEntries) || inlineNames.has(rule.name));
+		const inline = inlinesAtReference(rule.name, inlineCtx);
 		return rule.inline === inline ? rule : { ...rule, inline };
 	};
 	const rules: Record<string, Rule<'evaluate'>> = {};

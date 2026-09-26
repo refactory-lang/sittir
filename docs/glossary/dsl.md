@@ -4412,11 +4412,9 @@ The whole-text regex source of a token, composed from its interior rule: a strin
  *  Each of those is a whole leaf CLASS with its own catalog identity, not
  *  a single-use structural fragment — folding one into an inline SYMBOL
  *  reference would duplicate that class at every reference site instead of
- *  collapsing a single occurrence. Consumers: link's
- *  `stampParserVisibility` gates a reference's `inline` stamp on this
- *  (unless the reference's own name is explicitly in the grammar's
- *  `inline:` array, which overrides the guard); `inline-sets.ts` and
- *  `assemble.ts` read the negation directly as an inlinability check.
+ *  collapsing a single occurrence. Consumer: `inline-sets.ts` reads the
+ *  negation as an inlinability check for grammar diagnostics. Link's
+ *  reference `inline` stamp does not read it (`inlinesAtReference`).
  */
 ```
 

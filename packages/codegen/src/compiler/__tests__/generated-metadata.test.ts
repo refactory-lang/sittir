@@ -218,6 +218,41 @@ static const char * const ts_field_names[] = {
 		expect(byId.get(31)?.aliasedNonTerminal).toBeUndefined();
 	});
 
+	it('marks a symbol whose id is below TOKEN_COUNT as a terminal', async () => {
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			`
+#define TOKEN_COUNT 3
+
+enum ts_symbol_identifiers {
+  sym_identifier = 1,
+  sym__block_comment_content = 2,
+  sym__let_chain = 3,
+  sym_let_condition = 4,
+};
+
+static const char * const ts_symbol_names[] = {
+  [sym_identifier] = "identifier",
+  [sym__block_comment_content] = "_block_comment_content",
+  [sym__let_chain] = "_let_chain",
+  [sym_let_condition] = "let_condition",
+};
+
+enum ts_field_identifiers {
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+};
+`,
+			'parser.c'
+		);
+		const byId = new Map(collectGeneratedKindEntries(tables).map((entry) => [entry.id, entry]));
+		expect(byId.get(1)?.terminal).toBe(true);
+		expect(byId.get(2)?.terminal).toBe(true);
+		expect(byId.get(3)?.terminal).toBeUndefined();
+		expect(byId.get(4)?.terminal).toBeUndefined();
+	});
+
 	it('leaves a symbolic (non-keyword-shaped) anonymous token under its plain derived name', async () => {
 		const tables = await deriveGeneratedIdTablesFromParserCSource(
 			`
