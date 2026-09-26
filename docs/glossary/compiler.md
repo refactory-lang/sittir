@@ -2863,6 +2863,8 @@ runs once the metadata callbacks have been evaluated.
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateMetadataCallbacks`
 
+Each `reserved` wordset callback runs like the list callbacks, with a fresh `$` and the base grammar's wordset of the same name, and records its members as rules in the order written (`ReservedWordsets`). An extension that declares no `reserved` inherits the base's wordsets (`inheritBaseGrammarMetadata`).
+
 ```text
 /**
  * Run all the metadata callbacks (extras, externals, supertypes,
@@ -9832,6 +9834,10 @@ same kinds, so the name and the fact cannot disagree.
 /** Sittir can render/dispatch it. */
 ```
 
+### `packages/codegen/src/compiler/types.ts::ReservedWordsets`
+
+The grammar's `reserved` field as tree-sitter has it: each wordset name mapped to its members as rules, in declaration order. `evaluate` records it verbatim (a member written as a string is a STRING rule), and it equals `.sittir/src/grammar.json`'s `reserved`, which is `{}` for a grammar that declares none. It is carried unchanged through link, normalize and simplify to the node map.
+
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.factoryInline`
 
 ```text
@@ -10690,7 +10696,7 @@ re-derives a fact the pipeline already stamps.
 
 ### `packages/codegen/src/compiler/link.ts::collapseRenamedRules`
 
-A hidden rule the parser always shows under one tree name (`ts_symbol_names` gives the name; the catalog row is visible, not an alias or anonymous row, and is the only visible row carrying that name — `isRenamedEntry`) is one visible kind. This pass renames it to that tree name everywhere the grammar names it, before anything reads the grammar: rule keys, SYMBOL names and their `_ref` from/to, an identity alias wrapper around the renamed symbol (unwrapped), every name list (externals, extras, supertypes, inline, factoryInline, conflicts, precedences, word, orphanedSyntheticGroups, bodyPatternZeroMatches), the name-keyed side tables (externalRoles, refineForms, groups, renderAs, visibleExternals, options, expectDiagnostics, expectTestFailures), the NUL-joined automaticVariants keys and the desugar divergence events. It rebuilds the rule catalog (keeping each rule's provenance) and re-attaches reference rule ids, since rule ids embed the owner's name. A tree name that another rule or external already uses is an error.
+A hidden rule the parser always shows under one tree name (`ts_symbol_names` gives the name; the catalog row is visible, not an alias or anonymous row, and is the only visible row carrying that name — `isRenamedEntry`) is one visible kind. This pass renames it to that tree name everywhere the grammar names it, before anything reads the grammar: rule keys, SYMBOL names and their `_ref` from/to, an identity alias wrapper around the renamed symbol (unwrapped), every name list (externals, extras, supertypes, inline, factoryInline, conflicts, precedences, word, orphanedSyntheticGroups, bodyPatternZeroMatches), the SYMBOL members of each `reserved` wordset (the wordset names are not rule names and keep theirs), the name-keyed side tables (externalRoles, refineForms, groups, renderAs, visibleExternals, options, expectDiagnostics, expectTestFailures), the NUL-joined automaticVariants keys and the desugar divergence events. It rebuilds the rule catalog (keeping each rule's provenance) and re-attaches reference rule ids, since rule ids embed the owner's name. A tree name that another rule or external already uses is an error.
 
 It runs where the evaluated grammar is first consumed: `collectGrammarDiagnosticsForGrammar` collapses its input and hands the result on as `raw`, and `link` collapses again for callers that link an evaluated grammar directly; a collapsed grammar has no renamed rule left, so the second call returns its input.
 
