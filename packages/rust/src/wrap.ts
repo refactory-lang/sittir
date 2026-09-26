@@ -18633,10 +18633,10 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.FloatLiteral]: (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
 	[TSKindId.StringContent]: (d) => ({ ...d, $type: TSKindId.StringContent as const }),
 	[TSKindId.RawStringLiteralContent]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralContent as const }),
-	[TSKindId.LineDocContent]: (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
-	[TSKindId.BlockCommentContent]: (d) => ({ ...d, $type: TSKindId.BlockCommentContent as const }),
 	[TSKindId.RawStringLiteralStart]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralStart as const }),
 	[TSKindId.RawStringLiteralEnd]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralEnd as const }),
+	[TSKindId.LineDocContent]: (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
+	[TSKindId.BlockCommentContent]: (d) => ({ ...d, $type: TSKindId.BlockCommentContent as const }),
 	[TSKindId.ErrorSentinel]: (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const }),
 	[TSKindId._TypeIdentifier]: (d, t) => wrapTypeIdentifier(_aliasEnvelope(d, t) as unknown as T.TypeIdentifier, t),
 	[TSKindId._FieldIdentifier]: (d, t) => wrapFieldIdentifier(_aliasEnvelope(d, t) as unknown as T.FieldIdentifier, t),
@@ -18963,10 +18963,10 @@ interface _WrapReturnByKindId {
 	[TSKindId.FloatLiteral]: _NodeData & { readonly $type: TSKindId.FloatLiteral };
 	[TSKindId.StringContent]: _NodeData & { readonly $type: TSKindId.StringContent };
 	[TSKindId.RawStringLiteralContent]: _NodeData & { readonly $type: TSKindId.RawStringLiteralContent };
-	[TSKindId.LineDocContent]: _NodeData & { readonly $type: TSKindId.LineDocContent };
-	[TSKindId.BlockCommentContent]: _NodeData & { readonly $type: TSKindId.BlockCommentContent };
 	[TSKindId.RawStringLiteralStart]: _NodeData & { readonly $type: TSKindId.RawStringLiteralStart };
 	[TSKindId.RawStringLiteralEnd]: _NodeData & { readonly $type: TSKindId.RawStringLiteralEnd };
+	[TSKindId.LineDocContent]: _NodeData & { readonly $type: TSKindId.LineDocContent };
+	[TSKindId.BlockCommentContent]: _NodeData & { readonly $type: TSKindId.BlockCommentContent };
 	[TSKindId.ErrorSentinel]: _NodeData & { readonly $type: TSKindId.ErrorSentinel };
 	[TSKindId._TypeIdentifier]: ReturnType<typeof wrapTypeIdentifier>;
 	[TSKindId._FieldIdentifier]: ReturnType<typeof wrapFieldIdentifier>;

@@ -33,6 +33,7 @@ export interface GeneratedKindEntry {
 	readonly hidden?: boolean;
 	readonly keyword?: boolean;
 	readonly aliasedNonTerminal?: boolean;
+	readonly lexicalRank?: number;
 }
 
 export interface TreeSitterLanguageMetadata {
@@ -87,9 +88,10 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 	const fieldNames = collectNameTable(parser, source, 'static const char * const ts_field_names[]');
 	const aliasedNonTerminals = collectAliasedNonTerminals(parser, source);
 	const symbolTextFacts = resolveSymbolTextFacts(symbolNames, collectGrammarFacts(grammarJson));
+	const lexicalRanks = collectLexicalRanks(grammarJson);
 
 	return {
-		kindIds: joinIdNames(symbolIds, symbolNames, deriveSymbolRuntimeName(symbolTextFacts), symbolTextFacts, aliasedNonTerminals),
+		kindIds: joinIdNames(symbolIds, symbolNames, deriveSymbolRuntimeName(symbolTextFacts), symbolTextFacts, aliasedNonTerminals, lexicalRanks),
 		fieldIds: joinIdNames(fieldIds, fieldNames, deriveFieldRuntimeName),
 		sourceArtifact
 	};
@@ -250,7 +252,8 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 			alias: entry.parser?.alias || undefined,
 			hidden: entry.parser?.hidden || undefined,
 			keyword: entry.parser?.keyword || undefined,
-			aliasedNonTerminal: entry.parser?.aliasedNonTerminal || undefined
+			aliasedNonTerminal: entry.parser?.aliasedNonTerminal || undefined,
+			lexicalRank: entry.parser?.lexicalRank
 		}));
 }
 
@@ -439,12 +442,13 @@ function joinIdNames(
 	names: ReadonlyMap<string, string>,
 	fallbackName: (cName: string) => string,
 	symbolTextFacts?: ReadonlyMap<string, SymbolTextFacts>,
-	aliasedNonTerminals?: ReadonlySet<string>
+	aliasedNonTerminals?: ReadonlySet<string>,
+	lexicalRanks?: ReadonlyMap<string, number>
 ): Map<string, GeneratedIdEntry> {
 	const result = new Map<string, GeneratedIdEntry>();
 	for (const entry of ids.values()) {
 		const key = fallbackName(entry.cName);
-		const parser = createParserMetadata(entry, key, names, symbolTextFacts, aliasedNonTerminals);
+		const parser = createParserMetadata(entry, key, names, symbolTextFacts, aliasedNonTerminals, lexicalRanks);
 		const existing = result.get(key);
 		if (!existing || !existing.parser) {
 			result.set(key, { id: entry.id, parser });
@@ -484,9 +488,11 @@ function createParserMetadata(
 	parserName: string,
 	names: ReadonlyMap<string, string>,
 	symbolTextFacts?: ReadonlyMap<string, SymbolTextFacts>,
-	aliasedNonTerminals?: ReadonlySet<string>
+	aliasedNonTerminals?: ReadonlySet<string>,
+	lexicalRanks?: ReadonlyMap<string, number>
 ): KindParserMetadata {
 	const facts = symbolTextFacts?.get(entry.cName);
+	const lexicalRank = lexicalRanks?.get(grammarNameOfSymbol(entry.cName));
 	return {
 		cSymbol: entry.cName,
 		parserName,
@@ -498,8 +504,89 @@ function createParserMetadata(
 		alias: entry.cName.startsWith('alias_sym_'),
 		hidden: parserName.startsWith('_'),
 		...(keywordTextOf(entry.cName, symbolTextFacts) === undefined ? {} : { keyword: true as const }),
-		...(aliasedNonTerminals?.has(entry.cName) ? { aliasedNonTerminal: true as const } : {})
+		...(aliasedNonTerminals?.has(entry.cName) ? { aliasedNonTerminal: true as const } : {}),
+		...(lexicalRank === undefined ? {} : { lexicalRank })
 	};
+}
+
+function grammarNameOfSymbol(cName: string): string {
+	return cName.replace(/^(?:alias_sym|aux_sym|anon_sym|sym)_/, '');
+}
+
+type LexicalKey = readonly number[];
+
+function compareLexicalKeys(a: LexicalKey, b: LexicalKey): number {
+	for (let i = 0; i < Math.min(a.length, b.length); i++) if (a[i] !== b[i]) return a[i]! - b[i]!;
+	return a.length - b.length;
+}
+
+function tokenLexicalPrec(rule: GrammarJsonRule | undefined): number {
+	if (rule?.type !== 'TOKEN' && rule?.type !== 'IMMEDIATE_TOKEN') return 0;
+	return rule.content?.type === 'PREC' && typeof rule.content.value === 'number' ? rule.content.value : 0;
+}
+
+function isFixedTextRule(rule: GrammarJsonRule | undefined): boolean {
+	let current = rule;
+	while (current?.type === 'TOKEN' || current?.type === 'IMMEDIATE_TOKEN' || current?.type === 'PREC') current = current.content;
+	return current?.type === 'STRING';
+}
+
+interface GrammarJsonRule {
+	readonly type?: string;
+	readonly name?: string;
+	readonly value?: unknown;
+	readonly named?: boolean;
+	readonly content?: GrammarJsonRule;
+	readonly members?: readonly GrammarJsonRule[];
+	readonly metadata?: { readonly symbolSource?: string };
+}
+
+export function collectLexicalRanks(grammarJson: unknown): ReadonlyMap<string, number> {
+	const grammar = grammarJson as { rules?: Record<string, GrammarJsonRule>; externals?: readonly GrammarJsonRule[] } | undefined;
+	const rules = grammar?.rules ?? {};
+	const ruleNames = Object.keys(rules);
+	const externals = (grammar?.externals ?? []).flatMap((external) => (typeof external.name === 'string' ? [external.name] : []));
+	const mintSources = new Map<string, { readonly owner: string; readonly arm: number }>();
+	const aliasStorage = new Map<string, string>();
+	for (const owner of ruleNames) {
+		let arm = 0;
+		const walk = (node: GrammarJsonRule | undefined): void => {
+			if (node === undefined) return;
+			if (node.type === 'SYMBOL' && typeof node.name === 'string' && node.metadata?.symbolSource === 'group-lift' && !mintSources.has(node.name)) {
+				mintSources.set(node.name, { owner, arm: ++arm });
+			}
+			if (node.type === 'ALIAS' && node.named === true && typeof node.value === 'string' && node.content?.type === 'SYMBOL' && typeof node.content.name === 'string' && !aliasStorage.has(node.value)) {
+				aliasStorage.set(node.value, node.content.name);
+			}
+			walk(node.content);
+			for (const member of node.members ?? []) walk(member);
+		};
+		walk(rules[owner]);
+	}
+	const positions = new Map<string, LexicalKey>();
+	const positionOf = (name: string, seen: ReadonlySet<string>): LexicalKey => {
+		const known = positions.get(name);
+		if (known !== undefined) return known;
+		const source = mintSources.get(name);
+		const position =
+			source !== undefined && !seen.has(source.owner)
+				? [...positionOf(source.owner, new Set([...seen, name])), source.arm]
+				: [externals.includes(name) ? externals.indexOf(name) : ruleNames.indexOf(name)];
+		positions.set(name, position);
+		return position;
+	};
+	const keyOf = (name: string): LexicalKey => {
+		const rule = rules[name];
+		return [externals.includes(name) ? 0 : 1, -tokenLexicalPrec(rule), isFixedTextRule(rule) ? 0 : 1, ...positionOf(name, new Set())];
+	};
+	const keys = new Map<string, LexicalKey>();
+	for (const name of [...externals, ...ruleNames]) keys.set(name, keyOf(name));
+	for (const [display, storage] of aliasStorage) {
+		const storageKey = keys.get(storage);
+		if (!(display in rules) && storageKey !== undefined) keys.set(display, storageKey);
+	}
+	const ordered = [...keys].sort(([a, ka], [b, kb]) => compareLexicalKeys(ka, kb) || (a < b ? -1 : a > b ? 1 : 0));
+	return new Map(ordered.map(([name], rank) => [name, rank]));
 }
 
 function shouldReplaceSymbol(existingCName: string | undefined, nextCName: string): boolean {

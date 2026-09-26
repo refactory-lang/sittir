@@ -1,4 +1,4 @@
-import type { NodeMap } from '../compiler/types.ts';
+import type { KindParserMetadata, NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { findEntryForKindName, findEntryForLiteralText, symbolNameIsNotable } from '../compiler/generated-metadata.ts';
 import { compareOrdinal } from './shared.ts';
@@ -21,6 +21,7 @@ export interface KindEnumEntry {
 	readonly anon?: boolean;
 	readonly literalRule?: boolean;
 	readonly alias?: boolean;
+	readonly lexicalRank?: number;
 }
 
 export function kindIdMemberName(nodeMap: NodeMap, kind: string): string {
@@ -56,7 +57,7 @@ export function collectKindEntries(
 		const literalText = row.parser?.literalText;
 		const anon = row.parser?.anon ?? false;
 		const alias = row.parser?.alias || undefined;
-		entries.push({ kind, member, id: row.id, parseId: row.parseId, symbolName, literalText, anon: anon || undefined, literalRule, alias });
+		entries.push({ kind, member, id: row.id, parseId: row.parseId, symbolName, literalText, anon: anon || undefined, literalRule, alias, lexicalRank: row.parser?.lexicalRank });
 	}
 	entries.sort((a, b) => a.id - b.id || compareOrdinal(a.kind, b.kind));
 	return entries;
@@ -123,17 +124,7 @@ function toIdMap(ids: GeneratedIdTables['kindIds']): Map<string, number> {
 interface CatalogRow {
 	readonly id?: number;
 	readonly parseId?: number;
-	readonly parser?: {
-		readonly cSymbol: string;
-		readonly parserName: string;
-		readonly symbolName?: string;
-		readonly literalText?: string;
-		readonly literalRule?: boolean;
-		readonly anon: boolean;
-		readonly aux: boolean;
-		readonly alias: boolean;
-		readonly hidden: boolean;
-	};
+	readonly parser?: KindParserMetadata;
 }
 
 function toCatalogMap(ids: GeneratedIdTables['kindIds']): Map<string, CatalogRow> {

@@ -4,7 +4,7 @@ import { ir, TSKindId, Delimiter } from '@sittir/python';
 export function rebuildPython4spaceGenerated() {
 	return ir.module.strict(ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.expressionStatement.strict(ir.string.strict({
 		stringStart: ir.stringStart("\"\"\""),
-		content: [ir.stringContent.strict("Simple user management module.")],
+		content: [ir.stringContent.strict(ir._stringContent("Simple user management module."))],
 		stringEnd: ir.stringEnd("\"\"\""),
 	}))), ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.importFromStatement.strict({
 		moduleName: ir.dottedName.strict(ir.identifier("typing")),
@@ -40,12 +40,12 @@ export function rebuildPython4spaceGenerated() {
 			returnType: ir.type.strict(ir.identifier("str")),
 			body: ir.suite.block.strict(ir.block.strict(ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.returnStatement.strict(ir.string.strict({
 				stringStart: ir.stringStart("f\""),
-				content: [ir.stringContent.strict("Hello, "), ir.interpolation.strict({
+				content: [ir.stringContent.strict(ir._stringContent("Hello, ")), ir.interpolation.strict({
 					expression: ir.attribute.strict({
 						object: ir.identifier("self"),
 						attribute: ir.identifier("name"),
 					}),
-				}), ir.stringContent.strict("!")],
+				}), ir.stringContent.strict(ir._stringContent("!"))],
 				stringEnd: ir.stringEnd("\""),
 			}))))),
 		}))),

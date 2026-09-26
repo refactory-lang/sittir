@@ -97,12 +97,46 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set(['identity_escape']);
 
-function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {
-	for (const kind of kinds) {
-		const entry = _leafRegistry[kind];
-		if (!entry) continue;
-		if (entry.values && entry.values.includes(v)) return entry.factory(v);
-		if (entry.pattern && entry.pattern.test(v)) return entry.factory(v);
+function _buildGuardedText(v: string, kind: string): AnyNodeData | number {
+	const entry = _leafRegistry[kind]!;
+	if (entry.values !== undefined && !entry.values.includes(v)) {
+		throw new Error(`${JSON.stringify(v)} is not the text of ${kind}: expected one of ${JSON.stringify(entry.values)}`);
+	}
+	if (entry.pattern !== undefined && !entry.pattern.test(v)) {
+		throw new Error(`${JSON.stringify(v)} is not a ${kind}: it does not match ${entry.pattern}`);
+	}
+	return entry.factory(v);
+}
+
+const _TEXT_KINDS_BY_RANK: readonly string[] = [
+	'any_character',
+	'start_assertion',
+	'end_assertion',
+	'boundary_assertion',
+	'non_boundary_assertion',
+	'pattern_character',
+	'posix_class_name',
+	'class_character',
+	'flags',
+	'zero_or_more',
+	'one_or_more',
+	'optional',
+	'decimal_escape',
+	'unicode_character_escape',
+	'unicode_property',
+	'unicode_property_name',
+	'control_escape',
+	'control_letter_escape',
+	'group_name',
+	'decimal_digits'
+];
+
+function _resolveBareText(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {
+	for (const kind of _TEXT_KINDS_BY_RANK) {
+		if (!kinds.includes(kind)) continue;
+		const entry = _leafRegistry[kind]!;
+		if (entry.values !== undefined ? entry.values.includes(v) : entry.pattern?.test(v) === true)
+			return entry.factory(v);
 	}
 	return undefined;
 }
@@ -206,7 +240,7 @@ function _resolveOne<T>(
 		if (scalar !== undefined) return scalar as T;
 	}
 	if (typeof v === 'string') {
-		const leaf = _resolveLeafString(v, [...leafKinds, ...branchKinds]);
+		const leaf = _resolveBareText(v, [...leafKinds, ...branchKinds]);
 		if (leaf !== undefined) return leaf as T;
 		if (branchKinds.length === 0 && leafKinds.length === 1) return _resolveOneLeaf<T>(v, leafKinds[0]!);
 		if (branchKinds.length === 0 && leafKinds.length > 1 && leafKinds.every((k) => _AFFIXED_KINDS.has(k))) {
@@ -257,6 +291,10 @@ function _resolveOne<T>(
 		throw new Error(
 			`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(', ')}]: ${JSON.stringify(v)}`
 		);
+	}
+	if (typeof v === 'string') {
+		const texts = _TEXT_KINDS_BY_RANK.filter((kind) => leafKinds.includes(kind) || branchKinds.includes(kind));
+		if (texts.length > 0) throw new Error(`_resolveOne: ${JSON.stringify(v)} matches none of [${texts.join(', ')}]`);
 	}
 	return v as T;
 }
@@ -312,10 +350,7 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
-	if (typeof v === 'string') {
-		const e = _leafRegistry[kind];
-		if (e !== undefined) return e.factory(v) as T;
-	}
+	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as T;
 	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
 		const { kind: k, ...rest } = v;
 		const kn = _kindNameOf(k);

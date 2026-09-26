@@ -117,16 +117,6 @@ type IsKindEnum<T> = T extends { readonly __kindEnum__?: unknown } ? true : fals
 type KindEnumText<T> = T extends { readonly __kindEnum__?: infer V } ? V : never;
 
 /**
- * HiddenLeaf<T> — brands a hidden text leaf (a pattern kind with no `ir`
- * entry of its own) so a strict factory input admits its text: the parent's
- * factory builds the leaf, the way the loose surface does for any leaf.
- */
-export type HiddenLeaf<T> = T & { readonly __hiddenLeaf__?: true };
-
-/** @internal — true when T carries the HiddenLeaf brand key. */
-type IsHiddenLeaf<T> = '__hiddenLeaf__' extends keyof T ? true : false;
-
-/**
  * AliasOf<T, C> — brands an alias node (a display the parser issues over a
  * storage kind) with its content type C, so a strict factory input admits the
  * content: the parent's factory builds the alias around it.
@@ -140,18 +130,11 @@ type AliasContent<T> = '__aliasContent__' extends keyof T
 		: never
 	: never;
 
-/** @internal — an element also admits what builds it: a hidden leaf its
- *  text, an alias its content. */
-type AdmitElementInput<E> = E extends unknown
-	? IsHiddenLeaf<E> extends true
-		? E | string
-		: [AliasContent<E>] extends [never]
-			? E
-			: E | AliasContent<E>
-	: never;
+/** @internal — an element also admits what builds it: an alias its content. */
+type AdmitElementInput<E> = E extends unknown ? ([AliasContent<E>] extends [never] ? E : E | AliasContent<E>) : never;
 
 /** @internal — true when an element admits more than itself. */
-type AdmitsMore<E> = E extends unknown ? (IsHiddenLeaf<E> extends true ? true : [AliasContent<E>] extends [never] ? false : true) : never;
+type AdmitsMore<E> = E extends unknown ? ([AliasContent<E>] extends [never] ? false : true) : never;
 
 /** @internal — {@link AdmitElementInput} through a slot's array wrapper. */
 type AdmitSlotInput<S> = S extends readonly unknown[]

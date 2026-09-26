@@ -34,12 +34,13 @@ const EXPECTED = [
 	'propose-14',
 	'separated-lists',
 	'test-history',
+	'text-kind-overlap',
 	'variant-derivation-probe',
 	'walk'
 ];
 
 describe('tool namespace', () => {
-	it('registers exactly the 33 tools', () => {
+	it('registers exactly the 34 converted tools', () => {
 		expect(toolModules.map((m) => m.name).sort()).toEqual([...EXPECTED].sort());
 	});
 

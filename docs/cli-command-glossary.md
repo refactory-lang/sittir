@@ -640,6 +640,20 @@ Record or show `vitest run` result history (test-history.jsonl)
 pnpm exec tsx packages/cli/src/cli.ts tool test-history [n] [options]
 ```
 
+### `tool text-kind-overlap`
+
+List texts a higher-ranked candidate text kind takes from a lower-ranked one in the same loose slot
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool text-kind-overlap [options]
+```
+
 ### `tool variant-derivation-probe`
 
 Assert the live structural variantChildKinds derivation equals committed node-model.json5 (cross-commit drift detector)

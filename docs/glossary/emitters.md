@@ -2143,7 +2143,7 @@ A single branch kind at an optional slot resolves through `_resolveOneBranch(val
  */
 ```
 
-A pattern leaf's entry carries `pattern:` (`anchoredLeafRegexLiteral`) when its kind has one, so `_resolveLeafString` picks the leaf kind whose guard the text satisfies rather than the first leaf kind a slot admits; only a kind with no derivable pattern is a last-resort match.
+Every text kind's check is built once as a `TextKindCheck` — fixed `values` for a visible fixed-text leaf, the compiled `pattern` (`anchoredLeafRegex`, or the token interior's `su` regex) otherwise — and the registry row prints that same check, so the emitted row and `leafTextChecks` cannot drift. The checks come back ordered by `rankTextKinds`, and their kinds are emitted as `_TEXT_KINDS_BY_RANK`. Hidden and visible leaves register alike; a kind the factory emitter does not emit (`classifyFactoryEmission`) is skipped, and a pattern kind with no text pattern is skipped when no slot references it and is an error otherwise.
 
 ```text
 // ---------------------------------------------------------------------------
@@ -2181,7 +2181,7 @@ number scalar) still resolves to the kind.
 An affixed leaf (`isAffixedLeaf`: a lexed kind with a required fixed member) has a content row and no pattern: its text
 differs from its content, so a bare string is never matched against it. Where the slot offers a choice, the kind must be
 supplied (`ir.charLiteral('a')`); where the slot admits exactly one leaf, a bare string is that leaf's content and goes
-through the kind's own coercer, as the strict surface admits a hidden leaf's text. The emitted `_AFFIXED_KINDS` set names
+through the kind's own coercer. The emitted `_AFFIXED_KINDS` set names
 them; `_resolveOne` throws when a choice consists only of affixed leaves. An unaffixed lexed kind (rust `integer_literal`)
 keeps its whole-text pattern row, and a visible external scanner token authors its shape in `renderAs` so every
 factory-bearing pattern leaf has one; a leaf with a factory and no pattern is an emitter error, never a last resort.
@@ -6801,11 +6801,6 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 // reference to a literal string at emit time, so no generated
 // code mentions `KwAsync` / `KwMove` / `KwOperator` anywhere.
 ```
-
-
-#### hidden text leaves
-
-A pattern leaf that some slot admits as a hidden text leaf (`hiddenTextLeafKinds`) aliases `HiddenLeaf<Terminal<kind, string>>`. The brand is a phantom optional key, so a built leaf still satisfies it, and `ConfigOf` reads it to widen the slot that holds the leaf to the leaf or its text.
 
 ### `packages/codegen/src/emitters/types.ts::emitTreeInterfaceDeclarations`
 
@@ -12729,10 +12724,11 @@ The placeholder seats the optional single-valued slots of the top-level stub as 
 /** Does this keyword / pattern kind get a flat `ir.<irKey>` entry —
  *  user-facing (the assemble-time fact: visible, or hidden but an alias
  *  source or a variant child; sittir's own whitespace kinds are not), not
- *  inlined, with a factory, a public key (a legal identifier with no
- *  leading underscore — a hidden pattern whose key kept one, python's
- *  `_string_content` beside `string_content`, is not a second surface)
- *  and a catalog id? A hidden keyword gets no entry: its value is its kind
+ *  inlined, with a factory, a legal identifier key and a catalog id?
+ *  A hidden pattern whose key keeps its underscore because the bare name
+ *  is taken (python's `_string_content` beside `string_content`) still
+ *  gets its entry: a strict slot takes only built leaves, so every leaf
+ *  a slot stores needs a builder on `ir`. A hidden keyword gets no entry: its value is its kind
  *  id, so a slot takes `TSKindId.<Kind>` and there is nothing to build;
  *  an enum of literals gets none for the same reason, per member. One
  *  predicate for the pre-pass that maps flat keys to their factory
@@ -12954,7 +12950,7 @@ leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
  * Owns ALL `from()` resolver string generation. Rule.ts exposes the
  * IR; this file dispatches on `node.modelType` and emits the per-kind
  * resolver bodies plus the module-scoped helpers (_resolveOne,
- * _resolveMany, _resolveLeafString, _resolveByKind, _resolveScalar).
+ * _resolveMany, _resolveBareText, _resolveByKind, _resolveScalar).
  */
 ```
 
@@ -13241,10 +13237,27 @@ A list's admitted kinds are its content slot's kinds plus, when that slot holds 
 
 ### `packages/codegen/src/emitters/from.ts::isLeafRegistryKind`
 
-Whether a kind has a row in `_leafRegistry` — a visible pattern, enum or
-keyword with a raw factory. Shared with `buildLeafRegistryEntries` so the
-predicate that fills the registry and the one that asks whether a bare string
-can reach it cannot drift.
+Whether a kind can take a bare string by itself — an enum, a visible fixed-text leaf or a pattern leaf with a raw factory, hidden or not. `forwardsBareString` reads it to decide whether a single-kind chain ends at a leaf.
+
+### `packages/codegen/src/emitters/from.ts::TextKindCheck`
+
+One text kind's bare-text check: `values` for a fixed-text kind, `pattern` for a pattern, interior or alias-of-pattern kind. `buildLeafRegistryEntries` builds it and prints the registry row from it; the `text-kind-overlap` tool reads the same checks.
+
+### `packages/codegen/src/emitters/from.ts::leafTextChecks`
+
+The leaf registry's text-kind checks in lexical rank order — the value behind `_TEXT_KINDS_BY_RANK`, for callers outside the emitter.
+
+### `packages/codegen/src/emitters/from.ts::textCheckAccepts`
+
+Whether a `TextKindCheck` accepts a text: membership in `values`, else a test of `pattern`. It is the build-time mirror of the emitted `_resolveBareText` row test.
+
+### `packages/codegen/src/emitters/from.ts::rankTextKinds`
+
+Orders text-kind checks by the catalog's `lexicalRank` (`findKindEntry`, so an alias display finds its row). A text kind with no rank is an error: every factory-bearing text kind has a parser row, so a missing rank means the catalog and the registry disagree. Without a catalog the order is left as it is.
+
+### `packages/codegen/src/emitters/from.ts::slotResolverKinds`
+
+A slot's resolver kinds: its kind names expanded through supertypes (`expandAndDedupeContentTypes`) and split into leaf, branch and token kinds (`classifyKindsForResolver`). `resolveFieldCall` emits the `_resolveOne` call from it, and the overlap tool reads a slot's text candidates from it.
 
 ### `packages/codegen/src/emitters/from.ts::defaultArmKindOf`
 
@@ -13378,6 +13391,10 @@ In `_resolveOne`, a value that is neither a config object nor kinded data hoists
 // `true` input doesn't get misrouted through `_resolveScalar` into
 // a `boolean_literal` factory call.
 ```
+
+#### _TEXT_KINDS_BY_RANK
+
+The emitted from-module lists every registered text kind in `lexicalRank` order. `_resolveBareText(v, kinds)` walks that list, skips kinds the slot does not admit, and builds the first kind whose row accepts the text; the runtime never ranks anything itself. When a slot admits text kinds and none accepts, `_resolveOne` throws `"<text>" matches none of [<kinds>]`. `_resolveOneLeaf` builds a single-leaf slot through `_buildGuardedText`, which throws `"<text>" is not a <kind>` on a mismatch. The keyword-text table (`_KEYWORD_BRANCH_BY_TEXT`) keeps exact identity and is asserted unique at codegen: one keyword text building two branches is an error.
 
 ### `packages/codegen/src/emitters/from.ts::FromEmitter`
 
@@ -16441,21 +16458,21 @@ segments that would spell the same nested key distinguishable.
  *  only where a message or an `at` prefix needs one. */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::hiddenTextLeaves`
+### `packages/codegen/src/emitters/factories.ts::textLeaves`
 
-The hidden text leaves one slot admits: the slot's node-ref values whose kind is a pattern leaf named with a leading underscore and has a factory. A bare string given at such a slot is that leaf's text. It is the one predicate behind every strict-surface consequence of the admission: the `| string` in the parameter types, the `HiddenLeaf` brand on the leaf's type alias, the `admitHiddenText` call in the factory body, and the `admitHiddenText` import.
+The text leaves one slot admits: the slot's node-stored values whose kind is a pattern leaf with a factory, hidden or visible. A strict factory never builds them from text, so the slot's rejection names their builders.
 
-### `packages/codegen/src/emitters/factories.ts::hiddenTextLeafKinds`
+### `packages/codegen/src/emitters/factories.ts::strictNodeExpectation`
 
-Every kind that some slot admits as a hidden text leaf. The types emitter brands exactly these aliases with `HiddenLeaf`, so an underscore-named pattern leaf that no slot admits (an indent or dedent mark) stays an unbranded `Terminal`.
+What a strict slot expects in place of a string, or `undefined` when a string is a legal strict value. A slot with text leaves (`textLeaves`) names their builders (`buildStringOpen(…)`); otherwise a slot with at least one node-stored value and no `literal`-stored value names the built types it stores (`a built Expression / ExpressionList`). A `literal` value's text is its stored form, and a slot with no node value stores kind ids or verbatim text, so neither takes the guard. The same predicate decides the `rejectBareText` import.
 
-### `packages/codegen/src/emitters/factories.ts::hiddenTextAdmission`
+### `packages/codegen/src/emitters/factories.ts::bareTextRejection`
 
-Wraps a slot's stored value in `admitHiddenText<NonNullable<T.<Kind>[<storageKey>]>>(value, [[kind, pattern, builder], ...], '<Kind>.<configKey>')`. The table lists the slot's hidden leaves with their anchored `_leafRe_*` constant, or `undefined` for a leaf with no derivable pattern. It runs after the slot's enum storage coercion, so text that names an enum member still resolves to that member first and only the remaining strings become hidden leaves.
+Wraps a slot's stored value in `rejectBareText(value, '<Kind>.<configKey>', '<expected>')` when `strictNodeExpectation` names an expectation. It runs after the slot's enum storage coercion, so a mixed slot's keyword members are already kind ids and only a string left over is rejected.
 
 ### `packages/codegen/src/emitters/factories.ts::storedSlotValueExpr`
 
-The storage coercion of one slot value (boolean keyword, bitflag, kind enum, mixed enum, or verbatim), before any hidden-leaf admission. `slotStorageFromValueExpr` composes it with `hiddenTextAdmission`.
+The storage coercion of one slot value (boolean keyword, bitflag, kind enum, mixed enum, or verbatim), before the bare-text rejection. `slotStorageFromValueExpr` composes it with `bareTextRejection`.
 
 ### `packages/codegen/src/emitters/factories.ts::leafReDeclaration`
 
@@ -16463,7 +16480,7 @@ The anchored pattern constant a text leaf's factory declares: its `_leafRe_<fact
 
 ### `packages/codegen/src/emitters/factories.ts::constructionChildElementType`
 
-`childElementType` for a construction parameter: the read-side element union, widened by the children's alias content types (`aliasContentTypes`), plus `string` when any of the children admits a hidden text leaf. The read side (`wrap.ts`, `from.ts`) keeps `childElementType`, because a node read from a tree never holds bare text.
+`childElementType` for a construction parameter: the read-side element union, widened by the children's alias content types (`aliasContentTypes`). The read side (`wrap.ts`, `from.ts`) keeps `childElementType`, because a node read from a tree holds no alias content.
 
 ### `packages/codegen/src/emitters/factories.ts::slotAliases`
 
@@ -16495,15 +16512,15 @@ A slot input's admissions in order: hidden-text leaves first, then alias content
 
 ### `packages/codegen/src/emitters/factories.ts::constructionFieldElementType`
 
-`fieldElementType` for a construction parameter or setter: the read-side element union plus `string` when the slot admits a hidden text leaf.
+`fieldElementType` for a construction parameter or setter: the read-side element union, widened by the slot's alias content types (`withAliasContentTypes`) and by `number` on a numeric slot (`numericSlotShape`).
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitTransportHelpers`
 
 Also emits `admitAliasContent`, the runtime half of `aliasContentAdmission`: it maps arrays element-wise, reads a value's id from its `$type` (or the value itself when it is a stored kind id), and builds the alias for the first row whose ids contain it.
 
-#### admitHiddenText
+#### rejectBareText
 
-`admitHiddenText(value, leaves, where)` builds the hidden leaf a bare string stands for. A slot with one hidden leaf builds it directly, so its own guard names the failure. A slot with several picks the first leaf whose anchored pattern matches the text, then a leaf with no pattern, and otherwise throws `<where>: "<text>" matches none of [<kinds>]`. Arrays map element-wise and anything that is not a string passes through.
+`rejectBareText(value, where, expected)` is the strict surface's bare-text guard: a string throws `<where>: a strict factory takes a built node, not a string; expected <expected>, or use .coerce`. Arrays are checked element-wise and every other value passes through unchanged. The loose surface (`.coerce`) is where text becomes a node. A slot that stores only kind ids (a kind enum with no node value) takes no guard: its strict input is one of its declared fixed values, not a leaf's text, so `coerceKindEnumStorage` maps a matching string to its id and passes any other through.
 
 ### `packages/codegen/src/emitters/shared.ts::anchoredLeafRegex`
 
