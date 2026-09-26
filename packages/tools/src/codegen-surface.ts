@@ -40,6 +40,7 @@ const MODULES = {
 	assemble: '../../codegen/src/compiler/assemble.ts',
 	resolveGrammar: '../../codegen/src/compiler/resolve-grammar.ts',
 	grammarDiagnostics: '../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts',
+	upstream: '../../codegen/src/compiler/upstream.ts',
 	opaqueFacts: '../../codegen/src/compiler/opaque-facts.ts',
 	nodeTypesLoader: '../../codegen/src/validate/node-types-loader.ts',
 	nativeBinaryFreshness: '../../codegen/src/scripts/native-binary-freshness.ts',
@@ -69,6 +70,7 @@ export interface CodegenSurface {
 	assemble: typeof import('../../codegen/src/compiler/assemble.ts');
 	resolveGrammar: typeof import('../../codegen/src/compiler/resolve-grammar.ts');
 	grammarDiagnostics: typeof import('../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts');
+	upstream: typeof import('../../codegen/src/compiler/upstream.ts');
 	opaqueFacts: typeof import('../../codegen/src/compiler/opaque-facts.ts');
 	nodeTypesLoader: typeof import('../../codegen/src/validate/node-types-loader.ts');
 	nativeBinaryFreshness: typeof import('../../codegen/src/scripts/native-binary-freshness.ts');

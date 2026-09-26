@@ -31,7 +31,7 @@ import type {
 } from '../types/rule.ts';
 import { normalizeEnumMembers } from '../dsl/rule-metadata.ts';
 import { structuralBuilder } from '../dsl/builders.ts';
-import type { RawGrammar, DesugarDivergenceEvent, RuleProvenance } from './types.ts';
+import type { RawGrammar, DesugarDivergenceEvent, RuleProvenance, UpstreamEvaluation } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
 import { isComplexBody } from '../dsl/rule-patterns.ts';
 import { collectOrphanedRules } from '../util/reachable-rules.ts';
@@ -373,6 +373,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
 	const optionsBlock = drainOptionsMetadata(opts);
 	const { ruleCauses, undeclaredRules } = drainRuleCausesMetadata(opts);
+	const upstream = departsFromUpstream(opts) ? evaluateUpstream(optionsOrBase, ctx) : undefined;
 
 	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: ctx.sinks.supertypes });
 	const references = attachReferenceRuleIds(refs, { ruleCatalog: identified.ruleCatalog });
@@ -400,6 +401,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		expectTestFailures,
 		ruleCauses,
 		undeclaredRules,
+		upstream,
 		orphanedSyntheticGroups,
 		automaticVariants: wireCtx?.automaticVariants,
 		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined,
@@ -450,6 +452,21 @@ function drainRuleCausesMetadata(opts: GrammarOptions): Pick<RawGrammar, 'ruleCa
 		ruleCauses: wireCtx.ruleCauses.size > 0 ? Object.fromEntries(wireCtx.ruleCauses) : undefined,
 		undeclaredRules: undeclaredRules.length > 0 ? undeclaredRules : undefined
 	};
+}
+
+function departsFromUpstream(opts: GrammarOptions): boolean {
+	const wireCtx = getWireContext(opts);
+	if (!wireCtx) return false;
+	const patches = (opts as { patches?: Record<string, unknown> }).patches;
+	return wireCtx.authoredRuleNames.size > 0 || Object.keys(patches ?? {}).length > 0;
+}
+
+function evaluateUpstream(base: GrammarOptions | { grammar: any }, ctx: EvaluateCtx): UpstreamEvaluation {
+	try {
+		return { raw: grammarFn(base, { name: ctx.opts.name, rules: {} }).grammar as RawGrammar };
+	} catch (error) {
+		return { failure: error instanceof Error ? error.message : String(error) };
+	}
 }
 
 function drainOptionsMetadata(opts: GrammarOptions): OptionsConfig | undefined {

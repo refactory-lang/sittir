@@ -119,12 +119,15 @@ export interface RawGrammar {
 	readonly expectTestFailures?: Readonly<Record<string, string>>;
 	readonly ruleCauses?: Readonly<Record<string, RuleCauseDeclaration>>;
 	readonly undeclaredRules?: readonly string[];
+	readonly upstream?: UpstreamEvaluation;
 	readonly orphanedSyntheticGroups?: readonly string[];
 	readonly automaticVariants?: AutomaticVariants;
 
 	readonly bodyPatternZeroMatches?: readonly string[];
 	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
 }
+
+export type UpstreamEvaluation = { readonly raw: RawGrammar } | { readonly failure: string };
 
 export interface DesugarDivergenceEvent {
 	readonly site: 'body-pattern-group';

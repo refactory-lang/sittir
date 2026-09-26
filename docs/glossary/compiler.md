@@ -2297,6 +2297,49 @@ Copies `WireContext.ruleCauses` and `WireContext.undeclaredRules` onto
 `RawGrammar.ruleCauses` / `RawGrammar.undeclaredRules` (the latter sorted);
 each is omitted when empty, and both when the grammar was not wired.
 
+### `packages/codegen/src/compiler/evaluate.ts::departsFromUpstream`
+
+Whether a wired grammar departs from its base: it declares at least one
+`rules:` entry or `patches:` entry. Only such a grammar has hand-authored
+departures to judge, so only it pays for an upstream evaluation.
+
+### `packages/codegen/src/compiler/evaluate.ts::evaluateUpstream`
+
+Evaluates the base `grammar()` received (the same object `wire()` received,
+the grammar's `enrichedBase`) a second time with no wire config, inside the
+same DSL-globals scope, so the upstream is never located by package path. A
+throw becomes a `failure` record rather than failing the grammar's own
+evaluation.
+
+### `packages/codegen/src/compiler/types.ts::RawGrammar.upstream`
+
+The base evaluated with no wire config (`{ raw }`) or the reason that
+evaluation failed (`{ failure }`); absent when the grammar does not depart
+from its base (`departsFromUpstream`).
+
+### `packages/codegen/src/compiler/types.ts::UpstreamEvaluation`
+
+`{ raw }` or `{ failure }`: the outcome of `evaluateUpstream`.
+
+### `packages/codegen/src/compiler/upstream.ts::compileUpstream`
+
+Runs the evaluated upstream through `collectGrammarDiagnosticsForGrammar`
+and returns its rule names (post-enrich, so enrich mints count as upstream),
+its externals and its diagnostics. A throw anywhere in link, normalize or
+assemble becomes a `failure` record. The upstream has no generated parser, so
+no id tables are passed and `kindid-unstamped-anon-literal` fires on every
+anonymous literal: that code says nothing about the upstream shape.
+
+### `packages/codegen/src/compiler/upstream.ts::UpstreamCompilation`
+
+The upstream compile's rule names, external names, diagnostics, and
+`failure` when it did not complete.
+
+### `packages/codegen/src/compiler/compile.ts::Compilation.upstream`
+
+`compileUpstream` of `RawGrammar.upstream`, run inline in `compileGrammar`
+whenever the grammar evaluated one.
+
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.ruleCauses`
 
 The grammar's `rules:` entries that carry a `reauthored` or `vocabulary`

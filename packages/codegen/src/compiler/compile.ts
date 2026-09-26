@@ -11,6 +11,7 @@ import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter } from './types.ts';
 import { stampVisibleExternals, type GeneratedIdTables } from './generated-metadata.ts';
+import { compileUpstream, type UpstreamCompilation } from './upstream.ts';
 
 export interface Compilation {
 	readonly grammar: string;
@@ -22,6 +23,7 @@ export interface Compilation {
 	readonly diagnostics: DiagnosticSink;
 	readonly slotGroupingDiagnostics: readonly SlotGroupingDiagnostic[];
 	readonly grammarDiagnostics: readonly GrammarDiagnostic[];
+	readonly upstream?: UpstreamCompilation;
 }
 
 export interface CompileGrammarConfig {
@@ -60,7 +62,8 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 		nodeMap,
 		diagnostics: compilerDiagnostics,
 		slotGroupingDiagnostics,
-		grammarDiagnostics: diagnostics
+		grammarDiagnostics: diagnostics,
+		upstream: raw.upstream === undefined ? undefined : compileUpstream(raw.upstream)
 	};
 }
 

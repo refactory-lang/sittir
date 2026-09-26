@@ -162,6 +162,8 @@ describe('post-evaluate invariant', () => {
 				// bare bodies — read by the rule-cause diagnostics.
 				'ruleCauses',
 				'undeclaredRules',
+				// The base evaluated with no wire config — read by the upstream compile.
+				'upstream',
 				// Enrich-synthesized clause-hoist names orphaned by an override
 				// redeclaring their recorded owner — read by
 				// collectGrammarDiagnosticsForGrammar to suppress phantom diagnostics.

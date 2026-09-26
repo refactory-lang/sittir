@@ -383,6 +383,7 @@ Run pre-codegen grammar diagnostics
 **Options**
 
 - `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--upstream` — diagnose the grammar's base evaluated with no wire config
 
 **Example**
 
@@ -646,7 +647,7 @@ List texts a higher-ranked candidate text kind takes from a lower-ranked one in 
 
 **Options**
 
-- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
 
 **Example**
 

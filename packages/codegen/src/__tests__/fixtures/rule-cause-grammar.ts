@@ -15,6 +15,7 @@ export default grammar(
 	base,
 	wire(
 		{
+			name: 'rule_cause',
 			rules: {
 				a: reauthored('ambiguity', ($) => seq($.b, $._helper)),
 				_helper: vocabulary(($) => $.c),
