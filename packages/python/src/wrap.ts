@@ -894,8 +894,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'newline',
 		'_blankline',
 		'blankline',
-		'_double_newline',
-		'double_newline'
+		'_double_blankline',
+		'double_blankline'
 	])
 };
 

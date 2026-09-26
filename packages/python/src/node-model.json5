@@ -31,7 +31,7 @@
     "]",
     "_blankline",
     "_dedent",
-    "_double_newline",
+    "_double_blankline",
     "_indent",
     "_newline",
     "_space",
@@ -3010,10 +3010,10 @@
       "hidden": false
     },
     {
-      "kind": "_double_newline",
+      "kind": "_double_blankline",
       "modelType": "punctuation",
-      "typeName": "DoubleNewline",
-      "irKey": "doubleNewline",
+      "typeName": "DoubleBlankline",
+      "irKey": "doubleBlankline",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
@@ -3401,7 +3401,7 @@
       "transparent": true,
       "subtypes": [
         "_blankline",
-        "_double_newline",
+        "_double_blankline",
         "_newline",
         "_space",
         "_tight"

@@ -5916,7 +5916,7 @@ var grammar_sittir_default = grammar(
         role($._indent, "indent");
         role($._dedent, "dedent");
         role($._newline, "newline");
-        return [...prev ?? [], $._tight, $._space, $._blankline, $._double_newline];
+        return [...prev ?? [], $._tight, $._space, $._blankline, $._double_blankline];
       },
       supertypes: ($, previous) => [...previous ?? [], $._whitespace],
       conflicts: ($, previous) => [
@@ -5930,7 +5930,7 @@ var grammar_sittir_default = grammar(
       visibleExternals: (_$) => ({
         _newline: string("\n"),
         _blankline: string("\n\n"),
-        _double_newline: string("\n\n\n"),
+        _double_blankline: string("\n\n\n"),
         _tight: string(""),
         _space: string(" ")
       }),
@@ -5970,9 +5970,9 @@ var grammar_sittir_default = grammar(
         integer_binary: { "prefix:": preference("0b") },
         module: {
           "statements:/separator": preference("tight"),
-          "statements:/(function_definition)/after": preference("double_newline"),
-          "statements:/(class_definition)/after": preference("double_newline"),
-          "statements:/(decorated_definition)/after": preference("double_newline")
+          "statements:/(function_definition)/after": preference("double_blankline"),
+          "statements:/(class_definition)/after": preference("double_blankline"),
+          "statements:/(decorated_definition)/after": preference("double_blankline")
         },
         _: {
           '"("/before': preference("tight"),
@@ -6213,7 +6213,7 @@ var grammar_sittir_default = grammar(
         _suite: { 0: variant("inline"), 1: variant("block"), 2: variant("empty") }
       },
       rules: {
-        _whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._double_newline, $._indent, $._dedent),
+        _whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._double_blankline, $._indent, $._dedent),
         // See docs/python-grammar-sittir-glossary.md::primary_expression
         primary_expression: ($, original) => {
           let base2 = original.members;

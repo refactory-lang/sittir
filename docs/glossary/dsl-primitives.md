@@ -461,7 +461,7 @@ Builds the placeholder; `options.absent` and `options.default` are carried only 
 `_whitespace`, the hidden supertype every grammar declares (in `supertypes:`
 and as a rule) listing the whitespace kinds it renders: each member is a
 never-scanned external with a kind id, `tight` renders nothing, and a
-grammar may add its own — python's `_double_newline` leaves two blank
+grammar may add its own — python's `_double_blankline` leaves two blank
 lines. The model reads the arms of every spacing site from it
 (`whitespace-arms.ts`); nothing in codegen lists whitespace kinds by name.
 The supertype is protected from unreachable-rule pruning like any other.

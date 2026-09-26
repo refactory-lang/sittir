@@ -7970,10 +7970,10 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_double_newline"
+            "name": "_double_blankline"
           },
           "named": true,
-          "value": "double_newline"
+          "value": "double_blankline"
         },
         {
           "type": "SYMBOL",
@@ -10004,7 +10004,7 @@
     },
     {
       "type": "SYMBOL",
-      "name": "_double_newline"
+      "name": "_double_blankline"
     }
   ],
   "inline": [

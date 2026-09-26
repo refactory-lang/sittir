@@ -4153,7 +4153,7 @@ labels tell them apart, since a flank label never parses as a seam label.
 The render text of each member of the grammar's `_whitespace` supertype
 (`whitespaceSymbolsOf`), keyed by arm, for each member symbol
 `visibleExternals` declares as a `string(...)`:
-`_tight` is `''`, python's `_double_newline` is `'\n\n\n'`, and `_indent` /
+`_tight` is `''`, python's `_double_blankline` is `'\n\n\n'`, and `_indent` /
 `_dedent` carry the writer's depth marks (`INDENT_TEXT`, `DEDENT_TEXT`,
 which `indent()` and `dedent()` stand for). Every whitespace kind is a
 literal. A visible external outside the supertype is not whitespace and is
@@ -4290,7 +4290,7 @@ The whitespace kinds a grammar renders, in declaration order, as arm to
 member symbol: the members of its `_whitespace` supertype
 (`WHITESPACE_SUPERTYPE`), each armed by its parse name or its display
 (`tight`, `space`, `newline`, `blankline`, `indent`, `dedent`, python's
-`double_newline`). A grammar without the supertype is an error: nothing in
+`double_blankline`). A grammar without the supertype is an error: nothing in
 codegen lists whitespace kinds by name, so every spacing site, `options.ts`
 union, whitespace text and choice member symbol is read from here.
 

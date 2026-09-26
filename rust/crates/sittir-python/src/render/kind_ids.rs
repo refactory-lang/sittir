@@ -130,7 +130,7 @@ pub const STRING_END: KindId = KindId(119);
 pub const _TIGHT: KindId = KindId(120);
 pub const _SPACE: KindId = KindId(121);
 pub const _BLANKLINE: KindId = KindId(122);
-pub const _DOUBLE_NEWLINE: KindId = KindId(123);
+pub const _DOUBLE_BLANKLINE: KindId = KindId(123);
 pub const MODULE: KindId = KindId(124);
 pub const _STATEMENT: KindId = KindId(125);
 pub const _SIMPLE_STATEMENTS: KindId = KindId(126);
@@ -468,7 +468,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         120 => "_tight", // "_tight"
         121 => "_space", // "_space"
         122 => "_blankline", // "_blankline"
-        123 => "_double_newline", // "_double_newline"
+        123 => "_double_blankline", // "_double_blankline"
         124 => "module", // "module"
         125 => "_statement", // "_statement"
         126 => "_simple_statements", // "_simple_statements"

@@ -208,7 +208,7 @@ pub enum AnyTransport {
     StringEnd(StringEndTransport),
     Newline(NewlineTransport),
     Blankline(BlanklineTransport),
-    DoubleNewline(DoubleNewlineTransport),
+    DoubleBlankline(DoubleBlanklineTransport),
     Tight(TightTransport),
     Space(SpaceTransport),
     Indent(IndentTransport),
@@ -561,7 +561,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::StringEnd(t) => t.prepare(ctx),
             AnyTransport::Newline(t) => t.prepare(ctx),
             AnyTransport::Blankline(t) => t.prepare(ctx),
-            AnyTransport::DoubleNewline(t) => t.prepare(ctx),
+            AnyTransport::DoubleBlankline(t) => t.prepare(ctx),
             AnyTransport::Tight(t) => t.prepare(ctx),
             AnyTransport::Space(t) => t.prepare(ctx),
             AnyTransport::Indent(t) => t.prepare(ctx),
@@ -1478,9 +1478,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 122 => Ok(AnyTransport::Blankline(
                     BlanklineTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _double_newline (_DOUBLE_NEWLINE)
-                123 => Ok(AnyTransport::DoubleNewline(
-                    DoubleNewlineTransport::from_napi_value(env, napi_val)?
+                // kind: _double_blankline (_DOUBLE_BLANKLINE)
+                123 => Ok(AnyTransport::DoubleBlankline(
+                    DoubleBlanklineTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _tight (_TIGHT)
                 120 => Ok(AnyTransport::Tight(
@@ -37065,38 +37065,38 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BlanklineTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct DoubleNewlineTransport {
+pub struct DoubleBlanklineTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for DoubleNewlineTransport {
+impl ::sittir_core::view::KindOf for DoubleBlanklineTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for DoubleNewlineTransport {
+impl ::sittir_core::options::Edged for DoubleBlanklineTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(123) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
-impl ::sittir_core::render::Render for DoubleNewlineTransport {
+impl ::sittir_core::render::Render for DoubleBlanklineTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, { w.token_seam(&self.text); Ok::<(), ::sittir_core::render::RenderError>(()) })
     }
 }
 
-impl ::sittir_core::prepare::Prepare for DoubleNewlineTransport {
+impl ::sittir_core::prepare::Prepare for DoubleBlanklineTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for DoubleNewlineTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37121,7 +37121,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoubleNewlineTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DoubleNewlineTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DoubleBlanklineTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -37139,7 +37139,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoubleNewlineTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DoubleNewlineTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for DoubleBlanklineTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -37149,22 +37149,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for DoubleNewlineTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DoubleNewlineTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DoubleBlanklineTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        DoubleNewlineTransport::from_napi_value(env, napi_val).map(Box::new)
+        DoubleBlanklineTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DoubleNewlineTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DoubleBlanklineTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        DoubleNewlineTransport::to_napi_value(env, *val)
+        DoubleBlanklineTransport::to_napi_value(env, *val)
     }
 }
 
@@ -51261,7 +51261,7 @@ fn render_blankline(t: &BlanklineTransport, w: &mut dyn ::sittir_core::render::R
     { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
-fn render_double_newline(t: &DoubleNewlineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_double_blankline(t: &DoubleBlanklineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
@@ -51997,7 +51997,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::StringEnd(inner) => inner.kind_in(kinds),
             Self::Newline(inner) => inner.kind_in(kinds),
             Self::Blankline(inner) => inner.kind_in(kinds),
-            Self::DoubleNewline(inner) => inner.kind_in(kinds),
+            Self::DoubleBlankline(inner) => inner.kind_in(kinds),
             Self::Tight(inner) => inner.kind_in(kinds),
             Self::Space(inner) => inner.kind_in(kinds),
             Self::Indent(inner) => inner.kind_in(kinds),
@@ -52287,7 +52287,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::StringEnd(t) => t.render(w),
             AnyTransport::Newline(t) => t.render(w),
             AnyTransport::Blankline(t) => t.render(w),
-            AnyTransport::DoubleNewline(t) => t.render(w),
+            AnyTransport::DoubleBlankline(t) => t.render(w),
             AnyTransport::Tight(t) => t.render(w),
             AnyTransport::Space(t) => t.render(w),
             AnyTransport::Indent(t) => t.render(w),

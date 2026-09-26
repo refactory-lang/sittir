@@ -142,7 +142,7 @@ enum ts_symbol_identifiers {
   sym__tight = 120,
   sym__space = 121,
   sym__blankline = 122,
-  sym__double_newline = 123,
+  sym__double_blankline = 123,
   sym_module = 124,
   sym__statement = 125,
   sym__simple_statements = 126,
@@ -481,7 +481,7 @@ static const char * const ts_symbol_names[] = {
   [sym__tight] = "_tight",
   [sym__space] = "_space",
   [sym__blankline] = "_blankline",
-  [sym__double_newline] = "_double_newline",
+  [sym__double_blankline] = "_double_blankline",
   [sym_module] = "module",
   [sym__statement] = "_statement",
   [sym__simple_statements] = "_simple_statements",
@@ -820,7 +820,7 @@ static const TSSymbol ts_symbol_map[] = {
   [sym__tight] = sym__tight,
   [sym__space] = sym__space,
   [sym__blankline] = sym__blankline,
-  [sym__double_newline] = sym__double_newline,
+  [sym__double_blankline] = sym__double_blankline,
   [sym_module] = sym_module,
   [sym__statement] = sym__statement,
   [sym__simple_statements] = sym__simple_statements,
@@ -1528,7 +1528,7 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = false,
     .named = true,
   },
-  [sym__double_newline] = {
+  [sym__double_blankline] = {
     .visible = false,
     .named = true,
   },
@@ -10525,7 +10525,7 @@ static const uint16_t ts_parse_table[LARGE_STATE_COUNT][SYMBOL_COUNT] = {
     [sym__tight] = ACTIONS(1),
     [sym__space] = ACTIONS(1),
     [sym__blankline] = ACTIONS(1),
-    [sym__double_newline] = ACTIONS(1),
+    [sym__double_blankline] = ACTIONS(1),
   },
   [STATE(1)] = {
     [sym_module] = STATE(2127),
@@ -108714,7 +108714,7 @@ enum ts_external_scanner_symbol_identifiers {
   ts_external_token__tight = 12,
   ts_external_token__space = 13,
   ts_external_token__blankline = 14,
-  ts_external_token__double_newline = 15,
+  ts_external_token__double_blankline = 15,
 };
 
 static const TSSymbol ts_external_scanner_symbol_map[EXTERNAL_TOKEN_COUNT] = {
@@ -108733,7 +108733,7 @@ static const TSSymbol ts_external_scanner_symbol_map[EXTERNAL_TOKEN_COUNT] = {
   [ts_external_token__tight] = sym__tight,
   [ts_external_token__space] = sym__space,
   [ts_external_token__blankline] = sym__blankline,
-  [ts_external_token__double_newline] = sym__double_newline,
+  [ts_external_token__double_blankline] = sym__double_blankline,
 };
 
 static const bool ts_external_scanner_states[19][EXTERNAL_TOKEN_COUNT] = {
@@ -108753,7 +108753,7 @@ static const bool ts_external_scanner_states[19][EXTERNAL_TOKEN_COUNT] = {
     [ts_external_token__tight] = true,
     [ts_external_token__space] = true,
     [ts_external_token__blankline] = true,
-    [ts_external_token__double_newline] = true,
+    [ts_external_token__double_blankline] = true,
   },
   [2] = {
     [ts_external_token_string_start] = true,

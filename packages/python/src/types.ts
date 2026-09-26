@@ -233,7 +233,7 @@ export enum TSKindId {
 	Tight = 120,
 	Space = 121,
 	Blankline = 122,
-	DoubleNewline = 123,
+	DoubleBlankline = 123,
 	Module = 124,
 	Statement = 125,
 	SimpleStatements = 126,
@@ -569,7 +569,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[120, '_tight'],
 	[121, '_space'],
 	[122, '_blankline'],
-	[123, '_double_newline'],
+	[123, '_double_blankline'],
 	[124, 'module'],
 	[125, '_statement'],
 	[126, '_simple_statements'],
@@ -908,7 +908,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[120, '_tight'],
 	[121, '_space'],
 	[122, '_blankline'],
-	[123, '_double_newline'],
+	[123, '_double_blankline'],
 	[124, 'module'],
 	[125, '_statement'],
 	[126, '_simple_statements'],
@@ -1372,8 +1372,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Space;
 		case '_blankline':
 			return TSKindId.Blankline;
-		case '_double_newline':
-			return TSKindId.DoubleNewline;
+		case '_double_blankline':
+			return TSKindId.DoubleBlankline;
 		case 'module':
 			return TSKindId.Module;
 		case '_statement':
@@ -1980,13 +1980,13 @@ export type SpacingArm =
 	| TSKindId.Space
 	| TSKindId.Newline
 	| TSKindId.Blankline
-	| TSKindId.DoubleNewline;
+	| TSKindId.DoubleBlankline;
 export type WhitespaceArm =
 	| TSKindId.Tight
 	| TSKindId.Space
 	| TSKindId.Newline
 	| TSKindId.Blankline
-	| TSKindId.DoubleNewline;
+	| TSKindId.DoubleBlankline;
 
 /** Separated-list optional-flank bitflag — the wire's `_delimiter` key
  *  and the list factories' `delimiter` option. */
@@ -2224,7 +2224,7 @@ export enum WhitespaceKind {
 	Space = '_space',
 	Newline = '_newline',
 	Blankline = '_blankline',
-	DoubleNewline = '_double_newline'
+	DoubleBlankline = '_double_blankline'
 }
 
 // Node types — concrete interfaces
@@ -5055,7 +5055,7 @@ export type LineContinuation = LineContinuationNewline | LineContinuationNul;
 
 export type LineContinuationTree = LineContinuationNewlineTree | LineContinuationNulTree;
 
-export type Whitespace = Tight | Space | Newline | Blankline | DoubleNewline;
+export type Whitespace = Tight | Space | Newline | Blankline | DoubleBlankline;
 
 export type WhitespaceTree = NewlineTree;
 
@@ -5174,9 +5174,9 @@ export type Blankline = TSKindId.Blankline;
 export interface BlanklineTree extends AnyTreeNode {
 	readonly type: '_blankline';
 }
-export type DoubleNewline = TSKindId.DoubleNewline;
-export interface DoubleNewlineTree extends AnyTreeNode {
-	readonly type: '_double_newline';
+export type DoubleBlankline = TSKindId.DoubleBlankline;
+export interface DoubleBlanklineTree extends AnyTreeNode {
+	readonly type: '_double_blankline';
 }
 export type Tight = TSKindId.Tight;
 export interface TightTree extends AnyTreeNode {
