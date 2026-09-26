@@ -92,7 +92,7 @@ function isBlockingAssembleWarningCode(code: string): boolean {
 	return code === 'storagename-collision' || code === 'nonterminal-separator-unstamped';
 }
 
-function isExpectedDiagnostic(
+export function isExpectedDiagnostic(
 	expectDiagnostics: Readonly<Record<string, readonly string[]>> | undefined,
 	code: string,
 	ownerKind: string | undefined

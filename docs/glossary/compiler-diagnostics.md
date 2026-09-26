@@ -502,3 +502,50 @@ console during regen and the persisted grammar-diagnostics.json.
 // ---------------------------------------------------------------------------
 ```
 
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::PROVOKING_CODES`
+
+Which upstream diagnostic codes justify each `reauthored` cause. A code
+counts on the rule it names (`ownerKind`), whether or not it blocks yet, so the
+judgement does not depend on which shape codes have been flipped to blocking.
+The table lists only codes the upstream compiles are observed to report:
+`'lexical-interior'` has `parsekind-noninjective`; `'alias-shape'` has the
+alias codes and the four collect-slots shape codes; `'ambiguity'` has none,
+because no detector for an upstream generate conflict exists yet. A rule whose
+cause has no detector lands on its grammar's
+`rule-reauthored-without-cause` floor, named per rule, and leaves it when the
+detector lands. `kindid-unstamped-anon-literal` is deliberately absent: the
+upstream has no generated parser, so it fires on every anonymous literal.
+`content-collision` and `storagename-collision` are absent too: a `field()`
+patch resolves them, so they are patch-site provocations, not rule causes.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::diagnoseRuleCauses`
+
+Judges a grammar's hand-authored departures against its upstream compile.
+Every code it emits blocks except where noted, and every message names the
+declaration or deletion that resolves it:
+
+- `rule-cause-missing`: a `rules:` entry with a bare body. Judged without the
+  upstream.
+- `upstream-compile-failed` (warning): the upstream compile did not complete;
+  none of the judgements below is made.
+- `render-only-not-external`: a `renderAs:` key that is not an upstream
+  external, as the evaluated externals list spells it.
+- `vocabulary-replaces-upstream`: a `vocabulary` entry named like an upstream
+  rule.
+- `rule-cause-mismatch`: a `reauthored` entry on a name upstream does not
+  declare, or one whose upstream provocations all belong to other causes.
+- `rule-reauthored-without-cause`: a `reauthored` entry no `PROVOKING_CODES`
+  code provokes. The one floorable code: an owner listed for it in the
+  grammar's `expectDiagnostics:` is a warning.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeVocabulary`
+
+`vocabulary-replaces-upstream` for a `vocabulary` entry upstream also
+declares, else nothing.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeReauthored`
+
+The `reauthored` judgement: the name must be an upstream rule, some
+`PROVOKING_CODES` code must fire on it upstream, and one of those codes must
+belong to the declared cause.
