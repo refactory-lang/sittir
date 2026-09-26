@@ -635,47 +635,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for TriviaTransport {
     }
 }
 
-#[derive(Debug, Clone, Default)]
-pub struct TransportTrivia {
-    pub leading: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>>,
-    pub trailing: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>>,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TransportTrivia {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let leading: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>> = obj.get("leading")?;
-        let trailing: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>> = obj.get("trailing")?;
-        Ok(TransportTrivia { leading, trailing })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TransportTrivia {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ValidateNapiValue for TransportTrivia {}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::TypeName for TransportTrivia {
-    fn type_name() -> &'static str {
-        "TransportTrivia"
-    }
-    fn value_type() -> ::napi::ValueType {
-        ::napi::ValueType::Object
-    }
-}
+pub type TransportTrivia = ::sittir_core::trivia::TransportTrivia<TriviaTransport>;
 
 
 /// Text that is a slot's content with no kind of its own: a bare string in
@@ -9406,6 +9366,7 @@ fn render_character_class(node: &CharacterClassTransport, w: &mut dyn ::sittir_c
     w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("[")?;
     w.site_at(options::SITE_CHARACTER_CLASS_LBRACK_AFTER);
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "class_atoms", w)?;
     class_atoms.render(w)?;
     w.site_at(options::SITE_CHARACTER_CLASS_RBRACK_BEFORE);
     w.text("]")?;

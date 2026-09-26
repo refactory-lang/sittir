@@ -1278,6 +1278,42 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
     }
 }
 
+/// The gap an extra occupies inside a node with no named child to own it,
+/// by (kind id, anonymous tokens before the extra): the model slot whose
+/// position the gap holds. `None` when the model has no slot there.
+pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str> {
+    match (kind.0, preceding_tokens) {
+        (171, 0) => Some("statements"),
+        (190, 1) => Some("declarations"),
+        (194, 1) => Some("enum_variant_list_elements"),
+        (196, 1) => Some("field_declaration_list_elements"),
+        (198, 1) => Some("attributes"),
+        (222, 1) => Some("use_clauses"),
+        (225, 1) => Some("parameters_elements"),
+        (244, 2) => Some("bounds"),
+        (272, 1) => Some("arguments_elements"),
+        (278, 1) => Some("initializers"),
+        (284, 0) => Some("right"),
+        (288, 1) => Some("match_block_arms"),
+        (297, 1) => Some("parameters"),
+        (308, 1) => Some("statements"),
+        (311, 1) => Some("elements"),
+        (312, 1) => Some("patterns"),
+        (335, 1) => Some("content"),
+        (370, 1) => Some("attributes"),
+        (406, 1) => Some("token_patterns"),
+        (407, 1) => Some("token_patterns"),
+        (408, 1) => Some("token_patterns"),
+        (409, 1) => Some("tokens"),
+        (410, 1) => Some("tokens"),
+        (411, 1) => Some("tokens"),
+        (412, 1) => Some("delim_tokens"),
+        (413, 1) => Some("delim_tokens"),
+        (414, 1) => Some("delim_tokens"),
+        _ => None,
+    }
+}
+
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every
 /// slot the parser field-tags a literal into: the separator of a repeated
 /// slot, or a literal a rule puts beside a singular slot under the same

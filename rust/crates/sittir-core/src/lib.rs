@@ -24,6 +24,7 @@ pub mod render;
 pub mod slot;
 pub mod spacing;
 pub mod splice;
+pub mod trivia;
 pub mod types;
 pub mod view;
 

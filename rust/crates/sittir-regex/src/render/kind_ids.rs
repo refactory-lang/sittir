@@ -260,6 +260,16 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
     }
 }
 
+/// The gap an extra occupies inside a node with no named child to own it,
+/// by (kind id, anonymous tokens before the extra): the model slot whose
+/// position the gap holds. `None` when the model has no slot there.
+pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str> {
+    match (kind.0, preceding_tokens) {
+        (57, 3) => Some("class_atoms"),
+        _ => None,
+    }
+}
+
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every
 /// slot the parser field-tags a literal into: the separator of a repeated
 /// slot, or a literal a rule puts beside a singular slot under the same

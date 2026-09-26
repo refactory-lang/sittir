@@ -54,4 +54,23 @@ describe('selfContainedRenderInput', () => {
 		) as { $_trivia: unknown };
 		expect(out.$_trivia).toEqual({ leading: ['// c'], trailing: ['// d'] });
 	});
+
+	it('keeps the same-line flag on a text entry and detaches inner entries', () => {
+		const out = selfContainedRenderInput(
+			{
+				$type: COMPOUND,
+				_x: [],
+				$_trivia: {
+					trailing: [{ $type: 3, $nodeHandle: 1, $span: { start: 4, end: 8 }, $sameLine: true, $tokensBetween: 1 }],
+					inner: { x: [{ $type: 3, $nodeHandle: 1, $span: { start: 4, end: 8 } }] }
+				}
+			},
+			source,
+			isLeafKind
+		) as { $_trivia: unknown };
+		expect(out.$_trivia).toEqual({
+			trailing: [{ $text: '// c', $sameLine: true, $tokensBetween: 1 }],
+			inner: { x: ['// c'] }
+		});
+	});
 });

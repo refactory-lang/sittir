@@ -9,6 +9,7 @@ export interface GrammarPackage {
 	readonly name: GrammarName;
 	readonly dir: string;
 	readonly stable: boolean;
+	readonly displayName: string | undefined;
 }
 
 export const REPO_ROOT = fileURLToPath(new URL('../../..', import.meta.url)).replace(/\/$/, '');
@@ -23,9 +24,14 @@ export function grammarPackages(): readonly GrammarPackage[] {
 		.map((entry) => {
 			const dir = join(PACKAGES_DIR, entry.name);
 			const manifest = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')) as {
-				sittir?: { stable?: boolean };
+				sittir?: { stable?: boolean; displayName?: string };
 			};
-			return { name: entry.name, dir, stable: manifest.sittir?.stable === true };
+			return {
+				name: entry.name,
+				dir,
+				stable: manifest.sittir?.stable === true,
+				displayName: manifest.sittir?.displayName
+			};
 		})
 		.sort((a, b) => a.name.localeCompare(b.name));
 	return discovered;
@@ -61,6 +67,8 @@ export function grammarPackageDir(name: GrammarName): string {
 }
 
 export function grammarDisplayName(name: GrammarName): string {
+	const declared = grammarPackages().find((g) => g.name === name)?.displayName;
+	if (declared !== undefined) return declared;
 	return name
 		.split('_')
 		.map((part) => part.charAt(0).toUpperCase() + part.slice(1))

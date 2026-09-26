@@ -723,7 +723,7 @@ The grammar registry. The set of grammars is discovered from disk — every `pac
 
 ### `packages/codegen/src/grammars.ts::grammarPackages`
 
-Every grammar package, sorted by name, with its `stable` flag read from `package.json`'s `sittir.stable`. Cached for the process: packages are not created mid-run.
+Every grammar package, sorted by name, with its `stable` flag and `displayName` read from `package.json`'s `sittir` block. Cached for the process: packages are not created mid-run.
 
 ### `packages/codegen/src/grammars.ts::allGrammars`
 
@@ -751,5 +751,5 @@ Vite/vitest aliases mapping each workspace package's `exports` entries (`@sittir
 
 ### `packages/codegen/src/grammars.ts::grammarDisplayName`
 
-PascalCase display name derived from the grammar name (`scm` → `Scm`, `my_lang` → `MyLang`), used where a generated artifact names the grammar in a type or prose (the native crate's `<Name>Grammar`).
+The grammar's display name, used where a generated artifact names the grammar in a type or prose (the native crate's `<Name>Grammar`): the package's declared `sittir.displayName` (`typescript` → `TypeScript`), else PascalCase derived from the name (`scm` → `Scm`, `my_lang` → `MyLang`). A package that does not exist yet, as during bootstrap, takes the derived form.
 

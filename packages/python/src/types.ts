@@ -5482,8 +5482,6 @@ export interface OptionsHintMap {
 	yieldFromClause: YieldFromClause.Hints;
 	unaryOperatorOperator: UnaryOperatorOperator.Hints;
 	augmentedAssignmentOperator: AugmentedAssignmentOperator.Hints;
-	lineContinuationNewline: LineContinuationNewline.Hints;
-	lineContinuationNul: LineContinuationNul.Hints;
 }
 
 export namespace Module {
@@ -7365,18 +7363,6 @@ export namespace AugmentedAssignmentOperator {
 			readonly starEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly starStarEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 		};
-	}
-}
-
-export namespace LineContinuationNewline {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly bslash?: { readonly after?: SpacingArm } };
-	}
-}
-
-export namespace LineContinuationNul {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly bslash?: { readonly after?: SpacingArm } };
 	}
 }
 

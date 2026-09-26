@@ -212,6 +212,10 @@ impl sittir_core::read_node::ReadModel for ${v.Name}Grammar {
     ) -> Option<&'static str> {
         render::kind_ids::wire_slot(parent, field, child)
     }
+
+    fn inner_gap_key(&self, kind: sittir_core::types::KindId, preceding_tokens: u16) -> Option<&'static str> {
+        render::kind_ids::inner_gap_key(kind, preceding_tokens)
+    }
 }
 
 // The engine class itself — parse, read, render, edits, and the live-tree

@@ -178,7 +178,7 @@ Landed. The shape differs from the first draft; later tasks use these interfaces
   - Read `NodeData` whose `trivia_data` follows the spec's rules 1–4. Entries
     carry `$sameLine` when on their anchor's row.
 
-- [ ] **Step 1: Write the failing tests** in `rust/crates/sittir-core/tests/read_node.rs`,
+- [x] **Step 1: Write the failing tests** in `rust/crates/sittir-core/tests/read_node.rs`,
   using the existing rust-grammar test model:
 
 ```rust
@@ -210,9 +210,9 @@ fn block_comment_before_owner_on_same_row_is_same_line_leading() {
 
   `read`, `block_statements` and `function_body` are small helpers in the test
   file over the existing test model.
-- [ ] **Step 2: Run them.** `cargo test -p sittir-core --test read_node`.
+- [x] **Step 2: Run them.** `cargo test -p sittir-core --test read_node`.
   Expected: FAIL (the fields don't exist).
-- [ ] **Step 3: Implement.**
+- [x] **Step 3: Implement.**
   - In `read_children(parent)`, collect the parent's children with their index
     and a flag for "named, not extra". For each extra child `c`, pick the owner:
     1. The previous named non-extra sibling ends on `c.start_position().row`:
@@ -233,10 +233,33 @@ fn block_comment_before_owner_on_same_row_is_same_line_leading() {
     `fn inner_gap_key(kind, n) -> Option<&'static str>` as a `match (kind.0, n)`
     over every node's `innerGaps`. Keep the existing `u16::MAX if false` style
     for an empty table.
-- [ ] **Step 4: Run the tests.** Expected: PASS.
-- [ ] **Step 5: Regen and gate.** Validate rows hold or tighten (rrp stays
+- [x] **Step 4: Run the tests.** Expected: PASS.
+- [x] **Step 5: Regen and gate.** Validate rows hold or tighten (rrp stays
   byte-exact through source coordinates). Record the trivia-row change.
-- [ ] **Step 6: Commit.**
+- [x] **Step 6: Commit.**
+
+**As landed.** Task 3 also carries the render side of rules 1 and 4 (pulled
+forward from Task 7, so every commit stays at baseline):
+
+- Placement is computed per node from its own siblings and children
+  (`read_node::node_trivia`), not by a parent pass: a node re-read by handle
+  never runs its parent's `read_children`.
+- Entries carry `$sameLine` and, on a same-line trailing entry, `$tokensBetween`
+  (the anonymous tokens between owner and entry). `0` seats the entry right after
+  its owner; more holds it past the tokens that follow the owner
+  (`RenderSink::defer_trailing` / `seat_trailing`), seated before the next owner,
+  a coordinate, a line break, or the end of the parent's render.
+- `sittir_core::trivia::TransportTrivia<T>` is the one trivia carrier; each
+  grammar aliases it over its `TriviaTransport`. Inner entries render at their
+  gap through the render-body printer's `innerGap` hook
+  (`trivia::render_inner`), before a presence-gated slot's `if`.
+- `foldsToCoordinate` refuses only leading/trailing trivia; inner lies inside the
+  span.
+- The token-interior rule covers trivia kinds (`render-rules.ts::triviaInterior`):
+  no interior seams in a trivia kind or the kinds reachable only through it,
+  and the boundary before a member that starts immediate when present is not a
+  site (`startsImmediateWhenPresent`).
+- The native crate's display name is the package's `sittir.displayName`.
 
 ### Task 4: Wrap carries trivia entries through the per-kind path
 
@@ -278,9 +301,8 @@ it('wraps trivia entries like slot children', () => {
     every entry through the same `wrapNode(entry, tree)` dispatch slot children
     use. The token-interior drill then fills `_content`.
 - [ ] **Step 4: Run the test.** Expected: PASS.
-- [ ] **Step 5: Regen and gate.** rust "Comments degenerate cases"
-  (`source_file`, `let_declaration`) now pass. Remove them from the rust
-  left-out list (the count drops by 2) and tighten the baseline in the same commit.
+- [ ] **Step 5: Regen and gate.** Rows hold. (The rust doc-comment fixtures
+  that were left out came back in Task 3, with the baseline ratcheted there.)
 - [ ] **Step 6: Commit.**
 
 ### Task 5: Runtime `$trivia`: getters, inner, refusals, loose strings
@@ -422,31 +444,30 @@ const s: readonly import('../src/index.js').Statement[] = parsed.statements();
 - [ ] **Step 5: Regen, gate and commit.** List the public API additions in the
   commit message.
 
-### Task 7: Transport and render: same-line, line-terminated, inner gaps
+### Task 7: Transport and render: line-terminated breaks, leading joins, inner layout
+
+Re-based on Task 3, which landed the core `trivia::TransportTrivia<T>` (with
+`inner`, `same_line`, `tokens_between` per entry), same-line trailing seating in
+the spacing writer, and inner entries at their gap. What remains:
 
 **Files:**
-- Modify: `rust/crates/sittir-core/src/macros.rs` (`render_with_trivia!`):
-  - leading entries join with a space when `same_line`, otherwise a line break;
-  - trailing entries start with a space when `same_line`, otherwise a line break;
-  - no special case for line comments: their `<kind>_after` edge default is
-    `newline` (next bullet), so the break comes from the ordinary edge.
+- Modify: `rust/crates/sittir-core/src/trivia.rs` and `spacing.rs`:
+  - leading entries join with a space when `same_line`, otherwise a line break
+    (today every leading entry ends its line);
+  - a held trailing run and every entry break the line only when the entry is
+    line-terminated (today the writer breaks after any run left open): no
+    special case for line comments, since their `<kind>_after` edge default is
+    `newline` (next bullet).
 - Modify: `packages/codegen/src/emitters/render-module.ts`:
-  - `renderTriviaTransportSupport`: `TransportTrivia` gains
-    `inner: Option<BTreeMap<String, Vec<SlotValue<TriviaTransport>>>>`;
-  - `TriviaTransport` entries carry `same_line: bool`;
   - `TriviaTransport` implements `fn line_terminated(&self) -> bool`, one arm
     per comment kind from the stamped fact.
 - Modify: the render-defaults stamp (`compiler/model/render-rules.ts` /
   `site-preferences.ts`): an extra kind with `lineTerminated` gets `<kind>_after`
   default `newline`, and that edge admits only line-breaking arms.
-- Modify: `packages/codegen/src/emitters/render-body.ts` and `templates.ts`:
-  emit an `innerTrivia(gap)` body node at each gap position.
-  `render-module.ts` lowers it to
-  `::sittir_core::render::render_inner_trivia(&self.transport_trivia_data, "<gap>", w)?`.
-- Add: `rust/crates/sittir-core/src/render.rs`: `render_inner_trivia`. It writes
-  the gap's entries separated by a line break, wrapped in the block-body
-  indent/dedent seams when the gap sits between the kind's block-body seams,
-  otherwise by spaces.
+- Modify: `rust/crates/sittir-core/src/trivia.rs` (`render_inner`): wrap the
+  gap's entries in the block-body indent/dedent seams when the gap sits between
+  the kind's block-body seams, otherwise join them by spaces (today each entry
+  ends its line at the gap).
 - Test: `rust/crates/sittir-core/src/macros.rs` (the existing
   `trivia_macro_tests`) and `packages/rust/tests/trivia-render.test.ts`.
 

@@ -46,9 +46,8 @@ import {
 	delimiterMembersFor
 } from '../compiler/model/node-map.ts';
 export { delimiterMembersFor } from '../compiler/model/node-map.ts';
+import { anchoredLeafRegex, anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 import {
-	anchoredLeafRegexLiteral,
-	anchoredLeafRegex,
 	isRequired,
 	isMultiple,
 	isNonEmpty,

@@ -155,6 +155,21 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     seam_is_token: bool,
     sources: Option<&'a dyn crate::render::SourceTable>,
     options: Option<&'a crate::options::ResolvedOptions>,
+    deferring: Option<String>,
+    deferred: Vec<String>,
+}
+
+/// The writer's spacing state, set aside while a deferred run renders on its
+/// own and put back after.
+struct HeldContext {
+    last: Option<char>,
+    adjacent_next: bool,
+    indent_pending: bool,
+    indent_armed: bool,
+    seam: Option<SeamRank>,
+    seam_strength: u8,
+    seam_text: String,
+    seam_is_token: bool,
 }
 
 impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
@@ -175,6 +190,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam_is_token: false,
             sources: None,
             options: None,
+            deferring: None,
+            deferred: Vec::new(),
         }
     }
 
@@ -218,10 +235,79 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         self.indent_pending = false;
         for _ in 0..self.depth {
-            self.inner.write_str(self.indent)?;
+            self.emit(self.indent)?;
         }
         if self.depth > 0 {
             self.last = self.indent.chars().next_back();
+        }
+        Ok(())
+    }
+
+    fn at_line_start(&self) -> bool {
+        matches!(self.last, None | Some('\n'))
+    }
+
+    /// Where written text goes: the output, or the buffer of a deferred run.
+    fn emit(&mut self, s: &str) -> std::fmt::Result {
+        match self.deferring.as_mut() {
+            Some(buffer) => {
+                buffer.push_str(s);
+                Ok(())
+            }
+            None => self.inner.write_str(s),
+        }
+    }
+
+    /// Whether writing `s` next would start a new line: it opens with a line
+    /// break, or the held seam carries one.
+    fn breaks_line(&self, s: &str) -> bool {
+        s.starts_with('\n') || (self.seam.is_some() && self.seam_text.contains('\n'))
+    }
+
+    fn hold_context(&mut self) -> HeldContext {
+        HeldContext {
+            last: self.last.take(),
+            adjacent_next: std::mem::replace(&mut self.adjacent_next, false),
+            indent_pending: std::mem::replace(&mut self.indent_pending, false),
+            indent_armed: std::mem::replace(&mut self.indent_armed, false),
+            seam: self.seam.take(),
+            seam_strength: std::mem::replace(&mut self.seam_strength, SEAM_FALLBACK),
+            seam_text: std::mem::take(&mut self.seam_text),
+            seam_is_token: std::mem::replace(&mut self.seam_is_token, false),
+        }
+    }
+
+    fn restore_context(&mut self, held: HeldContext) {
+        self.last = held.last;
+        self.adjacent_next = held.adjacent_next;
+        self.indent_pending = held.indent_pending;
+        self.indent_armed = held.indent_armed;
+        self.seam = held.seam;
+        self.seam_strength = held.seam_strength;
+        self.seam_text = held.seam_text;
+        self.seam_is_token = held.seam_is_token;
+    }
+
+    /// Writes the held trailing runs where the output stands, ahead of any
+    /// held seam, each after a space. A run that leaves the line open makes
+    /// the held seam a line break, since what follows a line comment on its
+    /// row would be swallowed by it, unless `next` breaks the line itself.
+    fn write_deferred(&mut self, next: &str) -> std::fmt::Result {
+        if self.deferring.is_some() || self.deferred.is_empty() {
+            return Ok(());
+        }
+        for run in std::mem::take(&mut self.deferred) {
+            if !self.at_line_start() {
+                self.write_text(" ")?;
+            }
+            self.write_text(&run)?;
+        }
+        if !self.at_line_start() && !self.breaks_line(next) {
+            self.seam = Some(seam_rank("\n"));
+            self.seam_strength = SEAM_DECLARED;
+            self.seam_text.clear();
+            self.seam_text.push('\n');
+            self.seam_is_token = false;
         }
         Ok(())
     }
@@ -250,11 +336,11 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
                 // constructs noisy for no correctness gain.
                 let symbol_seam = last != first && self.word.is_literal_merge_pair(last, first);
                 if word_seam || symbol_seam {
-                    self.inner.write_str(" ")?;
+                    self.emit(" ")?;
                 }
             }
         }
-        self.inner.write_str(s)?;
+        self.emit(s)?;
         self.last = s.chars().next_back();
         if self.last == Some('\n') {
             self.indent_pending = true;
@@ -313,6 +399,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if s.is_empty() {
             return Ok(());
         }
+        if self.breaks_line(s) {
+            self.write_deferred(s)?;
+        }
         if s.starts_with('\n') && self.seam == Some(1) && !self.seam_is_token {
             self.seam = None;
             self.seam_text.clear();
@@ -328,6 +417,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// instead: the token is part of the node. The root render calls this
     /// once, after the last `write_str`.
     pub fn finish(&mut self) -> std::fmt::Result {
+        self.write_deferred("")?;
         if self.seam_is_token {
             self.flush_seam()?;
         }
@@ -418,6 +508,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
                 tree_id: coord.tree_id(),
             })?;
         let text = coord.resolve(sources)?;
+        self.write_deferred(text)?;
         self.write_chunk(text)?;
         Ok(())
     }
@@ -440,7 +531,31 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn ends_line(&self) -> bool {
-        matches!(self.last, None | Some('\n'))
+        self.at_line_start()
+    }
+
+    fn defer_trailing(
+        &mut self,
+        render: &mut dyn FnMut(&mut dyn crate::render::RenderSink) -> crate::render::RenderResult,
+    ) -> crate::render::RenderResult {
+        if self.deferring.is_some() {
+            return render(self);
+        }
+        let held = self.hold_context();
+        self.deferring = Some(String::new());
+        let result = render(self);
+        let run = self.deferring.take().unwrap_or_default();
+        self.restore_context(held);
+        result?;
+        if !run.is_empty() {
+            self.deferred.push(run);
+        }
+        Ok(())
+    }
+
+    fn seat_trailing(&mut self) -> crate::render::RenderResult {
+        self.write_deferred("")?;
+        Ok(())
     }
 }
 

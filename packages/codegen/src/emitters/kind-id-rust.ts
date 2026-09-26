@@ -141,6 +141,19 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('    }');
 	lines.push('}');
 
+	lines.push('');
+	lines.push('/// The gap an extra occupies inside a node with no named child to own it,');
+	lines.push('/// by (kind id, anonymous tokens before the extra): the model slot whose');
+	lines.push('/// position the gap holds. `None` when the model has no slot there.');
+	lines.push("pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str> {");
+	lines.push('    match (kind.0, preceding_tokens) {');
+	for (const row of innerGapRows(nodeMap, entries)) {
+		lines.push(`        (${row.kindId}, ${row.precedingTokens}) => Some(${JSON.stringify(row.key)}),`);
+	}
+	lines.push('        _ => None,');
+	lines.push('    }');
+	lines.push('}');
+
 	const separatorRows: string[] = [];
 	for (const [, node] of nodeMap.nodes) {
 		const parentId = findOwnKindEntry(entries, node.kind)?.id;
@@ -181,6 +194,25 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('');
 
 	return lines.join('\n');
+}
+
+interface InnerGapRow {
+	readonly kindId: number;
+	readonly precedingTokens: number;
+	readonly key: string;
+}
+
+function innerGapRows(
+	nodeMap: NodeMap,
+	entries: readonly (KindEntryLike & { readonly id: number })[]
+): readonly InnerGapRow[] {
+	return [...nodeMap.nodes.values()]
+		.filter((node) => node instanceof AbstractAssembledCompound)
+		.flatMap((node) => {
+			const kindId = findOwnKindEntry(entries, node.kind)?.id;
+			return kindId === undefined ? [] : node.innerGaps.map((gap) => ({ kindId, ...gap }));
+		})
+		.sort((a, b) => a.kindId - b.kindId || a.precedingTokens - b.precedingTokens);
 }
 
 export interface WireSlotRow {

@@ -3233,6 +3233,12 @@ both read this one fact.
  */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::startsImmediateWhenPresent`
+
+Whether a rule's leftmost terminal is immediate whatever its multiplicity: the
+present case of `leftmostTerminalImmediate`, which answers false for a member
+that may be absent. A choice is immediate when every arm is.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::leftmostTerminalImmediate`
 
 #### body
@@ -3658,6 +3664,9 @@ A lexed kind is skipped by the interior seam pass: template text inside a token 
 render function, so no address inside it can carry a preference. The kind still sits among its neighbours; that
 spacing comes from the parent's seams.
 ```
+
+The same holds for a trivia kind's token interior (`triviaInterior`): no interior seams, and a kind inside it owns
+no edges; the trivia kind's own edges stay.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::withKindEdges`
 
@@ -4477,7 +4486,7 @@ Where an inner comment can sit in an empty node of this kind: one `InnerGap` per
 - Tokens under an optional or repeat member, or inside a choice, are conditional and not counted: they are absent from an empty node.
 - A slot is found by its source rule ids, never at the rule root.
 - When several slots share a span, only the first in render order keys it.
-- A gap before the kind's first token or after its last is not inner: tree-sitter gives an extra outside a node's own tokens to the parent. A kind with no unconditional token keeps its gaps. Only the root can hold an extra there (rust `source_file`, python `module`, typescript `program`), and a comment-only file keys to the root's first slot.
+- A gap before the kind's first token or after its last is not inner: tree-sitter gives an extra outside a node's own tokens to the parent. A kind with no unconditional token is the exception, and only the root can hold an extra there (rust `source_file`, python `module`, typescript `program`). Its one gap is its first repeat slot in render order, because `inner` carries the comments of an empty repeat: a comment-only file is a root whose statements are empty. An optional single slot before it (`shebang`, `hash_bang_line`) never owns the gap.
 - A compound with no slots and at least two tokens has the one gap `interior` after its first token.
 
 Slotless leaves carry no gaps. A merged literal such as rust `unit_expression` `()` no longer records its token split, so an inner comment there is a read diagnostic and a count in the trivia validation row.
@@ -4489,6 +4498,8 @@ One inner-comment position of a kind: the empty slot that keys it (or `interior`
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.lineEnds`
 
 How this kind's text can end, read from its own rule: `open` for a pattern that accepts a line of arbitrary text but not text across a line break, `closed` for a literal or any other pattern, `empty` for an arm that may end with nothing, and `{ symbol }` for an arm that ends in another kind. A sequence ends as its last member does, falling back through members that can be empty; a choice ends as each of its arms. `lineTerminated` resolves the symbols through the node map.
+
+The probe proves `open`, so it can under-report but never over-report. A pattern that is open but narrow, such as `[a-z]*`, rejects the probe line and reads `closed`. That gives the kind no newline default, never a wrong one. No trivia arm in the three grammars has such a pattern today.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::LineEnd`
 
@@ -4538,6 +4549,26 @@ True for a slot value that is free text constrained by a pattern rather than a l
 ```text
 True for a kind whose slot structure is a token interior; such a kind is skipped by the interior seam pass and owns no edges.
 ```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::triviaInterior`
+
+The token-interior rule applied to trivia kinds. A trivia kind (`triviaKinds`)
+is lexically one unit: a comment body or a line continuation has no seam a
+space could go in without changing what it reads as (`/*!*/` spaced reads as a
+doc comment with a space of content; `\ ` before a newline is not a
+continuation). The token interior of a trivia kind covers the kinds reachable
+only through it, found as a fixpoint over the render rules' references (the
+doc-comment variants and their markers). Those own no seams; the trivia kind's
+own edges stay, since it still sits among its neighbours.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isImmediateWhenPresent`
+
+Whether the boundary before a seq member is immediate: the member, when it is
+present, starts with an immediate token (`startsImmediateWhenPresent`). Such a
+boundary is not a site: `withTokenSeams` writes neither the left token's after
+face nor the member's before face there. When a nullable member is absent, the
+member after it keeps its own before face, so the absent case is never left
+without a seam of its own.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledAlias.aliasTypeId`
 
@@ -4605,3 +4636,77 @@ Whether a slot value's node is hidden on the surface: the node's own `surfaceHid
 ### `packages/codegen/src/compiler/model/node-map.ts::isSurfaceHiddenIn`
 
 Whether a kind is hidden on the surface, read from its node in the map (`surfaceHidden`), or by name through `surfaceHiddenOf` when the map has no node for it. Emitters ask this instead of testing a name's leading underscore.
+
+### `packages/codegen/src/compiler/model/leaf-pattern.ts::anchoredLeafRegex`
+
+The compiled whole-text regex of a leaf pattern: `^(?:<pattern>)$` with useless escapes stripped, compiled with the `u` flag and then without it. `anchoredLeafRegexLiteral` prints it as the module constant, and the leaf guard emitter tests it against the empty string to decide whether the non-empty check applies, so the constant and the check read one compilation.
+
+### `packages/codegen/src/compiler/model/leaf-pattern.ts::anchoredLeafRegexLiteral`
+
+The one derivation of a text leaf's whole-text guard: the kind's `textPattern` with useless escapes stripped, wrapped as `^(?:…)$`, compiled (flag `u` first, then none) and returned as a regex literal built from the compiled regex's own `source`. It returns `undefined` for a kind with no pattern and stops codegen naming the kind when the pattern compiles under neither flag. The factory guards (`buildLeafReConsts`) and the loose coercer's leaf registry both consume it, so a bare string is routed to the kind whose guard it satisfies.
+
+### `packages/codegen/src/compiler/model/leaf-pattern.ts::stripUselessEscapes`
+
+```text
+/**
+ * Strip ESLint-flagged useless escapes that occur inside tree-sitter
+ * grammar regex patterns. These cases appear in real grammars and
+ * are safe to strip:
+ *
+ *   - `\[` inside a character class — `[` has no special meaning inside
+ *     `[...]`, so the backslash is decorative.
+ *   - `\-` at the end of a character class — a literal `-` after a prior
+ *     character set needs no escape when it's the last char in the class.
+ *   - `\^` anywhere in a class except its first character — `^` negates
+ *     only directly after `[`, so `[\^a]` keeps its escape while
+ *     `[^\^$]` becomes `[^^$]`.
+ *
+ * The stripped pattern must still compile as a RegExp. If it doesn't
+ * (some grammar regex we didn't anticipate), fall back to the original
+ * pattern so semantics stay identical. Full set-equivalence cannot be
+ * checked at codegen time without running both regexes against a corpus
+ * — the two specific transformations above are provably safe by the
+ * JavaScript regex grammar, so compile-success is the strongest static
+ * check we can offer.
+ */
+```
+
+```text
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+```
+
+#### body
+
+```text
+// Inside character class.
+```
+
+#### body
+
+```text
+// `\[` inside a class → `[`
+```
+
+#### body
+
+```text
+// `\-` at end of class (next-next is `]`) → `-`
+```
+
+#### body
+
+```text
+// Otherwise keep the escape verbatim.
+```
+
+#### body
+
+```text
+// If the stripped pattern fails to compile, the transformation broke
+// something — fall back to the original (which we know compiled;
+// otherwise this function wouldn't have been called).
+```
+
+An escaped character outside a class is copied whole, so an escaped `[` (a literal bracket in a composed token pattern) does not open a class. Inside a class it also drops the escape from a character that is literal there (`+ . * ? ( ) { } | $ /`), keeping `\\`, `\]`, `\^` and `\-` and every escape that changes meaning.

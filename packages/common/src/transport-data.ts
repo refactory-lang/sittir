@@ -58,14 +58,24 @@ function isUntouchedBelow(value: unknown): boolean {
 
 /**
  * Whether this node can cross as a coordinate: it still names its tree and
- * its span, carries no separately attached trivia, and nothing below it was
+ * its span, carries no trivia outside that span, and nothing below it was
  * rebuilt. The handle is required here and nowhere below, because it is the
  * only thing that says which tree the span indexes into.
  */
 function foldsToCoordinate(record: Record<string, unknown>): boolean {
 	if (typeof record.$nodeHandle !== 'number' || !isRecord(record.$span)) return false;
-	if (record.$_trivia != null) return false;
+	if (hasOutsideTrivia(record.$_trivia)) return false;
 	return isUntouchedBelow(record);
+}
+
+/**
+ * Whether trivia lies outside the node's span: leading or trailing entries. A
+ * read's inner entries sit inside the span, so the coordinate already covers
+ * them.
+ */
+function hasOutsideTrivia(trivia: unknown): boolean {
+	if (!isRecord(trivia)) return false;
+	return trivia.leading != null || trivia.trailing != null;
 }
 
 /** The coordinate projection of a folded node: identity and provenance, no storage. */

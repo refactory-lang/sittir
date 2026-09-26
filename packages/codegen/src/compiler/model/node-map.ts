@@ -45,7 +45,7 @@ import {
 } from '../../types/parsekind-collisions.ts';
 import { describeDeriveShape, type DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
-import { anchoredLeafRegex } from '../../emitters/shared.ts';
+import { anchoredLeafRegex } from './leaf-pattern.ts';
 
 const renderRuleWalker = new RuleWalker<RenderRule>();
 const anyRuleWalker = new RuleWalker<AnyRule>();
@@ -1754,13 +1754,12 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		if (this._slots.some(isRequired)) return [];
 		const root = this.renderRule;
 		const slotById = new Map(this._slots.flatMap((slot) => slot.sourceRuleIds.map((id) => [id, slot] as const)));
-		const candidates: InnerGap[] = [];
+		const occurrences: { readonly slot: AssembledNonterminal; readonly precedingTokens: number }[] = [];
 		let tokens = 0;
 		const walk = (rule: RenderRule, ctx: GapWalkCtx): void => {
 			const slot = rule === root || rule.id === undefined ? undefined : slotById.get(rule.id);
 			if (slot !== undefined) {
-				if (!candidates.some((gap) => gap.precedingTokens === tokens))
-					candidates.push({ key: slot.name, precedingTokens: tokens });
+				occurrences.push({ slot, precedingTokens: tokens });
 				return;
 			}
 			if (rule.type === STRING) {
@@ -1777,9 +1776,16 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		};
 		walk(root, { conditional: false });
 		if (this._slots.length === 0) return tokens >= 2 ? [{ key: 'interior', precedingTokens: 1 }] : [];
-		return tokens === 0
-			? candidates
-			: candidates.filter((gap) => gap.precedingTokens > 0 && gap.precedingTokens < tokens);
+		if (tokens === 0) {
+			const repeat = occurrences.find((occurrence) => isMultiple(occurrence.slot));
+			return repeat === undefined ? [] : [{ key: repeat.slot.name, precedingTokens: 0 }];
+		}
+		return occurrences
+			.filter(
+				(occurrence, i) => occurrences.findIndex((other) => other.precedingTokens === occurrence.precedingTokens) === i
+			)
+			.filter((occurrence) => occurrence.precedingTokens > 0 && occurrence.precedingTokens < tokens)
+			.map((occurrence) => ({ key: occurrence.slot.name, precedingTokens: occurrence.precedingTokens }));
 	}
 
 	get separator(): string | undefined {
@@ -2325,17 +2331,8 @@ export function leftmostTerminalImmediate(rule: RenderRule | undefined, ctx: Lef
 	return coreLeftmostImmediate(rule, ctx);
 }
 
-export function isBoundaryLeftImmediate(
-	members: readonly RenderRule[],
-	fromIndex: number,
-	ctx: LeftmostWalkCtx
-): boolean {
-	for (let i = fromIndex; i < members.length; i++) {
-		const member = members[i]!;
-		if (!coreLeftmostImmediate(member, { rules: ctx.rules, visiting: new Set(ctx.visiting) })) return false;
-		if (!isNullableMultiplicity(member)) return true;
-	}
-	return false;
+export function startsImmediateWhenPresent(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {
+	return coreLeftmostImmediate(rule, ctx);
 }
 
 export type SeamEdgeClass = 'word' | 'not-word' | 'varies';

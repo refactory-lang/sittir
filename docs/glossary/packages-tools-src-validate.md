@@ -1680,7 +1680,7 @@ Applies the placement rule to every extra under a root, first match wins:
 3. A named sibling precedes: trailing of it.
 4. Otherwise: inner of the parent.
 
-Anonymous tokens and other extras are never siblings for this purpose. `today` mirrors the core reader's `compute_trivia`: leading of the next named sibling, trailing only when none follows, lost when the extra has no named sibling at all. `outsideBlock` marks an own-line extra indented at least as deep as the statements of a `block` that ends its previous sibling (python only). That is where tree-sitter can place a comment outside the block its author wrote it in.
+Anonymous tokens and other extras are never siblings for this purpose. `today` is the sibling-only placement, with no same-line or inner owner: leading of the next named sibling, trailing only when none follows, lost when the extra has no named sibling at all. `outsideBlock` marks an own-line extra indented at least as deep as the statements of a `block` that ends its previous sibling (python only). That is where tree-sitter can place a comment outside the block its author wrote it in.
 
 ### `packages/tools/src/validate/trivia-placement.ts::gapModel`
 

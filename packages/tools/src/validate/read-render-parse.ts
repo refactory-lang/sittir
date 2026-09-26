@@ -348,7 +348,8 @@ export function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: Any
  * storage-less leaf kind (`isLeafKind`) keeps its identity with its own
  * bytes as `$text` (sliced from `source` when the reader captured none);
  * a storage-less compound keeps only its identity and rebuilds from its
- * empty slots, and a storage-less trivia entry becomes its text.
+ * empty slots, and a storage-less trivia entry becomes its text, as
+ * `{ $text, $sameLine, $tokensBetween }` when it shares its owner's row.
  */
 export function selfContainedRenderInput(
 	data: unknown,
@@ -367,8 +368,16 @@ export function selfContainedRenderInput(
 		if (!Array.isArray(entries)) return entries;
 		return entries.map((entry) => {
 			if (entry === null || typeof entry !== 'object' || hasStorage(entry as Record<string, unknown>)) return walk(entry);
-			return textOf(entry as Record<string, unknown>) ?? walk(entry);
+			const record = entry as Record<string, unknown>;
+			const text = textOf(record);
+			if (text === undefined) return walk(entry);
+			if (record.$sameLine !== true) return text;
+			return { $text: text, $sameLine: true, $tokensBetween: record.$tokensBetween };
 		});
+	};
+	const walkGaps = (gaps: unknown): unknown => {
+		if (gaps === null || typeof gaps !== 'object') return gaps;
+		return Object.fromEntries(Object.entries(gaps).map(([key, entries]) => [key, walkTrivia(entries)]));
 	};
 	const walk = (value: unknown): unknown => {
 		if (Array.isArray(value)) return value.map(walk);
@@ -379,7 +388,12 @@ export function selfContainedRenderInput(
 			if (key === '$nodeHandle' || key === '$childIndex') continue;
 			if (key === '$_trivia' && raw !== null && typeof raw === 'object') {
 				const sides = raw as Record<string, unknown>;
-				out[key] = { ...sides, leading: walkTrivia(sides.leading), trailing: walkTrivia(sides.trailing) };
+				out[key] = {
+					...sides,
+					leading: walkTrivia(sides.leading),
+					trailing: walkTrivia(sides.trailing),
+					inner: walkGaps(sides.inner)
+				};
 			} else {
 				out[key] = key.startsWith('_') || key === '$other' ? walk(raw) : raw;
 			}

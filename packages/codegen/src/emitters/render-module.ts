@@ -113,7 +113,7 @@ import { collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { Rule } from '../types/rule.ts';
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import type { GrammarName } from '../grammars.ts';
-
+import { triviaKinds } from '../compiler/model/trivia.ts';
 
 export interface RustRenderModuleEmit {
 	hashRs: { path: string; contents: string };
@@ -965,7 +965,8 @@ function buildTypedTemplateBody(
 				const owner = node.display.name;
 				return `options::SITE_${toScreamingSnakeCase(owner, owner)}_${toScreamingSnakeCase(name, name)}`;
 			},
-			kinds: (names) => rustKindIdSlice(names, nodeMap, kindIdByKind, struct.kind)
+			kinds: (names) => rustKindIdSlice(names, nodeMap, kindIdByKind, struct.kind),
+			innerGap: (name) => node instanceof AbstractAssembledCompound && node.innerGaps.some((gap) => gap.key === name)
 		})
 	);
 	return lines;
@@ -2558,16 +2559,9 @@ function emitTriviaKindIdArm(id: number, variant: string, structName: string): s
 }
 
 function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
-	const extrasNodes: AssembledNode[] = [];
-	const seenExtras = new Set<string>();
-	const addExtra = (kindName: string): void => {
-		if (seenExtras.has(kindName)) return;
-		seenExtras.add(kindName);
-		const node = nodeMap.nodes.get(kindName);
-		if (node instanceof AssembledSupertype) node.subtypeNames.forEach(addExtra);
-		else if (node !== undefined) extrasNodes.push(node);
-	};
-	(nodeMap.extras ?? new Set<string>()).forEach(addExtra);
+	const extrasNodes = [...triviaKinds(nodeMap)]
+		.map((kind) => nodeMap.nodes.get(kind))
+		.filter((node): node is AssembledNode => node !== undefined && !(node instanceof AssembledSupertype));
 
 	const lines: string[] = [];
 	lines.push('#[derive(Debug, Clone)]');
@@ -2633,47 +2627,7 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 	lines.push('}');
 	lines.push('');
 
-	lines.push('#[derive(Debug, Clone, Default)]');
-	lines.push('pub struct TransportTrivia {');
-	lines.push('    pub leading: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>>,');
-	lines.push('    pub trailing: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>>,');
-	lines.push('}');
-	lines.push('');
-	lines.push('#[cfg(feature = "napi-bindings")]');
-	lines.push('impl ::napi::bindgen_prelude::FromNapiValue for TransportTrivia {');
-	lines.push('    unsafe fn from_napi_value(');
-	lines.push('        env: ::napi::sys::napi_env,');
-	lines.push('        napi_val: ::napi::sys::napi_value,');
-	lines.push('    ) -> ::napi::Result<Self> {');
-	lines.push('        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;');
-	lines.push('        let leading: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>> = obj.get("leading")?;');
-	lines.push('        let trailing: Option<Vec<::sittir_core::SlotValue<TriviaTransport>>> = obj.get("trailing")?;');
-	lines.push('        Ok(TransportTrivia { leading, trailing })');
-	lines.push('    }');
-	lines.push('}');
-	lines.push('');
-	lines.push('#[cfg(feature = "napi-bindings")]');
-	lines.push('impl ::napi::bindgen_prelude::ToNapiValue for TransportTrivia {');
-	lines.push('    unsafe fn to_napi_value(');
-	lines.push('        env: ::napi::sys::napi_env,');
-	lines.push('        _val: Self,');
-	lines.push('    ) -> ::napi::Result<::napi::sys::napi_value> {');
-	lines.push('        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())');
-	lines.push('    }');
-	lines.push('}');
-	lines.push('');
-	lines.push('#[cfg(feature = "napi-bindings")]');
-	lines.push('impl ::napi::bindgen_prelude::ValidateNapiValue for TransportTrivia {}');
-	lines.push('');
-	lines.push('#[cfg(feature = "napi-bindings")]');
-	lines.push('impl ::napi::bindgen_prelude::TypeName for TransportTrivia {');
-	lines.push("    fn type_name() -> &'static str {");
-	lines.push('        "TransportTrivia"');
-	lines.push('    }');
-	lines.push('    fn value_type() -> ::napi::ValueType {');
-	lines.push('        ::napi::ValueType::Object');
-	lines.push('    }');
-	lines.push('}');
+	lines.push('pub type TransportTrivia = ::sittir_core::trivia::TransportTrivia<TriviaTransport>;');
 	lines.push('');
 
 	return lines;

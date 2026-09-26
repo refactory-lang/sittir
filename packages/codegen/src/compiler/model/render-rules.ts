@@ -4,9 +4,10 @@ import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type R
 import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
-import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isBoundaryLeftImmediate, isVisiblePunctuationLeaf, leftmostTerminalImmediate } from './node-map.ts';
+import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isVisiblePunctuationLeaf, startsImmediateWhenPresent, leftmostTerminalImmediate } from './node-map.ts';
 import { slotElementKinds } from '../../emitters/transport-common.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
+import { triviaKinds } from './trivia.ts';
 import { addressSites, resolveBindings, type PreferenceOrigin } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
@@ -82,8 +83,8 @@ function isImmediateRight(rule: RenderRule | undefined, config: RenderRulesConfi
 	return leftmostTerminalImmediate(rule, { rules: config.normalizedRules ?? {}, visiting: new Set() });
 }
 
-function isBoundaryImmediateFrom(members: readonly RenderRule[], fromIndex: number, config: RenderRulesConfig): boolean {
-	return isBoundaryLeftImmediate(members, fromIndex, { rules: config.normalizedRules ?? {}, visiting: new Set() });
+function isImmediateWhenPresent(rule: RenderRule, config: RenderRulesConfig): boolean {
+	return startsImmediateWhenPresent(rule, { rules: config.normalizedRules ?? {}, visiting: new Set() });
 }
 
 export interface SeatedChild {
@@ -696,7 +697,7 @@ function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfi
 			const leftNow = members[members.length - 1]!;
 			const leftEdge = edgeMember(leftNow, 'last');
 			const rightEdge = edgeMember(right, 'first');
-			const rightImmediate = isBoundaryImmediateFrom(r.members, i, config);
+			const rightImmediate = isImmediateWhenPresent(r.members[i]!, config);
 			const leftToken = seamNameOf(leftEdge ?? leftNow, config);
 			const rightToken = seamNameOf(rightEdge ?? right, config);
 			if (!rightImmediate && leftToken !== undefined && !(leftEdge !== undefined && isAnyWhitespaceChoice(leftEdge))) {
@@ -751,6 +752,29 @@ function isLexedKind(kind: string, nodeMap: NodeMap): boolean {
 	return node instanceof AbstractAssembledCompound && node.lexedInterior;
 }
 
+function triviaInterior(rules: Readonly<Record<string, RenderRule>>, nodeMap: NodeMap): ReadonlySet<string> {
+	const referencers = new Map<string, Set<string>>();
+	for (const [kind, rule] of Object.entries(rules)) {
+		walker.fold(rule, undefined, (_, r) => {
+			const name = bag(r).name;
+			if (bag(r).type === SYMBOL && name !== undefined && name !== kind) {
+				referencers.set(name, (referencers.get(name) ?? new Set()).add(kind));
+			}
+			return undefined;
+		});
+	}
+	const interior = new Set(triviaKinds(nodeMap));
+	for (let grew = true; grew; ) {
+		grew = false;
+		for (const [kind, from] of referencers) {
+			if (interior.has(kind) || ![...from].every((referencer) => interior.has(referencer))) continue;
+			interior.add(kind);
+			grew = true;
+		}
+	}
+	return interior;
+}
+
 function ownsKindEdges(kind: string, nodeMap: NodeMap): boolean {
 	if (!(nodeMap.nodes.get(kind) instanceof AbstractAssembledCompound) || isLexedKind(kind, nodeMap)) return false;
 	const display = displayNameOf(kind, nodeMap);
@@ -788,6 +812,7 @@ export function seamRenderRules(
 	const flankSyms = flankSymbols(config);
 	const seams: SeamArms = flankSyms === undefined ? { arms: spacingArms, symbols } : { arms: whitespaceArmsOf(config.nodeMap), symbols: flankSyms };
 	const immediateConfig: RenderRulesConfig = { ...config, normalizedRules: spaced.rules };
+	const tokenInterior = triviaInterior(spaced.rules, config.nodeMap);
 	const build = (): RenderRules => {
 		const resolver = new DefaultResolver(config.nodeMap, declared);
 		const out: Record<string, RenderRule> = {};
@@ -802,8 +827,9 @@ export function seamRenderRules(
 			}
 			const kindConfig: RenderRulesConfig = { ...immediateConfig, choiceArmNodes: choiceArmNodesOf(rule) };
 			const visit = (r: RenderRule): RenderRule => withTokenSeams(r, kind, kindConfig, resolver, seams);
-			const seamed = isLexedKind(kind, config.nodeMap) ? rule : visit(walker.map(rule, visit));
-			out[kind] = ownsKindEdges(kind, config.nodeMap) ? withKindEdges(seamed, kind, immediateConfig, resolver, seams) : seamed;
+			const seamed = isLexedKind(kind, config.nodeMap) || tokenInterior.has(kind) ? rule : visit(walker.map(rule, visit));
+			const insideTrivia = tokenInterior.has(kind) && !triviaKinds(config.nodeMap).has(kind);
+			out[kind] = ownsKindEdges(kind, config.nodeMap) && !insideTrivia ? withKindEdges(seamed, kind, immediateConfig, resolver, seams) : seamed;
 		}
 		return { rules: out };
 	};

@@ -11,7 +11,8 @@ import {
 	type AssembledNode
 } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { anchoredLeafRegex, lexedContentSlot, slotLiteralValues } from './shared.ts';
+import { lexedContentSlot, slotLiteralValues } from './shared.ts';
+import { anchoredLeafRegex } from '../compiler/model/leaf-pattern.ts';
 
 export type InteriorEntry =
 	| { readonly lit: string }

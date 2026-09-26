@@ -11849,10 +11849,6 @@ export interface OptionsHintMap {
 	foreignModItemBody: ForeignModItemBody.Hints;
 	matchArmWithComma: MatchArmWithComma.Hints;
 	matchArmBlockEnding: MatchArmBlockEnding.Hints;
-	lineCommentDocOuter: LineCommentDocOuter.Hints;
-	lineCommentDocInner: LineCommentDocInner.Hints;
-	blockCommentDocOuter: BlockCommentDocOuter.Hints;
-	blockCommentDocInner: BlockCommentDocInner.Hints;
 	tokenTreePatternParen: TokenTreePatternParen.Hints;
 	tokenTreePatternBracket: TokenTreePatternBracket.Hints;
 	tokenTreePatternBrace: TokenTreePatternBrace.Hints;
@@ -13396,12 +13392,7 @@ export namespace LineComment {
 
 export namespace BlockComment {
 	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: WhitespaceArm;
-			readonly before?: WhitespaceArm;
-			readonly slashStar?: { readonly after?: WhitespaceArm };
-			readonly starSlash?: { readonly before?: WhitespaceArm };
-		};
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 	}
 }
 
@@ -14148,30 +14139,6 @@ export namespace MatchArmBlockEnding {
 			readonly before?: WhitespaceArm;
 			readonly eqGt?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
-	}
-}
-
-export namespace LineCommentDocOuter {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm };
-	}
-}
-
-export namespace LineCommentDocInner {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm };
-	}
-}
-
-export namespace BlockCommentDocOuter {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly star?: { readonly after?: WhitespaceArm } };
-	}
-}
-
-export namespace BlockCommentDocInner {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly bang?: { readonly after?: WhitespaceArm } };
 	}
 }
 

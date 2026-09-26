@@ -1117,76 +1117,6 @@ The name an import specifier binds in the module: `Y` for `X as Y`, otherwise `X
 
 The `@sittir/types` vocabulary a generated types module may import, in the order the import line lists them. The line names all of them and `pruneUnusedImports` keeps only those the module's body uses, so there is no per-name usage flag to keep in step with the list.
 
-### `packages/codegen/src/emitters/shared.ts::stripUselessEscapes`
-
-```text
-/**
- * Strip ESLint-flagged useless escapes that occur inside tree-sitter
- * grammar regex patterns. These cases appear in real grammars and
- * are safe to strip:
- *
- *   - `\[` inside a character class — `[` has no special meaning inside
- *     `[...]`, so the backslash is decorative.
- *   - `\-` at the end of a character class — a literal `-` after a prior
- *     character set needs no escape when it's the last char in the class.
- *   - `\^` anywhere in a class except its first character — `^` negates
- *     only directly after `[`, so `[\^a]` keeps its escape while
- *     `[^\^$]` becomes `[^^$]`.
- *
- * The stripped pattern must still compile as a RegExp. If it doesn't
- * (some grammar regex we didn't anticipate), fall back to the original
- * pattern so semantics stay identical. Full set-equivalence cannot be
- * checked at codegen time without running both regexes against a corpus
- * — the two specific transformations above are provably safe by the
- * JavaScript regex grammar, so compile-success is the strongest static
- * check we can offer.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// Inside character class.
-```
-
-#### body
-
-```text
-// `\[` inside a class → `[`
-```
-
-#### body
-
-```text
-// `\-` at end of class (next-next is `]`) → `-`
-```
-
-#### body
-
-```text
-// Otherwise keep the escape verbatim.
-```
-
-#### body
-
-```text
-// If the stripped pattern fails to compile, the transformation broke
-// something — fall back to the original (which we know compiled;
-// otherwise this function wouldn't have been called).
-```
-
-An escaped character outside a class is copied whole, so an escaped `[` (a literal bracket in a composed token pattern) does not open a class. Inside a class it also drops the escape from a character that is literal there (`+ . * ? ( ) { } | $ /`), keeping `\\`, `\]`, `\^` and `\-` and every escape that changes meaning.
-
-### `packages/codegen/src/emitters/shared.ts::anchoredLeafRegexLiteral`
-
-The one derivation of a text leaf's whole-text guard: the kind's `textPattern` with useless escapes stripped, wrapped as `^(?:…)$`, compiled (flag `u` first, then none) and returned as a regex literal built from the compiled regex's own `source`. It returns `undefined` for a kind with no pattern and stops codegen naming the kind when the pattern compiles under neither flag. The factory guards (`buildLeafReConsts`) and the loose coercer's leaf registry both consume it, so a bare string is routed to the kind whose guard it satisfies.
-
 ### `packages/codegen/src/emitters/from.ts::buildSupertypeByKey`
 
 ```text
@@ -3021,6 +2951,21 @@ the slot name are dropped, since the reader's default is that key.
 One `wire_slot` arm: the parent kind id, either the field or the child kind
 name, and the slot name the reader stores the child under.
 
+### `packages/codegen/src/emitters/kind-id-rust.ts::innerGapRows`
+
+The `inner_gap_key` rows: every compound's `innerGaps`, under the compound's
+own kind id, which is the grammar symbol the reader stamps and passes in. The
+reader asks for a key only when a node has no named non-extra child, so the
+rows cover the gaps an extra can reach inside an otherwise ownerless node: an
+empty block (rust `block`, after `{`, keys to `statements`) or an empty root
+(token-less, keyed to its first repeat slot). A gap with no row drops the
+extra from the read.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::InnerGapRow`
+
+One `inner_gap_key` arm: the kind id, the count of anonymous tokens before the
+extra, and the slot name the gap is keyed by.
+
 ### `packages/codegen/src/emitters/shared.ts::wireRoutesOf`
 
 The parser keys that land in an unnamed slot: its field labels
@@ -4186,25 +4131,17 @@ that arm from the option's resolved kind id.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTriviaTransportSupport`
 
-```text
-/**
- * `TriviaTransport` — one variant per grammar-`extras` kind (comments, line
- * continuations, …), sourced from `nodeMap.extras` (stamped from
- * `RawGrammar.extras`, DRY: never a hand-maintained kind list here). It admits
- * no verbatim text: a read-side extras node arrives as a coordinate the slot
- * carrier slices, never as a bare string.
- *
- * Typed variants are needed because a factory-constructed trivia node (e.g.
- * `F.buildLineComment(...)`) carries the SAME wrapped wire shape as any other
- * node (`_content`, `$type`, …) and must render through its own template —
- * a text-only trivia carrier would silently drop that structure.
- *
- * `TransportTrivia` (leading/trailing `Vec<TriviaTransport>`) replaces the
- * old grammar-agnostic `sittir_core::types::TransportTrivia`, which could
- * only carry pre-rendered text and silently dropped factory-constructed
- * trivia at render time.
- */
-```
+`TriviaTransport`: one variant per concrete trivia kind (`triviaKinds`, the
+grammar's extras through their supertypes), plus `Verbatim` for an entry
+that arrives as bare text (a detached fixture's comment, or text a user
+attached). Typed variants are needed because a factory-constructed comment
+carries the same wrapped wire shape as any other node and renders through
+its own template.
+
+`TransportTrivia` is an alias for `sittir_core::trivia::TransportTrivia<TriviaTransport>`.
+The carrier's shape (leading, trailing and inner entries, each with its
+same-line facts) and where each entry renders are the core module's, the
+same for every grammar.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderVerbatimTransport`
 
@@ -5578,6 +5515,20 @@ A `dedent`'s own `w.seam(...)` call is conditioned on `w.dedent()`'s return:
 `w.dedent();` otherwise. `dedent()` returns whether the indent it closes
 had text written — false cancels an empty body's payload along with its
 own, so `{}` stays bare rather than gaining a stray blank line.
+
+Inner trivia prints at its gap: before a `slot` the printer's `innerGap`
+names, `trivia::render_inner(&node.transport_trivia_data, "<slot>", w)`. A
+slot under a presence gate gets it before the `if` instead, since a node
+holding inner trivia has no named child, so the gated slot is empty and its
+arm never runs. `seatedGaps` carries the gaps already printed into nested
+arms, so a gap prints once.
+
+### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter.innerGap`
+
+Whether a slot name is one of the node's inner-trivia gaps
+(`AbstractAssembledCompound.innerGaps`), the keys the reader's
+`inner_gap_key` files ownerless extras under. `render-module.ts` supplies it
+from the node the body renders.
 
 ### `packages/codegen/src/emitters/render-body.ts::escapeBraces`
 
@@ -16331,10 +16282,6 @@ Also emits `admitAliasContent`, the runtime half of `aliasContentAdmission`: it 
 #### rejectKeywordText
 
 `rejectKeywordText(value, where, word, keywords)` throws `<where>: '<text>' is this slot's keyword` when the value is a word-kind node (`$type === word`) whose `$text` is one of `keywords`. Arrays are checked element-wise and every other value, including another leaf kind with the same text, passes through unchanged. The loose surface never reaches it with a keyword spelling, because its keyword extraction stores the arm's kind id first.
-
-### `packages/codegen/src/emitters/shared.ts::anchoredLeafRegex`
-
-The compiled whole-text regex of a leaf pattern: `^(?:<pattern>)$` with useless escapes stripped, compiled with the `u` flag and then without it. `anchoredLeafRegexLiteral` prints it as the module constant, and the leaf guard emitter tests it against the empty string to decide whether the non-empty check applies, so the constant and the check read one compilation.
 
 ### `packages/codegen/src/emitters/shared.ts::transparentContentKindNames`
 

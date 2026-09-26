@@ -12387,11 +12387,7 @@ export namespace TemplateSubstitution {
 
 export namespace Regex {
 	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: WhitespaceArm;
-			readonly before?: WhitespaceArm;
-			readonly slash?: { readonly after?: WhitespaceArm };
-		};
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 	}
 }
 

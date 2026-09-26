@@ -138,6 +138,16 @@ pub trait RenderSink {
     /// caller never asks it.
     fn dedent(&mut self, seam: &str);
     fn ends_line(&self) -> bool;
+    /// Render trailing trivia that shares its owner's row, held until the
+    /// anonymous tokens after the owner are written: the sink seats it before
+    /// the next owner, coordinate or line break, or at the end of the render.
+    fn defer_trailing(
+        &mut self,
+        render: &mut dyn FnMut(&mut dyn RenderSink) -> RenderResult,
+    ) -> RenderResult;
+    /// Write any held trailing trivia now. An owner calls this before it
+    /// renders, and before its own-line trailing entries.
+    fn seat_trailing(&mut self) -> RenderResult;
 }
 
 pub trait Render {

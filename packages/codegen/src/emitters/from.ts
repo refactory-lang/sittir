@@ -21,8 +21,8 @@ import type {
 
 type BranchLikeForFrom = AuthoredCompound;
 type FormChildForFrom = AuthoredCompound;
+import { anchoredLeafRegex } from '../compiler/model/leaf-pattern.ts';
 import {
-	anchoredLeafRegex,
 	classifyFactoryShape,
 	expandAndDedupeContentTypes,
 	isRequired,
