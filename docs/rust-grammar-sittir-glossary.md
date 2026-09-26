@@ -975,10 +975,11 @@ arms in place because the choice is a self-referential fold (see
 			// entries let sittir's render/factory/from pipelines know the literal
 			// text without depending on tree-sitter to expose it.
 			//
-			// Line markers (_outer_line / _inner_line) DO have IMMEDIATE_TOKEN bodies
-			// in grammar.json — those are stripped by wire so tree-sitter never sees
-			// duplicate rule bodies. Block markers (_outer_block / _inner_block) are
-			// pure externals with no grammar body.
+			// Line markers (_outer_line / _inner_line) are upstream rules with
+			// IMMEDIATE_TOKEN bodies, so sittir renders them from those bodies and
+			// they have no renderAs entry (renderAs keys are externals only). Block
+			// markers (_outer_block / _inner_block) are pure externals with no
+			// grammar body.
 			//
 			// Rust doc-comment syntax:
 			//   ///outer line doc      — outer line marker is '/' (lexer consumes '//' first)
