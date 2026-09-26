@@ -5210,10 +5210,6 @@ The config keys of a node's numeric text slots, the keys `WidenNumeric` widens.
 
 The shape of a pattern leaf's own text pattern.
 
-### `packages/codegen/src/emitters/factories.ts::registeredSlots`
-
-The slots of a node that an `options:` declaration registered as spelling sites.
-
 ### `packages/codegen/src/emitters/factories.ts::omitRegistered`
 
 Wraps a configuration type so it omits the registered slots' keys.
@@ -5550,6 +5546,10 @@ slot, the escaped suffix; `"{}"` when the slot has no flanks.
  * itself. Returns `null` when there's no field (not a container shape).
  */
 ```
+
+### `packages/codegen/src/emitters/shared.ts::registeredSlots`
+
+The slots of a node that take their value from the trailing options argument instead of the config: the node's slots minus its `configSlots`. It inherits the model's inert-registration rule, so a compound whose every slot is registered keeps them all as config slots and has no registered slots here. Every consumer that asks whether a slot is registered (the factory surface, `from()`, the test emitter, `classifyFactoryShape`'s spread check and the exported `FactorySlotMeta.registered`) reads it from this one function, never from the raw `registeredOption` stamp. A node with no `configSlots` falls back to the stamp.
 
 ### `packages/codegen/src/emitters/shared.ts::classifyFactoryShape`
 

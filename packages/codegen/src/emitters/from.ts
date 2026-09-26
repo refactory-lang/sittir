@@ -52,7 +52,8 @@ import {
 	isAffixedLeaf,
 	transparentWrapperContentSlot,
 	referencedKinds,
-	classifyFactoryEmission
+	classifyFactoryEmission,
+	registeredSlots
 } from './shared.ts';
 import {
 	fieldElementType,
@@ -60,7 +61,6 @@ import {
 	kindEnumTextMapExpr,
 	delimiterMembersFor,
 	listHasOptions,
-	registeredSlots,
 	separatedListSurface,
 	spellingTypeOf,
 	listOptionKeys

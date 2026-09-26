@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "b288469db6fdfed5c7172d7864bbac1ef35257bb027f8ce298db93a71f8bf090",
+  "source_hash": "5d23389ee2670f71bad994cbe48f65a708644a75a069225dda79424908ee5c0d",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "1fd958abbfc1ec8d7134f1017d428e6feb3eb368763c9330ed7f467b0e11a247",
     "packages/python/.sittir/grammar.js": "b215a908408c973f20850f27168a7a959bcf1bdb1047669f43b2d0cf78d555a0",
