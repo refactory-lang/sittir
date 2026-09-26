@@ -49,8 +49,6 @@ export const ir: {
 	readonly namedNodeGroup: typeof F.namedNodeGroup;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly immediateIdentifier: typeof F.buildImmediateIdentifier;
-	readonly arm: typeof F.groupExpressionArm;
-	readonly field: typeof F.fieldDefinition;
 	readonly nodeIdentifier: typeof nodeIdentifier;
 	readonly definition: typeof definition;
 	readonly groupExpression: typeof groupExpression;
@@ -82,10 +80,6 @@ export const ir: {
 	// Leaf node factories
 	identifier: F.buildIdentifier,
 	immediateIdentifier: F.buildImmediateIdentifier,
-
-	// Supertype-stripped short aliases
-	arm: F.groupExpressionArm,
-	field: F.fieldDefinition,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	nodeIdentifier,

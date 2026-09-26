@@ -12615,6 +12615,8 @@ The placeholder seats the optional single-valued slots of the top-level stub as 
  */
 ```
 
+The flat namespace holds each builder once, under its own `irKey`; a supertype-stripped name exists only as a member of its group namespace (`ir.expression.binary`, never a flat `ir.binary`).
+
 ### `packages/codegen/src/emitters/ir.ts::isFlatLeafOrKeyword`
 
 ```text
