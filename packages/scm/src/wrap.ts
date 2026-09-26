@@ -15,7 +15,6 @@ import type { ParsedRoot } from '@sittir/common/engine';
 // instead of re-declaring locally. Single source of truth.
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { TSKindId, KIND_NAMES } from './types.js';
-import { Delimiter } from './types.js';
 import type * as T from './types.js';
 import { withMethods, methodsEngine } from './utils.js';
 

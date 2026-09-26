@@ -14,7 +14,6 @@ import type {
 	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
-	BooleanKeyword as BaseBooleanKeyword,
 	KindEnum
 } from '@sittir/types';
 import type * as T from './types.js';

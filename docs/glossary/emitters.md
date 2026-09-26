@@ -1118,18 +1118,33 @@ tested against a slot value.
 (`declaredSeparatorDefault`), so a built node always carries its token,
 as it always carries its delimiter.
 
+### `packages/codegen/src/emitters/shared.ts::pruneUnusedImports`
+
+The one mechanism for "import only what the body uses" in every generated TypeScript module. An emitter writes its preamble naming every candidate import, then passes its finished lines and the candidate local names here. The body is every line that is not an `import`; a named import specifier (`X`, or `X as Y` tested by its local name `Y`) whose name has no `\b` use in the body is removed, and an import line left with no specifiers is dropped whole. Keying on the imported name, not on the import's path or line text, keeps it correct wherever the import sits: the `Delimiter` import in the raw factories, the coerce module and wrap; the `@sittir/types` names in the factories, the coerce module and the types module. A grammar that never uses a name (scm and regex have no separated lists and no keyword-presence slots) gets no import of it, so its generated package lints clean.
+
+### `packages/codegen/src/emitters/shared.ts::importLocalName`
+
+The name an import specifier binds in the module: `Y` for `X as Y`, otherwise `X`.
+
+### `packages/codegen/src/emitters/types.ts::VOCABULARY_IMPORTS`
+
+The `@sittir/types` vocabulary a generated types module may import, in the order the import line lists them. The line names all of them and `pruneUnusedImports` keeps only those the module's body uses, so there is no per-name usage flag to keep in step with the list.
+
 ### `packages/codegen/src/emitters/shared.ts::stripUselessEscapes`
 
 ```text
 /**
  * Strip ESLint-flagged useless escapes that occur inside tree-sitter
- * grammar regex patterns. Only two cases appear in real grammars and
+ * grammar regex patterns. These cases appear in real grammars and
  * are safe to strip:
  *
  *   - `\[` inside a character class — `[` has no special meaning inside
  *     `[...]`, so the backslash is decorative.
  *   - `\-` at the end of a character class — a literal `-` after a prior
  *     character set needs no escape when it's the last char in the class.
+ *   - `\^` anywhere in a class except its first character — `^` negates
+ *     only directly after `[`, so `[\^a]` keeps its escape while
+ *     `[^\^$]` becomes `[^^$]`.
  *
  * The stripped pattern must still compile as a RegExp. If it doesn't
  * (some grammar regex we didn't anticipate), fall back to the original
@@ -12978,7 +12993,8 @@ leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
 /** The `@sittir/types` names the generated from-module may reference.
  *  `AnyNodeData` is unconditional (every leaf-registry entry names it); the
  *  rest depend on per-kind emission decisions made long after the preamble
- *  is written, so `finalize` prunes whichever the body never mentions. */
+ *  is written, so the preamble names them all and `pruneUnusedImports`
+ *  drops whichever the body never mentions. */
 ```
 
 ```text

@@ -37,7 +37,8 @@ import {
 	fieldTypeComponents,
 	collectConcreteStorageKeys,
 	expandToConcreteParseKinds,
-	slotSeparatorTexts
+	slotSeparatorTexts,
+	pruneUnusedImports
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType, declaredSeparatorDefault } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
@@ -1819,6 +1820,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('}');
 		lines.push('');
 
-		return lines.join('\n');
+		return pruneUnusedImports(lines, ['Delimiter']).join('\n');
 	}
 }

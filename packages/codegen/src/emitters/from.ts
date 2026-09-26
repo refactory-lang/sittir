@@ -53,7 +53,8 @@ import {
 	transparentWrapperContentSlot,
 	referencedKinds,
 	classifyFactoryEmission,
-	registeredSlots
+	registeredSlots,
+	pruneUnusedImports
 } from './shared.ts';
 import {
 	fieldElementType,
@@ -1789,16 +1790,8 @@ export class FromEmitter implements CodegenEmitter<string> {
 					];
 				}
 			}
-			if (!/\bDelimiter\./.test(body)) {
-				if (l === `import { Delimiter } from './types.js';`) return [];
-				l = l.replace(`, Delimiter } from './types.js';`, ` } from './types.js';`);
-			}
-			if (l.endsWith(`} from '@sittir/types';`)) {
-				const used = TYPES_IMPORT_OPTIONAL.filter((name) => new RegExp(`\\b${name}\\b`).test(body));
-				return [`import type { ${[TYPES_IMPORT_ALWAYS, ...used].join(', ')} } from '@sittir/types';`];
-			}
 			return [l];
 		});
-		return pruned.join('\n');
+		return pruneUnusedImports(pruned, ['Delimiter', ...TYPES_IMPORT_OPTIONAL]).join('\n');
 	}
 }

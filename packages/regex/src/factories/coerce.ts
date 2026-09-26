@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import type * as T from '../types.js';
-import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
+import { TSKindId, KIND_NAMES } from '../types.js';
 import type { AnyNodeData, LooseValue } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';
 
@@ -72,7 +72,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	end_assertion: { values: ['$'], factory: () => F.buildEndAssertion() },
 	boundary_assertion: { values: ['\\b'], factory: () => F.buildBoundaryAssertion() },
 	non_boundary_assertion: { values: ['\\B'], factory: () => F.buildNonBoundaryAssertion() },
-	pattern_character: { pattern: /^(?:(?:[^\^$\\.*+?()[\]|\r?\n]))$/u, factory: F.buildPatternCharacter },
+	pattern_character: { pattern: /^(?:(?:[^^$\\.*+?()[\]|\r?\n]))$/u, factory: F.buildPatternCharacter },
 	posix_class_name: { pattern: /^(?:(?:[a-zA-Z]+))$/u, factory: F.buildPosixClassName },
 	class_character: { pattern: /^(?:(?:[^\\\]-]))$/u, factory: F.buildClassCharacter },
 	flags: { pattern: /^(?:(?:[a-zA-Z]+))$/u, factory: F.buildFlags },
