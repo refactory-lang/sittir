@@ -2,7 +2,8 @@
 
 **Status:** approved design, 2026-09-22; amended 2026-09-26 (render bodies stay
 on `renderAs:`, all five grammars, measured ceilings, upstream taken from the
-base `wire()` receives).
+base `wire()` receives); amended again 2026-09-26 (diagnostics are checks
+over the evaluated rule tree and gate link, §4).
 
 **Goal:** the compiler refuses every grammar shape it does not model, at the
 site, naming the shape and the patch form that resolves it; and every
@@ -94,14 +95,14 @@ blocking.
 
 ### 1.3 A replacement must be provoked
 
-For each `reauthored` rule, the compiler evaluates the **upstream** body of
-the same name through the same pipeline: the base `wire(config, base)`
+For each `reauthored` rule, the compiler checks the **upstream** body of
+the same name with the same rule checks (§4): the base `wire(config, base)`
 receives (the grammar's `enrichedBase`, the same object it composes) is
-compiled a second time with no wire config. The upstream is never located by
+evaluated and checked with no wire config. The upstream is never located by
 package path; each grammar's own `base` import is the one source. Symbol
-terminality in this compile, as everywhere in diagnostics, comes from the
-catalog-based `SymbolSource`. The upstream compile runs only when the grammar
-has at least one `reauthored` rule or resolving patch. If no blocking
+facts in these checks, as everywhere in diagnostics, come from the
+predicted `SymbolSource` (§4.3). No stage but the final one is ever linked,
+normalized or assembled. If no blocking
 diagnostic fires on the upstream shape, the replacement is unjustified: `rule-reauthored-without-cause`,
 blocking, naming the rule and its declared cause. If a blocking diagnostic
 does fire, its code is recorded on the rule as the claim, and the diagnostic
@@ -115,8 +116,7 @@ in `expectTestFailures`. The provocation table records only codes the
 upstream compiles are observed to report. A cause whose provoking diagnostic
 is not among those fired is a mismatch and is reported as
 `rule-cause-mismatch`; a `reauthored` declaration on a name upstream does not
-define is the same mismatch. An upstream compile that throws is one
-`upstream-compile-failed` warning and no judgements.
+define is the same mismatch.
 
 ### 1.4 Ratchet
 
@@ -175,7 +175,116 @@ code: an owner kind floored for one code still blocks on another.
 `multi-slot-nested-seq` has no instance in any grammar and has an empty
 floor.
 
-## 4. Acceptance
+## 4. Where diagnostics run
+
+### 4.1 Checks over the evaluated rules; link is gated
+
+A grammar diagnostic is a check over the **evaluated rule tree**. No check
+reads link, normalize or assemble output, and no check needs the parser's
+generated id tables. A compile runs in this order:
+
+1. evaluate each stage: raw (the upstream grammar as written), enriched
+   (after enrich, before wire), final (after wire);
+2. run the rule checks on each stage and derive the diagnostic records (§5);
+3. **gate:** if any final-stage record with a blocking code
+   (`canProceed: false`) is unresolved and not covered by `expectDiagnostics`,
+   the compile stops. Link does not run.
+
+Link, normalize and assemble only ever see a grammar that passed the gate. A
+shape they cannot model has already been reported, so they never throw on a
+grammar shape; where one re-meets such a shape, it asserts the gate's
+verdict. A non-blocking code (`union-slot-routed`) is recorded and never
+gated: it reports supported routing, and the gate's target of zero applies to
+blocking codes. `expectDiagnostics` floors stay the only exception to the
+gate, per code and per owner, and only shrink.
+
+### 4.2 Which checks are rule checks
+
+| family | codes | fact the check reads |
+| --- | --- | --- |
+| evaluate events | `body-pattern-zero-match`, `desugar-divergence-*` | evaluate's own events |
+| causes and claims | `rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`, `rule-reauthored-without-cause`, `patch-without-cause` | wire declarations, patch sites, the upstream stage's records |
+| alias sites | `display-union-mixed`, `display-union-unknown-member`, `content-alias-noninjective`, `alias-distributed`, `parsekind-noninjective` | ALIAS sites in the rules (display target versus source symbol) |
+| slot shapes | `unclassifiable-shape`, `union-slot-mixed-row`, `union-slot-routed`, `union-slot-nondegenerate-arm`, `multi-slot-nested-seq`, `content-collision`, `storagename-collision`, `union-slot-content-collision` | the splice view (§4.3): fields, repeat multiplicity and separators, choice-arm partitions, rule classification |
+| literal sets | `single-literal-choice` (new) | a choice whose literal arms reduce to one value, which assemble today rejects by throwing (typescript `meta_property` upstream) |
+| inline list | `inline-array-visible-name` | the `inline:` list and predicted visibility |
+
+Detection moves to the rule checks, and classification stays in one place:
+the member-shape classifier and the storage-name derivation are single
+functions over rule nodes, called by the checks over the splice view and by
+collect-slots during assemble. No slot fact is derived twice.
+
+### 4.3 The splice view and predicted symbol facts
+
+Slot-shape checks must see a hidden kind's body where normalize will splice
+it. The splice view walks the evaluated rules through every SYMBOL whose
+reference inlines (`inlinesAtReference`), with symbol facts from the
+predicted `SymbolSource`: hiddenness, supertype, terminality and visibility
+read from the rules, externals, `inline:` and `supertypes:`, never from
+parser.c. Normalize's splicing uses the same predicate, so the view and the
+normalized tree agree by construction.
+
+Renames that link applies from the parser's tables (a hidden rule that the
+parser always presents under an alias name) are predicted from the rules'
+alias sites the same way, and link asserts that its parser-derived renames
+equal the prediction. A disagreement is a predictor bug, fixed in the
+predictor; it is never absorbed by moving a floor.
+
+### 4.4 What is not a grammar diagnostic
+
+- **Kind-id ratchet** (`kindid-*`): these compare sittir's kinds with the
+  parser's ids, so they are answerable only after tree-sitter generates the
+  parser. They stay the post-generate phantom-kind ratchet: ceilings that
+  only shrink, outside the gate.
+- **Compiler invariants**: `alias-target-unminted`, `fixpoint-cap-reached`,
+  `dangling-internal-ref`, `factory-inline-unnestable`,
+  `union-slot-unaddressable`, and the derive-shape postconditions
+  (`seq-with-nested-seq`, `choice-with-multiple-arm-shapes`,
+  `seq-member-collision`, `polymorph-classification-gap`, `rule-unexpected`).
+  Each is an assertion in the phase that owns it and is unreachable once the
+  gate passes. An invariant that fires is a missing rule check: its
+  grammar-level cause gets a check in §4.2, and the invariant stays an
+  assertion.
+- **Naming events**: `typename-collision` reports an automatic rename. It is
+  a codegen naming event, recorded with codegen output, not a diagnostic.
+- **Emit-level reports** (`seam-word-hazard`, `unnamed-choice-slot`) are out
+  of scope for this gate.
+
+## 5. Diagnostic records
+
+Every stage's rule-check output folds into one record per key:
+
+```ts
+interface DiagnosticRecord {
+  code: string;
+  ruleId: RuleId;              // the owner kind's root rule id
+  ownerKind: string;
+  slotName?: string;
+  ruleProvenance?: 'upstream' | 'enrich' | 'wire';
+  resolved: boolean;
+  resolvedBy?: { stage: 'enrich' | 'wire'; by: readonly ResolvedBy[] };
+}
+type ResolvedBy = { rule: string } | { patch: { ownerKind: string; path: string; form: string } };
+```
+
+- The key is `(code, ruleId, slotName?)`. Diagnostics are owner-level, and
+  rule ids below the root are not stable across stages (enrich's field wraps
+  and hoists change paths), so the key uses the owner's root id. All stages
+  use evaluate-time kind names, so no rename canonicalization is needed.
+- `ruleProvenance` is the first stage the key appears in; absent when that
+  stage produced no records.
+- `resolved` is operational: the key is absent from the final stage's
+  exhaustive check.
+- `resolvedBy.by` lists the `rules:` entries and patch sites that resolved
+  the key. A patch site claims the records owned by its owner kind and by
+  every group lift its path passes through; the lift writers record that
+  evidence, never a name match. An enrich resolution has an empty `by`:
+  nothing names the enrich pass that removed a diagnostic.
+- Patch-site labels (`authoring` / `resolving`) derive from the records: a
+  site is resolving iff it claims a key present in the enriched stage and
+  resolved by wire.
+
+## 6. Acceptance
 
 - Every `rules:` entry in the five grammar files is `reauthored` or
   `vocabulary`; no bare body remains. Every `renderAs:` key is an upstream
@@ -192,11 +301,19 @@ floor.
   floor-listed instances, and an unlisted instance blocks.
 - Ratchet: hand-written rule counts at or below 12/14/15/1/1; the check runs
   with the phantom-kind ratchet.
+- No diagnostic reads link, normalize or assemble output. A grammar with an
+  unfloored blocking record stops before link; a unit fixture proves it.
+- Every stage, including typescript's raw stage, produces records; no stage
+  compile exists to fail.
+- Link's parser-derived renames equal the predicted renames in all five
+  grammars.
+- The compiler invariants of §4.4 are assertions and fire on no grammar; the
+  final-stage floors are unchanged or smaller.
 - Native gate unchanged: read-render-parse, factory-render-parse and
   ir-render-parse at baseline in every grammar; the declaration migration is
   byte-identical on generated output.
 
-## 5. Out of scope
+## 7. Out of scope
 
 - Fixing any of the shapes the census surfaces; each is its own work item.
 - The `expectTestFailures` list: it stays as the corpus-divergence record and
