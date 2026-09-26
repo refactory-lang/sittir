@@ -140,465 +140,6 @@ function normalizeEnumMembers(members) {
   return { type: CHOICE, members };
 }
 
-// packages/codegen/src/dsl/transform/transform-path.ts
-function dsl() {
-  return globalThis;
-}
-function nativeRequired(name) {
-  const fn = dsl()[name];
-  if (typeof fn !== "function") {
-    throw new Error(
-      `transform: no global ${String(name)}() found \u2014 must be called inside a runtime that injects ${String(name)}() (sittir evaluate.ts or tree-sitter CLI)`
-    );
-  }
-  return fn;
-}
-var ApplyPathSkip = class extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "ApplyPathSkip";
-  }
-};
-function splitSegments(pathStr) {
-  const parts = [];
-  let current = "";
-  let inLiteral = false;
-  for (const c of pathStr) {
-    if (c === '"') {
-      inLiteral = !inLiteral;
-      current += c;
-    } else if (c === "/" && !inLiteral) {
-      parts.push(current);
-      current = "";
-    } else {
-      current += c;
-    }
-  }
-  if (inLiteral) throw new Error(`parsePath: unterminated literal in path '${pathStr}'`);
-  parts.push(current);
-  return parts;
-}
-function parsePath(pathStr) {
-  if (pathStr === ".") return [];
-  if (typeof pathStr !== "string" || pathStr.length === 0) {
-    throw new Error(`parsePath: path must be a non-empty string, got ${JSON.stringify(pathStr)}`);
-  }
-  if (pathStr.startsWith("/") || pathStr.endsWith("/")) {
-    throw new Error(`parsePath: leading/trailing slash not allowed in path '${pathStr}'`);
-  }
-  const parts = splitSegments(pathStr);
-  const segments = [];
-  for (const part of parts) {
-    if (part.length >= 2 && part.startsWith('"') && part.endsWith('"')) {
-      segments.push({ kind: "literal", text: part.slice(1, -1) });
-    } else if (part === "_") {
-      segments.push({ kind: "wildcard" });
-    } else if (/^-?\d+$/.test(part)) {
-      segments.push({ kind: "index", value: Number(part) });
-    } else if (/^\([A-Za-z_][A-Za-z0-9_]*\)$/.test(part)) {
-      segments.push({ kind: "kind-match", name: part.slice(1, -1) });
-    } else if (/^[A-Za-z_][A-Za-z0-9_]*:$/.test(part)) {
-      segments.push({ kind: "fieldName", name: part.slice(0, -1) });
-    } else if (part === "*") {
-      throw new Error(`parsePath: path segment '*' is no longer valid \u2014 use '_' for wildcard`);
-    } else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
-      throw new Error(
-        `parsePath: bare kind name '${part}' is no longer valid as a path segment \u2014 use '(${part})' instead`
-      );
-    } else {
-      throw new Error(
-        `parsePath: invalid segment '${part}' in path '${pathStr}' \u2014 must be a numeric index, '_' (wildcard), '(name)' (kind-match), or 'name:' (field traversal)`
-      );
-    }
-  }
-  return segments;
-}
-var membersOf = (r) => r.members;
-var contentOf = (r) => r.content;
-function applyPath(rule2, segments, patch, precStack) {
-  if (isPrecWrapper(rule2)) {
-    return descendThroughPrecWrapper(rule2, segments, patch, precStack);
-  }
-  if (segments.length === 0) {
-    return typeof patch === "function" ? patch(rule2, precStack) : patch;
-  }
-  if (isEnrichGroupLiftSymbol(rule2)) {
-    return descendThroughGroupLiftSymbol(rule2, segments, patch, precStack);
-  }
-  if (isEnrichContentAlias(rule2)) {
-    return descendThroughEnrichContentAlias(rule2, segments, patch, precStack);
-  }
-  const [head, ...rest] = segments;
-  const t = rule2.type;
-  switch (head.kind) {
-    case "kind-match":
-      return dispatchKindMatch(rule2, head.name, rest, patch, precStack);
-    case "fieldName":
-      return descendThroughNamedField(rule2, head.name, rest, patch, precStack);
-    case "index":
-    case "literal":
-    case "wildcard": {
-      if (isContainerType(t)) {
-        return applyToMembers(rule2, head, rest, patch, precStack);
-      }
-      if (isWrapperType(t)) {
-        return descendThroughSingleWrapper(rule2, head, rest, patch, precStack);
-      }
-      if (t === "ALIAS") {
-        return descendThroughAlias(rule2, head, rest, patch, precStack);
-      }
-      throw new ApplyPathSkip(
-        `applyPath: cannot descend into '${rule2.type}' rule (path has ${segments.length} segments left)`
-      );
-    }
-    default: {
-      const _exhaustive = head;
-      throw new Error(`applyPath: unknown segment kind '${_exhaustive.kind}'`);
-    }
-  }
-}
-function descendThroughPrecWrapper(rule2, segments, patch, precStack) {
-  const newStack = precStack ? [...precStack, rule2] : [rule2];
-  const newContent = applyPath(contentOf(rule2), segments, patch, newStack);
-  return reconstructPrec(rule2, newContent);
-}
-function isEnrichGroupLiftSymbol(rule2) {
-  const t = rule2.type;
-  if (t !== "SYMBOL") return false;
-  const meta = readRuleMetadata("metadata" in rule2 ? rule2.metadata : void 0);
-  return meta?.symbolSource === "group-lift";
-}
-var groupLiftRuleMap;
-function setGroupLiftRuleMap(map) {
-  groupLiftRuleMap = map;
-}
-function getGroupLiftRuleBody(name) {
-  return groupLiftRuleMap?.get(name);
-}
-function setGroupLiftRuleBody(name, body) {
-  groupLiftRuleMap?.set(name, body);
-}
-function descendThroughGroupLiftSymbol(rule2, segments, patch, precStack) {
-  const name = rule2.name;
-  if (!name) {
-    throw new ApplyPathSkip("applyPath: enrich group-lift symbol has no name to resolve its body");
-  }
-  const body = groupLiftRuleMap?.get(name);
-  if (body === void 0) {
-    throw new ApplyPathSkip(
-      `applyPath: enrich group-lift symbol '${name}' \u2014 referenced rule not found in the group-lift rule map (enrich resolver not registered, or the name was pruned)`
-    );
-  }
-  const newBody = applyPath(body, segments, patch, precStack);
-  groupLiftRuleMap?.set(name, newBody);
-  return rule2;
-}
-function isEnrichContentAlias(rule2) {
-  const t = rule2.type;
-  if (t !== "ALIAS") return false;
-  return readRuleMetadata("metadata" in rule2 ? rule2.metadata : void 0)?.aliasSource === "visible-group";
-}
-function descendThroughEnrichContentAlias(rule2, segments, patch, precStack) {
-  const body = rule2.content;
-  if (body === void 0) {
-    throw new ApplyPathSkip("applyPath: enrich content-alias has no content to travel through");
-  }
-  const newBody = applyPath(body, segments, patch, precStack);
-  return { ...rule2, content: newBody };
-}
-function descendThroughSingleWrapper(rule2, head, rest, patch, precStack) {
-  switch (head.kind) {
-    case "wildcard": {
-      const newContent = applyPath(contentOf(rule2), rest, patch, precStack);
-      return reconstructWrapper(rule2, newContent);
-    }
-    case "index": {
-      if (head.value === 0 || head.value === -1) {
-        const newContent = applyPath(contentOf(rule2), rest, patch, precStack);
-        return reconstructWrapper(rule2, newContent);
-      }
-      throw new ApplyPathSkip(
-        `applyPath: index ${head.value} out of bounds \u2014 '${rule2.type}' wraps a single content rule (only index 0 / -1 is valid)`
-      );
-    }
-    case "literal": {
-      if (literalTextOfMember(contentOf(rule2)) !== head.text) {
-        throw new ApplyPathSkip(
-          `applyPath: '${rule2.type}' does not wrap the literal ${JSON.stringify(head.text)}`
-        );
-      }
-      const newContent = applyPath(contentOf(rule2), rest, patch, precStack);
-      return reconstructWrapper(rule2, newContent);
-    }
-    case "kind-match":
-    case "fieldName": {
-      throw new Error(
-        `descendThroughSingleWrapper: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`
-      );
-    }
-    default: {
-      const _exhaustive = head;
-      throw new Error(
-        `descendThroughSingleWrapper: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`
-      );
-    }
-  }
-}
-function descendThroughAlias(rule2, head, rest, patch, precStack) {
-  switch (head.kind) {
-    case "wildcard": {
-      const newContent = applyPath(contentOf(rule2), rest, patch, precStack);
-      return reconstructAlias(rule2, newContent);
-    }
-    case "index": {
-      if (head.value === 0 || head.value === -1) {
-        const newContent = applyPath(contentOf(rule2), rest, patch, precStack);
-        return reconstructAlias(rule2, newContent);
-      }
-      throw new ApplyPathSkip(
-        `applyPath: index ${head.value} out of bounds \u2014 '${rule2.type}' wraps a single content rule (only index 0 / -1 is valid)`
-      );
-    }
-    case "literal": {
-      if (literalTextOfMember(contentOf(rule2)) !== head.text) {
-        throw new ApplyPathSkip(
-          `applyPath: '${rule2.type}' does not wrap the literal ${JSON.stringify(head.text)}`
-        );
-      }
-      const newContent = applyPath(contentOf(rule2), rest, patch, precStack);
-      return reconstructWrapper(rule2, newContent);
-    }
-    case "kind-match":
-    case "fieldName": {
-      throw new Error(
-        `descendThroughAlias: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`
-      );
-    }
-    default: {
-      const _exhaustive = head;
-      throw new Error(
-        `descendThroughAlias: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`
-      );
-    }
-  }
-}
-function reconstructAlias(rule2, newContent) {
-  return {
-    ...rule2,
-    content: newContent
-  };
-}
-function descendThroughNamedField(rule2, fieldName, rest, patch, precStack) {
-  if (!isFieldType(rule2.type)) {
-    throw new Error(
-      `applyPath: path segment '${fieldName}:' at this level expects a field('${fieldName}', ...) wrapper; got type '${rule2.type}'`
-    );
-  }
-  const actualName = rule2.name;
-  if (actualName !== fieldName) {
-    throw new Error(
-      `applyPath: path segment '${fieldName}:' doesn't match field name '${actualName}' at this position`
-    );
-  }
-  const newContent = applyPath(contentOf(rule2), rest, patch, precStack);
-  return reconstructWrapper(rule2, newContent);
-}
-function dispatchKindMatch(rule2, kindName, rest, patch, precStack) {
-  return applyKindMatch(rule2, kindName, rest, patch, precStack, false);
-}
-function applyKindMatch(rule2, targetKind, rest, patch, precStack, insideNamedField) {
-  const result = walkKindMatch(rule2, targetKind, rest, patch, precStack, insideNamedField);
-  if (!result.matched) {
-    throw new ApplyPathSkip(`applyPath: kind '${targetKind}' matched zero occurrences in this subtree`);
-  }
-  return result.rule;
-}
-function applyKindMatchToSymbol(rule2, targetKind, rest, patch, precStack, insideNamedField) {
-  const name = rule2.name;
-  if (name !== targetKind) return { rule: rule2, matched: false };
-  if (insideNamedField) return { rule: rule2, matched: false };
-  const patched = rest.length === 0 ? typeof patch === "function" ? patch(rule2, precStack) : patch : applyPath(rule2, rest, patch, precStack);
-  return { rule: patched, matched: true };
-}
-function walkKindMatch(rule2, targetKind, rest, patch, precStack, insideNamedField) {
-  if (!isWalkableNode(rule2)) {
-    return { rule: rule2, matched: false };
-  }
-  const t = rule2.type;
-  if (isPrecWrapper(rule2)) {
-    const stack = precStack ? [...precStack, rule2] : [rule2];
-    const inner = walkKindMatch(contentOf(rule2), targetKind, rest, patch, stack, insideNamedField);
-    return {
-      rule: inner.matched ? reconstructPrec(rule2, inner.rule) : rule2,
-      matched: inner.matched
-    };
-  }
-  if (t === "SYMBOL") {
-    return applyKindMatchToSymbol(rule2, targetKind, rest, patch, precStack, insideNamedField);
-  }
-  if (t === "FIELD") {
-    const inner = walkKindMatch(contentOf(rule2), targetKind, rest, patch, precStack, true);
-    return {
-      rule: inner.matched ? reconstructWrapper(rule2, inner.rule) : rule2,
-      matched: inner.matched
-    };
-  }
-  if (isWrapperType(t)) {
-    const inner = walkKindMatch(contentOf(rule2), targetKind, rest, patch, precStack, insideNamedField);
-    return {
-      rule: inner.matched ? reconstructWrapper(rule2, inner.rule) : rule2,
-      matched: inner.matched
-    };
-  }
-  if (isContainerType(t)) {
-    const members = [...membersOf(rule2)];
-    let anyMatched = false;
-    for (let i = 0; i < members.length; i++) {
-      const inner = walkKindMatch(members[i], targetKind, rest, patch, precStack, insideNamedField);
-      if (inner.matched) {
-        members[i] = inner.rule;
-        anyMatched = true;
-      }
-    }
-    return {
-      rule: anyMatched ? reconstructContainer(rule2, members) : rule2,
-      matched: anyMatched
-    };
-  }
-  return { rule: rule2, matched: false };
-}
-function isWalkableNode(rule2) {
-  return rule2 !== null && rule2 !== void 0 && typeof rule2 === "object" && typeof rule2.type === "string";
-}
-function reconstructContainer(rule2, members) {
-  const t = rule2.type;
-  if (isSeqType(t)) return carryOverProperties(withoutHoisted(rule2), nativeRequired("seq")(...members));
-  if (isChoiceType(t)) return carryOverProperties(withoutHoisted(rule2), nativeRequired("choice")(...members));
-  throw new Error(`reconstructContainer: unknown container type '${t}'`);
-}
-function reconstructWrapper(rule2, newContent) {
-  const t = rule2.type;
-  if (t === "OPTIONAL") return carryOverProperties(rule2, nativeRequired("optional")(newContent));
-  if (t === "REPEAT" || t === "REPEAT1") {
-    return carryOverProperties(rule2, nativeRequired(t === "REPEAT" ? "repeat" : "repeat1")(newContent));
-  }
-  if (t === "TOKEN") return carryOverProperties(rule2, nativeRequired("token")(newContent));
-  if (t === IMMEDIATE_TOKEN) {
-    const immediate = nativeRequired("token").immediate;
-    if (typeof immediate !== "function") throw new Error("transform: native token.immediate not available");
-    return carryOverProperties(rule2, immediate(newContent));
-  }
-  if (isFieldType(t)) {
-    if (isFieldType(newContent.type)) return newContent;
-    const name = rule2.name;
-    return carryOverProperties(rule2, nativeRequired("field")(name, newContent));
-  }
-  throw new Error(
-    `reconstructWrapper: no native dsl reconstruction for wrapper type '${rule2.type}' \u2014 this is a bug in the path-descent logic.`
-  );
-}
-function withoutHoisted(rule2) {
-  const { annotations, ...rest } = rule2;
-  if (annotations?.hoisted !== true) return rule2;
-  const { hoisted: _hoisted, ...kept } = annotations;
-  return Object.keys(kept).length === 0 ? rest : { ...rest, annotations: kept };
-}
-function carryOverProperties(rule2, rebuilt2) {
-  if (rebuilt2.type !== rule2.type) return rebuilt2;
-  const original = rule2;
-  const out = rebuilt2;
-  for (const key of Object.keys(original)) {
-    if (key in out) continue;
-    const value = original[key];
-    if (value === void 0) continue;
-    out[key] = value;
-  }
-  return rebuilt2;
-}
-var PREC_VARIANT_MAP = {
-  PREC_LEFT: "left",
-  PREC_RIGHT: "right",
-  PREC_DYNAMIC: "dynamic"
-};
-function reconstructPrec(rule2, newContent) {
-  const t = rule2.type;
-  const value = rule2.value ?? 0;
-  const prec = nativeRequired("prec");
-  const variant2 = PREC_VARIANT_MAP[t];
-  if (variant2) {
-    const fn = prec[variant2];
-    if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
-    return fn(value, newContent);
-  }
-  return prec(value, newContent);
-}
-function wrapInPrecStack(content, precStack, reconstructPrec2) {
-  if (!precStack?.length) return content;
-  let result = content;
-  for (let i = precStack.length - 1; i >= 0; i--) {
-    result = reconstructPrec2(precStack[i], result);
-  }
-  return result;
-}
-function applyToMembers(rule2, head, rest, patch, precStack) {
-  const members = [...membersOf(rule2)];
-  switch (head.kind) {
-    case "index":
-      return applyToIndexedMember(rule2, members, head.value, rest, patch, precStack);
-    case "literal": {
-      const at = members.findIndex((m) => literalTextOfMember(m) === head.text);
-      if (at < 0) throw new ApplyPathSkip(`applyPath: no literal ${JSON.stringify(head.text)} in ${rule2.type}`);
-      members[at] = applyPath(members[at], rest, patch, precStack);
-      return reconstructContainer(rule2, members);
-    }
-    case "wildcard":
-      return applyWildcardToMembers(rule2, members, rest, patch, precStack);
-    case "kind-match":
-    case "fieldName": {
-      throw new Error(`applyToMembers: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`);
-    }
-    default: {
-      const _exhaustive = head;
-      throw new Error(
-        `applyToMembers: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`
-      );
-    }
-  }
-}
-function literalTextOfMember(rule2) {
-  const r = rule2;
-  return r.type === "STRING" && typeof r.value === "string" ? r.value : void 0;
-}
-function applyToIndexedMember(rule2, members, indexValue, rest, patch, precStack) {
-  const idx = indexValue < 0 ? members.length + indexValue : indexValue;
-  if (idx < 0 || idx >= members.length) {
-    throw new ApplyPathSkip(`applyPath: index ${indexValue} out of bounds in ${rule2.type} of length ${members.length}`);
-  }
-  members[idx] = applyPath(members[idx], rest, patch, precStack);
-  return reconstructContainer(rule2, members);
-}
-function applyWildcardToMembers(rule2, members, rest, patch, precStack) {
-  if (members.length === 0) {
-    throw new ApplyPathSkip(`applyPath: wildcard matched zero members in empty ${rule2.type}`);
-  }
-  let anyApplied = false;
-  for (let i = 0; i < members.length; i++) {
-    try {
-      members[i] = applyPath(members[i], rest, patch, precStack);
-      anyApplied = true;
-    } catch (e) {
-      if (e instanceof ApplyPathSkip) continue;
-      throw e;
-    }
-  }
-  if (!anyApplied) {
-    throw new ApplyPathSkip(
-      `applyPath: wildcard matched zero members successfully in ${rule2.type} of length ${members.length}`
-    );
-  }
-  return reconstructContainer(rule2, members);
-}
-
 // packages/codegen/src/dsl/annotations.ts
 function withAnnotations(rule2, extra) {
   const node = rule2;
@@ -741,6 +282,96 @@ var FLANK_ADDRESS = /^(_*[a-z][a-z0-9_]*?)_(start|end)$/;
 function parseFlankAddress(key) {
   const m = FLANK_ADDRESS.exec(key);
   return m ? { kind: m[1], side: m[2] } : void 0;
+}
+
+// packages/codegen/src/dsl/primitives/field.ts
+function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
+  const c = content;
+  if (!c || typeof c.type !== "string") return content;
+  if (isStringType(c.type)) {
+    return synthesizeKwSymbol(fieldName, content, wrapSyntheticBody);
+  }
+  if (isOptionalType(c.type)) {
+    return descendOptional(fieldName, content, wrapSyntheticBody, "optional");
+  }
+  if (isChoiceType(c.type)) {
+    const members = content.members;
+    if (Array.isArray(members) && members.length === 2) {
+      const blankIdx = members.findIndex((m) => m?.type === "BLANK");
+      if (blankIdx !== -1) {
+        return descendOptional(fieldName, content, wrapSyntheticBody, "choice-blank");
+      }
+    }
+    return content;
+  }
+  return content;
+}
+function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
+  const hiddenName = `_kw_${fieldName}`;
+  let body = content;
+  if (wrapSyntheticBody) body = wrapSyntheticBody(body);
+  if (!wireRegisterSyntheticRule(hiddenName, body)) {
+    throw new Error(
+      `field('${fieldName}', <STRING>): no active wire() context \u2014 call must occur inside a rule callback wrapped by wire()`
+    );
+  }
+  wireRegisterSyntheticInline(hiddenName);
+  return {
+    type: "SYMBOL",
+    name: hiddenName
+  };
+}
+function descendOptional(fieldName, content, wrapSyntheticBody, wrapperKind) {
+  let inner;
+  if (wrapperKind === "optional") {
+    inner = content.content;
+  } else {
+    const members = content.members;
+    const nonBlank = members.find((m) => m.type !== "BLANK");
+    inner = nonBlank;
+  }
+  const rewritten = maybeKeywordSymbol(fieldName, inner, wrapSyntheticBody);
+  if (rewritten === inner) return content;
+  if (wrapperKind === "optional") {
+    const nativeOptional = globalThis.optional;
+    if (typeof nativeOptional !== "function") return content;
+    return nativeOptional(rewritten);
+  }
+  const c = content;
+  const newMembers = c.members.map((m) => m.type === "BLANK" ? m : rewritten);
+  return { ...c, members: newMembers };
+}
+function isFieldPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "field";
+}
+function field(name, content) {
+  if (content === void 0) {
+    return {
+      __sittirPlaceholder: "field",
+      name
+    };
+  }
+  const native = globalThis.field;
+  if (typeof native !== "function") {
+    throw new Error(
+      "field(): no global field() found \u2014 must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)"
+    );
+  }
+  return buildTwoArgFieldResult(native, name, content);
+}
+function buildTwoArgFieldResult(native, name, content) {
+  const initial = native(name, content);
+  const inner = initial.content;
+  const symbolized = maybeKeywordSymbol(name, inner);
+  const metadata = makeRuleMetadata({ fieldSource: "override" });
+  if (symbolized !== inner) {
+    const reconstructed = native(name, symbolized);
+    return {
+      ...reconstructed,
+      metadata
+    };
+  }
+  return { ...initial, metadata };
 }
 
 // packages/codegen/src/dsl/primitives/alias.ts
@@ -1893,8 +1524,8 @@ var fuseHeadRepeatListsWalker = new RuleWalker();
 
 // packages/codegen/src/dsl/transform/token-forms.ts
 var typeOf2 = (rule2) => rule2.type ?? "";
-var membersOf2 = (rule2) => rule2.members ?? [];
-var contentOf2 = (rule2) => rule2.content;
+var membersOf = (rule2) => rule2.members ?? [];
+var contentOf = (rule2) => rule2.content;
 var rebuilt = (rule2, patch) => ({ ...rule2, ...patch });
 var isBlank = (rule2) => typeOf2(rule2) === "BLANK";
 var isString = (rule2) => typeOf2(rule2) === "STRING";
@@ -1902,55 +1533,55 @@ function isTokenWrapper(rule2) {
   return isTokenWrapperType(typeOf2(rule2));
 }
 function classifyTokenChoice(choice2) {
-  const arms = membersOf2(choice2);
+  const arms = membersOf(choice2);
   if (arms.some(isBlank)) return "presence";
   if (arms.every(isString)) return "spelling";
   return "forms";
 }
 function flattenFormArms(arms) {
   return arms.flatMap(
-    (arm2) => isChoiceType(typeOf2(arm2)) && classifyTokenChoice(arm2) === "forms" ? flattenFormArms(membersOf2(arm2)) : [arm2]
+    (arm2) => isChoiceType(typeOf2(arm2)) && classifyTokenChoice(arm2) === "forms" ? flattenFormArms(membersOf(arm2)) : [arm2]
   );
 }
 function findOutermostForms(rule2, path) {
   const t = typeOf2(rule2);
   if (isChoiceType(t)) {
     const cls = classifyTokenChoice(rule2);
-    if (cls === "forms") return { path, arms: flattenFormArms(membersOf2(rule2)) };
+    if (cls === "forms") return { path, arms: flattenFormArms(membersOf(rule2)) };
     if (cls === "spelling") return void 0;
-    const live = membersOf2(rule2).filter((m) => !isBlank(m));
+    const live = membersOf(rule2).filter((m) => !isBlank(m));
     const only = live.length === 1 ? live[0] : void 0;
     if (only !== void 0 && isChoiceType(typeOf2(only)) && classifyTokenChoice(only) === "forms") {
-      return { path, arms: [...flattenFormArms(membersOf2(only)), membersOf2(rule2).find(isBlank)] };
+      return { path, arms: [...flattenFormArms(membersOf(only)), membersOf(rule2).find(isBlank)] };
     }
     return void 0;
   }
   if (t === "OPTIONAL") {
-    const inner = contentOf2(rule2);
+    const inner = contentOf(rule2);
     if (isChoiceType(typeOf2(inner)) && classifyTokenChoice(inner) === "forms") {
-      return { path, arms: [...flattenFormArms(membersOf2(inner)), BLANK] };
+      return { path, arms: [...flattenFormArms(membersOf(inner)), BLANK] };
     }
     return void 0;
   }
   if (isSeqType(t)) {
-    const members = membersOf2(rule2);
+    const members = membersOf(rule2);
     for (let i = 0; i < members.length; i++) {
       const found = findOutermostForms(members[i], [...path, i]);
       if (found) return found;
     }
     return void 0;
   }
-  if (contentOf2(rule2) !== void 0) return findOutermostForms(contentOf2(rule2), [...path, 0]);
+  if (contentOf(rule2) !== void 0) return findOutermostForms(contentOf(rule2), [...path, 0]);
   return void 0;
 }
 function replaceAt(rule2, path, arm2) {
   if (path.length === 0) return arm2;
   const [head, ...rest] = path;
   if (Array.isArray(rule2.members)) {
-    const members = membersOf2(rule2).map((m, i) => i === head ? replaceAt(m, rest, arm2) : m);
+    const members = membersOf(rule2).map((m, i) => i === head ? replaceAt(m, rest, arm2) : m);
     return rebuilt(rule2, { members });
   }
-  return rebuilt(rule2, { content: replaceAt(contentOf2(rule2), rest, arm2) });
+  return rebuilt(rule2, { content: replaceAt(contentOf(rule2), rest, arm2) });
 }
 var BLANK = { type: "BLANK" };
 var EMPTY_SEQ = { type: "SEQ", members: [] };
@@ -1958,10 +1589,10 @@ function dropAt(rule2, path) {
   if (path.length === 0) return EMPTY_SEQ;
   const [head, ...rest] = path;
   if (Array.isArray(rule2.members)) {
-    if (rest.length === 0) return rebuilt(rule2, { members: membersOf2(rule2).filter((_, i) => i !== head) });
-    return rebuilt(rule2, { members: membersOf2(rule2).map((m, i) => i === head ? dropAt(m, rest) : m) });
+    if (rest.length === 0) return rebuilt(rule2, { members: membersOf(rule2).filter((_, i) => i !== head) });
+    return rebuilt(rule2, { members: membersOf(rule2).map((m, i) => i === head ? dropAt(m, rest) : m) });
   }
-  return rebuilt(rule2, { content: dropAt(contentOf2(rule2), rest) });
+  return rebuilt(rule2, { content: dropAt(contentOf(rule2), rest) });
 }
 var canonicalRuleText = (rule2) => JSON.stringify(rule2, (key, value) => key === "id" || key === "metadata" ? void 0 : value);
 function distributeTokenForms(rule2, kind) {
@@ -1969,10 +1600,10 @@ function distributeTokenForms(rule2, kind) {
   let core = rule2;
   while (isPrecWrapper(core)) {
     precStack.push(core);
-    core = contentOf2(core);
+    core = contentOf(core);
   }
   if (!isTokenWrapper(core)) return rule2;
-  const body = contentOf2(core);
+  const body = contentOf(core);
   const site = findOutermostForms(body, []);
   if (site === void 0) return rule2;
   const arms = site.arms.map((arm2) => isBlank(arm2) ? dropAt(body, site.path) : replaceAt(body, site.path, arm2));
@@ -2214,8 +1845,9 @@ function enrich(baseInput) {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }
   const hasWrapper = "grammar" in base2;
-  const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
-  if (!rulesBag) return base2;
+  const baseRules = hasWrapper ? base2.grammar?.rules : base2.rules;
+  if (!baseRules) return base2;
+  const rulesBag = { ...baseRules };
   const grammarMeta = hasWrapper ? base2.grammar : base2;
   const supertypeNames = extractGrammarSymbolNames(base2, hasWrapper, "supertypes");
   const inlineNames = extractGrammarSymbolNames(base2, hasWrapper, "inline");
@@ -2292,12 +1924,6 @@ function enrich(baseInput) {
   }
   synthesizeFieldEnumRules(mergedRules);
   const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
-  setGroupLiftRuleMap({
-    get: (n) => mergedRules[n],
-    set: (n, b) => {
-      mergedRules[n] = b;
-    }
-  });
   const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupSources.has(n)));
   const result = hasWrapper ? { ...base2, grammar: { ...base2.grammar, rules: mergedRules } } : { ...base2, rules: mergedRules };
   addSupertypes(hasWrapper ? result.grammar : result, tokenFormParents);
@@ -4300,6 +3926,15 @@ function automaticVariantsOf(context) {
 function wireIsExtraRule(name) {
   return currentContext?.extraRuleNames.has(name) ?? false;
 }
+function wireGetLiftBody(name) {
+  return currentContext?.liftBodies.get(name) ?? currentContext?.baseRuleBodies[name];
+}
+function wireSetLiftBody(name, body) {
+  currentContext?.liftBodies.set(name, body);
+}
+function baseRuleBodiesOf(base2) {
+  return base2?.grammar?.rules ?? base2?.rules ?? {};
+}
 function wire(config, base2) {
   const cfg = config;
   const baseArg = base2;
@@ -4329,7 +3964,9 @@ function wire(config, base2) {
     flattenedParents: /* @__PURE__ */ new Set(),
     aliasTargets: /* @__PURE__ */ new Set(),
     automaticVariants: seedAutomaticVariants(base2),
-    adoptedGroups: baseArg ? adoptMintedGroups(baseArg, base2, cfg.groups) : /* @__PURE__ */ new Map()
+    adoptedGroups: baseArg ? adoptMintedGroups(baseArg, base2, cfg.groups) : /* @__PURE__ */ new Map(),
+    baseRuleBodies: baseRuleBodiesOf(baseArg),
+    liftBodies: /* @__PURE__ */ new Map()
   };
   const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
@@ -4341,6 +3978,10 @@ function wire(config, base2) {
       if (baseName in outRules) continue;
       outRules[baseName] = passthroughBaseRuleFn;
     }
+  }
+  for (const liftName of enrichLiftNames(base2)) {
+    if (liftName in outRules || !(liftName in context.baseRuleBodies) || context.adoptedGroups.has(liftName)) continue;
+    outRules[liftName] = passthroughBaseRuleFn;
   }
   wrapAllRuleFns(outRules, context);
   applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
@@ -4718,8 +4359,12 @@ function hasBodyPatternGroups(groups) {
   return false;
 }
 var passthroughBaseRuleFn = function passthroughBaseRuleFn2(_$, previous) {
-  return previous;
+  const name = currentContext?.currentRuleKind;
+  return (name === null || name === void 0 ? void 0 : currentContext?.liftBodies.get(name)) ?? previous;
 };
+function enrichLiftNames(base2) {
+  return /* @__PURE__ */ new Set([...getEnrichClauseGroups(base2), ...getEnrichVisibleGroupSources(base2)]);
+}
 function declaredPatterns(groups, injects) {
   const $ = makeSimpleDollarProxy();
   const declared = [];
@@ -4968,94 +4613,452 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context, 
   }
 }
 
-// packages/codegen/src/dsl/primitives/field.ts
-function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
-  const c = content;
-  if (!c || typeof c.type !== "string") return content;
-  if (isStringType(c.type)) {
-    return synthesizeKwSymbol(fieldName, content, wrapSyntheticBody);
-  }
-  if (isOptionalType(c.type)) {
-    return descendOptional(fieldName, content, wrapSyntheticBody, "optional");
-  }
-  if (isChoiceType(c.type)) {
-    const members = content.members;
-    if (Array.isArray(members) && members.length === 2) {
-      const blankIdx = members.findIndex((m) => m?.type === "BLANK");
-      if (blankIdx !== -1) {
-        return descendOptional(fieldName, content, wrapSyntheticBody, "choice-blank");
-      }
-    }
-    return content;
-  }
-  return content;
+// packages/codegen/src/dsl/transform/transform-path.ts
+function dsl() {
+  return globalThis;
 }
-function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
-  const hiddenName = `_kw_${fieldName}`;
-  let body = content;
-  if (wrapSyntheticBody) body = wrapSyntheticBody(body);
-  if (!wireRegisterSyntheticRule(hiddenName, body)) {
+function nativeRequired(name) {
+  const fn = dsl()[name];
+  if (typeof fn !== "function") {
     throw new Error(
-      `field('${fieldName}', <STRING>): no active wire() context \u2014 call must occur inside a rule callback wrapped by wire()`
+      `transform: no global ${String(name)}() found \u2014 must be called inside a runtime that injects ${String(name)}() (sittir evaluate.ts or tree-sitter CLI)`
     );
   }
-  wireRegisterSyntheticInline(hiddenName);
+  return fn;
+}
+var ApplyPathSkip = class extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ApplyPathSkip";
+  }
+};
+function splitSegments(pathStr) {
+  const parts = [];
+  let current = "";
+  let inLiteral = false;
+  for (const c of pathStr) {
+    if (c === '"') {
+      inLiteral = !inLiteral;
+      current += c;
+    } else if (c === "/" && !inLiteral) {
+      parts.push(current);
+      current = "";
+    } else {
+      current += c;
+    }
+  }
+  if (inLiteral) throw new Error(`parsePath: unterminated literal in path '${pathStr}'`);
+  parts.push(current);
+  return parts;
+}
+function parsePath(pathStr) {
+  if (pathStr === ".") return [];
+  if (typeof pathStr !== "string" || pathStr.length === 0) {
+    throw new Error(`parsePath: path must be a non-empty string, got ${JSON.stringify(pathStr)}`);
+  }
+  if (pathStr.startsWith("/") || pathStr.endsWith("/")) {
+    throw new Error(`parsePath: leading/trailing slash not allowed in path '${pathStr}'`);
+  }
+  const parts = splitSegments(pathStr);
+  const segments = [];
+  for (const part of parts) {
+    if (part.length >= 2 && part.startsWith('"') && part.endsWith('"')) {
+      segments.push({ kind: "literal", text: part.slice(1, -1) });
+    } else if (part === "_") {
+      segments.push({ kind: "wildcard" });
+    } else if (/^-?\d+$/.test(part)) {
+      segments.push({ kind: "index", value: Number(part) });
+    } else if (/^\([A-Za-z_][A-Za-z0-9_]*\)$/.test(part)) {
+      segments.push({ kind: "kind-match", name: part.slice(1, -1) });
+    } else if (/^[A-Za-z_][A-Za-z0-9_]*:$/.test(part)) {
+      segments.push({ kind: "fieldName", name: part.slice(0, -1) });
+    } else if (part === "*") {
+      throw new Error(`parsePath: path segment '*' is no longer valid \u2014 use '_' for wildcard`);
+    } else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
+      throw new Error(
+        `parsePath: bare kind name '${part}' is no longer valid as a path segment \u2014 use '(${part})' instead`
+      );
+    } else {
+      throw new Error(
+        `parsePath: invalid segment '${part}' in path '${pathStr}' \u2014 must be a numeric index, '_' (wildcard), '(name)' (kind-match), or 'name:' (field traversal)`
+      );
+    }
+  }
+  return segments;
+}
+var membersOf2 = (r) => r.members;
+var contentOf2 = (r) => r.content;
+function applyPath(rule2, segments, patch, precStack) {
+  if (isPrecWrapper(rule2)) {
+    return descendThroughPrecWrapper(rule2, segments, patch, precStack);
+  }
+  if (segments.length === 0) {
+    return typeof patch === "function" ? patch(rule2, precStack) : patch;
+  }
+  if (isEnrichGroupLiftSymbol(rule2)) {
+    return descendThroughGroupLiftSymbol(rule2, segments, patch, precStack);
+  }
+  if (isEnrichContentAlias(rule2)) {
+    return descendThroughEnrichContentAlias(rule2, segments, patch, precStack);
+  }
+  const [head, ...rest] = segments;
+  const t = rule2.type;
+  switch (head.kind) {
+    case "kind-match":
+      return dispatchKindMatch(rule2, head.name, rest, patch, precStack);
+    case "fieldName":
+      return descendThroughNamedField(rule2, head.name, rest, patch, precStack);
+    case "index":
+    case "literal":
+    case "wildcard": {
+      if (isContainerType(t)) {
+        return applyToMembers(rule2, head, rest, patch, precStack);
+      }
+      if (isWrapperType(t)) {
+        return descendThroughSingleWrapper(rule2, head, rest, patch, precStack);
+      }
+      if (t === "ALIAS") {
+        return descendThroughAlias(rule2, head, rest, patch, precStack);
+      }
+      throw new ApplyPathSkip(
+        `applyPath: cannot descend into '${rule2.type}' rule (path has ${segments.length} segments left)`
+      );
+    }
+    default: {
+      const _exhaustive = head;
+      throw new Error(`applyPath: unknown segment kind '${_exhaustive.kind}'`);
+    }
+  }
+}
+function descendThroughPrecWrapper(rule2, segments, patch, precStack) {
+  const newStack = precStack ? [...precStack, rule2] : [rule2];
+  const newContent = applyPath(contentOf2(rule2), segments, patch, newStack);
+  return reconstructPrec(rule2, newContent);
+}
+function isEnrichGroupLiftSymbol(rule2) {
+  const t = rule2.type;
+  if (t !== "SYMBOL") return false;
+  const meta = readRuleMetadata("metadata" in rule2 ? rule2.metadata : void 0);
+  return meta?.symbolSource === "group-lift";
+}
+function descendThroughGroupLiftSymbol(rule2, segments, patch, precStack) {
+  const name = rule2.name;
+  if (!name) {
+    throw new ApplyPathSkip("applyPath: enrich group-lift symbol has no name to resolve its body");
+  }
+  const body = wireGetLiftBody(name);
+  if (body === void 0) {
+    throw new ApplyPathSkip(
+      `applyPath: enrich group-lift symbol '${name}' \u2014 no body in the active wire() context (no wire() context, or the name was pruned)`
+    );
+  }
+  wireSetLiftBody(name, applyPath(body, segments, patch, precStack));
+  return rule2;
+}
+function isEnrichContentAlias(rule2) {
+  const t = rule2.type;
+  if (t !== "ALIAS") return false;
+  return readRuleMetadata("metadata" in rule2 ? rule2.metadata : void 0)?.aliasSource === "visible-group";
+}
+function descendThroughEnrichContentAlias(rule2, segments, patch, precStack) {
+  const body = rule2.content;
+  if (body === void 0) {
+    throw new ApplyPathSkip("applyPath: enrich content-alias has no content to travel through");
+  }
+  const newBody = applyPath(body, segments, patch, precStack);
+  return { ...rule2, content: newBody };
+}
+function descendThroughSingleWrapper(rule2, head, rest, patch, precStack) {
+  switch (head.kind) {
+    case "wildcard": {
+      const newContent = applyPath(contentOf2(rule2), rest, patch, precStack);
+      return reconstructWrapper(rule2, newContent);
+    }
+    case "index": {
+      if (head.value === 0 || head.value === -1) {
+        const newContent = applyPath(contentOf2(rule2), rest, patch, precStack);
+        return reconstructWrapper(rule2, newContent);
+      }
+      throw new ApplyPathSkip(
+        `applyPath: index ${head.value} out of bounds \u2014 '${rule2.type}' wraps a single content rule (only index 0 / -1 is valid)`
+      );
+    }
+    case "literal": {
+      if (literalTextOfMember(contentOf2(rule2)) !== head.text) {
+        throw new ApplyPathSkip(
+          `applyPath: '${rule2.type}' does not wrap the literal ${JSON.stringify(head.text)}`
+        );
+      }
+      const newContent = applyPath(contentOf2(rule2), rest, patch, precStack);
+      return reconstructWrapper(rule2, newContent);
+    }
+    case "kind-match":
+    case "fieldName": {
+      throw new Error(
+        `descendThroughSingleWrapper: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`
+      );
+    }
+    default: {
+      const _exhaustive = head;
+      throw new Error(
+        `descendThroughSingleWrapper: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`
+      );
+    }
+  }
+}
+function descendThroughAlias(rule2, head, rest, patch, precStack) {
+  switch (head.kind) {
+    case "wildcard": {
+      const newContent = applyPath(contentOf2(rule2), rest, patch, precStack);
+      return reconstructAlias(rule2, newContent);
+    }
+    case "index": {
+      if (head.value === 0 || head.value === -1) {
+        const newContent = applyPath(contentOf2(rule2), rest, patch, precStack);
+        return reconstructAlias(rule2, newContent);
+      }
+      throw new ApplyPathSkip(
+        `applyPath: index ${head.value} out of bounds \u2014 '${rule2.type}' wraps a single content rule (only index 0 / -1 is valid)`
+      );
+    }
+    case "literal": {
+      if (literalTextOfMember(contentOf2(rule2)) !== head.text) {
+        throw new ApplyPathSkip(
+          `applyPath: '${rule2.type}' does not wrap the literal ${JSON.stringify(head.text)}`
+        );
+      }
+      const newContent = applyPath(contentOf2(rule2), rest, patch, precStack);
+      return reconstructWrapper(rule2, newContent);
+    }
+    case "kind-match":
+    case "fieldName": {
+      throw new Error(
+        `descendThroughAlias: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`
+      );
+    }
+    default: {
+      const _exhaustive = head;
+      throw new Error(
+        `descendThroughAlias: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`
+      );
+    }
+  }
+}
+function reconstructAlias(rule2, newContent) {
   return {
-    type: "SYMBOL",
-    name: hiddenName
+    ...rule2,
+    content: newContent
   };
 }
-function descendOptional(fieldName, content, wrapSyntheticBody, wrapperKind) {
-  let inner;
-  if (wrapperKind === "optional") {
-    inner = content.content;
-  } else {
-    const members = content.members;
-    const nonBlank = members.find((m) => m.type !== "BLANK");
-    inner = nonBlank;
-  }
-  const rewritten = maybeKeywordSymbol(fieldName, inner, wrapSyntheticBody);
-  if (rewritten === inner) return content;
-  if (wrapperKind === "optional") {
-    const nativeOptional = globalThis.optional;
-    if (typeof nativeOptional !== "function") return content;
-    return nativeOptional(rewritten);
-  }
-  const c = content;
-  const newMembers = c.members.map((m) => m.type === "BLANK" ? m : rewritten);
-  return { ...c, members: newMembers };
-}
-function isFieldPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "field";
-}
-function field(name, content) {
-  if (content === void 0) {
-    return {
-      __sittirPlaceholder: "field",
-      name
-    };
-  }
-  const native = globalThis.field;
-  if (typeof native !== "function") {
+function descendThroughNamedField(rule2, fieldName, rest, patch, precStack) {
+  if (!isFieldType(rule2.type)) {
     throw new Error(
-      "field(): no global field() found \u2014 must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)"
+      `applyPath: path segment '${fieldName}:' at this level expects a field('${fieldName}', ...) wrapper; got type '${rule2.type}'`
     );
   }
-  return buildTwoArgFieldResult(native, name, content);
+  const actualName = rule2.name;
+  if (actualName !== fieldName) {
+    throw new Error(
+      `applyPath: path segment '${fieldName}:' doesn't match field name '${actualName}' at this position`
+    );
+  }
+  const newContent = applyPath(contentOf2(rule2), rest, patch, precStack);
+  return reconstructWrapper(rule2, newContent);
 }
-function buildTwoArgFieldResult(native, name, content) {
-  const initial = native(name, content);
-  const inner = initial.content;
-  const symbolized = maybeKeywordSymbol(name, inner);
-  const metadata = makeRuleMetadata({ fieldSource: "override" });
-  if (symbolized !== inner) {
-    const reconstructed = native(name, symbolized);
+function dispatchKindMatch(rule2, kindName, rest, patch, precStack) {
+  return applyKindMatch(rule2, kindName, rest, patch, precStack, false);
+}
+function applyKindMatch(rule2, targetKind, rest, patch, precStack, insideNamedField) {
+  const result = walkKindMatch(rule2, targetKind, rest, patch, precStack, insideNamedField);
+  if (!result.matched) {
+    throw new ApplyPathSkip(`applyPath: kind '${targetKind}' matched zero occurrences in this subtree`);
+  }
+  return result.rule;
+}
+function applyKindMatchToSymbol(rule2, targetKind, rest, patch, precStack, insideNamedField) {
+  const name = rule2.name;
+  if (name !== targetKind) return { rule: rule2, matched: false };
+  if (insideNamedField) return { rule: rule2, matched: false };
+  const patched = rest.length === 0 ? typeof patch === "function" ? patch(rule2, precStack) : patch : applyPath(rule2, rest, patch, precStack);
+  return { rule: patched, matched: true };
+}
+function walkKindMatch(rule2, targetKind, rest, patch, precStack, insideNamedField) {
+  if (!isWalkableNode(rule2)) {
+    return { rule: rule2, matched: false };
+  }
+  const t = rule2.type;
+  if (isPrecWrapper(rule2)) {
+    const stack = precStack ? [...precStack, rule2] : [rule2];
+    const inner = walkKindMatch(contentOf2(rule2), targetKind, rest, patch, stack, insideNamedField);
     return {
-      ...reconstructed,
-      metadata
+      rule: inner.matched ? reconstructPrec(rule2, inner.rule) : rule2,
+      matched: inner.matched
     };
   }
-  return { ...initial, metadata };
+  if (t === "SYMBOL") {
+    return applyKindMatchToSymbol(rule2, targetKind, rest, patch, precStack, insideNamedField);
+  }
+  if (t === "FIELD") {
+    const inner = walkKindMatch(contentOf2(rule2), targetKind, rest, patch, precStack, true);
+    return {
+      rule: inner.matched ? reconstructWrapper(rule2, inner.rule) : rule2,
+      matched: inner.matched
+    };
+  }
+  if (isWrapperType(t)) {
+    const inner = walkKindMatch(contentOf2(rule2), targetKind, rest, patch, precStack, insideNamedField);
+    return {
+      rule: inner.matched ? reconstructWrapper(rule2, inner.rule) : rule2,
+      matched: inner.matched
+    };
+  }
+  if (isContainerType(t)) {
+    const members = [...membersOf2(rule2)];
+    let anyMatched = false;
+    for (let i = 0; i < members.length; i++) {
+      const inner = walkKindMatch(members[i], targetKind, rest, patch, precStack, insideNamedField);
+      if (inner.matched) {
+        members[i] = inner.rule;
+        anyMatched = true;
+      }
+    }
+    return {
+      rule: anyMatched ? reconstructContainer(rule2, members) : rule2,
+      matched: anyMatched
+    };
+  }
+  return { rule: rule2, matched: false };
+}
+function isWalkableNode(rule2) {
+  return rule2 !== null && rule2 !== void 0 && typeof rule2 === "object" && typeof rule2.type === "string";
+}
+function reconstructContainer(rule2, members) {
+  const t = rule2.type;
+  if (isSeqType(t)) return carryOverProperties(withoutHoisted(rule2), nativeRequired("seq")(...members));
+  if (isChoiceType(t)) return carryOverProperties(withoutHoisted(rule2), nativeRequired("choice")(...members));
+  throw new Error(`reconstructContainer: unknown container type '${t}'`);
+}
+function reconstructWrapper(rule2, newContent) {
+  const t = rule2.type;
+  if (t === "OPTIONAL") return carryOverProperties(rule2, nativeRequired("optional")(newContent));
+  if (t === "REPEAT" || t === "REPEAT1") {
+    return carryOverProperties(rule2, nativeRequired(t === "REPEAT" ? "repeat" : "repeat1")(newContent));
+  }
+  if (t === "TOKEN") return carryOverProperties(rule2, nativeRequired("token")(newContent));
+  if (t === IMMEDIATE_TOKEN) {
+    const immediate = nativeRequired("token").immediate;
+    if (typeof immediate !== "function") throw new Error("transform: native token.immediate not available");
+    return carryOverProperties(rule2, immediate(newContent));
+  }
+  if (isFieldType(t)) {
+    if (isFieldType(newContent.type)) return newContent;
+    const name = rule2.name;
+    return carryOverProperties(rule2, nativeRequired("field")(name, newContent));
+  }
+  throw new Error(
+    `reconstructWrapper: no native dsl reconstruction for wrapper type '${rule2.type}' \u2014 this is a bug in the path-descent logic.`
+  );
+}
+function withoutHoisted(rule2) {
+  const { annotations, ...rest } = rule2;
+  if (annotations?.hoisted !== true) return rule2;
+  const { hoisted: _hoisted, ...kept } = annotations;
+  return Object.keys(kept).length === 0 ? rest : { ...rest, annotations: kept };
+}
+function carryOverProperties(rule2, rebuilt2) {
+  if (rebuilt2.type !== rule2.type) return rebuilt2;
+  const original = rule2;
+  const out = rebuilt2;
+  for (const key of Object.keys(original)) {
+    if (key in out) continue;
+    const value = original[key];
+    if (value === void 0) continue;
+    out[key] = value;
+  }
+  return rebuilt2;
+}
+var PREC_VARIANT_MAP = {
+  PREC_LEFT: "left",
+  PREC_RIGHT: "right",
+  PREC_DYNAMIC: "dynamic"
+};
+function reconstructPrec(rule2, newContent) {
+  const t = rule2.type;
+  const value = rule2.value ?? 0;
+  const prec = nativeRequired("prec");
+  const variant2 = PREC_VARIANT_MAP[t];
+  if (variant2) {
+    const fn = prec[variant2];
+    if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
+    return fn(value, newContent);
+  }
+  return prec(value, newContent);
+}
+function wrapInPrecStack(content, precStack, reconstructPrec2) {
+  if (!precStack?.length) return content;
+  let result = content;
+  for (let i = precStack.length - 1; i >= 0; i--) {
+    result = reconstructPrec2(precStack[i], result);
+  }
+  return result;
+}
+function applyToMembers(rule2, head, rest, patch, precStack) {
+  const members = [...membersOf2(rule2)];
+  switch (head.kind) {
+    case "index":
+      return applyToIndexedMember(rule2, members, head.value, rest, patch, precStack);
+    case "literal": {
+      const at = members.findIndex((m) => literalTextOfMember(m) === head.text);
+      if (at < 0) throw new ApplyPathSkip(`applyPath: no literal ${JSON.stringify(head.text)} in ${rule2.type}`);
+      members[at] = applyPath(members[at], rest, patch, precStack);
+      return reconstructContainer(rule2, members);
+    }
+    case "wildcard":
+      return applyWildcardToMembers(rule2, members, rest, patch, precStack);
+    case "kind-match":
+    case "fieldName": {
+      throw new Error(`applyToMembers: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`);
+    }
+    default: {
+      const _exhaustive = head;
+      throw new Error(
+        `applyToMembers: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`
+      );
+    }
+  }
+}
+function literalTextOfMember(rule2) {
+  const r = rule2;
+  return r.type === "STRING" && typeof r.value === "string" ? r.value : void 0;
+}
+function applyToIndexedMember(rule2, members, indexValue, rest, patch, precStack) {
+  const idx = indexValue < 0 ? members.length + indexValue : indexValue;
+  if (idx < 0 || idx >= members.length) {
+    throw new ApplyPathSkip(`applyPath: index ${indexValue} out of bounds in ${rule2.type} of length ${members.length}`);
+  }
+  members[idx] = applyPath(members[idx], rest, patch, precStack);
+  return reconstructContainer(rule2, members);
+}
+function applyWildcardToMembers(rule2, members, rest, patch, precStack) {
+  if (members.length === 0) {
+    throw new ApplyPathSkip(`applyPath: wildcard matched zero members in empty ${rule2.type}`);
+  }
+  let anyApplied = false;
+  for (let i = 0; i < members.length; i++) {
+    try {
+      members[i] = applyPath(members[i], rest, patch, precStack);
+      anyApplied = true;
+    } catch (e) {
+      if (e instanceof ApplyPathSkip) continue;
+      throw e;
+    }
+  }
+  if (!anyApplied) {
+    throw new ApplyPathSkip(
+      `applyPath: wildcard matched zero members successfully in ${rule2.type} of length ${members.length}`
+    );
+  }
+  return reconstructContainer(rule2, members);
 }
 
 // packages/codegen/src/dsl/primitives/arm.ts
@@ -5379,7 +5382,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, parentKind, altMember), name });
   }
   for (const { altIdx, lift } of lifted) {
-    setGroupLiftRuleBody(lift.liftName, hoist(lift.body));
+    wireSetLiftBody(lift.liftName, hoist(lift.body));
     refs.push({ altIdx, ref: choiceMembers[altIdx], name: lift.liftName });
   }
   refs.sort((a, b) => a.altIdx - b.altIdx);
@@ -5427,7 +5430,7 @@ function enrichLiftArmOf(member) {
   if (symbol?.type !== "SYMBOL" || typeof symbol.name !== "string" || !isEnrichGroupLiftSymbol(symbol)) {
     return null;
   }
-  const body = getGroupLiftRuleBody(symbol.name);
+  const body = wireGetLiftBody(symbol.name);
   return body === void 0 ? null : { body, liftName: symbol.name, symbol };
 }
 function renameEnrichLift(member, lift, ruleName, nodeName) {
@@ -5691,7 +5694,7 @@ function relabelUniformFieldSet(content, newName) {
     }
     if (isEnrichGroupLiftSymbol(n) && isHiddenKind(n.name ?? "")) {
       const liftName = n.name;
-      const body = liftName === void 0 ? void 0 : getGroupLiftRuleBody(liftName);
+      const body = liftName === void 0 ? void 0 : wireGetLiftBody(liftName);
       if (liftName !== void 0 && body !== void 0 && !liftBodies.has(liftName)) {
         liftBodies.set(liftName, body);
         collect(body, inRepeat);
@@ -5725,7 +5728,7 @@ function relabelUniformFieldSet(content, newName) {
     return n;
   };
   for (const [liftName, body] of liftBodies) {
-    setGroupLiftRuleBody(liftName, rewrite(body));
+    wireSetLiftBody(liftName, rewrite(body));
   }
   return rewrite(content);
 }

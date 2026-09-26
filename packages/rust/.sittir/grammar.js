@@ -388,29 +388,18 @@ function isEnrichGroupLiftSymbol(rule) {
   const meta = readRuleMetadata("metadata" in rule ? rule.metadata : void 0);
   return meta?.symbolSource === "group-lift";
 }
-var groupLiftRuleMap;
-function setGroupLiftRuleMap(map) {
-  groupLiftRuleMap = map;
-}
-function getGroupLiftRuleBody(name) {
-  return groupLiftRuleMap?.get(name);
-}
-function setGroupLiftRuleBody(name, body) {
-  groupLiftRuleMap?.set(name, body);
-}
 function descendThroughGroupLiftSymbol(rule, segments, patch, precStack) {
   const name = rule.name;
   if (!name) {
     throw new ApplyPathSkip("applyPath: enrich group-lift symbol has no name to resolve its body");
   }
-  const body = groupLiftRuleMap?.get(name);
+  const body = wireGetLiftBody(name);
   if (body === void 0) {
     throw new ApplyPathSkip(
-      `applyPath: enrich group-lift symbol '${name}' \u2014 referenced rule not found in the group-lift rule map (enrich resolver not registered, or the name was pruned)`
+      `applyPath: enrich group-lift symbol '${name}' \u2014 no body in the active wire() context (no wire() context, or the name was pruned)`
     );
   }
-  const newBody = applyPath(body, segments, patch, precStack);
-  groupLiftRuleMap?.set(name, newBody);
+  wireSetLiftBody(name, applyPath(body, segments, patch, precStack));
   return rule;
 }
 function isEnrichContentAlias(rule) {
@@ -2206,8 +2195,9 @@ function enrich(baseInput) {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }
   const hasWrapper = "grammar" in base2;
-  const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
-  if (!rulesBag) return base2;
+  const baseRules = hasWrapper ? base2.grammar?.rules : base2.rules;
+  if (!baseRules) return base2;
+  const rulesBag = { ...baseRules };
   const grammarMeta = hasWrapper ? base2.grammar : base2;
   const supertypeNames = extractGrammarSymbolNames(base2, hasWrapper, "supertypes");
   const inlineNames = extractGrammarSymbolNames(base2, hasWrapper, "inline");
@@ -2284,12 +2274,6 @@ function enrich(baseInput) {
   }
   synthesizeFieldEnumRules(mergedRules);
   const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
-  setGroupLiftRuleMap({
-    get: (n) => mergedRules[n],
-    set: (n, b) => {
-      mergedRules[n] = b;
-    }
-  });
   const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupSources.has(n)));
   const result = hasWrapper ? { ...base2, grammar: { ...base2.grammar, rules: mergedRules } } : { ...base2, rules: mergedRules };
   addSupertypes(hasWrapper ? result.grammar : result, tokenFormParents);
@@ -4512,7 +4496,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, parentKind, altMember), name });
   }
   for (const { altIdx, lift } of lifted) {
-    setGroupLiftRuleBody(lift.liftName, hoist(lift.body));
+    wireSetLiftBody(lift.liftName, hoist(lift.body));
     refs.push({ altIdx, ref: choiceMembers[altIdx], name: lift.liftName });
   }
   refs.sort((a, b) => a.altIdx - b.altIdx);
@@ -4560,7 +4544,7 @@ function enrichLiftArmOf(member) {
   if (symbol?.type !== "SYMBOL" || typeof symbol.name !== "string" || !isEnrichGroupLiftSymbol(symbol)) {
     return null;
   }
-  const body = getGroupLiftRuleBody(symbol.name);
+  const body = wireGetLiftBody(symbol.name);
   return body === void 0 ? null : { body, liftName: symbol.name, symbol };
 }
 function renameEnrichLift(member, lift, ruleName, nodeName) {
@@ -4824,7 +4808,7 @@ function relabelUniformFieldSet(content, newName) {
     }
     if (isEnrichGroupLiftSymbol(n) && isHiddenKind(n.name ?? "")) {
       const liftName = n.name;
-      const body = liftName === void 0 ? void 0 : getGroupLiftRuleBody(liftName);
+      const body = liftName === void 0 ? void 0 : wireGetLiftBody(liftName);
       if (liftName !== void 0 && body !== void 0 && !liftBodies.has(liftName)) {
         liftBodies.set(liftName, body);
         collect(body, inRepeat);
@@ -4858,7 +4842,7 @@ function relabelUniformFieldSet(content, newName) {
     return n;
   };
   for (const [liftName, body] of liftBodies) {
-    setGroupLiftRuleBody(liftName, rewrite(body));
+    wireSetLiftBody(liftName, rewrite(body));
   }
   return rewrite(content);
 }
@@ -5151,6 +5135,15 @@ function automaticVariantsOf(context) {
 function wireIsExtraRule(name) {
   return currentContext?.extraRuleNames.has(name) ?? false;
 }
+function wireGetLiftBody(name) {
+  return currentContext?.liftBodies.get(name) ?? currentContext?.baseRuleBodies[name];
+}
+function wireSetLiftBody(name, body) {
+  currentContext?.liftBodies.set(name, body);
+}
+function baseRuleBodiesOf(base2) {
+  return base2?.grammar?.rules ?? base2?.rules ?? {};
+}
 function wire(config, base2) {
   const cfg = config;
   const baseArg = base2;
@@ -5180,7 +5173,9 @@ function wire(config, base2) {
     flattenedParents: /* @__PURE__ */ new Set(),
     aliasTargets: /* @__PURE__ */ new Set(),
     automaticVariants: seedAutomaticVariants(base2),
-    adoptedGroups: baseArg ? adoptMintedGroups(baseArg, base2, cfg.groups) : /* @__PURE__ */ new Map()
+    adoptedGroups: baseArg ? adoptMintedGroups(baseArg, base2, cfg.groups) : /* @__PURE__ */ new Map(),
+    baseRuleBodies: baseRuleBodiesOf(baseArg),
+    liftBodies: /* @__PURE__ */ new Map()
   };
   const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
@@ -5192,6 +5187,10 @@ function wire(config, base2) {
       if (baseName in outRules) continue;
       outRules[baseName] = passthroughBaseRuleFn;
     }
+  }
+  for (const liftName of enrichLiftNames(base2)) {
+    if (liftName in outRules || !(liftName in context.baseRuleBodies) || context.adoptedGroups.has(liftName)) continue;
+    outRules[liftName] = passthroughBaseRuleFn;
   }
   wrapAllRuleFns(outRules, context);
   applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
@@ -5569,8 +5568,12 @@ function hasBodyPatternGroups(groups) {
   return false;
 }
 var passthroughBaseRuleFn = function passthroughBaseRuleFn2(_$, previous) {
-  return previous;
+  const name = currentContext?.currentRuleKind;
+  return (name === null || name === void 0 ? void 0 : currentContext?.liftBodies.get(name)) ?? previous;
 };
+function enrichLiftNames(base2) {
+  return /* @__PURE__ */ new Set([...getEnrichClauseGroups(base2), ...getEnrichVisibleGroupSources(base2)]);
+}
 function declaredPatterns(groups, injects) {
   const $ = makeSimpleDollarProxy();
   const declared = [];
