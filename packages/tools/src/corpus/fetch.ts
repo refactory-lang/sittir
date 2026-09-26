@@ -70,7 +70,7 @@ export function archiveCommit(tarball: Buffer): string {
 	const tar = gunzipSync(tarball);
 	if (String.fromCharCode(tar[156]!) !== 'g')
 		throw new Error('corpus: the archive has no global header naming its commit');
-	const size = Number.parseInt(tar.subarray(124, 136).toString('ascii').replace(/\0.*$/, '').trim(), 8);
+	const size = Number.parseInt(tar.subarray(124, 136).toString('ascii').split('\0')[0]!.trim(), 8);
 	const records = tar.subarray(512, 512 + size).toString('utf8');
 	const commit = records.match(/\d+ comment=([0-9a-f]{40})\n/)?.[1];
 	if (commit === undefined) throw new Error('corpus: the archive header names no commit');

@@ -43,7 +43,6 @@
  *   5. Assemble's field→slot mapping.
  */
 
-import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { load } from '../codegen-surface.ts';
 import { REPO_ROOT } from '@sittir/codegen/grammars';
