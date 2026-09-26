@@ -27,6 +27,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+One wasm binding per web-tree-sitter instance, shared by every loader. `Parser.init()` is not safe to call concurrently: its binding check runs before its await, so two first calls in flight build two bindings, and the second replaces the module-global one that `Language.load` and `setLanguage` use. A Language loaded between the two then reads as ABI version 0. The init promise is therefore stored once, synchronously, on the `Parser` class under `Symbol.for('sittir.web-tree-sitter.init')`, and every caller awaits that one promise. Keying on the class rather than this module's scope keeps the rule when two copies of this module share one web-tree-sitter instance (tools reaches it through the dynamic codegen surface, `generated-metadata` imports it statically), and the slot dies with the instance.
+
 ### `packages/codegen/src/polymorph-variant.ts::assertNever`
 
 ```text
