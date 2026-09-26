@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from '../alias-distributed.ts';
-import type { CatalogSymbolCtx } from '../alias-distributed.ts';
+import { symbolSourceOf, type SymbolSource } from '../alias-distributed.ts';
 import type { KindEntryLike } from '../../generated-metadata.ts';
 import type { AnyRule } from '../../../types/rule.ts';
 
@@ -12,13 +12,13 @@ const alias = (content: unknown, value: string, named = true) => ({ type: 'ALIAS
 function symbolsOf(
 	rules: Record<string, unknown>,
 	opts: { inline?: string[]; externals?: string[]; kindEntries?: KindEntryLike[] } = {}
-): CatalogSymbolCtx {
-	return {
+): SymbolSource {
+	return symbolSourceOf({
 		rules: rules as Record<string, AnyRule>,
 		externals: new Set(opts.externals ?? []),
 		inline: new Set(opts.inline ?? []),
 		kindEntries: opts.kindEntries ?? []
-	};
+	});
 }
 const distributed = (rules: Record<string, unknown>, opts?: { inline?: string[] }) =>
 	diagnoseDistributedAliases({ grammar: 'demo', symbols: symbolsOf(rules, opts) });
@@ -79,6 +79,14 @@ describe('display-union-mixed', () => {
 			symbols: symbolsOf(rules, { kindEntries })
 		});
 		expect(out).toEqual([]);
+	});
+	it('with no parser catalog yet, files a member by the predicted class of its rule shape', () => {
+		const out = diagnoseMixedDisplayUnions({
+			grammar: 'demo',
+			displayUnions: new Map([['shown', [{ storage: 'tok', literal: false }, { storage: 'node', literal: false }]]]),
+			symbols: symbolsOf(rules)
+		});
+		expect(out[0]).toMatchObject({ code: 'display-union-mixed', details: { terminals: ['tok'], nonterminals: ['node'] } });
 	});
 	it("files a member by the parser catalog's terminal fact, not by its rule shape", () => {
 		const out = diagnoseMixedDisplayUnions({

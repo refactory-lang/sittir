@@ -13,7 +13,7 @@ import type { SlotGroupingDiagnostic } from './slot-grouping.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent } from '../types.ts';
 import { collectGeneratedKindEntries, type GeneratedIdTables } from '../generated-metadata.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
-import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions, type CatalogSymbolCtx } from './alias-distributed.ts';
+import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions, symbolSourceOf } from './alias-distributed.ts';
 
 export type { GrammarDiagnostic };
 
@@ -205,12 +205,12 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		grammar: rawGrammar.name,
 		contentAliasedTo: linked.contentAliasedTo
 	});
-	const symbols: CatalogSymbolCtx = {
+	const symbols = symbolSourceOf({
 		rules: rawGrammar.rules,
 		externals: new Set(rawGrammar.externals),
 		inline: new Set(rawGrammar.inline),
 		kindEntries
-	};
+	});
 	const orphanedSyntheticGroups = new Set(rawGrammar.orphanedSyntheticGroups ?? []);
 	const kindIdStampDiagnostics: GrammarDiagnostic[] = compilerDiagnostics
 		.all()

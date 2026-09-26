@@ -442,7 +442,8 @@ construction sites, so this override never touches them.
 Blocks a named alias over content tree-sitter applies the alias to member by
 member: a sequence of two or more members or a repeat, reached through
 precedence, `optional` and `field` wrappers, or through a rule the parser
-inlines (`isInlinedName`: tree-sitter substitutes its body). The model would describe one node where the parser issues several.
+inlines (the `SymbolSource`'s `isInlined`: tree-sitter substitutes its
+body). The model would describe one node where the parser issues several.
 It never looks through `token()`, which lexes as one token, or through a
 hidden rule that is not inlined, which is a node of its own whatever its use
 count.
@@ -452,17 +453,28 @@ no single model node to be wrong about. The known unnamed case is
 typescript's `predefined_type` arm `alias(seq('unique', 'symbol'),
 'unique symbol')`.
 
-### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::CatalogSymbolCtx`
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::SymbolSource`
 
-What the alias diagnostics read about a grammar's symbols once the parser catalog exists: the rule bodies, the external and `inline:` names, and the catalog rows.
+The one answer the alias diagnostics ask about a grammar's symbols: whether a name is a terminal to the parser (`isTerminal`) and whether the parser inlines it (`isInlined`), beside the rule bodies and external names. Which facts answer it is chosen once, by `symbolSourceOf`, so each diagnostic has a single code path:
 
-### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::isInlinedName`
+- after the first generate, when the parser catalog has rows, the parser's own facts answer (`catalogSymbolSource`);
+- before any parser.c exists (a fresh or bootstrapping grammar, or the diagnostics tool run before the first generate), the DSL-phase prediction from rule shape answers (`predictedSymbolSource`), so the diagnostics still fire in that phase.
 
-Whether the parser inlines a name: it is in the grammar's `inline:` array and has no catalog row (tree-sitter issues no symbol for an inlined rule).
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::SymbolFacts`
 
-### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::isTerminalName`
+The grammar facts `symbolSourceOf` builds a source from: rule bodies, external and `inline:` names, and the catalog rows (empty before the first generate).
 
-Whether a name is a terminal to the parser, by the catalog's `terminal` fact. An inlined name has no row, so it is classified by its body (`terminalContentOf`), since the parser substitutes it; a rowless name that is not inlined is a nonterminal.
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::symbolSourceOf`
+
+Chooses the `SymbolSource`: the catalog source when there are catalog rows, the predicted source otherwise.
+
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::catalogSymbolSource`
+
+Answers from the parser catalog. A name is inlined when it is in `inline:` and has no row (tree-sitter issues no symbol for an inlined rule); it is a terminal when its row's `terminal` fact says so (id below `TOKEN_COUNT`). An inlined name is classified by its body (`terminalContentOf`), since the parser substitutes it; a rowless name that is not inlined is a nonterminal.
+
+### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::predictedSymbolSource`
+
+Answers from the DSL-phase prediction, for the phase before parser.c exists: `parserSymbolClassOf` (inlined means its `inlined` class) and `terminalSymbolOf`.
 
 ### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::distributedShape`
 
@@ -474,8 +486,9 @@ The distributed shape an alias's content has, described for the message, or
 An invariant guard, not a user-facing shape check: enrich
 (`unaliasOverloadedDisplays`) resolves every display that would sit over both
 a terminal and a nonterminal storage, so after enrich no display union holds
-both. Members are classified by the parser catalog's `terminal` fact
-(`isTerminalName`), and a literal member is a terminal by its own stamp
+both. Members are classified by the `SymbolSource` (`isTerminal`: the
+parser catalog after the first generate, the shape prediction before it),
+and a literal member is a terminal by its own stamp
 (`DisplayUnionMember.literal`).
 A member that is neither a rule, an external nor a literal is reported
 rather than defaulted, since defaulting would make the guard guess.

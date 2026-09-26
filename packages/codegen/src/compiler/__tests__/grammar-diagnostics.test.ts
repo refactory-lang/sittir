@@ -79,7 +79,7 @@ function collisionGrammar(): RawGrammar {
 }
 
 describe('grammar diagnostics preflight', () => {
-	it('emits parsekind-noninjective from compiler-produced collisions', () => {
+	it('emits parsekind-noninjective from compiler-produced collisions, and display-union-mixed because the fixture skips the enrich pass that resolves a display over both a terminal and a nonterminal', () => {
 		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar: collisionGrammar() });
 
 		expect(result.nodeMap.parseKindCollisions).toEqual([
@@ -98,6 +98,12 @@ describe('grammar diagnostics preflight', () => {
 				ownerKind: 'host',
 				slotName: 'content',
 				canProceed: false
+			}),
+			expect.objectContaining({
+				code: 'display-union-mixed',
+				ownerKind: 'shared',
+				canProceed: false,
+				details: { display: 'shared', terminals: ['left', 'right'], nonterminals: ['shared'] }
 			})
 		]);
 	});
@@ -174,10 +180,11 @@ describe('grammar diagnostics preflight', () => {
 		expect(error.message).toContain('parsekind-noninjective');
 	});
 
-	it('parsekind-noninjective blocks (canProceed: false)', () => {
+	it('parsekind-noninjective now blocks (canProceed: false), beside the mixed-display guard an enrich-skipping fixture trips', () => {
 		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar: collisionGrammar() });
 		expect(result.diagnostics).toEqual([
-			expect.objectContaining({ code: 'parsekind-noninjective', ownerKind: 'host', canProceed: false })
+			expect.objectContaining({ code: 'parsekind-noninjective', ownerKind: 'host', canProceed: false }),
+			expect.objectContaining({ code: 'display-union-mixed', ownerKind: 'shared', canProceed: false })
 		]);
 	});
 

@@ -3841,8 +3841,8 @@ the caller's `isTerminalSymbol`, a string, pattern or token, or a choice
 whose every arm is terminal. The symbol test is a parameter so the one body
 walk serves both phases: the DSL phase passes `terminalSymbolOf` (predicted
 from rule shape, since no parser.c exists yet) and the grammar diagnostics
-pass the parser catalog's `terminal` fact
-(`compiler/diagnostics/alias-distributed.ts::isTerminalName`).
+pass the parser catalog's `terminal` fact once one exists
+(`compiler/diagnostics/alias-distributed.ts::catalogSymbolSource`).
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::terminalSymbolOf`
 
@@ -3850,7 +3850,9 @@ Whether a name is a terminal to the parser, predicted in the DSL phase: its
 `parserSymbolClassOf`, except that an inlined rule is classified by its body,
 since the parser substitutes it. Used by enrich's
 `unaliasOverloadedDisplays`, which runs before parser.c exists. After the
-catalog exists the parser's own fact is used instead (`isTerminalName`).
+catalog exists the parser's own fact is used instead
+(`compiler/diagnostics/alias-distributed.ts::SymbolSource`); before it, the
+grammar diagnostics use this prediction too (`predictedSymbolSource`).
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::lexesAsOneToken`
 
