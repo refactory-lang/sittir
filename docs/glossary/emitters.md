@@ -11387,6 +11387,8 @@ hands each parent's wire set to `seatOf`, so the seats the model stamps are
 the routes the overlay emits from the same id tables. `emitNodeModel`
 passes the generator's `generatedIdTables` through for that reason.
 
+`textLeavesThrough` publishes `transparentEnvelopeTextLeaves` per envelope, so the loose source emitter predicts which bare strings the coercer routes through an envelope.
+
 `variantRoutes` publishes `variantRoutePaths` — each flattened variant kind's public `ir` path — sorted by kind, so tools read the one derivation instead of reconstructing paths from `polymorphVariants` and hoisting facts.
 
 Each kind that takes a bare input on the loose surface also carries
@@ -13155,6 +13157,10 @@ Orders text-kind checks by the catalog's `lexicalRank` (`findKindEntry`, so an a
 
 A slot's resolver kinds: its kind names expanded through supertypes (`expandAndDedupeContentTypes`) and split into leaf, branch and token kinds (`classifyKindsForResolver`). `resolveFieldCall` emits the `_resolveOne` call from it, and the overlap tool reads a slot's text candidates from it.
 
+### `packages/codegen/src/emitters/from.ts::transparentEnvelopeTextLeaves`
+
+The text leaf kinds a bare string reaches through an envelope that adds no text of its own: a surface-hidden envelope (hidden storage the parser shows under an alias, such as typescript `_lhs_expression`) with a coercer and one slot, whose leaves are that slot's `slotResolverKinds` leaf kinds. Any other node reaches none: an envelope with fixed text (`array`, `await_expression`) would wrap a bare string in text the author never wrote. The coercer's `_ENVELOPE_TEXT_LEAVES` table and the node model's `textLeavesThrough` both read it.
+
 ### `packages/codegen/src/emitters/from.ts::defaultArmKindOf`
 
 The storage kind of the slot value an author marked `arm.default`, or
@@ -13201,6 +13207,8 @@ ids at wrapper-only slots until arrays started resolving per element.
 ### `packages/codegen/src/emitters/from.ts::emitResolverHelpers`
 
 In `_resolveOne`, a value that is neither a config object nor kinded data hoists into a branch arm only when that arm is the slot's sole branch kind or its declared default arm; a string additionally needs the arm to be string-capable. A bare string never picks an arm by elimination among several — which kind it names is not decided by its text — so a string no leaf accepts throws when any arm could take it.
+
+`_resolveBareText` tests the slot's text leaves in lexical-rank order, counting an envelope arm's leaves (`_ENVELOPE_TEXT_LEAVES`, from `transparentEnvelopeTextLeaves`) as the slot's own. A leaf reached through an envelope is built and then passed to the envelope's coercer, so `left: 'result'` builds the same `_lhs_expression` envelope the strict surface spells.
 
 `_listElements` passes an element that is already the list's wrapper kind through untouched and resolves only the others to the wrapper's content; resolving a built wrapper toward an alias content kind would nest it inside that alias.
 

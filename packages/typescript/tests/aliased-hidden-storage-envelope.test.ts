@@ -22,4 +22,14 @@ describe('an assignment target over aliased hidden storage', () => {
 		const read = (root as { _statements?: { _expression?: { _left?: unknown } } })._statements?._expression?._left;
 		expect(shapeOf(read)).toEqual(shapeOf(built._left));
 	});
+
+	it('takes a bare string on the loose surface and builds the strict envelope', () => {
+		const loose = ir.assignmentExpression({ left: 'result', right: ir.number('1') });
+		const strict = ir.assignmentExpression.strict({
+			left: ir.lhsExpression.strict(ir.identifier('result')),
+			right: ir.number('1')
+		});
+		expect(loose.$render().toString()).toBe('result = 1');
+		expect(shapeOf(loose)).toEqual(shapeOf(strict));
+	});
 });

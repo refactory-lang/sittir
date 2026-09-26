@@ -657,6 +657,7 @@ export interface LoadedNodeModel {
 	readonly slotMultiple: Record<string, Record<string, boolean>>;
 	readonly slotDefaults: Record<string, Record<string, string>>;
 	readonly bareAccepts: Record<string, readonly string[]>;
+	readonly textLeavesThrough: Record<string, readonly string[]>;
 	readonly forwardsTo: Record<string, string>;
 	readonly listDefaults: Record<string, string>;
 	readonly listElementKinds: Record<string, readonly string[]>;
@@ -683,6 +684,7 @@ interface ParsedNodeModel {
 		factoryFields?: readonly string[];
 		subtypes?: readonly string[];
 		bareAccepts?: readonly string[];
+		textLeavesThrough?: readonly string[];
 		forwardsTo?: string;
 		defaultDelimiter?: string;
 		leafPattern?: string;
@@ -712,6 +714,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	slotMultiple: {},
 	slotDefaults: {},
 	bareAccepts: {},
+	textLeavesThrough: {},
 	forwardsTo: {},
 	listDefaults: {},
 	listElementKinds: {}
@@ -753,6 +756,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const slotMultiple: Record<string, Record<string, boolean>> = {};
 	const slotDefaults: Record<string, Record<string, string>> = {};
 	const bareAccepts: Record<string, readonly string[]> = {};
+	const textLeavesThrough: Record<string, readonly string[]> = {};
 	const forwardsTo: Record<string, string> = {};
 	const listDefaults: Record<string, string> = {};
 	const listElementKinds: Record<string, readonly string[]> = {};
@@ -786,6 +790,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		if (node.factoryFields !== undefined) factoryFields[node.kind] = node.factoryFields;
 		if (node.subtypes !== undefined) subtypes[node.kind] = node.subtypes;
 		if (node.bareAccepts !== undefined) bareAccepts[node.kind] = node.bareAccepts;
+		if (node.textLeavesThrough !== undefined) textLeavesThrough[node.kind] = node.textLeavesThrough;
 		if (node.forwardsTo !== undefined) forwardsTo[node.kind] = node.forwardsTo;
 		if (node.defaultDelimiter !== undefined) listDefaults[node.kind] = node.defaultDelimiter;
 		if (node.elementKinds !== undefined) listElementKinds[node.kind] = node.elementKinds;
@@ -809,6 +814,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		slotMultiple,
 		slotDefaults,
 		bareAccepts,
+		textLeavesThrough,
 		forwardsTo,
 		listDefaults,
 		listElementKinds

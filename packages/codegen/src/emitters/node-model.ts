@@ -25,7 +25,7 @@ import { buildFactoryMap } from './factory-map.ts';
 import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
 import { resolveFieldStorageInfo, compareOrdinal, anchoredLeafRegexLiteral } from './shared.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
-import { bareAcceptClosure } from './from.ts';
+import { bareAcceptClosure, transparentEnvelopeTextLeaves } from './from.ts';
 import { interiorOf, type NodeInterior } from './interior.ts';
 import { declaredDelimiterDefault } from './factories.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
@@ -74,6 +74,7 @@ interface SerializedNodeBase {
 	forwardsTo?: string;
 	factoryFields?: string[];
 	bareAccepts?: string[];
+	textLeavesThrough?: string[];
 }
 
 interface SerializedCompoundNode extends SerializedNodeBase {
@@ -167,6 +168,8 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		if (factoryFields !== undefined) serialized.factoryFields = [...factoryFields];
 		const accepts = bareAccepts.get(kind);
 		if (accepts !== undefined && accepts.size > 0) serialized.bareAccepts = [...accepts].sort(compareOrdinal);
+		const textLeavesThrough = transparentEnvelopeTextLeaves(node, nodeMap);
+		if (textLeavesThrough.length > 0) serialized.textLeavesThrough = [...textLeavesThrough];
 		nodes.push(serialized);
 	}
 

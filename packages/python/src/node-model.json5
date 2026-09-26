@@ -2748,6 +2748,12 @@
         "true",
         "union_pattern",
         "wildcard_pattern"
+      ],
+      "textLeavesThrough": [
+        "true",
+        "false",
+        "none",
+        "wildcard_pattern"
       ]
     },
     {

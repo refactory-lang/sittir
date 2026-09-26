@@ -83,6 +83,7 @@ const loose: LooseFacts = {
 		args: ['attributed', 'identifier', 'field_identifier'],
 		attributed: ['identifier', 'field_identifier']
 	},
+	textLeavesThrough: {},
 	forwardsTo: { wrapper: 'identifier', other: 'identifier' },
 	listDefaults: { arguments: 'Delimiter.None', elements: 'Delimiter.None', args: 'Delimiter.None' },
 	listElementKinds: { arguments: ['identifier'], elements: ['identifier'], args: ['attributed'] },

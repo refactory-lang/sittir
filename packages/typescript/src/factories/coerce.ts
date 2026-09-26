@@ -438,12 +438,22 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'meta_property_import_meta'
 ];
 
+const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {
+	_lhs_expression: ['undefined', 'identifier']
+};
+
 function _resolveBareText(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {
 	for (const kind of _TEXT_KINDS_BY_RANK) {
-		if (!kinds.includes(kind)) continue;
+		const direct = kinds.includes(kind);
+		const envelope = direct
+			? undefined
+			: kinds.find((k) => _ENVELOPE_TEXT_LEAVES[k]?.includes(kind) === true && _isFromKind(k));
+		if (!direct && envelope === undefined) continue;
 		const entry = _leafRegistry[kind]!;
-		if (entry.values !== undefined ? entry.values.includes(v) : entry.pattern?.test(v) === true)
-			return entry.factory(v);
+		if (!(entry.values !== undefined ? entry.values.includes(v) : entry.pattern?.test(v) === true)) continue;
+		return envelope !== undefined && _isFromKind(envelope)
+			? _resolveByKind(envelope, entry.factory(v))
+			: entry.factory(v);
 	}
 	return undefined;
 }

@@ -40,6 +40,7 @@ export interface LooseFacts {
 	readonly slotMultiple: Record<string, Record<string, boolean>>;
 	readonly slotDefaults: Record<string, Record<string, string>>;
 	readonly bareAccepts: Record<string, readonly string[]>;
+	readonly textLeavesThrough: Record<string, readonly string[]>;
 	readonly forwardsTo: Record<string, string>;
 	readonly listDefaults: Record<string, string>;
 	readonly listElementKinds: Record<string, readonly string[]>;
@@ -290,7 +291,16 @@ function soleLeafKind(kinds: readonly string[], text: string, ctx: PrintContext)
 
 function bareTextAdmitted(kind: string, property: string, text: string, ctx: PrintContext): boolean {
 	const kinds = slotKindsAt(kind, property, ctx);
-	return ctx.loose !== undefined && kinds !== undefined && soleLeafKind(kinds, text, ctx) !== undefined;
+	return ctx.loose !== undefined && kinds !== undefined && soleLeafKind(textCandidateKinds(kinds, ctx), text, ctx) !== undefined;
+}
+
+function textCandidateKinds(kinds: readonly string[], ctx: PrintContext): readonly string[] {
+	return [...kinds, ...kinds.flatMap((k) => ctx.loose!.textLeavesThrough[k] ?? [])];
+}
+
+function envelopeReaching(kinds: readonly string[], leaf: string, ctx: PrintContext): string | undefined {
+	if (kinds.includes(leaf)) return undefined;
+	return kinds.find((k) => ctx.loose!.textLeavesThrough[k]?.includes(leaf) === true);
 }
 
 function readLeafBare(kind: string, text: string, ctx: PrintContext): boolean {
@@ -447,6 +457,15 @@ function loosenValue(
 		return new Printed(value.$type, bare ?? `[${printed.join(', ')}]`, value.kind);
 	}
 	const inner = value.facts?.inner;
+	const innerText = inner instanceof Printed ? inner.facts?.text : undefined;
+	if (
+		inner instanceof Printed &&
+		inner.kind !== undefined &&
+		innerText !== undefined &&
+		envelopeReaching(kinds, inner.kind, ctx) === value.kind &&
+		soleLeafKind(textCandidateKinds(kinds, ctx), innerText, ctx) === inner.kind
+	)
+		return new Printed(value.$type, JSON.stringify(innerText), value.kind);
 	if (
 		inner instanceof Printed &&
 		inner.kind !== undefined &&
@@ -935,6 +954,7 @@ export async function emitFactorySourceText(
 						slotMultiple: model.slotMultiple,
 						slotDefaults: model.slotDefaults,
 						bareAccepts: model.bareAccepts,
+						textLeavesThrough: model.textLeavesThrough,
 						forwardsTo: model.forwardsTo,
 						listDefaults: model.listDefaults,
 						listElementKinds: model.listElementKinds,

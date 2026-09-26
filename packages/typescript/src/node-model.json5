@@ -4770,6 +4770,10 @@
         "update_expression_postfix",
         "update_expression_prefix",
         "yield_expression"
+      ],
+      "textLeavesThrough": [
+        "undefined",
+        "identifier"
       ]
     },
     {

@@ -81,7 +81,10 @@ the value passes unchanged.
 ### `packages/tools/src/emit/factory-source.ts::loosenValue`
 
 The loosest spelling of a printed node at a slot, in the order the runtime
-resolves a value. A single-slot wrapper is dropped when its inner value is
+resolves a value. A transparent envelope holding a text leaf is its bare text
+when the envelope is the one the coercer would route that leaf through
+(`envelopeReaching`) and the leaf is the sole match among the slot's text
+candidates (`textCandidateKinds`). A single-slot wrapper is dropped when its inner value is
 not admitted directly and exactly one arm of the slot admits it bare — and
 that arm is the wrapper itself, or the runtime would build a different
 wrapper. A list envelope with default options is its bare array when the
@@ -311,6 +314,14 @@ matching the config is left as it is.
  */
 ```
 
+### `packages/tools/src/emit/factory-source.ts::textCandidateKinds`
+
+The kinds a bare string can name at a slot: the slot's kinds plus the text leaves each transparent envelope arm reaches (`textLeavesThrough`), the same set the coercer's `_resolveBareText` ranks.
+
+### `packages/tools/src/emit/factory-source.ts::envelopeReaching`
+
+The first slot kind that is a transparent envelope reaching `leaf`, or none when the slot admits the leaf directly: the envelope the coercer wraps a bare string of that leaf in.
+
 ### `packages/tools/src/emit/factory-source.ts::bareTextAdmitted`
 
 ```text
@@ -320,6 +331,8 @@ matching the config is left as it is.
  * (the first text leaf of the slot), so a bare string builds the same leaf.
  */
 ```
+
+The pattern kinds counted are the slot's text candidates (`textCandidateKinds`), so a leaf a transparent envelope arm reaches counts as admitted.
 
 ### `packages/tools/src/emit/factory-source.ts::admitsDirectly`
 

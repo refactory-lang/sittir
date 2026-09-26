@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "a247eddb674a3a3b060128eba87cd79f0bd85b0e9946167dfe80b97677ae77a9",
+  "source_hash": "5fb1fc8244e935bd3411b0aa3c4417f445b27cfb4a3c356bcdd6464e2e694142",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "6647721213cb3beeb2c4bd883629d788a73e0a81fcd40d14c8efbe3584195576",
     "packages/typescript/.sittir/grammar.js": "13c870c8bbe91af51972500ea0c030b3e704dcd9f9a059edd16b2dd59841d469",
@@ -21,7 +21,7 @@
     "packages/typescript/src/consts.ts": "df2b8aa6b629c2243128db650eb524b3492b77f1a66b4cb8692ae3fde2a31805",
     "packages/typescript/src/engine.ts": "9cf6d8e7475a6d72a1ef0684bb41ca817f7e2a7c382f5284f22418cc584ede0f",
     "packages/typescript/src/factories/bundle.ts": "ce39decb97e9e73b3c2d997fff0393e23a9faba8dafc129c831524b3c6aa7966",
-    "packages/typescript/src/factories/coerce.ts": "9d2aad4a6ee9ffa7b8f6714234e1150ddcc0376020eaa694f9dd7e7d0218cddc",
+    "packages/typescript/src/factories/coerce.ts": "21fa1386bbc1ef9b56d1bb4834b740f3dbb4b5c1612ae1ef9148a9fbc3c4d0e4",
     "packages/typescript/src/factories/index.ts": "5ffae9ca729f817bc1033ba459212263b7fa09edfbfce3e1e290cb12794c3311",
     "packages/typescript/src/factories/overlays/polymorphs.ts": "b055eed0a2fb96e71a3cfe10843b66750fc7f8ce5d5ba647c317bf127740ed09",
     "packages/typescript/src/factories/overlays/refines.ts": "1a89cdd227fdfd96b6ecc81e502b96f782d474a56ed47379aa2371040c2ff688",
@@ -32,7 +32,7 @@
     "packages/typescript/src/index.ts": "dde8f93f6c1ee1f11445d8814046d1a2935cbc3166266058f75e29326c3e200c",
     "packages/typescript/src/ir.ts": "80a38830924c38a6dd6de770d00f30929586c1f1899645cbf7dd078c48507481",
     "packages/typescript/src/is.ts": "b2cbd289d80ff0d0b3c1be7e83af29f9cf76ce3ce59879af33ef7a22a550b366",
-    "packages/typescript/src/node-model.json5": "50d4f94b90edc5d850db1aee194dfdbf2aafadfc8afd486c13a7e72d7574b2c6",
+    "packages/typescript/src/node-model.json5": "f6ef424094775482d6df58b0c06d1ce50d41a0468aca67ca117d63a5c48fd344",
     "packages/typescript/src/options.ts": "3e7e839d923c5465a50196d337724e56679e61db05d53646e366f40abe25c176",
     "packages/typescript/src/render-engine.ts": "c2b1e35bcd43cb1e69a8ad49475cb8b5fd9c64dcf6120681c44acb9c3c7dc33f",
     "packages/typescript/src/types.ts": "6f1649278d3bbbf9624475f7d62b4c7806bec97759fec026e67ecdc595b0a704",

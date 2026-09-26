@@ -72,6 +72,7 @@ import {
 	AbstractAssembledCompound,
 	AssembledList,
 	AssembledSupertype,
+	AssembledEnvelope,
 	AssembledPattern,
 	AssembledEnum,
 	AssembledKeyword,
@@ -757,6 +758,12 @@ function emitKeywordFrom(node: LeafFromNode): string {
 }
 
 type KindInterner = (kinds: readonly string[]) => string;
+
+export function transparentEnvelopeTextLeaves(node: AssembledNode, nodeMap: NodeMap): readonly string[] {
+	if (!(node instanceof AssembledEnvelope) || node.modelType !== 'envelope' || !node.surfaceHidden) return [];
+	if (node.fromFunctionName === undefined || node.slots.length !== 1) return [];
+	return slotResolverKinds(node.slots[0]!, nodeMap).leafKinds;
+}
 
 export function slotResolverKinds(field: { values: readonly NodeOrTerminal[] }, nodeMap: NodeMap): ReturnType<typeof classifyKindsForResolver> {
 	return classifyKindsForResolver(expandAndDedupeContentTypes(slotKindNames(field), nodeMap, storageKindIdByNameOf(field)), nodeMap);
@@ -1459,11 +1466,21 @@ function emitResolverHelpers(
 	lines.push('');
 	lines.push(`const _TEXT_KINDS_BY_RANK: readonly string[] = ${JSON.stringify(textChecks.map((check) => check.kind))};`);
 	lines.push('');
+	const envelopeTextLeaves = [...nodeMap.nodes]
+		.map(([kind, node]) => [kind, transparentEnvelopeTextLeaves(node, nodeMap)] as const)
+		.filter(([, leaves]) => leaves.length > 0);
+	lines.push('const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {');
+	for (const [kind, leaves] of envelopeTextLeaves) lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(leaves)},`);
+	lines.push('};');
+	lines.push('');
 	lines.push('function _resolveBareText(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {');
 	lines.push('  for (const kind of _TEXT_KINDS_BY_RANK) {');
-	lines.push('    if (!kinds.includes(kind)) continue;');
+	lines.push('    const direct = kinds.includes(kind);');
+	lines.push('    const envelope = direct ? undefined : kinds.find((k) => _ENVELOPE_TEXT_LEAVES[k]?.includes(kind) === true && _isFromKind(k));');
+	lines.push('    if (!direct && envelope === undefined) continue;');
 	lines.push('    const entry = _leafRegistry[kind]!;');
-	lines.push('    if (entry.values !== undefined ? entry.values.includes(v) : entry.pattern?.test(v) === true) return entry.factory(v);');
+	lines.push('    if (!(entry.values !== undefined ? entry.values.includes(v) : entry.pattern?.test(v) === true)) continue;');
+	lines.push('    return envelope !== undefined && _isFromKind(envelope) ? _resolveByKind(envelope, entry.factory(v)) : entry.factory(v);');
 	lines.push('  }');
 	lines.push('  return undefined;');
 	lines.push('}');
