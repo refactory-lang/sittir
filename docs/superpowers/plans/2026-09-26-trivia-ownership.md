@@ -67,6 +67,9 @@ generated grammar crates and packages, vitest, cargo.
    factory re-call) throws, naming leading/trailing on the new child. It must not
    drop the comments or render them between the braces next to the new child.
    Pinned in Task 5.
+6. **A whitespace entry next to a spacing default** (`blankline` leading on a
+   statement whose seam default is a newline) renders exactly one blank line,
+   not a newline plus a blank line. Pinned in Task 7.
 5. **A python comment after an indented block's last statement** (`if x:\n    a\n
    # c\nb`): whatever tree-sitter-python's tree says, read → wrap → render stays
    byte-exact and built → render keeps the comment on its owner. Measured, not
@@ -359,6 +362,11 @@ it('refuses adding a child to a node with inner comments', () => {
 	const b = ir.block().$trivia.inner(ir.lineComment('// TODO'));
 	expect(() => b.$with.statements([ir.expressionStatement(ir.identifier('a'))])).toThrow(/leading|trailing/);
 });
+it('accepts whitespace items and whitespace strings', () => {
+	const a = ir.identifier('a').$trivia.leading(ir.whitespace.blankline());
+	const b = ir.identifier('a').$trivia.leading('\n\n');
+	expect(b.$trivia.leading()).toEqual(a.$trivia.leading());
+});
 it('classifies loose strings against comment kinds and rejects others', () => {
 	const f = ir.identifier('a').$trivia.leading('// hi');
 	expect(f.$trivia.leading()[0]!.$type).toBe(TSKindId.LineComment);
@@ -371,8 +379,13 @@ it('classifies loose strings against comment kinds and rejects others', () => {
   cannot import a grammar.
 - [ ] **Step 2: Run them.** Expected: FAIL.
 - [ ] **Step 3: Implement.**
+  - Items may be any extra kind's node data or a `_whitespace` item
+    (`ir.whitespace.blankline()`); the grammar's extra kinds come from its
+    `extras` and `trivia` role, the whitespace items from `_whitespace`.
   - With zero args, each side returns its stored entries (`[]` when absent).
-  - A string item is classified by the first comment kind in
+  - A whitespace-only string maps to the `_whitespace` item whose text equals it
+    (`whitespaceTextOf`); `'\n\n'` → blankline.
+  - Any other string item is classified by the first extra kind in
     `_TEXT_KINDS_BY_RANK` whose anchored pattern accepts it, then built through
     that kind's factory. Otherwise throw
     `trivia: '<text>' is none of <kinds>`.
@@ -484,6 +497,11 @@ it('renders inner comments inside an empty block', () => {
 	const f = ir.functionItem({ name: 'f', body: ir.block().$trivia.inner(ir.lineComment('// TODO')) });
 	expect(f.$render()).toMatch(/\{\n\s+\/\/ TODO\n\}/);
 });
+it('a blankline leading entry gives exactly one blank line', () => {
+	const b = ir.block(ir.expressionStatement(ir.identifier('a')), ir.expressionStatement(ir.identifier('b')).$trivia.leading(ir.whitespace.blankline()));
+	expect(b.$render()).toMatch(/a;\n\n\s*b;/);
+	expect(b.$render()).not.toMatch(/a;\n\n\n/);
+});
 it('renders a built trailing line comment followed by the next statement on a new line', () => {
 	const b = ir.block(ir.expressionStatement(ir.identifier('a')).$trivia.trailing(ir.lineComment('// x')), ir.expressionStatement(ir.identifier('b')));
 	expect(b.$render()).not.toMatch(/\/\/ x b/);
@@ -494,7 +512,9 @@ it('renders a built trailing line comment followed by the next statement on a ne
   source coordinates stripped.
 - [ ] **Step 2: Run them.** Expected: FAIL.
 - [ ] **Step 3: Implement** the macro, transport, body node and
-  `render_inner_trivia`. Add matching Rust unit tests to `trivia_macro_tests`
+  `render_inner_trivia`. `TriviaTransport` gains the whitespace variants; a
+  whitespace entry replaces the spacing default at its gap for that node (it is
+  written through the spacing writer, which coalesces by rank). Add matching Rust unit tests to `trivia_macro_tests`
   for `same_line` and `line_terminated`.
 - [ ] **Step 4: Run the tests.** Expected: PASS. Run
   `cargo test --workspace --no-default-features`.

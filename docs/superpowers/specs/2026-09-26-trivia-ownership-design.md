@@ -1,4 +1,4 @@
-# Trivia ownership: leading, trailing and inner comments
+# Trivia ownership: leading, trailing and inner trivia
 
 ## Goal
 
@@ -11,6 +11,15 @@ one owner and one position:
 
 Authors attach comments through `$trivia`, including inside an otherwise empty
 body, which cannot be expressed today.
+
+On the factory surface, every extra can be attached this way, not only comments:
+- the grammar's other non-whitespace extras (e.g. python `line_continuation`);
+- the whitespace vocabulary (`newline`, `blankline`, and `indent`/`dedent` where
+  the grammar has them). For example, "a blank line before this statement" is a
+  `blankline` leading entry.
+
+The reader records extra NODES only. Whitespace read from source stays with the
+source coordinates, as today.
 
 ## How tree-sitter places a comment
 
@@ -73,7 +82,13 @@ recorded anywhere, and it is lost.
 
 ### Entry shape
 
-Every trivia entry, read or built, is the node data of its extra kind:
+A trivia entry is one of two things:
+- a **node entry**: an extra kind's node data (comments, other extras), read or
+  built;
+- a **whitespace entry**: an item of the grammar's `_whitespace` vocabulary,
+  built only (the reader never produces one).
+
+A node entry:
 
 - the same shape a slot child of that kind has;
 - read, wrapped and transported by the same code as slot children, so a comment
@@ -95,8 +110,9 @@ interface NodeTrivia {
 }
 ```
 
-`TriviaEntry` is the node data of one of the grammar's comment kinds (its
-`trivia` role). The bare-string form that `TriviaEntry` allows today is replaced
+`TriviaEntry` is the node data of one of the grammar's extra kinds, or a
+whitespace vocabulary item (the same `_whitespace` members render options use,
+stored by kind id). The bare-string form that `TriviaEntry` allows today is replaced
 by the builder surface below. `$_trivia` stays the storage key.
 
 ### Empty kinds and gaps
@@ -185,12 +201,17 @@ a comment where it can't render:
 
 This follows the existing bare-text rules:
 
-- **Strict:** items are comment nodes built with the grammar's comment factories
-  (`ir.lineComment(…)`, `ir.blockComment(…)`).
-- **Loose:** items may also be strings. A string is classified against the
-  grammar's comment kinds by the anchored-pattern test in lexical-rank order
-  (the rule loose bare text already uses for text slots). A string no comment
-  kind accepts throws.
+- **Strict:** items are nodes built with the grammar's extra-kind factories
+  (`ir.lineComment(…)`, `ir.blockComment(…)`, `ir.lineContinuation()`), or
+  whitespace items (`ir.whitespace.blankline()`, `ir.whitespace.newline()`).
+- **Loose:** items may also be strings.
+  - A string is classified against the grammar's extra kinds by the
+    anchored-pattern test in lexical-rank order (the rule loose bare text
+    already uses for text slots).
+  - A whitespace-only string maps to the whitespace item whose text it equals
+    (`'\n'` → newline, `'\n\n'` → blankline), through the same
+    `whitespaceTextOf` fact render options use.
+  - A string nothing accepts throws.
 
 ## Render
 
@@ -207,6 +228,11 @@ decides the break:
     kind's block-body seams already declare indent/dedent);
   - separated by a space otherwise;
   - separators of an empty list are not written.
+- **whitespace entries:** a whitespace entry at a position REPLACES the spacing
+  default at that gap for this node, rather than adding to it. So a `blankline`
+  leading entry gives exactly one blank line before the owner, whatever the
+  seam default was. Consecutive whitespace entries coalesce by rank, as the
+  spacing writer already does (the strongest wins).
 - **line-terminated comments:** a comment kind whose token cannot contain a line
   break forces a line break after it, whatever follows. A line comment otherwise
   swallows the next token. The fact is stamped once per comment kind (see "Model
@@ -222,7 +248,7 @@ for design review:
 
 1. `NodeTrivia.inner` (runtime data), keyed by `GapKey`.
 2. `$sameLine?: true` on trivia entries (runtime data).
-3. **`lineTerminated`** on comment kinds (node model, a stamped fact):
+3. **`lineTerminated`** on extra kinds (node model, a stamped fact):
    - computed at link from the kind's token rule: can the token's pattern match
      a line break;
    - consumed only by render emission.
@@ -231,6 +257,11 @@ for design review:
      for a slotless kind;
    - consumed by type emission (`Empty<Kind>`, `innerAt`), the factory, wrap and
      render.
+
+5. Whitespace trivia entries (runtime data): a trivia array may hold a
+   `_whitespace` item (stored by kind id, like a whitespace option value)
+   alongside extra-kind node data. `TriviaTransport` gains the whitespace
+   variants.
 
 No annotation is read by the compiler for any of this. Trivia stays outside the
 rule model.
@@ -278,9 +309,10 @@ rule model.
 
 ## Out of scope
 
-- Blank lines between a comment and its owner. Whitespace stays with the
-  whitespace vocabulary and render options; read → render keeps them through
-  source coordinates.
+- The reader recording whitespace (blank lines) as trivia entries. Built
+  whitespace entries are in scope; read whitespace stays with source
+  coordinates. A follow-up can have the reader record blank lines (two or more
+  line breaks) as `blankline` entries once the entry shape is proven.
 - Reflowing or re-indenting comment text.
 - Doc-comment semantics (rust `///` as attributes, python docstrings, which are
   expression statements, not extras).
