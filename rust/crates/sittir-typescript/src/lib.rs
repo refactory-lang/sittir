@@ -64,6 +64,19 @@ impl sittir_core::read_node::ReadModel for TypeScriptGrammar {
     fn is_alias_envelope(&self, kind: sittir_core::types::KindId) -> bool {
         render::kind_ids::is_alias_envelope(kind)
     }
+
+    fn keeps_anonymous_children(&self, kind: sittir_core::types::KindId) -> bool {
+        render::kind_ids::keeps_anonymous_children(kind)
+    }
+
+    fn wire_slot(
+        &self,
+        parent: sittir_core::types::KindId,
+        field: Option<&str>,
+        child: &str,
+    ) -> Option<&'static str> {
+        render::kind_ids::wire_slot(parent, field, child)
+    }
 }
 
 // The engine class itself — parse, read, render, edits, and the live-tree

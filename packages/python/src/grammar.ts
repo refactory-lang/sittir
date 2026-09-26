@@ -423,22 +423,8 @@ export type PythonGrammar = {
 			required: true;
 			types: [
 				{ type: 'case_as_pattern'; named: true },
-				{ type: 'case_list_pattern'; named: true },
-				{ type: 'case_tuple_pattern'; named: true },
-				{ type: 'class_pattern'; named: true },
-				{ type: 'complex_pattern'; named: true },
-				{ type: 'concatenated_string'; named: true },
-				{ type: 'dict_pattern'; named: true },
-				{ type: 'dotted_name'; named: true },
-				{ type: 'false'; named: true },
 				{ type: 'keyword_pattern'; named: true },
-				{ type: 'none'; named: true },
-				{ type: 'simple_pattern_negative'; named: true },
-				{ type: 'splat_pattern'; named: true },
-				{ type: 'string'; named: true },
-				{ type: 'true'; named: true },
-				{ type: 'union_pattern'; named: true },
-				{ type: 'wildcard_pattern'; named: true }
+				{ type: 'simple_pattern'; named: true }
 			];
 		};
 	};
@@ -534,12 +520,12 @@ export type PythonGrammar = {
 				types: [{ type: 'float'; named: true }, { type: 'integer'; named: true }];
 			};
 			operator: { multiple: false; required: true; types: [{ type: '+'; named: false }, { type: '-'; named: false }] };
-			real: { multiple: false; required: false; types: [{ type: '-'; named: false }] };
-		};
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: 'float'; named: true }, { type: 'integer'; named: true }];
+			real: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'float'; named: true }, { type: 'integer'; named: true }];
+			};
+			sign: { multiple: false; required: false; types: [{ type: '-'; named: false }] };
 		};
 	};
 	readonly comprehension_clauses: {
@@ -666,15 +652,16 @@ export type PythonGrammar = {
 	readonly dictionary_splat_pattern: {
 		type: 'dictionary_splat_pattern';
 		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [
-				{ type: 'attribute'; named: true },
-				{ type: 'identifier'; named: true },
-				{ type: 'subscript'; named: true }
-			];
+		fields: {
+			target: {
+				multiple: false;
+				required: true;
+				types: [
+					{ type: 'attribute'; named: true },
+					{ type: 'identifier'; named: true },
+					{ type: 'subscript'; named: true }
+				];
+			};
 		};
 	};
 	readonly dotted_name: {
@@ -849,8 +836,7 @@ export type PythonGrammar = {
 	readonly format_specifier: {
 		type: 'format_specifier';
 		named: true;
-		fields: {};
-		children: { multiple: true; required: false; types: [{ type: 'format_expression'; named: true }] };
+		fields: { elements: { multiple: true; required: false; types: [{ type: 'format_expression'; named: true }] } };
 	};
 	readonly function_definition: {
 		type: 'function_definition';
@@ -1088,15 +1074,16 @@ export type PythonGrammar = {
 	readonly list_splat_pattern: {
 		type: 'list_splat_pattern';
 		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [
-				{ type: 'attribute'; named: true },
-				{ type: 'identifier'; named: true },
-				{ type: 'subscript'; named: true }
-			];
+		fields: {
+			target: {
+				multiple: false;
+				required: true;
+				types: [
+					{ type: 'attribute'; named: true },
+					{ type: 'identifier'; named: true },
+					{ type: 'subscript'; named: true }
+				];
+			};
 		};
 	};
 	readonly match_block: {
@@ -1192,11 +1179,12 @@ export type PythonGrammar = {
 	readonly parenthesized_expression: {
 		type: 'parenthesized_expression';
 		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: 'expression'; named: true }, { type: 'yield'; named: true }];
+		fields: {
+			expression: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'expression'; named: true }, { type: 'yield'; named: true }];
+			};
 		};
 	};
 	readonly parenthesized_import_list: {
@@ -1208,11 +1196,12 @@ export type PythonGrammar = {
 	readonly parenthesized_list_splat: {
 		type: 'parenthesized_list_splat';
 		named: true;
-		fields: {};
-		children: {
-			multiple: false;
-			required: true;
-			types: [{ type: 'list_splat'; named: true }, { type: 'parenthesized_list_splat'; named: true }];
+		fields: {
+			content: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'list_splat'; named: true }, { type: 'parenthesized_list_splat'; named: true }];
+			};
 		};
 	};
 	readonly pass_statement: { type: 'pass_statement'; named: true; fields: {} };
@@ -1316,14 +1305,42 @@ export type PythonGrammar = {
 		fields: { body: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] } };
 		children: { multiple: false; required: true; types: [{ type: 'comprehension_clauses'; named: true }] };
 	};
-	readonly simple_pattern_negative: {
-		type: 'simple_pattern_negative';
+	readonly simple_pattern: {
+		type: 'simple_pattern';
 		named: true;
-		fields: { sign: { multiple: false; required: false; types: [{ type: '-'; named: false }] } };
+		fields: {};
 		children: {
 			multiple: false;
 			required: true;
-			types: [{ type: 'float'; named: true }, { type: 'integer'; named: true }];
+			types: [
+				{ type: 'case_list_pattern'; named: true },
+				{ type: 'case_tuple_pattern'; named: true },
+				{ type: 'class_pattern'; named: true },
+				{ type: 'complex_pattern'; named: true },
+				{ type: 'concatenated_string'; named: true },
+				{ type: 'dict_pattern'; named: true },
+				{ type: 'dotted_name'; named: true },
+				{ type: 'false'; named: true },
+				{ type: 'none'; named: true },
+				{ type: 'simple_pattern_negative'; named: true },
+				{ type: 'splat_pattern'; named: true },
+				{ type: 'string'; named: true },
+				{ type: 'true'; named: true },
+				{ type: 'union_pattern'; named: true },
+				{ type: 'wildcard_pattern'; named: true }
+			];
+		};
+	};
+	readonly simple_pattern_negative: {
+		type: 'simple_pattern_negative';
+		named: true;
+		fields: {
+			sign: { multiple: false; required: false; types: [{ type: '-'; named: false }] };
+			value: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'float'; named: true }, { type: 'integer'; named: true }];
+			};
 		};
 	};
 	readonly simple_statements: {
@@ -1515,15 +1532,17 @@ export type PythonGrammar = {
 	readonly typed_parameter: {
 		type: 'typed_parameter';
 		named: true;
-		fields: { type: { multiple: false; required: true; types: [{ type: 'type'; named: true }] } };
-		children: {
-			multiple: false;
-			required: true;
-			types: [
-				{ type: 'dictionary_splat_pattern'; named: true },
-				{ type: 'identifier'; named: true },
-				{ type: 'list_splat_pattern'; named: true }
-			];
+		fields: {
+			name: {
+				multiple: false;
+				required: true;
+				types: [
+					{ type: 'dictionary_splat_pattern'; named: true },
+					{ type: 'identifier'; named: true },
+					{ type: 'list_splat_pattern'; named: true }
+				];
+			};
+			type: { multiple: false; required: true; types: [{ type: 'type'; named: true }] };
 		};
 	};
 	readonly types: {

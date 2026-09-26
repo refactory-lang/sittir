@@ -46,7 +46,7 @@ export function buildRuleLookup(nodeMap: NodeMap): RuleLookup {
 		}
 	}
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!node.userFacing || !kind.startsWith('_') || labeledSources.has(kind)) continue;
+		if (!node.userFacing || !node.surfaceHidden || labeledSources.has(kind)) continue;
 		addLabel(kind.slice(1), kind);
 	}
 

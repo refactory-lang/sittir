@@ -17,8 +17,7 @@ import type {
 	Terminal,
 	NonEmptyArray,
 	BooleanKeyword as BaseBooleanKeyword,
-	KindEnum,
-	HiddenLeaf
+	KindEnum
 } from '@sittir/types';
 import type * as T from './types.js';
 import type { NodeMethodsOf } from './utils.js';
@@ -60,6 +59,8 @@ export type LeafStringMap = {
 	[TSKindId.UnitExpression]: '()';
 	[TSKindId.RemainingFieldPattern]: '..';
 	[TSKindId.BooleanLiteral]: 'true' | 'false';
+	[TSKindId.InnerLineDocCommentMarker]: '!';
+	[TSKindId.OuterLineDocCommentMarker]: '/';
 	[TSKindId.Self]: 'self';
 	[TSKindId.Super]: 'super';
 	[TSKindId.Crate]: 'crate';
@@ -166,9 +167,12 @@ export type LeafStringMap = {
 		| 'use'
 		| 'where'
 		| 'while';
-	[TSKindId.WildcardPattern]: '_';
+	[TSKindId.RangeExpressionBare]: '..';
 	[TSKindId.ImplItemUnsafeMarker]: 'unsafe';
 	[TSKindId.RangePatternWithLeftBare]: '..';
+	[TSKindId.WildcardPattern]: '_';
+	[TSKindId.OuterDocCommentMarker]: '*';
+	[TSKindId.InnerDocCommentMarker]: '!';
 	[TSKindId.BlockKeyword]: 'block';
 	[TSKindId.ExprKeyword]: 'expr';
 	[TSKindId.Expr2021Keyword]: 'expr_2021';
@@ -381,32 +385,32 @@ export enum TSKindId {
 	ModKeyword = 135,
 	PubKeyword = 136,
 	StructKeyword = 137,
-	StringLiteralOpen = 138,
-	IntegerLiteralDecimal = 139,
-	IntegerLiteralHex = 140,
-	IntegerLiteralBinary = 141,
-	IntegerLiteralOctal = 142,
-	CharLiteralEscaped = 143,
-	CharLiteralPlain = 144,
-	CharLiteralEmpty = 145,
-	EscapeSequenceSimple = 146,
-	EscapeSequenceUnicodeFixed = 147,
-	EscapeSequenceUnicodeBraced = 148,
-	EscapeSequenceHex = 149,
-	RawKeyword = 150,
-	LineCommentRegularDslashToken1 = 151,
-	LineCommentRegularDslashToken2 = 152,
-	LineCommentContent = 153,
+	IntegerLiteralDecimal = 138,
+	IntegerLiteralHex = 139,
+	IntegerLiteralBinary = 140,
+	IntegerLiteralOctal = 141,
+	CharLiteralEscaped = 142,
+	CharLiteralPlain = 143,
+	CharLiteralEmpty = 144,
+	EscapeSequenceSimple = 145,
+	EscapeSequenceUnicodeFixed = 146,
+	EscapeSequenceUnicodeBraced = 147,
+	EscapeSequenceHex = 148,
+	RawKeyword = 149,
+	StringOpen = 150,
+	LineCommentExtraSlashesToken1 = 151,
+	LineCommentExtraSlashesToken2 = 152,
+	LineCommentRegular = 153,
 	MacroRulesBang = 154,
 	StringContent = 155,
 	RawStringLiteralStart = 156,
 	RawStringLiteralContent = 157,
 	RawStringLiteralEnd = 158,
 	FloatLiteral = 159,
-	OuterBlockDocCommentMarker = 160,
-	InnerBlockDocCommentMarker = 161,
+	OuterDocCommentMarker = 160,
+	InnerDocCommentMarker = 161,
 	BlockCommentContent = 162,
-	LineDocContent = 163,
+	DocComment = 163,
 	ErrorSentinel = 164,
 	Tight = 165,
 	Space = 166,
@@ -427,7 +431,7 @@ export enum TSKindId {
 	FragmentSpecifier = 181,
 	TokenTree = 182,
 	TokenRepetition = 183,
-	_NonSpecialToken = 184,
+	NonSpecialToken = 184,
 	AttributeItem = 185,
 	InnerAttributeItem = 186,
 	Attribute = 187,
@@ -602,75 +606,75 @@ export enum TSKindId {
 	Patterns = 356,
 	StructPatternElements = 357,
 	UseWildcardGroup = 358,
-	VisibilityModifierGroup = 359,
-	KwAsync = 360,
-	KwDefault = 361,
-	KwConst = 362,
-	KwUnsafe = 363,
-	TupleTypeElements = 364,
-	TupleExpressionElements = 365,
-	TokenTreePunctuation = 366,
-	TokenKeywords = 367,
-	WildcardPattern = 368,
-	RangeExpressionBare = 369,
-	ImplItemUnsafeMarker = 370,
-	ArrayExpressionSemi = 371,
-	ArrayExpressionList = 372,
-	AttributeInput = 373,
-	ClosureExpressionBlock = 374,
-	ClosureExpressionExpr = 375,
-	ReferenceExpressionRawConst = 376,
-	ReferenceExpressionRawMut = 377,
-	ReferenceExpressionMut = 378,
-	ReferenceExpressionBare = 379,
-	ImplItemPositiveClause = 380,
-	ImplItemNegativeClause = 381,
-	ImplItemBody = 382,
-	ImplItemSemi = 383,
+	KwAsync = 359,
+	KwDefault = 360,
+	KwConst = 361,
+	KwUnsafe = 362,
+	TupleTypeElements = 363,
+	TupleExpressionElements = 364,
+	TokenTreePunctuation = 365,
+	TokenKeywords = 366,
+	RangeExpressionBare = 367,
+	ImplItemUnsafeMarker = 368,
+	ArrayExpressionSemi = 369,
+	ArrayExpressionList = 370,
+	AttributeInput = 371,
+	ClosureExpressionBlock = 372,
+	ClosureExpressionExpr = 373,
+	ReferenceExpressionRawConst = 374,
+	ReferenceExpressionRawMut = 375,
+	ReferenceExpressionMut = 376,
+	ReferenceExpressionBare = 377,
+	ImplItemPositiveClause = 378,
+	ImplItemNegativeClause = 379,
+	ImplItemBody = 380,
+	ImplItemSemi = 381,
+	VisibilityModifierPubScopeInPath = 382,
+	VisibilityModifierPubScope = 383,
 	VisibilityModifierPub = 384,
-	VisibilityModifierPubInPath = 385,
-	FunctionTypeTraitForm = 386,
-	FunctionTypeFnForm = 387,
-	ModItemExternal = 388,
-	ModItemInline = 389,
-	OrPatternBinary = 390,
-	OrPatternPrefix = 391,
-	PointerTypeConst = 392,
-	PointerTypeMut = 393,
-	RangeExpressionBinary = 394,
-	RangeExpressionPostfix = 395,
-	RangeExpressionPrefix = 396,
-	ExpressionStatementWithSemi = 397,
-	ForeignModItemSemi = 398,
-	ForeignModItemBody = 399,
-	MatchArmWithComma = 400,
-	MatchArmBlockEnding = 401,
-	LineCommentRegularDslash = 402,
-	LineCommentDocOuter = 403,
-	LineCommentDocInner = 404,
-	BlockCommentDocOuter = 405,
-	BlockCommentDocInner = 406,
-	TokenTreePatternParen = 407,
-	TokenTreePatternBracket = 408,
-	TokenTreePatternBrace = 409,
-	TokenTreeParen = 410,
-	TokenTreeBracket = 411,
-	TokenTreeBrace = 412,
-	DelimTokenTreeParen = 413,
-	DelimTokenTreeBracket = 414,
-	DelimTokenTreeBrace = 415,
-	FieldPatternShorthand = 416,
-	FieldPatternNamed = 417,
-	MacroDefinitionParen = 418,
-	MacroDefinitionBracket = 419,
-	MacroDefinitionBrace = 420,
-	RangePatternPrefix = 421,
-	RangePatternWithLeftWithRight = 422,
-	RangePatternWithLeftBare = 423,
-	RangePatternWithLeft = 424,
-	StructItemBrace = 425,
-	StructItemTuple = 426,
-	StructItemUnit = 427,
+	FunctionTypeTraitForm = 385,
+	FunctionTypeFnForm = 386,
+	ModItemExternal = 387,
+	ModItemInline = 388,
+	OrPatternBinary = 389,
+	OrPatternPrefix = 390,
+	PointerTypeConst = 391,
+	PointerTypeMut = 392,
+	RangeExpressionBinary = 393,
+	RangeExpressionPostfix = 394,
+	RangeExpressionPrefix = 395,
+	ExpressionStatementWithSemi = 396,
+	ForeignModItemSemi = 397,
+	ForeignModItemBody = 398,
+	MatchArmWithComma = 399,
+	MatchArmBlockEnding = 400,
+	LineCommentExtraSlashes = 401,
+	LineCommentDocOuter = 402,
+	LineCommentDocInner = 403,
+	BlockCommentDocOuter = 404,
+	BlockCommentDocInner = 405,
+	TokenTreePatternParen = 406,
+	TokenTreePatternBracket = 407,
+	TokenTreePatternBrace = 408,
+	TokenTreeParen = 409,
+	TokenTreeBracket = 410,
+	TokenTreeBrace = 411,
+	DelimTokenTreeParen = 412,
+	DelimTokenTreeBracket = 413,
+	DelimTokenTreeBrace = 414,
+	FieldPatternShorthand = 415,
+	FieldPatternNamed = 416,
+	MacroDefinitionParen = 417,
+	MacroDefinitionBracket = 418,
+	MacroDefinitionBrace = 419,
+	RangePatternPrefix = 420,
+	RangePatternWithLeftWithRight = 421,
+	RangePatternWithLeftBare = 422,
+	RangePatternWithLeft = 423,
+	StructItemBrace = 424,
+	StructItemTuple = 425,
+	StructItemUnit = 426,
+	WildcardPattern = 427,
 	AttributedFieldDeclaration = 428,
 	AttributedEnumVariant = 429,
 	AttributedParameter = 430,
@@ -709,9 +713,9 @@ export enum TSKindId {
 	_TupleExpressionElementsRepeat1 = 463,
 	DelimTokenTreeParenRepeat1 = 464,
 	_MatchBlockArmsRepeat1 = 465,
-	_FieldIdentifier = 466,
-	_ShorthandFieldIdentifier = 468,
-	_TypeIdentifier = 469
+	FieldIdentifier = 466,
+	ShorthandFieldIdentifier = 468,
+	TypeIdentifier = 469
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -852,32 +856,32 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[135, 'mod_keyword'],
 	[136, 'pub_keyword'],
 	[137, 'struct_keyword'],
-	[138, '_string_literal_open'],
-	[139, 'integer_literal_decimal'],
-	[140, 'integer_literal_hex'],
-	[141, 'integer_literal_binary'],
-	[142, 'integer_literal_octal'],
-	[143, 'char_literal_escaped'],
-	[144, 'char_literal_plain'],
-	[145, 'char_literal_empty'],
-	[146, 'escape_sequence_simple'],
-	[147, 'escape_sequence_unicode_fixed'],
-	[148, 'escape_sequence_unicode_braced'],
-	[149, 'escape_sequence_hex'],
-	[150, 'raw_keyword'],
-	[151, 'line_comment_regular_dslash_token1'],
-	[152, 'line_comment_regular_dslash_token2'],
-	[153, 'line_comment_content'],
+	[138, 'integer_literal_decimal'],
+	[139, 'integer_literal_hex'],
+	[140, 'integer_literal_binary'],
+	[141, 'integer_literal_octal'],
+	[142, 'char_literal_escaped'],
+	[143, 'char_literal_plain'],
+	[144, 'char_literal_empty'],
+	[145, 'escape_sequence_simple'],
+	[146, 'escape_sequence_unicode_fixed'],
+	[147, 'escape_sequence_unicode_braced'],
+	[148, 'escape_sequence_hex'],
+	[149, 'raw_keyword'],
+	[150, 'string_open'],
+	[151, 'line_comment_extra_slashes_token1'],
+	[152, 'line_comment_extra_slashes_token2'],
+	[153, 'line_comment_regular'],
 	[154, 'macro_rules_bang'],
 	[155, 'string_content'],
-	[156, '_raw_string_literal_start'],
+	[156, 'raw_string_literal_start'],
 	[157, 'raw_string_literal_content'],
-	[158, '_raw_string_literal_end'],
+	[158, 'raw_string_literal_end'],
 	[159, 'float_literal'],
-	[160, '_outer_block_doc_comment_marker'],
-	[161, '_inner_block_doc_comment_marker'],
+	[160, 'outer_doc_comment_marker'],
+	[161, 'inner_doc_comment_marker'],
 	[162, '_block_comment_content'],
-	[163, '_line_doc_content'],
+	[163, 'doc_comment'],
 	[164, '_error_sentinel'],
 	[165, '_tight'],
 	[166, '_space'],
@@ -898,7 +902,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'fragment_specifier'],
 	[182, 'token_tree'],
 	[183, 'token_repetition'],
-	[184, '_non_special_token'],
+	[184, 'non_special_token'],
 	[185, 'attribute_item'],
 	[186, 'inner_attribute_item'],
 	[187, 'attribute'],
@@ -1048,10 +1052,10 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[330, 'escape_sequence'],
 	[331, 'boolean_literal'],
 	[332, 'line_comment'],
-	[333, '_inner_line_doc_comment_marker'],
-	[334, '_outer_line_doc_comment_marker'],
+	[333, 'inner_line_doc_comment_marker'],
+	[334, 'outer_line_doc_comment_marker'],
 	[335, 'block_comment'],
-	[336, '_primitive_type'],
+	[336, 'primitive_type'],
 	[337, '_kw_ref_marker'],
 	[338, '_kw_unsafe_marker'],
 	[339, '_kw_static_marker'],
@@ -1074,83 +1078,83 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[356, 'patterns'],
 	[357, 'struct_pattern_elements'],
 	[358, 'use_wildcard_group'],
-	[359, 'visibility_modifier_group'],
-	[360, '_kw_async'],
-	[361, '_kw_default'],
-	[362, '_kw_const'],
-	[363, '_kw_unsafe'],
-	[364, '_tuple_type_elements'],
-	[365, '_tuple_expression_elements'],
-	[366, '_token_tree_punctuation'],
-	[367, '_token_keywords'],
-	[368, '_wildcard_pattern'],
-	[369, '_range_expression_bare'],
-	[370, '_impl_item_unsafe_marker'],
-	[371, 'array_expression_semi'],
-	[372, 'array_expression_list'],
-	[373, 'attribute_input'],
-	[374, 'closure_expression_block'],
-	[375, 'closure_expression_expr'],
-	[376, 'reference_expression_raw_const'],
-	[377, 'reference_expression_raw_mut'],
-	[378, 'reference_expression_mut'],
-	[379, 'reference_expression_bare'],
-	[380, 'impl_item_positive_clause'],
-	[381, 'impl_item_negative_clause'],
-	[382, 'impl_item_body'],
-	[383, 'impl_item_semi'],
+	[359, '_kw_async'],
+	[360, '_kw_default'],
+	[361, '_kw_const'],
+	[362, '_kw_unsafe'],
+	[363, 'tuple_type_elements'],
+	[364, 'tuple_expression_elements'],
+	[365, 'token_tree_punctuation'],
+	[366, '_token_keywords'],
+	[367, 'range_expression_bare'],
+	[368, '_impl_item_unsafe_marker'],
+	[369, 'array_expression_semi'],
+	[370, 'array_expression_list'],
+	[371, 'attribute_input'],
+	[372, 'closure_expression_block'],
+	[373, 'closure_expression_expr'],
+	[374, 'reference_expression_raw_const'],
+	[375, 'reference_expression_raw_mut'],
+	[376, 'reference_expression_mut'],
+	[377, 'reference_expression_bare'],
+	[378, 'impl_item_positive_clause'],
+	[379, 'impl_item_negative_clause'],
+	[380, 'impl_item_body'],
+	[381, 'impl_item_semi'],
+	[382, 'visibility_modifier_pub_scope_in_path'],
+	[383, 'visibility_modifier_pub_scope'],
 	[384, 'visibility_modifier_pub'],
-	[385, 'visibility_modifier_pub_in_path'],
-	[386, 'function_type_trait_form'],
-	[387, 'function_type_fn_form'],
-	[388, 'mod_item_external'],
-	[389, 'mod_item_inline'],
-	[390, 'or_pattern_binary'],
-	[391, 'or_pattern_prefix'],
-	[392, 'pointer_type_const'],
-	[393, 'pointer_type_mut'],
-	[394, 'range_expression_binary'],
-	[395, 'range_expression_postfix'],
-	[396, 'range_expression_prefix'],
-	[397, 'expression_statement_with_semi'],
-	[398, 'foreign_mod_item_semi'],
-	[399, 'foreign_mod_item_body'],
-	[400, 'match_arm_with_comma'],
-	[401, 'match_arm_block_ending'],
-	[402, 'line_comment_regular_dslash'],
-	[403, 'line_comment_doc_outer'],
-	[404, 'line_comment_doc_inner'],
-	[405, 'block_comment_doc_outer'],
-	[406, 'block_comment_doc_inner'],
-	[407, 'token_tree_pattern_paren'],
-	[408, 'token_tree_pattern_bracket'],
-	[409, 'token_tree_pattern_brace'],
-	[410, 'token_tree_paren'],
-	[411, 'token_tree_bracket'],
-	[412, 'token_tree_brace'],
-	[413, 'delim_token_tree_paren'],
-	[414, 'delim_token_tree_bracket'],
-	[415, 'delim_token_tree_brace'],
-	[416, 'field_pattern_shorthand'],
-	[417, 'field_pattern_named'],
-	[418, 'macro_definition_paren'],
-	[419, 'macro_definition_bracket'],
-	[420, 'macro_definition_brace'],
-	[421, 'range_pattern_prefix'],
-	[422, 'range_pattern_with_left_with_right'],
-	[423, 'range_pattern_with_left_bare'],
-	[424, 'range_pattern_with_left'],
-	[425, 'struct_item_brace'],
-	[426, 'struct_item_tuple'],
-	[427, 'struct_item_unit'],
-	[428, '_attributed_field_declaration'],
-	[429, '_attributed_enum_variant'],
-	[430, '_attributed_parameter'],
-	[431, '_attributed_type_parameter'],
-	[432, '_attributed_argument'],
-	[433, '_attributed_ordered_field'],
-	[434, '_type_argument'],
-	[435, '_match_block_arms'],
+	[385, 'function_type_trait_form'],
+	[386, 'function_type_fn_form'],
+	[387, 'mod_item_external'],
+	[388, 'mod_item_inline'],
+	[389, 'or_pattern_binary'],
+	[390, 'or_pattern_prefix'],
+	[391, 'pointer_type_const'],
+	[392, 'pointer_type_mut'],
+	[393, 'range_expression_binary'],
+	[394, 'range_expression_postfix'],
+	[395, 'range_expression_prefix'],
+	[396, 'expression_statement_with_semi'],
+	[397, 'foreign_mod_item_semi'],
+	[398, 'foreign_mod_item_body'],
+	[399, 'match_arm_with_comma'],
+	[400, 'match_arm_block_ending'],
+	[401, 'line_comment_extra_slashes'],
+	[402, 'line_comment_doc_outer'],
+	[403, 'line_comment_doc_inner'],
+	[404, 'block_comment_doc_outer'],
+	[405, 'block_comment_doc_inner'],
+	[406, 'token_tree_pattern_paren'],
+	[407, 'token_tree_pattern_bracket'],
+	[408, 'token_tree_pattern_brace'],
+	[409, 'token_tree_paren'],
+	[410, 'token_tree_bracket'],
+	[411, 'token_tree_brace'],
+	[412, 'delim_token_tree_paren'],
+	[413, 'delim_token_tree_bracket'],
+	[414, 'delim_token_tree_brace'],
+	[415, 'field_pattern_shorthand'],
+	[416, 'field_pattern_named'],
+	[417, 'macro_definition_paren'],
+	[418, 'macro_definition_bracket'],
+	[419, 'macro_definition_brace'],
+	[420, 'range_pattern_prefix'],
+	[421, 'range_pattern_with_left_with_right'],
+	[422, 'range_pattern_with_left_bare'],
+	[423, 'range_pattern_with_left'],
+	[424, 'struct_item_brace'],
+	[425, 'struct_item_tuple'],
+	[426, 'struct_item_unit'],
+	[427, 'wildcard_pattern'],
+	[428, 'attributed_field_declaration'],
+	[429, 'attributed_enum_variant'],
+	[430, 'attributed_parameter'],
+	[431, 'attributed_type_parameter'],
+	[432, 'attributed_argument'],
+	[433, 'attributed_ordered_field'],
+	[434, 'type_argument'],
+	[435, 'match_block_arms'],
 	[436, 'source_file_repeat1'],
 	[437, 'token_repetition_pattern_repeat1'],
 	[438, 'token_repetition_repeat1'],
@@ -1325,22 +1329,22 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[135, 'mod'],
 	[136, 'pub'],
 	[137, 'struct'],
-	[138, 'string_open'],
-	[139, 'integer_literal_decimal'],
-	[140, 'integer_literal_hex'],
-	[141, 'integer_literal_binary'],
-	[142, 'integer_literal_octal'],
-	[143, 'char_literal_escaped'],
-	[144, 'char_literal_plain'],
-	[145, 'char_literal_empty'],
-	[146, 'escape_sequence_simple'],
-	[147, 'escape_sequence_unicode_fixed'],
-	[148, 'escape_sequence_unicode_braced'],
-	[149, 'escape_sequence_hex'],
-	[150, 'raw'],
-	[151, 'line_comment_regular_dslash_token1'],
-	[152, 'line_comment_regular_dslash_token2'],
-	[153, 'line_comment_content'],
+	[138, 'integer_literal_decimal'],
+	[139, 'integer_literal_hex'],
+	[140, 'integer_literal_binary'],
+	[141, 'integer_literal_octal'],
+	[142, 'char_literal_escaped'],
+	[143, 'char_literal_plain'],
+	[144, 'char_literal_empty'],
+	[145, 'escape_sequence_simple'],
+	[146, 'escape_sequence_unicode_fixed'],
+	[147, 'escape_sequence_unicode_braced'],
+	[148, 'escape_sequence_hex'],
+	[149, 'raw'],
+	[150, 'string_open'],
+	[151, 'line_comment_extra_slashes_token1'],
+	[152, 'line_comment_extra_slashes_token2'],
+	[153, 'line_comment_regular'],
 	[154, 'macro_rules!'],
 	[155, 'string_content'],
 	[156, 'raw_string_literal_start'],
@@ -1471,7 +1475,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[281, 'base_field_initializer'],
 	[282, 'if_expression'],
 	[283, 'let_condition'],
-	[284, 'let_chain'],
+	[284, '_let_chain'],
 	[467, 'let_chain'],
 	[285, '_condition'],
 	[286, 'else_clause'],
@@ -1547,75 +1551,75 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[356, 'patterns'],
 	[357, 'struct_pattern_elements'],
 	[358, 'use_wildcard_group'],
-	[359, 'visibility_modifier_group'],
-	[360, '_kw_async'],
-	[361, '_kw_default'],
-	[362, '_kw_const'],
-	[363, '_kw_unsafe'],
-	[364, 'tuple_type_elements'],
-	[365, 'tuple_expression_elements'],
-	[366, 'token_tree_punctuation'],
-	[367, '_token_keywords'],
-	[368, 'wildcard_pattern'],
-	[369, 'range_expression_bare'],
-	[370, '_impl_item_unsafe_marker'],
-	[371, 'array_expression_semi'],
-	[372, 'array_expression_list'],
-	[373, 'attribute_input'],
-	[374, 'closure_expression_block'],
-	[375, 'closure_expression_expr'],
-	[376, 'reference_expression_raw_const'],
-	[377, 'reference_expression_raw_mut'],
-	[378, 'reference_expression_mut'],
-	[379, 'reference_expression_bare'],
-	[380, 'impl_item_positive_clause'],
-	[381, 'impl_item_negative_clause'],
-	[382, 'impl_item_body'],
-	[383, 'impl_item_semi'],
+	[359, '_kw_async'],
+	[360, '_kw_default'],
+	[361, '_kw_const'],
+	[362, '_kw_unsafe'],
+	[363, 'tuple_type_elements'],
+	[364, 'tuple_expression_elements'],
+	[365, 'token_tree_punctuation'],
+	[366, '_token_keywords'],
+	[367, 'range_expression_bare'],
+	[368, '_impl_item_unsafe_marker'],
+	[369, 'array_expression_semi'],
+	[370, 'array_expression_list'],
+	[371, 'attribute_input'],
+	[372, 'closure_expression_block'],
+	[373, 'closure_expression_expr'],
+	[374, 'reference_expression_raw_const'],
+	[375, 'reference_expression_raw_mut'],
+	[376, 'reference_expression_mut'],
+	[377, 'reference_expression_bare'],
+	[378, 'impl_item_positive_clause'],
+	[379, 'impl_item_negative_clause'],
+	[380, 'impl_item_body'],
+	[381, 'impl_item_semi'],
+	[382, 'visibility_modifier_pub_scope_in_path'],
+	[383, 'visibility_modifier_pub_scope'],
 	[384, 'visibility_modifier_pub'],
-	[385, 'visibility_modifier_pub_in_path'],
-	[386, 'function_type_trait_form'],
-	[387, 'function_type_fn_form'],
-	[388, 'mod_item_external'],
-	[389, 'mod_item_inline'],
-	[390, 'or_pattern_binary'],
-	[391, 'or_pattern_prefix'],
-	[392, 'pointer_type_const'],
-	[393, 'pointer_type_mut'],
-	[394, 'range_expression_binary'],
-	[395, 'range_expression_postfix'],
-	[396, 'range_expression_prefix'],
-	[397, 'expression_statement_with_semi'],
-	[398, 'foreign_mod_item_semi'],
-	[399, 'foreign_mod_item_body'],
-	[400, 'match_arm_with_comma'],
-	[401, 'match_arm_block_ending'],
-	[402, 'line_comment_regular_dslash'],
-	[403, 'line_comment_doc_outer'],
-	[404, 'line_comment_doc_inner'],
-	[405, 'block_comment_doc_outer'],
-	[406, 'block_comment_doc_inner'],
-	[407, 'token_tree_pattern_paren'],
-	[408, 'token_tree_pattern_bracket'],
-	[409, 'token_tree_pattern_brace'],
-	[410, 'token_tree_paren'],
-	[411, 'token_tree_bracket'],
-	[412, 'token_tree_brace'],
-	[413, 'delim_token_tree_paren'],
-	[414, 'delim_token_tree_bracket'],
-	[415, 'delim_token_tree_brace'],
-	[416, 'field_pattern_shorthand'],
-	[417, 'field_pattern_named'],
-	[418, 'macro_definition_paren'],
-	[419, 'macro_definition_bracket'],
-	[420, 'macro_definition_brace'],
-	[421, 'range_pattern_prefix'],
-	[422, 'range_pattern_with_left_with_right'],
-	[423, 'range_pattern_with_left_bare'],
-	[424, 'range_pattern_with_left'],
-	[425, 'struct_item_brace'],
-	[426, 'struct_item_tuple'],
-	[427, 'struct_item_unit'],
+	[385, 'function_type_trait_form'],
+	[386, 'function_type_fn_form'],
+	[387, 'mod_item_external'],
+	[388, 'mod_item_inline'],
+	[389, 'or_pattern_binary'],
+	[390, 'or_pattern_prefix'],
+	[391, 'pointer_type_const'],
+	[392, 'pointer_type_mut'],
+	[393, 'range_expression_binary'],
+	[394, 'range_expression_postfix'],
+	[395, 'range_expression_prefix'],
+	[396, 'expression_statement_with_semi'],
+	[397, 'foreign_mod_item_semi'],
+	[398, 'foreign_mod_item_body'],
+	[399, 'match_arm_with_comma'],
+	[400, 'match_arm_block_ending'],
+	[401, 'line_comment_extra_slashes'],
+	[402, 'line_comment_doc_outer'],
+	[403, 'line_comment_doc_inner'],
+	[404, 'block_comment_doc_outer'],
+	[405, 'block_comment_doc_inner'],
+	[406, 'token_tree_pattern_paren'],
+	[407, 'token_tree_pattern_bracket'],
+	[408, 'token_tree_pattern_brace'],
+	[409, 'token_tree_paren'],
+	[410, 'token_tree_bracket'],
+	[411, 'token_tree_brace'],
+	[412, 'delim_token_tree_paren'],
+	[413, 'delim_token_tree_bracket'],
+	[414, 'delim_token_tree_brace'],
+	[415, 'field_pattern_shorthand'],
+	[416, 'field_pattern_named'],
+	[417, 'macro_definition_paren'],
+	[418, 'macro_definition_bracket'],
+	[419, 'macro_definition_brace'],
+	[420, 'range_pattern_prefix'],
+	[421, 'range_pattern_with_left_with_right'],
+	[422, 'range_pattern_with_left_bare'],
+	[423, 'range_pattern_with_left'],
+	[424, 'struct_item_brace'],
+	[425, 'struct_item_tuple'],
+	[426, 'struct_item_unit'],
+	[427, 'wildcard_pattern'],
 	[428, 'attributed_field_declaration'],
 	[429, 'attributed_enum_variant'],
 	[430, 'attributed_parameter'],
@@ -1938,8 +1942,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PubKeyword;
 		case 'struct_keyword':
 			return TSKindId.StructKeyword;
-		case '_string_literal_open':
-			return TSKindId.StringLiteralOpen;
 		case 'integer_literal_decimal':
 			return TSKindId.IntegerLiteralDecimal;
 		case 'integer_literal_hex':
@@ -1964,32 +1966,34 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.EscapeSequenceHex;
 		case 'raw_keyword':
 			return TSKindId.RawKeyword;
-		case 'line_comment_regular_dslash_token1':
-			return TSKindId.LineCommentRegularDslashToken1;
-		case 'line_comment_regular_dslash_token2':
-			return TSKindId.LineCommentRegularDslashToken2;
-		case 'line_comment_content':
-			return TSKindId.LineCommentContent;
+		case 'string_open':
+			return TSKindId.StringOpen;
+		case 'line_comment_extra_slashes_token1':
+			return TSKindId.LineCommentExtraSlashesToken1;
+		case 'line_comment_extra_slashes_token2':
+			return TSKindId.LineCommentExtraSlashesToken2;
+		case 'line_comment_regular':
+			return TSKindId.LineCommentRegular;
 		case 'macro_rules_bang':
 			return TSKindId.MacroRulesBang;
 		case 'string_content':
 			return TSKindId.StringContent;
-		case '_raw_string_literal_start':
+		case 'raw_string_literal_start':
 			return TSKindId.RawStringLiteralStart;
 		case 'raw_string_literal_content':
 			return TSKindId.RawStringLiteralContent;
-		case '_raw_string_literal_end':
+		case 'raw_string_literal_end':
 			return TSKindId.RawStringLiteralEnd;
 		case 'float_literal':
 			return TSKindId.FloatLiteral;
-		case '_outer_block_doc_comment_marker':
-			return TSKindId.OuterBlockDocCommentMarker;
-		case '_inner_block_doc_comment_marker':
-			return TSKindId.InnerBlockDocCommentMarker;
+		case 'outer_doc_comment_marker':
+			return TSKindId.OuterDocCommentMarker;
+		case 'inner_doc_comment_marker':
+			return TSKindId.InnerDocCommentMarker;
 		case '_block_comment_content':
 			return TSKindId.BlockCommentContent;
-		case '_line_doc_content':
-			return TSKindId.LineDocContent;
+		case 'doc_comment':
+			return TSKindId.DocComment;
 		case '_error_sentinel':
 			return TSKindId.ErrorSentinel;
 		case '_tight':
@@ -2030,8 +2034,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TokenTree;
 		case 'token_repetition':
 			return TSKindId.TokenRepetition;
-		case '_non_special_token':
-			return TSKindId._NonSpecialToken;
+		case 'non_special_token':
+			return TSKindId.NonSpecialToken;
 		case 'attribute_item':
 			return TSKindId.AttributeItem;
 		case 'inner_attribute_item':
@@ -2328,13 +2332,13 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.BooleanLiteral;
 		case 'line_comment':
 			return TSKindId.LineComment;
-		case '_inner_line_doc_comment_marker':
+		case 'inner_line_doc_comment_marker':
 			return TSKindId.InnerLineDocCommentMarker;
-		case '_outer_line_doc_comment_marker':
+		case 'outer_line_doc_comment_marker':
 			return TSKindId.OuterLineDocCommentMarker;
 		case 'block_comment':
 			return TSKindId.BlockComment;
-		case '_primitive_type':
+		case 'primitive_type':
 			return TSKindId.PrimitiveType;
 		case '_kw_ref_marker':
 			return TSKindId.KwRefMarker;
@@ -2380,8 +2384,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StructPatternElements;
 		case 'use_wildcard_group':
 			return TSKindId.UseWildcardGroup;
-		case 'visibility_modifier_group':
-			return TSKindId.VisibilityModifierGroup;
 		case '_kw_async':
 			return TSKindId.KwAsync;
 		case '_kw_default':
@@ -2390,17 +2392,15 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.KwConst;
 		case '_kw_unsafe':
 			return TSKindId.KwUnsafe;
-		case '_tuple_type_elements':
+		case 'tuple_type_elements':
 			return TSKindId.TupleTypeElements;
-		case '_tuple_expression_elements':
+		case 'tuple_expression_elements':
 			return TSKindId.TupleExpressionElements;
-		case '_token_tree_punctuation':
+		case 'token_tree_punctuation':
 			return TSKindId.TokenTreePunctuation;
 		case '_token_keywords':
 			return TSKindId.TokenKeywords;
-		case '_wildcard_pattern':
-			return TSKindId.WildcardPattern;
-		case '_range_expression_bare':
+		case 'range_expression_bare':
 			return TSKindId.RangeExpressionBare;
 		case '_impl_item_unsafe_marker':
 			return TSKindId.ImplItemUnsafeMarker;
@@ -2430,10 +2430,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ImplItemBody;
 		case 'impl_item_semi':
 			return TSKindId.ImplItemSemi;
+		case 'visibility_modifier_pub_scope_in_path':
+			return TSKindId.VisibilityModifierPubScopeInPath;
+		case 'visibility_modifier_pub_scope':
+			return TSKindId.VisibilityModifierPubScope;
 		case 'visibility_modifier_pub':
 			return TSKindId.VisibilityModifierPub;
-		case 'visibility_modifier_pub_in_path':
-			return TSKindId.VisibilityModifierPubInPath;
 		case 'function_type_trait_form':
 			return TSKindId.FunctionTypeTraitForm;
 		case 'function_type_fn_form':
@@ -2466,8 +2468,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.MatchArmWithComma;
 		case 'match_arm_block_ending':
 			return TSKindId.MatchArmBlockEnding;
-		case 'line_comment_regular_dslash':
-			return TSKindId.LineCommentRegularDslash;
+		case 'line_comment_extra_slashes':
+			return TSKindId.LineCommentExtraSlashes;
 		case 'line_comment_doc_outer':
 			return TSKindId.LineCommentDocOuter;
 		case 'line_comment_doc_inner':
@@ -2518,21 +2520,23 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StructItemTuple;
 		case 'struct_item_unit':
 			return TSKindId.StructItemUnit;
-		case '_attributed_field_declaration':
+		case 'wildcard_pattern':
+			return TSKindId.WildcardPattern;
+		case 'attributed_field_declaration':
 			return TSKindId.AttributedFieldDeclaration;
-		case '_attributed_enum_variant':
+		case 'attributed_enum_variant':
 			return TSKindId.AttributedEnumVariant;
-		case '_attributed_parameter':
+		case 'attributed_parameter':
 			return TSKindId.AttributedParameter;
-		case '_attributed_type_parameter':
+		case 'attributed_type_parameter':
 			return TSKindId.AttributedTypeParameter;
-		case '_attributed_argument':
+		case 'attributed_argument':
 			return TSKindId.AttributedArgument;
-		case '_attributed_ordered_field':
+		case 'attributed_ordered_field':
 			return TSKindId.AttributedOrderedField;
-		case '_type_argument':
+		case 'type_argument':
 			return TSKindId.TypeArgument;
-		case '_match_block_arms':
+		case 'match_block_arms':
 			return TSKindId.MatchBlockArms;
 		case 'source_file_repeat1':
 			return TSKindId.SourceFileRepeat1;
@@ -2595,11 +2599,11 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '_match_block_arms_repeat1':
 			return TSKindId._MatchBlockArmsRepeat1;
 		case 'field_identifier':
-			return TSKindId._FieldIdentifier;
+			return TSKindId.FieldIdentifier;
 		case 'shorthand_field_identifier':
-			return TSKindId._ShorthandFieldIdentifier;
+			return TSKindId.ShorthandFieldIdentifier;
 		case 'type_identifier':
-			return TSKindId._TypeIdentifier;
+			return TSKindId.TypeIdentifier;
 		case ';':
 			return TSKindId.Semi;
 		case '=>':
@@ -2848,58 +2852,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PubKeyword;
 		case 'struct':
 			return TSKindId.StructKeyword;
-		case 'string_open':
-			return TSKindId.StringLiteralOpen;
 		case 'raw':
 			return TSKindId.RawKeyword;
 		case 'macro_rules!':
 			return TSKindId.MacroRulesBang;
-		case 'raw_string_literal_start':
-			return TSKindId.RawStringLiteralStart;
-		case 'raw_string_literal_end':
-			return TSKindId.RawStringLiteralEnd;
-		case 'outer_doc_comment_marker':
-			return TSKindId.OuterBlockDocCommentMarker;
-		case 'inner_doc_comment_marker':
-			return TSKindId.InnerBlockDocCommentMarker;
-		case 'doc_comment':
-			return TSKindId.LineDocContent;
-		case 'non_special_token':
-			return TSKindId._NonSpecialToken;
 		case 'let_chain':
 			return TSKindId.LetChain;
-		case 'inner_line_doc_comment_marker':
-			return TSKindId.InnerLineDocCommentMarker;
-		case 'outer_line_doc_comment_marker':
-			return TSKindId.OuterLineDocCommentMarker;
-		case 'primitive_type':
-			return TSKindId.PrimitiveType;
-		case 'tuple_type_elements':
-			return TSKindId.TupleTypeElements;
-		case 'tuple_expression_elements':
-			return TSKindId.TupleExpressionElements;
-		case 'token_tree_punctuation':
-			return TSKindId.TokenTreePunctuation;
-		case 'wildcard_pattern':
-			return TSKindId.WildcardPattern;
-		case 'range_expression_bare':
-			return TSKindId.RangeExpressionBare;
-		case 'attributed_field_declaration':
-			return TSKindId.AttributedFieldDeclaration;
-		case 'attributed_enum_variant':
-			return TSKindId.AttributedEnumVariant;
-		case 'attributed_parameter':
-			return TSKindId.AttributedParameter;
-		case 'attributed_type_parameter':
-			return TSKindId.AttributedTypeParameter;
-		case 'attributed_argument':
-			return TSKindId.AttributedArgument;
-		case 'attributed_ordered_field':
-			return TSKindId.AttributedOrderedField;
-		case 'type_argument':
-			return TSKindId.TypeArgument;
-		case 'match_block_arms':
-			return TSKindId.MatchBlockArms;
 		default:
 			throw new TypeError(`unknown kind name ${kindName}`);
 	}
@@ -2985,22 +2943,7 @@ export enum TokenPatternKind {
 	TokenRepetitionPattern = 'token_repetition_pattern',
 	TokenBindingPattern = 'token_binding_pattern',
 	Metavariable = 'metavariable',
-	_NonSpecialToken = '_non_special_token',
-	Literal = '_literal',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	MutableSpecifier = 'mutable_specifier',
-	Self = 'self',
-	Super = 'super',
-	Crate = 'crate',
-	PrimitiveType = '_primitive_type',
-	TokenTreePunctuation = '_token_tree_punctuation',
-	TokenKeywords = '_token_keywords'
+	NonSpecialToken = 'non_special_token'
 }
 
 export enum TokenTreePatternKind {
@@ -3013,46 +2956,13 @@ export enum TokensKind {
 	TokenTree = 'token_tree',
 	TokenRepetition = 'token_repetition',
 	Metavariable = 'metavariable',
-	_NonSpecialToken = '_non_special_token',
-	Literal = '_literal',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	MutableSpecifier = 'mutable_specifier',
-	Self = 'self',
-	Super = 'super',
-	Crate = 'crate',
-	PrimitiveType = '_primitive_type',
-	TokenTreePunctuation = '_token_tree_punctuation',
-	TokenKeywords = '_token_keywords'
+	NonSpecialToken = 'non_special_token'
 }
 
 export enum TokenTreeKind {
 	TokenTreeParen = 'token_tree_paren',
 	TokenTreeBracket = 'token_tree_bracket',
 	TokenTreeBrace = 'token_tree_brace'
-}
-
-export enum _NonSpecialTokenKind {
-	Literal = '_literal',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	MutableSpecifier = 'mutable_specifier',
-	Self = 'self',
-	Super = 'super',
-	Crate = 'crate',
-	PrimitiveType = '_primitive_type',
-	TokenTreePunctuation = '_token_tree_punctuation',
-	TokenKeywords = '_token_keywords'
 }
 
 export enum ModItemKind {
@@ -3126,7 +3036,7 @@ export enum TypeKind {
 	DynamicType = 'dynamic_type',
 	BoundedType = 'bounded_type',
 	RemovedTraitBound = 'removed_trait_bound',
-	PrimitiveType = '_primitive_type'
+	PrimitiveType = 'primitive_type'
 }
 
 export enum PointerTypeKind {
@@ -3146,12 +3056,6 @@ export enum ExpressionExceptRangeKind {
 	ReturnExpression = 'return_expression',
 	YieldExpression = 'yield_expression',
 	Literal = '_literal',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
 	Identifier = 'identifier',
 	U8Keyword = 'u8_keyword',
 	I8Keyword = 'i8_keyword',
@@ -3214,12 +3118,6 @@ export enum ExpressionKind {
 	ReturnExpression = 'return_expression',
 	YieldExpression = 'yield_expression',
 	Literal = '_literal',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
 	Identifier = 'identifier',
 	U8Keyword = 'u8_keyword',
 	I8Keyword = 'i8_keyword',
@@ -3292,43 +3190,13 @@ export enum DelimTokenTreeKind {
 }
 
 export enum DelimTokensKind {
-	_NonSpecialToken = '_non_special_token',
-	Literal = '_literal',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	MutableSpecifier = 'mutable_specifier',
-	Self = 'self',
-	Super = 'super',
-	Crate = 'crate',
-	PrimitiveType = '_primitive_type',
-	TokenTreePunctuation = '_token_tree_punctuation',
-	TokenKeywords = '_token_keywords',
+	NonSpecialToken = 'non_special_token',
 	Dollar = 'dollar',
 	DelimTokenTree = 'delim_token_tree'
 }
 
 export enum NonDelimTokenKind {
-	_NonSpecialToken = '_non_special_token',
-	Literal = '_literal',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	MutableSpecifier = 'mutable_specifier',
-	Self = 'self',
-	Super = 'super',
-	Crate = 'crate',
-	PrimitiveType = '_primitive_type',
-	TokenTreePunctuation = '_token_tree_punctuation',
-	TokenKeywords = '_token_keywords',
+	NonSpecialToken = 'non_special_token',
 	Dollar = 'dollar'
 }
 
@@ -3346,72 +3214,6 @@ export enum ArrayExpressionKind {
 
 export enum ConditionKind {
 	Expression = '_expression',
-	UnaryExpression = 'unary_expression',
-	ReferenceExpression = 'reference_expression',
-	TryExpression = 'try_expression',
-	BinaryExpression = 'binary_expression',
-	AssignmentExpression = 'assignment_expression',
-	CompoundAssignmentExpr = 'compound_assignment_expr',
-	TypeCastExpression = 'type_cast_expression',
-	CallExpression = 'call_expression',
-	ReturnExpression = 'return_expression',
-	YieldExpression = 'yield_expression',
-	Literal = '_literal',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	U8Keyword = 'u8_keyword',
-	I8Keyword = 'i8_keyword',
-	U16Keyword = 'u16_keyword',
-	I16Keyword = 'i16_keyword',
-	U32Keyword = 'u32_keyword',
-	I32Keyword = 'i32_keyword',
-	U64Keyword = 'u64_keyword',
-	I64Keyword = 'i64_keyword',
-	U128Keyword = 'u128_keyword',
-	I128Keyword = 'i128_keyword',
-	IsizeKeyword = 'isize_keyword',
-	UsizeKeyword = 'usize_keyword',
-	F32Keyword = 'f32_keyword',
-	F64Keyword = 'f64_keyword',
-	BoolKeyword = 'bool_keyword',
-	StrKeyword = 'str_keyword',
-	CharKeyword = 'char_keyword',
-	DefaultKeyword = 'default_keyword',
-	UnionKeyword = 'union_keyword',
-	GenKeyword = 'gen_keyword',
-	Self = 'self',
-	ScopedIdentifier = 'scoped_identifier',
-	GenericFunction = 'generic_function',
-	AwaitExpression = 'await_expression',
-	FieldExpression = 'field_expression',
-	ArrayExpression = 'array_expression',
-	TupleExpression = 'tuple_expression',
-	MacroInvocation = 'macro_invocation',
-	UnitExpression = 'unit_expression',
-	BreakExpression = 'break_expression',
-	ContinueExpression = 'continue_expression',
-	IndexExpression = 'index_expression',
-	Metavariable = 'metavariable',
-	ClosureExpression = 'closure_expression',
-	ParenthesizedExpression = 'parenthesized_expression',
-	StructExpression = 'struct_expression',
-	UnsafeBlock = 'unsafe_block',
-	AsyncBlock = 'async_block',
-	GenBlock = 'gen_block',
-	TryBlock = 'try_block',
-	Block = 'block',
-	IfExpression = 'if_expression',
-	MatchExpression = 'match_expression',
-	WhileExpression = 'while_expression',
-	LoopExpression = 'loop_expression',
-	ForExpression = 'for_expression',
-	ConstBlock = 'const_block',
-	RangeExpression = 'range_expression',
 	LetCondition = 'let_condition',
 	LetChain = '_let_chain'
 }
@@ -3428,13 +3230,6 @@ export enum ClosureExpressionKind {
 
 export enum PatternKind {
 	LiteralPattern = '_literal_pattern',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	NegativeLiteral = 'negative_literal',
 	U8Keyword = 'u8_keyword',
 	I8Keyword = 'i8_keyword',
 	U16Keyword = 'u16_keyword',
@@ -3471,7 +3266,7 @@ export enum PatternKind {
 	OrPattern = 'or_pattern',
 	ConstBlock = 'const_block',
 	MacroInvocation = 'macro_invocation',
-	WildcardPattern = '_wildcard_pattern'
+	WildcardPattern = 'wildcard_pattern'
 }
 
 export enum FieldPatternKind {
@@ -3564,24 +3359,6 @@ export enum WhitespaceKind {
 	Blankline = '_blankline',
 	Indent = '_indent',
 	Dedent = '_dedent'
-}
-
-export enum NonSpecialTokenKind {
-	Literal = '_literal',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	MutableSpecifier = 'mutable_specifier',
-	Self = 'self',
-	Super = 'super',
-	Crate = 'crate',
-	PrimitiveType = '_primitive_type',
-	TokenTreePunctuation = '_token_tree_punctuation',
-	TokenKeywords = '_token_keywords'
 }
 
 // Node types — concrete interfaces
@@ -3683,212 +3460,11 @@ export interface TokenRepetitionPattern {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
 	readonly _separator?: string;
 	readonly _operator: number;
 	readonly __inputHints__?: {
-		readonly token_patterns?: readonly (
-			| KindEnum<
-					| 'true'
-					| 'false'
-					| 'mut'
-					| 'self'
-					| 'super'
-					| 'crate'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| '+'
-					| '-'
-					| '*'
-					| '/'
-					| '%'
-					| '^'
-					| '!'
-					| '&'
-					| '|'
-					| '&&'
-					| '||'
-					| '<<'
-					| '>>'
-					| '+='
-					| '-='
-					| '*='
-					| '/='
-					| '%='
-					| '^='
-					| '&='
-					| '|='
-					| '<<='
-					| '>>='
-					| '='
-					| '=='
-					| '!='
-					| '>'
-					| '<'
-					| '>='
-					| '<='
-					| '@'
-					| '_'
-					| '.'
-					| '..'
-					| '...'
-					| '..='
-					| ','
-					| ';'
-					| ':'
-					| '::'
-					| '->'
-					| '=>'
-					| '#'
-					| '?'
-					| "'"
-					| 'as'
-					| 'async'
-					| 'await'
-					| 'break'
-					| 'const'
-					| 'continue'
-					| 'default'
-					| 'enum'
-					| 'fn'
-					| 'for'
-					| 'gen'
-					| 'if'
-					| 'impl'
-					| 'let'
-					| 'loop'
-					| 'match'
-					| 'mod'
-					| 'pub'
-					| 'return'
-					| 'static'
-					| 'struct'
-					| 'trait'
-					| 'type'
-					| 'union'
-					| 'unsafe'
-					| 'use'
-					| 'where'
-					| 'while',
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.MutableSpecifier
-					| TSKindId.Self
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Plus
-					| TSKindId.Dash
-					| TSKindId.Star
-					| TSKindId.Slash
-					| TSKindId.Percent
-					| TSKindId.Caret
-					| TSKindId.Bang
-					| TSKindId.Amp
-					| TSKindId.Pipe
-					| TSKindId.AmpAmp
-					| TSKindId.PipePipe
-					| TSKindId.LtLt
-					| TSKindId.GtGt
-					| TSKindId.PlusEq
-					| TSKindId.DashEq
-					| TSKindId.StarEq
-					| TSKindId.SlashEq
-					| TSKindId.PercentEq
-					| TSKindId.CaretEq
-					| TSKindId.AmpEq
-					| TSKindId.PipeEq
-					| TSKindId.LtLtEq
-					| TSKindId.GtGtEq
-					| TSKindId.Eq
-					| TSKindId.EqEq
-					| TSKindId.BangEq
-					| TSKindId.Gt
-					| TSKindId.Lt
-					| TSKindId.GtEq
-					| TSKindId.LtEq
-					| TSKindId.At
-					| TSKindId.Underscore
-					| TSKindId.Dot
-					| TSKindId.DotDot
-					| TSKindId.DotDotDot
-					| TSKindId.DotDotEq
-					| TSKindId.Comma
-					| TSKindId.Semi
-					| TSKindId.Colon
-					| TSKindId.ColonColon
-					| TSKindId.DashGt
-					| TSKindId.EqGt
-					| TSKindId.Pound
-					| TSKindId.Qmark
-					| TSKindId.Squote
-					| TSKindId.AsKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.AwaitKeyword
-					| TSKindId.BreakKeyword
-					| TSKindId.ConstKeyword
-					| TSKindId.ContinueKeyword
-					| TSKindId.DefaultKeyword
-					| TSKindId.EnumKeyword
-					| TSKindId.FnKeyword
-					| TSKindId.ForKeyword
-					| TSKindId.GenKeyword
-					| TSKindId.IfKeyword
-					| TSKindId.ImplKeyword
-					| TSKindId.LetKeyword
-					| TSKindId.LoopKeyword
-					| TSKindId.MatchKeyword
-					| TSKindId.ModKeyword
-					| TSKindId.PubKeyword
-					| TSKindId.ReturnKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.StructKeyword
-					| TSKindId.TraitKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.UnsafeKeyword
-					| TSKindId.UseKeyword
-					| TSKindId.WhereKeyword
-					| TSKindId.WhileKeyword
-			  >
-			| TokenTreePattern
-			| TokenRepetitionPattern
-			| TokenBindingPattern
-			| Metavariable
-			| _NonSpecialToken
-		)[];
 		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
 	};
 	tokenPatterns(): readonly (
@@ -3896,7 +3472,7 @@ export interface TokenRepetitionPattern {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
 	separator(): string | undefined;
 	operator(): number;
@@ -3904,11 +3480,118 @@ export interface TokenRepetitionPattern {
 
 export interface TokenRepetition {
 	readonly $type: TSKindId.TokenRepetition;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 	readonly _separator?: string;
 	readonly _operator: number;
 	readonly __inputHints__?: {
-		readonly tokens?: readonly (
+		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
+	};
+	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
+	separator(): string | undefined;
+	operator(): number;
+}
+
+export interface NonSpecialToken {
+	readonly $type: TSKindId.NonSpecialToken;
+	readonly _content:
+		| Literal
+		| Identifier
+		| TSKindId.MutableSpecifier
+		| TSKindId.Self
+		| TSKindId.Super
+		| TSKindId.Crate
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| TSKindId.Plus
+		| TSKindId.Dash
+		| TSKindId.Star
+		| TSKindId.Slash
+		| TSKindId.Percent
+		| TSKindId.Caret
+		| TSKindId.Bang
+		| TSKindId.Amp
+		| TSKindId.Pipe
+		| TSKindId.AmpAmp
+		| TSKindId.PipePipe
+		| TSKindId.LtLt
+		| TSKindId.GtGt
+		| TSKindId.PlusEq
+		| TSKindId.DashEq
+		| TSKindId.StarEq
+		| TSKindId.SlashEq
+		| TSKindId.PercentEq
+		| TSKindId.CaretEq
+		| TSKindId.AmpEq
+		| TSKindId.PipeEq
+		| TSKindId.LtLtEq
+		| TSKindId.GtGtEq
+		| TSKindId.Eq
+		| TSKindId.EqEq
+		| TSKindId.BangEq
+		| TSKindId.Gt
+		| TSKindId.Lt
+		| TSKindId.GtEq
+		| TSKindId.LtEq
+		| TSKindId.At
+		| TSKindId.Underscore
+		| TSKindId.Dot
+		| TSKindId.DotDot
+		| TSKindId.DotDotDot
+		| TSKindId.DotDotEq
+		| TSKindId.Comma
+		| TSKindId.Semi
+		| TSKindId.Colon
+		| TSKindId.ColonColon
+		| TSKindId.DashGt
+		| TSKindId.EqGt
+		| TSKindId.Pound
+		| TSKindId.Qmark
+		| TSKindId.Squote
+		| TSKindId.AsKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.BreakKeyword
+		| TSKindId.ConstKeyword
+		| TSKindId.ContinueKeyword
+		| TSKindId.DefaultKeyword
+		| TSKindId.EnumKeyword
+		| TSKindId.FnKeyword
+		| TSKindId.ForKeyword
+		| TSKindId.GenKeyword
+		| TSKindId.IfKeyword
+		| TSKindId.ImplKeyword
+		| TSKindId.LetKeyword
+		| TSKindId.LoopKeyword
+		| TSKindId.MatchKeyword
+		| TSKindId.ModKeyword
+		| TSKindId.PubKeyword
+		| TSKindId.ReturnKeyword
+		| TSKindId.StaticKeyword
+		| TSKindId.StructKeyword
+		| TSKindId.TraitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.UnsafeKeyword
+		| TSKindId.UseKeyword
+		| TSKindId.WhereKeyword
+		| TSKindId.WhileKeyword;
+	readonly __inputHints__?: {
+		readonly content:
 			| KindEnum<
 					| 'true'
 					| 'false'
@@ -4103,16 +3786,106 @@ export interface TokenRepetition {
 					| TSKindId.WhereKeyword
 					| TSKindId.WhileKeyword
 			  >
-			| TokenTree
-			| TokenRepetition
-			| Metavariable
-			| _NonSpecialToken
-		)[];
-		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
+			| Literal
+			| Identifier;
 	};
-	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
-	separator(): string | undefined;
-	operator(): number;
+	content():
+		| Literal
+		| Identifier
+		| TSKindId.MutableSpecifier
+		| TSKindId.Self
+		| TSKindId.Super
+		| TSKindId.Crate
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| TSKindId.Plus
+		| TSKindId.Dash
+		| TSKindId.Star
+		| TSKindId.Slash
+		| TSKindId.Percent
+		| TSKindId.Caret
+		| TSKindId.Bang
+		| TSKindId.Amp
+		| TSKindId.Pipe
+		| TSKindId.AmpAmp
+		| TSKindId.PipePipe
+		| TSKindId.LtLt
+		| TSKindId.GtGt
+		| TSKindId.PlusEq
+		| TSKindId.DashEq
+		| TSKindId.StarEq
+		| TSKindId.SlashEq
+		| TSKindId.PercentEq
+		| TSKindId.CaretEq
+		| TSKindId.AmpEq
+		| TSKindId.PipeEq
+		| TSKindId.LtLtEq
+		| TSKindId.GtGtEq
+		| TSKindId.Eq
+		| TSKindId.EqEq
+		| TSKindId.BangEq
+		| TSKindId.Gt
+		| TSKindId.Lt
+		| TSKindId.GtEq
+		| TSKindId.LtEq
+		| TSKindId.At
+		| TSKindId.Underscore
+		| TSKindId.Dot
+		| TSKindId.DotDot
+		| TSKindId.DotDotDot
+		| TSKindId.DotDotEq
+		| TSKindId.Comma
+		| TSKindId.Semi
+		| TSKindId.Colon
+		| TSKindId.ColonColon
+		| TSKindId.DashGt
+		| TSKindId.EqGt
+		| TSKindId.Pound
+		| TSKindId.Qmark
+		| TSKindId.Squote
+		| TSKindId.AsKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.BreakKeyword
+		| TSKindId.ConstKeyword
+		| TSKindId.ContinueKeyword
+		| TSKindId.DefaultKeyword
+		| TSKindId.EnumKeyword
+		| TSKindId.FnKeyword
+		| TSKindId.ForKeyword
+		| TSKindId.GenKeyword
+		| TSKindId.IfKeyword
+		| TSKindId.ImplKeyword
+		| TSKindId.LetKeyword
+		| TSKindId.LoopKeyword
+		| TSKindId.MatchKeyword
+		| TSKindId.ModKeyword
+		| TSKindId.PubKeyword
+		| TSKindId.ReturnKeyword
+		| TSKindId.StaticKeyword
+		| TSKindId.StructKeyword
+		| TSKindId.TraitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.UnsafeKeyword
+		| TSKindId.UseKeyword
+		| TSKindId.WhereKeyword
+		| TSKindId.WhileKeyword;
 }
 
 export interface AttributeItem {
@@ -5877,9 +5650,9 @@ export interface VisibilityModifier {
 
 export interface BracketedType {
 	readonly $type: TSKindId.BracketedType;
-	readonly _content: Type | QualifiedType;
+	readonly _type: Type | QualifiedType;
 	readonly __inputHints__?: {
-		readonly content:
+		readonly type:
 			| KindEnum<
 					| '!'
 					| 'u8'
@@ -5921,7 +5694,7 @@ export interface BracketedType {
 			| Type
 			| QualifiedType;
 	};
-	content(): Type | QualifiedType;
+	type(): Type | QualifiedType;
 }
 
 export interface QualifiedType {
@@ -7411,8 +7184,8 @@ export interface LetChain {
 
 export interface ElseClause {
 	readonly $type: TSKindId.ElseClause;
-	readonly _content: Block | IfExpression;
-	content(): Block | IfExpression;
+	readonly _body: Block | IfExpression;
+	body(): Block | IfExpression;
 }
 
 export interface MatchExpression {
@@ -7669,12 +7442,12 @@ export interface Block {
 
 export interface GenericPattern {
 	readonly $type: TSKindId.GenericPattern;
-	readonly _content: Identifier | ScopedIdentifier;
+	readonly _name: Identifier | ScopedIdentifier;
 	readonly _type_arguments: TypeArguments;
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly TypeArgument[];
 	};
-	content(): Identifier | ScopedIdentifier;
+	name(): Identifier | ScopedIdentifier;
 	typeArguments(): TypeArguments;
 }
 
@@ -7790,9 +7563,9 @@ export interface NegativeLiteral {
 
 export interface StringLiteral {
 	readonly $type: TSKindId.StringLiteral;
-	readonly _string_open: StringLiteralOpen;
+	readonly _string_open: StringOpen;
 	readonly _elements?: readonly (EscapeSequence | StringContent)[];
-	stringOpen(): StringLiteralOpen;
+	stringOpen(): StringOpen;
 	elements(): readonly (EscapeSequence | StringContent)[];
 }
 
@@ -7808,8 +7581,8 @@ export interface RawStringLiteral {
 
 export interface LineComment {
 	readonly $type: TSKindId.LineComment;
-	readonly _content: LineCommentRegularDslash | LineCommentDocOuter | LineCommentDocInner | LineCommentContent;
-	content(): LineCommentRegularDslash | LineCommentDocOuter | LineCommentDocInner | LineCommentContent;
+	readonly _content: LineCommentExtraSlashes | LineCommentDocOuter | LineCommentDocInner | LineCommentRegular;
+	content(): LineCommentExtraSlashes | LineCommentDocOuter | LineCommentDocInner | LineCommentRegular;
 }
 
 export interface BlockComment {
@@ -8132,17 +7905,6 @@ export interface UseWildcardGroup {
 		| TSKindId.UnionKeyword
 		| TSKindId.GenKeyword
 		| undefined;
-}
-
-export interface VisibilityModifierGroup {
-	readonly $type: TSKindId.VisibilityModifierGroup;
-	readonly _content: TSKindId.Self | TSKindId.Super | TSKindId.Crate | VisibilityModifierPubInPath;
-	readonly __inputHints__?: {
-		readonly content:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| VisibilityModifierPubInPath;
-	};
-	content(): TSKindId.Self | TSKindId.Super | TSKindId.Crate | VisibilityModifierPubInPath;
 }
 
 export interface TupleTypeElements {
@@ -8674,22 +8436,8 @@ export interface ImplItemSemi {
 	whereClause(): WhereClause | undefined;
 }
 
-export interface VisibilityModifierPub {
-	readonly $type: TSKindId.VisibilityModifierPub;
-	readonly _visibility_modifier_group?: VisibilityModifierGroup;
-	readonly __looseHints__?: {
-		readonly visibility_modifier_group?:
-			| VisibilityModifierGroup
-			| 'self'
-			| 'super'
-			| 'crate'
-			| readonly ('self' | 'super' | 'crate' | VisibilityModifierPubInPath)[];
-	};
-	visibilityModifierGroup(): VisibilityModifierGroup | undefined;
-}
-
-export interface VisibilityModifierPubInPath {
-	readonly $type: TSKindId.VisibilityModifierPubInPath;
+export interface VisibilityModifierPubScopeInPath {
+	readonly $type: TSKindId.VisibilityModifierPubScopeInPath;
 	readonly _path:
 		| TSKindId.Self
 		| TSKindId.U8Keyword
@@ -8798,6 +8546,31 @@ export interface VisibilityModifierPubInPath {
 		| TSKindId.DefaultKeyword
 		| TSKindId.UnionKeyword
 		| TSKindId.GenKeyword;
+}
+
+export interface VisibilityModifierPubScope {
+	readonly $type: TSKindId.VisibilityModifierPubScope;
+	readonly _content: TSKindId.Self | TSKindId.Super | TSKindId.Crate | VisibilityModifierPubScopeInPath;
+	readonly __inputHints__?: {
+		readonly content:
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
+			| VisibilityModifierPubScopeInPath;
+	};
+	content(): TSKindId.Self | TSKindId.Super | TSKindId.Crate | VisibilityModifierPubScopeInPath;
+}
+
+export interface VisibilityModifierPub {
+	readonly $type: TSKindId.VisibilityModifierPub;
+	readonly _visibility_modifier_pub_scope?: VisibilityModifierPubScope;
+	readonly __looseHints__?: {
+		readonly visibility_modifier_pub_scope?:
+			| VisibilityModifierPubScope
+			| 'self'
+			| 'super'
+			| 'crate'
+			| readonly ('self' | 'super' | 'crate' | VisibilityModifierPubScopeInPath)[];
+	};
+	visibilityModifierPubScope(): VisibilityModifierPubScope | undefined;
 }
 
 export interface FunctionTypeTraitForm {
@@ -9100,14 +8873,14 @@ export interface MatchArmBlockEnding {
 
 export interface LineCommentDocOuter {
 	readonly $type: TSKindId.LineCommentDocOuter;
-	readonly _doc: LineDocContent;
-	doc(): LineDocContent;
+	readonly _doc: DocComment;
+	doc(): DocComment;
 }
 
 export interface LineCommentDocInner {
 	readonly $type: TSKindId.LineCommentDocInner;
-	readonly _doc: LineDocContent;
-	doc(): LineDocContent;
+	readonly _doc: DocComment;
+	doc(): DocComment;
 }
 
 export interface BlockCommentDocOuter {
@@ -9129,217 +8902,14 @@ export interface TokenTreePatternParen {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
-	readonly __inputHints__?: {
-		readonly token_patterns?: readonly (
-			| KindEnum<
-					| 'true'
-					| 'false'
-					| 'mut'
-					| 'self'
-					| 'super'
-					| 'crate'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| '+'
-					| '-'
-					| '*'
-					| '/'
-					| '%'
-					| '^'
-					| '!'
-					| '&'
-					| '|'
-					| '&&'
-					| '||'
-					| '<<'
-					| '>>'
-					| '+='
-					| '-='
-					| '*='
-					| '/='
-					| '%='
-					| '^='
-					| '&='
-					| '|='
-					| '<<='
-					| '>>='
-					| '='
-					| '=='
-					| '!='
-					| '>'
-					| '<'
-					| '>='
-					| '<='
-					| '@'
-					| '_'
-					| '.'
-					| '..'
-					| '...'
-					| '..='
-					| ','
-					| ';'
-					| ':'
-					| '::'
-					| '->'
-					| '=>'
-					| '#'
-					| '?'
-					| "'"
-					| 'as'
-					| 'async'
-					| 'await'
-					| 'break'
-					| 'const'
-					| 'continue'
-					| 'default'
-					| 'enum'
-					| 'fn'
-					| 'for'
-					| 'gen'
-					| 'if'
-					| 'impl'
-					| 'let'
-					| 'loop'
-					| 'match'
-					| 'mod'
-					| 'pub'
-					| 'return'
-					| 'static'
-					| 'struct'
-					| 'trait'
-					| 'type'
-					| 'union'
-					| 'unsafe'
-					| 'use'
-					| 'where'
-					| 'while',
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.MutableSpecifier
-					| TSKindId.Self
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Plus
-					| TSKindId.Dash
-					| TSKindId.Star
-					| TSKindId.Slash
-					| TSKindId.Percent
-					| TSKindId.Caret
-					| TSKindId.Bang
-					| TSKindId.Amp
-					| TSKindId.Pipe
-					| TSKindId.AmpAmp
-					| TSKindId.PipePipe
-					| TSKindId.LtLt
-					| TSKindId.GtGt
-					| TSKindId.PlusEq
-					| TSKindId.DashEq
-					| TSKindId.StarEq
-					| TSKindId.SlashEq
-					| TSKindId.PercentEq
-					| TSKindId.CaretEq
-					| TSKindId.AmpEq
-					| TSKindId.PipeEq
-					| TSKindId.LtLtEq
-					| TSKindId.GtGtEq
-					| TSKindId.Eq
-					| TSKindId.EqEq
-					| TSKindId.BangEq
-					| TSKindId.Gt
-					| TSKindId.Lt
-					| TSKindId.GtEq
-					| TSKindId.LtEq
-					| TSKindId.At
-					| TSKindId.Underscore
-					| TSKindId.Dot
-					| TSKindId.DotDot
-					| TSKindId.DotDotDot
-					| TSKindId.DotDotEq
-					| TSKindId.Comma
-					| TSKindId.Semi
-					| TSKindId.Colon
-					| TSKindId.ColonColon
-					| TSKindId.DashGt
-					| TSKindId.EqGt
-					| TSKindId.Pound
-					| TSKindId.Qmark
-					| TSKindId.Squote
-					| TSKindId.AsKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.AwaitKeyword
-					| TSKindId.BreakKeyword
-					| TSKindId.ConstKeyword
-					| TSKindId.ContinueKeyword
-					| TSKindId.DefaultKeyword
-					| TSKindId.EnumKeyword
-					| TSKindId.FnKeyword
-					| TSKindId.ForKeyword
-					| TSKindId.GenKeyword
-					| TSKindId.IfKeyword
-					| TSKindId.ImplKeyword
-					| TSKindId.LetKeyword
-					| TSKindId.LoopKeyword
-					| TSKindId.MatchKeyword
-					| TSKindId.ModKeyword
-					| TSKindId.PubKeyword
-					| TSKindId.ReturnKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.StructKeyword
-					| TSKindId.TraitKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.UnsafeKeyword
-					| TSKindId.UseKeyword
-					| TSKindId.WhereKeyword
-					| TSKindId.WhileKeyword
-			  >
-			| TokenTreePattern
-			| TokenRepetitionPattern
-			| TokenBindingPattern
-			| Metavariable
-			| _NonSpecialToken
-		)[];
-	};
 	tokenPatterns(): readonly (
 		| TokenTreePattern
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
 }
 
@@ -9350,217 +8920,14 @@ export interface TokenTreePatternBracket {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
-	readonly __inputHints__?: {
-		readonly token_patterns?: readonly (
-			| KindEnum<
-					| 'true'
-					| 'false'
-					| 'mut'
-					| 'self'
-					| 'super'
-					| 'crate'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| '+'
-					| '-'
-					| '*'
-					| '/'
-					| '%'
-					| '^'
-					| '!'
-					| '&'
-					| '|'
-					| '&&'
-					| '||'
-					| '<<'
-					| '>>'
-					| '+='
-					| '-='
-					| '*='
-					| '/='
-					| '%='
-					| '^='
-					| '&='
-					| '|='
-					| '<<='
-					| '>>='
-					| '='
-					| '=='
-					| '!='
-					| '>'
-					| '<'
-					| '>='
-					| '<='
-					| '@'
-					| '_'
-					| '.'
-					| '..'
-					| '...'
-					| '..='
-					| ','
-					| ';'
-					| ':'
-					| '::'
-					| '->'
-					| '=>'
-					| '#'
-					| '?'
-					| "'"
-					| 'as'
-					| 'async'
-					| 'await'
-					| 'break'
-					| 'const'
-					| 'continue'
-					| 'default'
-					| 'enum'
-					| 'fn'
-					| 'for'
-					| 'gen'
-					| 'if'
-					| 'impl'
-					| 'let'
-					| 'loop'
-					| 'match'
-					| 'mod'
-					| 'pub'
-					| 'return'
-					| 'static'
-					| 'struct'
-					| 'trait'
-					| 'type'
-					| 'union'
-					| 'unsafe'
-					| 'use'
-					| 'where'
-					| 'while',
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.MutableSpecifier
-					| TSKindId.Self
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Plus
-					| TSKindId.Dash
-					| TSKindId.Star
-					| TSKindId.Slash
-					| TSKindId.Percent
-					| TSKindId.Caret
-					| TSKindId.Bang
-					| TSKindId.Amp
-					| TSKindId.Pipe
-					| TSKindId.AmpAmp
-					| TSKindId.PipePipe
-					| TSKindId.LtLt
-					| TSKindId.GtGt
-					| TSKindId.PlusEq
-					| TSKindId.DashEq
-					| TSKindId.StarEq
-					| TSKindId.SlashEq
-					| TSKindId.PercentEq
-					| TSKindId.CaretEq
-					| TSKindId.AmpEq
-					| TSKindId.PipeEq
-					| TSKindId.LtLtEq
-					| TSKindId.GtGtEq
-					| TSKindId.Eq
-					| TSKindId.EqEq
-					| TSKindId.BangEq
-					| TSKindId.Gt
-					| TSKindId.Lt
-					| TSKindId.GtEq
-					| TSKindId.LtEq
-					| TSKindId.At
-					| TSKindId.Underscore
-					| TSKindId.Dot
-					| TSKindId.DotDot
-					| TSKindId.DotDotDot
-					| TSKindId.DotDotEq
-					| TSKindId.Comma
-					| TSKindId.Semi
-					| TSKindId.Colon
-					| TSKindId.ColonColon
-					| TSKindId.DashGt
-					| TSKindId.EqGt
-					| TSKindId.Pound
-					| TSKindId.Qmark
-					| TSKindId.Squote
-					| TSKindId.AsKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.AwaitKeyword
-					| TSKindId.BreakKeyword
-					| TSKindId.ConstKeyword
-					| TSKindId.ContinueKeyword
-					| TSKindId.DefaultKeyword
-					| TSKindId.EnumKeyword
-					| TSKindId.FnKeyword
-					| TSKindId.ForKeyword
-					| TSKindId.GenKeyword
-					| TSKindId.IfKeyword
-					| TSKindId.ImplKeyword
-					| TSKindId.LetKeyword
-					| TSKindId.LoopKeyword
-					| TSKindId.MatchKeyword
-					| TSKindId.ModKeyword
-					| TSKindId.PubKeyword
-					| TSKindId.ReturnKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.StructKeyword
-					| TSKindId.TraitKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.UnsafeKeyword
-					| TSKindId.UseKeyword
-					| TSKindId.WhereKeyword
-					| TSKindId.WhileKeyword
-			  >
-			| TokenTreePattern
-			| TokenRepetitionPattern
-			| TokenBindingPattern
-			| Metavariable
-			| _NonSpecialToken
-		)[];
-	};
 	tokenPatterns(): readonly (
 		| TokenTreePattern
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
 }
 
@@ -9571,1466 +8938,60 @@ export interface TokenTreePatternBrace {
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
-	readonly __inputHints__?: {
-		readonly token_patterns?: readonly (
-			| KindEnum<
-					| 'true'
-					| 'false'
-					| 'mut'
-					| 'self'
-					| 'super'
-					| 'crate'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| '+'
-					| '-'
-					| '*'
-					| '/'
-					| '%'
-					| '^'
-					| '!'
-					| '&'
-					| '|'
-					| '&&'
-					| '||'
-					| '<<'
-					| '>>'
-					| '+='
-					| '-='
-					| '*='
-					| '/='
-					| '%='
-					| '^='
-					| '&='
-					| '|='
-					| '<<='
-					| '>>='
-					| '='
-					| '=='
-					| '!='
-					| '>'
-					| '<'
-					| '>='
-					| '<='
-					| '@'
-					| '_'
-					| '.'
-					| '..'
-					| '...'
-					| '..='
-					| ','
-					| ';'
-					| ':'
-					| '::'
-					| '->'
-					| '=>'
-					| '#'
-					| '?'
-					| "'"
-					| 'as'
-					| 'async'
-					| 'await'
-					| 'break'
-					| 'const'
-					| 'continue'
-					| 'default'
-					| 'enum'
-					| 'fn'
-					| 'for'
-					| 'gen'
-					| 'if'
-					| 'impl'
-					| 'let'
-					| 'loop'
-					| 'match'
-					| 'mod'
-					| 'pub'
-					| 'return'
-					| 'static'
-					| 'struct'
-					| 'trait'
-					| 'type'
-					| 'union'
-					| 'unsafe'
-					| 'use'
-					| 'where'
-					| 'while',
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.MutableSpecifier
-					| TSKindId.Self
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Plus
-					| TSKindId.Dash
-					| TSKindId.Star
-					| TSKindId.Slash
-					| TSKindId.Percent
-					| TSKindId.Caret
-					| TSKindId.Bang
-					| TSKindId.Amp
-					| TSKindId.Pipe
-					| TSKindId.AmpAmp
-					| TSKindId.PipePipe
-					| TSKindId.LtLt
-					| TSKindId.GtGt
-					| TSKindId.PlusEq
-					| TSKindId.DashEq
-					| TSKindId.StarEq
-					| TSKindId.SlashEq
-					| TSKindId.PercentEq
-					| TSKindId.CaretEq
-					| TSKindId.AmpEq
-					| TSKindId.PipeEq
-					| TSKindId.LtLtEq
-					| TSKindId.GtGtEq
-					| TSKindId.Eq
-					| TSKindId.EqEq
-					| TSKindId.BangEq
-					| TSKindId.Gt
-					| TSKindId.Lt
-					| TSKindId.GtEq
-					| TSKindId.LtEq
-					| TSKindId.At
-					| TSKindId.Underscore
-					| TSKindId.Dot
-					| TSKindId.DotDot
-					| TSKindId.DotDotDot
-					| TSKindId.DotDotEq
-					| TSKindId.Comma
-					| TSKindId.Semi
-					| TSKindId.Colon
-					| TSKindId.ColonColon
-					| TSKindId.DashGt
-					| TSKindId.EqGt
-					| TSKindId.Pound
-					| TSKindId.Qmark
-					| TSKindId.Squote
-					| TSKindId.AsKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.AwaitKeyword
-					| TSKindId.BreakKeyword
-					| TSKindId.ConstKeyword
-					| TSKindId.ContinueKeyword
-					| TSKindId.DefaultKeyword
-					| TSKindId.EnumKeyword
-					| TSKindId.FnKeyword
-					| TSKindId.ForKeyword
-					| TSKindId.GenKeyword
-					| TSKindId.IfKeyword
-					| TSKindId.ImplKeyword
-					| TSKindId.LetKeyword
-					| TSKindId.LoopKeyword
-					| TSKindId.MatchKeyword
-					| TSKindId.ModKeyword
-					| TSKindId.PubKeyword
-					| TSKindId.ReturnKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.StructKeyword
-					| TSKindId.TraitKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.UnsafeKeyword
-					| TSKindId.UseKeyword
-					| TSKindId.WhereKeyword
-					| TSKindId.WhileKeyword
-			  >
-			| TokenTreePattern
-			| TokenRepetitionPattern
-			| TokenBindingPattern
-			| Metavariable
-			| _NonSpecialToken
-		)[];
-	};
 	tokenPatterns(): readonly (
 		| TokenTreePattern
 		| TokenRepetitionPattern
 		| TokenBindingPattern
 		| Metavariable
-		| _NonSpecialToken
+		| NonSpecialToken
 	)[];
 }
 
 export interface TokenTreeParen {
 	readonly $type: TSKindId.TokenTreeParen;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
-	readonly __inputHints__?: {
-		readonly tokens?: readonly (
-			| KindEnum<
-					| 'true'
-					| 'false'
-					| 'mut'
-					| 'self'
-					| 'super'
-					| 'crate'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| '+'
-					| '-'
-					| '*'
-					| '/'
-					| '%'
-					| '^'
-					| '!'
-					| '&'
-					| '|'
-					| '&&'
-					| '||'
-					| '<<'
-					| '>>'
-					| '+='
-					| '-='
-					| '*='
-					| '/='
-					| '%='
-					| '^='
-					| '&='
-					| '|='
-					| '<<='
-					| '>>='
-					| '='
-					| '=='
-					| '!='
-					| '>'
-					| '<'
-					| '>='
-					| '<='
-					| '@'
-					| '_'
-					| '.'
-					| '..'
-					| '...'
-					| '..='
-					| ','
-					| ';'
-					| ':'
-					| '::'
-					| '->'
-					| '=>'
-					| '#'
-					| '?'
-					| "'"
-					| 'as'
-					| 'async'
-					| 'await'
-					| 'break'
-					| 'const'
-					| 'continue'
-					| 'default'
-					| 'enum'
-					| 'fn'
-					| 'for'
-					| 'gen'
-					| 'if'
-					| 'impl'
-					| 'let'
-					| 'loop'
-					| 'match'
-					| 'mod'
-					| 'pub'
-					| 'return'
-					| 'static'
-					| 'struct'
-					| 'trait'
-					| 'type'
-					| 'union'
-					| 'unsafe'
-					| 'use'
-					| 'where'
-					| 'while',
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.MutableSpecifier
-					| TSKindId.Self
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Plus
-					| TSKindId.Dash
-					| TSKindId.Star
-					| TSKindId.Slash
-					| TSKindId.Percent
-					| TSKindId.Caret
-					| TSKindId.Bang
-					| TSKindId.Amp
-					| TSKindId.Pipe
-					| TSKindId.AmpAmp
-					| TSKindId.PipePipe
-					| TSKindId.LtLt
-					| TSKindId.GtGt
-					| TSKindId.PlusEq
-					| TSKindId.DashEq
-					| TSKindId.StarEq
-					| TSKindId.SlashEq
-					| TSKindId.PercentEq
-					| TSKindId.CaretEq
-					| TSKindId.AmpEq
-					| TSKindId.PipeEq
-					| TSKindId.LtLtEq
-					| TSKindId.GtGtEq
-					| TSKindId.Eq
-					| TSKindId.EqEq
-					| TSKindId.BangEq
-					| TSKindId.Gt
-					| TSKindId.Lt
-					| TSKindId.GtEq
-					| TSKindId.LtEq
-					| TSKindId.At
-					| TSKindId.Underscore
-					| TSKindId.Dot
-					| TSKindId.DotDot
-					| TSKindId.DotDotDot
-					| TSKindId.DotDotEq
-					| TSKindId.Comma
-					| TSKindId.Semi
-					| TSKindId.Colon
-					| TSKindId.ColonColon
-					| TSKindId.DashGt
-					| TSKindId.EqGt
-					| TSKindId.Pound
-					| TSKindId.Qmark
-					| TSKindId.Squote
-					| TSKindId.AsKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.AwaitKeyword
-					| TSKindId.BreakKeyword
-					| TSKindId.ConstKeyword
-					| TSKindId.ContinueKeyword
-					| TSKindId.DefaultKeyword
-					| TSKindId.EnumKeyword
-					| TSKindId.FnKeyword
-					| TSKindId.ForKeyword
-					| TSKindId.GenKeyword
-					| TSKindId.IfKeyword
-					| TSKindId.ImplKeyword
-					| TSKindId.LetKeyword
-					| TSKindId.LoopKeyword
-					| TSKindId.MatchKeyword
-					| TSKindId.ModKeyword
-					| TSKindId.PubKeyword
-					| TSKindId.ReturnKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.StructKeyword
-					| TSKindId.TraitKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.UnsafeKeyword
-					| TSKindId.UseKeyword
-					| TSKindId.WhereKeyword
-					| TSKindId.WhileKeyword
-			  >
-			| TokenTree
-			| TokenRepetition
-			| Metavariable
-			| _NonSpecialToken
-		)[];
-	};
-	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
+	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 }
 
 export interface TokenTreeBracket {
 	readonly $type: TSKindId.TokenTreeBracket;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
-	readonly __inputHints__?: {
-		readonly tokens?: readonly (
-			| KindEnum<
-					| 'true'
-					| 'false'
-					| 'mut'
-					| 'self'
-					| 'super'
-					| 'crate'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| '+'
-					| '-'
-					| '*'
-					| '/'
-					| '%'
-					| '^'
-					| '!'
-					| '&'
-					| '|'
-					| '&&'
-					| '||'
-					| '<<'
-					| '>>'
-					| '+='
-					| '-='
-					| '*='
-					| '/='
-					| '%='
-					| '^='
-					| '&='
-					| '|='
-					| '<<='
-					| '>>='
-					| '='
-					| '=='
-					| '!='
-					| '>'
-					| '<'
-					| '>='
-					| '<='
-					| '@'
-					| '_'
-					| '.'
-					| '..'
-					| '...'
-					| '..='
-					| ','
-					| ';'
-					| ':'
-					| '::'
-					| '->'
-					| '=>'
-					| '#'
-					| '?'
-					| "'"
-					| 'as'
-					| 'async'
-					| 'await'
-					| 'break'
-					| 'const'
-					| 'continue'
-					| 'default'
-					| 'enum'
-					| 'fn'
-					| 'for'
-					| 'gen'
-					| 'if'
-					| 'impl'
-					| 'let'
-					| 'loop'
-					| 'match'
-					| 'mod'
-					| 'pub'
-					| 'return'
-					| 'static'
-					| 'struct'
-					| 'trait'
-					| 'type'
-					| 'union'
-					| 'unsafe'
-					| 'use'
-					| 'where'
-					| 'while',
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.MutableSpecifier
-					| TSKindId.Self
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Plus
-					| TSKindId.Dash
-					| TSKindId.Star
-					| TSKindId.Slash
-					| TSKindId.Percent
-					| TSKindId.Caret
-					| TSKindId.Bang
-					| TSKindId.Amp
-					| TSKindId.Pipe
-					| TSKindId.AmpAmp
-					| TSKindId.PipePipe
-					| TSKindId.LtLt
-					| TSKindId.GtGt
-					| TSKindId.PlusEq
-					| TSKindId.DashEq
-					| TSKindId.StarEq
-					| TSKindId.SlashEq
-					| TSKindId.PercentEq
-					| TSKindId.CaretEq
-					| TSKindId.AmpEq
-					| TSKindId.PipeEq
-					| TSKindId.LtLtEq
-					| TSKindId.GtGtEq
-					| TSKindId.Eq
-					| TSKindId.EqEq
-					| TSKindId.BangEq
-					| TSKindId.Gt
-					| TSKindId.Lt
-					| TSKindId.GtEq
-					| TSKindId.LtEq
-					| TSKindId.At
-					| TSKindId.Underscore
-					| TSKindId.Dot
-					| TSKindId.DotDot
-					| TSKindId.DotDotDot
-					| TSKindId.DotDotEq
-					| TSKindId.Comma
-					| TSKindId.Semi
-					| TSKindId.Colon
-					| TSKindId.ColonColon
-					| TSKindId.DashGt
-					| TSKindId.EqGt
-					| TSKindId.Pound
-					| TSKindId.Qmark
-					| TSKindId.Squote
-					| TSKindId.AsKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.AwaitKeyword
-					| TSKindId.BreakKeyword
-					| TSKindId.ConstKeyword
-					| TSKindId.ContinueKeyword
-					| TSKindId.DefaultKeyword
-					| TSKindId.EnumKeyword
-					| TSKindId.FnKeyword
-					| TSKindId.ForKeyword
-					| TSKindId.GenKeyword
-					| TSKindId.IfKeyword
-					| TSKindId.ImplKeyword
-					| TSKindId.LetKeyword
-					| TSKindId.LoopKeyword
-					| TSKindId.MatchKeyword
-					| TSKindId.ModKeyword
-					| TSKindId.PubKeyword
-					| TSKindId.ReturnKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.StructKeyword
-					| TSKindId.TraitKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.UnsafeKeyword
-					| TSKindId.UseKeyword
-					| TSKindId.WhereKeyword
-					| TSKindId.WhileKeyword
-			  >
-			| TokenTree
-			| TokenRepetition
-			| Metavariable
-			| _NonSpecialToken
-		)[];
-	};
-	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
+	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 }
 
 export interface TokenTreeBrace {
 	readonly $type: TSKindId.TokenTreeBrace;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
-	readonly __inputHints__?: {
-		readonly tokens?: readonly (
-			| KindEnum<
-					| 'true'
-					| 'false'
-					| 'mut'
-					| 'self'
-					| 'super'
-					| 'crate'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| '+'
-					| '-'
-					| '*'
-					| '/'
-					| '%'
-					| '^'
-					| '!'
-					| '&'
-					| '|'
-					| '&&'
-					| '||'
-					| '<<'
-					| '>>'
-					| '+='
-					| '-='
-					| '*='
-					| '/='
-					| '%='
-					| '^='
-					| '&='
-					| '|='
-					| '<<='
-					| '>>='
-					| '='
-					| '=='
-					| '!='
-					| '>'
-					| '<'
-					| '>='
-					| '<='
-					| '@'
-					| '_'
-					| '.'
-					| '..'
-					| '...'
-					| '..='
-					| ','
-					| ';'
-					| ':'
-					| '::'
-					| '->'
-					| '=>'
-					| '#'
-					| '?'
-					| "'"
-					| 'as'
-					| 'async'
-					| 'await'
-					| 'break'
-					| 'const'
-					| 'continue'
-					| 'default'
-					| 'enum'
-					| 'fn'
-					| 'for'
-					| 'gen'
-					| 'if'
-					| 'impl'
-					| 'let'
-					| 'loop'
-					| 'match'
-					| 'mod'
-					| 'pub'
-					| 'return'
-					| 'static'
-					| 'struct'
-					| 'trait'
-					| 'type'
-					| 'union'
-					| 'unsafe'
-					| 'use'
-					| 'where'
-					| 'while',
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.MutableSpecifier
-					| TSKindId.Self
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Plus
-					| TSKindId.Dash
-					| TSKindId.Star
-					| TSKindId.Slash
-					| TSKindId.Percent
-					| TSKindId.Caret
-					| TSKindId.Bang
-					| TSKindId.Amp
-					| TSKindId.Pipe
-					| TSKindId.AmpAmp
-					| TSKindId.PipePipe
-					| TSKindId.LtLt
-					| TSKindId.GtGt
-					| TSKindId.PlusEq
-					| TSKindId.DashEq
-					| TSKindId.StarEq
-					| TSKindId.SlashEq
-					| TSKindId.PercentEq
-					| TSKindId.CaretEq
-					| TSKindId.AmpEq
-					| TSKindId.PipeEq
-					| TSKindId.LtLtEq
-					| TSKindId.GtGtEq
-					| TSKindId.Eq
-					| TSKindId.EqEq
-					| TSKindId.BangEq
-					| TSKindId.Gt
-					| TSKindId.Lt
-					| TSKindId.GtEq
-					| TSKindId.LtEq
-					| TSKindId.At
-					| TSKindId.Underscore
-					| TSKindId.Dot
-					| TSKindId.DotDot
-					| TSKindId.DotDotDot
-					| TSKindId.DotDotEq
-					| TSKindId.Comma
-					| TSKindId.Semi
-					| TSKindId.Colon
-					| TSKindId.ColonColon
-					| TSKindId.DashGt
-					| TSKindId.EqGt
-					| TSKindId.Pound
-					| TSKindId.Qmark
-					| TSKindId.Squote
-					| TSKindId.AsKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.AwaitKeyword
-					| TSKindId.BreakKeyword
-					| TSKindId.ConstKeyword
-					| TSKindId.ContinueKeyword
-					| TSKindId.DefaultKeyword
-					| TSKindId.EnumKeyword
-					| TSKindId.FnKeyword
-					| TSKindId.ForKeyword
-					| TSKindId.GenKeyword
-					| TSKindId.IfKeyword
-					| TSKindId.ImplKeyword
-					| TSKindId.LetKeyword
-					| TSKindId.LoopKeyword
-					| TSKindId.MatchKeyword
-					| TSKindId.ModKeyword
-					| TSKindId.PubKeyword
-					| TSKindId.ReturnKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.StructKeyword
-					| TSKindId.TraitKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.UnsafeKeyword
-					| TSKindId.UseKeyword
-					| TSKindId.WhereKeyword
-					| TSKindId.WhileKeyword
-			  >
-			| TokenTree
-			| TokenRepetition
-			| Metavariable
-			| _NonSpecialToken
-		)[];
-	};
-	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
+	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
+	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 }
 
 export interface DelimTokenTreeParen {
 	readonly $type: TSKindId.DelimTokenTreeParen;
-	readonly _delim_tokens?: readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly _delim_tokens?: readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 	readonly __inputHints__?: {
-		readonly delim_tokens?: readonly (
-			| KindEnum<
-					| 'true'
-					| 'false'
-					| 'mut'
-					| 'self'
-					| 'super'
-					| 'crate'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| '+'
-					| '-'
-					| '*'
-					| '/'
-					| '%'
-					| '^'
-					| '!'
-					| '&'
-					| '|'
-					| '&&'
-					| '||'
-					| '<<'
-					| '>>'
-					| '+='
-					| '-='
-					| '*='
-					| '/='
-					| '%='
-					| '^='
-					| '&='
-					| '|='
-					| '<<='
-					| '>>='
-					| '='
-					| '=='
-					| '!='
-					| '>'
-					| '<'
-					| '>='
-					| '<='
-					| '@'
-					| '_'
-					| '.'
-					| '..'
-					| '...'
-					| '..='
-					| ','
-					| ';'
-					| ':'
-					| '::'
-					| '->'
-					| '=>'
-					| '#'
-					| '?'
-					| "'"
-					| 'as'
-					| 'async'
-					| 'await'
-					| 'break'
-					| 'const'
-					| 'continue'
-					| 'default'
-					| 'enum'
-					| 'fn'
-					| 'for'
-					| 'gen'
-					| 'if'
-					| 'impl'
-					| 'let'
-					| 'loop'
-					| 'match'
-					| 'mod'
-					| 'pub'
-					| 'return'
-					| 'static'
-					| 'struct'
-					| 'trait'
-					| 'type'
-					| 'union'
-					| 'unsafe'
-					| 'use'
-					| 'where'
-					| 'while'
-					| '$',
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.MutableSpecifier
-					| TSKindId.Self
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Plus
-					| TSKindId.Dash
-					| TSKindId.Star
-					| TSKindId.Slash
-					| TSKindId.Percent
-					| TSKindId.Caret
-					| TSKindId.Bang
-					| TSKindId.Amp
-					| TSKindId.Pipe
-					| TSKindId.AmpAmp
-					| TSKindId.PipePipe
-					| TSKindId.LtLt
-					| TSKindId.GtGt
-					| TSKindId.PlusEq
-					| TSKindId.DashEq
-					| TSKindId.StarEq
-					| TSKindId.SlashEq
-					| TSKindId.PercentEq
-					| TSKindId.CaretEq
-					| TSKindId.AmpEq
-					| TSKindId.PipeEq
-					| TSKindId.LtLtEq
-					| TSKindId.GtGtEq
-					| TSKindId.Eq
-					| TSKindId.EqEq
-					| TSKindId.BangEq
-					| TSKindId.Gt
-					| TSKindId.Lt
-					| TSKindId.GtEq
-					| TSKindId.LtEq
-					| TSKindId.At
-					| TSKindId.Underscore
-					| TSKindId.Dot
-					| TSKindId.DotDot
-					| TSKindId.DotDotDot
-					| TSKindId.DotDotEq
-					| TSKindId.Comma
-					| TSKindId.Semi
-					| TSKindId.Colon
-					| TSKindId.ColonColon
-					| TSKindId.DashGt
-					| TSKindId.EqGt
-					| TSKindId.Pound
-					| TSKindId.Qmark
-					| TSKindId.Squote
-					| TSKindId.AsKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.AwaitKeyword
-					| TSKindId.BreakKeyword
-					| TSKindId.ConstKeyword
-					| TSKindId.ContinueKeyword
-					| TSKindId.DefaultKeyword
-					| TSKindId.EnumKeyword
-					| TSKindId.FnKeyword
-					| TSKindId.ForKeyword
-					| TSKindId.GenKeyword
-					| TSKindId.IfKeyword
-					| TSKindId.ImplKeyword
-					| TSKindId.LetKeyword
-					| TSKindId.LoopKeyword
-					| TSKindId.MatchKeyword
-					| TSKindId.ModKeyword
-					| TSKindId.PubKeyword
-					| TSKindId.ReturnKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.StructKeyword
-					| TSKindId.TraitKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.UnsafeKeyword
-					| TSKindId.UseKeyword
-					| TSKindId.WhereKeyword
-					| TSKindId.WhileKeyword
-					| TSKindId.Dollar
-			  >
-			| _NonSpecialToken
-			| DelimTokenTree
-		)[];
+		readonly delim_tokens?: readonly (KindEnum<'$', TSKindId.Dollar> | NonSpecialToken | DelimTokenTree)[];
 	};
-	delimTokens(): readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	delimTokens(): readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 }
 
 export interface DelimTokenTreeBracket {
 	readonly $type: TSKindId.DelimTokenTreeBracket;
-	readonly _delim_tokens?: readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly _delim_tokens?: readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 	readonly __inputHints__?: {
-		readonly delim_tokens?: readonly (
-			| KindEnum<
-					| 'true'
-					| 'false'
-					| 'mut'
-					| 'self'
-					| 'super'
-					| 'crate'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| '+'
-					| '-'
-					| '*'
-					| '/'
-					| '%'
-					| '^'
-					| '!'
-					| '&'
-					| '|'
-					| '&&'
-					| '||'
-					| '<<'
-					| '>>'
-					| '+='
-					| '-='
-					| '*='
-					| '/='
-					| '%='
-					| '^='
-					| '&='
-					| '|='
-					| '<<='
-					| '>>='
-					| '='
-					| '=='
-					| '!='
-					| '>'
-					| '<'
-					| '>='
-					| '<='
-					| '@'
-					| '_'
-					| '.'
-					| '..'
-					| '...'
-					| '..='
-					| ','
-					| ';'
-					| ':'
-					| '::'
-					| '->'
-					| '=>'
-					| '#'
-					| '?'
-					| "'"
-					| 'as'
-					| 'async'
-					| 'await'
-					| 'break'
-					| 'const'
-					| 'continue'
-					| 'default'
-					| 'enum'
-					| 'fn'
-					| 'for'
-					| 'gen'
-					| 'if'
-					| 'impl'
-					| 'let'
-					| 'loop'
-					| 'match'
-					| 'mod'
-					| 'pub'
-					| 'return'
-					| 'static'
-					| 'struct'
-					| 'trait'
-					| 'type'
-					| 'union'
-					| 'unsafe'
-					| 'use'
-					| 'where'
-					| 'while'
-					| '$',
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.MutableSpecifier
-					| TSKindId.Self
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Plus
-					| TSKindId.Dash
-					| TSKindId.Star
-					| TSKindId.Slash
-					| TSKindId.Percent
-					| TSKindId.Caret
-					| TSKindId.Bang
-					| TSKindId.Amp
-					| TSKindId.Pipe
-					| TSKindId.AmpAmp
-					| TSKindId.PipePipe
-					| TSKindId.LtLt
-					| TSKindId.GtGt
-					| TSKindId.PlusEq
-					| TSKindId.DashEq
-					| TSKindId.StarEq
-					| TSKindId.SlashEq
-					| TSKindId.PercentEq
-					| TSKindId.CaretEq
-					| TSKindId.AmpEq
-					| TSKindId.PipeEq
-					| TSKindId.LtLtEq
-					| TSKindId.GtGtEq
-					| TSKindId.Eq
-					| TSKindId.EqEq
-					| TSKindId.BangEq
-					| TSKindId.Gt
-					| TSKindId.Lt
-					| TSKindId.GtEq
-					| TSKindId.LtEq
-					| TSKindId.At
-					| TSKindId.Underscore
-					| TSKindId.Dot
-					| TSKindId.DotDot
-					| TSKindId.DotDotDot
-					| TSKindId.DotDotEq
-					| TSKindId.Comma
-					| TSKindId.Semi
-					| TSKindId.Colon
-					| TSKindId.ColonColon
-					| TSKindId.DashGt
-					| TSKindId.EqGt
-					| TSKindId.Pound
-					| TSKindId.Qmark
-					| TSKindId.Squote
-					| TSKindId.AsKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.AwaitKeyword
-					| TSKindId.BreakKeyword
-					| TSKindId.ConstKeyword
-					| TSKindId.ContinueKeyword
-					| TSKindId.DefaultKeyword
-					| TSKindId.EnumKeyword
-					| TSKindId.FnKeyword
-					| TSKindId.ForKeyword
-					| TSKindId.GenKeyword
-					| TSKindId.IfKeyword
-					| TSKindId.ImplKeyword
-					| TSKindId.LetKeyword
-					| TSKindId.LoopKeyword
-					| TSKindId.MatchKeyword
-					| TSKindId.ModKeyword
-					| TSKindId.PubKeyword
-					| TSKindId.ReturnKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.StructKeyword
-					| TSKindId.TraitKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.UnsafeKeyword
-					| TSKindId.UseKeyword
-					| TSKindId.WhereKeyword
-					| TSKindId.WhileKeyword
-					| TSKindId.Dollar
-			  >
-			| _NonSpecialToken
-			| DelimTokenTree
-		)[];
+		readonly delim_tokens?: readonly (KindEnum<'$', TSKindId.Dollar> | NonSpecialToken | DelimTokenTree)[];
 	};
-	delimTokens(): readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	delimTokens(): readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 }
 
 export interface DelimTokenTreeBrace {
 	readonly $type: TSKindId.DelimTokenTreeBrace;
-	readonly _delim_tokens?: readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly _delim_tokens?: readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 	readonly __inputHints__?: {
-		readonly delim_tokens?: readonly (
-			| KindEnum<
-					| 'true'
-					| 'false'
-					| 'mut'
-					| 'self'
-					| 'super'
-					| 'crate'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| '+'
-					| '-'
-					| '*'
-					| '/'
-					| '%'
-					| '^'
-					| '!'
-					| '&'
-					| '|'
-					| '&&'
-					| '||'
-					| '<<'
-					| '>>'
-					| '+='
-					| '-='
-					| '*='
-					| '/='
-					| '%='
-					| '^='
-					| '&='
-					| '|='
-					| '<<='
-					| '>>='
-					| '='
-					| '=='
-					| '!='
-					| '>'
-					| '<'
-					| '>='
-					| '<='
-					| '@'
-					| '_'
-					| '.'
-					| '..'
-					| '...'
-					| '..='
-					| ','
-					| ';'
-					| ':'
-					| '::'
-					| '->'
-					| '=>'
-					| '#'
-					| '?'
-					| "'"
-					| 'as'
-					| 'async'
-					| 'await'
-					| 'break'
-					| 'const'
-					| 'continue'
-					| 'default'
-					| 'enum'
-					| 'fn'
-					| 'for'
-					| 'gen'
-					| 'if'
-					| 'impl'
-					| 'let'
-					| 'loop'
-					| 'match'
-					| 'mod'
-					| 'pub'
-					| 'return'
-					| 'static'
-					| 'struct'
-					| 'trait'
-					| 'type'
-					| 'union'
-					| 'unsafe'
-					| 'use'
-					| 'where'
-					| 'while'
-					| '$',
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.MutableSpecifier
-					| TSKindId.Self
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Plus
-					| TSKindId.Dash
-					| TSKindId.Star
-					| TSKindId.Slash
-					| TSKindId.Percent
-					| TSKindId.Caret
-					| TSKindId.Bang
-					| TSKindId.Amp
-					| TSKindId.Pipe
-					| TSKindId.AmpAmp
-					| TSKindId.PipePipe
-					| TSKindId.LtLt
-					| TSKindId.GtGt
-					| TSKindId.PlusEq
-					| TSKindId.DashEq
-					| TSKindId.StarEq
-					| TSKindId.SlashEq
-					| TSKindId.PercentEq
-					| TSKindId.CaretEq
-					| TSKindId.AmpEq
-					| TSKindId.PipeEq
-					| TSKindId.LtLtEq
-					| TSKindId.GtGtEq
-					| TSKindId.Eq
-					| TSKindId.EqEq
-					| TSKindId.BangEq
-					| TSKindId.Gt
-					| TSKindId.Lt
-					| TSKindId.GtEq
-					| TSKindId.LtEq
-					| TSKindId.At
-					| TSKindId.Underscore
-					| TSKindId.Dot
-					| TSKindId.DotDot
-					| TSKindId.DotDotDot
-					| TSKindId.DotDotEq
-					| TSKindId.Comma
-					| TSKindId.Semi
-					| TSKindId.Colon
-					| TSKindId.ColonColon
-					| TSKindId.DashGt
-					| TSKindId.EqGt
-					| TSKindId.Pound
-					| TSKindId.Qmark
-					| TSKindId.Squote
-					| TSKindId.AsKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.AwaitKeyword
-					| TSKindId.BreakKeyword
-					| TSKindId.ConstKeyword
-					| TSKindId.ContinueKeyword
-					| TSKindId.DefaultKeyword
-					| TSKindId.EnumKeyword
-					| TSKindId.FnKeyword
-					| TSKindId.ForKeyword
-					| TSKindId.GenKeyword
-					| TSKindId.IfKeyword
-					| TSKindId.ImplKeyword
-					| TSKindId.LetKeyword
-					| TSKindId.LoopKeyword
-					| TSKindId.MatchKeyword
-					| TSKindId.ModKeyword
-					| TSKindId.PubKeyword
-					| TSKindId.ReturnKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.StructKeyword
-					| TSKindId.TraitKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.UnsafeKeyword
-					| TSKindId.UseKeyword
-					| TSKindId.WhereKeyword
-					| TSKindId.WhileKeyword
-					| TSKindId.Dollar
-			  >
-			| _NonSpecialToken
-			| DelimTokenTree
-		)[];
+		readonly delim_tokens?: readonly (KindEnum<'$', TSKindId.Dollar> | NonSpecialToken | DelimTokenTree)[];
 	};
-	delimTokens(): readonly (_NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	delimTokens(): readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 }
 
 export interface FieldPatternShorthand {
@@ -11799,21 +9760,21 @@ export interface MatchBlockArms {
 }
 
 export interface TypeIdentifier {
-	readonly $type: TSKindId._TypeIdentifier;
+	readonly $type: TSKindId.TypeIdentifier;
 	readonly _content: Identifier;
 	readonly __aliasContent__?: TypeIdentifier.Types;
 	content(): Identifier;
 }
 
 export interface FieldIdentifier {
-	readonly $type: TSKindId._FieldIdentifier;
+	readonly $type: TSKindId.FieldIdentifier;
 	readonly _content: Identifier;
 	readonly __aliasContent__?: FieldIdentifier.Types;
 	content(): Identifier;
 }
 
 export interface ShorthandFieldIdentifier {
-	readonly $type: TSKindId._ShorthandFieldIdentifier;
+	readonly $type: TSKindId.ShorthandFieldIdentifier;
 	readonly _content: Identifier;
 	readonly __aliasContent__?: ShorthandFieldIdentifier.Types;
 	content(): Identifier;
@@ -11843,6 +9804,8 @@ export type MutableSpecifier = TSKindId.MutableSpecifier;
 export type UnitExpression = TSKindId.UnitExpression;
 export type RemainingFieldPattern = TSKindId.RemainingFieldPattern;
 export type BooleanLiteral = TSKindId.TrueKeyword | TSKindId.FalseKeyword;
+export type InnerLineDocCommentMarker = TSKindId.InnerLineDocCommentMarker;
+export type OuterLineDocCommentMarker = TSKindId.OuterLineDocCommentMarker;
 export type Identifier = Terminal<TSKindId.Identifier, string>;
 export type Self = TSKindId.Self;
 export type Super = TSKindId.Super;
@@ -11960,20 +9923,23 @@ export type TokenKeywords =
 	| TSKindId.UseKeyword
 	| TSKindId.WhereKeyword
 	| TSKindId.WhileKeyword;
-export type WildcardPattern = TSKindId.WildcardPattern;
-export type StringLiteralOpen = HiddenLeaf<Terminal<TSKindId.StringLiteralOpen, string>>;
+export type RangeExpressionBare = TSKindId.RangeExpressionBare;
 export type ImplItemUnsafeMarker = TSKindId.ImplItemUnsafeMarker;
 export type CharLiteralEmpty = Terminal<TSKindId.CharLiteralEmpty, string>;
-export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
-export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
+export type StringOpen = Terminal<TSKindId.StringOpen, string>;
+export type LineCommentExtraSlashes = Terminal<TSKindId.LineCommentExtraSlashes, string>;
+export type LineCommentRegular = Terminal<TSKindId.LineCommentRegular, string>;
 export type RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
+export type WildcardPattern = TSKindId.WildcardPattern;
 export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
 export type StringContent = Terminal<TSKindId.StringContent, string>;
 export type RawStringLiteralContent = Terminal<TSKindId.RawStringLiteralContent, string>;
-export type LineDocContent = HiddenLeaf<Terminal<TSKindId.LineDocContent, string>>;
-export type BlockCommentContent = HiddenLeaf<Terminal<TSKindId.BlockCommentContent, string>>;
-export type RawStringLiteralStart = HiddenLeaf<Terminal<TSKindId.RawStringLiteralStart, string>>;
-export type RawStringLiteralEnd = HiddenLeaf<Terminal<TSKindId.RawStringLiteralEnd, string>>;
+export type OuterDocCommentMarker = TSKindId.OuterDocCommentMarker;
+export type InnerDocCommentMarker = TSKindId.InnerDocCommentMarker;
+export type RawStringLiteralStart = Terminal<TSKindId.RawStringLiteralStart, string>;
+export type RawStringLiteralEnd = Terminal<TSKindId.RawStringLiteralEnd, string>;
+export type DocComment = Terminal<TSKindId.DocComment, string>;
+export type BlockCommentContent = Terminal<TSKindId.BlockCommentContent, string>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
 export type U8Keyword = TSKindId.U8Keyword;
 export type I8Keyword = TSKindId.I8Keyword;
@@ -12003,6 +9969,7 @@ export interface MacroRuleTree extends TreeNode<'macro_rule'> {}
 export interface TokenBindingPatternTree extends TreeNode<'token_binding_pattern'> {}
 export interface TokenRepetitionPatternTree extends TreeNode<'token_repetition_pattern'> {}
 export interface TokenRepetitionTree extends TreeNode<'token_repetition'> {}
+export interface NonSpecialTokenTree extends TreeNode<'non_special_token'> {}
 export interface AttributeItemTree extends TreeNode<'attribute_item'> {}
 export interface InnerAttributeItemTree extends TreeNode<'inner_attribute_item'> {}
 export interface AttributeTree extends TreeNode<'attribute'> {}
@@ -12142,13 +10109,8 @@ export interface TuplePatternElementsTree extends TreeNode<'tuple_pattern_elemen
 export interface PatternsTree extends TreeNode<'patterns'> {}
 export interface StructPatternElementsTree extends TreeNode<'struct_pattern_elements'> {}
 export interface UseWildcardGroupTree extends TreeNode<'use_wildcard_group'> {}
-export interface VisibilityModifierGroupTree extends TreeNode<'visibility_modifier_group'> {}
-export interface TupleTypeElementsTree extends AnyTreeNode {
-	readonly type: '_tuple_type_elements';
-}
-export interface TupleExpressionElementsTree extends AnyTreeNode {
-	readonly type: '_tuple_expression_elements';
-}
+export interface TupleTypeElementsTree extends TreeNode<'tuple_type_elements'> {}
+export interface TupleExpressionElementsTree extends TreeNode<'tuple_expression_elements'> {}
 export interface IntegerLiteralDecimalTree extends TreeNode<'integer_literal_decimal'> {}
 export interface IntegerLiteralHexTree extends TreeNode<'integer_literal_hex'> {}
 export interface IntegerLiteralBinaryTree extends TreeNode<'integer_literal_binary'> {}
@@ -12172,8 +10134,9 @@ export interface ImplItemPositiveClauseTree extends TreeNode<'impl_item_positive
 export interface ImplItemNegativeClauseTree extends TreeNode<'impl_item_negative_clause'> {}
 export interface ImplItemBodyTree extends TreeNode<'impl_item_body'> {}
 export interface ImplItemSemiTree extends TreeNode<'impl_item_semi'> {}
+export interface VisibilityModifierPubScopeInPathTree extends TreeNode<'visibility_modifier_pub_scope_in_path'> {}
+export interface VisibilityModifierPubScopeTree extends TreeNode<'visibility_modifier_pub_scope'> {}
 export interface VisibilityModifierPubTree extends TreeNode<'visibility_modifier_pub'> {}
-export interface VisibilityModifierPubInPathTree extends TreeNode<'visibility_modifier_pub_in_path'> {}
 export interface FunctionTypeTraitFormTree extends TreeNode<'function_type_trait_form'> {}
 export interface FunctionTypeFnFormTree extends TreeNode<'function_type_fn_form'> {}
 export interface ModItemExternalTree extends TreeNode<'mod_item_external'> {}
@@ -12214,30 +10177,14 @@ export interface RangePatternWithLeftTree extends TreeNode<'range_pattern_with_l
 export interface StructItemBraceTree extends TreeNode<'struct_item_brace'> {}
 export interface StructItemTupleTree extends TreeNode<'struct_item_tuple'> {}
 export interface StructItemUnitTree extends TreeNode<'struct_item_unit'> {}
-export interface AttributedFieldDeclarationTree extends AnyTreeNode {
-	readonly type: '_attributed_field_declaration';
-}
-export interface AttributedEnumVariantTree extends AnyTreeNode {
-	readonly type: '_attributed_enum_variant';
-}
-export interface AttributedParameterTree extends AnyTreeNode {
-	readonly type: '_attributed_parameter';
-}
-export interface AttributedTypeParameterTree extends AnyTreeNode {
-	readonly type: '_attributed_type_parameter';
-}
-export interface AttributedArgumentTree extends AnyTreeNode {
-	readonly type: '_attributed_argument';
-}
-export interface AttributedOrderedFieldTree extends AnyTreeNode {
-	readonly type: '_attributed_ordered_field';
-}
-export interface TypeArgumentTree extends AnyTreeNode {
-	readonly type: '_type_argument';
-}
-export interface MatchBlockArmsTree extends AnyTreeNode {
-	readonly type: '_match_block_arms';
-}
+export interface AttributedFieldDeclarationTree extends TreeNode<'attributed_field_declaration'> {}
+export interface AttributedEnumVariantTree extends TreeNode<'attributed_enum_variant'> {}
+export interface AttributedParameterTree extends TreeNode<'attributed_parameter'> {}
+export interface AttributedTypeParameterTree extends TreeNode<'attributed_type_parameter'> {}
+export interface AttributedArgumentTree extends TreeNode<'attributed_argument'> {}
+export interface AttributedOrderedFieldTree extends TreeNode<'attributed_ordered_field'> {}
+export interface TypeArgumentTree extends TreeNode<'type_argument'> {}
+export interface MatchBlockArmsTree extends TreeNode<'match_block_arms'> {}
 export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
 export interface FieldIdentifierTree extends TreeNode<'field_identifier'> {}
 export interface ShorthandFieldIdentifierTree extends TreeNode<'shorthand_field_identifier'> {}
@@ -12261,6 +10208,12 @@ export interface RemainingFieldPatternTree extends AnyTreeNode {
 	readonly type: 'remaining_field_pattern';
 }
 export interface BooleanLiteralTree extends TreeNode<'boolean_literal'> {}
+export interface InnerLineDocCommentMarkerTree extends AnyTreeNode {
+	readonly type: 'inner_line_doc_comment_marker';
+}
+export interface OuterLineDocCommentMarkerTree extends AnyTreeNode {
+	readonly type: 'outer_line_doc_comment_marker';
+}
 export interface IdentifierTree extends TreeNode<'identifier'> {}
 export interface SelfTree extends AnyTreeNode {
 	readonly type: 'self';
@@ -12271,9 +10224,7 @@ export interface SuperTree extends AnyTreeNode {
 export interface CrateTree extends AnyTreeNode {
 	readonly type: 'crate';
 }
-export interface PrimitiveTypeTree extends AnyTreeNode {
-	readonly type: '_primitive_type';
-}
+export interface PrimitiveTypeTree extends TreeNode<'primitive_type'> {}
 export interface KwRefMarkerTree extends AnyTreeNode {
 	readonly type: '_kw_ref_marker';
 }
@@ -12304,43 +10255,42 @@ export interface KwUnsafeTree extends AnyTreeNode {
 export interface CompoundAssignmentExprOperatorTree extends AnyTreeNode {
 	readonly type: '_compound_assignment_expr_operator';
 }
-export interface TokenTreePunctuationTree extends AnyTreeNode {
-	readonly type: '_token_tree_punctuation';
-}
+export interface TokenTreePunctuationTree extends TreeNode<'token_tree_punctuation'> {}
 export interface TokenKeywordsTree extends AnyTreeNode {
 	readonly type: '_token_keywords';
 }
-export interface WildcardPatternTree extends AnyTreeNode {
-	readonly type: '_wildcard_pattern';
-}
-export interface StringLiteralOpenTree extends AnyTreeNode {
-	readonly type: '_string_literal_open';
+export interface RangeExpressionBareTree extends AnyTreeNode {
+	readonly type: 'range_expression_bare';
 }
 export interface ImplItemUnsafeMarkerTree extends AnyTreeNode {
 	readonly type: '_impl_item_unsafe_marker';
 }
 export interface CharLiteralEmptyTree extends TreeNode<'char_literal_empty'> {}
-export interface LineCommentRegularDslashTree extends TreeNode<'line_comment_regular_dslash'> {}
-export interface LineCommentContentTree extends TreeNode<'line_comment_content'> {}
+export interface StringOpenTree extends TreeNode<'string_open'> {}
+export interface LineCommentExtraSlashesTree extends TreeNode<'line_comment_extra_slashes'> {}
+export interface LineCommentRegularTree extends TreeNode<'line_comment_regular'> {}
 export interface RangePatternWithLeftBareTree extends AnyTreeNode {
 	readonly type: 'range_pattern_with_left_bare';
+}
+export interface WildcardPatternTree extends AnyTreeNode {
+	readonly type: 'wildcard_pattern';
 }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralContentTree extends AnyTreeNode {
 	readonly type: 'raw_string_literal_content';
 }
-export interface LineDocContentTree extends AnyTreeNode {
-	readonly type: '_line_doc_content';
+export interface OuterDocCommentMarkerTree extends AnyTreeNode {
+	readonly type: 'outer_doc_comment_marker';
 }
+export interface InnerDocCommentMarkerTree extends AnyTreeNode {
+	readonly type: 'inner_doc_comment_marker';
+}
+export interface RawStringLiteralStartTree extends TreeNode<'raw_string_literal_start'> {}
+export interface RawStringLiteralEndTree extends TreeNode<'raw_string_literal_end'> {}
+export interface DocCommentTree extends TreeNode<'doc_comment'> {}
 export interface BlockCommentContentTree extends AnyTreeNode {
 	readonly type: '_block_comment_content';
-}
-export interface RawStringLiteralStartTree extends AnyTreeNode {
-	readonly type: '_raw_string_literal_start';
-}
-export interface RawStringLiteralEndTree extends AnyTreeNode {
-	readonly type: '_raw_string_literal_end';
 }
 export interface ErrorSentinelTree extends AnyTreeNode {
 	readonly type: '_error_sentinel';
@@ -12657,115 +10607,25 @@ export type TokenPattern =
 	| TokenRepetitionPattern
 	| TokenBindingPattern
 	| Metavariable
-	| _NonSpecialToken
-	| Literal
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| MutableSpecifier
-	| Self
-	| Super
-	| Crate
-	| PrimitiveType
-	| TokenTreePunctuation
-	| TokenKeywords;
+	| NonSpecialToken;
 
 export type TokenPatternTree =
 	| TokenRepetitionPatternTree
 	| TokenBindingPatternTree
 	| MetavariableTree
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| BooleanLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| MutableSpecifierTree
-	| SelfTree
-	| SuperTree
-	| CrateTree
-	| PrimitiveTypeTree
-	| TokenTreePunctuationTree
-	| TokenKeywordsTree;
+	| NonSpecialTokenTree;
 
 export type TokenTreePattern = TokenTreePatternParen | TokenTreePatternBracket | TokenTreePatternBrace;
 
 export type TokenTreePatternTree = TokenTreePatternParenTree | TokenTreePatternBracketTree | TokenTreePatternBraceTree;
 
-export type Tokens =
-	| TokenTree
-	| TokenRepetition
-	| Metavariable
-	| _NonSpecialToken
-	| Literal
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| MutableSpecifier
-	| Self
-	| Super
-	| Crate
-	| PrimitiveType
-	| TokenTreePunctuation
-	| TokenKeywords;
+export type Tokens = TokenTree | TokenRepetition | Metavariable | NonSpecialToken;
 
-export type TokensTree =
-	| TokenRepetitionTree
-	| MetavariableTree
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| BooleanLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| MutableSpecifierTree
-	| SelfTree
-	| SuperTree
-	| CrateTree
-	| PrimitiveTypeTree
-	| TokenTreePunctuationTree
-	| TokenKeywordsTree;
+export type TokensTree = TokenRepetitionTree | MetavariableTree | NonSpecialTokenTree;
 
 export type TokenTree = TokenTreeParen | TokenTreeBracket | TokenTreeBrace;
 
 export type TokenTreeTree = TokenTreeParenTree | TokenTreeBracketTree | TokenTreeBraceTree;
-
-export type _NonSpecialToken =
-	| Literal
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| MutableSpecifier
-	| Self
-	| Super
-	| Crate
-	| PrimitiveType
-	| TokenTreePunctuation
-	| TokenKeywords;
-
-export type _NonSpecialTokenTree =
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| BooleanLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| MutableSpecifierTree
-	| SelfTree
-	| SuperTree
-	| CrateTree
-	| PrimitiveTypeTree
-	| TokenTreePunctuationTree
-	| TokenKeywordsTree;
 
 export type ModItem = ModItemExternal | ModItemInline;
 
@@ -12900,12 +10760,6 @@ export type ExpressionExceptRange =
 	| ReturnExpression
 	| YieldExpression
 	| Literal
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
 	| Identifier
 	| U8Keyword
 	| I8Keyword
@@ -12965,10 +10819,6 @@ export type ExpressionExceptRangeTree =
 	| CallExpressionTree
 	| ReturnExpressionTree
 	| YieldExpressionTree
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| BooleanLiteralTree
-	| FloatLiteralTree
 	| IdentifierTree
 	| U8KeywordTree
 	| I8KeywordTree
@@ -13028,12 +10878,6 @@ export type Expression =
 	| ReturnExpression
 	| YieldExpression
 	| Literal
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
 	| Identifier
 	| U8Keyword
 	| I8Keyword
@@ -13094,10 +10938,6 @@ export type ExpressionTree =
 	| CallExpressionTree
 	| ReturnExpressionTree
 	| YieldExpressionTree
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| BooleanLiteralTree
-	| FloatLiteralTree
 	| IdentifierTree
 	| U8KeywordTree
 	| I8KeywordTree
@@ -13176,72 +11016,13 @@ export type DelimTokenTree = DelimTokenTreeParen | DelimTokenTreeBracket | Delim
 
 export type DelimTokenTreeTree = DelimTokenTreeParenTree | DelimTokenTreeBracketTree | DelimTokenTreeBraceTree;
 
-export type DelimTokens =
-	| _NonSpecialToken
-	| Literal
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| MutableSpecifier
-	| Self
-	| Super
-	| Crate
-	| PrimitiveType
-	| TokenTreePunctuation
-	| TokenKeywords
-	| Dollar
-	| DelimTokenTree;
+export type DelimTokens = NonSpecialToken | Dollar | DelimTokenTree;
 
-export type DelimTokensTree =
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| BooleanLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| MutableSpecifierTree
-	| SelfTree
-	| SuperTree
-	| CrateTree
-	| PrimitiveTypeTree
-	| TokenTreePunctuationTree
-	| TokenKeywordsTree;
+export type DelimTokensTree = NonSpecialTokenTree;
 
-export type NonDelimToken =
-	| _NonSpecialToken
-	| Literal
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| MutableSpecifier
-	| Self
-	| Super
-	| Crate
-	| PrimitiveType
-	| TokenTreePunctuation
-	| TokenKeywords
-	| Dollar;
+export type NonDelimToken = NonSpecialToken | Dollar;
 
-export type NonDelimTokenTree =
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| BooleanLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| MutableSpecifierTree
-	| SelfTree
-	| SuperTree
-	| CrateTree
-	| PrimitiveTypeTree
-	| TokenTreePunctuationTree
-	| TokenKeywordsTree;
+export type NonDelimTokenTree = NonSpecialTokenTree;
 
 export type ReferenceExpression =
 	| ReferenceExpressionRawConst
@@ -13259,140 +11040,9 @@ export type ArrayExpression = ArrayExpressionSemi | ArrayExpressionList;
 
 export type ArrayExpressionTree = ArrayExpressionSemiTree | ArrayExpressionListTree;
 
-export type Condition =
-	| Expression
-	| UnaryExpression
-	| ReferenceExpression
-	| TryExpression
-	| BinaryExpression
-	| AssignmentExpression
-	| CompoundAssignmentExpr
-	| TypeCastExpression
-	| CallExpression
-	| ReturnExpression
-	| YieldExpression
-	| Literal
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| U8Keyword
-	| I8Keyword
-	| U16Keyword
-	| I16Keyword
-	| U32Keyword
-	| I32Keyword
-	| U64Keyword
-	| I64Keyword
-	| U128Keyword
-	| I128Keyword
-	| IsizeKeyword
-	| UsizeKeyword
-	| F32Keyword
-	| F64Keyword
-	| BoolKeyword
-	| StrKeyword
-	| CharKeyword
-	| DefaultKeyword
-	| UnionKeyword
-	| GenKeyword
-	| Self
-	| ScopedIdentifier
-	| GenericFunction
-	| AwaitExpression
-	| FieldExpression
-	| ArrayExpression
-	| TupleExpression
-	| MacroInvocation
-	| UnitExpression
-	| BreakExpression
-	| ContinueExpression
-	| IndexExpression
-	| Metavariable
-	| ClosureExpression
-	| ParenthesizedExpression
-	| StructExpression
-	| UnsafeBlock
-	| AsyncBlock
-	| GenBlock
-	| TryBlock
-	| Block
-	| IfExpression
-	| MatchExpression
-	| WhileExpression
-	| LoopExpression
-	| ForExpression
-	| ConstBlock
-	| RangeExpression
-	| LetCondition
-	| LetChain;
+export type Condition = Expression | LetCondition | LetChain;
 
-export type ConditionTree =
-	| UnaryExpressionTree
-	| TryExpressionTree
-	| BinaryExpressionTree
-	| AssignmentExpressionTree
-	| CompoundAssignmentExprTree
-	| TypeCastExpressionTree
-	| CallExpressionTree
-	| ReturnExpressionTree
-	| YieldExpressionTree
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| BooleanLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| U8KeywordTree
-	| I8KeywordTree
-	| U16KeywordTree
-	| I16KeywordTree
-	| U32KeywordTree
-	| I32KeywordTree
-	| U64KeywordTree
-	| I64KeywordTree
-	| U128KeywordTree
-	| I128KeywordTree
-	| IsizeKeywordTree
-	| UsizeKeywordTree
-	| F32KeywordTree
-	| F64KeywordTree
-	| BoolKeywordTree
-	| StrKeywordTree
-	| CharKeywordTree
-	| DefaultKeywordTree
-	| UnionKeywordTree
-	| GenKeywordTree
-	| SelfTree
-	| ScopedIdentifierTree
-	| GenericFunctionTree
-	| AwaitExpressionTree
-	| FieldExpressionTree
-	| TupleExpressionTree
-	| MacroInvocationTree
-	| UnitExpressionTree
-	| BreakExpressionTree
-	| ContinueExpressionTree
-	| IndexExpressionTree
-	| MetavariableTree
-	| ParenthesizedExpressionTree
-	| StructExpressionTree
-	| UnsafeBlockTree
-	| AsyncBlockTree
-	| GenBlockTree
-	| TryBlockTree
-	| BlockTree
-	| IfExpressionTree
-	| MatchExpressionTree
-	| WhileExpressionTree
-	| LoopExpressionTree
-	| ForExpressionTree
-	| ConstBlockTree
-	| RangeExpressionTree
-	| LetConditionTree
-	| LetChainTree;
+export type ConditionTree = LetConditionTree | LetChainTree;
 
 export type MatchArm = MatchArmWithComma | MatchArmBlockEnding;
 
@@ -13404,13 +11054,6 @@ export type ClosureExpressionTree = ClosureExpressionBlockTree | ClosureExpressi
 
 export type Pattern =
 	| LiteralPattern
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| NegativeLiteral
 	| U8Keyword
 	| I8Keyword
 	| U16Keyword
@@ -13450,11 +11093,6 @@ export type Pattern =
 	| WildcardPattern;
 
 export type PatternTree =
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| BooleanLiteralTree
-	| FloatLiteralTree
-	| NegativeLiteralTree
 	| U8KeywordTree
 	| I8KeywordTree
 	| U16KeywordTree
@@ -13605,37 +11243,6 @@ export type PathTree =
 
 export type Whitespace = Tight | Space | Newline | Blankline | Indent | Dedent;
 
-export type NonSpecialToken =
-	| Literal
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| MutableSpecifier
-	| Self
-	| Super
-	| Crate
-	| PrimitiveType
-	| TokenTreePunctuation
-	| TokenKeywords;
-
-export type NonSpecialTokenTree =
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| BooleanLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| MutableSpecifierTree
-	| SelfTree
-	| SuperTree
-	| CrateTree
-	| PrimitiveTypeTree
-	| TokenTreePunctuationTree
-	| TokenKeywordsTree;
-
 export namespace Statement {
 	export type Kind = '_statement';
 	export type Tree = StatementTree;
@@ -13669,11 +11276,6 @@ export namespace Tokens {
 export namespace TokenTree {
 	export type Kind = 'token_tree';
 	export type Tree = TokenTreeTree;
-}
-
-export namespace _NonSpecialToken {
-	export type Kind = '_non_special_token';
-	export type Tree = _NonSpecialTokenTree;
 }
 
 export namespace ModItem {
@@ -13820,16 +11422,7 @@ export namespace Whitespace {
 	export type Kind = '_whitespace';
 }
 
-export namespace NonSpecialToken {
-	export type Kind = 'non_special_token';
-	export type Tree = NonSpecialTokenTree;
-}
-
 // Token type aliases (only tokens referenced in field/child unions)
-export type RangeExpressionBare = TSKindId.RangeExpressionBare;
-export interface RangeExpressionBareTree extends AnyTreeNode {
-	readonly type: '_range_expression_bare';
-}
 export type Tight = TSKindId.Tight;
 export interface TightTree extends AnyTreeNode {
 	readonly type: '_tight';
@@ -13866,6 +11459,7 @@ export type RustNode =
 	| TokenBindingPattern
 	| TokenRepetitionPattern
 	| TokenRepetition
+	| NonSpecialToken
 	| AttributeItem
 	| InnerAttributeItem
 	| Attribute
@@ -14003,7 +11597,6 @@ export type RustNode =
 	| Patterns
 	| StructPatternElements
 	| UseWildcardGroup
-	| VisibilityModifierGroup
 	| TupleTypeElements
 	| TupleExpressionElements
 	| IntegerLiteralDecimal
@@ -14029,8 +11622,9 @@ export type RustNode =
 	| ImplItemNegativeClause
 	| ImplItemBody
 	| ImplItemSemi
+	| VisibilityModifierPubScopeInPath
+	| VisibilityModifierPubScope
 	| VisibilityModifierPub
-	| VisibilityModifierPubInPath
 	| FunctionTypeTraitForm
 	| FunctionTypeFnForm
 	| ModItemExternal
@@ -14222,7 +11816,6 @@ export interface OptionsHintMap {
 	patterns: Patterns.Hints;
 	structPatternElements: StructPatternElements.Hints;
 	useWildcardGroup: UseWildcardGroup.Hints;
-	visibilityModifierGroup: VisibilityModifierGroup.Hints;
 	tupleTypeElements: TupleTypeElements.Hints;
 	tupleExpressionElements: TupleExpressionElements.Hints;
 	arrayExpressionSemi: ArrayExpressionSemi.Hints;
@@ -14238,8 +11831,9 @@ export interface OptionsHintMap {
 	implItemNegativeClause: ImplItemNegativeClause.Hints;
 	implItemBody: ImplItemBody.Hints;
 	implItemSemi: ImplItemSemi.Hints;
+	visibilityModifierPubScopeInPath: VisibilityModifierPubScopeInPath.Hints;
+	visibilityModifierPubScope: VisibilityModifierPubScope.Hints;
 	visibilityModifierPub: VisibilityModifierPub.Hints;
-	visibilityModifierPubInPath: VisibilityModifierPubInPath.Hints;
 	functionTypeFnForm: FunctionTypeFnForm.Hints;
 	modItemExternal: ModItemExternal.Hints;
 	modItemInline: ModItemInline.Hints;
@@ -16122,17 +13716,6 @@ export namespace UseWildcardGroup {
 	}
 }
 
-export namespace VisibilityModifierGroup {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: WhitespaceArm;
-			readonly before?: WhitespaceArm;
-			readonly lparen?: { readonly after?: WhitespaceArm };
-			readonly rparen?: { readonly before?: WhitespaceArm };
-		};
-	}
-}
-
 export namespace TupleTypeElements {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -16374,22 +13957,33 @@ export namespace ImplItemSemi {
 	}
 }
 
+export namespace VisibilityModifierPubScopeInPath {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly inKeyword?: { readonly after?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace VisibilityModifierPubScope {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly lparen?: { readonly after?: WhitespaceArm };
+			readonly rparen?: { readonly before?: WhitespaceArm };
+		};
+	}
+}
+
 export namespace VisibilityModifierPub {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
 			readonly pubKeyword?: { readonly after?: WhitespaceArm };
-		};
-	}
-}
-
-export namespace VisibilityModifierPubInPath {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: WhitespaceArm;
-			readonly before?: WhitespaceArm;
-			readonly inKeyword?: { readonly after?: WhitespaceArm };
 		};
 	}
 }
@@ -16571,13 +14165,13 @@ export namespace LineCommentDocInner {
 
 export namespace BlockCommentDocOuter {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly star?: { readonly after?: WhitespaceArm } };
 	}
 }
 
 export namespace BlockCommentDocInner {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm };
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly bang?: { readonly after?: WhitespaceArm } };
 	}
 }
 
@@ -17207,6 +14801,17 @@ export interface TokenRepetitionNs extends NodeNs<
 	never,
 	'token_repetition'
 > {}
+export interface NonSpecialTokenNs extends NodeNs<
+	NonSpecialToken,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	NonSpecialToken.Built,
+	NonSpecialToken.BuildArgs,
+	NonSpecialToken.LooseArgs,
+	'content',
+	'non_special_token'
+> {}
 export interface AttributeItemNs extends NodeNs<
 	AttributeItem,
 	LeafScalarMap,
@@ -17666,7 +15271,7 @@ export interface BracketedTypeNs extends NodeNs<
 	BracketedType.Built,
 	BracketedType.BuildArgs,
 	BracketedType.LooseArgs,
-	'content',
+	'type',
 	'bracketed_type'
 > {}
 export interface QualifiedTypeNs extends NodeNs<
@@ -18128,7 +15733,7 @@ export interface ElseClauseNs extends NodeNs<
 	ElseClause.Built,
 	ElseClause.BuildArgs,
 	ElseClause.LooseArgs,
-	'content',
+	'body',
 	'else_clause'
 > {}
 export interface MatchExpressionNs extends NodeNs<
@@ -18714,17 +16319,6 @@ export interface UseWildcardGroupNs extends NodeNs<
 	'path',
 	'use_wildcard_group'
 > {}
-export interface VisibilityModifierGroupNs extends NodeNs<
-	VisibilityModifierGroup,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	VisibilityModifierGroup.Built,
-	VisibilityModifierGroup.BuildArgs,
-	VisibilityModifierGroup.LooseArgs,
-	'content',
-	'visibility_modifier_group'
-> {}
 export interface TupleTypeElementsNs extends NodeNs<
 	TupleTypeElements,
 	LeafScalarMap,
@@ -18734,7 +16328,7 @@ export interface TupleTypeElementsNs extends NodeNs<
 	TupleTypeElements.BuildArgs,
 	TupleTypeElements.LooseArgs,
 	'type',
-	'_tuple_type_elements'
+	'tuple_type_elements'
 > {}
 export interface TupleExpressionElementsNs extends NodeNs<
 	TupleExpressionElements,
@@ -18745,7 +16339,7 @@ export interface TupleExpressionElementsNs extends NodeNs<
 	TupleExpressionElements.BuildArgs,
 	TupleExpressionElements.LooseArgs,
 	'element',
-	'_tuple_expression_elements'
+	'tuple_expression_elements'
 > {}
 export interface IntegerLiteralDecimalNs extends NodeNs<
 	IntegerLiteralDecimal,
@@ -19000,6 +16594,28 @@ export interface ImplItemSemiNs extends NodeNs<
 	never,
 	'impl_item_semi'
 > {}
+export interface VisibilityModifierPubScopeInPathNs extends NodeNs<
+	VisibilityModifierPubScopeInPath,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	VisibilityModifierPubScopeInPath.Built,
+	VisibilityModifierPubScopeInPath.BuildArgs,
+	VisibilityModifierPubScopeInPath.LooseArgs,
+	'path',
+	'visibility_modifier_pub_scope_in_path'
+> {}
+export interface VisibilityModifierPubScopeNs extends NodeNs<
+	VisibilityModifierPubScope,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	VisibilityModifierPubScope.Built,
+	VisibilityModifierPubScope.BuildArgs,
+	VisibilityModifierPubScope.LooseArgs,
+	'content',
+	'visibility_modifier_pub_scope'
+> {}
 export interface VisibilityModifierPubNs extends NodeNs<
 	VisibilityModifierPub,
 	LeafScalarMap,
@@ -19008,19 +16624,8 @@ export interface VisibilityModifierPubNs extends NodeNs<
 	VisibilityModifierPub.Built,
 	VisibilityModifierPub.BuildArgs,
 	VisibilityModifierPub.LooseArgs,
-	'visibility_modifier_group',
+	'visibility_modifier_pub_scope',
 	'visibility_modifier_pub'
-> {}
-export interface VisibilityModifierPubInPathNs extends NodeNs<
-	VisibilityModifierPubInPath,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	VisibilityModifierPubInPath.Built,
-	VisibilityModifierPubInPath.BuildArgs,
-	VisibilityModifierPubInPath.LooseArgs,
-	'path',
-	'visibility_modifier_pub_in_path'
 > {}
 export interface FunctionTypeTraitFormNs extends NodeNs<
 	FunctionTypeTraitForm,
@@ -19471,7 +17076,7 @@ export interface AttributedFieldDeclarationNs extends NodeNs<
 	AttributedFieldDeclaration.BuildArgs,
 	AttributedFieldDeclaration.LooseArgs,
 	never,
-	'_attributed_field_declaration'
+	'attributed_field_declaration'
 > {}
 export interface AttributedEnumVariantNs extends NodeNs<
 	AttributedEnumVariant,
@@ -19482,7 +17087,7 @@ export interface AttributedEnumVariantNs extends NodeNs<
 	AttributedEnumVariant.BuildArgs,
 	AttributedEnumVariant.LooseArgs,
 	never,
-	'_attributed_enum_variant'
+	'attributed_enum_variant'
 > {}
 export interface AttributedParameterNs extends NodeNs<
 	AttributedParameter,
@@ -19493,7 +17098,7 @@ export interface AttributedParameterNs extends NodeNs<
 	AttributedParameter.BuildArgs,
 	AttributedParameter.LooseArgs,
 	never,
-	'_attributed_parameter'
+	'attributed_parameter'
 > {}
 export interface AttributedTypeParameterNs extends NodeNs<
 	AttributedTypeParameter,
@@ -19504,7 +17109,7 @@ export interface AttributedTypeParameterNs extends NodeNs<
 	AttributedTypeParameter.BuildArgs,
 	AttributedTypeParameter.LooseArgs,
 	never,
-	'_attributed_type_parameter'
+	'attributed_type_parameter'
 > {}
 export interface AttributedArgumentNs extends NodeNs<
 	AttributedArgument,
@@ -19515,7 +17120,7 @@ export interface AttributedArgumentNs extends NodeNs<
 	AttributedArgument.BuildArgs,
 	AttributedArgument.LooseArgs,
 	never,
-	'_attributed_argument'
+	'attributed_argument'
 > {}
 export interface AttributedOrderedFieldNs extends NodeNs<
 	AttributedOrderedField,
@@ -19526,7 +17131,7 @@ export interface AttributedOrderedFieldNs extends NodeNs<
 	AttributedOrderedField.BuildArgs,
 	AttributedOrderedField.LooseArgs,
 	never,
-	'_attributed_ordered_field'
+	'attributed_ordered_field'
 > {}
 export interface TypeArgumentNs extends NodeNs<
 	TypeArgument,
@@ -19537,7 +17142,7 @@ export interface TypeArgumentNs extends NodeNs<
 	TypeArgument.BuildArgs,
 	TypeArgument.LooseArgs,
 	never,
-	'_type_argument'
+	'type_argument'
 > {}
 export interface MatchBlockArmsNs extends NodeNs<
 	MatchBlockArms,
@@ -19548,7 +17153,7 @@ export interface MatchBlockArmsNs extends NodeNs<
 	MatchBlockArms.BuildArgs,
 	MatchBlockArms.LooseArgs,
 	never,
-	'_match_block_arms'
+	'match_block_arms'
 > {}
 export interface TypeIdentifierNs extends NodeNs<
 	TypeIdentifier,
@@ -19609,6 +17214,18 @@ export interface RemainingFieldPatternNs extends KeywordNs<
 	RemainingFieldPatternTree,
 	'remaining_field_pattern'
 > {}
+export interface InnerLineDocCommentMarkerNs extends KeywordNs<
+	TSKindId.InnerLineDocCommentMarker,
+	'!',
+	InnerLineDocCommentMarkerTree,
+	'inner_line_doc_comment_marker'
+> {}
+export interface OuterLineDocCommentMarkerNs extends KeywordNs<
+	TSKindId.OuterLineDocCommentMarker,
+	'/',
+	OuterLineDocCommentMarkerTree,
+	'outer_line_doc_comment_marker'
+> {}
 export interface SelfNs extends KeywordNs<TSKindId.Self, 'self', SelfTree, 'self'> {}
 export interface SuperNs extends KeywordNs<TSKindId.Super, 'super', SuperTree, 'super'> {}
 export interface CrateNs extends KeywordNs<TSKindId.Crate, 'crate', CrateTree, 'crate'> {}
@@ -19636,11 +17253,11 @@ export interface KwAsyncNs extends KeywordNs<TSKindId.KwAsync, 'async', KwAsyncT
 export interface KwDefaultNs extends KeywordNs<TSKindId.KwDefault, 'default', KwDefaultTree, '_kw_default'> {}
 export interface KwConstNs extends KeywordNs<TSKindId.KwConst, 'const', KwConstTree, '_kw_const'> {}
 export interface KwUnsafeNs extends KeywordNs<TSKindId.KwUnsafe, 'unsafe', KwUnsafeTree, '_kw_unsafe'> {}
-export interface WildcardPatternNs extends KeywordNs<
-	TSKindId.WildcardPattern,
-	'_',
-	WildcardPatternTree,
-	'_wildcard_pattern'
+export interface RangeExpressionBareNs extends KeywordNs<
+	TSKindId.RangeExpressionBare,
+	'..',
+	RangeExpressionBareTree,
+	'range_expression_bare'
 > {}
 export interface ImplItemUnsafeMarkerNs extends KeywordNs<
 	TSKindId.ImplItemUnsafeMarker,
@@ -19653,6 +17270,24 @@ export interface RangePatternWithLeftBareNs extends KeywordNs<
 	'..',
 	RangePatternWithLeftBareTree,
 	'range_pattern_with_left_bare'
+> {}
+export interface WildcardPatternNs extends KeywordNs<
+	TSKindId.WildcardPattern,
+	'_',
+	WildcardPatternTree,
+	'wildcard_pattern'
+> {}
+export interface OuterDocCommentMarkerNs extends KeywordNs<
+	TSKindId.OuterDocCommentMarker,
+	'*',
+	OuterDocCommentMarkerTree,
+	'outer_doc_comment_marker'
+> {}
+export interface InnerDocCommentMarkerNs extends KeywordNs<
+	TSKindId.InnerDocCommentMarker,
+	'!',
+	InnerDocCommentMarkerTree,
+	'inner_doc_comment_marker'
 > {}
 export interface U8KeywordNs extends KeywordNs<TSKindId.U8Keyword, 'u8', U8KeywordTree, 'u8_keyword'> {}
 export interface I8KeywordNs extends KeywordNs<TSKindId.I8Keyword, 'i8', I8KeywordTree, 'i8_keyword'> {}
@@ -19680,13 +17315,6 @@ export interface DefaultKeywordNs extends KeywordNs<
 export interface UnionKeywordNs extends KeywordNs<TSKindId.UnionKeyword, 'union', UnionKeywordTree, 'union_keyword'> {}
 export interface GenKeywordNs extends KeywordNs<TSKindId.GenKeyword, 'gen', GenKeywordTree, 'gen_keyword'> {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Built, IdentifierTree, 'identifier'> {}
-export interface StringLiteralOpenNs extends LeafNs<
-	StringLiteralOpen,
-	string,
-	StringLiteralOpen.Built,
-	StringLiteralOpenTree,
-	'_string_literal_open'
-> {}
 export interface CharLiteralEmptyNs extends LeafNs<
 	CharLiteralEmpty,
 	string,
@@ -19694,19 +17322,20 @@ export interface CharLiteralEmptyNs extends LeafNs<
 	CharLiteralEmptyTree,
 	'char_literal_empty'
 > {}
-export interface LineCommentRegularDslashNs extends LeafNs<
-	LineCommentRegularDslash,
+export interface StringOpenNs extends LeafNs<StringOpen, string, StringOpen.Built, StringOpenTree, 'string_open'> {}
+export interface LineCommentExtraSlashesNs extends LeafNs<
+	LineCommentExtraSlashes,
 	string,
-	LineCommentRegularDslash.Built,
-	LineCommentRegularDslashTree,
-	'line_comment_regular_dslash'
+	LineCommentExtraSlashes.Built,
+	LineCommentExtraSlashesTree,
+	'line_comment_extra_slashes'
 > {}
-export interface LineCommentContentNs extends LeafNs<
-	LineCommentContent,
+export interface LineCommentRegularNs extends LeafNs<
+	LineCommentRegular,
 	string,
-	LineCommentContent.Built,
-	LineCommentContentTree,
-	'line_comment_content'
+	LineCommentRegular.Built,
+	LineCommentRegularTree,
+	'line_comment_regular'
 > {}
 export interface FloatLiteralNs extends LeafNs<
 	FloatLiteral,
@@ -19729,33 +17358,27 @@ export interface RawStringLiteralContentNs extends LeafNs<
 	RawStringLiteralContentTree,
 	'raw_string_literal_content'
 > {}
-export interface LineDocContentNs extends LeafNs<
-	LineDocContent,
-	string,
-	LineDocContent.Built,
-	LineDocContentTree,
-	'_line_doc_content'
-> {}
-export interface BlockCommentContentNs extends LeafNs<
-	BlockCommentContent,
-	string,
-	BlockCommentContent.Built,
-	BlockCommentContentTree,
-	'_block_comment_content'
-> {}
 export interface RawStringLiteralStartNs extends LeafNs<
 	RawStringLiteralStart,
 	string,
 	RawStringLiteralStart.Built,
 	RawStringLiteralStartTree,
-	'_raw_string_literal_start'
+	'raw_string_literal_start'
 > {}
 export interface RawStringLiteralEndNs extends LeafNs<
 	RawStringLiteralEnd,
 	string,
 	RawStringLiteralEnd.Built,
 	RawStringLiteralEndTree,
-	'_raw_string_literal_end'
+	'raw_string_literal_end'
+> {}
+export interface DocCommentNs extends LeafNs<DocComment, string, DocComment.Built, DocCommentTree, 'doc_comment'> {}
+export interface BlockCommentContentNs extends LeafNs<
+	BlockCommentContent,
+	string,
+	BlockCommentContent.Built,
+	BlockCommentContentTree,
+	'_block_comment_content'
 > {}
 export interface ErrorSentinelNs extends LeafNs<
 	ErrorSentinel,
@@ -19772,6 +17395,7 @@ export interface NamespaceMap {
 	[TSKindId.TokenBindingPattern]: TokenBindingPatternNs;
 	[TSKindId.TokenRepetitionPattern]: TokenRepetitionPatternNs;
 	[TSKindId.TokenRepetition]: TokenRepetitionNs;
+	[TSKindId.NonSpecialToken]: NonSpecialTokenNs;
 	[TSKindId.AttributeItem]: AttributeItemNs;
 	[TSKindId.InnerAttributeItem]: InnerAttributeItemNs;
 	[TSKindId.Attribute]: AttributeNs;
@@ -19909,7 +17533,6 @@ export interface NamespaceMap {
 	[TSKindId.Patterns]: PatternsNs;
 	[TSKindId.StructPatternElements]: StructPatternElementsNs;
 	[TSKindId.UseWildcardGroup]: UseWildcardGroupNs;
-	[TSKindId.VisibilityModifierGroup]: VisibilityModifierGroupNs;
 	[TSKindId.TupleTypeElements]: TupleTypeElementsNs;
 	[TSKindId.TupleExpressionElements]: TupleExpressionElementsNs;
 	[TSKindId.IntegerLiteralDecimal]: IntegerLiteralDecimalNs;
@@ -19935,8 +17558,9 @@ export interface NamespaceMap {
 	[TSKindId.ImplItemNegativeClause]: ImplItemNegativeClauseNs;
 	[TSKindId.ImplItemBody]: ImplItemBodyNs;
 	[TSKindId.ImplItemSemi]: ImplItemSemiNs;
+	[TSKindId.VisibilityModifierPubScopeInPath]: VisibilityModifierPubScopeInPathNs;
+	[TSKindId.VisibilityModifierPubScope]: VisibilityModifierPubScopeNs;
 	[TSKindId.VisibilityModifierPub]: VisibilityModifierPubNs;
-	[TSKindId.VisibilityModifierPubInPath]: VisibilityModifierPubInPathNs;
 	[TSKindId.FunctionTypeTraitForm]: FunctionTypeTraitFormNs;
 	[TSKindId.FunctionTypeFnForm]: FunctionTypeFnFormNs;
 	[TSKindId.ModItemExternal]: ModItemExternalNs;
@@ -19985,15 +17609,17 @@ export interface NamespaceMap {
 	[TSKindId.AttributedOrderedField]: AttributedOrderedFieldNs;
 	[TSKindId.TypeArgument]: TypeArgumentNs;
 	[TSKindId.MatchBlockArms]: MatchBlockArmsNs;
-	[TSKindId._TypeIdentifier]: TypeIdentifierNs;
-	[TSKindId._FieldIdentifier]: FieldIdentifierNs;
-	[TSKindId._ShorthandFieldIdentifier]: ShorthandFieldIdentifierNs;
+	[TSKindId.TypeIdentifier]: TypeIdentifierNs;
+	[TSKindId.FieldIdentifier]: FieldIdentifierNs;
+	[TSKindId.ShorthandFieldIdentifier]: ShorthandFieldIdentifierNs;
 	[TSKindId.EmptyStatement]: EmptyStatementNs;
 	[TSKindId.UnitType]: UnitTypeNs;
 	[TSKindId.NeverType]: NeverTypeNs;
 	[TSKindId.MutableSpecifier]: MutableSpecifierNs;
 	[TSKindId.UnitExpression]: UnitExpressionNs;
 	[TSKindId.RemainingFieldPattern]: RemainingFieldPatternNs;
+	[TSKindId.InnerLineDocCommentMarker]: InnerLineDocCommentMarkerNs;
+	[TSKindId.OuterLineDocCommentMarker]: OuterLineDocCommentMarkerNs;
 	[TSKindId.Self]: SelfNs;
 	[TSKindId.Super]: SuperNs;
 	[TSKindId.Crate]: CrateNs;
@@ -20006,9 +17632,12 @@ export interface NamespaceMap {
 	[TSKindId.KwDefault]: KwDefaultNs;
 	[TSKindId.KwConst]: KwConstNs;
 	[TSKindId.KwUnsafe]: KwUnsafeNs;
-	[TSKindId.WildcardPattern]: WildcardPatternNs;
+	[TSKindId.RangeExpressionBare]: RangeExpressionBareNs;
 	[TSKindId.ImplItemUnsafeMarker]: ImplItemUnsafeMarkerNs;
 	[TSKindId.RangePatternWithLeftBare]: RangePatternWithLeftBareNs;
+	[TSKindId.WildcardPattern]: WildcardPatternNs;
+	[TSKindId.OuterDocCommentMarker]: OuterDocCommentMarkerNs;
+	[TSKindId.InnerDocCommentMarker]: InnerDocCommentMarkerNs;
 	[TSKindId.U8Keyword]: U8KeywordNs;
 	[TSKindId.I8Keyword]: I8KeywordNs;
 	[TSKindId.U16Keyword]: U16KeywordNs;
@@ -20030,17 +17659,17 @@ export interface NamespaceMap {
 	[TSKindId.UnionKeyword]: UnionKeywordNs;
 	[TSKindId.GenKeyword]: GenKeywordNs;
 	[TSKindId.Identifier]: IdentifierNs;
-	[TSKindId.StringLiteralOpen]: StringLiteralOpenNs;
 	[TSKindId.CharLiteralEmpty]: CharLiteralEmptyNs;
-	[TSKindId.LineCommentRegularDslash]: LineCommentRegularDslashNs;
-	[TSKindId.LineCommentContent]: LineCommentContentNs;
+	[TSKindId.StringOpen]: StringOpenNs;
+	[TSKindId.LineCommentExtraSlashes]: LineCommentExtraSlashesNs;
+	[TSKindId.LineCommentRegular]: LineCommentRegularNs;
 	[TSKindId.FloatLiteral]: FloatLiteralNs;
 	[TSKindId.StringContent]: StringContentNs;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContentNs;
-	[TSKindId.LineDocContent]: LineDocContentNs;
-	[TSKindId.BlockCommentContent]: BlockCommentContentNs;
 	[TSKindId.RawStringLiteralStart]: RawStringLiteralStartNs;
 	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEndNs;
+	[TSKindId.DocComment]: DocCommentNs;
+	[TSKindId.BlockCommentContent]: BlockCommentContentNs;
 	[TSKindId.ErrorSentinel]: ErrorSentinelNs;
 }
 
@@ -20182,7 +17811,13 @@ export namespace TokenRepetitionPattern {
 		readonly $named: true;
 		readonly $with: {
 			tokenPatterns(
-				value?: NonNullable<T.TokenRepetitionPattern.Config>['tokenPatterns']
+				...values: (
+					| T.TokenTreePattern
+					| T.TokenRepetitionPattern
+					| T.TokenBindingPattern
+					| T.Metavariable
+					| T.NonSpecialToken
+				)[]
 			): T.TokenRepetitionPattern.Built;
 			separator(value?: string): T.TokenRepetitionPattern.Built;
 			operator(value: NonNullable<T.TokenRepetitionPattern.Config>['operator']): T.TokenRepetitionPattern.Built;
@@ -20205,7 +17840,9 @@ export namespace TokenRepetition {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			tokens(value?: NonNullable<T.TokenRepetition.Config>['tokens']): T.TokenRepetition.Built;
+			tokens(
+				...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
+			): T.TokenRepetition.Built;
 			separator(value?: string): T.TokenRepetition.Built;
 			operator(value: NonNullable<T.TokenRepetition.Config>['operator']): T.TokenRepetition.Built;
 		};
@@ -20218,6 +17855,321 @@ export namespace TokenRepetition {
 	];
 	export type Tree = TreeFor<TSKindId.TokenRepetition>;
 	export type Kind = 'token_repetition';
+}
+export namespace NonSpecialToken {
+	export type Config = ConfigFor<TSKindId.NonSpecialToken>;
+	export interface Built extends T.NonSpecialToken, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(
+				value: NonNullable<
+					| T.Literal
+					| T.Identifier
+					| TSKindId.MutableSpecifier
+					| TSKindId.Self
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.Plus
+					| TSKindId.Dash
+					| TSKindId.Star
+					| TSKindId.Slash
+					| TSKindId.Percent
+					| TSKindId.Caret
+					| TSKindId.Bang
+					| TSKindId.Amp
+					| TSKindId.Pipe
+					| TSKindId.AmpAmp
+					| TSKindId.PipePipe
+					| TSKindId.LtLt
+					| TSKindId.GtGt
+					| TSKindId.PlusEq
+					| TSKindId.DashEq
+					| TSKindId.StarEq
+					| TSKindId.SlashEq
+					| TSKindId.PercentEq
+					| TSKindId.CaretEq
+					| TSKindId.AmpEq
+					| TSKindId.PipeEq
+					| TSKindId.LtLtEq
+					| TSKindId.GtGtEq
+					| TSKindId.Eq
+					| TSKindId.EqEq
+					| TSKindId.BangEq
+					| TSKindId.Gt
+					| TSKindId.Lt
+					| TSKindId.GtEq
+					| TSKindId.LtEq
+					| TSKindId.At
+					| TSKindId.Underscore
+					| TSKindId.Dot
+					| TSKindId.DotDot
+					| TSKindId.DotDotDot
+					| TSKindId.DotDotEq
+					| TSKindId.Comma
+					| TSKindId.Semi
+					| TSKindId.Colon
+					| TSKindId.ColonColon
+					| TSKindId.DashGt
+					| TSKindId.EqGt
+					| TSKindId.Pound
+					| TSKindId.Qmark
+					| TSKindId.Squote
+					| TSKindId.AsKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
+					| TSKindId.BreakKeyword
+					| TSKindId.ConstKeyword
+					| TSKindId.ContinueKeyword
+					| TSKindId.DefaultKeyword
+					| TSKindId.EnumKeyword
+					| TSKindId.FnKeyword
+					| TSKindId.ForKeyword
+					| TSKindId.GenKeyword
+					| TSKindId.IfKeyword
+					| TSKindId.ImplKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.LoopKeyword
+					| TSKindId.MatchKeyword
+					| TSKindId.ModKeyword
+					| TSKindId.PubKeyword
+					| TSKindId.ReturnKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.StructKeyword
+					| TSKindId.TraitKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.UnionKeyword
+					| TSKindId.UnsafeKeyword
+					| TSKindId.UseKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.WhileKeyword
+				>
+			): T.NonSpecialToken.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.NonSpecialToken>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NonSpecialToken>;
+	export type BuildArgs = [
+		value:
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword
+	];
+	export type LooseArgs = [
+		value: LooseValue<
+			| T.Literal
+			| T.Identifier
+			| TSKindId.MutableSpecifier
+			| TSKindId.Self
+			| TSKindId.Super
+			| TSKindId.Crate
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.Caret
+			| TSKindId.Bang
+			| TSKindId.Amp
+			| TSKindId.Pipe
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.CaretEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+			| TSKindId.Eq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Gt
+			| TSKindId.Lt
+			| TSKindId.GtEq
+			| TSKindId.LtEq
+			| TSKindId.At
+			| TSKindId.Underscore
+			| TSKindId.Dot
+			| TSKindId.DotDot
+			| TSKindId.DotDotDot
+			| TSKindId.DotDotEq
+			| TSKindId.Comma
+			| TSKindId.Semi
+			| TSKindId.Colon
+			| TSKindId.ColonColon
+			| TSKindId.DashGt
+			| TSKindId.EqGt
+			| TSKindId.Pound
+			| TSKindId.Qmark
+			| TSKindId.Squote
+			| TSKindId.AsKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.AwaitKeyword
+			| TSKindId.BreakKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.ContinueKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.EnumKeyword
+			| TSKindId.FnKeyword
+			| TSKindId.ForKeyword
+			| TSKindId.GenKeyword
+			| TSKindId.IfKeyword
+			| TSKindId.ImplKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.LoopKeyword
+			| TSKindId.MatchKeyword
+			| TSKindId.ModKeyword
+			| TSKindId.PubKeyword
+			| TSKindId.ReturnKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.StructKeyword
+			| TSKindId.TraitKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.UnsafeKeyword
+			| TSKindId.UseKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.WhileKeyword,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
+	export type Tree = TreeFor<TSKindId.NonSpecialToken>;
+	export type Kind = 'non_special_token';
 }
 export namespace AttributeItem {
 	export type Config = ConfigFor<TSKindId.AttributeItem>;
@@ -21059,7 +19011,7 @@ export namespace BracketedType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: NonNullable<(T.Type | T.QualifiedType) | T.TypeIdentifier.Types>): T.BracketedType.Built;
+			type(value: NonNullable<(T.Type | T.QualifiedType) | T.TypeIdentifier.Types>): T.BracketedType.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.BracketedType>;
@@ -21913,7 +19865,7 @@ export namespace ElseClause {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: T.Block | T.IfExpression): T.ElseClause.Built;
+			body(value: T.Block | T.IfExpression): T.ElseClause.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ElseClause>;
@@ -22295,7 +20247,7 @@ export namespace GenericPattern {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: T.Identifier | T.ScopedIdentifier): T.GenericPattern.Built;
+			name(value: T.Identifier | T.ScopedIdentifier): T.GenericPattern.Built;
 			typeArguments(value: T.TypeArguments): T.GenericPattern.Built;
 		};
 	}
@@ -22476,7 +20428,7 @@ export namespace StringLiteral {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			stringOpen(value: T.StringLiteralOpen | string): T.StringLiteral.Built;
+			stringOpen(value: T.StringOpen): T.StringLiteral.Built;
 			elements(...values: (T.EscapeSequence | T.StringContent)[]): T.StringLiteral.Built;
 		};
 	}
@@ -22495,9 +20447,9 @@ export namespace RawStringLiteral {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			rawStringLiteralStart(value: T.RawStringLiteralStart | string): T.RawStringLiteral.Built;
+			rawStringLiteralStart(value: T.RawStringLiteralStart): T.RawStringLiteral.Built;
 			stringContent(value: T.RawStringLiteralContent): T.RawStringLiteral.Built;
-			rawStringLiteralEnd(value: T.RawStringLiteralEnd | string): T.RawStringLiteral.Built;
+			rawStringLiteralEnd(value: T.RawStringLiteralEnd): T.RawStringLiteral.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.RawStringLiteral>;
@@ -22516,18 +20468,18 @@ export namespace LineComment {
 		readonly $named: true;
 		readonly $with: {
 			content(
-				value: T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent
+				value: T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular
 			): T.LineComment.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.LineComment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LineComment>;
 	export type BuildArgs = [
-		value: T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent
+		value: T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular
 	];
 	export type LooseArgs = [
 		value: LooseValue<
-			T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent,
+			T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -22542,17 +20494,15 @@ export namespace BlockComment {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(
-				value?: (T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) | string
-			): T.BlockComment.Built;
+			content(value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent): T.BlockComment.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.BlockComment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BlockComment>;
-	export type BuildArgs = [value?: (T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) | string];
+	export type BuildArgs = [value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent];
 	export type LooseArgs = [
 		value?: LooseValue<
-			(T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) | string,
+			T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -23366,31 +21316,6 @@ export namespace UseWildcardGroup {
 	export type Tree = TreeFor<TSKindId.UseWildcardGroup>;
 	export type Kind = 'use_wildcard_group';
 }
-export namespace VisibilityModifierGroup {
-	export type Config = ConfigFor<TSKindId.VisibilityModifierGroup>;
-	export interface Built extends T.VisibilityModifierGroup, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(
-				value: NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath>
-			): T.VisibilityModifierGroup.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.VisibilityModifierGroup>;
-	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierGroup>;
-	export type BuildArgs = [value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath];
-	export type LooseArgs = [
-		value: LooseValue<
-			TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
-	export type Tree = TreeFor<TSKindId.VisibilityModifierGroup>;
-	export type Kind = 'visibility_modifier_group';
-}
 export namespace TupleTypeElements {
 	export type Config = ConfigFor<TSKindId.TupleTypeElements>;
 	export interface Built extends T.TupleTypeElements, NodeMethodsOf {
@@ -23410,7 +21335,7 @@ export namespace TupleTypeElements {
 		...elements: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.TupleTypeElements>;
-	export type Kind = '_tuple_type_elements';
+	export type Kind = 'tuple_type_elements';
 }
 export namespace TupleExpressionElements {
 	export type Config = ConfigFor<TSKindId.TupleExpressionElements>;
@@ -23431,7 +21356,7 @@ export namespace TupleExpressionElements {
 		...elements: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Tree = TreeFor<TSKindId.TupleExpressionElements>;
-	export type Kind = '_tuple_expression_elements';
+	export type Kind = 'tuple_expression_elements';
 }
 export namespace IntegerLiteralDecimal {
 	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralDecimal>, 'content'>;
@@ -23981,27 +21906,9 @@ export namespace ImplItemSemi {
 	export type Tree = TreeFor<TSKindId.ImplItemSemi>;
 	export type Kind = 'impl_item_semi';
 }
-export namespace VisibilityModifierPub {
-	export type Config = ConfigFor<TSKindId.VisibilityModifierPub>;
-	export interface Built extends T.VisibilityModifierPub, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			visibilityModifierGroup(value?: T.VisibilityModifierGroup): T.VisibilityModifierPub.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.VisibilityModifierPub>;
-	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPub>;
-	export type BuildArgs = [value?: T.VisibilityModifierGroup];
-	export type LooseArgs = [
-		value?: LooseValue<T.VisibilityModifierGroup, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
-	export type Tree = TreeFor<TSKindId.VisibilityModifierPub>;
-	export type Kind = 'visibility_modifier_pub';
-}
-export namespace VisibilityModifierPubInPath {
-	export type Config = ConfigFor<TSKindId.VisibilityModifierPubInPath>;
-	export interface Built extends T.VisibilityModifierPubInPath, NodeMethodsOf {
+export namespace VisibilityModifierPubScopeInPath {
+	export type Config = ConfigFor<TSKindId.VisibilityModifierPubScopeInPath>;
+	export interface Built extends T.VisibilityModifierPubScopeInPath, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
@@ -24034,11 +21941,11 @@ export namespace VisibilityModifierPubInPath {
 					| TSKindId.UnionKeyword
 					| TSKindId.GenKeyword
 				>
-			): T.VisibilityModifierPubInPath.Built;
+			): T.VisibilityModifierPubScopeInPath.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.VisibilityModifierPubInPath>;
-	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPubInPath>;
+	export type Loose = LooseFor<TSKindId.VisibilityModifierPubScopeInPath>;
+	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPubScopeInPath>;
 	export type BuildArgs = [
 		value:
 			| TSKindId.Self
@@ -24101,8 +22008,51 @@ export namespace VisibilityModifierPubInPath {
 			T.NamespaceMap
 		>
 	];
-	export type Tree = TreeFor<TSKindId.VisibilityModifierPubInPath>;
-	export type Kind = 'visibility_modifier_pub_in_path';
+	export type Tree = TreeFor<TSKindId.VisibilityModifierPubScopeInPath>;
+	export type Kind = 'visibility_modifier_pub_scope_in_path';
+}
+export namespace VisibilityModifierPubScope {
+	export type Config = ConfigFor<TSKindId.VisibilityModifierPubScope>;
+	export interface Built extends T.VisibilityModifierPubScope, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(
+				value: NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
+			): T.VisibilityModifierPubScope.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.VisibilityModifierPubScope>;
+	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPubScope>;
+	export type BuildArgs = [value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath];
+	export type LooseArgs = [
+		value: LooseValue<
+			TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
+	export type Tree = TreeFor<TSKindId.VisibilityModifierPubScope>;
+	export type Kind = 'visibility_modifier_pub_scope';
+}
+export namespace VisibilityModifierPub {
+	export type Config = ConfigFor<TSKindId.VisibilityModifierPub>;
+	export interface Built extends T.VisibilityModifierPub, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			visibilityModifierPubScope(value?: T.VisibilityModifierPubScope): T.VisibilityModifierPub.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.VisibilityModifierPub>;
+	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPub>;
+	export type BuildArgs = [value?: T.VisibilityModifierPubScope];
+	export type LooseArgs = [
+		value?: LooseValue<T.VisibilityModifierPubScope, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
+	export type Tree = TreeFor<TSKindId.VisibilityModifierPub>;
+	export type Kind = 'visibility_modifier_pub';
 }
 export namespace FunctionTypeTraitForm {
 	export type Config = ConfigFor<TSKindId.FunctionTypeTraitForm>;
@@ -24429,15 +22379,13 @@ export namespace LineCommentDocOuter {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			doc(value: T.LineDocContent | string): T.LineCommentDocOuter.Built;
+			doc(value: T.DocComment): T.LineCommentDocOuter.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.LineCommentDocOuter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LineCommentDocOuter>;
-	export type BuildArgs = [value: T.LineDocContent | string];
-	export type LooseArgs = [
-		value: LooseValue<T.LineDocContent | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.DocComment];
+	export type LooseArgs = [value: LooseValue<T.DocComment, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.LineCommentDocOuter>;
 	export type Kind = 'line_comment_doc_outer';
 }
@@ -24447,15 +22395,13 @@ export namespace LineCommentDocInner {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			doc(value: T.LineDocContent | string): T.LineCommentDocInner.Built;
+			doc(value: T.DocComment): T.LineCommentDocInner.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.LineCommentDocInner>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LineCommentDocInner>;
-	export type BuildArgs = [value: T.LineDocContent | string];
-	export type LooseArgs = [
-		value: LooseValue<T.LineDocContent | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value: T.DocComment];
+	export type LooseArgs = [value: LooseValue<T.DocComment, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.LineCommentDocInner>;
 	export type Kind = 'line_comment_doc_inner';
 }
@@ -24465,15 +22411,13 @@ export namespace BlockCommentDocOuter {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			doc(value?: T.BlockCommentContent | string): T.BlockCommentDocOuter.Built;
+			doc(value?: T.BlockCommentContent): T.BlockCommentDocOuter.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.BlockCommentDocOuter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BlockCommentDocOuter>;
-	export type BuildArgs = [value?: T.BlockCommentContent | string];
-	export type LooseArgs = [
-		value?: LooseValue<T.BlockCommentContent | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value?: T.BlockCommentContent];
+	export type LooseArgs = [value?: LooseValue<T.BlockCommentContent, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.BlockCommentDocOuter>;
 	export type Kind = 'block_comment_doc_outer';
 }
@@ -24483,15 +22427,13 @@ export namespace BlockCommentDocInner {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			doc(value?: T.BlockCommentContent | string): T.BlockCommentDocInner.Built;
+			doc(value?: T.BlockCommentContent): T.BlockCommentDocInner.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.BlockCommentDocInner>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BlockCommentDocInner>;
-	export type BuildArgs = [value?: T.BlockCommentContent | string];
-	export type LooseArgs = [
-		value?: LooseValue<T.BlockCommentContent | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs = [value?: T.BlockCommentContent];
+	export type LooseArgs = [value?: LooseValue<T.BlockCommentContent, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.BlockCommentDocInner>;
 	export type Kind = 'block_comment_doc_inner';
 }
@@ -24507,7 +22449,7 @@ export namespace TokenTreePatternParen {
 					| T.TokenRepetitionPattern
 					| T.TokenBindingPattern
 					| T.Metavariable
-					| T._NonSpecialToken
+					| T.NonSpecialToken
 				)[]
 			): T.TokenTreePatternParen.Built;
 		};
@@ -24520,12 +22462,12 @@ export namespace TokenTreePatternParen {
 			| T.TokenRepetitionPattern
 			| T.TokenBindingPattern
 			| T.Metavariable
-			| T._NonSpecialToken
+			| T.NonSpecialToken
 		)[]
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24546,7 +22488,7 @@ export namespace TokenTreePatternBracket {
 					| T.TokenRepetitionPattern
 					| T.TokenBindingPattern
 					| T.Metavariable
-					| T._NonSpecialToken
+					| T.NonSpecialToken
 				)[]
 			): T.TokenTreePatternBracket.Built;
 		};
@@ -24559,12 +22501,12 @@ export namespace TokenTreePatternBracket {
 			| T.TokenRepetitionPattern
 			| T.TokenBindingPattern
 			| T.Metavariable
-			| T._NonSpecialToken
+			| T.NonSpecialToken
 		)[]
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24585,7 +22527,7 @@ export namespace TokenTreePatternBrace {
 					| T.TokenRepetitionPattern
 					| T.TokenBindingPattern
 					| T.Metavariable
-					| T._NonSpecialToken
+					| T.NonSpecialToken
 				)[]
 			): T.TokenTreePatternBrace.Built;
 		};
@@ -24598,12 +22540,12 @@ export namespace TokenTreePatternBrace {
 			| T.TokenRepetitionPattern
 			| T.TokenBindingPattern
 			| T.Metavariable
-			| T._NonSpecialToken
+			| T.NonSpecialToken
 		)[]
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken,
+			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24618,15 +22560,15 @@ export namespace TokenTreeParen {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			tokens(...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]): T.TokenTreeParen.Built;
+			tokens(...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]): T.TokenTreeParen.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TokenTreeParen>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TokenTreeParen>;
-	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]];
+	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+			T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24641,17 +22583,15 @@ export namespace TokenTreeBracket {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			tokens(
-				...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]
-			): T.TokenTreeBracket.Built;
+			tokens(...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]): T.TokenTreeBracket.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TokenTreeBracket>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TokenTreeBracket>;
-	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]];
+	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+			T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24666,15 +22606,15 @@ export namespace TokenTreeBrace {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			tokens(...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]): T.TokenTreeBrace.Built;
+			tokens(...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]): T.TokenTreeBrace.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TokenTreeBrace>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TokenTreeBrace>;
-	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken)[]];
+	export type BuildArgs = [...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken,
+			T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24689,15 +22629,15 @@ export namespace DelimTokenTreeParen {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			delimTokens(...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeParen.Built;
+			delimTokens(...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeParen.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.DelimTokenTreeParen>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DelimTokenTreeParen>;
-	export type BuildArgs = [...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
+	export type BuildArgs = [...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+			T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24712,15 +22652,15 @@ export namespace DelimTokenTreeBracket {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			delimTokens(...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeBracket.Built;
+			delimTokens(...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeBracket.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.DelimTokenTreeBracket>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DelimTokenTreeBracket>;
-	export type BuildArgs = [...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
+	export type BuildArgs = [...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+			T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24735,15 +22675,15 @@ export namespace DelimTokenTreeBrace {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			delimTokens(...vs: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeBrace.Built;
+			delimTokens(...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]): T.DelimTokenTreeBrace.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.DelimTokenTreeBrace>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DelimTokenTreeBrace>;
-	export type BuildArgs = [...children: (T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
+	export type BuildArgs = [...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T._NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+			T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -25010,7 +22950,7 @@ export namespace AttributedFieldDeclaration {
 			| T.AttributedFieldDeclaration
 	];
 	export type Tree = TreeFor<TSKindId.AttributedFieldDeclaration>;
-	export type Kind = '_attributed_field_declaration';
+	export type Kind = 'attributed_field_declaration';
 }
 export namespace AttributedEnumVariant {
 	export type Config = ConfigFor<TSKindId.AttributedEnumVariant>;
@@ -25031,7 +22971,7 @@ export namespace AttributedEnumVariant {
 			| T.AttributedEnumVariant
 	];
 	export type Tree = TreeFor<TSKindId.AttributedEnumVariant>;
-	export type Kind = '_attributed_enum_variant';
+	export type Kind = 'attributed_enum_variant';
 }
 export namespace AttributedParameter {
 	export type Config = ConfigFor<TSKindId.AttributedParameter>;
@@ -25052,7 +22992,7 @@ export namespace AttributedParameter {
 			| T.AttributedParameter
 	];
 	export type Tree = TreeFor<TSKindId.AttributedParameter>;
-	export type Kind = '_attributed_parameter';
+	export type Kind = 'attributed_parameter';
 }
 export namespace AttributedTypeParameter {
 	export type Config = ConfigFor<TSKindId.AttributedTypeParameter>;
@@ -25075,7 +23015,7 @@ export namespace AttributedTypeParameter {
 			| T.AttributedTypeParameter
 	];
 	export type Tree = TreeFor<TSKindId.AttributedTypeParameter>;
-	export type Kind = '_attributed_type_parameter';
+	export type Kind = 'attributed_type_parameter';
 }
 export namespace AttributedArgument {
 	export type Config = ConfigFor<TSKindId.AttributedArgument>;
@@ -25096,7 +23036,7 @@ export namespace AttributedArgument {
 			| T.AttributedArgument
 	];
 	export type Tree = TreeFor<TSKindId.AttributedArgument>;
-	export type Kind = '_attributed_argument';
+	export type Kind = 'attributed_argument';
 }
 export namespace AttributedOrderedField {
 	export type Config = ConfigFor<TSKindId.AttributedOrderedField>;
@@ -25118,7 +23058,7 @@ export namespace AttributedOrderedField {
 			| T.AttributedOrderedField
 	];
 	export type Tree = TreeFor<TSKindId.AttributedOrderedField>;
-	export type Kind = '_attributed_ordered_field';
+	export type Kind = 'attributed_ordered_field';
 }
 export namespace TypeArgument {
 	export type Config = ConfigFor<TSKindId.TypeArgument>;
@@ -25137,7 +23077,7 @@ export namespace TypeArgument {
 		config: LooseConfigOf<T.TypeArgument, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TypeArgument
 	];
 	export type Tree = TreeFor<TSKindId.TypeArgument>;
-	export type Kind = '_type_argument';
+	export type Kind = 'type_argument';
 }
 export namespace MatchBlockArms {
 	export type Config = ConfigFor<TSKindId.MatchBlockArms>;
@@ -25156,10 +23096,10 @@ export namespace MatchBlockArms {
 		config: LooseConfigOf<T.MatchBlockArms, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MatchBlockArms
 	];
 	export type Tree = TreeFor<TSKindId.MatchBlockArms>;
-	export type Kind = '_match_block_arms';
+	export type Kind = 'match_block_arms';
 }
 export namespace TypeIdentifier {
-	export type Config = ConfigFor<TSKindId._TypeIdentifier>;
+	export type Config = ConfigFor<TSKindId.TypeIdentifier>;
 	export type Types = Identifier;
 	export interface Built extends T.TypeIdentifier, NodeMethodsOf {
 		readonly $source: 2;
@@ -25168,15 +23108,15 @@ export namespace TypeIdentifier {
 			content(value: T.Identifier): T.TypeIdentifier.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId._TypeIdentifier>;
-	export type LooseConfig = LooseConfigFor<TSKindId._TypeIdentifier>;
+	export type Loose = LooseFor<TSKindId.TypeIdentifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TypeIdentifier>;
 	export type BuildArgs = [value: T.Identifier];
 	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId._TypeIdentifier>;
+	export type Tree = TreeFor<TSKindId.TypeIdentifier>;
 	export type Kind = 'type_identifier';
 }
 export namespace FieldIdentifier {
-	export type Config = ConfigFor<TSKindId._FieldIdentifier>;
+	export type Config = ConfigFor<TSKindId.FieldIdentifier>;
 	export type Types = Identifier;
 	export interface Built extends T.FieldIdentifier, NodeMethodsOf {
 		readonly $source: 2;
@@ -25185,15 +23125,15 @@ export namespace FieldIdentifier {
 			content(value: T.Identifier): T.FieldIdentifier.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId._FieldIdentifier>;
-	export type LooseConfig = LooseConfigFor<TSKindId._FieldIdentifier>;
+	export type Loose = LooseFor<TSKindId.FieldIdentifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId.FieldIdentifier>;
 	export type BuildArgs = [value: T.Identifier];
 	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId._FieldIdentifier>;
+	export type Tree = TreeFor<TSKindId.FieldIdentifier>;
 	export type Kind = 'field_identifier';
 }
 export namespace ShorthandFieldIdentifier {
-	export type Config = ConfigFor<TSKindId._ShorthandFieldIdentifier>;
+	export type Config = ConfigFor<TSKindId.ShorthandFieldIdentifier>;
 	export type Types = Identifier;
 	export interface Built extends T.ShorthandFieldIdentifier, NodeMethodsOf {
 		readonly $source: 2;
@@ -25202,11 +23142,11 @@ export namespace ShorthandFieldIdentifier {
 			content(value: T.Identifier): T.ShorthandFieldIdentifier.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId._ShorthandFieldIdentifier>;
-	export type LooseConfig = LooseConfigFor<TSKindId._ShorthandFieldIdentifier>;
+	export type Loose = LooseFor<TSKindId.ShorthandFieldIdentifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ShorthandFieldIdentifier>;
 	export type BuildArgs = [value: T.Identifier];
 	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId._ShorthandFieldIdentifier>;
+	export type Tree = TreeFor<TSKindId.ShorthandFieldIdentifier>;
 	export type Kind = 'shorthand_field_identifier';
 }
 export namespace EmptyStatement {
@@ -25268,6 +23208,26 @@ export namespace RemainingFieldPattern {
 	export type LooseArgs = RemainingFieldPatternNs['LooseArgs'];
 	export type Tree = RemainingFieldPatternNs['Tree'];
 	export type Kind = 'remaining_field_pattern';
+}
+export namespace InnerLineDocCommentMarker {
+	export type Config = InnerLineDocCommentMarkerNs['Config'];
+	export type Built = InnerLineDocCommentMarkerNs['Built'];
+	export type Loose = InnerLineDocCommentMarkerNs['Loose'];
+	export type LooseConfig = InnerLineDocCommentMarkerNs['LooseConfig'];
+	export type BuildArgs = InnerLineDocCommentMarkerNs['BuildArgs'];
+	export type LooseArgs = InnerLineDocCommentMarkerNs['LooseArgs'];
+	export type Tree = InnerLineDocCommentMarkerNs['Tree'];
+	export type Kind = 'inner_line_doc_comment_marker';
+}
+export namespace OuterLineDocCommentMarker {
+	export type Config = OuterLineDocCommentMarkerNs['Config'];
+	export type Built = OuterLineDocCommentMarkerNs['Built'];
+	export type Loose = OuterLineDocCommentMarkerNs['Loose'];
+	export type LooseConfig = OuterLineDocCommentMarkerNs['LooseConfig'];
+	export type BuildArgs = OuterLineDocCommentMarkerNs['BuildArgs'];
+	export type LooseArgs = OuterLineDocCommentMarkerNs['LooseArgs'];
+	export type Tree = OuterLineDocCommentMarkerNs['Tree'];
+	export type Kind = 'outer_line_doc_comment_marker';
 }
 export namespace Self {
 	export type Config = SelfNs['Config'];
@@ -25389,15 +23349,15 @@ export namespace KwUnsafe {
 	export type Tree = KwUnsafeNs['Tree'];
 	export type Kind = '_kw_unsafe';
 }
-export namespace WildcardPattern {
-	export type Config = WildcardPatternNs['Config'];
-	export type Built = WildcardPatternNs['Built'];
-	export type Loose = WildcardPatternNs['Loose'];
-	export type LooseConfig = WildcardPatternNs['LooseConfig'];
-	export type BuildArgs = WildcardPatternNs['BuildArgs'];
-	export type LooseArgs = WildcardPatternNs['LooseArgs'];
-	export type Tree = WildcardPatternNs['Tree'];
-	export type Kind = '_wildcard_pattern';
+export namespace RangeExpressionBare {
+	export type Config = RangeExpressionBareNs['Config'];
+	export type Built = RangeExpressionBareNs['Built'];
+	export type Loose = RangeExpressionBareNs['Loose'];
+	export type LooseConfig = RangeExpressionBareNs['LooseConfig'];
+	export type BuildArgs = RangeExpressionBareNs['BuildArgs'];
+	export type LooseArgs = RangeExpressionBareNs['LooseArgs'];
+	export type Tree = RangeExpressionBareNs['Tree'];
+	export type Kind = 'range_expression_bare';
 }
 export namespace ImplItemUnsafeMarker {
 	export type Config = ImplItemUnsafeMarkerNs['Config'];
@@ -25418,6 +23378,36 @@ export namespace RangePatternWithLeftBare {
 	export type LooseArgs = RangePatternWithLeftBareNs['LooseArgs'];
 	export type Tree = RangePatternWithLeftBareNs['Tree'];
 	export type Kind = 'range_pattern_with_left_bare';
+}
+export namespace WildcardPattern {
+	export type Config = WildcardPatternNs['Config'];
+	export type Built = WildcardPatternNs['Built'];
+	export type Loose = WildcardPatternNs['Loose'];
+	export type LooseConfig = WildcardPatternNs['LooseConfig'];
+	export type BuildArgs = WildcardPatternNs['BuildArgs'];
+	export type LooseArgs = WildcardPatternNs['LooseArgs'];
+	export type Tree = WildcardPatternNs['Tree'];
+	export type Kind = 'wildcard_pattern';
+}
+export namespace OuterDocCommentMarker {
+	export type Config = OuterDocCommentMarkerNs['Config'];
+	export type Built = OuterDocCommentMarkerNs['Built'];
+	export type Loose = OuterDocCommentMarkerNs['Loose'];
+	export type LooseConfig = OuterDocCommentMarkerNs['LooseConfig'];
+	export type BuildArgs = OuterDocCommentMarkerNs['BuildArgs'];
+	export type LooseArgs = OuterDocCommentMarkerNs['LooseArgs'];
+	export type Tree = OuterDocCommentMarkerNs['Tree'];
+	export type Kind = 'outer_doc_comment_marker';
+}
+export namespace InnerDocCommentMarker {
+	export type Config = InnerDocCommentMarkerNs['Config'];
+	export type Built = InnerDocCommentMarkerNs['Built'];
+	export type Loose = InnerDocCommentMarkerNs['Loose'];
+	export type LooseConfig = InnerDocCommentMarkerNs['LooseConfig'];
+	export type BuildArgs = InnerDocCommentMarkerNs['BuildArgs'];
+	export type LooseArgs = InnerDocCommentMarkerNs['LooseArgs'];
+	export type Tree = InnerDocCommentMarkerNs['Tree'];
+	export type Kind = 'inner_doc_comment_marker';
 }
 export namespace U8Keyword {
 	export type Config = U8KeywordNs['Config'];
@@ -25634,21 +23624,6 @@ export namespace Identifier {
 	export type Tree = IdentifierNs['Tree'];
 	export type Kind = 'identifier';
 }
-export namespace StringLiteralOpen {
-	export type Config = StringLiteralOpenNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.StringLiteralOpen;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = StringLiteralOpenNs['Loose'];
-	export type LooseConfig = StringLiteralOpenNs['LooseConfig'];
-	export type BuildArgs = StringLiteralOpenNs['BuildArgs'];
-	export type LooseArgs = StringLiteralOpenNs['LooseArgs'];
-	export type Tree = StringLiteralOpenNs['Tree'];
-	export type Kind = '_string_literal_open';
-}
 export namespace CharLiteralEmpty {
 	export type Config = CharLiteralEmptyNs['Config'];
 	export interface Built extends NodeMethodsOf {
@@ -25664,35 +23639,50 @@ export namespace CharLiteralEmpty {
 	export type Tree = CharLiteralEmptyNs['Tree'];
 	export type Kind = 'char_literal_empty';
 }
-export namespace LineCommentRegularDslash {
-	export type Config = LineCommentRegularDslashNs['Config'];
+export namespace StringOpen {
+	export type Config = StringOpenNs['Config'];
 	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.LineCommentRegularDslash;
+		readonly $type: TSKindId.StringOpen;
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export type Loose = LineCommentRegularDslashNs['Loose'];
-	export type LooseConfig = LineCommentRegularDslashNs['LooseConfig'];
-	export type BuildArgs = LineCommentRegularDslashNs['BuildArgs'];
-	export type LooseArgs = LineCommentRegularDslashNs['LooseArgs'];
-	export type Tree = LineCommentRegularDslashNs['Tree'];
-	export type Kind = 'line_comment_regular_dslash';
+	export type Loose = StringOpenNs['Loose'];
+	export type LooseConfig = StringOpenNs['LooseConfig'];
+	export type BuildArgs = StringOpenNs['BuildArgs'];
+	export type LooseArgs = StringOpenNs['LooseArgs'];
+	export type Tree = StringOpenNs['Tree'];
+	export type Kind = 'string_open';
 }
-export namespace LineCommentContent {
-	export type Config = LineCommentContentNs['Config'];
+export namespace LineCommentExtraSlashes {
+	export type Config = LineCommentExtraSlashesNs['Config'];
 	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.LineCommentContent;
+		readonly $type: TSKindId.LineCommentExtraSlashes;
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export type Loose = LineCommentContentNs['Loose'];
-	export type LooseConfig = LineCommentContentNs['LooseConfig'];
-	export type BuildArgs = LineCommentContentNs['BuildArgs'];
-	export type LooseArgs = LineCommentContentNs['LooseArgs'];
-	export type Tree = LineCommentContentNs['Tree'];
-	export type Kind = 'line_comment_content';
+	export type Loose = LineCommentExtraSlashesNs['Loose'];
+	export type LooseConfig = LineCommentExtraSlashesNs['LooseConfig'];
+	export type BuildArgs = LineCommentExtraSlashesNs['BuildArgs'];
+	export type LooseArgs = LineCommentExtraSlashesNs['LooseArgs'];
+	export type Tree = LineCommentExtraSlashesNs['Tree'];
+	export type Kind = 'line_comment_extra_slashes';
+}
+export namespace LineCommentRegular {
+	export type Config = LineCommentRegularNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.LineCommentRegular;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = LineCommentRegularNs['Loose'];
+	export type LooseConfig = LineCommentRegularNs['LooseConfig'];
+	export type BuildArgs = LineCommentRegularNs['BuildArgs'];
+	export type LooseArgs = LineCommentRegularNs['LooseArgs'];
+	export type Tree = LineCommentRegularNs['Tree'];
+	export type Kind = 'line_comment_regular';
 }
 export namespace FloatLiteral {
 	export type Config = FloatLiteralNs['Config'];
@@ -25739,20 +23729,50 @@ export namespace RawStringLiteralContent {
 	export type Tree = RawStringLiteralContentNs['Tree'];
 	export type Kind = 'raw_string_literal_content';
 }
-export namespace LineDocContent {
-	export type Config = LineDocContentNs['Config'];
+export namespace RawStringLiteralStart {
+	export type Config = RawStringLiteralStartNs['Config'];
 	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.LineDocContent;
+		readonly $type: TSKindId.RawStringLiteralStart;
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export type Loose = LineDocContentNs['Loose'];
-	export type LooseConfig = LineDocContentNs['LooseConfig'];
-	export type BuildArgs = LineDocContentNs['BuildArgs'];
-	export type LooseArgs = LineDocContentNs['LooseArgs'];
-	export type Tree = LineDocContentNs['Tree'];
-	export type Kind = '_line_doc_content';
+	export type Loose = RawStringLiteralStartNs['Loose'];
+	export type LooseConfig = RawStringLiteralStartNs['LooseConfig'];
+	export type BuildArgs = RawStringLiteralStartNs['BuildArgs'];
+	export type LooseArgs = RawStringLiteralStartNs['LooseArgs'];
+	export type Tree = RawStringLiteralStartNs['Tree'];
+	export type Kind = 'raw_string_literal_start';
+}
+export namespace RawStringLiteralEnd {
+	export type Config = RawStringLiteralEndNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.RawStringLiteralEnd;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = RawStringLiteralEndNs['Loose'];
+	export type LooseConfig = RawStringLiteralEndNs['LooseConfig'];
+	export type BuildArgs = RawStringLiteralEndNs['BuildArgs'];
+	export type LooseArgs = RawStringLiteralEndNs['LooseArgs'];
+	export type Tree = RawStringLiteralEndNs['Tree'];
+	export type Kind = 'raw_string_literal_end';
+}
+export namespace DocComment {
+	export type Config = DocCommentNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.DocComment;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = DocCommentNs['Loose'];
+	export type LooseConfig = DocCommentNs['LooseConfig'];
+	export type BuildArgs = DocCommentNs['BuildArgs'];
+	export type LooseArgs = DocCommentNs['LooseArgs'];
+	export type Tree = DocCommentNs['Tree'];
+	export type Kind = 'doc_comment';
 }
 export namespace BlockCommentContent {
 	export type Config = BlockCommentContentNs['Config'];
@@ -25768,36 +23788,6 @@ export namespace BlockCommentContent {
 	export type LooseArgs = BlockCommentContentNs['LooseArgs'];
 	export type Tree = BlockCommentContentNs['Tree'];
 	export type Kind = '_block_comment_content';
-}
-export namespace RawStringLiteralStart {
-	export type Config = RawStringLiteralStartNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.RawStringLiteralStart;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = RawStringLiteralStartNs['Loose'];
-	export type LooseConfig = RawStringLiteralStartNs['LooseConfig'];
-	export type BuildArgs = RawStringLiteralStartNs['BuildArgs'];
-	export type LooseArgs = RawStringLiteralStartNs['LooseArgs'];
-	export type Tree = RawStringLiteralStartNs['Tree'];
-	export type Kind = '_raw_string_literal_start';
-}
-export namespace RawStringLiteralEnd {
-	export type Config = RawStringLiteralEndNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.RawStringLiteralEnd;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = RawStringLiteralEndNs['Loose'];
-	export type LooseConfig = RawStringLiteralEndNs['LooseConfig'];
-	export type BuildArgs = RawStringLiteralEndNs['BuildArgs'];
-	export type LooseArgs = RawStringLiteralEndNs['LooseArgs'];
-	export type Tree = RawStringLiteralEndNs['Tree'];
-	export type Kind = '_raw_string_literal_end';
 }
 export namespace ErrorSentinel {
 	export type Config = ErrorSentinelNs['Config'];

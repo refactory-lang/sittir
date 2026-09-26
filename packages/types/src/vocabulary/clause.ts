@@ -179,7 +179,7 @@ export namespace Clause {
 		export interface Type<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause.Extends<G>>> {
 			// claimed by t
 			readonly kind: 'clause.extends.type';
-			readonly types: (G['identifier'] | G['type'])[];
+			readonly types: (V.Identifier.Type<G> | G['type'])[];
 		}
 		export type Any<G extends GrammarContext> = V.Clause.Extends<G> | V.Clause.Extends.Type<G>;
 	}
@@ -208,7 +208,30 @@ export namespace Clause {
 			// p only
 			readonly declare?: boolean;
 			// t only
-			readonly label?: V.Identifier.Label<G>;
+			readonly label?:
+				| V.Identifier.Label<G>
+				| 'any'
+				| 'async'
+				| 'boolean'
+				| 'declare'
+				| 'export'
+				| 'get'
+				| 'let'
+				| 'module'
+				| 'namespace'
+				| 'new'
+				| 'number'
+				| 'object'
+				| 'override'
+				| 'private'
+				| 'protected'
+				| 'public'
+				| 'readonly'
+				| 'set'
+				| 'static'
+				| 'string'
+				| 'symbol'
+				| 'type';
 			// t only
 			readonly name: G['identifier'];
 			readonly value?: G['identifier'];
@@ -218,7 +241,28 @@ export namespace Clause {
 			// claimed by r
 			readonly kind: 'clause.import.as';
 			readonly alias: G['identifier'];
-			readonly path: G['identifier'];
+			readonly path:
+				| G['identifier']
+				| 'bool'
+				| 'char'
+				| 'default'
+				| 'f32'
+				| 'f64'
+				| 'gen'
+				| 'i128'
+				| 'i16'
+				| 'i32'
+				| 'i64'
+				| 'i8'
+				| 'isize'
+				| 'str'
+				| 'u128'
+				| 'u16'
+				| 'u32'
+				| 'u64'
+				| 'u8'
+				| 'union'
+				| 'usize';
 		}
 		export interface Attribute<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause.Import<G>>> {
 			// claimed by t
@@ -237,7 +281,28 @@ export namespace Clause {
 				// claimed by r
 				readonly kind: 'clause.import.list.scoped';
 				readonly list: V.Clause.Import.List<G>;
-				readonly path?: G['identifier'];
+				readonly path?:
+					| G['identifier']
+					| 'bool'
+					| 'char'
+					| 'default'
+					| 'f32'
+					| 'f64'
+					| 'gen'
+					| 'i128'
+					| 'i16'
+					| 'i32'
+					| 'i64'
+					| 'i8'
+					| 'isize'
+					| 'str'
+					| 'u128'
+					| 'u16'
+					| 'u32'
+					| 'u64'
+					| 'u8'
+					| 'union'
+					| 'usize';
 			}
 			export type Any<G extends GrammarContext> = V.Clause.Import.List<G> | V.Clause.Import.List.Scoped<G>;
 		}
@@ -340,7 +405,7 @@ export namespace Clause {
 		// claimed by t
 		readonly kind: 'clause.mapped_type';
 		readonly alias?: G['identifier'] | G['type'];
-		readonly name: G['identifier'];
+		readonly name: V.Identifier.Type<G>;
 		readonly type: G['identifier'] | G['type'];
 	}
 	export interface Match<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause<G>>> {

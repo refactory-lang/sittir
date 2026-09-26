@@ -29,23 +29,25 @@ const fielded: Rule<'evaluate'> = {
 	]
 };
 
-const root: Rule<'evaluate'> = {
-	type: SEQ,
-	members: [
-		{ type: STRING, value: 'r' },
-		{ type: SYMBOL, name: '_g' }
-	]
-};
+function rootOf(name: string): Rule<'evaluate'> {
+	return {
+		type: SEQ,
+		members: [
+			{ type: STRING, value: 'r' },
+			{ type: SYMBOL, name }
+		]
+	};
+}
 
 describe('link keeps the hoisted annotation on the rule', () => {
-	it('collects a hidden rule that carries the hoisted annotation', () => {
-		const linked = link(raw({ root, _g: { ...fielded, annotations: { hoisted: true } } }));
+	it('collects a rule that carries the hoisted annotation', () => {
+		const linked = link(raw({ root: rootOf('g'), g: { ...fielded, annotations: { hoisted: true } } }));
 
-		expect(linked.rules['_g']?.annotations?.hoisted).toBe(true);
+		expect(linked.rules['g']?.annotations?.hoisted).toBe(true);
 	});
 
 	it('does not hoist a hidden sequence for carrying a field', () => {
-		const linked = link(raw({ root, _g: fielded }));
+		const linked = link(raw({ root: rootOf('_g'), _g: fielded }));
 
 		expect(linked.rules['_g']?.annotations?.hoisted).toBeUndefined();
 	});

@@ -1,4 +1,4 @@
-// A group spliced into its parent's config keeps its own arity: the match
+// A group flattened into its parent's config keeps its own arity: the match
 // block's arms take their required last arm, an absent group is the
 // no-argument call, and a list seat takes an array.
 import { describe, expect, it } from 'vitest';
@@ -15,7 +15,7 @@ const last = () =>
 		value: ir.identifier('z')
 	});
 
-describe('a group spliced into the parent config', () => {
+describe('a group flattened into the parent config', () => {
 	it('renders with its arms and renders empty without the group', () => {
 		expect(ir.matchBlock.strict({ matchArm: [arm()], lastArm: last() }).$render()).toBe(
 			'{\n    x => {}\n    y => z\n}'

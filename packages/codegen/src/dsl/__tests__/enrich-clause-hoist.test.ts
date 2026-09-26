@@ -22,8 +22,8 @@ import { readRuleMetadata } from '../rule-metadata.ts';
 beforeAll(() => installFakeDsl());
 afterAll(() => restoreFakeDsl());
 
-function mkGrammar(rules: Record<string, unknown>) {
-	return { grammar: { name: 'test', rules } };
+function mkGrammar(rules: Record<string, unknown>, externals: readonly string[] = []) {
+	return { grammar: { name: 'test', rules, externals: externals.map((name) => ({ type: 'SYMBOL', name })) } };
 }
 
 function runEnrich(input: ReturnType<typeof mkGrammar>) {
@@ -550,7 +550,7 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 					{ type: 'STRING', value: ')' }
 				]
 			}
-		});
+		}, ['_a', '_b']);
 		const result = runEnrich(input);
 		const rules = result.grammar.rules;
 
@@ -622,5 +622,33 @@ describe('enrich clause-hoist pass — cross-parent group dedupe ignores runtime
 		// and as the sole group mint under its parent it carries no ordinal.
 		const groupKeys = Object.keys(rules).filter((k) => /_group\d*$/.test(k));
 		expect(groupKeys).toEqual(['parent_a_group']);
+	});
+});
+
+describe('enrich clause-hoist pass — repeat over a multi-slot seq', () => {
+	const sym = (name: string) => ({ type: 'SYMBOL', name });
+	const str = (value: string) => ({ type: 'STRING', value });
+	const repeatOf = (...members: unknown[]) => ({ type: 'REPEAT1', content: { type: 'SEQ', members } });
+	const quantifier = { type: 'FIELD', name: 'quantifier', content: sym('star') };
+
+	it('lifts a two-slot element into one visible group so each repetition stays paired', () => {
+		const rules = runEnrich(mkGrammar({ term: repeatOf(sym('atom'), quantifier) })).grammar.rules;
+		const ref = (rules.term as { content: { type: string; name: string; metadata?: unknown } }).content;
+		expect(ref).toMatchObject({ type: 'SYMBOL', name: 'term_group' });
+		expect(readRuleMetadata(ref.metadata)?.symbolSource).toBe('group-lift');
+		const group = rules.term_group as { type: string; members: unknown[] };
+		expect(group.type).toBe('SEQ');
+		expect(group.members).toHaveLength(2);
+		expect(group.members[1]).toMatchObject({ type: 'FIELD', name: 'quantifier' });
+	});
+
+	it('leaves a separated-list element in place', () => {
+		const rules = runEnrich(mkGrammar({ list: repeatOf(str(','), sym('item')) })).grammar.rules;
+		expect((rules.list as { content: { type: string } }).content.type).toBe('SEQ');
+	});
+
+	it('leaves a single-slot element in place', () => {
+		const rules = runEnrich(mkGrammar({ list: repeatOf(str('('), sym('item'), str(')')) })).grammar.rules;
+		expect((rules.list as { content: { type: string } }).content.type).toBe('SEQ');
 	});
 });

@@ -15,7 +15,7 @@ it('types every site by kind id at its address and rejects a wrong member at com
 			formalParameter: { separator: { comma: { after: TSKindId.Space } }, delimiter: Delimiter.Trailing }
 		},
 		objectTypeContent: {
-			content: { separator: { kind: TSKindId.Semi, after: TSKindId.Newline }, delimiter: Delimiter.Trailing }
+			members: { separator: { kind: TSKindId.Semi, after: TSKindId.Newline }, delimiter: Delimiter.Trailing }
 		},
 		enumBodyElements: { content: { separator: { comma: { after: TSKindId.Newline } }, delimiter: Delimiter.Trailing } },
 		statements: { terminator: TSKindId.AutomaticSemicolon },
@@ -31,7 +31,7 @@ it('types every site by kind id at its address and rejects a wrong member at com
 			formalParameter: { delimiter: Delimiter.Leading }
 		},
 		// @ts-expect-error a separator is one of its literal kinds
-		objectTypeContent: { content: { separator: { kind: TSKindId.Colon } } },
+		objectTypeContent: { members: { separator: { kind: TSKindId.Colon } } },
 		// @ts-expect-error a brace has no 'sideways' edge
 		classBody: { lbrace: { sideways: TSKindId.Space } }
 	};
@@ -61,4 +61,16 @@ it('an unknown key, an address naming no site, and a value a site does not admit
 	expect(() =>
 		createEngine({ options: { array: { elements: { separator: { comma: { after: TSKindId.Semi } } } } } as never })
 	).toThrow(/does not admit kind id/);
+});
+
+it('an omitted registered choice option renders the arm the options resolve, and a set one renders as set', () => {
+	const semi = createEngine();
+	const automatic = createEngine({ options: { statements: { terminator: TSKindId.AutomaticSemicolon } } });
+	const omitted = ir.returnStatement.strict(ir.identifier('r'));
+	expect(semi.render(omitted).toString()).toBe('return r;');
+	expect(automatic.render(omitted).toString()).toBe('return r\n');
+	expect(automatic.render(omitted, { options: { statements: { terminator: TSKindId.Semi } } }).toString()).toBe('return r;');
+	const set = ir.returnStatement.strict(ir.identifier('r'), { terminator: TSKindId.Semi });
+	expect(semi.render(set).toString()).toBe('return r;');
+	expect(automatic.render(set).toString()).toBe('return r;');
 });

@@ -1,9 +1,10 @@
+import { findOwnKindEntry } from '../compiler/generated-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import { bareInteriorText, interiorOf, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { findOwnKindEntry,
+import {
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,
@@ -20,7 +21,7 @@ import type {
 type BranchLikeForFrom = AuthoredCompound;
 type FormChildForFrom = AuthoredCompound;
 import {
-	anchoredLeafRegexLiteral,
+	anchoredLeafRegex,
 	classifyFactoryShape,
 	expandAndDedupeContentTypes,
 	isRequired,
@@ -49,7 +50,11 @@ import {
 	listRestParamType,
 	transparentContentKindNames,
 	isAffixedLeaf,
-	transparentWrapperContentSlot
+	transparentWrapperContentSlot,
+	referencedKinds,
+	classifyFactoryEmission,
+	registeredSlots,
+	pruneUnusedImports
 } from './shared.ts';
 import {
 	fieldElementType,
@@ -57,7 +62,6 @@ import {
 	kindEnumTextMapExpr,
 	delimiterMembersFor,
 	listHasOptions,
-	registeredSlots,
 	separatedListSurface,
 	spellingTypeOf,
 	listOptionKeys
@@ -68,6 +72,7 @@ import {
 	AbstractAssembledCompound,
 	AssembledList,
 	AssembledSupertype,
+	AssembledEnvelope,
 	AssembledPattern,
 	AssembledEnum,
 	AssembledKeyword,
@@ -754,6 +759,16 @@ function emitKeywordFrom(node: LeafFromNode): string {
 
 type KindInterner = (kinds: readonly string[]) => string;
 
+export function transparentEnvelopeTextLeaves(node: AssembledNode, nodeMap: NodeMap): readonly string[] {
+	if (!(node instanceof AssembledEnvelope) || node.modelType !== 'envelope' || !node.surfaceHidden) return [];
+	if (node.fromFunctionName === undefined || node.slots.length !== 1) return [];
+	return slotResolverKinds(node.slots[0]!, nodeMap).leafKinds;
+}
+
+export function slotResolverKinds(field: { values: readonly NodeOrTerminal[] }, nodeMap: NodeMap): ReturnType<typeof classifyKindsForResolver> {
+	return classifyKindsForResolver(expandAndDedupeContentTypes(slotKindNames(field), nodeMap, storageKindIdByNameOf(field)), nodeMap);
+}
+
 function classifyKindsForResolver(
 	expanded: string[],
 	nodeMap: NodeMap
@@ -891,8 +906,7 @@ function resolveFieldCall(
 
 	const storageInfo = 'name' in field ? resolveFieldStorageInfo(field as AssembledNonterminal, nodeMap) : undefined;
 
-	const expanded = expandAndDedupeContentTypes(slotKindNames(field), nodeMap, storageKindIdByNameOf(field));
-	const { leafKinds, branchKinds, tokenKinds } = classifyKindsForResolver(expanded, nodeMap);
+	const { leafKinds, branchKinds, tokenKinds } = slotResolverKinds(field, nodeMap);
 
 	const elementType =
 		elementTypeOverride ?? ('name' in field ? fieldElementType(field as AssembledNonterminal, nodeMap) : undefined);
@@ -940,14 +954,34 @@ function keywordPresenceResolverCall(
 	return `_resolveBitflag(${prop})`;
 }
 
-function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
+interface LeafRegistry {
+	readonly entries: readonly string[];
+	readonly textChecks: readonly TextKindCheck[];
+}
+
+export interface TextKindCheck {
+	readonly kind: string;
+	readonly values?: readonly string[];
+	readonly pattern?: RegExp;
+}
+
+export function leafTextChecks(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): readonly TextKindCheck[] {
+	return buildLeafRegistryEntries(nodeMap, kindEntries).textChecks;
+}
+
+export function textCheckAccepts(check: TextKindCheck, text: string): boolean {
+	return check.values !== undefined ? check.values.includes(text) : check.pattern?.test(text) === true;
+}
+
+function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): LeafRegistry {
 	const registryEntries: string[] = [];
+	const textChecks: TextKindCheck[] = [];
+	const referenced = referencedKinds(nodeMap);
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_')) continue;
-		if (!node.rawFactoryName) continue;
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
+		if (classifyFactoryEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
 		const factory = `F.${node.rawFactoryName}`;
 		if (isVisibleTextLeaf(node)) {
+			textChecks.push({ kind, values: [node.text] });
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`
 			);
@@ -963,28 +997,42 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 			const spelling = registered.length === 0 ? '' : `, { ${registered.map((slot) => `${slot.configKey}: cfg[${JSON.stringify(slot.configKey)}]`).join(', ')} } as never`;
 			const configSlot = interior.slots.find((slot) => !slot.flag && !registered.some((r) => r.configKey === slot.configKey));
 			const arg = shape === 'direct' ? `cfg[${JSON.stringify(configSlot!.configKey)}] as never` : 'cfg as never';
+			textChecks.push({ kind, pattern: new RegExp(interior.regex, 'su') });
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { pattern: new RegExp(TOKEN_INTERIORS[${JSON.stringify(kind)}].regex, 'su'), factory: (text: string) => { const cfg = ${config}; return ${factory}(${arg}${spelling}); } },`
 			);
 		} else if (node instanceof AssembledPattern) {
-			const literal = anchoredLeafRegexLiteral(kind, node.textPattern);
-			if (literal === undefined) {
+			const pattern = anchoredLeafRegex(kind, node.textPattern);
+			if (pattern === undefined) {
+				if (!referenced.has(kind)) continue;
 				throw new Error(
 					`leaf registry: '${kind}' has a factory but no text pattern; an external scanner token authors its shape in renderAs`
 				);
 			}
-			registryEntries.push(`  ${JSON.stringify(kind)}: { pattern: ${literal}, factory: ${factory} },`);
+			textChecks.push({ kind, pattern });
+			registryEntries.push(`  ${JSON.stringify(kind)}: { pattern: /${pattern.source}/${pattern.flags}, factory: ${factory} },`);
 		} else if (node instanceof AssembledAlias) {
 			const leaf = aliasPatternLeaf(node, nodeMap);
 			if (leaf === undefined) continue;
-			const literal = anchoredLeafRegexLiteral(leaf.kind, leaf.textPattern);
-			if (literal === undefined) continue;
+			const pattern = anchoredLeafRegex(leaf.kind, leaf.textPattern);
+			if (pattern === undefined) continue;
+			textChecks.push({ kind, pattern });
 			registryEntries.push(
-				`  ${JSON.stringify(kind)}: { pattern: ${literal}, factory: (text: string) => ${factory}(F.${leaf.rawFactoryName}(text) as never) },`
+				`  ${JSON.stringify(kind)}: { pattern: /${pattern.source}/${pattern.flags}, factory: (text: string) => ${factory}(F.${leaf.rawFactoryName}(text) as never) },`
 			);
 		}
 	}
-	return registryEntries;
+	return { entries: registryEntries, textChecks: rankTextKinds(textChecks, kindEntries) };
+}
+
+function rankTextKinds(checks: readonly TextKindCheck[], kindEntries: readonly KindEnumEntry[] | undefined): TextKindCheck[] {
+	if (kindEntries === undefined) return [...checks];
+	const rankOf = ({ kind }: TextKindCheck): number => {
+		const rank = findKindEntry(kindEntries, kind)?.lexicalRank;
+		if (rank === undefined) throw new Error(`from: text kind '${kind}' has no lexical rank in the catalog`);
+		return rank;
+	};
+	return [...checks].sort((a, b) => rankOf(a) - rankOf(b));
 }
 
 function aliasPatternLeaf(node: AssembledAlias, nodeMap: NodeMap): AssembledPattern | undefined {
@@ -1076,7 +1124,7 @@ export function bareAcceptClosure(
 }
 
 function isLeafRegistryKind(kind: string, node: AssembledNode): boolean {
-	if (kind.startsWith('_') || !node.rawFactoryName) return false;
+	if (!node.rawFactoryName) return false;
 	return node instanceof AssembledEnum || isVisibleTextLeaf(node) || node instanceof AssembledPattern;
 }
 
@@ -1153,7 +1201,7 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('    if (scalar !== undefined) return scalar as T;');
 	lines.push('  }');
 	lines.push('  if (typeof v === "string") {');
-	lines.push('    const leaf = _resolveLeafString(v, [...leafKinds, ...branchKinds]);');
+	lines.push('    const leaf = _resolveBareText(v, [...leafKinds, ...branchKinds]);');
 	lines.push('    if (leaf !== undefined) return leaf as T;');
 	lines.push(
 		'    if (branchKinds.length === 0 && leafKinds.length === 1) return _resolveOneLeaf<T>(v, leafKinds[0]!);'
@@ -1209,6 +1257,10 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push(
 		'    throw new Error(`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(", ")}]: ${JSON.stringify(v)}`);'
 	);
+	lines.push('  }');
+	lines.push('  if (typeof v === "string") {');
+	lines.push('    const texts = _TEXT_KINDS_BY_RANK.filter((kind) => leafKinds.includes(kind) || branchKinds.includes(kind));');
+	lines.push('    if (texts.length > 0) throw new Error(`_resolveOne: ${JSON.stringify(v)} matches none of [${texts.join(", ")}]`);');
 	lines.push('  }');
 	lines.push('  return v as T;');
 	lines.push('}');
@@ -1386,7 +1438,7 @@ function emitResolverHelpers(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
-	const registryEntries = buildLeafRegistryEntries(nodeMap, kindEntries);
+	const { entries: registryEntries, textChecks } = buildLeafRegistryEntries(nodeMap, kindEntries);
 
 	lines.push('// --- Loose-input resolver helpers (see C6-prereq) ---');
 	lines.push('interface _LeafEntry {');
@@ -1401,12 +1453,34 @@ function emitResolverHelpers(
 	lines.push(`const _AFFIXED_KINDS: ReadonlySet<string> = new Set(${JSON.stringify(affixed)});`);
 	lines.push('');
 
-	lines.push('function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {');
-	lines.push('  for (const kind of kinds) {');
-	lines.push('    const entry = _leafRegistry[kind];');
-	lines.push('    if (!entry) continue;');
-	lines.push('    if (entry.values && entry.values.includes(v)) return entry.factory(v);');
-	lines.push('    if (entry.pattern && entry.pattern.test(v)) return entry.factory(v);');
+	lines.push('function _buildGuardedText(v: string, kind: string): AnyNodeData | number {');
+	lines.push('  const entry = _leafRegistry[kind]!;');
+	lines.push('  if (entry.values !== undefined && !entry.values.includes(v)) {');
+	lines.push('    throw new Error(`${JSON.stringify(v)} is not the text of ${kind}: expected one of ${JSON.stringify(entry.values)}`);');
+	lines.push('  }');
+	lines.push('  if (entry.pattern !== undefined && !entry.pattern.test(v)) {');
+	lines.push('    throw new Error(`${JSON.stringify(v)} is not a ${kind}: it does not match ${entry.pattern}`);');
+	lines.push('  }');
+	lines.push('  return entry.factory(v);');
+	lines.push('}');
+	lines.push('');
+	lines.push(`const _TEXT_KINDS_BY_RANK: readonly string[] = ${JSON.stringify(textChecks.map((check) => check.kind))};`);
+	lines.push('');
+	const envelopeTextLeaves = [...nodeMap.nodes]
+		.map(([kind, node]) => [kind, transparentEnvelopeTextLeaves(node, nodeMap)] as const)
+		.filter(([, leaves]) => leaves.length > 0);
+	lines.push('const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {');
+	for (const [kind, leaves] of envelopeTextLeaves) lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(leaves)},`);
+	lines.push('};');
+	lines.push('');
+	lines.push('function _resolveBareText(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {');
+	lines.push('  for (const kind of _TEXT_KINDS_BY_RANK) {');
+	lines.push('    const direct = kinds.includes(kind);');
+	lines.push('    const envelope = direct ? undefined : kinds.find((k) => _ENVELOPE_TEXT_LEAVES[k]?.includes(kind) === true && _isFromKind(k));');
+	lines.push('    if (!direct && envelope === undefined) continue;');
+	lines.push('    const entry = _leafRegistry[kind]!;');
+	lines.push('    if (!(entry.values !== undefined ? entry.values.includes(v) : entry.pattern?.test(v) === true)) continue;');
+	lines.push('    return envelope !== undefined && _isFromKind(envelope) ? _resolveByKind(envelope, entry.factory(v)) : entry.factory(v);');
 	lines.push('  }');
 	lines.push('  return undefined;');
 	lines.push('}');
@@ -1469,6 +1543,12 @@ function emitResolverHelpers(
 	for (const kind of bareAcceptClosure(nodeMap, kindEntries).keys()) {
 		if (!stringCapable.includes(kind) && forwardsBareString(kind, nodeMap)) stringCapable.push(kind);
 	}
+	const branchByText = new Map<string, string>();
+	for (const [text, k] of byText) {
+		const prior = branchByText.get(text);
+		if (prior !== undefined) throw new Error(`from: keyword text ${JSON.stringify(text)} builds both '${prior}' and '${k}'; a bare keyword must name one branch`);
+		branchByText.set(text, k);
+	}
 	lines.push('const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {');
 	for (const [text, k] of byText) lines.push(`  ${JSON.stringify(text)}: ${JSON.stringify(k)},`);
 	lines.push('};');
@@ -1524,10 +1604,7 @@ function emitResolverHelpers(
 	lines.push('    const scalar = _resolveScalar(v);');
 	lines.push('    if (scalar !== undefined) return scalar as T;');
 	lines.push('  }');
-	lines.push('  if (typeof v === "string") {');
-	lines.push('    const e = _leafRegistry[kind];');
-	lines.push('    if (e !== undefined) return e.factory(v) as T;');
-	lines.push('  }');
+	lines.push('  if (typeof v === "string" && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as T;');
 	lines.push('  if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {');
 	lines.push('    const { kind: k, ...rest } = v;');
 	lines.push('    const kn = _kindNameOf(k);');
@@ -1730,16 +1807,8 @@ export class FromEmitter implements CodegenEmitter<string> {
 					];
 				}
 			}
-			if (!/\bDelimiter\./.test(body)) {
-				if (l === `import { Delimiter } from './types.js';`) return [];
-				l = l.replace(`, Delimiter } from './types.js';`, ` } from './types.js';`);
-			}
-			if (l.endsWith(`} from '@sittir/types';`)) {
-				const used = TYPES_IMPORT_OPTIONAL.filter((name) => new RegExp(`\\b${name}\\b`).test(body));
-				return [`import type { ${[TYPES_IMPORT_ALWAYS, ...used].join(', ')} } from '@sittir/types';`];
-			}
 			return [l];
 		});
-		return pruned.join('\n');
+		return pruneUnusedImports(pruned, ['Delimiter', ...TYPES_IMPORT_OPTIONAL]).join('\n');
 	}
 }

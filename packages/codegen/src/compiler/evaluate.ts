@@ -11,7 +11,7 @@ import {
 	SEQ,
 	STRING,
 	SYMBOL,
-	TOKEN,
+	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
 import type {
@@ -33,7 +33,7 @@ import { normalizeEnumMembers } from '../dsl/rule-metadata.ts';
 import { structuralBuilder } from '../dsl/builders.ts';
 import type { RawGrammar, DesugarDivergenceEvent, RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
-import { isComplexBody, isNonInlinableLeafShape, isParserHiddenName } from '../dsl/rule-patterns.ts';
+import { isComplexBody } from '../dsl/rule-patterns.ts';
 import { collectOrphanedRules } from '../util/reachable-rules.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
@@ -41,7 +41,7 @@ import type { WireContext, RefineForm } from '../dsl/wire/wire.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
 
-interface SymbolRuleWithRef extends SymbolRule<'evaluate'> {
+export interface SymbolRuleWithRef extends SymbolRule<'evaluate'> {
 	readonly _ref?: SymbolRef;
 }
 
@@ -87,7 +87,7 @@ function choice(...members: Input[]): Rule<'evaluate'> {
 	}
 
 	if (normalized.length > 0 && normalized.every((m) => m.type === STRING)) {
-		return normalizeEnumMembers(normalized as StringRule<'evaluate'>[], { author: 'grammar' });
+		return normalizeEnumMembers(normalized as StringRule<'evaluate'>[]);
 	}
 
 	return structuralBuilder.choice(...normalized);
@@ -398,37 +398,11 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		expectDiagnostics,
 		expectTestFailures,
 		orphanedSyntheticGroups,
+		automaticVariants: wireCtx?.automaticVariants,
 		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined,
 		desugarDivergences: ctx.desugarDivergences.length > 0 ? [...ctx.desugarDivergences] : undefined
 	} satisfies RawGrammar;
 	return { grammar: grammarResult };
-}
-
-const canonicalWalker = new RuleWalker<Rule<'evaluate'>>({});
-
-function canonicalizeRawGrammar(raw: RawGrammar): RawGrammar {
-	const inlineNames = new Set(raw.inline);
-	const supertypes = new Set(raw.supertypes);
-	const stampRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
-		if (rule.type === ALIAS) {
-			return rule.content.type === SYMBOL && rule.content.inline !== false
-				? { ...rule, content: { ...rule.content, inline: false } }
-				: rule;
-		}
-		if (rule.type !== SYMBOL) return rule;
-		const hidden = isParserHiddenName(rule.name);
-		const target = raw.rules[rule.name];
-		const boundary =
-			supertypes.has(rule.name) ||
-			(!inlineNames.has(rule.name) && target !== undefined && isNonInlinableLeafShape(target));
-		const inline = !boundary && (hidden || inlineNames.has(rule.name));
-		return rule.inline === inline ? rule : { ...rule, inline };
-	};
-	const rules: Record<string, Rule<'evaluate'>> = {};
-	for (const [name, rule] of Object.entries(raw.rules)) {
-		rules[name] = { ...stampRef(canonicalWalker.map(rule, stampRef)), hidden: isParserHiddenName(name) };
-	}
-	return { ...raw, rules, visibleInlineNames: raw.inline.filter((name) => !name.startsWith('_')) };
 }
 
 function getWireContext(opts: GrammarOptions): WireContext | undefined {
@@ -907,6 +881,10 @@ function appendDedup(sink: string[], value: string): void {
 	if (!sink.includes(value)) sink.push(value);
 }
 
+function baseNameSymbols(names: readonly unknown[] | undefined): unknown[] {
+	return (names ?? []).map((name) => (typeof name === 'string' ? sym(name) : name));
+}
+
 function appendCallbackMetadataNames(sink: string[], result: unknown): void {
 	if (!Array.isArray(result)) return;
 	for (const item of result) {
@@ -963,7 +941,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 
 	if (opts.supertypes) {
 		const $ = createProxy('_supertypes_', refs);
-		const baseSupertypes = baseGrammar?.supertypes ?? [];
+		const baseSupertypes = baseNameSymbols(baseGrammar?.supertypes);
 		appendCallbackMetadataNames(sinks.supertypes, opts.supertypes.call($, $, baseSupertypes));
 	}
 
@@ -975,13 +953,13 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 
 	if (opts.inline) {
 		const $ = createProxy('_inline_', refs);
-		const baseInline = baseGrammar?.inline ?? [];
+		const baseInline = baseNameSymbols(baseGrammar?.inline);
 		appendCallbackMetadataNames(sinks.inline, opts.inline.call($, $, baseInline));
 	}
 
 	if (opts.conflicts) {
 		const $ = createProxy('_conflicts_', refs);
-		const baseConflicts = baseGrammar?.conflicts ?? [];
+		const baseConflicts = (baseGrammar?.conflicts ?? []).map((group) => baseNameSymbols(group));
 		const result = opts.conflicts.call($, $, baseConflicts);
 		if (Array.isArray(result)) {
 			for (const c of result) {
@@ -1039,7 +1017,7 @@ export async function evaluate(entryPath: string): Promise<RawGrammar> {
 		const g = globalThis as Record<string, unknown>;
 		const savedGlobals = saveAndInjectDslGlobals(g);
 		try {
-			return canonicalizeRawGrammar(await importAndExtractGrammar(entryPath));
+			return await importAndExtractGrammar(entryPath);
 		} finally {
 			restoreSavedGlobals(g, savedGlobals);
 		}

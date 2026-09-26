@@ -1,0 +1,12 @@
+{
+	"repository": "https://github.com/tree-sitter/tree-sitter-typescript",
+	"version": "0.23.2",
+	"ref": "v0.23.2",
+	"commit": "f975a621f4e7f532fe322e13c4f79495e0a7b2e7",
+	"files": [
+		"declarations.txt",
+		"expressions.txt",
+		"functions.txt",
+		"types.txt"
+	]
+}

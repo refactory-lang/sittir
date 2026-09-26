@@ -25,7 +25,15 @@ import {
 import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
-import { findEntryForKindName, findEntryForLiteralText } from '../generated-metadata.ts';
+import {
+	findEntryForKindName,
+	findEntryForLiteralText,
+	findOwnKindEntry,
+	isAliasedHiddenStorage,
+	surfaceHiddenOf
+} from '../generated-metadata.ts';
+import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
+import { armNameOf, undisplayedKindAddress } from '../../dsl/arm-names.ts';
 import { tokenToName } from '../normalize.ts';
 import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
 import { assertNever } from '../../polymorph-variant.ts';
@@ -127,6 +135,7 @@ export type ValueStorage =
 			readonly kindId?: number;
 			readonly text: string;
 			readonly immediate?: boolean;
+			readonly enumKind?: string;
 	  }
 	| { readonly via: 'kindId'; readonly kind: string; readonly members: readonly EnumMemberStorage[] }
 	| { readonly via: 'literal'; readonly text: string; readonly immediate?: boolean };
@@ -147,7 +156,13 @@ export function isTextStorage(storage: ValueStorage): storage is TextValueStorag
 export function textStoragesOf(storage: ValueStorage): readonly TextValueStorage[] {
 	if (isTextStorage(storage)) return [storage];
 	if (storage.via === 'kindId') {
-		return storage.members.map((m) => ({ via: 'kindId', kind: m.kind, kindId: m.kindId, text: m.text }));
+		return storage.members.map((m) => ({
+			via: 'kindId',
+			kind: m.kind,
+			kindId: m.kindId,
+			text: m.text,
+			enumKind: storage.kind
+		}));
 	}
 	return [];
 }
@@ -166,7 +181,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly variant?: string;
 	readonly variantOf?: string;
 	readonly default?: true;
-	readonly spliced?: true;
+	readonly flattened?: true;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -491,9 +506,7 @@ function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledN
 				});
 				const prev = setUnionSlotRouting(false);
 				try {
-					slots = mergeSlotsByName(
-						collectSlots(rule, kindName, ctx, undefined, undefined, ctx?.diagnostics)
-					);
+					slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx?.diagnostics));
 				} finally {
 					setUnionSlotRouting(prev);
 					drainSynthesizedUnionChoiceIds();
@@ -569,6 +582,15 @@ export function buildParseKindRuleSignatures<T extends AnyRule>(
 
 export function storageKindOfRef(node: AssembledNode | UnresolvedRef): string {
 	return isUnresolvedRef(node) ? node.name : node.kind;
+}
+
+export function surfaceHiddenOfRef(node: AssembledNode | UnresolvedRef): boolean {
+	return isUnresolvedRef(node) ? surfaceHiddenOf(undefined, node.name) : node.surfaceHidden;
+}
+
+export function isSurfaceHiddenIn(kind: string, ctx: NodesCtx): boolean {
+	const node = ctx.nodes.get(kind);
+	return node === undefined ? surfaceHiddenOf(undefined, kind) : node.surfaceHidden;
 }
 
 export function storageKindOfValue(value: NodeOrTerminal): string | undefined {
@@ -699,16 +721,35 @@ export interface ArmFacts {
 	readonly variant?: string;
 	readonly variantOf?: string;
 	readonly default?: true;
-	readonly spliced?: true;
+	readonly flattened?: true;
 }
 
-export function armFactsOf(rule: { annotations?: RuleAnnotations }): ArmFacts {
-	const annotations = rule.annotations;
+function literalArmDisplayOf(resolvedKind: string, ctx: DeriveCtx | undefined): string {
+	const entry = ctx?.kindEntries === undefined ? undefined : findOwnKindEntry(ctx.kindEntries, resolvedKind);
+	return entry?.keyword === true && entry.literalText !== undefined
+		? entry.literalText
+		: undisplayedKindAddress(resolvedKind);
+}
+
+export function armFactsOf(
+	arm: { readonly annotations?: RuleAnnotations; readonly resolvedKind?: string },
+	ctx: DeriveCtx | undefined
+): ArmFacts {
+	const { annotations, resolvedKind } = arm;
 	if (annotations === undefined) return {};
+	const literalName =
+		annotations.variantOf === undefined || resolvedKind === undefined
+			? undefined
+			: armNameOf(
+					annotations.variantOf,
+					literalArmDisplayOf(resolvedKind, ctx),
+					ctx?.simplifiedRules?.[annotations.variantOf]?.type === SUPERTYPE
+				);
+	const variant = annotations.variant ?? literalName;
 	return {
-		...(annotations.variant === undefined ? {} : { variant: annotations.variant, variantOf: annotations.variantOf }),
+		...(variant === undefined ? {} : { variant, variantOf: annotations.variantOf }),
 		...(annotations.default === true ? { default: true as const } : {}),
-		...(annotations.spliced === true ? { spliced: true as const } : {})
+		...(annotations.flattened === true ? { flattened: true as const } : {})
 	};
 }
 
@@ -736,7 +777,10 @@ export function deriveValuesForRule(
 ): NodeOrTerminal[] {
 	switch (rule.type) {
 		case SYMBOL: {
-			const armFacts = armFactsOf(rule);
+			const armFacts = armFactsOf(
+				{ annotations: rule.annotations, resolvedKind: rule.literal === undefined ? undefined : rule.name },
+				ctx
+			);
 			if (rule.literal !== undefined) {
 				if (rule.kindId !== undefined) {
 					return [
@@ -781,7 +825,7 @@ export function deriveValuesForRule(
 			const entry = findEntryForKindName(ctx?.kindEntries ?? [], rule.name);
 			const parseEntry =
 				rule.aliasedTo === undefined ? entry : findEntryForKindName(ctx?.kindEntries ?? [], rule.aliasedTo);
-						return [
+			return [
 				{
 					node: { kind: 'unresolved-ref', name: rule.name },
 					storageKindId: entry?.id,
@@ -795,14 +839,16 @@ export function deriveValuesForRule(
 		case SUPERTYPE:
 			return rule.subtypes.map((subRef) => {
 				const name = subRef.name;
+				const armFacts = armFactsOf(subRef, ctx);
 				const display = aliasEnvelopeValueOf(subRef, ctx, multiplicity);
-				if (display !== undefined) return display;
+				if (display !== undefined) return { ...display, ...armFacts };
 				if (subRef.kindId !== undefined) {
 					return {
 						node: { kind: 'unresolved-ref' as const, name },
 						storageKindId: subRef.kindId,
 						parseKind: { kind: 'unresolved-ref' as const, name: subRef.aliasedTo ?? name },
 						parseKindId: subRef.aliasedToId ?? subRef.kindId,
+						...armFacts,
 						multiplicity
 					};
 				}
@@ -812,14 +858,14 @@ export function deriveValuesForRule(
 					storageKindId: entry?.id,
 					parseKind: { kind: 'unresolved-ref' as const, name: subRef.aliasedTo ?? name },
 					parseKindId: subRef.aliasedToId ?? entry?.parseId ?? entry?.id,
+					...armFacts,
 					multiplicity
 				};
 			});
 		case STRING:
 		case PATTERN: {
-			const armFacts = armFactsOf(rule);
 			if (rule.type === PATTERN && rule.fieldName !== undefined) {
-				return [{ pattern: rule.value, ...armFacts, multiplicity }];
+				return [{ pattern: rule.value, ...armFactsOf(rule, ctx), multiplicity }];
 			}
 			if (rule.resolvedKindId !== undefined) {
 				const entry = findKindEntryById({ entries: ctx?.kindEntries ?? [], id: rule.resolvedKindId });
@@ -831,7 +877,7 @@ export function deriveValuesForRule(
 						resolvedKindId: rule.resolvedKindId,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
 						parseKindId: entry?.parseId ?? rule.resolvedKindId,
-						...armFacts,
+						...armFactsOf({ annotations: rule.annotations, resolvedKind: rk }, ctx),
 						multiplicity
 					}
 				];
@@ -845,7 +891,7 @@ export function deriveValuesForRule(
 					resolvedKindId: entry?.id,
 					parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
 					parseKindId: entry?.parseId ?? entry?.id,
-					...armFacts,
+					...armFactsOf({ annotations: rule.annotations, resolvedKind: rk }, ctx),
 					multiplicity
 				}
 			];
@@ -866,7 +912,7 @@ export function deriveValuesForRule(
 						resolvedKindId: entry?.id,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
 						parseKindId: entry?.parseId ?? entry?.id,
-						...armFactsOf(m),
+						...armFactsOf({ annotations: m.annotations, resolvedKind: rk }, ctx),
 						multiplicity
 					};
 				});
@@ -992,6 +1038,7 @@ export type ModelType =
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kind: string;
 	readonly kindEntry?: GeneratedKindEntry;
+	readonly display: DisplayStamp;
 	readonly wordMatcher: RegExp | undefined;
 	typeName: string;
 	factoryName?: string;
@@ -1052,6 +1099,7 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 			hidden?: boolean;
 			kindEntries?: readonly GeneratedKindEntry[];
 			wordMatcher?: RegExp;
+			rowless?: RowlessDisplaySource;
 		}
 	) {
 		this.kind = kind;
@@ -1061,11 +1109,16 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		this.typeName = derived.typeName;
 		this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
 		this.irKey = opts?.irKey ?? derived.irKey;
-		this.kindEntry = findEntryForKindName(opts?.kindEntries ?? [], kind);
+		this.kindEntry = findOwnKindEntry(opts?.kindEntries ?? [], kind);
+		this.display = stampDisplay(kind, this.kindEntry, opts?.kindEntries ?? [], opts?.rowless ?? 'phantom');
 	}
 
 	get hidden(): boolean {
 		return this.factoryName === undefined;
+	}
+
+	get surfaceHidden(): boolean {
+		return surfaceHiddenOf(this.kindEntry, this.kind);
 	}
 
 	get transparent(): boolean {
@@ -1711,7 +1764,9 @@ export class AssembledAlias extends AssembledEnvelope<RenderRule, 'alias'> {
 	constructor(kind: string, simplifiedRule: SimplifiedRule, renderRule: RenderRule, opts?: CompoundOpts) {
 		super(kind, simplifiedRule, renderRule, opts);
 		if (opts?.aliasTypeId === undefined) {
-			throw new Error(`AssembledAlias: '${kind}' has no alias type id — its display has no alias row in the kind catalog`);
+			throw new Error(
+				`AssembledAlias: '${kind}' has no alias type id — its display has no alias row in the kind catalog`
+			);
 		}
 		this.aliasTypeId = opts.aliasTypeId;
 	}
@@ -1760,7 +1815,8 @@ export function compoundModelTypeFor(
 	if (body.type === SEQ && body.members.length === 0) return 'envelope';
 	if (body.type === CHOICE && (body.multiplicity === 'array' || body.multiplicity === 'nonEmptyArray'))
 		return 'envelope';
-	if (body.type === CHOICE && body.members.length > 0 && body.members.every(isLeafShapedMember)) return 'polymorph';
+	if (body.type === CHOICE && body.members.length > 0 && body.members.every(isLeafShapedMember))
+		return isAliasedHiddenStorage(kind, ctx.kindEntries) ? 'envelope' : 'polymorph';
 	return 'branch';
 }
 
@@ -1784,7 +1840,7 @@ export function isAliasEnvelopeKind(display: string, ctx: CompoundModelTypeCtx):
 	if (findEntryForKindName(ctx.kindEntries, display)?.alias !== true) return false;
 	return refs.every((ref) => {
 		const storage = findEntryForKindName(ctx.kindEntries, ref.name);
-		return storage === undefined || storage.alias === true || storage.hidden !== true;
+		return storage === undefined || !surfaceHiddenOf(storage, ref.name);
 	});
 }
 export function aliasEnvelopeOf(ref: { readonly aliasedTo?: string }, ctx: CompoundModelTypeCtx): string | undefined {
@@ -1802,7 +1858,6 @@ export abstract class AssembledLeaf<R extends AnyRule = RenderRule> extends Asse
 	get tokenized(): boolean {
 		return 'tokenized' in this.rule && this.rule.tokenized === true;
 	}
-
 }
 
 export class AssembledPattern extends AssembledLeaf<RenderRule> {
@@ -1893,7 +1948,11 @@ export class AssembledPunctuation extends AssembledLeaf<StringRule> {
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 
-	constructor(kind: string, rule: StringRule, opts?: { hidden?: boolean; kindEntries?: readonly GeneratedKindEntry[] }) {
+	constructor(
+		kind: string,
+		rule: StringRule,
+		opts?: { hidden?: boolean; kindEntries?: readonly GeneratedKindEntry[] }
+	) {
 		super(kind, rule, { hidden: opts?.hidden ?? true, kindEntries: opts?.kindEntries });
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
@@ -2005,8 +2064,13 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 	transitiveParseKinds?: readonly NodeOrTerminal[];
 	optionDefaultArm?: string;
 
-	constructor(kind: string, rule: SupertypeRule | ChoiceRule, subtypes: readonly SubtypeRef[]) {
-		super(kind, rule, { hidden: true });
+	constructor(
+		kind: string,
+		rule: SupertypeRule | ChoiceRule,
+		subtypes: readonly SubtypeRef[],
+		opts?: { kindEntries?: readonly GeneratedKindEntry[] }
+	) {
+		super(kind, rule, { hidden: true, kindEntries: opts?.kindEntries, rowless: 'supertype' });
 		this.#subtypes = subtypes.map(
 			({ name, storageKindId, ...armFacts }): NodeOrTerminal => ({
 				node: { kind: 'unresolved-ref', name },
@@ -2027,7 +2091,9 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 
 	get variantSubtypes(): readonly NodeBackedRef[] | undefined {
 		const refs = this.#subtypes.filter(isNodeRef);
-		return refs.length >= 2 && refs.every((ref) => ref.variantOf === this.kind && ref.variant !== undefined) ? refs : undefined;
+		return refs.length >= 2 && refs.every((ref) => ref.variantOf === this.kind && ref.variant !== undefined)
+			? refs
+			: undefined;
 	}
 
 	get subtypeParseNames(): Readonly<Record<string, string>> | undefined {
@@ -2102,6 +2168,10 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 		return this.rule.separator?.terminated === true;
 	}
 
+	get singleElementNeedsTrailing(): boolean {
+		return this.terminatedSeparator && this.trailingDelimiter === 'optional';
+	}
+
 	override get separator(): string | undefined {
 		return extractSeparatorString(this.rule.separator);
 	}
@@ -2169,7 +2239,11 @@ export function leftmostTerminalImmediate(rule: RenderRule | undefined, ctx: Lef
 	return coreLeftmostImmediate(rule, ctx);
 }
 
-export function isBoundaryLeftImmediate(members: readonly RenderRule[], fromIndex: number, ctx: LeftmostWalkCtx): boolean {
+export function isBoundaryLeftImmediate(
+	members: readonly RenderRule[],
+	fromIndex: number,
+	ctx: LeftmostWalkCtx
+): boolean {
 	for (let i = fromIndex; i < members.length; i++) {
 		const member = members[i]!;
 		if (!coreLeftmostImmediate(member, { rules: ctx.rules, visiting: new Set(ctx.visiting) })) return false;

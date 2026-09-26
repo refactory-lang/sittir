@@ -1,11 +1,14 @@
 import { type Command, Option } from 'commander';
+import { allGrammars } from '@sittir/codegen/grammars';
 
-/** Grammar names accepted across the CLI. */
-export const GRAMMARS = ['rust', 'typescript', 'python'] as const;
-
-/** Add `-g, --grammar <name>` (choices: rust|typescript|python). Returns the command for chaining. */
+/** Add `-g, --grammar <name>` (choices: every grammar package on disk). Returns the command for chaining. */
 export function withGrammar(cmd: Command): Command {
-	return cmd.addOption(new Option('-g, --grammar <name>', 'Grammar to operate on').choices([...GRAMMARS]));
+	return cmd.addOption(new Option('-g, --grammar <name>', 'Grammar to operate on').choices([...allGrammars()]));
+}
+
+/** Add `-g, --grammar <name...>` (each value one of every grammar package on disk). Returns the command for chaining. */
+export function withGrammars(cmd: Command): Command {
+	return cmd.addOption(new Option('-g, --grammar <name...>', 'Grammar(s) to operate on').choices([...allGrammars()]));
 }
 
 /** Add `-r, --recursive` boolean flag, default false. */

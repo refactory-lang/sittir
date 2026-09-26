@@ -683,6 +683,40 @@ describe('wire()', () => {
 	});
 });
 
+describe('a patch keyed by a groups: or injects: declaration', () => {
+	beforeAll(() => {
+		installFakeDsl();
+	});
+	afterAll(() => {
+		restoreFakeDsl();
+	});
+
+	const pair = ($: Record<string, unknown>) => ({ type: 'SEQ', members: [{ type: 'STRING', value: '(' }, $.x, { type: 'STRING', value: ')' }] });
+
+	it('throws when the patch names the mint', () => {
+		expect(() =>
+			wire<GrammarJson>({ name: 'test', rules: {}, groups: { paren_x: pair as never }, patches: { _paren_x: { 1: field('inner') } } })
+		).toThrow(/patches: '_paren_x' names the groups: declaration 'paren_x'/);
+	});
+
+	it('throws when the patch names the groups: key', () => {
+		expect(() =>
+			wire<GrammarJson>({ name: 'test', rules: {}, injects: { paren_x: pair as never }, patches: { paren_x: { 1: field('inner') } } })
+		).toThrow(/patches: 'paren_x' names the injects: declaration 'paren_x'/);
+	});
+
+	it('still applies a patch on an ordinary rule beside a groups: declaration', () => {
+		const wired = wire<GrammarJson>({
+			name: 'test',
+			rules: { call: () => ({ type: 'SEQ', members: [{ type: 'SYMBOL', name: 'callee' }, { type: 'SYMBOL', name: 'args' }] }) },
+			groups: { paren_x: pair as never },
+			patches: { call: { 0: field('function') } }
+		});
+		const call = evaluateWiredRules(wired.rules).call as { members: unknown[] };
+		expect(call.members[0]).toMatchObject({ type: 'FIELD', name: 'function' });
+	});
+});
+
 // Silence unused-import warnings if transform/variant aren't referenced
 // above — they're kept imported to prove wire.ts plays well with them.
 void transform;

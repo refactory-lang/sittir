@@ -9,7 +9,8 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve as resolvePath } from 'node:path';
-import { runFrom, runRt, runCoverage, runFactory, type Grammar, type Backend, type FactorySurface } from './run.ts';
+import { runFrom, runRt, runCoverage, runFactory, type Backend, type FactorySurface } from './run.ts';
+import { isGrammar, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { readTestHistory } from './test-history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
@@ -25,7 +26,6 @@ import {
 	type ValidationReportEntry
 } from './validate/validation-report.ts';
 
-export const ALL_GRAMMARS: Grammar[] = ['rust', 'typescript', 'python'];
 /**
  * The `validate` CLI namespace only ever validates against native — js/all
  * backend selection was removed (see `tool bench`/`tool probe-kind` for the
@@ -48,10 +48,10 @@ type ValidateReadRenderParseFn = (
 	}
 ) => Promise<unknown>;
 
-/** Parse grammar args; unknown names are silently dropped. Defaults to all three grammars. */
-export function resolveGrammars(args: string[]): Grammar[] {
-	const valid = args.filter((a): a is Grammar => ALL_GRAMMARS.includes(a as Grammar));
-	return valid.length ? valid : ALL_GRAMMARS;
+/** Parse grammar args; unknown names are silently dropped. Defaults to the stable grammars. */
+export function resolveGrammars(args: readonly string[]): readonly GrammarName[] {
+	const valid = args.filter(isGrammar);
+	return valid.length ? valid : stableGrammars();
 }
 
 export function resolveBackends(mode: CliBackend): Backend[] {
@@ -63,7 +63,7 @@ export function formatBackendLabel(backend: Backend): 'native' {
 }
 
 export interface GrammarCounts {
-	readonly grammar: Grammar;
+	readonly grammar: GrammarName;
 	readonly backend: Backend;
 	readonly from: Awaited<ReturnType<typeof runFrom>>;
 	readonly coverage: ReturnType<typeof runCoverage>;
@@ -73,7 +73,7 @@ export interface GrammarCounts {
 	readonly irRenderParse: Awaited<ReturnType<typeof runFactory>>;
 }
 
-export async function collectGrammarCounts(grammar: Grammar, backend: Backend): Promise<GrammarCounts> {
+export async function collectGrammarCounts(grammar: GrammarName, backend: Backend): Promise<GrammarCounts> {
 	// Guard: a `.node` older than its generated render module means the binary
 	// wasn't rebuilt after the last regen, so these counts would not be true
 	// native. Warn loudly rather than mislead.
@@ -105,10 +105,10 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		counts;
 	const lines = [
 		`${grammar}/${formatBackendLabel(backend)}:`,
-		`  fromPass=${from.pass}    fromTotal=${from.total}`,
+		`  fromPass=${from.pass}    fromTotal=${from.total}    fromTrivia=${from.trivia.length}`,
 		`  covPass=${coverage.pass}    covTotal=${coverage.total}`,
-		`  read-render-parsePass=${readRenderParse.pass}    read-render-parseTotal=${readRenderParse.total}    read-render-parseAstMatchPass=${readRenderParse.astMatchPass}`,
-		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}`,
+		`  read-render-parsePass=${readRenderParse.pass}    read-render-parseTotal=${readRenderParse.total}    read-render-parseAstMatchPass=${readRenderParse.astMatchPass}    read-render-parseTrivia=${readRenderParse.trivia.length}`,
+		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}    read-render-parse-shallowTrivia=${readRenderParseShallow.trivia.length}`,
 		`  factory-render-parsePass=${factoryRenderParse.pass}    factory-render-parseTotal=${factoryRenderParse.total}    factory-render-parseAstMatchPass=${factoryRenderParse.astMatchPass}`,
 		`  ir-render-parsePass=${irRenderParse.pass}    ir-render-parseTotal=${irRenderParse.total}    ir-render-parseAstMatchPass=${irRenderParse.astMatchPass}`
 	];
@@ -191,13 +191,16 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 		factoryRenderParseAstMatchPass: factoryRenderParse.astMatchPass,
 		irRenderParsePass: irRenderParse.pass,
 		irRenderParseTotal: irRenderParse.total,
-		irRenderParseAstMatchPass: irRenderParse.astMatchPass
+		irRenderParseAstMatchPass: irRenderParse.astMatchPass,
+		fromTrivia: from.trivia.length,
+		readRenderParseTrivia: readRenderParse.trivia.length,
+		readRenderParseShallowTrivia: readRenderParseShallow.trivia.length
 	};
 }
 
 /** Print top-8 error buckets from factory-render-parse for one grammar, on the raw or the `ir` surface. */
 export async function grammarProbeFactory(
-	grammar: Grammar,
+	grammar: GrammarName,
 	backend: Backend,
 	surface: FactorySurface = 'raw'
 ): Promise<void> {
@@ -238,7 +241,7 @@ export function parseLastIsolateProgress(stderr: string): string | null {
  * Summarize the isolation run outcome for one grammar into a printable string.
  */
 export function formatIsolateGrammarSummary(
-	grammar: Grammar,
+	grammar: GrammarName,
 	status: 'ok' | 'crashed' | 'error',
 	output: string,
 	lastKind: string | null,
@@ -274,7 +277,7 @@ export function resolveCliEntryArgs(): { tsxBin: string; cliPath: string } {
  * Spawn a child process to run native validation for a single grammar.
  * Returns the child's combined output + metadata.
  */
-export async function spawnIsolatedGrammarWorker(grammar: Grammar): Promise<{
+export async function spawnIsolatedGrammarWorker(grammar: GrammarName): Promise<{
 	status: 'ok' | 'crashed' | 'error';
 	stdout: string;
 	stderr: string;
@@ -351,7 +354,7 @@ export async function spawnIsolatedGrammarWorker(grammar: Grammar): Promise<{
  * with how `runCountsCli` already surfaces whole-grammar collection
  * failures as synthetic entries rather than throwing out of the report loop.
  */
-export function readGrammarDiagnosticsEntries(grammar: Grammar): GrammarDiagnosticEntry[] {
+export function readGrammarDiagnosticsEntries(grammar: GrammarName): GrammarDiagnosticEntry[] {
 	const path = resolvePath(join('packages', grammar, '.sittir', 'grammar-diagnostics.json'));
 	if (!existsSync(path)) return [];
 	try {
@@ -404,8 +407,21 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 		r.entry && r.kind ? `${r.entry} (${r.kind})` : (r.kind ?? r.entry ?? '');
 	const pushSkips = (
 		stage: string,
-		result: { readonly skips?: readonly ValidatorSkip[]; readonly excluded: readonly ValidatorSkip[] }
+		result: {
+			readonly skips?: readonly ValidatorSkip[];
+			readonly excluded: readonly ValidatorSkip[];
+			readonly trivia?: readonly ValidatorSkip[];
+		}
 	): void => {
+		for (const t of result.trivia ?? [])
+			failures.push({
+				...t,
+				stage: `${stage}-trivia`,
+				code: `${stage}-trivia`,
+				severity: 'warning',
+				message: t.reason,
+				label: entryKindLabel(t)
+			});
 		for (const s of result.skips ?? [])
 			failures.push({ ...s, stage: `${stage}-skip`, code: `${stage}-skip`, severity: 'info', message: s.reason, label: entryKindLabel(s) });
 		const excludedByKind = new Map<string, { kind?: string; reason: string; entries: Set<string>; count: number }>();
@@ -552,7 +568,7 @@ export function extractIsolateReportJson(stdout: string): {
  * caller and it never read the existing file first.
  */
 export function writeMergedValidationReport(
-	grammars: readonly Grammar[],
+	grammars: readonly GrammarName[],
 	validatorFailuresByGrammar: Readonly<Record<string, readonly ValidatorDiagnostic[]>>
 ): ValidationReportEntry[] {
 	if (grammars.length === 0) return [];
@@ -584,7 +600,7 @@ export function writeMergedValidationReport(
  * Returns true when the gate passes.
  */
 export function enforceSClassCeilings(
-	grammars: readonly Grammar[],
+	grammars: readonly GrammarName[],
 	entries: readonly ValidationReportEntry[]
 ): boolean {
 	const ceilingsPath = resolvePath(join('packages', 'tools', 'sclass-ceilings.json'));
@@ -855,7 +871,7 @@ export function runTestHistoryCli(args: string[]): void {
 }
 
 export async function runTraceRtCli(
-	grammar: Grammar,
+	grammar: GrammarName,
 	backend: Backend,
 	options: { recursive?: boolean } = {}
 ): Promise<void> {

@@ -25,6 +25,7 @@ import { describe, it, expect } from 'vitest';
 import { generate } from '../../../codegen/src/compiler/generate.ts';
 import { validateReadProjection } from '../validate/read-projection.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
+import { stableGrammars } from '@sittir/codegen/grammars';
 
 /** Deep (recursive-read) floors per grammar. See header for why ONLY these live here. */
 const FLOORS = {
@@ -186,7 +187,7 @@ const OVERRIDE_PARSER_KNOWN_ISSUES: Record<string, Set<string>> = {
 };
 
 describe('read projection — structural', () => {
-	it.each(['python', 'rust', 'typescript'] as const)(
+	it.each(stableGrammars())(
 		'%s: every kind in the corpus passes the structural check',
 		async (grammar) => {
 			const result = await validateReadProjection(grammar);

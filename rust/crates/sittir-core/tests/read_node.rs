@@ -32,6 +32,17 @@ impl ReadModel for TextKinds {
     }
 }
 
+/// No text kinds; the kinds named here keep their anonymous children.
+struct KeepsAnonymous(Vec<u16>);
+impl ReadModel for KeepsAnonymous {
+    fn is_text_kind(&self, _kind: KindId) -> bool {
+        false
+    }
+    fn keeps_anonymous_children(&self, kind: KindId) -> bool {
+        self.0.contains(&kind.0)
+    }
+}
+
 /// Recursively assert that every object-shaped JSON node in `value`
 /// (matching the NodeData wire shape) has only keys in
 /// the de-hoisted NodeData contract. Descends into `_<slot>` values and
@@ -387,4 +398,35 @@ fn find_first_ts_node_by_kind<'a>(
         }
     }
     None
+}
+
+#[test]
+fn a_kind_that_keeps_anonymous_children_reads_its_only_anonymous_child_as_other() {
+    let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+    let source = "fn f() { let _ = async move || async move {}; }";
+    let tree = parse_tree(lang, source);
+    let params = find_first_ts_node_by_kind(tree.root_node(), "closure_parameters")
+        .expect("closure_parameters cst node");
+    let closure_parameters = tree.language().id_for_node_kind("closure_parameters", true);
+    let pipe = tree.language().id_for_node_kind("|", false);
+    let node = read_node(
+        &tree,
+        source,
+        Some(params),
+        Some(0),
+        ReadDepth::Shallow,
+        &KeepsAnonymous(vec![closure_parameters]),
+    );
+    let json = serde_json::to_value(&node).expect("serialize");
+    assert_shape(&json, "closure_parameters");
+    let other = json
+        .get("$other")
+        .and_then(Value::as_array)
+        .expect("the anonymous children stay as $other");
+    let kinds: Vec<u64> = other
+        .iter()
+        .filter_map(|child| child.get("$type").and_then(Value::as_u64))
+        .collect();
+    assert_eq!(kinds, vec![u64::from(pipe), u64::from(pipe)]);
+    assert!(json.get("$text").is_none());
 }

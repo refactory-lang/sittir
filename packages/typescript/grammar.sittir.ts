@@ -18,6 +18,7 @@ function immediateClosingDelimiter(original: unknown) {
 }
 
 const enrichedBase = enrich(base);
+
 export default grammar(
 	enrichedBase,
 	wire(
@@ -253,10 +254,10 @@ export default grammar(
 				number_operator: { '"-"/after': preference('tight'), '"+"/after': preference('tight') },
 
 				object_type_content: {
-					'content:/separator/before': preference('tight'),
-					'content:/separator/after': preference('newline'),
-					'content:/separator/kind': preference('semi'),
-					'content:/delimiter': preference('Delimiter.Trailing')
+					'members:/separator/before': preference('tight'),
+					'members:/separator/after': preference('newline'),
+					'members:/separator/kind': preference('semi'),
+					'members:/delimiter': preference('Delimiter.Trailing')
 				},
 
 				statement_block: { before: preference('space') },
@@ -310,12 +311,17 @@ export default grammar(
 			},
 
 			patches: {
+				decorator: { 1: field('expression') },
+				decorator_parenthesized_expression: { 1: field('expression') },
+				asserts: { 1: field('value') },
+				type_query: { 1: field('expression') },
 				comment: {
 					'1/0/1': regex(/([^*]|\*+[^*\/])*\**/),
 					'1/0/2': { type: 'STRING', value: '*/' } as never,
 					0: variant('line'),
 					1: variant('block')
 				},
+				literal_type: { 0: variant('negative_number') },
 				number: {
 					'1/0/0': field('integer'),
 					'1/0/2': field('fraction'),
@@ -373,15 +379,16 @@ export default grammar(
 
 				// Patch sets apply in order. The second fields the member repeat
 				// AFTER the arm-level paths of the first resolve against the
-				// un-fielded shape: with the `';'` arm alias-identified (see the
-				// `class_body` rules: override), every element — members and stray
-				// semicolons alike — keys into one ordered `_content` array,
-				// retiring this kind's per-kind bucket merge. The third's variant
-				// paths then traverse the `content` field the second added.
+				// un-fielded shape: with the stray `';'` arm minted as its own kind
+				// `empty_member`, every element — members and stray semicolons
+				// alike — keys into one ordered `_content` array. The third's
+				// variant paths then traverse the `content` field the second added.
 				class_body: [
 					{
+						'1/0/4': alias('empty_member'),
 						'1/0/0/2': field('terminator'),
 						'1/0/1/1': field('terminator'),
+						'1/0/3/0': field('member'),
 						'1/0/3/1': field('terminator')
 					},
 					{ 1: field('content') },
@@ -660,6 +667,8 @@ export default grammar(
 
 				class_heritage: { '0': variant('extends_clause'), '1': variant('implements_clause') },
 
+				extends_clause: { '1/0': alias('extends_clause_single'), '1/1/0/1': alias('extends_clause_single') },
+
 				import_clause: {
 					'0': variant('namespace_import'),
 					'1': variant('named_imports'),
@@ -717,8 +726,6 @@ export default grammar(
 				import_require_clause: '#170 — Missing field _content on ImportRequireClauseTransport._source',
 				object_type_content: '#170 (#172-adjacent) — Missing field _content through export-arm transport',
 				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)',
-				'export_statement_default_declaration.defaultKwValue':
-					'a required registered slot on an intermediate child (defaultKw) reached through a nested (multi-level) sub-factory chain has no home in the generated test: .$with only reaches the outer node\'s own slots, and the recursive subFactoryCallArgs builder produces a nested config expression, not a statement a .$with chain could attach to'
 			},
 			rules: {
 				_whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),
@@ -738,7 +745,7 @@ export default grammar(
 
 				template_string: ($, original) => immediateClosingDelimiter(original),
 				template_literal_type: ($, original) => immediateClosingDelimiter(original),
-				template_type: ($) => seq(token.immediate('${'), choice($.primary_type, $.infer_type), '}'),
+				template_type: ($) => seq(token.immediate('${'), field('type', choice($.primary_type, $.infer_type)), '}'),
 				// `template_substitution` sits only in string-interior contexts
 				// (template_string / template_literal_type elements), where any
 				// preceding characters are absorbed into a fragment token — no
@@ -753,18 +760,6 @@ export default grammar(
 				// argument above.
 				template_substitution: ($) => seq(token.immediate('${'), field('expression', $._expressions), '}'),
 
-				// The class-body repeat's bare `';'` arm (stray member-separator
-				// semicolons) has no kind identity, so the read's array capture
-				// cannot materialize it. Alias the STRING in place to the visible
-				// `semicolon` kind — the existing `_semicolon` enum (values
-				// `'\n'`/`';'`) already owns that name and member text, so the
-				// canonical-hidden lookup and enum transport serve it with no new
-				// machinery. An alias on a string renames the node only — no
-				// lexing/LR change — and the arm keeps its position, so the
-				// `class_body` path patches below stay valid. (NOT the one-arg
-				// `alias('semicolon')` patch helper — that synthesizes/reuses a
-				// `_semicolon` RULE for the arm, which would make class bodies
-				// accept automatic semicolons.)
 				// The signature arm of an arrow function is upstream's hidden
 				// `_call_signature`, whose fields inline into the parent. Upstream
 				// typescript already declares that body as the visible kind
@@ -785,26 +780,6 @@ export default grammar(
 					)
 				}),
 
-				class_body: ($, original) => ({
-					...original,
-					members: original.members.map((m) =>
-						(m as { type?: string; content?: { type?: string; members?: unknown[] } }).type === 'REPEAT'
-							? {
-									...m,
-									content: {
-										...(m as { content: { members: unknown[] } }).content,
-										members: (m as { content: { members: unknown[] } }).content.members.map((arm) =>
-											(arm as { type?: string; value?: string }).type === 'STRING' &&
-											(arm as { value?: string }).value === ';'
-												? { type: 'ALIAS', content: arm, named: true, value: 'semicolon' }
-												: arm
-										)
-									}
-								}
-							: m
-					)
-				}),
-
 				_reserved_identifier: ($, original) => {
 					const members = original.members;
 					const last = members[members.length - 1];
@@ -817,21 +792,6 @@ export default grammar(
 						members: flatMembers
 					};
 				},
-
-				// Upstream's `_extends_clause_single` (base grammar.js) carries two
-				// fields (value, type_arguments) but is never aliased visible, so it
-				// falls to the render layer's single-slot inline path and silently
-				// drops `type_arguments`. Alias both occurrences (head + repeat) to a
-				// visible kind so it gets its own slot surface, per the
-				// single-slot-vs-visible rule.
-				extends_clause: ($) =>
-					seq(
-						'extends',
-						seq(
-							alias($._extends_clause_single, $.extends_clause_single),
-							repeat(seq(',', alias($._extends_clause_single, $.extends_clause_single)))
-						)
-					),
 
 				ambient_declaration_global: ($) => seq('global', field('body', $.statement_block)),
 				ambient_declaration_module: ($) =>
@@ -868,7 +828,7 @@ export default grammar(
 						$.index_signature,
 						$.method_signature
 					);
-					return seq(optional(SEP()), seq(member, repeat(seq(SEP(), member))), optional(SEP()));
+					return seq(optional(SEP()), seq(field('members', member), repeat(seq(SEP(), field('members', member)))), optional(SEP()));
 				}
 			},
 			renderAs: (_$) => ({

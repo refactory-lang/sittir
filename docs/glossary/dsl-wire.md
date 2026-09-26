@@ -29,13 +29,22 @@ exist.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSyntheticRule`
 
-```text
-/**
- * Register a hidden-rule body against the active wire context. Returns
- * `true` when the context absorbed the call, `false` when there is no
- * active context (caller falls back to the legacy accumulator).
- */
-```
+Register a hidden-rule body against the active wire context. Returns
+`true` when the context absorbed the call, `false` when there is no
+active context (caller falls back to the legacy accumulator). Stores the
+body unlabelled (`automatic-variants.ts`'s `withoutLabel`): a minted rule's
+own label, if any, belongs on the reference site that names it, not on the
+body the mint deposits.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireDeclareRuleBody`
+
+Records the body a `rule(name, …)` patch declares at `site`
+(`<parent kind>/<patch key>`), as `canonicalRuleText` of the body built from
+the name-neutral `$` (`makeSimpleDollarProxy`). The first declaration claims
+the name; a later one returns `undefined` when its text is equal and the
+first site when it differs, so `resolveRulePlaceholder` can name both places.
+The installed rule builds the real body itself (`declaredRuleFn`); this record
+exists only for the agreement check.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSyntheticInline`
 
@@ -107,6 +116,19 @@ exist.
 /** Current rule kind on the active wire context, or null when inactive. */
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::wireAutomaticVariants`
+
+The current wire context's automatic-variant record (`automaticVariantsOf`).
+`resolveFieldPlaceholder` (strip), `resolveAliasPlaceholder` (relabel) and
+`withVariantAnnotation` (authored claim) read it while a rule fn runs inside
+the context-setting wrapper.
+
+### `packages/codegen/src/dsl/wire/wire.ts::automaticVariantsOf`
+
+A wire context's record. A read with no wire context throws: a label is
+only ever stripped, restamped or claimed inside `wire()` or
+`withWireContext`.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::withWireContext`
 
 ```text
@@ -121,22 +143,9 @@ exist.
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::polymorphVisibleName`
-
-```text
-/**
- * The rule name a polymorph variant mints — also its node kind, since a
- * variant is a visible rule rather than a hidden rule behind an alias.
- *
- * When the parent is itself a hidden rule (name starts with `_`) —
- * e.g. `_for_header` — the leading underscore is stripped so the
- * variant kind (`for_header_lhs`) is visible in the parse tree.
- * Without stripping, tree-sitter would hide it, collapsing the variant.
- *
- * Used by wire's placeholder registration AND transform.ts's
- * variant-resolution paths so both agree on the rule name.
- */
-```
+An optional `base` grammar seeds the new context's `automaticVariants`
+(`getEnrichAutomaticVariants`), so a test exercising DSL helpers against an
+already-enriched grammar sees the same labels `wire()` itself would.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::patchSetsOf`
 
@@ -195,6 +204,9 @@ array form `transform()` consumes as its rest parameter.
  * - `alias('z')` (one-arg) → the hidden `_z`.
  */
 ```
+
+A `rule('w', body)` mints `w` itself, visible or hidden as the author named
+it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireHasDeposit`
 
@@ -257,6 +269,13 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
 
 ### `packages/codegen/src/dsl/wire/wire.ts::injectPlaceholderHiddenRules`
 
+A `rule()` name that is already a rule of the grammar (authored, base, or
+patched), or an external, is refused: installing nothing would silently drop
+the body. The first `rule()` of a name claims it, and later ones with the
+same name are the same rule; `resolveRulePlaceholder` checks their bodies
+agree. A `rule()` name is installed as `declaredRuleFn`, every other mint as
+`makeDeferredContentFn`.
+
 ```text
 /**
  * Walk every patch value in the patches config at wire() time and
@@ -291,6 +310,14 @@ declared `{ absent: true }`, the hoist names the absent case
 `<parent>_${ABSENT_VARIANT_NAME}`, so wire pre-registers that name with the
 others. If the hoist then does not fire, nothing deposits it and orphan
 pruning removes the empty rule in both pipelines.
+
+### `packages/codegen/src/dsl/wire/wire.ts::declaredRuleFn`
+
+The rule function a `rule(name, body)` installs: it builds `body($)` from the
+`$` the executing pipeline hands this rule (tree-sitter's CLI, then sittir's
+evaluate). The body's references are therefore checked by that pipeline's
+own undefined-rule check and attributed to `name`, not to any parent that
+patched a reference to it in.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::makeDeferredContentFn`
 
@@ -571,6 +598,16 @@ pruning removes the empty rule in both pipelines.
  */
 ```
 
+A replaced sub-tree is re-labelled (`relabelledArm`, against the matched
+rule) rather than left bare: a candidate's own site may be an automatically
+or author-labelled arm, and the SYMBOL (or, for an `aliasAs` candidate, the
+ALIAS) it collapses to needs the same label to keep standing in for it.
+Takes the record as a lookup (`automatic`, passed down from
+`buildPatternReplacingFn`) rather than reading the current wire context:
+the pattern-replacing wrapper runs outside the context-setting rule
+wrapper, so no context is current when it executes. The lookup is called
+only when a replacement happens.
+
 #### body
 
 ```text
@@ -595,11 +632,11 @@ pruning removes the empty rule in both pipelines.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::buildPatternReplacingFn`
 
-```text
-/**
- * Wrap a rule fn so its return value has matching pattern sub-trees replaced.
- */
-```
+Wraps a rule fn so its result has every structural match of a candidate
+replaced (`replaceInBodyRt`). The record reaches `replaceInBodyRt` as a
+lookup bound to the wire context (`() => context.automaticVariants`),
+because the wrapped fn runs after the context-setting wrapper has restored
+the previous context.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::withStringGlobalShim`
 
@@ -727,6 +764,9 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
 // the body fn evaluates inside a proper wire context.
 ```
 
+The wire context is required: each injected or grouped rule fn is wrapped in
+it, and the pattern-replacing wrappers read its automatic-variant record.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::RenderAsConfig`
 
 ```text
@@ -823,6 +863,23 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext`
+
+`ruleBodies` holds, per `rule()` name, the canonical text of its declared
+body and the first site that declared it (`wireDeclareRuleBody`).
+`automaticVariants` is the context's one automatic-variant record, made when
+the context is built and never at a read site (`seedAutomaticVariants`): a
+copy of the base's record when the base went through `enrich`, otherwise an
+empty record, because without an enrich pass no label is automatic. A
+malformed record on the base is an error. Wire edits the copy (restamps add
+keys, authored label writers remove them) and evaluate carries it to link.
+Every reader gets it through the context:
+`resolveFieldPlaceholder` reads it (via `wireAutomaticVariants`) to strip a
+label from content a patch pulls under a `field()`; `resolveAliasPlaceholder`
+(also via `wireAutomaticVariants`) and `replaceInBodyRt` (passed down
+explicitly through `buildPatternReplacingFn`, since it runs outside the
+context-setting rule wrapper) read it to restamp a label at a rewritten
+site — so an arm's label stays consistent across a patch or a group
+body-pattern substitution.
 
 ```text
 /**
@@ -1670,6 +1727,49 @@ argument disables inference for the parameters after it; the grammars pass
 // `cfg = config as unknown as WireConfig<any>` above).
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::adoptMintedGroups`
+
+An authored `groups:` pattern takes over an enrich-minted visible group whose
+whole body it matches, the same way enrich's automatic facts give way to an
+authored declaration elsewhere (automatic arm labels vs `variant()`). The
+minted groups come only from enrich's own record
+(`getEnrichVisibleGroupSources`), never a name pattern. The minted body is
+compared with `unwrapPrec` applied, since enrich re-registers the ambient prec
+on it, using `patternBodyEqual`, the predicate the replacement itself uses. An
+adopted group is deleted from the enriched base's rule map, which wire runs
+before `grammar()` copies it in both pipelines. Its references are rewritten to
+the authored alias by `replaceInBodyRt` through the candidate's `adopts` set.
+Adopted names are skipped when wire registers enrich's visible groups for
+inline removal and conflicts. A partial match adopts nothing: the pattern is
+replaced inside the minted group as usual.
+
+This is a bridge until enrich sees the authored config directly (a combined
+`sittirGrammar(base, cfg)` entry point); enrich then declines the mint instead
+of wire undoing it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::DeclaredPattern`
+
+One evaluated `groups:` or `injects:` body-pattern entry: its section, key,
+body function and the evaluated body.
+
+### `packages/codegen/src/dsl/wire/wire.ts::declaredPatterns`
+
+Evaluates the body-pattern entries of `groups:` and `injects:` once, with the
+validation both consumers share: a `groups:` key must be visible, the body fn
+must return a rule, and the body must be a complex structural pattern
+(`isComplexBodyRt`). Used by `applyWirePatternReplacement` and
+`adoptMintedGroups`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.adoptedGroups`
+
+Minted visible-group name → the authored `groups:` key that adopted it
+(`adoptMintedGroups`). Empty without an enriched base.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WirePatternCandidate.adopts`
+
+Minted group names this authored candidate adopted. `replaceInBodyRt` treats a
+reference to one of them as a match of the candidate's body.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::patternBodyEqual`
 
 #### body
@@ -1751,6 +1851,23 @@ default live in the two halves: the binding says which label an address belongs
 to, the declaration under its kind says what its arm is. Welded together, as
 `preference(label, arm)` repeated at every site does today, neither can be
 stated once.
+
+### `packages/codegen/src/dsl/wire/wire.ts::declaredGroupMintName`
+
+The rule name a `groups:` or `injects:` declaration is registered under: the
+key itself when it already starts with `_`, otherwise `_<key>` (the visible key
+becomes the alias display over that hidden rule). `applyWirePatternReplacement`
+registers the body under this name and `assertNoDeclaredGroupPatches` checks
+patch keys against it, so both read the one naming rule.
+
+### `packages/codegen/src/dsl/wire/wire.ts::assertNoDeclaredGroupPatches`
+
+Refuses a `patches:` key that names a `groups:` or `injects:` declaration,
+either by its key or by its registered name (`declaredGroupMintName`). Such a
+body is registered after the patch wrappers are composed, and the registration
+replaces the wrapper under that name, so the patch would be dropped without a
+trace. The declared body is authored in the grammar file, so its fields and
+variants are written in that body instead.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::assertNoSpacingAddressPatches`
 

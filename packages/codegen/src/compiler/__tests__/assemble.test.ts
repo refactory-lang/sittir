@@ -1044,7 +1044,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		expect(nodeMap.nodes.get('comma')?.modelType).toBe('pattern');
 	});
 
-	it('materializes a nested-supertype parse alias as its own AssembledSupertype, with the catalog available', () => {
+	it('mints no second node under a nested-supertype parse alias; the hidden storage is the one supertype', () => {
 		const normalized = makeNormalized({
 			_inner: { type: SUPERTYPE, name: '_inner', subtypes: [{ type: SYMBOL, name: 'identifier' }] },
 			_outer: {
@@ -1056,10 +1056,10 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		});
 		const generatedIdTables = makeIdTables({ identifier: anonEntry(7, 'identifier') });
 		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
-		const aliasNode = nodeMap.nodes.get('inner_alias');
-		expect(aliasNode?.modelType).toBe('supertype');
-		expect(aliasNode).toBeInstanceOf(AssembledSupertype);
-		expect((aliasNode as AssembledSupertype).subtypeNames).toEqual(['identifier']);
+		expect(nodeMap.nodes.has('inner_alias')).toBe(false);
+		const storage = nodeMap.nodes.get('_inner');
+		expect(storage).toBeInstanceOf(AssembledSupertype);
+		expect((storage as AssembledSupertype).subtypeNames).toEqual(['identifier']);
 	});
 
 	it('AssembledSupertype constructor trusts each pre-stamped SubtypeRef directly, no re-derivation', () => {

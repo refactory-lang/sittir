@@ -576,19 +576,14 @@ describe('enrich()', () => {
 				}
 			});
 			const out = runEnrich(input);
-			// enrich no longer auto-decomposes — group synthesis lives in
-			// dsl/wire/auto-groups.ts now. enrich just runs its own
-			// passes (optional-keyword promotion, multiplicity stamping,
-			// field wrappers) and leaves the structural shape alone, so
-			// the repeat's seq content is preserved and the inner
-			// optional-keyword promotion still wraps the 'pub' string as
-			// FIELD(SYMBOL(_pub_marker)).
-			const rule = out.grammar.rules.block as {
-				type: 'REPEAT';
-				content: { type: 'SEQ'; members: Rule[] };
-			};
-			expect(rule.content.type).toBe('SEQ');
-			expect(rule.content.members[0]).toMatchObject({
+			// The promoted marker makes the repeated element a two-slot seq, so
+			// it is lifted into a visible group that keeps each marker paired
+			// with its item; the promotion lives in the group body.
+			const rule = out.grammar.rules.block as { type: 'REPEAT'; content: { type: 'SYMBOL'; name: string } };
+			expect(rule.content.type).toBe('SYMBOL');
+			const group = out.grammar.rules[rule.content.name] as { type: 'SEQ'; members: Rule[] };
+			expect(group.type).toBe('SEQ');
+			expect(group.members[0]).toMatchObject({
 				type: 'OPTIONAL',
 				content: { type: 'FIELD', name: 'pub_marker' }
 			});
@@ -793,7 +788,7 @@ describe('enrich()', () => {
 	});
 
 	describe('non-seq rules', () => {
-		it('passes through choice rules unchanged', () => {
+		it('labels the arms of a choice rule and changes nothing else', () => {
 			const input = mkGrammar({
 				expr: {
 					type: CHOICE,
@@ -804,7 +799,14 @@ describe('enrich()', () => {
 				}
 			});
 			const out = runEnrich(input);
-			expect(out.grammar.rules.expr).toEqual(input.grammar.rules.expr);
+			const label = (variant: string) => ({ annotations: { variant, variantOf: 'expr' } });
+			expect(out.grammar.rules.expr).toEqual({
+				type: CHOICE,
+				members: [
+					{ type: SYMBOL, name: 'a', ...label('a') },
+					{ type: SYMBOL, name: 'b', ...label('b') }
+				]
+			});
 		});
 
 		it('passes through bare symbol rules unchanged', () => {
@@ -860,13 +862,11 @@ describe('enrich()', () => {
 				type: 'PREC',
 				content: {
 					type: 'CHOICE',
-					members: [
-						{ type: 'STRING', value: '+' },
-						{ type: 'STRING', value: '-' },
-						{ type: 'STRING', value: '*' },
-						{ type: 'STRING', value: '/' }
-					],
-					metadata: { author: 'enrich' }
+					members: ['+', '-', '*', '/'].map((value) => ({
+						type: 'STRING',
+						value,
+						annotations: { variantOf: '_binary_expression_operator' }
+					}))
 				},
 				value: -1
 			});

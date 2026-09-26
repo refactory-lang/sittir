@@ -6,7 +6,7 @@ export const separatedLists: CommandModule = {
 	describe: 'Census separated-list shapes: flank-carrying (visible-kind hoist) vs flankless (inline)',
 	register: (program) => {
 		withGrammar(defineCommand(program, separatedLists))
-			.option('--all-grammars', 'Run all three grammars')
+			.option('--all-grammars', 'Run every stable grammar')
 			.option('--format <fmt>', 'Output format: table | json', 'table')
 			.action(async (opts: { grammar?: string; allGrammars?: boolean; format?: string }) => {
 				const { separatedLists: runSeparatedLists } = await import('@sittir/tools');

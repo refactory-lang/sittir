@@ -8,8 +8,7 @@ vi.mock('node:child_process', () => ({
 vi.mock('@sittir/codegen/run-codegen', () => ({
 	runCodegen: vi.fn().mockResolvedValue(undefined),
 	runFullRegen: vi.fn().mockResolvedValue(undefined),
-	runStandaloneSteps: vi.fn().mockResolvedValue(undefined),
-	RUST_RENDER_GRAMMARS: ['rust', 'typescript', 'python']
+	runStandaloneSteps: vi.fn().mockResolvedValue(undefined)
 }));
 
 // The gen action's post-generate half is real code from @sittir/tools: an

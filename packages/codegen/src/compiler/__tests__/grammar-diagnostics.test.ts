@@ -12,7 +12,7 @@ import type { SimplifiedRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import type { GeneratedIdTables } from '../generated-metadata.ts';
 
-function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = []): RawGrammar {
+function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = [], supertypes: string[] = []): RawGrammar {
 	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);
 	return {
 		name: 'synth',
@@ -20,7 +20,7 @@ function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = []):
 		ruleCatalog,
 		extras: [],
 		externals: [],
-		supertypes: [],
+		supertypes,
 		factoryInline: [],
 		inline,
 		conflicts: [],
@@ -30,28 +30,57 @@ function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = []):
 	};
 }
 
+function catalogTables(symbols: {
+	readonly terminals: readonly string[];
+	readonly nonterminals: readonly string[];
+}): GeneratedIdTables {
+	const row = (name: string, id: number, terminal: boolean) => [
+		name,
+		{
+			id,
+			parser: {
+				cSymbol: `sym_${name}`,
+				parserName: name,
+				symbolName: name,
+				anon: false,
+				aux: false,
+				alias: false,
+				hidden: false,
+				...(terminal ? { terminal: true as const } : {})
+			}
+		}
+	];
+	const kindIds = Object.fromEntries([
+		...symbols.terminals.map((name, index) => row(name, index + 1, true)),
+		...symbols.nonterminals.map((name, index) => row(name, symbols.terminals.length + index + 1, false))
+	]);
+	return { kindIds, sourceArtifact: 'test' };
+}
+
+function collisionGrammar(): RawGrammar {
+	return buildRawGrammar({
+		host: structuralBuilder.choice(
+			structuralBuilder.alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
+			{ type: 'SYMBOL', name: 'shared' },
+			structuralBuilder.alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
+		),
+		left: { type: 'PATTERN', value: '[a-z]+' },
+		shared: {
+			type: 'SEQ',
+			members: [
+				{ type: 'SYMBOL', name: 'identifier', fieldName: 'body' },
+				{ type: 'SYMBOL', name: 'identifier2', fieldName: 'tail' }
+			]
+		},
+		right: { type: 'PATTERN', value: '[0-9]+' },
+		identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
+		identifier2: { type: 'PATTERN', value: '[A-Z_]\\w*' }
+	});
+}
+
 describe('grammar diagnostics preflight', () => {
-	it('emits parsekind-noninjective records from compiler-produced collisions', () => {
-		const result = collectGrammarDiagnosticsForGrammar({
-			rawGrammar: buildRawGrammar({
-				host: structuralBuilder.choice(
-					structuralBuilder.alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
-					{ type: 'SYMBOL', name: 'shared' },
-					structuralBuilder.alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
-				),
-				left: { type: 'PATTERN', value: '[a-z]+' },
-				shared: {
-					type: 'SEQ',
-					members: [
-						{ type: 'SYMBOL', name: 'identifier', fieldName: 'body' },
-						{ type: 'SYMBOL', name: 'identifier2', fieldName: 'tail' }
-					]
-				},
-				right: { type: 'PATTERN', value: '[0-9]+' },
-				identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
-				identifier2: { type: 'PATTERN', value: '[A-Z_]\\w*' }
-			})
-		});
+	it('emits parsekind-noninjective from compiler-produced collisions, and display-union-mixed because the fixture skips the enrich pass that resolves a display over both a terminal and a nonterminal', () => {
+		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar: collisionGrammar() });
 
 		expect(result.nodeMap.parseKindCollisions).toEqual([
 			expect.objectContaining({
@@ -68,8 +97,13 @@ describe('grammar diagnostics preflight', () => {
 				grammar: 'synth',
 				ownerKind: 'host',
 				slotName: 'content',
-				// PR-L Task 5: assemble-time parsekind-noninjective now blocks.
 				canProceed: false
+			}),
+			expect.objectContaining({
+				code: 'display-union-mixed',
+				ownerKind: 'shared',
+				canProceed: false,
+				details: { display: 'shared', terminals: ['left', 'right'], nonterminals: ['shared'] }
 			})
 		]);
 	});
@@ -146,29 +180,29 @@ describe('grammar diagnostics preflight', () => {
 		expect(error.message).toContain('parsekind-noninjective');
 	});
 
-	it('parsekind-noninjective now blocks (canProceed: false)', () => {
+	it('parsekind-noninjective now blocks (canProceed: false), beside the mixed-display guard an enrich-skipping fixture trips', () => {
+		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar: collisionGrammar() });
+		expect(result.diagnostics).toEqual([
+			expect.objectContaining({ code: 'parsekind-noninjective', ownerKind: 'host', canProceed: false }),
+			expect.objectContaining({ code: 'display-union-mixed', ownerKind: 'shared', canProceed: false })
+		]);
+	});
+
+	it("files a display union's members by the parser catalog, so an enrich-skipping fixture over a terminal and a nonterminal trips the mixed-display guard", () => {
 		const result = collectGrammarDiagnosticsForGrammar({
-			rawGrammar: buildRawGrammar({
-				host: structuralBuilder.choice(
-					structuralBuilder.alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
-					{ type: 'SYMBOL', name: 'shared' },
-					structuralBuilder.alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
-				),
-				left: { type: 'PATTERN', value: '[a-z]+' },
-				shared: {
-					type: 'SEQ',
-					members: [
-						{ type: 'SYMBOL', name: 'identifier', fieldName: 'body' },
-						{ type: 'SYMBOL', name: 'identifier2', fieldName: 'tail' }
-					]
-				},
-				right: { type: 'PATTERN', value: '[0-9]+' },
-				identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
-				identifier2: { type: 'PATTERN', value: '[A-Z_]\\w*' }
+			rawGrammar: collisionGrammar(),
+			generatedIdTables: catalogTables({
+				terminals: ['left', 'right', 'identifier', 'identifier2'],
+				nonterminals: ['host', 'shared']
 			})
 		});
 		expect(result.diagnostics).toEqual([
-			expect.objectContaining({ code: 'parsekind-noninjective', ownerKind: 'host', canProceed: false })
+			expect.objectContaining({
+				code: 'display-union-mixed',
+				ownerKind: 'shared',
+				canProceed: false,
+				details: { display: 'shared', terminals: ['left', 'right'], nonterminals: ['shared'] }
+			})
 		]);
 	});
 
@@ -255,7 +289,8 @@ describe('grammar diagnostics preflight', () => {
 
 	it("collectGrammarDiagnosticsForGrammar surfaces link's kindid-inline-excluded-symbols and kindid-unclassified-symbols diagnostics", () => {
 		// 'known' has a kindId; 'inline_only_kind' is a stamp miss declared in
-		// the grammar's own inline: array; 'gap_kind' is a stamp miss that is
+		// the grammar's own inline: array and as a supertype, so its reference
+		// stays a boundary instead of splicing; 'gap_kind' is a stamp miss that is
 		// neither inline nor stamped, reachable from the root ('host', the
 		// first declared rule) — a genuine, unaccepted gap.
 		const rawGrammar = buildRawGrammar(
@@ -269,9 +304,10 @@ describe('grammar diagnostics preflight', () => {
 					]
 				},
 				known: { type: 'PATTERN', value: 'x' },
-				inline_only_kind: { type: 'PATTERN', value: 'y' },
+				inline_only_kind: { type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'known' }] },
 				gap_kind: { type: 'PATTERN', value: 'z' }
 			},
+			['inline_only_kind'],
 			['inline_only_kind']
 		);
 		const generatedIdTables: GeneratedIdTables = { kindIds: { known: 1 }, sourceArtifact: 'test' };

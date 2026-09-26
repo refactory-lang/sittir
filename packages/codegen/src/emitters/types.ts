@@ -1,3 +1,4 @@
+import { findOwnKindEntry, modelKindOfEntry } from '../compiler/generated-metadata.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
@@ -5,7 +6,7 @@ import { DelimiterFlags, isFixedTextLeaf, isKindIdStored } from '../compiler/mod
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { bareInteriorText, numericLeafKinds, numericLeafShape, numericSlotKeys, numericSlotShape } from './interior.ts';
-import { findOwnKindEntry, modelKindOfEntry,
+import {
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,
@@ -74,7 +75,9 @@ import {
 	scalarLeafKinds,
 	lexedContentSlot,
 	canonicalSeparatedListField,
-	enumMemberDiscriminant
+	enumMemberDiscriminant,
+	pruneUnusedImports,
+	importLocalName
 } from './shared.ts';
 import {
 	constructorTargetKind,
@@ -83,15 +86,15 @@ import {
 	spellingTypeOf,
 	refineFormBuiltTypeSurfaceOf,
 	separatedListSurface,
-	hiddenTextLeafKinds,
 	type BuiltTypeSurface
 } from './factories.ts';
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
-import { armAliasesOf, hintEmitterOf, publicKindNames, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
-import { publicKindName, type SitePreference } from '../compiler/model/site-preferences.ts';
+import { armAliasesOf, hintEmitterOf, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
+import type { SitePreference } from '../compiler/model/site-preferences.ts';
+import { displayNameOf, displayedKinds, ownsItsDisplay } from '../compiler/model/display-name.ts';
 
 type StructuralNode = SlotBearingCompound;
 
@@ -177,7 +180,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		lines.push(`export type WhitespaceArm = ${arms.whitespaceType};`);
 		lines.push('');
 	}
-	const hints = kindEntries !== undefined && config.addresses !== undefined ? hintEmitterOf(config.addresses, kindEntries, arms, publicKindNames(nodeMap)) : undefined;
+	const hints = kindEntries !== undefined && config.addresses !== undefined ? hintEmitterOf(config.addresses, kindEntries, arms, displayedKinds(nodeMap)) : undefined;
 
 	emitDelimiterEnum(lines);
 
@@ -252,7 +255,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push(';');
 	lines.push('');
 
-	emitOptionsHints(lines, [...allKinds.map((kind) => ({ kind, typeName: nodeMap.nodes.get(kind)?.typeName })), ...emittedSupertypes], generatedTypes, hints);
+	emitOptionsHints(lines, [...allKinds.map((kind) => ({ kind, typeName: nodeMap.nodes.get(kind)?.typeName })), ...emittedSupertypes], generatedTypes, hints, nodeMap);
 
 	assertNoCamelCaseCollisions(nodeKinds);
 
@@ -369,41 +372,31 @@ export function emitTypes(config: EmitTypesConfig): string {
 	if (/\bT\.[A-Za-z_]/.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as T from './types.js';`);
 	}
-	const usesLooseValue = /\bLooseValue\b/.test(body);
-	const usesLooseConfigOf = /\bLooseConfigOf\b/.test(body);
-	const usesConfigOf = /\bConfigOf\b/.test(body);
-	const usesWidenNumeric = /\bWidenNumeric\b/.test(body);
-	const usesBitflag = /\bBitflag\b/.test(body);
-	const usesKindEnum = /\bKindEnum\b/.test(body);
-	const usesHiddenLeaf = /\bHiddenLeaf\b/.test(body);
-	const usesKeywordNs = /\bKeywordNs\b/.test(body);
-	const usesLeafNs = /\bLeafNs\b/.test(body);
-	const usesOmitEach = /\bOmitEach\b/.test(body);
-	const importedNames = [
-		'NodeData as BaseNodeData',
-		'NodeConfig as BaseNodeConfig',
-		'TreeNode as BaseTreeNode',
-		...(usesConfigOf ? ['ConfigOf'] : []),
-		...(usesLooseConfigOf ? ['LooseConfigOf'] : []),
-		...(usesWidenNumeric ? ['WidenNumeric'] : []),
-		...(usesLooseValue ? ['LooseValue'] : []),
-		'NodeKind',
-		'NodeNs',
-		...(usesKeywordNs ? ['KeywordNs'] : []),
-		...(usesLeafNs ? ['LeafNs'] : []),
-		'AnyTreeNodeOf as AnyTreeNode',
-		'Terminal',
-		'NonEmptyArray',
-		'BooleanKeyword as BaseBooleanKeyword',
-		...(usesBitflag ? ['Bitflag'] : []),
-		...(usesKindEnum ? ['KindEnum'] : []),
-		...(usesHiddenLeaf ? ['HiddenLeaf'] : []),
-		...(usesOmitEach ? ['OmitEach'] : [])
-	];
-	lines[sittirImportIndex] = `import type { ${importedNames.join(', ')} } from '@sittir/types';`;
+	lines[sittirImportIndex] = `import type { ${VOCABULARY_IMPORTS.join(', ')} } from '@sittir/types';`;
 
-	return lines.join('\n');
+	return pruneUnusedImports(lines, VOCABULARY_IMPORTS.map(importLocalName)).join('\n');
 }
+
+const VOCABULARY_IMPORTS = [
+	'NodeData as BaseNodeData',
+	'NodeConfig as BaseNodeConfig',
+	'TreeNode as BaseTreeNode',
+	'ConfigOf',
+	'LooseConfigOf',
+	'WidenNumeric',
+	'LooseValue',
+	'NodeKind',
+	'NodeNs',
+	'KeywordNs',
+	'LeafNs',
+	'AnyTreeNodeOf as AnyTreeNode',
+	'Terminal',
+	'NonEmptyArray',
+	'BooleanKeyword as BaseBooleanKeyword',
+	'Bitflag',
+	'KindEnum',
+	'OmitEach'
+];
 
 function buildGrammarKeySet(grammar: string): Set<string> {
 	const grammarKeys = new Set<string>();
@@ -492,7 +485,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 
 	lines.push('export const KIND_NAMES: ReadonlyMap<number, string> = new Map([');
 	for (const entry of entries) {
-		const kind = modelKindOfEntry(entry);
+		const kind = modelKindOfEntry(entry, entries);
 		lines.push(`  [${entry.id}, ${JSON.stringify(kind)}],`);
 		if (entry.parseId !== undefined && entry.parseId !== entry.id) {
 			lines.push(`  [${entry.parseId}, ${JSON.stringify(kind)}],`);
@@ -509,7 +502,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 		const displayName = entry.symbolName ?? entry.kind;
 		lines.push(`  [${entry.id}, ${JSON.stringify(displayName)}],`);
 		if (entry.parseId !== undefined && entry.parseId !== entry.id) {
-			lines.push(`  [${entry.parseId}, ${JSON.stringify(displayName)}],`);
+			lines.push(`  [${entry.parseId}, ${JSON.stringify(entry.parseName ?? displayName)}],`);
 		}
 	}
 	lines.push(']);');
@@ -541,17 +534,18 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	lines.push('  switch (kindName) {');
 	const seenCases = new Set<string>();
 	for (const entry of entries) {
-		const kind = modelKindOfEntry(entry);
+		const kind = modelKindOfEntry(entry, entries);
 		if (seenCases.has(kind)) continue;
 		seenCases.add(kind);
 		lines.push(`    case ${JSON.stringify(kind)}: return TSKindId.${entry.member};`);
 	}
 	for (const entry of entries) {
-		const parserTypeString = entry.symbolName;
-		if (!parserTypeString) continue;
-		if (seenCases.has(parserTypeString)) continue;
-		seenCases.add(parserTypeString);
-		lines.push(`    case ${JSON.stringify(parserTypeString)}: return TSKindId.${entry.member};`);
+		for (const parserTypeString of [entry.symbolName, entry.parseName]) {
+			if (!parserTypeString) continue;
+			if (seenCases.has(parserTypeString)) continue;
+			seenCases.add(parserTypeString);
+			lines.push(`    case ${JSON.stringify(parserTypeString)}: return TSKindId.${entry.member};`);
+		}
 	}
 	lines.push('    default: throw new TypeError(`unknown kind name ${kindName}`);');
 	lines.push('  }');
@@ -571,7 +565,6 @@ function emitLeafTerminalAliases(
 	kindEntries?: readonly KindEnumEntry[]
 ): void {
 	const referenced = referencedKinds(nodeMap);
-	const hiddenLeafKinds = hiddenTextLeafKinds(nodeMap);
 	lines.push('// Leaf node types');
 	for (const kind of leafKinds) {
 		const node = nodeMap.nodes.get(kind)!;
@@ -589,7 +582,7 @@ function emitLeafTerminalAliases(
 		}
 
 		const terminal = `Terminal<${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}, ${leafTextType(node)}>`;
-		lines.push(`export type ${node.typeName} = ${hiddenLeafKinds.has(kind) ? `HiddenLeaf<${terminal}>` : terminal};`);
+		lines.push(`export type ${node.typeName} = ${terminal};`);
 	}
 	lines.push('');
 }
@@ -648,18 +641,19 @@ function emitOptionsHints(
 	lines: string[],
 	kinds: readonly { readonly kind: string; readonly typeName: string | undefined }[],
 	generatedTypes: ReadonlySet<string>,
-	hints: HintEmitter | undefined
+	hints: HintEmitter | undefined,
+	nodeMap: NodeMap
 ): void {
 	const kindRoots = new Map((hints?.roots ?? []).filter((root) => !root.label).map((root) => [root.name, root]));
 	const homes = new Map<string, { kind: string; typeName: string; root: HintRoot }>();
 	for (const { kind, typeName } of kinds) {
-		const root = kindRoots.get(publicKindName(kind));
+		const root = kindRoots.get(displayNameOf(kind, nodeMap));
 		if (root === undefined || typeName === undefined || !generatedTypes.has(typeName)) continue;
 		const prior = homes.get(root.name);
-		if (prior !== undefined && prior.kind !== publicKindName(prior.kind) && kind !== publicKindName(kind)) {
-			throw new Error(`types emitter: options root '${root.name}' names both '${prior.kind}' and '${kind}', neither the visible spelling`);
+		if (prior !== undefined && ownsItsDisplay(prior.kind, nodeMap) === ownsItsDisplay(kind, nodeMap)) {
+			throw new Error(`types emitter: options root '${root.name}' names both '${prior.kind}' and '${kind}'`);
 		}
-		if (prior === undefined || prior.kind !== publicKindName(prior.kind)) homes.set(root.name, { kind, typeName, root });
+		if (prior === undefined || ownsItsDisplay(kind, nodeMap)) homes.set(root.name, { kind, typeName, root });
 	}
 	const homeless = [...kindRoots.keys()].filter((name) => !homes.has(name));
 	if (homeless.length > 0) throw new Error(`types emitter: options roots with no declared type to carry their hint: ${homeless.join(', ')}`);

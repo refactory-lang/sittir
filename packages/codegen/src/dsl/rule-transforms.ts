@@ -14,7 +14,7 @@ import {
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { withId } from './rule-attrs.ts';
-import { isParserHiddenName, parserSymbolClassOf, type ParserSymbolCtx } from './rule-patterns.ts';
+import { choiceArmsOf, isParserHiddenName, terminalContentOf, type SymbolSource } from './rule-patterns.ts';
 
 export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
 
@@ -32,10 +32,6 @@ export function innermostNamedAliasContent<R extends AnyRule>(rule: R): R {
 	return current;
 }
 
-function choiceArmsOf<R extends AnyRule>(content: R): readonly R[] | undefined {
-	if (content.type !== CHOICE) return undefined;
-	return (content as unknown as { members: readonly R[] }).members.flatMap((m) => choiceArmsOf(m) ?? [m]);
-}
 
 export interface DistributeAliasCtx {
 	readonly inlineBodyOf: (name: string) => AnyRule | undefined;
@@ -146,7 +142,7 @@ export function liftAliasedHiddenRuleBodies<R extends AnyRule>(rules: Record<str
 }
 
 export interface OverloadedDisplayCtx {
-	readonly symbols: ParserSymbolCtx;
+	readonly symbols: SymbolSource;
 }
 
 type AliasSite<R> = NamedAliasShape<R> & { readonly value: string };
@@ -159,18 +155,7 @@ export function unaliasOverloadedDisplays<R extends AnyRule>(rules: Record<strin
 		const alias = r as unknown as NamedAliasShape<R>;
 		return alias.type === ALIAS && alias.named === true && alias.value ? (alias as AliasSite<R>) : undefined;
 	};
-	const terminalContent = (content: R): boolean => {
-		if (content.type === SYMBOL) return terminalSymbol((content as unknown as { name: string }).name);
-		if (content.type === STRING || content.type === PATTERN || content.type === TOKEN) return true;
-		const arms = choiceArmsOf(content);
-		return arms !== undefined && arms.every(terminalContent);
-	};
-	const terminalSymbol = (name: string): boolean => {
-		const cls = parserSymbolClassOf(name, ctx.symbols);
-		if (cls !== 'inlined') return cls === 'terminal';
-		const body = rules[name];
-		return body !== undefined && terminalContent(body);
-	};
+	const terminalContent = (content: R): boolean => terminalContentOf(content, ctx.symbols.isTerminal);
 	const storageOf = (content: R): StorageOf => {
 		const symbol = content.type === SYMBOL ? (content as unknown as { name: string }).name : undefined;
 		return { key: symbol ?? JSON.stringify(content), symbol, terminal: terminalContent(content) };
@@ -217,7 +202,7 @@ export function unaliasOverloadedDisplays<R extends AnyRule>(rules: Record<strin
 	for (const display of [...storagesByDisplay.keys()].sort()) {
 		const members = [...storagesByDisplay.get(display)!.values()];
 		if (Object.hasOwn(rules, display)) {
-			const terminalDisplay = terminalSymbol(display);
+			const terminalDisplay = ctx.symbols.isTerminal(display);
 			for (const storage of members) {
 				if (storage.symbol === display || (terminalDisplay && storage.terminal)) continue;
 				split({ display, storage });

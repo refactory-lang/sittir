@@ -17,10 +17,10 @@ import {
 	seatsConfigChild,
 	configKeysOf,
 	elementsSeatOf,
-	spliceSeatOf,
+	flattenSeatOf,
 	tupleSeatOf,
 	subFactoriesOf,
-	type SpliceSeat,
+	type FlattenSeat,
 	type SubFactory
 } from './sub-factories.ts';
 import { bundleEntries, flattenedVariantParents, overlayFrame, overlayImportPath } from './module.ts';
@@ -29,6 +29,7 @@ import { camelCase } from '../refine-emit.ts';
 interface FlavorRefs {
 	readonly strict: string;
 	readonly coerce?: string;
+	readonly set?: string;
 }
 
 type CoerceEmitted = (node: AssembledNode) => boolean;
@@ -60,17 +61,18 @@ function childRefs(
 		if (childKey === undefined) return undefined;
 		const spelled = wires === undefined ? [...path] : emittedArmPath(child.kind, path, wires);
 		const base = `${childKey}.${spelled.join('.')}`;
-		return { strict: `${base}.strict`, coerce: `${base}.coerce` };
+		return { strict: `${base}.strict`, coerce: `${base}.coerce`, set: child.kind };
 	}
 	const childKey = keyByKind.get(child.kind);
 	if (childKey !== undefined && seated?.(child.kind) === true) {
-		return { strict: `${childKey}.strict`, coerce: `${childKey}.coerce` };
+		return { strict: `${childKey}.strict`, coerce: `${childKey}.coerce`, set: child.kind };
 	}
 	const strict = `F.${child.rawFactoryName}`;
 	return { strict, coerce: coerceEmitted(child) ? `C.${child.fromFunctionName}` : strict };
 }
 
 interface VariantRoute {
+	readonly set?: string;
 	readonly value: string;
 	readonly type: string;
 	readonly strict: string;
@@ -109,9 +111,9 @@ export interface PolymorphWireSet {
 	readonly node: AssembledNode;
 	readonly subs: readonly SubFactory[];
 	readonly aliases: readonly AliasWire[];
-	readonly splice?: SpliceSeat;
-	readonly elements?: readonly SpliceSeat[];
-	readonly tuples?: readonly SpliceSeat[];
+	readonly flatten?: FlattenSeat;
+	readonly elements?: readonly FlattenSeat[];
+	readonly tuples?: readonly FlattenSeat[];
 }
 
 export interface PolymorphWires {
@@ -190,23 +192,23 @@ export function collectPolymorphWires(
 			return childRefs(sub, keyByKind, coerceEmitted) !== undefined;
 		});
 		const aliases = variantAliasWires(node, nodeMap, isEmitted, subs);
-		const seat = spliceSeatOf(node, nodeMap);
-		const splice = seat !== undefined && isEmitted(seat.group.kind) ? seat : undefined;
+		const seat = flattenSeatOf(node, nodeMap);
+		const flatten = seat !== undefined && isEmitted(seat.group.kind) ? seat : undefined;
 		const elements = elementsSeatOf(node, nodeMap).filter((e) => isEmitted(e.group.kind));
 		const claimed = new Set(subs.map((sub) => sub.slot));
 		const tuples = tupleSeatOf(node, nodeMap).filter((e) => isEmitted(e.group.kind) && !claimed.has(e.slot));
 		visiting.add(node.kind);
-		for (const s of [...(splice ? [splice] : []), ...elements, ...tuples]) visit(s.group);
+		for (const s of [...(flatten ? [flatten] : []), ...elements, ...tuples]) visit(s.group);
 		for (const alias of aliases) visit(alias.child);
 		visiting.delete(node.kind);
-		if (subs.length > 0 || aliases.length > 0 || splice !== undefined || elements.length > 0 || tuples.length > 0) {
+		if (subs.length > 0 || aliases.length > 0 || flatten !== undefined || elements.length > 0 || tuples.length > 0) {
 			order.push(node.kind);
 			byKind.set(node.kind, {
 				parentKey,
 				node,
 				subs,
 				aliases,
-				...(splice ? { splice } : {}),
+				...(flatten ? { flatten } : {}),
 				...(elements.length > 0 ? { elements } : {}),
 				...(tuples.length > 0 ? { tuples } : {})
 			});
@@ -218,10 +220,28 @@ export function collectPolymorphWires(
 	return { order, byKind, kindEntries, isEmitted, coerceEmitted, keyByKind, bundledKinds };
 }
 
+interface OverlayChunk {
+	readonly kind: string;
+	readonly isPrivate: boolean;
+	readonly lines: readonly string[];
+	readonly uses: ReadonlySet<string>;
+	readonly hasMethods: boolean;
+}
+
+function withoutUnusedPrivateSets(chunks: readonly OverlayChunk[]): OverlayChunk[] {
+	let kept = [...chunks];
+	for (;;) {
+		const used = new Set(kept.flatMap((chunk) => [...chunk.uses].filter((kind) => kind !== chunk.kind)));
+		const next = kept.filter((chunk) => !chunk.isPrivate || used.has(chunk.kind));
+		if (next.length === kept.length) return kept;
+		kept = next;
+	}
+}
+
 function seatBearing(wires: PolymorphWires, kind: string, parentKind: string): boolean {
 	const set = wires.byKind.get(kind);
 	if (set === undefined) return false;
-	if (set.splice === undefined && (set.elements ?? []).length === 0 && (set.tuples ?? []).length === 0) return false;
+	if (set.flatten === undefined && (set.elements ?? []).length === 0 && (set.tuples ?? []).length === 0) return false;
 	const at = wires.order.indexOf(kind);
 	return at !== -1 && at < wires.order.indexOf(parentKind);
 }
@@ -259,7 +279,8 @@ function composeAcrossSlots(
 	seated: FlavorRefs | undefined,
 	armEntries: Map<string, ArmEntry>,
 	methods: string[],
-	chainsByArm: Map<string, string[]>
+	chainsByArm: Map<string, string[]>,
+	uses: Set<string>
 ): void {
 	const slots = wireSet.node instanceof AbstractAssembledCompound ? wireSet.node.slots : [];
 	const indexOf = (sub: SubFactory): number => slots.indexOf(sub.slot);
@@ -286,11 +307,13 @@ function composeAcrossSlots(
 			if (chained === undefined || chained.coerceApply === undefined || chained.coerceType === undefined) continue;
 			if (host.children.has(inner.name)) continue;
 			if (!named) {
+				if (applied.set !== undefined) uses.add(applied.set);
 				methods.push(`const ${strictName}: ${applied.strictType} = ${applied.strictApply};`);
 				methods.push(`const ${coerceName}: ${applied.coerceType} = ${applied.coerceApply};`);
 				named = true;
 			}
 			methods.push(...chained.method);
+			if (chained.set !== undefined) uses.add(chained.set);
 			chainsByArm.set(outer.name, [...(chainsByArm.get(outer.name) ?? []), inner.name]);
 			host.children.set(inner.name, {
 				sub: inner,
@@ -369,20 +392,24 @@ export function emittedArmPath(kind: string, path: readonly string[], wires: Pol
 	if (set === undefined || head === undefined) return [...path];
 	const sub = set.subs.find((candidate) => candidate.name === head);
 	if (sub === undefined) return [...path];
-	const under = nestingArmOf(sub, set.subs);
-	const spelled = under === undefined ? [sub.name] : [under.host, under.key];
+	const under = nestingArmOf(sub, set.subs, wires);
+	const spelled = under === undefined ? [sub.name] : [under.host, ...under.keys];
 	const rest = path.slice(1);
 	if (rest.length === 0) return spelled;
 	const next = sub.arm.via === 'node' ? sub.arm.child.kind : undefined;
 	return next === undefined ? [...spelled, ...rest] : [...spelled, ...emittedArmPath(next, rest, wires)];
 }
 
-function nestingArmOf(sub: SubFactory, subs: readonly SubFactory[]): { host: string; key: string } | undefined {
+function nestingArmOf(sub: SubFactory, subs: readonly SubFactory[], wires: PolymorphWires): { host: string; keys: readonly string[] } | undefined {
 	if (sub.arm.via !== 'node' || sub.arm.path.length === 0) return undefined;
 	const child = sub.arm.child;
 	const host = subs.find((d) => d.arm.via === 'node' && d.arm.path.length === 0 && d.arm.child === child);
 	if (host === undefined) return undefined;
 	const key = sub.arm.path[sub.arm.path.length - 1]!;
+	const inner = wires.byKind.get(child.kind)?.subs.find((candidate) => candidate.name === key);
+	if (inner !== undefined && inner.arm.via === 'node' && inner.arm.path.length > 0) {
+		return { host: host.name, keys: emittedArmPath(child.kind, sub.arm.path, wires) };
+	}
 	const collides = subs.some(
 		(other) =>
 			other !== sub &&
@@ -391,7 +418,7 @@ function nestingArmOf(sub: SubFactory, subs: readonly SubFactory[]): { host: str
 			other.arm.child === child &&
 			other.arm.path[other.arm.path.length - 1] === key
 	);
-	return { host: host.name, key: collides ? sub.name : key };
+	return { host: host.name, keys: [collides ? sub.name : key] };
 }
 
 function childChains(sub: SubFactory, chainedByKind: ReadonlyMap<string, ReadonlyMap<string, readonly string[]>>): readonly string[] {
@@ -439,8 +466,8 @@ const LIST_HELPER = [
 	'type ListOptionsOf<P> = Extract<P, ListOptions>;'
 ];
 
-const SPLICE_HELPER = [
-	'// A spliced group is present as a whole or absent as a whole: the second',
+const FLATTEN_HELPER = [
+	'// A flattened group is present as a whole or absent as a whole: the second',
 	'// overload forbids every one of its keys.',
 	'type NoneOf<T> = { [K in keyof T]?: never };'
 ];
@@ -583,7 +610,7 @@ interface SeatShape {
 	readonly spread?: true;
 }
 
-function spliceShape(
+function flattenShape(
 	k: string,
 	mergeKeys: readonly string[],
 	m: string,
@@ -604,13 +631,13 @@ function spliceShape(
 	const keyTests = mergeKeys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ');
 	const groupConfig = (c: string): string =>
 		directKey === undefined ? `ArgsOf<${c}>[0]` : `{ ${directKey}: ArgsOf<${c}>[0] }`;
-	const spliced = (p: string, c: string): string =>
+	const flattened = (p: string, c: string): string =>
 		`${p} | (OmitEach<NonNullable<${p}>, '${k}'> & (${groupConfig(c)} | NoneOf<${groupConfig(c)}>))`;
 	const buildGroup = directKey === undefined ? `${CALL_C}(inner)` : `${CALL_C}(inner[${JSON.stringify(directKey)}])`;
 	return {
 		method: [
 			`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF${wrapperSeat ? ', wrapperId: number' : ''}) =>`,
-			`	(config: ${spliced('ArgsOf<PF>[0]', 'CF')}, ${OPTS}): ReturnType<PF> => {`,
+			`	(config: ${flattened('ArgsOf<PF>[0]', 'CF')}, ${OPTS}): ReturnType<PF> => {`,
 			`		if (config === undefined) return ${CALL_PO('config')};`,
 			...(wrapperSeat
 				? [
@@ -633,7 +660,7 @@ function spliceShape(
 			`		return ${CALL_PO(`seated ? { ...rest, ${k}: ${buildGroup} } : rest`)};`,
 			`	};`
 		],
-		paramFor: (p, c) => `(config: ${spliced(p, `typeof ${c}`)})`
+		paramFor: (p, c) => `(config: ${flattened(p, `typeof ${c}`)})`
 	};
 }
 
@@ -716,19 +743,19 @@ interface SeatEmission {
 function seatEmission(
 	parent: AssembledNode,
 	parentKey: string,
-	seat: SpliceSeat,
-	kind: 'splice' | 'elements' | 'tuple',
+	seat: FlattenSeat,
+	kind: 'flatten' | 'elements' | 'tuple',
 	wires: PolymorphWires,
 	nodeMap: NodeMap
 ): SeatEmission {
-	const m = methodName(parentKey, kind === 'splice' ? 'splice' : seat.slot.configKey);
+	const m = methodName(parentKey, kind === 'flatten' ? 'flatten' : seat.slot.configKey);
 	const direct = resolveDirectFactorySlot(parent, nodeMap) !== undefined;
-	const wrapperSeat = kind === 'splice' && !direct && configKeysOf(seat.group).includes(seat.slot.configKey);
+	const wrapperSeat = kind === 'flatten' && !direct && configKeysOf(seat.group).includes(seat.slot.configKey);
 	const wrapperId = wrapperSeat ? kindDiscriminantExpr(seat.group.kind, nodeMap, wires.kindEntries) : undefined;
 	const childKey = wires.keyByKind.get(seat.group.kind);
 	const child: FlavorRefs =
 		childKey !== undefined && seatBearing(wires, seat.group.kind, parent.kind)
-			? { strict: `${childKey}.strict`, coerce: `${childKey}.coerce` }
+			? { strict: `${childKey}.strict`, coerce: `${childKey}.coerce`, set: seat.group.kind }
 			: {
 					strict: `F.${seat.group.rawFactoryName}`,
 					coerce: wires.coerceEmitted(seat.group) ? `C.${seat.group.fromFunctionName}` : undefined
@@ -736,8 +763,8 @@ function seatEmission(
 	const s =
 		kind === 'tuple'
 			? tupleShape(seat.slot.configKey, m)
-			: kind === 'splice'
-			? spliceShape(seat.slot.configKey, configKeysOf(seat.group), m, direct, seat.directKey, wrapperSeat)
+			: kind === 'flatten'
+			? flattenShape(seat.slot.configKey, configKeysOf(seat.group), m, direct, seat.directKey, wrapperSeat)
 			: elementsShape(
 					seat.slot.configKey,
 					configKeysOf(seat.group),
@@ -755,6 +782,7 @@ function seatEmission(
 }
 
 interface SubEmission {
+	readonly set?: string;
 	readonly method: readonly string[];
 	readonly strictApply: string;
 	readonly strictType: string;
@@ -799,6 +827,7 @@ function emitSub(
 	const typeFor = (pRef: string, cRef: string): string => `${s.paramFor(pRef, cRef)} => ReturnType<typeof ${pRef}>`;
 	const wrap: FlavorRefs = positional ? { strict: p.strict, coerce: p.coerce && p.strict } : p;
 	return {
+		set: c.set,
 		method: s.method,
 		strictApply: `${m}(${wrap.strict}, ${c.strict})`,
 		strictType: typeFor(wrap.strict, c.strict),
@@ -811,9 +840,8 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 	const { nodeMap, generatedIdTables } = config;
 	const wires = collectPolymorphWires(nodeMap, generatedIdTables);
 
-	const blocks: string[] = [];
+	const chunks: OverlayChunk[] = [];
 	let usesKindId = false;
-	let emittedHelpers = false;
 	const chainedByKind = new Map<string, Map<string, string[]>>();
 	const emittedEntries = new Set<string>();
 	const seatedEntries = new Set<string>();
@@ -821,15 +849,17 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 
 	for (const kind of wires.order) {
 		const wireSet = wires.byKind.get(kind)!;
+		const uses = new Set<string>();
 		const wireLines: string[] = [];
 		const wireTypes: string[] = [];
 		const methods: string[] = [];
 		const seats: SeatEmission[] = [
-			...(wireSet.splice ? [seatEmission(wireSet.node, wireSet.parentKey, wireSet.splice, 'splice', wires, nodeMap)] : []),
+			...(wireSet.flatten ? [seatEmission(wireSet.node, wireSet.parentKey, wireSet.flatten, 'flatten', wires, nodeMap)] : []),
 			...(wireSet.elements ?? []).map((e) => seatEmission(wireSet.node, wireSet.parentKey, e, 'elements', wires, nodeMap)),
 			...(wireSet.tuples ?? []).map((e) => seatEmission(wireSet.node, wireSet.parentKey, e, 'tuple', wires, nodeMap))
 		];
 		const seated = composeSeats(seats, wireSet, wires, nodeMap, methods);
+		if (seated !== undefined) for (const seat of seats) if (seat.child.set !== undefined) uses.add(seat.child.set);
 		if (methods.some((line) => line.includes('TSKindId.'))) usesKindId = true;
 		const armEntries = new Map<string, ArmEntry>();
 		const flat: { line: string; type: string }[] = [];
@@ -838,6 +868,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 			const emission = emitSub(wireSet.node, wireSet.parentKey, sub, wires, nodeMap, seated?.refs);
 			if (emission === undefined) continue;
 			methods.push(...emission.method);
+			if (emission.set !== undefined) uses.add(emission.set);
 			if (emission.strictApply.includes('TSKindId.') || emission.coerceApply?.includes('TSKindId.')) usesKindId = true;
 			const body =
 				emission.coerceApply === undefined
@@ -849,16 +880,16 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 					: `strict: ${emission.strictType}; coerce: ${emission.coerceType}`;
 			const entry: ArmEntry = { sub, line: body, type: bodyType, children: new Map() };
 			built.push({ sub, entry });
-			if (nestingArmOf(sub, wireSet.subs) === undefined) armEntries.set(sub.name, entry);
+			if (nestingArmOf(sub, wireSet.subs, wires) === undefined) armEntries.set(sub.name, entry);
 		}
 		for (const { sub, entry } of built) {
-			const under = nestingArmOf(sub, wireSet.subs);
+			const under = nestingArmOf(sub, wireSet.subs, wires);
 			if (under === undefined) continue;
-			const host = armEntries.get(under.host);
-			if (host === undefined) {
+			const parent = under.keys.slice(0, -1).reduce<ArmEntry | undefined>((at, key) => at?.children.get(key), armEntries.get(under.host));
+			if (parent === undefined) {
 				flat.push({ line: `	${sub.name}: { ${entry.line} },`, type: `	${sub.name}: { ${entry.type} };` });
 			} else {
-				host.children.set(under.key, entry);
+				parent.children.set(under.keys[under.keys.length - 1]!, entry);
 			}
 			for (const chain of childChains(sub, chainedByKind)) {
 				if (sub.arm.via !== 'node') break;
@@ -867,6 +898,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 				const emission = emitSub(wireSet.node, wireSet.parentKey, chainedSub, wires, nodeMap, seated?.refs, chainedName);
 				if (emission === undefined || emission.coerceApply === undefined || emission.coerceType === undefined) continue;
 				methods.push(...emission.method);
+				if (emission.set !== undefined) uses.add(emission.set);
 				entry.children.set(chain, {
 					sub: chainedSub,
 					line: `strict: ${emission.strictApply}, coerce: ${emission.coerceApply}`,
@@ -876,7 +908,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 			}
 		}
 		const chained = new Map<string, string[]>();
-		composeAcrossSlots(wireSet, wires, nodeMap, seated?.refs, armEntries, methods, chained);
+		composeAcrossSlots(wireSet, wires, nodeMap, seated?.refs, armEntries, methods, chained, uses);
 		chainedByKind.set(kind, chained);
 		for (const [name, entry] of armEntries) {
 			const rendered = renderArm(name, entry);
@@ -893,6 +925,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		}
 		for (const alias of wireSet.aliases) {
 			const route = variantRouteOf(alias.child);
+			if (route.set !== undefined) uses.add(route.set);
 			wireLines.push(`	${alias.name}: ${route.value},`);
 			wireTypes.push(`	${alias.name}: ${route.type};`);
 		}
@@ -900,23 +933,17 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 			emittedEntries.add(wireSet.node.kind);
 			if (seated !== undefined) seatedEntries.add(wireSet.node.kind);
 			if (seated?.refs.coerce !== undefined) coercibleSeats.add(wireSet.node.kind);
-			if (!emittedHelpers && methods.length > 0) {
-				blocks.push(...ERASED_HELPERS);
-				emittedHelpers = true;
-			}
-			blocks.push(...methods);
-			if (isHoistedCompound(wireSet.node)) {
-				blocks.push(`const ${wireSet.parentKey}: {`);
-				blocks.push(...wireTypes);
-				blocks.push(`} = {`);
-			} else {
-				blocks.push(`export const ${wireSet.parentKey}: typeof B.${wireSet.parentKey} & {`);
-				blocks.push(...wireTypes);
-				blocks.push(`} = {`);
-				blocks.push(`	...B.${wireSet.parentKey},`);
-			}
-			blocks.push(...wireLines);
-			blocks.push('};', '');
+			const isPrivate = isHoistedCompound(wireSet.node);
+			const lines = [
+				...methods,
+				...(isPrivate
+					? [`const ${wireSet.parentKey}: {`, ...wireTypes, `} = {`]
+					: [`export const ${wireSet.parentKey}: typeof B.${wireSet.parentKey} & {`, ...wireTypes, `} = {`, `	...B.${wireSet.parentKey},`]),
+				...wireLines,
+				'};',
+				''
+			];
+			chunks.push({ kind, isPrivate, lines, uses, hasMethods: methods.length > 0 });
 		}
 	}
 
@@ -929,6 +956,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		if (subFactories !== undefined && (seatedEntries.has(child.kind) || !isHoistedCompound(child))) {
 			const coercible = seatedEntries.has(child.kind) ? coercibleSeats.has(child.kind) : true;
 			return {
+				set: child.kind,
 				value: subFactories,
 				type: `typeof ${subFactories}`,
 				strict: `${subFactories}.strict`,
@@ -942,16 +970,25 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		const refs = { strict: strictRef, ...(coerceRef === undefined ? {} : { coerce: coerceRef }) };
 		return subFactories === undefined
 			? { value: `{ ${pairValue} }`, type: `{ ${pairType} }`, ...refs }
-			: { value: `{ ${pairValue}, ...${subFactories} }`, type: `{ ${pairType} } & typeof ${subFactories}`, ...refs };
+			: { set: child.kind, value: `{ ${pairValue}, ...${subFactories} }`, type: `{ ${pairType} } & typeof ${subFactories}`, ...refs };
 	}
 
-	const defaultRoutes = new Map<string, Pick<VariantRoute, 'strict' | 'coerce'>>();
+	const defaultRoutes = new Map<string, Pick<VariantRoute, 'strict' | 'coerce' | 'set'>>();
 	for (const parent of flattenedVariantParents(nodeMap, generatedIdTables)) {
 		const lines: string[] = [];
 		const types: string[] = [];
+		const uses = new Set<string>();
 		for (const route of parent.variants) {
 			const { name, child, nestedParentKey } = route;
+			if (route.leaf === true) {
+				const id = kindDiscriminantExpr(child.kind, nodeMap, wires.kindEntries);
+				usesKindId = true;
+				lines.push(`	${name}: ${id},`);
+				types.push(`	readonly ${name}: typeof ${id};`);
+				continue;
+			}
 			const target = nestedParentKey === undefined ? variantRouteOf(child) : defaultRoutes.get(nestedParentKey);
+			if (target?.set !== undefined) uses.add(target.set);
 			if (route.default && target !== undefined) {
 				defaultRoutes.set(parent.key, target);
 				lines.unshift(`	strict: ${target.strict},`, ...(target.coerce === undefined ? [] : [`	coerce: ${target.coerce},`]));
@@ -966,8 +1003,12 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 			lines.push(`	${name}: ${own.value},`);
 			types.push(`	readonly ${name}: ${own.type};`);
 		}
-		blocks.push(`export const ${parent.key}: {`, ...types, '} = {', ...lines, '};', '');
+		chunks.push({ kind: parent.key, isPrivate: false, lines: [`export const ${parent.key}: {`, ...types, '} = {', ...lines, '};', ''], uses, hasMethods: false });
 	}
+
+	const kept = withoutUnusedPrivateSets(chunks);
+	const helpersAt = kept.findIndex((chunk) => chunk.hasMethods);
+	const blocks = kept.flatMap((chunk, i) => (i === helpersAt ? [...ERASED_HELPERS, ...chunk.lines] : chunk.lines));
 
 	const extraImports = [
 		"import * as F from '../raw.js';",
@@ -978,7 +1019,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 	];
 	const start = blocks.indexOf(ERASED_HELPERS[0]!);
 	const end = start + ERASED_HELPERS.length - 1;
-	if (start >= 0 && blocks.some((b) => b.includes('NoneOf<'))) blocks.splice(end, 0, ...SPLICE_HELPER);
+	if (start >= 0 && blocks.some((b) => b.includes('NoneOf<'))) blocks.splice(end, 0, ...FLATTEN_HELPER);
 	if (start >= 0 && blocks.some((b) => b.includes('ListElement<'))) blocks.splice(end, 0, ...LIST_HELPER);
 	return [...overlayFrame(overlayImportPath(1), blocks, extraImports), ...blocks].join('\n');
 }

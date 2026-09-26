@@ -51,6 +51,7 @@
  * and calls the same function.
  */
 
+import { stableGrammars } from '@sittir/codegen/grammars';
 import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
@@ -72,7 +73,8 @@ export type RegressionVerdictReason =
 	| 'total-fail-rise'
 	| 'schema-violation'
 	| 'format-deferred-rise'
-	| 'left-out-rise';
+	| 'left-out-rise'
+	| 'grammar-dropped';
 
 export type RegressionVerdict =
 	| { ok: true; summary: string }
@@ -94,7 +96,7 @@ export type RegressionVerdict =
 // truth for "which validators / which grammars exist".
 // ---------------------------------------------------------------------------
 
-const GRAMMARS = ['python', 'rust', 'typescript'] as const;
+const GRAMMARS = stableGrammars();
 
 const VALIDATORS = ['from', 'coverage', 'roundtrip', 'factoryRoundtrip'] as const;
 type ValidatorName = (typeof VALIDATORS)[number];
@@ -326,7 +328,8 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 			}
 		};
 	}
-	for (const g of GRAMMARS) {
+	const checkedGrammars = label === 'head' ? [...new Set([...GRAMMARS, ...grammarKeys])] : grammarKeys;
+	for (const g of checkedGrammars) {
 		const gPath = `${label}.grammars.${g}`;
 		const ge = (grammars as Record<string, unknown>)[g];
 		if (ge === undefined) {
@@ -457,10 +460,36 @@ function passCountFail(path: string, before: number, after: number): RegressionV
  * conflicting floor on the same numbers. This function owns only the
  * per-grammar, per-validator, and per-grammar parity-fixture floors.
  */
-function checkPassCounts(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	for (const g of GRAMMARS) {
+function checkDroppedGrammars(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
+	const baseGrammars = Object.keys(base.grammars);
+	const dropped = baseGrammars.filter((g) => head.grammars[g] === undefined);
+	if (dropped.length === 0) return null;
+	return {
+		ok: false,
+		reason: 'grammar-dropped',
+		summary: `grammar(s) in the base baseline are missing from head: ${dropped.join(', ')}`,
+		details: {
+			path: 'grammars',
+			before: baseGrammars,
+			after: Object.keys(head.grammars),
+			note: 'a baselined grammar leaves the ratchet only through a reviewed baseline change'
+		}
+	};
+}
+
+function* comparedGrammars(
+	base: BackendBaseline,
+	head: BackendBaseline
+): Generator<readonly [string, GrammarEntry, GrammarEntry]> {
+	for (const g of Object.keys(base.grammars)) {
 		const baseGrammar = base.grammars[g];
 		const headGrammar = head.grammars[g];
+		if (baseGrammar && headGrammar) yield [g, baseGrammar, headGrammar];
+	}
+}
+
+function checkPassCounts(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
+	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
 		for (const vName of VALIDATORS) {
 			const b = baseGrammar.validators[vName] as ValidatorResult;
 			const h = headGrammar.validators[vName] as ValidatorResult;
@@ -497,9 +526,9 @@ function sumByKind(byKind: Readonly<Record<string, number>>): number {
 }
 
 function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	for (const g of GRAMMARS) {
-		const before = base.grammars[g].parityFixtures.leftOutByKind ?? {};
-		const after = head.grammars[g].parityFixtures.leftOutByKind ?? {};
+	for (const [g, baseGE, headGE] of comparedGrammars(base, head)) {
+		const before = baseGE.parityFixtures.leftOutByKind ?? {};
+		const after = headGE.parityFixtures.leftOutByKind ?? {};
 		const beforeSum = sumByKind(before);
 		const afterSum = sumByKind(after);
 		if (afterSum <= beforeSum) continue;
@@ -574,9 +603,7 @@ function parityFixturesSum(p: ParityFixtures): number {
 }
 
 function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	for (const g of GRAMMARS) {
-		const baseGE: GrammarEntry = base.grammars[g];
-		const headGE: GrammarEntry = head.grammars[g];
+	for (const [g, baseGE, headGE] of comparedGrammars(base, head)) {
 		for (const vName of VALIDATORS) {
 			const baseV = baseGE.validators[vName] as ValidatorResult;
 			const headV = headGE.validators[vName] as ValidatorResult;
@@ -669,6 +696,9 @@ export function checkRegression(base: BackendBaseline, head: BackendBaseline): R
 			details: { path: 'backend', before: base.backend, after: head.backend }
 		};
 	}
+
+	const dropped = checkDroppedGrammars(base, head);
+	if (dropped) return dropped;
 
 	const leftOutRise = checkLeftOutRise(base, head);
 	if (leftOutRise) return leftOutRise;

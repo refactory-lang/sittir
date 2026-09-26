@@ -1,6 +1,6 @@
 /**
  * discover/phantom — enumerate every codegen kind that has no parser
- * symbol entry (TSGrammar-only phantoms) across all three grammars.
+ * symbol entry (TSGrammar-only phantoms) across every stable grammar.
  *
  * A "phantom kind" is one that exists in nodeMap.nodes but has no entry
  * in generatedIdTables.kindIds — i.e. tree-sitter inlined/removed it
@@ -8,6 +8,7 @@
  */
 
 import { invoke } from '../codegen-surface.ts';
+import { stableGrammars } from '@sittir/codegen/grammars';
 
 export interface PhantomKindsOptions {
 	grammars: string[];
@@ -79,7 +80,7 @@ async function diagnoseGrammar(grammar: string): Promise<PhantomReport> {
 }
 
 export async function run(opts: PhantomKindsOptions): Promise<number> {
-	const grammars = opts.grammars.length ? opts.grammars : ['rust', 'typescript', 'python'];
+	const grammars = opts.grammars.length ? opts.grammars : stableGrammars();
 
 	for (const grammar of grammars) {
 		try {

@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 438,
+  "nodeCount": 437,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -10,7 +10,6 @@
     "_formal_parameter",
     "_identifier",
     "_import_identifier",
-    "_lhs_expression",
     "_module_export_name",
     "_property_name",
     "_tuple_type_member",
@@ -23,7 +22,6 @@
     "expression",
     "import_specifier",
     "index_signature",
-    "lhs_expression",
     "meta_property",
     "number",
     "parenthesized_expression",
@@ -82,6 +80,14 @@
         "arrow_function_parameter": "parameter"
       }
     },
+    "_lhs_expression": {
+      "definedBy": "enrich",
+      "childKind": {
+        "member_expression": "member_expression",
+        "subscript_expression": "subscript_expression",
+        "non_null_expression": "non_null_expression"
+      }
+    },
     "binary_expression": {
       "definedBy": "override",
       "childKind": {
@@ -102,6 +108,31 @@
         "declaration": "declaration",
         "ambient_declaration_global": "global",
         "ambient_declaration_module": "module"
+      }
+    },
+    "enum_body": {
+      "definedBy": "enrich",
+      "childKind": {
+        "enum_body_elements": "elements"
+      }
+    },
+    "literal_type": {
+      "definedBy": "override",
+      "childKind": {
+        "literal_type_negative_number": "negative_number",
+        "number": "number",
+        "string": "string",
+        "true": "true",
+        "false": "false",
+        "null": "null",
+        "undefined": "undefined"
+      }
+    },
+    "import_clause_group": {
+      "definedBy": "enrich",
+      "childKind": {
+        "namespace_import": "namespace_import",
+        "named_imports": "named_imports"
       }
     }
   },
@@ -165,7 +196,7 @@
     "optional_parameter.pattern": {
       "lhs_expression": "_lhs_expression"
     },
-    "template_type.content": {
+    "template_type.type": {
       "type_identifier": "identifier",
       "this_type": "this"
     },
@@ -227,12 +258,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_string_double",
-          "_string_single"
-        ]
+        "nonEmpty": false
       }
     },
     "export_clause": {
@@ -304,12 +330,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_namespace_import",
-          "_named_imports",
-          "_import_clause_default_import"
-        ]
+        "nonEmpty": false
       }
     },
     "namespace_import": {
@@ -511,12 +532,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_for_header_lhs",
-          "_for_header_var_kind",
-          "_for_header_let_const_kind"
-        ]
+        "nonEmpty": false
       },
       "body": {
         "unnamed": false,
@@ -645,8 +661,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "registered": true
+        "nonEmpty": false
       }
     },
     "return_statement": {
@@ -938,11 +953,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_class_heritage_extends_clause",
-          "_implements_clause"
-        ]
+        "nonEmpty": false
       }
     },
     "function_expression": {
@@ -1148,11 +1159,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_arrow_function_parameter",
-          "_call_signature"
-        ]
+        "nonEmpty": false
       },
       "body": {
         "unnamed": false,
@@ -1233,6 +1240,15 @@
         "nonEmpty": false
       },
       "index": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_lhs_expression": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1435,18 +1451,12 @@
       }
     },
     "decorator": {
-      "content": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_decorator_member_expression",
-          "_decorator_call_expression",
-          "_decorator_parenthesized_expression"
-        ]
+        "nonEmpty": false
       }
     },
     "decorator_member_expression": {
@@ -1528,38 +1538,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_member_expression",
-          "_subscript_expression",
-          "_undefined",
-          "_identifier",
-          "_declare_keyword",
-          "_namespace_keyword",
-          "_type_keyword",
-          "_public_keyword",
-          "_private_keyword",
-          "_protected_keyword",
-          "_override_keyword",
-          "_readonly_keyword",
-          "_module_keyword",
-          "_any_keyword",
-          "_number_keyword",
-          "_boolean_keyword",
-          "_string_keyword",
-          "_symbol_keyword",
-          "_export_keyword",
-          "_object_keyword",
-          "_new_keyword",
-          "_get_keyword",
-          "_set_keyword",
-          "_async_keyword",
-          "_static_keyword",
-          "_let_keyword",
-          "_object_pattern",
-          "_array_pattern",
-          "_non_null_expression"
-        ]
+        "nonEmpty": false
       }
     },
     "method_definition": {
@@ -1967,17 +1946,12 @@
       }
     },
     "decorator_parenthesized_expression": {
-      "content": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_decorator_member_expression",
-          "_decorator_call_expression"
-        ]
+        "nonEmpty": false
       }
     },
     "type_assertion": {
@@ -2069,7 +2043,7 @@
         "nonEmpty": true
       }
     },
-    "_extends_clause_single": {
+    "extends_clause_single": {
       "value": {
         "unnamed": false,
         "slotCount": 1,
@@ -2100,25 +2074,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_function_declaration",
-          "_generator_function_declaration",
-          "_class_declaration",
-          "_lexical_declaration",
-          "_variable_declaration",
-          "_function_signature",
-          "_abstract_class_declaration",
-          "_module",
-          "_internal_module",
-          "_type_alias_declaration",
-          "_enum_declaration",
-          "_interface_declaration",
-          "_import_alias",
-          "_ambient_declaration",
-          "_ambient_declaration_global",
-          "_ambient_declaration_module"
-        ]
+        "nonEmpty": false
       }
     },
     "abstract_class_declaration": {
@@ -2486,7 +2442,7 @@
         "nonEmpty": false
       }
     },
-    "_type_query_member_expression_in_type_annotation": {
+    "type_query_member_expression_in_type_annotation": {
       "object": {
         "unnamed": false,
         "slotCount": 1,
@@ -2502,7 +2458,7 @@
         "nonEmpty": false
       }
     },
-    "_type_query_call_expression_in_type_annotation": {
+    "type_query_call_expression_in_type_annotation": {
       "function": {
         "unnamed": false,
         "slotCount": 1,
@@ -2519,17 +2475,12 @@
       }
     },
     "asserts": {
-      "content": {
+      "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_type_predicate",
-          "_identifier",
-          "_this"
-        ]
+        "nonEmpty": false
       }
     },
     "asserts_annotation": {
@@ -2622,35 +2573,12 @@
       }
     },
     "template_type": {
-      "content": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_type_identifier",
-          "_this_type",
-          "_parenthesized_type",
-          "_predefined_type",
-          "_nested_type_identifier",
-          "_generic_type",
-          "_object_type",
-          "_array_type",
-          "_tuple_type",
-          "_flow_maybe_type",
-          "_type_query",
-          "_index_type_query",
-          "_this",
-          "_existential_type",
-          "_literal_type",
-          "_lookup_type",
-          "_conditional_type",
-          "_template_literal_type",
-          "_intersection_type",
-          "_union_type",
-          "_infer_type"
-        ]
+        "nonEmpty": false
       }
     },
     "template_literal_type": {
@@ -2749,7 +2677,7 @@
         "nonEmpty": false
       }
     },
-    "_type_query_member_expression": {
+    "type_query_member_expression": {
       "object": {
         "unnamed": false,
         "slotCount": 1,
@@ -2762,11 +2690,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_dot",
-          "_qmark_dot"
-        ]
+        "nonEmpty": false
       },
       "property": {
         "unnamed": false,
@@ -2776,7 +2700,7 @@
         "nonEmpty": false
       }
     },
-    "_type_query_subscript_expression": {
+    "type_query_subscript_expression": {
       "object": {
         "unnamed": false,
         "slotCount": 1,
@@ -2792,7 +2716,7 @@
         "nonEmpty": false
       }
     },
-    "_type_query_call_expression": {
+    "type_query_call_expression": {
       "function": {
         "unnamed": false,
         "slotCount": 1,
@@ -2808,7 +2732,7 @@
         "nonEmpty": false
       }
     },
-    "_type_query_instantiation_expression": {
+    "type_query_instantiation_expression": {
       "function": {
         "unnamed": false,
         "slotCount": 1,
@@ -2825,20 +2749,12 @@
       }
     },
     "type_query": {
-      "content": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_type_query_subscript_expression",
-          "_type_query_member_expression",
-          "_type_query_call_expression",
-          "_type_query_instantiation_expression",
-          "_identifier",
-          "_this"
-        ]
+        "nonEmpty": false
       }
     },
     "index_type_query": {
@@ -2891,39 +2807,6 @@
     },
     "literal_type": {
       "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_unary_expression_number",
-          "_number_hex",
-          "_number_float_point",
-          "_number_float_leading_point",
-          "_number_float_scientific",
-          "_number_decimal",
-          "_number_binary",
-          "_number_octal",
-          "_number_bigint",
-          "_string_double",
-          "_string_single",
-          "_true",
-          "_false",
-          "_null",
-          "_undefined"
-        ]
-      }
-    },
-    "_number": {
-      "operator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "argument": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3109,11 +2992,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_extends_keyword",
-          "_colon"
-        ]
+        "nonEmpty": false
       },
       "type": {
         "unnamed": false,
@@ -3268,24 +3147,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_name",
-          "_enum_assignment",
-          "_property_identifier",
-          "_private_property_identifier",
-          "_string_double",
-          "_string_single",
-          "_number_hex",
-          "_number_float_point",
-          "_number_float_leading_point",
-          "_number_float_scientific",
-          "_number_decimal",
-          "_number_binary",
-          "_number_octal",
-          "_number_bigint",
-          "_computed_property_name"
-        ]
+        "nonEmpty": false
       }
     },
     "types": {
@@ -3321,11 +3183,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_namespace_import",
-          "_named_imports"
-        ]
+        "nonEmpty": false
       }
     },
     "catch_clause_group": {
@@ -3378,25 +3236,12 @@
       }
     },
     "object_type_content": {
-      "content": {
+      "members": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_export_statement_default_from",
-          "_export_statement_default_declaration",
-          "_export_statement_type_export",
-          "_export_statement_equals_export",
-          "_export_statement_namespace_export",
-          "_property_signature",
-          "_call_signature",
-          "_construct_signature",
-          "_index_signature_colon",
-          "_index_signature_mapped_type_clause",
-          "_method_signature"
-        ]
+        "nonEmpty": true
       }
     },
     "export_statement_namespace_export": {
@@ -3468,6 +3313,22 @@
     },
     "comment_block": {
       "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "literal_type_negative_number": {
+      "operator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "argument": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3692,19 +3553,12 @@
       }
     },
     "class_body_member": {
-      "content": {
+      "member": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_abstract_method_signature",
-          "_index_signature_colon",
-          "_index_signature_mapped_type_clause",
-          "_method_signature",
-          "_public_field_definition"
-        ]
+        "nonEmpty": false
       },
       "terminator": {
         "unnamed": false,
@@ -3843,81 +3697,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_as_expression",
-          "_satisfies_expression",
-          "_instantiation_expression",
-          "_internal_module",
-          "_type_assertion",
-          "_identifier",
-          "_subscript_expression",
-          "_member_expression",
-          "_parenthesized_expression_typed",
-          "_parenthesized_expression_sequence",
-          "_undefined",
-          "_declare_keyword",
-          "_namespace_keyword",
-          "_type_keyword",
-          "_public_keyword",
-          "_private_keyword",
-          "_protected_keyword",
-          "_override_keyword",
-          "_readonly_keyword",
-          "_module_keyword",
-          "_any_keyword",
-          "_number_keyword",
-          "_boolean_keyword",
-          "_string_keyword",
-          "_symbol_keyword",
-          "_export_keyword",
-          "_object_keyword",
-          "_new_keyword",
-          "_get_keyword",
-          "_set_keyword",
-          "_async_keyword",
-          "_static_keyword",
-          "_let_keyword",
-          "_this",
-          "_super",
-          "_number_hex",
-          "_number_float_point",
-          "_number_float_leading_point",
-          "_number_float_scientific",
-          "_number_decimal",
-          "_number_binary",
-          "_number_octal",
-          "_number_bigint",
-          "_string_double",
-          "_string_single",
-          "_template_string",
-          "_regex",
-          "_true",
-          "_false",
-          "_null",
-          "_object",
-          "_array",
-          "_function_expression",
-          "_arrow_function",
-          "_generator_function",
-          "_class",
-          "_meta_property_new_target",
-          "_meta_property_import_meta",
-          "_call_expression_call",
-          "_call_expression_template_call",
-          "_call_expression_member",
-          "_non_null_expression",
-          "_assignment_expression",
-          "_augmented_assignment_expression",
-          "_await_expression",
-          "_unary_expression",
-          "_binary_expression",
-          "_ternary_expression",
-          "_update_expression_postfix",
-          "_update_expression_prefix",
-          "_new_expression",
-          "_yield_expression"
-        ]
+        "nonEmpty": false
       },
       "type": {
         "unnamed": false,
@@ -4079,11 +3859,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_type_keyword"
-        ]
+        "nonEmpty": false
       },
       "import_clause_group": {
         "unnamed": false,
@@ -4099,13 +3875,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_export_statement_default_from_star_from",
-          "_export_statement_default_from_ns_from",
-          "_export_statement_default_from_clause_from",
-          "_export_clause"
-        ]
+        "nonEmpty": false
       },
       "automatic_semicolon": {
         "unnamed": false,
@@ -4113,11 +3883,7 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true,
-        "wireKeys": [
-          "_automatic_semicolon",
-          "_semi"
-        ]
+        "registered": true
       }
     },
     "export_statement_default_declaration": {
@@ -4133,11 +3899,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_declaration",
-          "_export_statement_default_declaration_default_kw"
-        ]
+        "nonEmpty": false
       }
     },
     "export_statement_default_from_star_from": {
@@ -4187,11 +3949,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_declaration",
-          "_export_statement_default_declaration_default_kw_value"
-        ]
+        "nonEmpty": false
       }
     },
     "export_statement_default_declaration_default_kw_value": {
@@ -4208,11 +3966,7 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true,
-        "wireKeys": [
-          "_automatic_semicolon",
-          "_semi"
-        ]
+        "registered": true
       }
     },
     "variable_declarator_plain": {
@@ -4389,15 +4143,6 @@
         "nonEmpty": false
       }
     },
-    "semicolon": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "interface_body": {
       "content": {
         "unnamed": false,
@@ -4510,11 +4255,13 @@
       "kind": "_automatic_semicolon",
       "modelType": "punctuation",
       "typeName": "AutomaticSemicolon",
+      "factoryName": "automaticSemicolon",
       "irKey": "automaticSemicolon",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
-      "text": "\n"
+      "text": "\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_blankline",
@@ -4561,61 +4308,6 @@
       ]
     },
     {
-      "kind": "_extends_clause_single",
-      "modelType": "branch",
-      "typeName": "ExtendsClauseSingle",
-      "factoryName": "extendsClauseSingle",
-      "irKey": "extendsClauseSingle",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "expression"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "expression",
-              "parseKind": "expression"
-            }
-          ]
-        },
-        {
-          "name": "type_arguments",
-          "propertyName": "typeArguments",
-          "paramName": "typeArguments",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "type_arguments"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "type_arguments",
-              "parseKind": "type_arguments"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "value",
-        "type_arguments"
-      ]
-    },
-    {
       "kind": "_for_header",
       "modelType": "supertype",
       "typeName": "ForHeader",
@@ -4644,11 +4336,13 @@
       "kind": "_function_signature_automatic_semicolon",
       "modelType": "punctuation",
       "typeName": "FunctionSignatureAutomaticSemicolon",
+      "factoryName": "functionSignatureAutomaticSemicolon",
       "irKey": "functionSignatureAutomaticSemicolon",
-      "hidden": true,
+      "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
-      "text": "\n"
+      "text": "\n",
+      "factoryShape": "text"
     },
     {
       "kind": "_identifier",
@@ -4795,41 +4489,291 @@
     },
     {
       "kind": "_lhs_expression",
-      "modelType": "supertype",
-      "typeName": "_LhsExpression",
+      "modelType": "envelope",
+      "typeName": "LhsExpression",
+      "factoryName": "lhsExpression",
       "irKey": "lhsExpression",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "member_expression",
+            "subscript_expression",
+            "undefined",
+            "identifier",
+            "object_pattern",
+            "array_pattern",
+            "non_null_expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "member_expression",
+              "parseKind": "member_expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "subscript_expression",
+              "parseKind": "subscript_expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "undefined",
+              "parseKind": "undefined"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "declare_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "namespace_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "type_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "public_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "private_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "protected_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "override_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "readonly_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "module_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "any_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "number_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "boolean_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "string_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "symbol_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "export_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "object_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "new_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "get_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "set_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "async_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "static_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
+              "parseKind": "let_keyword"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "object_pattern",
+              "parseKind": "object_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "array_pattern",
+              "parseKind": "array_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "non_null_expression",
+              "parseKind": "non_null_expression"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
         "any_keyword",
+        "array",
         "array_pattern",
+        "arrow_function",
+        "as_expression",
+        "assignment_expression",
         "async_keyword",
+        "augmented_assignment_expression",
+        "await_expression",
+        "binary_expression",
         "boolean_keyword",
+        "call_expression_call",
+        "call_expression_member",
+        "call_expression_template_call",
+        "class",
         "declare_keyword",
         "export_keyword",
+        "false",
+        "function_expression",
+        "generator_function",
         "get_keyword",
         "identifier",
+        "instantiation_expression",
+        "internal_module",
         "let_keyword",
         "member_expression",
+        "meta_property_import_meta",
+        "meta_property_new_target",
         "module_keyword",
         "namespace_keyword",
+        "new_expression",
         "new_keyword",
         "non_null_expression",
+        "null",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
+        "object",
         "object_keyword",
         "object_pattern",
         "override_keyword",
+        "parenthesized_expression_sequence",
+        "parenthesized_expression_typed",
         "private_keyword",
         "protected_keyword",
         "public_keyword",
         "readonly_keyword",
+        "regex",
+        "satisfies_expression",
+        "sequence_expression",
         "set_keyword",
         "static_keyword",
+        "string_double",
         "string_keyword",
+        "string_single",
         "subscript_expression",
+        "super",
         "symbol_keyword",
+        "template_string",
+        "ternary_expression",
+        "this",
+        "true",
+        "type_assertion",
         "type_keyword",
-        "undefined"
+        "unary_expression",
+        "undefined",
+        "update_expression_postfix",
+        "update_expression_prefix",
+        "yield_expression"
+      ],
+      "textLeavesThrough": [
+        "undefined",
+        "identifier"
       ]
     },
     {
@@ -4853,61 +4797,6 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
       "text": "\n"
-    },
-    {
-      "kind": "_number",
-      "modelType": "branch",
-      "typeName": "_Number",
-      "factoryName": "_number",
-      "irKey": "_number",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "operator",
-          "propertyName": "operator",
-          "paramName": "operator",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [
-            "__number_operator"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "__number_operator",
-              "parseKind": "__number_operator"
-            }
-          ]
-        },
-        {
-          "name": "argument",
-          "propertyName": "argument",
-          "paramName": "argument",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "number"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "number",
-              "parseKind": "number"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "operator",
-        "argument"
-      ]
     },
     {
       "kind": "_operator",
@@ -4989,508 +4878,6 @@
         "rest_type",
         "tuple_parameter",
         "type"
-      ]
-    },
-    {
-      "kind": "_type_query_call_expression",
-      "modelType": "branch",
-      "typeName": "TypeQueryCallExpression",
-      "factoryName": "typeQueryCallExpression",
-      "irKey": "typeQueryCallExpression",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "function",
-          "propertyName": "function",
-          "paramName": "function_",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "import",
-            "identifier",
-            "_type_query_member_expression",
-            "_type_query_subscript_expression"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "import",
-              "parseKind": "import"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type_query_member_expression",
-              "parseKind": "type_query_member_expression"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type_query_subscript_expression",
-              "parseKind": "type_query_subscript_expression"
-            }
-          ]
-        },
-        {
-          "name": "arguments",
-          "propertyName": "arguments",
-          "paramName": "arguments_",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "arguments"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "arguments",
-              "parseKind": "arguments"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "function",
-        "arguments"
-      ]
-    },
-    {
-      "kind": "_type_query_call_expression_in_type_annotation",
-      "modelType": "branch",
-      "typeName": "TypeQueryCallExpressionInTypeAnnotation",
-      "factoryName": "typeQueryCallExpressionInTypeAnnotation",
-      "irKey": "typeQueryCallExpressionInTypeAnnotation",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "function",
-          "propertyName": "function",
-          "paramName": "function_",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "import",
-            "_type_query_member_expression_in_type_annotation"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "import",
-              "parseKind": "import"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type_query_member_expression_in_type_annotation",
-              "parseKind": "type_query_member_expression_in_type_annotation"
-            }
-          ]
-        },
-        {
-          "name": "arguments",
-          "propertyName": "arguments",
-          "paramName": "arguments_",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "arguments"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "arguments",
-              "parseKind": "arguments"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "function",
-        "arguments"
-      ]
-    },
-    {
-      "kind": "_type_query_instantiation_expression",
-      "modelType": "branch",
-      "typeName": "TypeQueryInstantiationExpression",
-      "factoryName": "typeQueryInstantiationExpression",
-      "irKey": "typeQueryInstantiationExpression",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "function",
-          "propertyName": "function",
-          "paramName": "function_",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "import",
-            "identifier",
-            "_type_query_member_expression",
-            "_type_query_subscript_expression"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "import",
-              "parseKind": "import"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type_query_member_expression",
-              "parseKind": "type_query_member_expression"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type_query_subscript_expression",
-              "parseKind": "type_query_subscript_expression"
-            }
-          ]
-        },
-        {
-          "name": "type_arguments",
-          "propertyName": "typeArguments",
-          "paramName": "typeArguments",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "type_arguments"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "type_arguments",
-              "parseKind": "type_arguments"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "function",
-        "type_arguments"
-      ]
-    },
-    {
-      "kind": "_type_query_member_expression",
-      "modelType": "branch",
-      "typeName": "TypeQueryMemberExpression",
-      "factoryName": "typeQueryMemberExpression",
-      "irKey": "typeQueryMemberExpression",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "object",
-          "propertyName": "object",
-          "paramName": "object",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "identifier",
-            "this",
-            "_type_query_subscript_expression",
-            "_type_query_member_expression",
-            "_type_query_call_expression"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "this",
-              "parseKind": "this"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type_query_subscript_expression",
-              "parseKind": "type_query_subscript_expression"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type_query_member_expression",
-              "parseKind": "type_query_member_expression"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type_query_call_expression",
-              "parseKind": "type_query_call_expression"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": ".",
-              "parseKind": "dot"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "?.",
-              "parseKind": "qmark_dot"
-            }
-          ]
-        },
-        {
-          "name": "property",
-          "propertyName": "property",
-          "paramName": "property",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "private_property_identifier",
-            "property_identifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "private_property_identifier",
-              "parseKind": "private_property_identifier"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "property_identifier",
-              "parseKind": "property_identifier"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "object",
-        "content",
-        "property"
-      ]
-    },
-    {
-      "kind": "_type_query_member_expression_in_type_annotation",
-      "modelType": "branch",
-      "typeName": "TypeQueryMemberExpressionInTypeAnnotation",
-      "factoryName": "typeQueryMemberExpressionInTypeAnnotation",
-      "irKey": "typeQueryMemberExpressionInTypeAnnotation",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "object",
-          "propertyName": "object",
-          "paramName": "object",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "import",
-            "_type_query_member_expression_in_type_annotation",
-            "_type_query_call_expression_in_type_annotation"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "import",
-              "parseKind": "import"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type_query_member_expression_in_type_annotation",
-              "parseKind": "type_query_member_expression_in_type_annotation"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type_query_call_expression_in_type_annotation",
-              "parseKind": "type_query_call_expression_in_type_annotation"
-            }
-          ]
-        },
-        {
-          "name": "property",
-          "propertyName": "property",
-          "paramName": "property",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "private_property_identifier",
-            "property_identifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "private_property_identifier",
-              "parseKind": "private_property_identifier"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "property_identifier",
-              "parseKind": "property_identifier"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "object",
-        "property"
-      ]
-    },
-    {
-      "kind": "_type_query_subscript_expression",
-      "modelType": "branch",
-      "typeName": "TypeQuerySubscriptExpression",
-      "factoryName": "typeQuerySubscriptExpression",
-      "irKey": "typeQuerySubscriptExpression",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "object",
-          "propertyName": "object",
-          "paramName": "object",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "identifier",
-            "this",
-            "_type_query_subscript_expression",
-            "_type_query_member_expression",
-            "_type_query_call_expression"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "this",
-              "parseKind": "this"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type_query_subscript_expression",
-              "parseKind": "type_query_subscript_expression"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type_query_member_expression",
-              "parseKind": "type_query_member_expression"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type_query_call_expression",
-              "parseKind": "type_query_call_expression"
-            }
-          ]
-        },
-        {
-          "name": "index",
-          "propertyName": "index",
-          "paramName": "index",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "predefined_type",
-            "string",
-            "number"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "predefined_type",
-              "parseKind": "predefined_type"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "string",
-              "parseKind": "string"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "number",
-              "parseKind": "number"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "config",
-      "factoryFields": [
-        "object",
-        "index"
       ]
     },
     {
@@ -6078,13 +5465,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -6100,6 +5480,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -6133,6 +5514,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -6474,7 +5861,7 @@
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "pattern",
             "assignment_pattern"
@@ -6534,13 +5921,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -6556,6 +5936,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -6589,6 +5970,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -6957,9 +6344,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6993,7 +6380,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "content"
+        "value"
       ],
       "bareAccepts": [
         "identifier",
@@ -7088,7 +6475,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "parenthesized_expression",
             "_lhs_expression"
@@ -7151,7 +6538,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "pattern"
           ],
@@ -8394,8 +7781,7 @@
               "parseKind": "catch_clause_group",
               "seat": {
                 "kind": "catch_clause_group",
-                "shape": "arm",
-                "mount": "group"
+                "shape": "flatten"
               }
             }
           ]
@@ -8649,7 +8035,8 @@
             "class_body_method",
             "class_body_method_sig",
             "class_static_block",
-            "class_body_member"
+            "class_body_member",
+            "empty_member"
           ],
           "values": [
             {
@@ -8677,10 +8064,10 @@
               "parseKind": "class_body_member"
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "array",
-              "value": ";",
-              "parseKind": "semicolon"
+              "name": "empty_member",
+              "parseKind": "empty_member"
             }
           ]
         }
@@ -8702,9 +8089,9 @@
       },
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "member",
+          "propertyName": "member",
+          "paramName": "member",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -8778,7 +8165,7 @@
       "name": "class_body_member",
       "factoryShape": "direct",
       "factoryFields": [
-        "content"
+        "member"
       ],
       "bareAccepts": [
         "abstract_method_signature",
@@ -10077,9 +9464,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -10120,7 +9507,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "content"
+        "expression"
       ],
       "bareAccepts": [
         "decorator_call_expression",
@@ -10283,9 +9670,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -10319,7 +9706,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "content"
+        "expression"
       ],
       "bareAccepts": [
         "decorator_call_expression",
@@ -10372,13 +9759,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -10394,6 +9774,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -10427,6 +9808,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -10744,6 +10131,18 @@
       "factoryShape": "text"
     },
     {
+      "kind": "empty_member",
+      "modelType": "punctuation",
+      "typeName": "EmptyMember",
+      "factoryName": "emptyMember",
+      "irKey": "emptyMember",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\";\" as const",
+      "text": ";",
+      "factoryShape": "text"
+    },
+    {
       "kind": "empty_statement",
       "modelType": "punctuation",
       "typeName": "EmptyStatement",
@@ -10994,7 +10393,12 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "enum_body_elements",
-              "parseKind": "enum_body_elements"
+              "parseKind": "enum_body_elements",
+              "seat": {
+                "kind": "enum_body_elements",
+                "shape": "arm",
+                "mount": "elements"
+              }
             }
           ]
         }
@@ -12671,13 +12075,13 @@
           "nonEmpty": true,
           "storage": "verbatim",
           "kinds": [
-            "_extends_clause_single"
+            "extends_clause_single"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "_extends_clause_single",
+              "name": "extends_clause_single",
               "parseKind": "extends_clause_single"
             }
           ]
@@ -12686,6 +12090,61 @@
       "factoryShape": "spread",
       "factoryFields": [
         "extends_clause_single"
+      ]
+    },
+    {
+      "kind": "extends_clause_single",
+      "modelType": "branch",
+      "typeName": "ExtendsClauseSingle",
+      "factoryName": "extendsClauseSingle",
+      "irKey": "extendsClauseSingle",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        },
+        {
+          "name": "type_arguments",
+          "propertyName": "typeArguments",
+          "paramName": "typeArguments",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "type_arguments"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "type_arguments",
+              "parseKind": "type_arguments"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "config",
+      "factoryFields": [
+        "value",
+        "type_arguments"
       ]
     },
     {
@@ -12842,13 +12301,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -12864,6 +12316,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -12897,6 +12350,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -13065,7 +12524,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "_lhs_expression",
             "parenthesized_expression"
@@ -16105,13 +15564,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -16127,6 +15579,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -16160,6 +15613,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -16911,45 +16370,6 @@
       ]
     },
     {
-      "kind": "lhs_expression",
-      "modelType": "supertype",
-      "typeName": "LhsExpression",
-      "irKey": "lhsExpression",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "any_keyword",
-        "array_pattern",
-        "async_keyword",
-        "boolean_keyword",
-        "declare_keyword",
-        "export_keyword",
-        "get_keyword",
-        "identifier",
-        "let_keyword",
-        "member_expression",
-        "module_keyword",
-        "namespace_keyword",
-        "new_keyword",
-        "non_null_expression",
-        "number_keyword",
-        "object_keyword",
-        "object_pattern",
-        "override_keyword",
-        "private_keyword",
-        "protected_keyword",
-        "public_keyword",
-        "readonly_keyword",
-        "set_keyword",
-        "static_keyword",
-        "string_keyword",
-        "subscript_expression",
-        "symbol_keyword",
-        "type_keyword",
-        "undefined"
-      ]
-    },
-    {
       "kind": "literal_type",
       "modelType": "polymorph",
       "typeName": "LiteralType",
@@ -16966,7 +16386,7 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_number",
+            "literal_type_negative_number",
             "number",
             "string",
             "true",
@@ -16978,8 +16398,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_number",
-              "parseKind": "unary_expression_number"
+              "name": "literal_type_negative_number",
+              "parseKind": "literal_type_negative_number",
+              "seat": {
+                "kind": "literal_type_negative_number",
+                "shape": "arm",
+                "mount": "negativeNumber"
+              }
             },
             {
               "kind": "node-ref",
@@ -17025,8 +16450,8 @@
         "content"
       ],
       "bareAccepts": [
-        "_number",
         "false",
+        "literal_type_negative_number",
         "null",
         "number_bigint",
         "number_binary",
@@ -17040,6 +16465,65 @@
         "string_single",
         "true",
         "undefined"
+      ]
+    },
+    {
+      "kind": "literal_type_negative_number",
+      "modelType": "branch",
+      "typeName": "LiteralTypeNegativeNumber",
+      "factoryName": "literalTypeNegativeNumber",
+      "irKey": "literalTypeNegativeNumber",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "operator",
+          "propertyName": "operator",
+          "paramName": "operator",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [
+            "__number_operator"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "__number_operator",
+              "parseKind": "__number_operator"
+            }
+          ]
+        },
+        {
+          "name": "argument",
+          "propertyName": "argument",
+          "paramName": "argument",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "number"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "number",
+              "parseKind": "number"
+            }
+          ]
+        }
+      ],
+      "name": "literal_type_negative_number",
+      "factoryShape": "config",
+      "factoryFields": [
+        "operator",
+        "argument"
       ]
     },
     {
@@ -20319,7 +19803,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "content"
+        "members"
       ],
       "bareAccepts": [
         "any_keyword",
@@ -20459,13 +19943,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -20481,6 +19958,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -20514,6 +19992,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -20555,13 +20039,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -20577,6 +20054,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -20610,6 +20088,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -20883,13 +20367,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -20905,6 +20382,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -20938,6 +20416,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -21378,7 +20862,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "pattern",
             "assignment_pattern"
@@ -21552,13 +21036,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -21574,6 +21051,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -21607,6 +21085,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -21623,36 +21107,7 @@
       "transparent": true,
       "subtypes": [
         "_lhs_expression",
-        "any_keyword",
-        "array_pattern",
-        "async_keyword",
-        "boolean_keyword",
-        "declare_keyword",
-        "export_keyword",
-        "get_keyword",
-        "identifier",
-        "let_keyword",
-        "member_expression",
-        "module_keyword",
-        "namespace_keyword",
-        "new_keyword",
-        "non_null_expression",
-        "number_keyword",
-        "object_keyword",
-        "object_pattern",
-        "override_keyword",
-        "private_keyword",
-        "protected_keyword",
-        "public_keyword",
-        "readonly_keyword",
-        "rest_pattern",
-        "set_keyword",
-        "static_keyword",
-        "string_keyword",
-        "subscript_expression",
-        "symbol_keyword",
-        "type_keyword",
-        "undefined"
+        "rest_pattern"
       ]
     },
     {
@@ -23033,13 +22488,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -23055,6 +22503,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -23088,6 +22537,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -23666,13 +23121,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -23688,6 +23136,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -23721,6 +23170,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -23966,38 +23421,6 @@
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "text": ";"
-    },
-    {
-      "kind": "semicolon",
-      "modelType": "alias",
-      "typeName": "Semicolon",
-      "factoryName": "semicolon",
-      "irKey": "semicolon",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": ";",
-              "parseKind": "semi"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ]
     },
     {
       "kind": "sequence_expression",
@@ -25480,9 +24903,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -25509,16 +24932,9 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "content"
+        "type"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -25534,6 +24950,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -25567,6 +24984,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -26021,13 +25444,6 @@
         "tuple_type_members"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -26043,6 +25459,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -26076,6 +25493,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -26110,13 +25533,6 @@
         "tuple_type_member"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -26132,6 +25548,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -26165,6 +25582,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -26180,13 +25603,13 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_member_expression_in_type_annotation",
         "constructor_type",
         "function_type",
         "infer_type",
         "primary_type",
-        "readonly_type"
+        "readonly_type",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_member_expression_in_type_annotation"
       ]
     },
     {
@@ -26325,13 +25748,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -26347,6 +25763,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -26380,6 +25797,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",
@@ -26422,13 +25845,6 @@
         "types"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -26444,6 +25860,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -26477,6 +25894,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "types",
         "undefined",
         "union_type",
@@ -26870,18 +26293,18 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_type_query_subscript_expression",
-            "_type_query_member_expression",
-            "_type_query_call_expression",
-            "_type_query_instantiation_expression",
+            "type_query_subscript_expression",
+            "type_query_member_expression",
+            "type_query_call_expression",
+            "type_query_instantiation_expression",
             "identifier",
             "this"
           ],
@@ -26889,25 +26312,25 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_query_subscript_expression",
+              "name": "type_query_subscript_expression",
               "parseKind": "type_query_subscript_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_query_member_expression",
+              "name": "type_query_member_expression",
               "parseKind": "type_query_member_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_query_call_expression",
+              "name": "type_query_call_expression",
               "parseKind": "type_query_call_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_query_instantiation_expression",
+              "name": "type_query_instantiation_expression",
               "parseKind": "type_query_instantiation_expression"
             },
             {
@@ -26927,15 +26350,517 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "content"
+        "expression"
       ],
       "bareAccepts": [
-        "_type_query_call_expression",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_subscript_expression",
         "identifier",
-        "this"
+        "this",
+        "type_query_call_expression",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_subscript_expression"
+      ]
+    },
+    {
+      "kind": "type_query_call_expression",
+      "modelType": "branch",
+      "typeName": "TypeQueryCallExpression",
+      "factoryName": "typeQueryCallExpression",
+      "irKey": "typeQueryCallExpression",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "function",
+          "propertyName": "function",
+          "paramName": "function_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "import",
+            "identifier",
+            "type_query_member_expression",
+            "type_query_subscript_expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "import",
+              "parseKind": "import"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_query_member_expression",
+              "parseKind": "type_query_member_expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_query_subscript_expression",
+              "parseKind": "type_query_subscript_expression"
+            }
+          ]
+        },
+        {
+          "name": "arguments",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "arguments"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "arguments",
+              "parseKind": "arguments"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "config",
+      "factoryFields": [
+        "function",
+        "arguments"
+      ]
+    },
+    {
+      "kind": "type_query_call_expression_in_type_annotation",
+      "modelType": "branch",
+      "typeName": "TypeQueryCallExpressionInTypeAnnotation",
+      "factoryName": "typeQueryCallExpressionInTypeAnnotation",
+      "irKey": "typeQueryCallExpressionInTypeAnnotation",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "function",
+          "propertyName": "function",
+          "paramName": "function_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "import",
+            "type_query_member_expression_in_type_annotation"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "import",
+              "parseKind": "import"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_query_member_expression_in_type_annotation",
+              "parseKind": "type_query_member_expression_in_type_annotation"
+            }
+          ]
+        },
+        {
+          "name": "arguments",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "arguments"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "arguments",
+              "parseKind": "arguments"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "config",
+      "factoryFields": [
+        "function",
+        "arguments"
+      ]
+    },
+    {
+      "kind": "type_query_instantiation_expression",
+      "modelType": "branch",
+      "typeName": "TypeQueryInstantiationExpression",
+      "factoryName": "typeQueryInstantiationExpression",
+      "irKey": "typeQueryInstantiationExpression",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "function",
+          "propertyName": "function",
+          "paramName": "function_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "import",
+            "identifier",
+            "type_query_member_expression",
+            "type_query_subscript_expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "import",
+              "parseKind": "import"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_query_member_expression",
+              "parseKind": "type_query_member_expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_query_subscript_expression",
+              "parseKind": "type_query_subscript_expression"
+            }
+          ]
+        },
+        {
+          "name": "type_arguments",
+          "propertyName": "typeArguments",
+          "paramName": "typeArguments",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "type_arguments"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_arguments",
+              "parseKind": "type_arguments"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "config",
+      "factoryFields": [
+        "function",
+        "type_arguments"
+      ]
+    },
+    {
+      "kind": "type_query_member_expression",
+      "modelType": "branch",
+      "typeName": "TypeQueryMemberExpression",
+      "factoryName": "typeQueryMemberExpression",
+      "irKey": "typeQueryMemberExpression",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "object",
+          "propertyName": "object",
+          "paramName": "object",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "identifier",
+            "this",
+            "type_query_subscript_expression",
+            "type_query_member_expression",
+            "type_query_call_expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "this",
+              "parseKind": "this"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_query_subscript_expression",
+              "parseKind": "type_query_subscript_expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_query_member_expression",
+              "parseKind": "type_query_member_expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_query_call_expression",
+              "parseKind": "type_query_call_expression"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ".",
+              "parseKind": "dot"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "?.",
+              "parseKind": "qmark_dot"
+            }
+          ]
+        },
+        {
+          "name": "property",
+          "propertyName": "property",
+          "paramName": "property",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "private_property_identifier",
+            "property_identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "private_property_identifier",
+              "parseKind": "private_property_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "property_identifier",
+              "parseKind": "property_identifier"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "config",
+      "factoryFields": [
+        "object",
+        "content",
+        "property"
+      ]
+    },
+    {
+      "kind": "type_query_member_expression_in_type_annotation",
+      "modelType": "branch",
+      "typeName": "TypeQueryMemberExpressionInTypeAnnotation",
+      "factoryName": "typeQueryMemberExpressionInTypeAnnotation",
+      "irKey": "typeQueryMemberExpressionInTypeAnnotation",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "object",
+          "propertyName": "object",
+          "paramName": "object",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "import",
+            "type_query_member_expression_in_type_annotation",
+            "type_query_call_expression_in_type_annotation"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "import",
+              "parseKind": "import"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_query_member_expression_in_type_annotation",
+              "parseKind": "type_query_member_expression_in_type_annotation"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_query_call_expression_in_type_annotation",
+              "parseKind": "type_query_call_expression_in_type_annotation"
+            }
+          ]
+        },
+        {
+          "name": "property",
+          "propertyName": "property",
+          "paramName": "property",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "private_property_identifier",
+            "property_identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "private_property_identifier",
+              "parseKind": "private_property_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "property_identifier",
+              "parseKind": "property_identifier"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "config",
+      "factoryFields": [
+        "object",
+        "property"
+      ]
+    },
+    {
+      "kind": "type_query_subscript_expression",
+      "modelType": "branch",
+      "typeName": "TypeQuerySubscriptExpression",
+      "factoryName": "typeQuerySubscriptExpression",
+      "irKey": "typeQuerySubscriptExpression",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "object",
+          "propertyName": "object",
+          "paramName": "object",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "identifier",
+            "this",
+            "type_query_subscript_expression",
+            "type_query_member_expression",
+            "type_query_call_expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "this",
+              "parseKind": "this"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_query_subscript_expression",
+              "parseKind": "type_query_subscript_expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_query_member_expression",
+              "parseKind": "type_query_member_expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_query_call_expression",
+              "parseKind": "type_query_call_expression"
+            }
+          ]
+        },
+        {
+          "name": "index",
+          "propertyName": "index",
+          "paramName": "index",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "predefined_type",
+            "string",
+            "number"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "predefined_type",
+              "parseKind": "predefined_type"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "number",
+              "parseKind": "number"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "config",
+      "factoryFields": [
+        "object",
+        "index"
       ]
     },
     {
@@ -26972,13 +26897,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_number",
-        "_type_query_call_expression",
-        "_type_query_call_expression_in_type_annotation",
-        "_type_query_instantiation_expression",
-        "_type_query_member_expression",
-        "_type_query_member_expression_in_type_annotation",
-        "_type_query_subscript_expression",
         "any_keyword",
         "array_type",
         "boolean_keyword",
@@ -26994,6 +26912,7 @@
         "infer_type",
         "intersection_type",
         "literal_type",
+        "literal_type_negative_number",
         "lookup_type",
         "nested_type_identifier",
         "never_keyword",
@@ -27027,6 +26946,12 @@
         "tuple_type_members",
         "type_identifier",
         "type_query",
+        "type_query_call_expression",
+        "type_query_call_expression_in_type_annotation",
+        "type_query_instantiation_expression",
+        "type_query_member_expression",
+        "type_query_member_expression_in_type_annotation",
+        "type_query_subscript_expression",
         "undefined",
         "union_type",
         "unique",

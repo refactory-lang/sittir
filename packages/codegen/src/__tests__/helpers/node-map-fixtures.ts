@@ -16,10 +16,7 @@ import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { flatten } from '../../compiler/flatten.ts';
 
-export function makeNodeMapWith(
-	nodes: Map<string, AssembledNode>,
-	aliasedHiddenKinds?: Map<string, string>
-): NodeMap {
+export function makeNodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
 	return {
 		name: 'rust',
 		nodes,
@@ -33,9 +30,13 @@ export function makeNodeMapWith(
 			repeatedShapes: []
 		},
 		externals: new Set(),
-		word: undefined,
-		aliasedHiddenKinds
+		word: undefined
 	} satisfies NodeMap;
+}
+
+export function makeSiteKindsNodeMap<T extends { readonly kind: string; readonly seat?: { readonly kind: string } }>(sites: readonly T[]): NodeMap {
+	const kinds = new Set(sites.flatMap((site) => (site.seat === undefined ? [site.kind] : [site.kind, site.seat.kind])));
+	return makeNodeMapWith(new Map([...kinds].map((kind) => [kind, new AssembledPattern(kind, { type: PATTERN, value: kind })])));
 }
 
 export function makeMinimalNodeMap(): NodeMap {

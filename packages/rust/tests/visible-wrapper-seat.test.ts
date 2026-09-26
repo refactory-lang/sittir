@@ -40,7 +40,7 @@ describe('a visible wrapper seated on its parent', () => {
 			nodes: { kind: string; slots?: { name: string; values: { seat?: { kind: string; shape: string } }[] }[] }[];
 		};
 		const seated = model.nodes
-			.filter((n) => n.slots?.some((s) => s.values.some((v) => v.seat?.kind === 'match_pattern' && v.seat.shape === 'splice')))
+			.filter((n) => n.slots?.some((s) => s.values.some((v) => v.seat?.kind === 'match_pattern' && v.seat.shape === 'flatten')))
 			.map((n) => n.kind)
 			.sort();
 		expect(seated).toEqual(['last_match_arm', 'match_arm_block_ending', 'match_arm_with_comma']);

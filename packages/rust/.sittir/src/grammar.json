@@ -47,11 +47,19 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "expression_statement"
+          "name": "expression_statement",
+          "annotations": {
+            "variant": "expression",
+            "variantOf": "_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "_declaration_statement"
+          "name": "_declaration_statement",
+          "annotations": {
+            "variant": "declaration",
+            "variantOf": "_statement"
+          }
         }
       ]
     },
@@ -76,12 +84,12 @@
           "content": {
             "type": "SYMBOL",
             "name": "_expression_ending_with_block",
-            "metadata": {
-              "fieldSource": "override"
-            },
             "annotations": {
               "variant": "block_ending",
               "variantOf": "expression_statement"
+            },
+            "metadata": {
+              "fieldSource": "override"
             }
           }
         }
@@ -92,87 +100,171 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "const_item"
+          "name": "const_item",
+          "annotations": {
+            "variant": "const",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "macro_invocation"
+          "name": "macro_invocation",
+          "annotations": {
+            "variant": "macro_invocation",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "macro_definition"
+          "name": "macro_definition",
+          "annotations": {
+            "variant": "macro",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "empty_statement"
+          "name": "empty_statement",
+          "annotations": {
+            "variant": "empty",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "attribute_item"
+          "name": "attribute_item",
+          "annotations": {
+            "variant": "attribute",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "inner_attribute_item"
+          "name": "inner_attribute_item",
+          "annotations": {
+            "variant": "inner_attribute",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "mod_item"
+          "name": "mod_item",
+          "annotations": {
+            "variant": "mod",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "foreign_mod_item"
+          "name": "foreign_mod_item",
+          "annotations": {
+            "variant": "foreign_mod",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "struct_item"
+          "name": "struct_item",
+          "annotations": {
+            "variant": "struct",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "union_item"
+          "name": "union_item",
+          "annotations": {
+            "variant": "union",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "enum_item"
+          "name": "enum_item",
+          "annotations": {
+            "variant": "enum",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "type_item"
+          "name": "type_item",
+          "annotations": {
+            "variant": "type",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "function_item"
+          "name": "function_item",
+          "annotations": {
+            "variant": "function",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "function_signature_item"
+          "name": "function_signature_item",
+          "annotations": {
+            "variant": "function_signature",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "impl_item"
+          "name": "impl_item",
+          "annotations": {
+            "variant": "impl",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "trait_item"
+          "name": "trait_item",
+          "annotations": {
+            "variant": "trait",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "associated_type"
+          "name": "associated_type",
+          "annotations": {
+            "variant": "associated",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "let_declaration"
+          "name": "let_declaration",
+          "annotations": {
+            "variant": "let",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "use_declaration"
+          "name": "use_declaration",
+          "annotations": {
+            "variant": "use",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "extern_crate_declaration"
+          "name": "extern_crate_declaration",
+          "annotations": {
+            "variant": "extern_crate",
+            "variantOf": "_declaration_statement"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "static_item"
+          "name": "static_item",
+          "annotations": {
+            "variant": "static",
+            "variantOf": "_declaration_statement"
+          }
         }
       ]
     },
@@ -235,30 +327,50 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "token_tree_pattern"
+          "name": "token_tree_pattern",
+          "annotations": {
+            "variant": "tree",
+            "variantOf": "_token_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "token_repetition_pattern"
+          "name": "token_repetition_pattern",
+          "annotations": {
+            "variant": "repetition",
+            "variantOf": "_token_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "token_binding_pattern"
+          "name": "token_binding_pattern",
+          "annotations": {
+            "variant": "binding",
+            "variantOf": "_token_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "metavariable"
+          "name": "metavariable",
+          "annotations": {
+            "variant": "metavariable",
+            "variantOf": "_token_pattern"
+          }
         },
         {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_non_special_token"
+            "name": "_non_special_token",
+            "annotations": {
+              "variant": "non_special",
+              "variantOf": "_token_pattern"
+            }
           },
           "named": true,
           "value": "non_special_token",
           "metadata": {
-            "author": "enrich"
+            "aliasSource": "visible-group"
           }
         }
       ]
@@ -400,63 +512,108 @@
       "members": [
         {
           "type": "STRING",
-          "value": "block"
+          "value": "block",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         },
         {
           "type": "STRING",
-          "value": "expr"
+          "value": "expr",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         },
         {
           "type": "STRING",
-          "value": "expr_2021"
+          "value": "expr_2021",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         },
         {
           "type": "STRING",
-          "value": "ident"
+          "value": "ident",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         },
         {
           "type": "STRING",
-          "value": "item"
+          "value": "item",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         },
         {
           "type": "STRING",
-          "value": "lifetime"
+          "value": "lifetime",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         },
         {
           "type": "STRING",
-          "value": "literal"
+          "value": "literal",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         },
         {
           "type": "STRING",
-          "value": "meta"
+          "value": "meta",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         },
         {
           "type": "STRING",
-          "value": "pat"
+          "value": "pat",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         },
         {
           "type": "STRING",
-          "value": "pat_param"
+          "value": "pat_param",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         },
         {
           "type": "STRING",
-          "value": "path"
+          "value": "path",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         },
         {
           "type": "STRING",
-          "value": "stmt"
+          "value": "stmt",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         },
         {
           "type": "STRING",
-          "value": "tt"
+          "value": "tt",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         },
         {
           "type": "STRING",
-          "value": "ty"
+          "value": "ty",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         },
         {
           "type": "STRING",
-          "value": "vis"
+          "value": "vis",
+          "annotations": {
+            "variantOf": "fragment_specifier"
+          }
         }
       ]
     },
@@ -465,26 +622,42 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "token_tree"
+          "name": "token_tree",
+          "annotations": {
+            "variant": "token_tree",
+            "variantOf": "_tokens"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "token_repetition"
+          "name": "token_repetition",
+          "annotations": {
+            "variant": "token_repetition",
+            "variantOf": "_tokens"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "metavariable"
+          "name": "metavariable",
+          "annotations": {
+            "variant": "metavariable",
+            "variantOf": "_tokens"
+          }
         },
         {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_non_special_token"
+            "name": "_non_special_token",
+            "annotations": {
+              "variant": "non_special_token",
+              "variantOf": "_tokens"
+            }
           },
           "named": true,
           "value": "non_special_token",
           "metadata": {
-            "author": "enrich"
+            "aliasSource": "visible-group"
           }
         }
       ]
@@ -597,27 +770,51 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_literal"
+          "name": "_literal",
+          "annotations": {
+            "variant": "literal",
+            "variantOf": "_non_special_token"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "identifier"
+          "name": "identifier",
+          "annotations": {
+            "variant": "identifier",
+            "variantOf": "_non_special_token"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "mutable_specifier"
+          "name": "mutable_specifier",
+          "annotations": {
+            "variant": "mutable_specifier",
+            "variantOf": "_non_special_token"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "self"
+          "name": "self",
+          "annotations": {
+            "variant": "self",
+            "variantOf": "_non_special_token"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "super"
+          "name": "super",
+          "annotations": {
+            "variant": "super",
+            "variantOf": "_non_special_token"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "crate"
+          "name": "crate",
+          "annotations": {
+            "variant": "crate",
+            "variantOf": "_non_special_token"
+          }
         },
         {
           "type": "ALIAS",
@@ -625,7 +822,11 @@
           "value": "primitive_type",
           "content": {
             "type": "SYMBOL",
-            "name": "_primitive_type"
+            "name": "_primitive_type",
+            "annotations": {
+              "variant": "primitive_type",
+              "variantOf": "_non_special_token"
+            }
           }
         },
         {
@@ -731,7 +932,6 @@
                 "type": "SYMBOL",
                 "name": "attribute_input",
                 "metadata": {
-                  "author": "enrich",
                   "symbolSource": "group-lift"
                 },
                 "annotations": {
@@ -1020,7 +1220,6 @@
               "type": "SYMBOL",
               "name": "enum_variant_list_elements",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -1100,7 +1299,6 @@
               "type": "SYMBOL",
               "name": "_enum_variant_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -1125,7 +1323,6 @@
               "type": "SYMBOL",
               "name": "field_declaration_list_elements",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -1201,7 +1398,6 @@
                 "type": "SYMBOL",
                 "name": "ordered_field_declaration_list_elements",
                 "metadata": {
-                  "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
@@ -1272,7 +1468,6 @@
               "type": "SYMBOL",
               "name": "_extern_crate_declaration_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -1340,7 +1535,6 @@
               "type": "SYMBOL",
               "name": "_enum_variant_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -1446,7 +1640,6 @@
               "type": "SYMBOL",
               "name": "_enum_variant_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -1660,7 +1853,6 @@
               "type": "SYMBOL",
               "name": "_function_item_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -1791,7 +1983,6 @@
               "type": "SYMBOL",
               "name": "_function_item_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -1877,7 +2068,6 @@
                 "type": "SYMBOL",
                 "name": "where_predicates",
                 "metadata": {
-                  "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
@@ -2296,7 +2486,6 @@
             "type": "SYMBOL",
             "name": "type_parameters_elements",
             "metadata": {
-              "author": "enrich",
               "symbolSource": "group-lift"
             }
           },
@@ -2341,7 +2530,6 @@
               "type": "SYMBOL",
               "name": "_const_parameter_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -2389,7 +2577,6 @@
                 "type": "SYMBOL",
                 "name": "_type_parameter_optional1",
                 "metadata": {
-                  "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
@@ -2475,7 +2662,6 @@
               "type": "SYMBOL",
               "name": "_let_declaration_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -2491,7 +2677,6 @@
               "type": "SYMBOL",
               "name": "_enum_variant_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -2507,7 +2692,6 @@
               "type": "SYMBOL",
               "name": "_let_declaration_optional2",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -2567,23 +2751,43 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_path"
+          "name": "_path",
+          "annotations": {
+            "variant": "path",
+            "variantOf": "_use_clause"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "use_as_clause"
+          "name": "use_as_clause",
+          "annotations": {
+            "variant": "as",
+            "variantOf": "_use_clause"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "use_list"
+          "name": "use_list",
+          "annotations": {
+            "variant": "list",
+            "variantOf": "_use_clause"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "scoped_use_list"
+          "name": "scoped_use_list",
+          "annotations": {
+            "variant": "scoped_list",
+            "variantOf": "_use_clause"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "use_wildcard"
+          "name": "use_wildcard",
+          "annotations": {
+            "variant": "wildcard",
+            "variantOf": "_use_clause"
+          }
         }
       ]
     },
@@ -2634,7 +2838,6 @@
               "type": "SYMBOL",
               "name": "use_clauses",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -2684,7 +2887,6 @@
               "type": "SYMBOL",
               "name": "use_wildcard_group",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -2713,7 +2915,6 @@
               "type": "SYMBOL",
               "name": "parameters_elements",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -2830,7 +3031,6 @@
               "type": "SYMBOL",
               "name": "_variadic_parameter_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -2935,19 +3135,18 @@
         {
           "type": "SYMBOL",
           "name": "crate",
-          "metadata": {
-            "fieldSource": "override"
-          },
           "annotations": {
             "variant": "crate",
             "variantOf": "visibility_modifier"
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
           "type": "SYMBOL",
           "name": "visibility_modifier_pub",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -2962,67 +3161,131 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "abstract_type"
+          "name": "abstract_type",
+          "annotations": {
+            "variant": "abstract",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "reference_type"
+          "name": "reference_type",
+          "annotations": {
+            "variant": "reference",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "metavariable"
+          "name": "metavariable",
+          "annotations": {
+            "variant": "metavariable",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "pointer_type"
+          "name": "pointer_type",
+          "annotations": {
+            "variant": "pointer",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "generic_type"
+          "name": "generic_type",
+          "annotations": {
+            "variant": "generic",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "scoped_type_identifier"
+          "name": "scoped_type_identifier",
+          "annotations": {
+            "variant": "scoped_identifier",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "tuple_type"
+          "name": "tuple_type",
+          "annotations": {
+            "variant": "tuple",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "unit_type"
+          "name": "unit_type",
+          "annotations": {
+            "variant": "unit",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "array_type"
+          "name": "array_type",
+          "annotations": {
+            "variant": "array",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "function_type"
+          "name": "function_type",
+          "annotations": {
+            "variant": "function",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "_type_identifier"
+          "name": "_type_identifier",
+          "annotations": {
+            "variant": "identifier",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "macro_invocation"
+          "name": "macro_invocation",
+          "annotations": {
+            "variant": "macro_invocation",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "never_type"
+          "name": "never_type",
+          "annotations": {
+            "variant": "never",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "dynamic_type"
+          "name": "dynamic_type",
+          "annotations": {
+            "variant": "dynamic",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "bounded_type"
+          "name": "bounded_type",
+          "annotations": {
+            "variant": "bounded",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "removed_trait_bound"
+          "name": "removed_trait_bound",
+          "annotations": {
+            "variant": "removed_trait_bound",
+            "variantOf": "_type"
+          }
         },
         {
           "type": "ALIAS",
@@ -3030,7 +3293,11 @@
           "value": "primitive_type",
           "content": {
             "type": "SYMBOL",
-            "name": "_primitive_type"
+            "name": "_primitive_type",
+            "annotations": {
+              "variant": "primitive",
+              "variantOf": "_type"
+            }
           }
         }
       ]
@@ -3043,17 +3310,24 @@
           "value": "<"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_type"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "qualified_type"
-            }
-          ]
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_type"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "qualified_type"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -3132,7 +3406,6 @@
               "type": "SYMBOL",
               "name": "_array_type_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -3162,7 +3435,6 @@
           "type": "SYMBOL",
           "name": "lifetimes",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           }
         },
@@ -3215,7 +3487,6 @@
                     "type": "SYMBOL",
                     "name": "function_type_fn_form",
                     "metadata": {
-                      "author": "enrich",
                       "symbolSource": "group-lift"
                     },
                     "annotations": {
@@ -3243,7 +3514,6 @@
               "type": "SYMBOL",
               "name": "_function_item_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -3515,7 +3785,6 @@
                 "type": "SYMBOL",
                 "name": "use_bounds_elements",
                 "metadata": {
-                  "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
@@ -3552,7 +3821,6 @@
           "type": "SYMBOL",
           "name": "type_arguments_elements",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           }
         },
@@ -3697,7 +3965,6 @@
               "type": "SYMBOL",
               "name": "_abstract_type_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -3800,54 +4067,102 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "unary_expression"
+          "name": "unary_expression",
+          "annotations": {
+            "variant": "unary_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "reference_expression"
+          "name": "reference_expression",
+          "annotations": {
+            "variant": "reference_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "try_expression"
+          "name": "try_expression",
+          "annotations": {
+            "variant": "try_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "binary_expression"
+          "name": "binary_expression",
+          "annotations": {
+            "variant": "binary_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "assignment_expression"
+          "name": "assignment_expression",
+          "annotations": {
+            "variant": "assignment_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "compound_assignment_expr"
+          "name": "compound_assignment_expr",
+          "annotations": {
+            "variant": "compound_assignment_expr",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "type_cast_expression"
+          "name": "type_cast_expression",
+          "annotations": {
+            "variant": "type_cast_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "call_expression"
+          "name": "call_expression",
+          "annotations": {
+            "variant": "call_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "return_expression"
+          "name": "return_expression",
+          "annotations": {
+            "variant": "return_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "yield_expression"
+          "name": "yield_expression",
+          "annotations": {
+            "variant": "yield_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "_literal"
+          "name": "_literal",
+          "annotations": {
+            "variant": "literal",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "PREC_LEFT",
           "value": 0,
           "content": {
             "type": "SYMBOL",
-            "name": "identifier"
+            "name": "identifier",
+            "annotations": {
+              "variant": "identifier",
+              "variantOf": "_expression_except_range"
+            }
           }
         },
         {
@@ -4041,75 +4356,143 @@
         },
         {
           "type": "SYMBOL",
-          "name": "self"
+          "name": "self",
+          "annotations": {
+            "variant": "self",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "scoped_identifier"
+          "name": "scoped_identifier",
+          "annotations": {
+            "variant": "scoped_identifier",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "generic_function"
+          "name": "generic_function",
+          "annotations": {
+            "variant": "generic_function",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "await_expression"
+          "name": "await_expression",
+          "annotations": {
+            "variant": "await_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "field_expression"
+          "name": "field_expression",
+          "annotations": {
+            "variant": "field_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "array_expression"
+          "name": "array_expression",
+          "annotations": {
+            "variant": "array_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "tuple_expression"
+          "name": "tuple_expression",
+          "annotations": {
+            "variant": "tuple_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "PREC",
           "value": 1,
           "content": {
             "type": "SYMBOL",
-            "name": "macro_invocation"
+            "name": "macro_invocation",
+            "annotations": {
+              "variant": "macro_invocation",
+              "variantOf": "_expression_except_range"
+            }
           }
         },
         {
           "type": "SYMBOL",
-          "name": "unit_expression"
+          "name": "unit_expression",
+          "annotations": {
+            "variant": "unit_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "break_expression"
+          "name": "break_expression",
+          "annotations": {
+            "variant": "break_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "continue_expression"
+          "name": "continue_expression",
+          "annotations": {
+            "variant": "continue_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "index_expression"
+          "name": "index_expression",
+          "annotations": {
+            "variant": "index_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "metavariable"
+          "name": "metavariable",
+          "annotations": {
+            "variant": "metavariable",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "closure_expression"
+          "name": "closure_expression",
+          "annotations": {
+            "variant": "closure_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "parenthesized_expression"
+          "name": "parenthesized_expression",
+          "annotations": {
+            "variant": "parenthesized_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "struct_expression"
+          "name": "struct_expression",
+          "annotations": {
+            "variant": "struct_expression",
+            "variantOf": "_expression_except_range"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "_expression_ending_with_block"
+          "name": "_expression_ending_with_block",
+          "annotations": {
+            "variant": "expression_ending_with_block",
+            "variantOf": "_expression_except_range"
+          }
         }
       ]
     },
@@ -4118,11 +4501,19 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_expression_except_range"
+          "name": "_expression_except_range",
+          "annotations": {
+            "variant": "except_range",
+            "variantOf": "_expression"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "range_expression"
+          "name": "range_expression",
+          "annotations": {
+            "variant": "range",
+            "variantOf": "_expression"
+          }
         }
       ]
     },
@@ -4131,47 +4522,91 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "unsafe_block"
+          "name": "unsafe_block",
+          "annotations": {
+            "variant": "unsafe_block",
+            "variantOf": "_expression_ending_with_block"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "async_block"
+          "name": "async_block",
+          "annotations": {
+            "variant": "async_block",
+            "variantOf": "_expression_ending_with_block"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "gen_block"
+          "name": "gen_block",
+          "annotations": {
+            "variant": "gen_block",
+            "variantOf": "_expression_ending_with_block"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "try_block"
+          "name": "try_block",
+          "annotations": {
+            "variant": "try_block",
+            "variantOf": "_expression_ending_with_block"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "block"
+          "name": "block",
+          "annotations": {
+            "variant": "block",
+            "variantOf": "_expression_ending_with_block"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "if_expression"
+          "name": "if_expression",
+          "annotations": {
+            "variant": "if_expression",
+            "variantOf": "_expression_ending_with_block"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "match_expression"
+          "name": "match_expression",
+          "annotations": {
+            "variant": "match_expression",
+            "variantOf": "_expression_ending_with_block"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "while_expression"
+          "name": "while_expression",
+          "annotations": {
+            "variant": "while_expression",
+            "variantOf": "_expression_ending_with_block"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "loop_expression"
+          "name": "loop_expression",
+          "annotations": {
+            "variant": "loop_expression",
+            "variantOf": "_expression_ending_with_block"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "for_expression"
+          "name": "for_expression",
+          "annotations": {
+            "variant": "for_expression",
+            "variantOf": "_expression_ending_with_block"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "const_block"
+          "name": "const_block",
+          "annotations": {
+            "variant": "const_block",
+            "variantOf": "_expression_ending_with_block"
+          }
         }
       ]
     },
@@ -4273,11 +4708,19 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_non_delim_token"
+          "name": "_non_delim_token",
+          "annotations": {
+            "variant": "non_token",
+            "variantOf": "_delim_tokens"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "delim_token_tree"
+          "name": "delim_token_tree",
+          "annotations": {
+            "variant": "token_tree",
+            "variantOf": "_delim_tokens"
+          }
         }
       ]
     },
@@ -4288,17 +4731,24 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_non_special_token"
+            "name": "_non_special_token",
+            "annotations": {
+              "variant": "special",
+              "variantOf": "_non_delim_token"
+            }
           },
           "named": true,
           "value": "non_special_token",
           "metadata": {
-            "author": "enrich"
+            "aliasSource": "visible-group"
           }
         },
         {
           "type": "STRING",
-          "value": "$"
+          "value": "$",
+          "annotations": {
+            "variantOf": "_non_delim_token"
+          }
         }
       ]
     },
@@ -4640,7 +5090,10 @@
                   "name": "_expression"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "binary_expression"
+            }
           }
         },
         {
@@ -4673,7 +5126,10 @@
                   "name": "_expression"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "binary_expression"
+            }
           }
         },
         {
@@ -4706,7 +5162,10 @@
                   "name": "_expression"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "binary_expression"
+            }
           }
         },
         {
@@ -4739,7 +5198,10 @@
                   "name": "_expression"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "binary_expression"
+            }
           }
         },
         {
@@ -4772,7 +5234,10 @@
                   "name": "_expression"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "binary_expression"
+            }
           }
         },
         {
@@ -4830,7 +5295,10 @@
                   "name": "_expression"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "binary_expression"
+            }
           }
         },
         {
@@ -4872,7 +5340,10 @@
                   "name": "_expression"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "binary_expression"
+            }
           }
         },
         {
@@ -4914,7 +5385,10 @@
                   "name": "_expression"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "binary_expression"
+            }
           }
         },
         {
@@ -4960,7 +5434,10 @@
                   "name": "_expression"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "binary_expression"
+            }
           }
         }
       ]
@@ -5121,7 +5598,10 @@
                   "fieldSource": "enriched"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "return_expression"
+            }
           }
         },
         {
@@ -5129,7 +5609,10 @@
           "value": -1,
           "content": {
             "type": "STRING",
-            "value": "return"
+            "value": "return",
+            "annotations": {
+              "variantOf": "return_expression"
+            }
           }
         }
       ]
@@ -5158,7 +5641,10 @@
                   "fieldSource": "enriched"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "yield_expression"
+            }
           }
         },
         {
@@ -5166,7 +5652,10 @@
           "value": -1,
           "content": {
             "type": "STRING",
-            "value": "yield"
+            "value": "yield",
+            "annotations": {
+              "variantOf": "yield_expression"
+            }
           }
         }
       ]
@@ -5210,7 +5699,6 @@
               "type": "SYMBOL",
               "name": "arguments_elements",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -5371,7 +5859,6 @@
                 "type": "SYMBOL",
                 "name": "field_initializer_list_elements",
                 "metadata": {
-                  "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
@@ -5594,7 +6081,10 @@
                   "fieldSource": "override"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "_let_chain"
+            }
           },
           {
             "type": "SEQ",
@@ -5625,7 +6115,10 @@
                   "fieldSource": "override"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "_let_chain"
+            }
           },
           {
             "type": "SEQ",
@@ -5656,7 +6149,10 @@
                   "fieldSource": "override"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "_let_chain"
+            }
           },
           {
             "type": "SEQ",
@@ -5687,7 +6183,10 @@
                   "fieldSource": "override"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "_let_chain"
+            }
           },
           {
             "type": "SEQ",
@@ -5718,7 +6217,10 @@
                   "fieldSource": "override"
                 }
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "_let_chain"
+            }
           }
         ]
       }
@@ -5728,17 +6230,29 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_expression"
+          "name": "_expression",
+          "annotations": {
+            "variant": "expression",
+            "variantOf": "_condition"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "let_condition"
+          "name": "let_condition",
+          "annotations": {
+            "variant": "let",
+            "variantOf": "_condition"
+          }
         },
         {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_let_chain"
+            "name": "_let_chain",
+            "annotations": {
+              "variant": "let_chain",
+              "variantOf": "_condition"
+            }
           },
           "named": true,
           "value": "let_chain"
@@ -5753,17 +6267,24 @@
           "value": "else"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "block"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "if_expression"
-            }
-          ]
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "block"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "if_expression"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -5806,7 +6327,6 @@
               "type": "SYMBOL",
               "name": "_match_block_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -5876,7 +6396,7 @@
             "name": "match_pattern"
           },
           "annotations": {
-            "spliced": true
+            "flattened": true
           }
         },
         {
@@ -5933,7 +6453,6 @@
               "type": "SYMBOL",
               "name": "_match_pattern_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -5954,7 +6473,6 @@
               "type": "SYMBOL",
               "name": "_while_expression_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -5995,7 +6513,6 @@
               "type": "SYMBOL",
               "name": "_while_expression_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -6028,7 +6545,6 @@
               "type": "SYMBOL",
               "name": "_while_expression_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -6123,7 +6639,6 @@
               "type": "SYMBOL",
               "name": "_closure_parameters_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -6467,7 +6982,6 @@
               "type": "SYMBOL",
               "name": "_while_expression_optional1",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -6524,7 +7038,11 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_literal_pattern"
+          "name": "_literal_pattern",
+          "annotations": {
+            "variant": "literal",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "ALIAS",
@@ -6681,27 +7199,51 @@
         },
         {
           "type": "SYMBOL",
-          "name": "identifier"
+          "name": "identifier",
+          "annotations": {
+            "variant": "identifier",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "scoped_identifier"
+          "name": "scoped_identifier",
+          "annotations": {
+            "variant": "scoped_identifier",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "generic_pattern"
+          "name": "generic_pattern",
+          "annotations": {
+            "variant": "generic",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "tuple_pattern"
+          "name": "tuple_pattern",
+          "annotations": {
+            "variant": "tuple",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "tuple_struct_pattern"
+          "name": "tuple_struct_pattern",
+          "annotations": {
+            "variant": "tuple_struct",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "struct_pattern"
+          "name": "struct_pattern",
+          "annotations": {
+            "variant": "struct",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "ALIAS",
@@ -6732,49 +7274,93 @@
         },
         {
           "type": "SYMBOL",
-          "name": "ref_pattern"
+          "name": "ref_pattern",
+          "annotations": {
+            "variant": "ref",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "slice_pattern"
+          "name": "slice_pattern",
+          "annotations": {
+            "variant": "slice",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "captured_pattern"
+          "name": "captured_pattern",
+          "annotations": {
+            "variant": "captured",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "reference_pattern"
+          "name": "reference_pattern",
+          "annotations": {
+            "variant": "reference",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "remaining_field_pattern"
+          "name": "remaining_field_pattern",
+          "annotations": {
+            "variant": "remaining_field",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "mut_pattern"
+          "name": "mut_pattern",
+          "annotations": {
+            "variant": "mut",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "range_pattern"
+          "name": "range_pattern",
+          "annotations": {
+            "variant": "range",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "or_pattern"
+          "name": "or_pattern",
+          "annotations": {
+            "variant": "or",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "const_block"
+          "name": "const_block",
+          "annotations": {
+            "variant": "const_block",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "macro_invocation"
+          "name": "macro_invocation",
+          "annotations": {
+            "variant": "macro_invocation",
+            "variantOf": "_pattern"
+          }
         },
         {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_wildcard_pattern"
+            "name": "_wildcard_pattern",
+            "annotations": {
+              "variant": "wildcard",
+              "variantOf": "_pattern"
+            }
           },
           "named": true,
           "value": "wildcard_pattern"
@@ -6785,17 +7371,24 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "identifier"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "scoped_identifier"
-            }
-          ]
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "scoped_identifier"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -6828,7 +7421,6 @@
                 "type": "SYMBOL",
                 "name": "tuple_pattern_elements",
                 "metadata": {
-                  "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
@@ -6861,7 +7453,6 @@
               "type": "SYMBOL",
               "name": "patterns",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -6911,7 +7502,6 @@
               "type": "SYMBOL",
               "name": "patterns",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -6960,7 +7550,6 @@
                 "type": "SYMBOL",
                 "name": "struct_pattern_elements",
                 "metadata": {
-                  "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
@@ -7042,7 +7631,6 @@
           "type": "SYMBOL",
           "name": "range_pattern_with_left",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7054,7 +7642,6 @@
           "type": "SYMBOL",
           "name": "range_pattern_prefix",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7164,7 +7751,6 @@
             "type": "SYMBOL",
             "name": "or_pattern_binary",
             "metadata": {
-              "author": "enrich",
               "symbolSource": "group-lift"
             },
             "annotations": {
@@ -7188,27 +7774,51 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "string_literal"
+          "name": "string_literal",
+          "annotations": {
+            "variant": "string",
+            "variantOf": "_literal"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "raw_string_literal"
+          "name": "raw_string_literal",
+          "annotations": {
+            "variant": "raw_string",
+            "variantOf": "_literal"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "char_literal"
+          "name": "char_literal",
+          "annotations": {
+            "variant": "char",
+            "variantOf": "_literal"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "boolean_literal"
+          "name": "boolean_literal",
+          "annotations": {
+            "variant": "boolean",
+            "variantOf": "_literal"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "integer_literal"
+          "name": "integer_literal",
+          "annotations": {
+            "variant": "integer",
+            "variantOf": "_literal"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "float_literal"
+          "name": "float_literal",
+          "annotations": {
+            "variant": "float",
+            "variantOf": "_literal"
+          }
         }
       ]
     },
@@ -7217,31 +7827,59 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "string_literal"
+          "name": "string_literal",
+          "annotations": {
+            "variant": "string",
+            "variantOf": "_literal_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "raw_string_literal"
+          "name": "raw_string_literal",
+          "annotations": {
+            "variant": "raw_string",
+            "variantOf": "_literal_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "char_literal"
+          "name": "char_literal",
+          "annotations": {
+            "variant": "char",
+            "variantOf": "_literal_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "boolean_literal"
+          "name": "boolean_literal",
+          "annotations": {
+            "variant": "boolean",
+            "variantOf": "_literal_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "integer_literal"
+          "name": "integer_literal",
+          "annotations": {
+            "variant": "integer",
+            "variantOf": "_literal_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "float_literal"
+          "name": "float_literal",
+          "annotations": {
+            "variant": "float",
+            "variantOf": "_literal_pattern"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "negative_literal"
+          "name": "negative_literal",
+          "annotations": {
+            "variant": "negative",
+            "variantOf": "_literal_pattern"
+          }
         }
       ]
     },
@@ -7281,7 +7919,6 @@
           "type": "SYMBOL",
           "name": "integer_literal_decimal",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7294,7 +7931,6 @@
           "type": "SYMBOL",
           "name": "integer_literal_hex",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7306,7 +7942,6 @@
           "type": "SYMBOL",
           "name": "integer_literal_binary",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7318,7 +7953,6 @@
           "type": "SYMBOL",
           "name": "integer_literal_octal",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7338,7 +7972,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_string_literal_open"
+              "name": "_string_open"
             },
             "named": true,
             "value": "string_open"
@@ -7439,7 +8073,6 @@
           "type": "SYMBOL",
           "name": "char_literal_escaped",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7451,7 +8084,6 @@
           "type": "SYMBOL",
           "name": "char_literal_plain",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7464,7 +8096,6 @@
           "type": "SYMBOL",
           "name": "char_literal_empty",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7481,7 +8112,6 @@
           "type": "SYMBOL",
           "name": "escape_sequence_simple",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7494,7 +8124,6 @@
           "type": "SYMBOL",
           "name": "escape_sequence_unicode_fixed",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7506,7 +8135,6 @@
           "type": "SYMBOL",
           "name": "escape_sequence_unicode_braced",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7518,7 +8146,6 @@
           "type": "SYMBOL",
           "name": "escape_sequence_hex",
           "metadata": {
-            "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
@@ -7533,11 +8160,17 @@
       "members": [
         {
           "type": "STRING",
-          "value": "true"
+          "value": "true",
+          "annotations": {
+            "variantOf": "boolean_literal"
+          }
         },
         {
           "type": "STRING",
-          "value": "false"
+          "value": "false",
+          "annotations": {
+            "variantOf": "boolean_literal"
+          }
         }
       ]
     },
@@ -7546,11 +8179,19 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "line_comment"
+          "name": "line_comment",
+          "annotations": {
+            "variant": "line_comment",
+            "variantOf": "comment"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "block_comment"
+          "name": "block_comment",
+          "annotations": {
+            "variant": "block_comment",
+            "variantOf": "comment"
+          }
         }
       ]
     },
@@ -7566,13 +8207,12 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "line_comment_regular_dslash",
+              "name": "line_comment_extra_slashes",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
-                "variant": "regular_dslash",
+                "variant": "extra_slashes",
                 "variantOf": "line_comment"
               }
             },
@@ -7580,7 +8220,6 @@
               "type": "SYMBOL",
               "name": "line_comment_doc_outer",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
@@ -7592,7 +8231,6 @@
               "type": "SYMBOL",
               "name": "line_comment_doc_inner",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
@@ -7602,10 +8240,11 @@
             },
             {
               "type": "SYMBOL",
-              "name": "line_comment_content",
+              "name": "line_comment_regular",
               "annotations": {
-                "variant": "content",
-                "variantOf": "line_comment"
+                "variant": "regular",
+                "variantOf": "line_comment",
+                "default": true
               }
             }
           ]
@@ -7651,7 +8290,6 @@
                   "type": "SYMBOL",
                   "name": "block_comment_doc_outer",
                   "metadata": {
-                    "author": "enrich",
                     "symbolSource": "group-lift"
                   },
                   "annotations": {
@@ -7663,7 +8301,6 @@
                   "type": "SYMBOL",
                   "name": "block_comment_doc_inner",
                   "metadata": {
-                    "author": "enrich",
                     "symbolSource": "group-lift"
                   },
                   "annotations": {
@@ -7673,7 +8310,15 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "_block_comment_content"
+                  "name": "_block_comment_content",
+                  "annotations": {
+                    "variant": "regular",
+                    "variantOf": "block_comment",
+                    "default": true
+                  },
+                  "metadata": {
+                    "fieldSource": "override"
+                  }
                 }
               ]
             },
@@ -7693,7 +8338,11 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "self"
+          "name": "self",
+          "annotations": {
+            "variant": "self",
+            "variantOf": "_path"
+          }
         },
         {
           "type": "ALIAS",
@@ -7850,23 +8499,43 @@
         },
         {
           "type": "SYMBOL",
-          "name": "metavariable"
+          "name": "metavariable",
+          "annotations": {
+            "variant": "metavariable",
+            "variantOf": "_path"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "super"
+          "name": "super",
+          "annotations": {
+            "variant": "super",
+            "variantOf": "_path"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "crate"
+          "name": "crate",
+          "annotations": {
+            "variant": "crate",
+            "variantOf": "_path"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "identifier"
+          "name": "identifier",
+          "annotations": {
+            "variant": "identifier",
+            "variantOf": "_path"
+          }
         },
         {
           "type": "SYMBOL",
-          "name": "scoped_identifier"
+          "name": "scoped_identifier",
+          "annotations": {
+            "variant": "scoped_identifier",
+            "variantOf": "_path"
+          }
         },
         {
           "type": "ALIAS",
@@ -7947,71 +8616,122 @@
         "members": [
           {
             "type": "STRING",
-            "value": "u8"
+            "value": "u8",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "i8"
+            "value": "i8",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "u16"
+            "value": "u16",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "i16"
+            "value": "i16",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "u32"
+            "value": "u32",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "i32"
+            "value": "i32",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "u64"
+            "value": "u64",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "i64"
+            "value": "i64",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "u128"
+            "value": "u128",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "i128"
+            "value": "i128",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "isize"
+            "value": "isize",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "usize"
+            "value": "usize",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "f32"
+            "value": "f32",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "f64"
+            "value": "f64",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "bool"
+            "value": "bool",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "str"
+            "value": "str",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           },
           {
             "type": "STRING",
-            "value": "char"
+            "value": "char",
+            "annotations": {
+              "variantOf": "_primitive_type"
+            }
           }
         ]
       }
@@ -8654,7 +9374,6 @@
               "type": "SYMBOL",
               "name": "macro_rules",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -8690,7 +9409,6 @@
               "type": "SYMBOL",
               "name": "macro_rules",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -8726,7 +9444,6 @@
               "type": "SYMBOL",
               "name": "macro_rules",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -10130,15 +10847,24 @@
           "members": [
             {
               "type": "STRING",
-              "value": "..."
+              "value": "...",
+              "annotations": {
+                "variantOf": "range_pattern_arm1"
+              }
             },
             {
               "type": "STRING",
-              "value": "..="
+              "value": "..=",
+              "annotations": {
+                "variantOf": "range_pattern_arm1"
+              }
             },
             {
               "type": "STRING",
-              "value": ".."
+              "value": "..",
+              "annotations": {
+                "variantOf": "range_pattern_arm1"
+              }
             }
           ]
         },
@@ -10191,7 +10917,6 @@
               "type": "SYMBOL",
               "name": "range_pattern_with_left_with_right",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
@@ -10219,11 +10944,17 @@
           "members": [
             {
               "type": "STRING",
-              "value": "..="
+              "value": "..=",
+              "annotations": {
+                "variantOf": "range_pattern_arm3"
+              }
             },
             {
               "type": "STRING",
-              "value": ".."
+              "value": "..",
+              "annotations": {
+                "variantOf": "range_pattern_arm3"
+              }
             }
           ]
         },
@@ -10442,7 +11173,10 @@
                 "name": "_expression"
               }
             }
-          ]
+          ],
+          "annotations": {
+            "variantOf": "attribute_arm"
+          }
         },
         {
           "type": "FIELD",
@@ -10450,6 +11184,9 @@
           "content": {
             "type": "SYMBOL",
             "name": "delim_token_tree"
+          },
+          "annotations": {
+            "variantOf": "attribute_arm"
           }
         }
       ],
@@ -10542,19 +11279,31 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "self"
+              "name": "self",
+              "annotations": {
+                "variant": "self",
+                "variantOf": "visibility_modifier_group"
+              }
             },
             {
               "type": "SYMBOL",
-              "name": "super"
+              "name": "super",
+              "annotations": {
+                "variant": "super",
+                "variantOf": "visibility_modifier_group"
+              }
             },
             {
               "type": "SYMBOL",
-              "name": "crate"
+              "name": "crate",
+              "annotations": {
+                "variant": "crate",
+                "variantOf": "visibility_modifier_group"
+              }
             },
             {
               "type": "SYMBOL",
-              "name": "visibility_modifier_pub_in_path",
+              "name": "visibility_modifier_pub_scope_in_path",
               "annotations": {
                 "variant": "in_path",
                 "variantOf": "visibility_modifier"
@@ -10580,10 +11329,13 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "visibility_modifier_group",
+              "name": "visibility_modifier_pub_scope",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
+              },
+              "annotations": {
+                "variant": "scope",
+                "variantOf": "visibility_modifier"
               }
             },
             {
@@ -10636,11 +11388,18 @@
             "members": [
               {
                 "type": "STRING",
-                "value": "const"
+                "value": "const",
+                "annotations": {
+                  "variantOf": "reference_expression_arm"
+                }
               },
               {
                 "type": "SYMBOL",
-                "name": "mutable_specifier"
+                "name": "mutable_specifier",
+                "annotations": {
+                  "variant": "mutable_specifier",
+                  "variantOf": "reference_expression_arm"
+                }
               }
             ]
           }
@@ -10691,7 +11450,6 @@
                 "type": "SYMBOL",
                 "name": "_function_item_optional1",
                 "metadata": {
-                  "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
@@ -11272,17 +12030,9 @@
         }
       ]
     },
-    "_wildcard_pattern": {
-      "type": "STRING",
-      "value": "_"
-    },
     "_range_expression_bare": {
       "type": "STRING",
       "value": ".."
-    },
-    "_string_literal_open": {
-      "type": "PATTERN",
-      "value": "[bc]?\""
     },
     "_impl_item_unsafe_marker": {
       "type": "STRING",
@@ -11939,7 +12689,6 @@
                   "type": "SYMBOL",
                   "name": "arguments_elements",
                   "metadata": {
-                    "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
@@ -11950,6 +12699,7 @@
             }
           ],
           "annotations": {
+            "variantOf": "array_expression",
             "default": true
           }
         },
@@ -11980,7 +12730,10 @@
                 "name": "_expression"
               }
             }
-          ]
+          ],
+          "annotations": {
+            "variantOf": "attribute_arm"
+          }
         },
         {
           "type": "FIELD",
@@ -11988,6 +12741,9 @@
           "content": {
             "type": "SYMBOL",
             "name": "delim_token_tree"
+          },
+          "annotations": {
+            "variantOf": "attribute_arm"
           }
         }
       ],
@@ -12079,7 +12835,6 @@
                       "type": "SYMBOL",
                       "name": "_function_item_optional1",
                       "metadata": {
-                        "author": "enrich",
                         "symbolSource": "group-lift"
                       }
                     },
@@ -12194,6 +12949,9 @@
                   "value": "_"
                 }
               ]
+            },
+            "annotations": {
+              "variantOf": "closure_expression"
             }
           }
         ],
@@ -12662,35 +13420,7 @@
       "type": "STRING",
       "value": "in"
     },
-    "visibility_modifier_pub": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "pub"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "visibility_modifier_group",
-              "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
-              }
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
-    "visibility_modifier_pub_in_path": {
+    "visibility_modifier_pub_scope_in_path": {
       "type": "SEQ",
       "members": [
         {
@@ -12707,6 +13437,90 @@
         {
           "type": "SYMBOL",
           "name": "_path"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "visibility_modifier_pub_scope": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "self",
+              "annotations": {
+                "variant": "self",
+                "variantOf": "visibility_modifier_group"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "super",
+              "annotations": {
+                "variant": "super",
+                "variantOf": "visibility_modifier_group"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "crate",
+              "annotations": {
+                "variant": "crate",
+                "variantOf": "visibility_modifier_group"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "visibility_modifier_pub_scope_in_path",
+              "annotations": {
+                "variant": "in_path",
+                "variantOf": "visibility_modifier"
+              }
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "visibility_modifier_pub": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "pub"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "visibility_modifier_pub_scope",
+              "metadata": {
+                "symbolSource": "group-lift"
+              },
+              "annotations": {
+                "variant": "scope",
+                "variantOf": "visibility_modifier"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ],
       "annotations": {
@@ -12733,6 +13547,7 @@
           ]
         },
         "annotations": {
+          "variantOf": "function_type",
           "hoisted": true
         }
       }
@@ -12801,7 +13616,10 @@
         },
         {
           "type": "STRING",
-          "value": ";"
+          "value": ";",
+          "annotations": {
+            "variantOf": "mod_item"
+          }
         }
       ],
       "annotations": {
@@ -12848,6 +13666,9 @@
           "content": {
             "type": "SYMBOL",
             "name": "declaration_list"
+          },
+          "annotations": {
+            "variantOf": "mod_item"
           }
         }
       ],
@@ -12916,6 +13737,7 @@
           }
         ],
         "annotations": {
+          "variantOf": "or_pattern",
           "hoisted": true
         }
       }
@@ -12929,7 +13751,10 @@
         },
         {
           "type": "STRING",
-          "value": "const"
+          "value": "const",
+          "annotations": {
+            "variantOf": "pointer_type"
+          }
         },
         {
           "type": "FIELD",
@@ -12953,7 +13778,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "mutable_specifier"
+          "name": "mutable_specifier",
+          "annotations": {
+            "variant": "mutable_specifier",
+            "variantOf": "pointer_type"
+          }
         },
         {
           "type": "FIELD",
@@ -12967,6 +13796,10 @@
       "annotations": {
         "hoisted": true
       }
+    },
+    "_string_open": {
+      "type": "PATTERN",
+      "value": "[bc]?\""
     },
     "range_expression_binary": {
       "type": "PREC_LEFT",
@@ -13022,6 +13855,7 @@
           }
         ],
         "annotations": {
+          "variantOf": "range_expression",
           "hoisted": true
         }
       }
@@ -13056,6 +13890,7 @@
           }
         ],
         "annotations": {
+          "variantOf": "range_expression",
           "hoisted": true
         }
       }
@@ -13090,6 +13925,7 @@
           }
         ],
         "annotations": {
+          "variantOf": "range_expression",
           "hoisted": true
         }
       }
@@ -13156,7 +13992,10 @@
         },
         {
           "type": "STRING",
-          "value": ";"
+          "value": ";",
+          "annotations": {
+            "variantOf": "foreign_mod_item"
+          }
         }
       ],
       "annotations": {
@@ -13202,6 +14041,9 @@
           "content": {
             "type": "SYMBOL",
             "name": "declaration_list"
+          },
+          "annotations": {
+            "variantOf": "foreign_mod_item"
           }
         }
       ],
@@ -13246,7 +14088,7 @@
               "name": "match_pattern"
             },
             "annotations": {
-              "spliced": true
+              "flattened": true
             }
           },
           {
@@ -13268,7 +14110,10 @@
                 "type": "STRING",
                 "value": ","
               }
-            ]
+            ],
+            "annotations": {
+              "variantOf": "match_arm"
+            }
           }
         ],
         "annotations": {
@@ -13313,7 +14158,7 @@
               "name": "match_pattern"
             },
             "annotations": {
-              "spliced": true
+              "flattened": true
             }
           },
           {
@@ -13330,6 +14175,9 @@
                 "type": "SYMBOL",
                 "name": "_expression_ending_with_block"
               }
+            },
+            "annotations": {
+              "variantOf": "match_arm"
             }
           }
         ],
@@ -13338,7 +14186,7 @@
         }
       }
     },
-    "line_comment_regular_dslash": {
+    "line_comment_extra_slashes": {
       "type": "SEQ",
       "members": [
         {
@@ -13429,7 +14277,7 @@
         "hoisted": true
       }
     },
-    "line_comment_content": {
+    "line_comment_regular": {
       "type": "IMMEDIATE_TOKEN",
       "content": {
         "type": "PREC",
@@ -13438,9 +14286,6 @@
           "type": "PATTERN",
           "value": ".*"
         }
-      },
-      "annotations": {
-        "hoisted": true
       }
     },
     "block_comment_doc_outer": {
@@ -13849,6 +14694,9 @@
             },
             "named": true,
             "value": "shorthand_field_identifier"
+          },
+          "annotations": {
+            "variantOf": "field_pattern"
           }
         }
       ],
@@ -13991,7 +14839,6 @@
                   "type": "SYMBOL",
                   "name": "macro_rules",
                   "metadata": {
-                    "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
@@ -14079,7 +14926,6 @@
                   "type": "SYMBOL",
                   "name": "macro_rules",
                   "metadata": {
-                    "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
@@ -14167,7 +15013,6 @@
                   "type": "SYMBOL",
                   "name": "macro_rules",
                   "metadata": {
-                    "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
@@ -14198,11 +15043,17 @@
           "members": [
             {
               "type": "STRING",
-              "value": "..="
+              "value": "..=",
+              "annotations": {
+                "variantOf": "range_pattern_arm3"
+              }
             },
             {
               "type": "STRING",
-              "value": ".."
+              "value": "..",
+              "annotations": {
+                "variantOf": "range_pattern_arm3"
+              }
             }
           ]
         },
@@ -14236,15 +15087,24 @@
           "members": [
             {
               "type": "STRING",
-              "value": "..."
+              "value": "...",
+              "annotations": {
+                "variantOf": "range_pattern_arm1"
+              }
             },
             {
               "type": "STRING",
-              "value": "..="
+              "value": "..=",
+              "annotations": {
+                "variantOf": "range_pattern_arm1"
+              }
             },
             {
               "type": "STRING",
-              "value": ".."
+              "value": "..",
+              "annotations": {
+                "variantOf": "range_pattern_arm1"
+              }
             }
           ]
         },
@@ -14272,10 +15132,7 @@
     },
     "range_pattern_with_left_bare": {
       "type": "STRING",
-      "value": "..",
-      "annotations": {
-        "hoisted": true
-      }
+      "value": ".."
     },
     "range_pattern_with_left": {
       "type": "SEQ",
@@ -14304,7 +15161,6 @@
               "type": "SYMBOL",
               "name": "range_pattern_with_left_with_right",
               "metadata": {
-                "author": "enrich",
                 "symbolSource": "group-lift"
               },
               "annotations": {
@@ -14549,12 +15405,19 @@
         },
         {
           "type": "STRING",
-          "value": ";"
+          "value": ";",
+          "annotations": {
+            "variantOf": "struct_item"
+          }
         }
       ],
       "annotations": {
         "hoisted": true
       }
+    },
+    "_wildcard_pattern": {
+      "type": "STRING",
+      "value": "_"
     },
     "_attributed_field_declaration": {
       "type": "SEQ",
@@ -15146,10 +16009,10 @@
     ],
     [
       "line_comment",
-      "line_comment_regular_dslash"
+      "line_comment_extra_slashes"
     ],
     [
-      "line_comment_regular_dslash"
+      "line_comment_extra_slashes"
     ],
     [
       "line_comment",
@@ -15202,10 +16065,10 @@
     ],
     [
       "visibility_modifier",
-      "visibility_modifier_group"
+      "visibility_modifier_pub_scope"
     ],
     [
-      "visibility_modifier_group"
+      "visibility_modifier_pub_scope"
     ],
     [
       "visibility_modifier",

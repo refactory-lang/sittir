@@ -18,10 +18,9 @@ export function explicitMainFunction() {
 
 export function nestedGreetFunction() {
 	return ir.statement.function.strict({
-		// A form three levels down (`pub` -> its parenthesized group -> the
-		// `in <path>` arm) keeps the variant name the grammar authored, on the
-		// parent a caller actually names.
-		visibilityModifier: ir.visibilityModifier.pub.inPath(
+		// Each arm nests under the arm that reaches it: `pub`, its
+		// parenthesized `scope`, then the `in <path>` form.
+		visibilityModifier: ir.visibilityModifier.pub.scope.inPath(
 			ir.scopedIdentifier({ path: ir.crate(), name: ir.identifier('x') }),
 		),
 		name: ir.identifier('greet'),

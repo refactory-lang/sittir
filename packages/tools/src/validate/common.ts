@@ -9,6 +9,8 @@ import type { AnyNodeData, AnyTreeNode, NodeTrivia } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common';
 import type { SittirEngine } from '@sittir/common/engine';
 import { load } from '../codegen-surface.ts';
+import { grammarPackageDir, isGrammar } from '@sittir/codegen/grammars';
+import { CORPUS_ROOT, localCorpusPath, upstreamCorpusDir } from '../corpus/layout.ts';
 import type {
 	CodegenSurface,
 	PolymorphVariantMap,
@@ -51,64 +53,67 @@ export interface CorpusEntry {
 export type TSNode = TS.Node;
 export type TSTree = TS.Tree;
 
+const CORPUS_HEADER =
+	/^(={3,})([^=\r\n][^\r\n]*)?\r?\n((?:(?:[^=\r\n]|\s+:)[^\r\n]*\r?\n)+)===+([^=\r\n][^\r\n]*)?\r?\n/gm;
+const CORPUS_DIVIDER = /^(-{3,})([^-\r\n][^\r\n]*)?\r?\n/gm;
+
 export function parseCorpus(content: string, grammar?: string): CorpusEntry[] {
+	const headers = [...content.matchAll(CORPUS_HEADER)];
+	const firstSuffix = headers[0]?.[2];
+	const tests = headers.filter((h) => h[2] === firstSuffix && h[4] === firstSuffix);
 	const entries: CorpusEntry[] = [];
-	const lines = content.split('\n');
-	let i = 0;
-
-	while (i < lines.length) {
-		if (!lines[i]!.startsWith('====')) {
-			i++;
-			continue;
-		}
-		i++;
-
-		const name = lines[i]?.trim() ?? '';
-		i++;
-
-		let declaredLanguage: string | undefined;
-		while (i < lines.length) {
-			const line = lines[i]!;
-			if (line.startsWith('====')) {
-				i++;
-				continue;
-			}
-			const directiveMatch = line.trim().match(/^:language\((.+?)\)$/);
-			if (directiveMatch) {
-				declaredLanguage = directiveMatch[1];
-				i++;
-				continue;
-			}
-			break;
-		}
-
-		const sourceLines: string[] = [];
-		while (i < lines.length && !lines[i]!.match(/^-{3,}$/)) {
-			sourceLines.push(lines[i]!);
-			i++;
-		}
-
-		while (i < lines.length && !lines[i]!.startsWith('====')) i++;
-
-		const source = sourceLines.join('\n').trim();
-		if (!source) continue;
-		if (grammar !== undefined && declaredLanguage !== undefined && declaredLanguage !== grammar) {
-			continue;
-		}
-		entries.push({ name, source });
-	}
-
+	tests.forEach((header, index) => {
+		const bodyStart = header.index + header[0].length;
+		const bodyEnd = tests[index + 1]?.index ?? content.length;
+		const body = content.slice(bodyStart, bodyEnd);
+		const divider = [...body.matchAll(CORPUS_DIVIDER)]
+			.filter((d) => d[2] === firstSuffix)
+			.reduce<RegExpExecArray | RegExpMatchArray | undefined>(
+				(best, d) => (best === undefined || d[1]!.length >= best[1]!.length ? d : best),
+				undefined
+			);
+		if (divider === undefined) return;
+		const [nameLine = '', ...markers] = header[3]!.split(/\r?\n/).filter((line) => line.length > 0);
+		const attributes = markers.map((line) => line.trim().match(/^:([a-z-]+)(?:\((.+?)\))?$/)).filter((m) => m !== null);
+		const declaredLanguage = attributes.find((m) => m[1] === 'language')?.[2];
+		if (grammar !== undefined && declaredLanguage !== undefined && declaredLanguage !== grammar) return;
+		const expected = body.slice(divider.index! + divider[0].length);
+		if (attributes.some((m) => m[1] === 'error') || /\((ERROR|MISSING)\b/.test(expected)) return;
+		let source = body.slice(0, divider.index);
+		if (source.endsWith('\n')) source = source.slice(0, -1);
+		if (source.endsWith('\r')) source = source.slice(0, -1);
+		if (source.trim().length === 0) return;
+		entries.push({ name: nameLine.trim(), source });
+	});
 	return entries;
 }
 
-const FIXTURES_DIR = fileURLToPath(new URL('../../../codegen/fixtures', import.meta.url));
+export function grammarModulePath(grammar: string, file: string): string | undefined {
+	if (!isGrammar(grammar)) return undefined;
+	const path = join(grammarPackageDir(grammar), 'src', file);
+	return existsSync(path) ? path : undefined;
+}
+
+export async function importGrammarModule(grammar: string, file: string): Promise<Record<string, any> | undefined> {
+	const path = grammarModulePath(grammar, file);
+	return path === undefined ? undefined : ((await import(pathToFileURL(path).href)) as Record<string, any>);
+}
 
 export function loadCorpusEntries(grammar: string): CorpusEntry[] {
-	const entries: CorpusEntry[] = [];
-	const files = readdirSync(FIXTURES_DIR).filter((f) => f.startsWith(`${grammar}-`) && f.endsWith('.txt'));
-	for (const file of files) {
-		const content = readFileSync(join(FIXTURES_DIR, file), 'utf-8');
-		entries.push(...parseCorpus(content, grammar));
+	const upstreamDir = upstreamCorpusDir(grammar);
+	const files = existsSync(upstreamDir)
+		? readdirSync(upstreamDir)
+				.filter((f) => f.endsWith('.txt'))
+				.sort()
+				.map((f) => join(upstreamDir, f))
+		: [];
+	const local = localCorpusPath(grammar);
+	if (existsSync(local)) files.push(local);
+	const entries = files.flatMap((file) => parseCorpus(readFileSync(file, 'utf-8'), grammar));
+	if (entries.length === 0) {
+		throw new Error(
+			`corpus: grammar '${grammar}' has no corpus entries under ${join(CORPUS_ROOT, grammar)}; run \`sittir tool fetch-corpus --grammar ${grammar}\``
+		);
 	}
 	return entries;
 }
@@ -477,7 +482,8 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		decorator_member_expression: (r) => `@${r}\nclass _W {}`,
 		decorator_call_expression: (r) => `@${r}\nclass _W {}`,
 		decorator_parenthesized_expression: (r) => `@${r}\nclass _W {}`,
-		rest_pattern: (r) => `const [${r}] = [];`
+		rest_pattern: (r) => `const [${r}] = [];`,
+		lhs_expression: (r) => `(${r} = null);`
 	},
 	python: {
 		module: (r) => r,
@@ -490,7 +496,7 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		assignment: (r) => r,
 		function_definition: (r) => r,
 		parameters: (r) => `def _f${r}:\n    pass`,
-		_parameters: (r) => `def _f(${r}):\n    pass`,
+		parameters_elements: (r) => `def _f(${r}):\n    pass`,
 		argument_list: (r) => `_f${r}`,
 		dotted_name: (r) => `import ${r}`,
 		list_splat: (r) => `_f(${r})`,
@@ -597,19 +603,12 @@ export const WASM_PATHS: Record<string, string> = {
 	python: 'tree-sitter-python/tree-sitter-python.wasm'
 };
 
-export const WRAP_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/wrap.ts',
-	typescript: '../../../typescript/src/wrap.ts',
-	python: '../../../python/src/wrap.ts'
-};
-
 export async function loadReadTreeNode(
 	grammar: string
 ): Promise<((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null> {
-	const p = WRAP_MODULE_PATHS[grammar];
-	if (!p) return null;
 	try {
-		const mod = await import(new URL(p, import.meta.url).pathname);
+		const mod = await importGrammarModule(grammar, 'wrap.ts');
+		if (!mod) return null;
 		return mod.readTreeNode ?? null;
 	} catch (e) {
 		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
@@ -620,10 +619,9 @@ export async function loadReadTreeNode(
 export async function loadWrapNode(
 	grammar: string
 ): Promise<((data: AnyNodeData, tree: TreeHandle) => unknown) | null> {
-	const p = WRAP_MODULE_PATHS[grammar];
-	if (!p) return null;
 	try {
-		const mod = await import(new URL(p, import.meta.url).pathname);
+		const mod = await importGrammarModule(grammar, 'wrap.ts');
+		if (!mod) return null;
 		return mod.wrapNode ?? null;
 	} catch (e) {
 		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
@@ -631,15 +629,9 @@ export async function loadWrapNode(
 	}
 }
 
-const NODE_MODEL_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/node-model.json5',
-	typescript: '../../../typescript/src/node-model.json5',
-	python: '../../../python/src/node-model.json5'
-};
-
 export interface Seat {
 	readonly kind: string;
-	readonly shape: 'arm' | 'splice' | 'elements' | 'tuple';
+	readonly shape: 'arm' | 'flatten' | 'elements' | 'tuple';
 	readonly mount?: string;
 	readonly seated?: true;
 }
@@ -665,6 +657,7 @@ export interface LoadedNodeModel {
 	readonly slotMultiple: Record<string, Record<string, boolean>>;
 	readonly slotDefaults: Record<string, Record<string, string>>;
 	readonly bareAccepts: Record<string, readonly string[]>;
+	readonly textLeavesThrough: Record<string, readonly string[]>;
 	readonly forwardsTo: Record<string, string>;
 	readonly listDefaults: Record<string, string>;
 	readonly listElementKinds: Record<string, readonly string[]>;
@@ -691,6 +684,7 @@ interface ParsedNodeModel {
 		factoryFields?: readonly string[];
 		subtypes?: readonly string[];
 		bareAccepts?: readonly string[];
+		textLeavesThrough?: readonly string[];
 		forwardsTo?: string;
 		defaultDelimiter?: string;
 		leafPattern?: string;
@@ -720,16 +714,17 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	slotMultiple: {},
 	slotDefaults: {},
 	bareAccepts: {},
+	textLeavesThrough: {},
 	forwardsTo: {},
 	listDefaults: {},
 	listElementKinds: {}
 };
 
 export function readNodeModelFile(grammar: string): string | undefined {
-	const p = NODE_MODEL_PATHS[grammar];
+	const p = grammarModulePath(grammar, 'node-model.json5');
 	if (!p) return undefined;
 	try {
-		return readFileSync(new URL(p, import.meta.url).pathname, 'utf-8');
+		return readFileSync(p, 'utf-8');
 	} catch {
 		return undefined;
 	}
@@ -761,6 +756,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const slotMultiple: Record<string, Record<string, boolean>> = {};
 	const slotDefaults: Record<string, Record<string, string>> = {};
 	const bareAccepts: Record<string, readonly string[]> = {};
+	const textLeavesThrough: Record<string, readonly string[]> = {};
 	const forwardsTo: Record<string, string> = {};
 	const listDefaults: Record<string, string> = {};
 	const listElementKinds: Record<string, readonly string[]> = {};
@@ -794,6 +790,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		if (node.factoryFields !== undefined) factoryFields[node.kind] = node.factoryFields;
 		if (node.subtypes !== undefined) subtypes[node.kind] = node.subtypes;
 		if (node.bareAccepts !== undefined) bareAccepts[node.kind] = node.bareAccepts;
+		if (node.textLeavesThrough !== undefined) textLeavesThrough[node.kind] = node.textLeavesThrough;
 		if (node.forwardsTo !== undefined) forwardsTo[node.kind] = node.forwardsTo;
 		if (node.defaultDelimiter !== undefined) listDefaults[node.kind] = node.defaultDelimiter;
 		if (node.elementKinds !== undefined) listElementKinds[node.kind] = node.elementKinds;
@@ -817,6 +814,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		slotMultiple,
 		slotDefaults,
 		bareAccepts,
+		textLeavesThrough,
 		forwardsTo,
 		listDefaults,
 		listElementKinds
@@ -940,18 +938,6 @@ function isWrappedNodeData(v: unknown): v is WrappedNodeData {
 	return !!v && typeof v === 'object' && typeof (v as { $type?: unknown }).$type === 'number';
 }
 
-export const TYPES_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/types.ts',
-	typescript: '../../../typescript/src/types.ts',
-	python: '../../../python/src/types.ts'
-};
-
-const IR_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/ir.ts',
-	typescript: '../../../typescript/src/ir.ts',
-	python: '../../../python/src/ir.ts'
-};
-
 export type IrEntry = { readonly strict?: (...args: unknown[]) => unknown } & Record<string, unknown>;
 
 export interface IrSurface {
@@ -961,11 +947,9 @@ export interface IrSurface {
 }
 
 export async function loadIrSurface(grammar: string): Promise<IrSurface | undefined> {
-	const p = IR_MODULE_PATHS[grammar];
-	if (!p) return undefined;
+	const mod = (await importGrammarModule(grammar, 'ir.ts')) as { ir?: Record<string, unknown> } | undefined;
+	if (mod?.ir === undefined) return undefined;
 	const model = await loadNodeModel(grammar);
-	const mod = (await import(new URL(p, import.meta.url).pathname)) as { ir?: Record<string, unknown> };
-	if (mod.ir === undefined) return undefined;
 	const entries: Record<string, IrEntry> = {};
 	for (const [kind, irKey] of Object.entries(model.irKeys)) {
 		const entry = mod.ir[irKey];
@@ -975,10 +959,9 @@ export async function loadIrSurface(grammar: string): Promise<IrSurface | undefi
 }
 
 export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined> {
-	const typesModulePath = TYPES_MODULE_PATHS[grammar];
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		return typesModule.KIND_DISPLAY_NAMES as ReadonlyMap<number, string> | undefined;
 	} catch {
 		return undefined;
@@ -988,10 +971,9 @@ export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number
 export async function loadStorageKindNameFromId(
 	grammar: string
 ): Promise<((id: number) => string | undefined) | undefined> {
-	const typesModulePath = TYPES_MODULE_PATHS[grammar];
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		const kindNames = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
 		return kindNames ? (id: number) => kindNames.get(id) : undefined;
 	} catch {
@@ -1010,10 +992,9 @@ export async function loadIsLeafKind(grammar: string): Promise<(kindId: number) 
 }
 
 export async function loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined> {
-	const typesModulePath = TYPES_MODULE_PATHS[grammar];
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		const kindNames = typesModule.KIND_DISPLAY_NAMES as ReadonlyMap<number, string> | undefined;
 		if (kindNames) {
 			return (id: number) => kindNames.get(id);
@@ -1035,10 +1016,9 @@ export async function loadKindNameFromId(grammar: string): Promise<((id: number)
 export async function loadCanonicalKindNameFromId(
 	grammar: string
 ): Promise<((id: number) => string | undefined) | undefined> {
-	const typesModulePath = TYPES_MODULE_PATHS[grammar];
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		const kindNames = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
 		if (!kindNames) return undefined;
 		return (id: number) => kindNames.get(id);
@@ -1048,10 +1028,9 @@ export async function loadCanonicalKindNameFromId(
 }
 
 export async function loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined> {
-	const typesModulePath = TYPES_MODULE_PATHS[grammar];
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		return typesModule.kindIdFromName as ((name: string) => number) | undefined;
 	} catch {
 		return undefined;
@@ -1065,9 +1044,7 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 	isOverride: boolean;
 }> {
 	const { assertGeneratedManifestsClean } = await load('generatedManifest');
-	if (grammar === 'rust' || grammar === 'typescript' || grammar === 'python') {
-		assertGeneratedManifestsClean([grammar]);
-	}
+	if (isGrammar(grammar)) assertGeneratedManifestsClean([grammar]);
 	const { Parser, Language } = await loadWebTreeSitter();
 
 	const thisDir = fileURLToPath(new URL('.', import.meta.url));
@@ -1208,7 +1185,7 @@ function drillReadNode(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
 }
 
 const ARM_ROUTE = Symbol('armRoute');
-const SPLICED = Symbol('spliced');
+const FLATTENED = Symbol('flattened');
 const POSITIONAL = Symbol('positional');
 
 interface ArmRoute {
@@ -1224,8 +1201,8 @@ function positionalOf(config: Record<string, unknown>): readonly unknown[] | und
 	return (config as Record<symbol, unknown>)[POSITIONAL] as readonly unknown[] | undefined;
 }
 
-function isSpliced(config: Record<string, unknown>): boolean {
-	return (config as Record<symbol, unknown>)[SPLICED] === true;
+function isFlattened(config: Record<string, unknown>): boolean {
+	return (config as Record<symbol, unknown>)[FLATTENED] === true;
 }
 
 function readValueKind(value: unknown, opts: NodeToConfigOpts): string | undefined {
@@ -1354,16 +1331,16 @@ function projectSeatedSlot(
 ): void {
 	const key = slotConfigKey(slot);
 	switch (seat.shape) {
-		case 'splice': {
+		case 'flatten': {
 			const group = nodeToConfig(drillReadNode(value as ReadNodeLike, opts), childOpts(opts));
 			const nested = armRouteOf(group);
 			if (nested !== undefined) {
 				throw new Error(
-					`ir surface: ${seat.kind}.${nested.mount} is an arm route inside a group spliced on ${parentKind}; the splice has no spelling for it`
+					`ir surface: ${seat.kind}.${nested.mount} is an arm route inside a group flattened on ${parentKind}; the flatten has no spelling for it`
 				);
 			}
 			Object.assign(out, group);
-			Object.defineProperty(out, SPLICED, { value: true, enumerable: false });
+			Object.defineProperty(out, FLATTENED, { value: true, enumerable: false });
 			return;
 		}
 		case 'elements':
@@ -1427,7 +1404,7 @@ function factoryArgs(
 	if (positional !== undefined) return positional;
 	if (shape === 'direct' || shape === 'forwarded') {
 		const { base, registered } = splitRegisteredSlots(kind, config, opts.factorySlots);
-		const value = isSpliced(base) ? base : directFactoryValue(kind, base, opts.factorySlots, opts.factoryFields);
+		const value = isFlattened(base) ? base : directFactoryValue(kind, base, opts.factorySlots, opts.factoryFields);
 		return registered === undefined ? [value] : [value, registered];
 	}
 	const elements = getChildFactoryArgs(kind, config, opts.factorySlots, opts.factoryFields);
@@ -1572,16 +1549,6 @@ function createChildrenConfigSlotModel(
 ): SlotModel {
 	const slotMeta = parentKind ? factorySlots?.[parentKind]?.children : undefined;
 	return createUnnamedChildrenSlotModel(slotModelArityFromMeta(slotMeta, true));
-}
-
-function declaredSlotNameForKey(parentKind: string | undefined, key: string, opts: NodeToConfigOpts): string {
-	const slots = parentKind ? opts.factorySlots?.[parentKind] : undefined;
-	if (!slots || key in slots) return key;
-	const wireKey = `_${key}`;
-	for (const [name, meta] of Object.entries(slots)) {
-		if (meta.wireKeys?.includes(wireKey)) return name;
-	}
-	return key;
 }
 
 function hasDeclaredFactorySlot(parentKind: string | undefined, name: string, opts: NodeToConfigOpts): boolean {
@@ -1876,9 +1843,8 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 			namedSlotEntries.push([key.slice(1), rec[key]]);
 		}
 	}
-	for (const [key, v] of namedSlotEntries) {
+	for (const [k, v] of namedSlotEntries) {
 		if (v === undefined) continue;
-		const k = declaredSlotNameForKey(parentKind, key, opts);
 		if (!isIdentifierShapedFieldKey(k)) continue;
 		if (!hasDeclaredFactorySlot(parentKind, k, opts)) continue;
 		const slot = createNamedConfigSlotModel(parentKind, k, opts.factorySlots);

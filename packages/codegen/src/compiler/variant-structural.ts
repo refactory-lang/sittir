@@ -1,9 +1,7 @@
-import { polymorphVisibleName } from '../dsl/wire/wire.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { ALIAS, SUPERTYPE, SYMBOL } from '../types/rule-types.ts';
 import type { AliasRule, Rule, RuleAnnotations, SymbolRule } from '../types/rule.ts';
-
-export { polymorphVisibleName };
+import { automaticVariantKey, type AutomaticVariants } from '../dsl/automatic-variants.ts';
 
 export function isAliasMintedRef(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>): boolean {
 	if (rule.type === ALIAS) return true;
@@ -11,17 +9,10 @@ export function isAliasMintedRef(rule: Rule<'link'>, rules: Record<string, Rule<
 	return false;
 }
 
-export function prefixNamedSuffix(parentKind: string, targetName: string): string | null {
-	const bareTarget = targetName.startsWith('_') ? targetName.slice(1) : targetName;
-	const prefix = `${polymorphVisibleName(parentKind, '')}`;
-	if (!bareTarget.startsWith(prefix)) return null;
-	const suffix = bareTarget.slice(prefix.length);
-	return suffix.length > 0 ? suffix : null;
-}
-
 export interface VariantChild {
 	readonly kind: string;
 	readonly name: string;
+	readonly definedBy: 'enrich' | 'override';
 }
 
 const walker = new RuleWalker<Rule<'link'>>();
@@ -30,26 +21,31 @@ function annotationsOf(rule: Rule<'link'>): RuleAnnotations | undefined {
 	return (rule as { annotations?: RuleAnnotations }).annotations;
 }
 
-function variantArmOf(rule: Rule<'link'>, parentKind: string): VariantChild | null {
+function definedByOf(rule: Rule<'link'>, automatic: AutomaticVariants | undefined): VariantChild['definedBy'] {
+	const key = automaticVariantKey(rule);
+	return key !== undefined && automatic?.keys.has(key) === true ? 'enrich' : 'override';
+}
+
+function variantArmOf(rule: Rule<'link'>, parentKind: string, automatic: AutomaticVariants | undefined): VariantChild | null {
 	if (rule.type === SYMBOL) {
 		const annotations = annotationsOf(rule);
 		if (annotations?.variant === undefined || annotations.variantOf !== parentKind) return null;
-		return { kind: (rule as SymbolRule<'link'>).name, name: annotations.variant };
+		return { kind: (rule as SymbolRule<'link'>).name, name: annotations.variant, definedBy: definedByOf(rule, automatic) };
 	}
 	if (rule.type === ALIAS) {
 		const alias = rule as AliasRule<'link'>;
 		const annotations = annotationsOf(alias) ?? annotationsOf(alias.content);
 		if (annotations?.variant === undefined || annotations.variantOf !== parentKind) return null;
-		return typeof alias.value === 'string' && alias.named ? { kind: alias.value, name: annotations.variant } : null;
+		return typeof alias.value === 'string' && alias.named ? { kind: alias.value, name: annotations.variant, definedBy: definedByOf(alias, automatic) } : null;
 	}
 	return null;
 }
 
-export function variantChildrenOf(parentKind: string, rule: Rule<'link'>): VariantChild[] {
+export function variantChildrenOf(parentKind: string, rule: Rule<'link'>, automatic: AutomaticVariants | undefined): VariantChild[] {
 	const out: VariantChild[] = [];
 	const seen = new Set<string>();
 	const visit = (node: Rule<'link'>): void => {
-		const arm = variantArmOf(node, parentKind);
+		const arm = variantArmOf(node, parentKind, automatic);
 		if (arm !== null) {
 			if (!seen.has(arm.kind)) {
 				seen.add(arm.kind);
@@ -64,10 +60,10 @@ export function variantChildrenOf(parentKind: string, rule: Rule<'link'>): Varia
 	return out;
 }
 
-export function deriveVariantChildren(rules: Record<string, Rule<'link'>>): Map<string, VariantChild[]> {
+export function deriveVariantChildren(rules: Record<string, Rule<'link'>>, automatic: AutomaticVariants | undefined): Map<string, VariantChild[]> {
 	const out = new Map<string, VariantChild[]>();
 	for (const [kind, rule] of Object.entries(rules)) {
-		const children = variantChildrenOf(kind, rule);
+		const children = variantChildrenOf(kind, rule, automatic);
 		if (children.length > 0) out.set(kind, children);
 	}
 	return out;

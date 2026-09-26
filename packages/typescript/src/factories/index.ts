@@ -59,6 +59,7 @@ export const newExpression: Hoisted<typeof O.newExpression> = hoist(O.newExpress
 export const awaitExpression: Hoisted<typeof O.awaitExpression> = hoist(O.awaitExpression);
 export const memberExpression: Hoisted<typeof O.memberExpression> = hoist(O.memberExpression);
 export const subscriptExpression: Hoisted<typeof O.subscriptExpression> = hoist(O.subscriptExpression);
+export const lhsExpression: Hoisted<typeof O.lhsExpression> = hoist(O.lhsExpression);
 export const assignmentExpression: Hoisted<typeof O.assignmentExpression> = hoist(O.assignmentExpression);
 export const augmentedAssignmentExpression: Hoisted<typeof O.augmentedAssignmentExpression> = hoist(
 	O.augmentedAssignmentExpression
@@ -157,7 +158,6 @@ export const indexTypeQuery: Hoisted<typeof O.indexTypeQuery> = hoist(O.indexTyp
 export const lookupType: Hoisted<typeof O.lookupType> = hoist(O.lookupType);
 export const mappedTypeClause: Hoisted<typeof O.mappedTypeClause> = hoist(O.mappedTypeClause);
 export const literalType: Hoisted<typeof O.literalType> = hoist(O.literalType);
-export const _number: Hoisted<typeof O._number> = hoist(O._number);
 export const flowMaybeType: Hoisted<typeof O.flowMaybeType> = hoist(O.flowMaybeType);
 export const parenthesizedType: Hoisted<typeof O.parenthesizedType> = hoist(O.parenthesizedType);
 export const typeArguments: Hoisted<typeof O.typeArguments> = hoist(O.typeArguments);
@@ -194,18 +194,26 @@ export const exportStatementTypeExport: Hoisted<typeof O.exportStatementTypeExpo
 export const exportStatementEqualsExport: Hoisted<typeof O.exportStatementEqualsExport> = hoist(
 	O.exportStatementEqualsExport
 );
+export const declaration: Hoisted<typeof O.declaration> = hoistRoutes(O.declaration);
 export const importSpecifier: Hoisted<typeof O.importSpecifier> = hoistRoutes(O.importSpecifier);
 export const variableDeclarator: Hoisted<typeof O.variableDeclarator> = hoistRoutes(O.variableDeclarator);
 export const forHeader: Hoisted<typeof O.forHeader> = hoistRoutes(O.forHeader);
 export const parenthesizedExpression: Hoisted<typeof O.parenthesizedExpression> = hoistRoutes(
 	O.parenthesizedExpression
 );
+export const formalParameter: Hoisted<typeof O.formalParameter> = hoistRoutes(O.formalParameter);
 export const callExpression: Hoisted<typeof O.callExpression> = hoistRoutes(O.callExpression);
+export const destructuringPattern: Hoisted<typeof O.destructuringPattern> = hoistRoutes(O.destructuringPattern);
 export const updateExpression: Hoisted<typeof O.updateExpression> = hoistRoutes(O.updateExpression);
 export const string: Hoisted<typeof O.string> = hoistRoutes(O.string);
 export const comment: Hoisted<typeof O.comment> = hoistRoutes(O.comment);
 export const number: Hoisted<typeof O.number> = hoistRoutes(O.number);
+export const identifier: Hoisted<typeof O.identifier> = hoistRoutes(O.identifier);
 export const metaProperty: Hoisted<typeof O.metaProperty> = hoistRoutes(O.metaProperty);
+export const pattern: Hoisted<typeof O.pattern> = hoistRoutes(O.pattern);
+export const propertyName: Hoisted<typeof O.propertyName> = hoistRoutes(O.propertyName);
 export const indexSignature: Hoisted<typeof O.indexSignature> = hoistRoutes(O.indexSignature);
 export const exportStatementDefault: Hoisted<typeof O.exportStatementDefault> = hoistRoutes(O.exportStatementDefault);
 export const exportStatement: Hoisted<typeof O.exportStatement> = hoistRoutes(O.exportStatement);
+export const moduleExportName: Hoisted<typeof O.moduleExportName> = hoistRoutes(O.moduleExportName);
+export const statement: Hoisted<typeof O.statement> = hoistRoutes(O.statement);

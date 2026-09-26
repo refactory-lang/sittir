@@ -1,0 +1,63 @@
+diff --git a/packages/codegen/src/dsl/__tests__/group-annotation.test.ts b/packages/codegen/src/dsl/__tests__/group-annotation.test.ts
+index ac3bdd89b..9b0e5f3be 100644
+--- a/packages/codegen/src/dsl/__tests__/group-annotation.test.ts
++++ b/packages/codegen/src/dsl/__tests__/group-annotation.test.ts
+@@ -1,6 +1,8 @@
+ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+ import { transform } from '../transform/transform.ts';
+ import { group } from '../primitives/group.ts';
++import { field } from '../primitives/field.ts';
++import { withWireContext } from '../wire/wire.ts';
+ import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
+ import type { RuntimeRule } from '../../types/runtime-shapes.ts';
+ 
+@@ -48,4 +50,22 @@ describe('group()', () => {
+ 
+ 		expect(out).toMatchObject({ annotations: { variant: 'a', variantOf: 'p', hoisted: true } });
+ 	});
++
++	it('a patch on a member of a hoisted group keeps the group hoisted', () => {
++		const hoisted = (): RuntimeRule =>
++			({
++				type: 'SEQ',
++				members: [
++					{ type: 'STRING', value: 'x' },
++					{ type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'a' }, { type: 'SYMBOL', name: 'b' }] }
++				],
++				annotations: { hoisted: true }
++			}) as unknown as RuntimeRule;
++
++		const { result: flat } = withWireContext('clause', () => transform(hoisted(), { 1: field('bindings') }));
++		const { result: path } = withWireContext('clause', () => transform(hoisted(), { '1/0': field('first') }));
++
++		for (const out of [flat, path]) expect((out as unknown as Annotated).annotations?.hoisted).toBe(true);
++		expect((flat as unknown as Members).members[1]).toMatchObject({ type: 'FIELD', name: 'bindings' });
++	});
+ });
+diff --git a/packages/codegen/src/dsl/transform/transform-path.ts b/packages/codegen/src/dsl/transform/transform-path.ts
+index 6cf210be1..e23c894d1 100644
+--- a/packages/codegen/src/dsl/transform/transform-path.ts
++++ b/packages/codegen/src/dsl/transform/transform-path.ts
+@@ -489,8 +489,8 @@ function isWalkableNode(rule: unknown): rule is RuntimeRule {
+ 
+ export function reconstructContainer(rule: RuntimeRule, members: RuntimeRule[]): RuntimeRule {
+ 	const t = rule.type;
+-	if (isSeqType(t)) return nativeRequired('seq')(...members);
+-	if (isChoiceType(t)) return nativeRequired('choice')(...members);
++	if (isSeqType(t)) return carryOverProperties(rule, nativeRequired('seq')(...members));
++	if (isChoiceType(t)) return carryOverProperties(rule, nativeRequired('choice')(...members));
+ 	throw new Error(`reconstructContainer: unknown container type '${t}'`);
+ }
+ 
+diff --git a/packages/typescript/grammar.sittir.ts b/packages/typescript/grammar.sittir.ts
+index 5e75920c3..fc4b90bd4 100644
+--- a/packages/typescript/grammar.sittir.ts
++++ b/packages/typescript/grammar.sittir.ts
+@@ -311,6 +311,7 @@ export default grammar(
+ 			},
+ 
+ 			patches: {
++				import_clause_group: { 1: field('bindings') },
+ 				decorator: { 1: field('expression') },
+ 				decorator_parenthesized_expression: { 1: field('expression') },
+ 				asserts: { 1: field('value') },

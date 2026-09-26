@@ -125,11 +125,11 @@ export function rebuildKeywordOpenersRustGenerated() {
 					pattern: ir.identifier("m"),
 					value: ir.macroInvocation.strict({
 						macro: ir.identifier("vec"),
-						arguments: ir.delimTokenTree.bracket.strict(ir.integerLiteral.decimal.strict({
+						arguments: ir.delimTokenTree.bracket.strict(ir.nonSpecialToken.strict(ir.integerLiteral.decimal.strict({
 							content: "1",
-						}), TSKindId.Comma, ir.integerLiteral.decimal.strict({
+						})), ir.nonSpecialToken.strict(TSKindId.Comma), ir.nonSpecialToken.strict(ir.integerLiteral.decimal.strict({
 							content: "2",
-						})),
+						}))),
 					}),
 				}), ir.letDeclaration.strict({
 					pattern: ir.identifier("c"),
@@ -181,7 +181,7 @@ export function rebuildKeywordOpenersRustGenerated() {
 				}),
 			}),
 		}), ir.functionItem.strict({
-			visibilityModifier: ir.visibilityModifier.pub.strict(ir.visibilityModifierGroup.strict(TSKindId.Crate)),
+			visibilityModifier: ir.visibilityModifier.pub.scope.strict(TSKindId.Crate),
 			name: ir.identifier("g"),
 			parameters: ir.parameters.strict(),
 			body: ir.block.strict({}),
@@ -191,10 +191,10 @@ export function rebuildKeywordOpenersRustGenerated() {
 			parameters: ir.parameters.strict(),
 			body: ir.block.strict({}),
 		}), ir.structItem.unit.strict({
-			visibilityModifier: ir.visibilityModifier.pub.strict(ir.visibilityModifierGroup.inPath.strict(ir.scopedIdentifier.strict({
+			visibilityModifier: ir.visibilityModifier.pub.scope.inPath.strict(ir.scopedIdentifier.strict({
 				path: TSKindId.Crate,
 				name: ir.identifier("x"),
-			}))),
+			})),
 			name: ir.identifier("S"),
 		})],
 	});

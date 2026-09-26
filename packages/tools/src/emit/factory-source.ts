@@ -40,6 +40,7 @@ export interface LooseFacts {
 	readonly slotMultiple: Record<string, Record<string, boolean>>;
 	readonly slotDefaults: Record<string, Record<string, string>>;
 	readonly bareAccepts: Record<string, readonly string[]>;
+	readonly textLeavesThrough: Record<string, readonly string[]>;
 	readonly forwardsTo: Record<string, string>;
 	readonly listDefaults: Record<string, string>;
 	readonly listElementKinds: Record<string, readonly string[]>;
@@ -217,7 +218,6 @@ function printVerbatimText(
 	slotKinds: readonly string[] = [],
 	storage?: string
 ): unknown {
-	if (leaf?.startsWith('_')) return text;
 	if (leaf !== undefined) return new Printed(leaf, `${ctx.irPathOfKind(leaf)}(${JSON.stringify(text)})`, leaf);
 	if (slotKinds.length === 1 && ctx.keywordKinds?.has(slotKinds[0]!)) return true;
 	if (slotKinds.length === 0 && storage === 'verbatim') return text;
@@ -291,7 +291,16 @@ function soleLeafKind(kinds: readonly string[], text: string, ctx: PrintContext)
 
 function bareTextAdmitted(kind: string, property: string, text: string, ctx: PrintContext): boolean {
 	const kinds = slotKindsAt(kind, property, ctx);
-	return ctx.loose !== undefined && kinds !== undefined && soleLeafKind(kinds, text, ctx) !== undefined;
+	return ctx.loose !== undefined && kinds !== undefined && soleLeafKind(textCandidateKinds(kinds, ctx), text, ctx) !== undefined;
+}
+
+function textCandidateKinds(kinds: readonly string[], ctx: PrintContext): readonly string[] {
+	return [...kinds, ...kinds.flatMap((k) => ctx.loose!.textLeavesThrough[k] ?? [])];
+}
+
+function envelopeReaching(kinds: readonly string[], leaf: string, ctx: PrintContext): string | undefined {
+	if (kinds.includes(leaf)) return undefined;
+	return kinds.find((k) => ctx.loose!.textLeavesThrough[k]?.includes(leaf) === true);
 }
 
 function readLeafBare(kind: string, text: string, ctx: PrintContext): boolean {
@@ -448,6 +457,15 @@ function loosenValue(
 		return new Printed(value.$type, bare ?? `[${printed.join(', ')}]`, value.kind);
 	}
 	const inner = value.facts?.inner;
+	const innerText = inner instanceof Printed ? inner.facts?.text : undefined;
+	if (
+		inner instanceof Printed &&
+		inner.kind !== undefined &&
+		innerText !== undefined &&
+		envelopeReaching(kinds, inner.kind, ctx) === value.kind &&
+		soleLeafKind(textCandidateKinds(kinds, ctx), innerText, ctx) === inner.kind
+	)
+		return new Printed(value.$type, JSON.stringify(innerText), value.kind);
 	if (
 		inner instanceof Printed &&
 		inner.kind !== undefined &&
@@ -643,33 +661,48 @@ export function printingIrSurface(
 	const entries: Record<string, IrEntry> = {};
 	for (const [kind, strict] of Object.entries(map)) {
 		const entry: Record<string, unknown> = { strict };
-		const path = ctx.irPathOfKind(kind);
-		const id = kindIdOfName(kind) ?? kind;
-		for (const table of Object.values(ctx.seats?.[kind] ?? {})) {
-			for (const seat of Object.values(table)) {
-				if (seat.shape !== 'arm' || seat.mount === undefined || seat.mount in entry) continue;
-				entry[seat.mount] = { strict: mountPrinter(path, seat, kind, id, ctx) };
-			}
-		}
+		mountArmPrinters(entry, ctx.irPathOfKind(kind), kind, kind, kindIdOfName(kind) ?? kind, ctx, new Set([kind]));
 		entries[kind] = entry as IrEntry;
 	}
 	return { entries, seats: ctx.seats ?? {}, modelTypes };
 }
 
+function mountArmPrinters(
+	entry: Record<string, unknown>,
+	path: string,
+	hostKind: string,
+	builtKind: string,
+	id: number | string,
+	ctx: PrintContext,
+	visiting: ReadonlySet<string>
+): void {
+	for (const table of Object.values(ctx.seats?.[hostKind] ?? {})) {
+		for (const seat of Object.values(table)) {
+			if (seat.shape !== 'arm' || seat.mount === undefined || seat.mount in entry) continue;
+			const mounted: Record<string, unknown> = { strict: mountPrinter(path, seat, hostKind, builtKind, id, ctx) };
+			entry[seat.mount] = mounted;
+			if (!visiting.has(seat.kind)) {
+				mountArmPrinters(mounted, `${path}.${seat.mount}`, seat.kind, builtKind, id, ctx, new Set([...visiting, seat.kind]));
+			}
+		}
+	}
+}
+
 function mountPrinter(
 	path: string,
 	seat: Seat,
-	parentKind: string,
+	hostKind: string,
+	builtKind: string,
 	id: number | string,
 	ctx: PrintContext
 ): (...args: unknown[]) => Printed | string {
 	return (...args: unknown[]): Printed => {
 		const given = args.slice(0, args.findLastIndex((a) => a !== undefined) + 1);
 		const printed = given.map((a) =>
-			printValue(isPlainObject(a) ? wrapSeatedConfig(parentKind, a, ctx) : wrapDirectArg(seat.kind, a, ctx), ctx, 0)
+			printValue(isPlainObject(a) ? wrapSeatedConfig(hostKind, a, ctx) : wrapDirectArg(seat.kind, a, ctx), ctx, 0)
 		);
 		const argSource = printed.join(', ');
-		return new Printed(id, `${callSpelling(`${path}.${seat.mount!}`, ctx)}(${argSource})`, parentKind, argSource);
+		return new Printed(id, `${callSpelling(`${path}.${seat.mount!}`, ctx)}(${argSource})`, builtKind, argSource);
 	};
 }
 
@@ -690,7 +723,7 @@ export function printFactorySource(
 import { readFileSync, writeFileSync } from 'node:fs';
 import { basename, resolve } from 'node:path';
 import {
-	TYPES_MODULE_PATHS,
+	importGrammarModule,
 	buildReadHandle,
 	loadKindIdFromName,
 	loadKindNameFromId,
@@ -751,7 +784,6 @@ function variantFormsOf(
 		name in modelTypes ? name : `_${name}` in modelTypes ? `_${name}` : undefined;
 	const out = new Map<string, VariantForm>();
 	for (const [parent, descriptor] of Object.entries(variants)) {
-		if (descriptor.definedBy !== 'override') continue;
 		const parentKind = kindOf(parent);
 		if (parentKind === undefined) continue;
 		for (const [child, form] of Object.entries(descriptor.childKind)) {
@@ -864,9 +896,8 @@ export async function emitFactorySourceText(
 	const kindIdFromName = await loadKindIdFromName(grammar);
 	const handle = await buildReadHandle(grammar, tree, source, options.backend ?? 'native', kindIdFromName);
 	const model = await loadNodeModel(grammar);
-	const typesPath = TYPES_MODULE_PATHS[grammar];
-	if (!typesPath) throw new Error(`emit-factory-source: no types module for ${grammar}`);
-	const types = (await import(new URL(`../validate/${typesPath}`, import.meta.url).pathname)) as TypesModule;
+	const types = (await importGrammarModule(grammar, 'types.ts')) as TypesModule | undefined;
+	if (!types) throw new Error(`emit-factory-source: no types module for ${grammar}`);
 	const displayNameFromId = await loadKindNameFromId(grammar);
 	const kindNameFromId = (id: number): string | undefined => types.KIND_NAMES.get(id) ?? displayNameFromId?.(id);
 	const idOfName = new Map<string, number>();
@@ -923,6 +954,7 @@ export async function emitFactorySourceText(
 						slotMultiple: model.slotMultiple,
 						slotDefaults: model.slotDefaults,
 						bareAccepts: model.bareAccepts,
+						textLeavesThrough: model.textLeavesThrough,
 						forwardsTo: model.forwardsTo,
 						listDefaults: model.listDefaults,
 						listElementKinds: model.listElementKinds,

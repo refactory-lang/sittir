@@ -15,6 +15,7 @@
 
 import { buildNodeMap } from '../codegen-surface.ts';
 import type { AssembledNode } from '../codegen-surface.ts';
+import { stableGrammars } from '@sittir/codegen/grammars';
 
 export interface AssembleShapeCensusOptions {
 	grammar: string;
@@ -131,7 +132,7 @@ function renderTable(census: AssembleShapeCensus): string {
 }
 
 export async function run(opts: AssembleShapeCensusOptions): Promise<number> {
-	const grammars = opts.allGrammars ? ['rust', 'typescript', 'python'] : [opts.grammar];
+	const grammars = opts.allGrammars ? stableGrammars() : [opts.grammar];
 	const results: AssembleShapeCensus[] = [];
 	for (const grammar of grammars) {
 		let nodes: ReadonlyMap<string, AssembledNode>;

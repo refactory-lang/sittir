@@ -35,8 +35,9 @@ export type RuleAnnotations = {
 	readonly variantOf?: string;
 	readonly default?: true;
 	readonly preference?: string;
+	readonly arm?: string;
 	readonly hoisted?: true;
-	readonly spliced?: true;
+	readonly flattened?: true;
 	readonly origin?: SeamOrigin;
 	readonly edgeLiterals?: readonly string[];
 	readonly tokenForm?: true;

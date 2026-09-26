@@ -166,14 +166,14 @@ export function serializeFixtures(fixtures: readonly ParityFixture[]): string {
  *  single `packages/{lang}/` regen replaces both the Rust source and
  *  its test inputs. */
 export function fixturesOutputPath(grammar: string): string {
-	return renderModuleFixturesPath(grammar as 'rust' | 'typescript' | 'python');
+	return renderModuleFixturesPath(grammar);
 }
 
 /** The render fixtures a regen left out, by kind, beside the fixture file:
  *  the baseline ratchet reads it, so a kind whose template stops
  *  reproducing its source fails the build instead of vanishing. */
 export function leftOutOutputPath(grammar: string): string {
-	return renderModuleLeftOutPath(grammar as 'rust' | 'typescript' | 'python');
+	return renderModuleLeftOutPath(grammar);
 }
 
 export function serializeLeftOut(leftOutByKind: Readonly<Record<string, number>>): string {

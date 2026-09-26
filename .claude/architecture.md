@@ -68,7 +68,7 @@ IR namespace access stays tree-shakeable:
 ```ts
 import { ir, expression } from '@sittir/rust';
 
-ir.binary(config);
+ir.binaryExpression(config);
 ir.expression.binary(config);
 expression.binary(config);
 ```

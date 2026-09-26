@@ -46,7 +46,7 @@ export function importTypesStrict() {
 			),
 			source: ir.string.single.strict(ir.unescapedSingleStringFragment('@sittir/types')),
 		},
-	}).$with.terminator(TSKindId.Semi);
+	});
 }
 
 /** The JSDoc block that leads `applyFormat`. */
@@ -57,12 +57,12 @@ export function applyFormatDocStrict() {
 }
 
 function param(name: string, type: string) {
-	return ir.requiredParameter.strict({ pattern: id(name), type: ann(type) });
+	return ir.requiredParameter.strict({ pattern: ir.lhsExpression.strict(id(name)), type: ann(type) });
 }
 
-/** `let <name> = <value>;` */
+/** `let <name> = <value>;` — the `;` is the terminator option's default. */
 function letStrict(name: string, value: string) {
-	return ir.lexicalDeclaration.semi({
+	return ir.lexicalDeclaration.strict({
 		kind: 'let',
 		declarators: [ir.variableDeclarator.plain.strict({ name: id(name), value: id(value) })],
 	});
@@ -92,9 +92,9 @@ export function applyBoundaryStrict() {
 	});
 }
 
-/** `return result;` — the `;` is filled by the form, not named by the caller. */
+/** `return result;` */
 export function returnResultStrict() {
-	return ir.returnStatement.semi({ expression: id('result') });
+	return ir.returnStatement.strict(id('result'));
 }
 
 /** `format.boundary` */

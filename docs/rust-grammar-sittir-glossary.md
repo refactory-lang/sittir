@@ -921,14 +921,6 @@ placeholder mints nothing new. Keyword-carrier hidden rules (`_kw_async`,
 synthesizes them whenever a one-arg `field('name')` patch lands on a bare
 STRING — see `function_modifiers` / `visibility_modifier`.
 
-### `_wildcard_pattern` (`packages/rust/grammar.sittir.ts:1096`)
-
-```text
-				// The hidden rule `_wildcard_pattern` is just the `_` literal;
-				// the named alias on `_pattern` above promotes it to a proper
-				// `wildcard_pattern` kind at parse time.
-```
-
 ### `reference_expression` (`packages/rust/grammar.sittir.ts`)
 
 ```text

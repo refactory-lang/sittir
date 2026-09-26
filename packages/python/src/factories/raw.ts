@@ -9,11 +9,11 @@ import {
 	withAccessors,
 	methodsEngine,
 	admitAliasContent,
-	admitHiddenText,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
-	numberText
+	numberText,
+	rejectBareText
 } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
@@ -28,7 +28,7 @@ const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/
 const _leafRe_buildIntegerDecimal = /^(?:(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?))$/u;
 const _leafRe_buildLineContinuationNewline = /^(?:\\(?:\r)?\n)$/u;
 const _leafRe_buildStringStart = /^(?:(?:[a-zA-Z]*["']+))$/u;
-const _leafRe_build_StringContent = /^(?:(?:[^"'\\{}\n]+))$/u;
+const _leafRe_buildStringFragment = /^(?:(?:[^"'\\{}\n]+))$/u;
 const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
 const _leafRe_buildStringEnd = /^(?:(?:["']+))$/u;
 const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
@@ -61,7 +61,7 @@ const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:['"abfrntv\\]))$/u;
 const _slotRe_buildEscapeSequenceNamed_content = /^(?:(?:N\{[^}]+\}))$/u;
 
 export function buildModule(...children: (T.SimpleStatements | T.CompoundStatement)[]): T.Module.Built {
-	const _statements = children;
+	const _statements = rejectBareText(children, 'Module.statements', 'a built SimpleStatements / CompoundStatement');
 	return withMethods(
 		withAccessors(
 			{
@@ -103,7 +103,11 @@ export function buildSimpleStatements(...args: unknown[]) {
 			);
 }
 function _buildSimpleStatements(value: T.SimpleStatementsElements): T.SimpleStatements.Built {
-	const _simple_statements_elements = value;
+	const _simple_statements_elements = rejectBareText(
+		value,
+		'SimpleStatements.simpleStatementsElements',
+		'a built SimpleStatementsElements'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -123,42 +127,39 @@ function _buildSimpleStatements(value: T.SimpleStatementsElements): T.SimpleStat
 	);
 }
 
+export function buildImportStatement(value: T.Names | T.Names.Types): ReturnType<typeof _buildImportStatement>;
 export function buildImportStatement(value: T.ImportList): ReturnType<typeof _buildImportStatement>;
-export function buildImportStatement(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
-): ReturnType<typeof _buildImportStatement>;
-export function buildImportStatement(
-	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
-): ReturnType<typeof _buildImportStatement>;
 export function buildImportStatement(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildImportStatement(args[0] as T.ImportList);
+		return _buildImportStatement(args[0] as T.Names | T.Names.Types);
 	}
 	const prebuilt =
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportList as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Names as const);
 	return prebuilt
-		? _buildImportStatement(args[0] as T.ImportList)
-		: _buildImportStatement((buildImportList as (...a: unknown[]) => unknown)(...args) as T.ImportList);
+		? _buildImportStatement(args[0] as T.Names | T.Names.Types)
+		: _buildImportStatement((buildNames as (...a: unknown[]) => unknown)(...args) as T.Names | T.Names.Types);
 }
-function _buildImportStatement(value: T.ImportList): T.ImportStatement.Built {
-	const _import_list = value;
+function _buildImportStatement(value: T.Names | T.Names.Types): T.ImportStatement.Built {
+	const _names = admitAliasContent<NonNullable<T.ImportStatement['_names']>>(
+		rejectBareText(value, 'ImportStatement.names', 'a built Names'),
+		[[[132], (v: unknown) => buildNames(v as never)]]
+	);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ImportStatement as const,
 				$source: 2 as const,
 				$named: true as const,
-				_import_list,
+				_names,
 				$with: {
-					importList: (value: T.ImportList) => buildImportStatement(value)
+					names: (value: T.Names | T.Names.Types) => buildImportStatement(value)
 				}
 			},
 			{
-				importList: () => _import_list
+				names: () => _names
 			}
 		),
 		methodsEngine
@@ -180,8 +181,8 @@ export function buildImportPrefix(text: string): T.ImportPrefix.Built {
 }
 
 export function buildRelativeImport(config: T.RelativeImport.Config): T.RelativeImport.Built {
-	const _prefix = config.prefix;
-	const _name = config.name;
+	const _prefix = rejectBareText(config.prefix, 'RelativeImport.prefix', 'buildImportPrefix(…)');
+	const _name = rejectBareText(config.name, 'RelativeImport.name', 'a built DottedName');
 	return withMethods(
 		withAccessors(
 			{
@@ -207,7 +208,11 @@ export function buildRelativeImport(config: T.RelativeImport.Config): T.Relative
 export function buildFutureImportStatement(
 	value: T.ImportList | T.ParenthesizedImportList
 ): T.FutureImportStatement.Built {
-	const _content = value;
+	const _content = rejectBareText(
+		value,
+		'FutureImportStatement.content',
+		'a built ImportList / ParenthesizedImportList'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -228,10 +233,18 @@ export function buildFutureImportStatement(
 }
 
 export function buildImportFromStatement(config: T.ImportFromStatement.Config): T.ImportFromStatement.Built {
-	const _module_name = config.moduleName;
-	const _content = coerceMixedEnumStorage<NonNullable<T.ImportFromStatement['_content']>>(config.content, [
-		['*', TSKindId.WildcardImport] as const
-	]);
+	const _module_name = rejectBareText(
+		config.moduleName,
+		'ImportFromStatement.moduleName',
+		'a built RelativeImport / DottedName'
+	);
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ImportFromStatement['_content']>>(config.content, [
+			['*', TSKindId.WildcardImport] as const
+		]),
+		'ImportFromStatement.content',
+		'a built ImportList / ParenthesizedImportList'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -280,7 +293,7 @@ function _buildImportList(
 	elements: NonEmptyArray<T.DottedName | T.AliasedImport>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ImportList.Built {
-	_assertNonEmpty(elements, '_import_list.elements');
+	_assertNonEmpty(elements, 'import_list.elements');
 	const _name = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -306,8 +319,8 @@ function _buildImportList(
 }
 
 export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImport.Built {
-	const _name = config.name ?? buildDottedName();
-	const _alias = config.alias;
+	const _name = rejectBareText(config.name ?? buildDottedName(), 'AliasedImport.name', 'a built DottedName');
+	const _alias = rejectBareText(config.alias, 'AliasedImport.alias', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -335,7 +348,11 @@ export function buildWildcardImport(): TSKindId.WildcardImport {
 }
 
 export function buildPrintStatement(value: T.PrintStatementChevron | T.PrintStatementPlain): T.PrintStatement.Built {
-	const _content = value;
+	const _content = rejectBareText(
+		value,
+		'PrintStatement.content',
+		'a built PrintStatementChevron / PrintStatementPlain'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -356,7 +373,11 @@ export function buildPrintStatement(value: T.PrintStatementChevron | T.PrintStat
 }
 
 export function buildChevron(value: T.Expression): T.Chevron.Built {
-	const _expression = coerceMixedEnumStorage<NonNullable<T.Chevron['_expression']>>(value, []);
+	const _expression = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Chevron['_expression']>>(value, []),
+		'Chevron.expression',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -378,7 +399,7 @@ export function buildChevron(value: T.Expression): T.Chevron.Built {
 
 export function buildAssertStatement(...children: T.Expression[]): T.AssertStatement.Built {
 	_assertNonEmpty(children, 'assert_statement.children');
-	const _expression = children;
+	const _expression = rejectBareText(children, 'AssertStatement.expression', 'a built Expression');
 	return withMethods(
 		withAccessors(
 			{
@@ -399,7 +420,11 @@ export function buildAssertStatement(...children: T.Expression[]): T.AssertState
 export function buildExpressionStatement(
 	value: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield
 ): T.ExpressionStatement.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.ExpressionStatement['_content']>>(value, []);
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ExpressionStatement['_content']>>(value, []),
+		'ExpressionStatement.content',
+		'a built Expression / ExpressionStatementTuple / Assignment / AugmentedAssignment / Yield'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -424,15 +449,23 @@ export function buildExpressionStatement(
 }
 
 export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedExpression.Built {
-	const _name = coerceMixedEnumStorage<NonNullable<T.NamedExpression['_name']>>(config.name, [
-		['print', TSKindId.PrintKeyword] as const,
-		['exec', TSKindId.ExecKeyword] as const,
-		['async', TSKindId.AsyncKeyword] as const,
-		['await', TSKindId.AwaitKeyword] as const,
-		['type', TSKindId.TypeKeyword] as const,
-		['match', TSKindId.MatchKeyword] as const
-	]);
-	const _value = coerceMixedEnumStorage<NonNullable<T.NamedExpression['_value']>>(config.value, []);
+	const _name = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.NamedExpression['_name']>>(config.name, [
+			['print', TSKindId.PrintKeyword] as const,
+			['exec', TSKindId.ExecKeyword] as const,
+			['async', TSKindId.AsyncKeyword] as const,
+			['await', TSKindId.AwaitKeyword] as const,
+			['type', TSKindId.TypeKeyword] as const,
+			['match', TSKindId.MatchKeyword] as const
+		]),
+		'NamedExpression.name',
+		'buildIdentifier(…)'
+	);
+	const _value = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.NamedExpression['_value']>>(config.value, []),
+		'NamedExpression.value',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -458,7 +491,11 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 }
 
 export function buildReturnStatement(value?: T.Expression | T.ExpressionList): T.ReturnStatement.Built {
-	const _expressions = coerceMixedEnumStorage<NonNullable<T.ReturnStatement['_expressions']>>(value, []);
+	const _expressions = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ReturnStatement['_expressions']>>(value, []),
+		'ReturnStatement.expressions',
+		'a built Expression / ExpressionList'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -479,7 +516,11 @@ export function buildReturnStatement(value?: T.Expression | T.ExpressionList): T
 }
 
 export function buildDeleteStatement(value: T.Expression | T.ExpressionList): T.DeleteStatement.Built {
-	const _expressions = coerceMixedEnumStorage<NonNullable<T.DeleteStatement['_expressions']>>(value, []);
+	const _expressions = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.DeleteStatement['_expressions']>>(value, []),
+		'DeleteStatement.expressions',
+		'a built Expression / ExpressionList'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -500,8 +541,16 @@ export function buildDeleteStatement(value: T.Expression | T.ExpressionList): T.
 }
 
 export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {}): T.RaiseStatement.Built {
-	const _expressions = coerceMixedEnumStorage<NonNullable<T.RaiseStatement['_expressions']>>(config.expressions, []);
-	const _cause = coerceMixedEnumStorage<NonNullable<T.RaiseStatement['_cause']>>(config.cause, []);
+	const _expressions = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.RaiseStatement['_expressions']>>(config.expressions, []),
+		'RaiseStatement.expressions',
+		'a built Expression / ExpressionList'
+	);
+	const _cause = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.RaiseStatement['_cause']>>(config.cause, []),
+		'RaiseStatement.cause',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -539,9 +588,17 @@ export function buildContinueStatement(): TSKindId.ContinueStatement {
 }
 
 export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Built {
-	const _condition = coerceMixedEnumStorage<NonNullable<T.IfStatement['_condition']>>(config.condition, []);
-	const _consequence = config.consequence;
-	const _alternative = config.alternative ?? [];
+	const _condition = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.IfStatement['_condition']>>(config.condition, []),
+		'IfStatement.condition',
+		'a built Expression'
+	);
+	const _consequence = rejectBareText(config.consequence, 'IfStatement.consequence', 'a built Suite');
+	const _alternative = rejectBareText(
+		config.alternative ?? [],
+		'IfStatement.alternative',
+		'a built ElifClause / ElseClause'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -570,8 +627,12 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bu
 }
 
 export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Built {
-	const _condition = coerceMixedEnumStorage<NonNullable<T.ElifClause['_condition']>>(config.condition, []);
-	const _consequence = config.consequence;
+	const _condition = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ElifClause['_condition']>>(config.condition, []),
+		'ElifClause.condition',
+		'a built Expression'
+	);
+	const _consequence = rejectBareText(config.consequence, 'ElifClause.consequence', 'a built Suite');
 	return withMethods(
 		withAccessors(
 			{
@@ -596,7 +657,7 @@ export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Built
 }
 
 export function buildElseClause(value: T.Suite): T.ElseClause.Built {
-	const _body = value;
+	const _body = rejectBareText(value, 'ElseClause.body', 'a built Suite');
 	return withMethods(
 		withAccessors(
 			{
@@ -617,8 +678,8 @@ export function buildElseClause(value: T.Suite): T.ElseClause.Built {
 }
 
 export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchStatement.Built {
-	const _subjects = config.subjects;
-	const _body = config.body;
+	const _subjects = rejectBareText(config.subjects, 'MatchStatement.subjects', 'a built Subjects');
+	const _body = rejectBareText(config.body, 'MatchStatement.body', 'a built MatchBlock');
 	return withMethods(
 		withAccessors(
 			{
@@ -642,9 +703,11 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 }
 
 export function buildMatchBlock(value: T.MatchBlockBlock | TSKindId.Newline): T.MatchBlock.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.MatchBlock['_content']>>(value, [
-		['\n', TSKindId.Newline] as const
-	]);
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.MatchBlock['_content']>>(value, [['\n', TSKindId.Newline] as const]),
+		'MatchBlock.content',
+		'a built MatchBlockBlock'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -665,9 +728,9 @@ export function buildMatchBlock(value: T.MatchBlockBlock | TSKindId.Newline): T.
 }
 
 export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Built {
-	const _case_patterns = config.casePatterns;
-	const _guard = config.guard;
-	const _consequence = config.consequence;
+	const _case_patterns = rejectBareText(config.casePatterns, 'CaseClause.casePatterns', 'a built CasePatterns');
+	const _guard = rejectBareText(config.guard, 'CaseClause.guard', 'a built IfClause');
+	const _consequence = rejectBareText(config.consequence, 'CaseClause.consequence', 'a built Suite');
 	return withMethods(
 		withAccessors(
 			{
@@ -695,10 +758,14 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Built
 
 export function buildForStatement(config: T.ForStatement.Config): T.ForStatement.Built {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
-	const _left = config.left;
-	const _right = coerceMixedEnumStorage<NonNullable<T.ForStatement['_right']>>(config.right, []);
-	const _body = config.body;
-	const _alternative = config.alternative;
+	const _left = rejectBareText(config.left, 'ForStatement.left', 'a built Pattern / PatternList');
+	const _right = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ForStatement['_right']>>(config.right, []),
+		'ForStatement.right',
+		'a built Expression / ExpressionList'
+	);
+	const _body = rejectBareText(config.body, 'ForStatement.body', 'a built Suite');
+	const _alternative = rejectBareText(config.alternative, 'ForStatement.alternative', 'a built ElseClause');
 	return withMethods(
 		withAccessors(
 			{
@@ -732,9 +799,13 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 }
 
 export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileStatement.Built {
-	const _condition = coerceMixedEnumStorage<NonNullable<T.WhileStatement['_condition']>>(config.condition, []);
-	const _body = config.body;
-	const _alternative = config.alternative;
+	const _condition = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.WhileStatement['_condition']>>(config.condition, []),
+		'WhileStatement.condition',
+		'a built Expression'
+	);
+	const _body = rejectBareText(config.body, 'WhileStatement.body', 'a built Suite');
+	const _alternative = rejectBareText(config.alternative, 'WhileStatement.alternative', 'a built ElseClause');
 	return withMethods(
 		withAccessors(
 			{
@@ -762,10 +833,14 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 }
 
 export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement.Built {
-	const _body = config.body;
-	const _except_clauses = config.exceptClauses ?? [];
-	const _else_clause = config.elseClause;
-	const _finally_clause = config.finallyClause;
+	const _body = rejectBareText(config.body, 'TryStatement.body', 'a built Suite');
+	const _except_clauses = rejectBareText(
+		config.exceptClauses ?? [],
+		'TryStatement.exceptClauses',
+		'a built ExceptClause'
+	);
+	const _else_clause = rejectBareText(config.elseClause, 'TryStatement.elseClause', 'a built ElseClause');
+	const _finally_clause = rejectBareText(config.finallyClause, 'TryStatement.finallyClause', 'a built FinallyClause');
 	return withMethods(
 		withAccessors(
 			{
@@ -796,8 +871,8 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 
 export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause.Built {
 	const _star_marker = coerceBooleanKeywordStorage(config.starMarker);
-	const _exception = config.exception;
-	const _suite = config.suite;
+	const _exception = rejectBareText(config.exception, 'ExceptClause.exception', 'a built ExceptClauseException');
+	const _suite = rejectBareText(config.suite, 'ExceptClause.suite', 'a built Suite');
 	return withMethods(
 		withAccessors(
 			{
@@ -825,7 +900,7 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 }
 
 export function buildFinallyClause(value: T.Suite): T.FinallyClause.Built {
-	const _block = value;
+	const _block = rejectBareText(value, 'FinallyClause.block', 'a built Suite');
 	return withMethods(
 		withAccessors(
 			{
@@ -847,8 +922,8 @@ export function buildFinallyClause(value: T.Suite): T.FinallyClause.Built {
 
 export function buildWithStatement(config: T.WithStatement.Config): T.WithStatement.Built {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
-	const _with_clause = config.withClause;
-	const _body = config.body;
+	const _with_clause = rejectBareText(config.withClause, 'WithStatement.withClause', 'a built WithClause');
+	const _body = rejectBareText(config.body, 'WithStatement.body', 'a built Suite');
 	return withMethods(
 		withAccessors(
 			{
@@ -876,7 +951,11 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 }
 
 export function buildWithItem(value: T.Expression): T.WithItem.Built {
-	const _value = coerceMixedEnumStorage<NonNullable<T.WithItem['_value']>>(value, []);
+	const _value = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.WithItem['_value']>>(value, []),
+		'WithItem.value',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -898,11 +977,19 @@ export function buildWithItem(value: T.Expression): T.WithItem.Built {
 
 export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.FunctionDefinition.Built {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
-	const _name = config.name;
-	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters ?? buildParameters();
-	const _return_type = config.returnType;
-	const _body = config.body;
+	const _name = rejectBareText(config.name, 'FunctionDefinition.name', 'buildIdentifier(…)');
+	const _type_parameters = rejectBareText(
+		config.typeParameters,
+		'FunctionDefinition.typeParameters',
+		'a built TypeParameter'
+	);
+	const _parameters = rejectBareText(
+		config.parameters ?? buildParameters(),
+		'FunctionDefinition.parameters',
+		'a built Parameters'
+	);
+	const _return_type = rejectBareText(config.returnType, 'FunctionDefinition.returnType', 'a built Type');
+	const _body = rejectBareText(config.body, 'FunctionDefinition.body', 'a built Suite');
 	return withMethods(
 		withAccessors(
 			{
@@ -938,7 +1025,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 	);
 }
 
-export function buildParameters(value?: T._Parameters): ReturnType<typeof _buildParameters>;
+export function buildParameters(value?: T.ParametersElements): ReturnType<typeof _buildParameters>;
 export function buildParameters(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Parameter>
@@ -946,19 +1033,19 @@ export function buildParameters(
 export function buildParameters(...elements: NonEmptyArray<T.Parameter>): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildParameters(args[0] as T._Parameters);
+		return _buildParameters(args[0] as T.ParametersElements);
 	}
 	const prebuilt =
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId._Parameters as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ParametersElements as const);
 	return prebuilt
-		? _buildParameters(args[0] as T._Parameters)
-		: _buildParameters((build_Parameters as (...a: unknown[]) => unknown)(...args) as T._Parameters);
+		? _buildParameters(args[0] as T.ParametersElements)
+		: _buildParameters((buildParametersElements as (...a: unknown[]) => unknown)(...args) as T.ParametersElements);
 }
-function _buildParameters(value?: T._Parameters): T.Parameters.Built {
-	const _elements = value;
+function _buildParameters(value?: T.ParametersElements): T.Parameters.Built {
+	const _elements = rejectBareText(value, 'Parameters.elements', 'a built ParametersElements');
 	return withMethods(
 		withAccessors(
 			{
@@ -967,7 +1054,7 @@ function _buildParameters(value?: T._Parameters): T.Parameters.Built {
 				$named: true as const,
 				_elements,
 				$with: {
-					elements: (value?: T._Parameters) => buildParameters(value)
+					elements: (value?: T.ParametersElements) => buildParameters(value)
 				}
 			},
 			{
@@ -978,7 +1065,7 @@ function _buildParameters(value?: T._Parameters): T.Parameters.Built {
 	);
 }
 
-export function buildLambdaParameters(value: T._Parameters): ReturnType<typeof _buildLambdaParameters>;
+export function buildLambdaParameters(value: T.ParametersElements): ReturnType<typeof _buildLambdaParameters>;
 export function buildLambdaParameters(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Parameter>
@@ -988,32 +1075,38 @@ export function buildLambdaParameters(
 ): ReturnType<typeof _buildLambdaParameters>;
 export function buildLambdaParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildLambdaParameters(args[0] as T._Parameters);
+		return _buildLambdaParameters(args[0] as T.ParametersElements);
 	}
 	const prebuilt =
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId._Parameters as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ParametersElements as const);
 	return prebuilt
-		? _buildLambdaParameters(args[0] as T._Parameters)
-		: _buildLambdaParameters((build_Parameters as (...a: unknown[]) => unknown)(...args) as T._Parameters);
+		? _buildLambdaParameters(args[0] as T.ParametersElements)
+		: _buildLambdaParameters(
+				(buildParametersElements as (...a: unknown[]) => unknown)(...args) as T.ParametersElements
+			);
 }
-function _buildLambdaParameters(value: T._Parameters): T.LambdaParameters.Built {
-	const _parameters = value;
+function _buildLambdaParameters(value: T.ParametersElements): T.LambdaParameters.Built {
+	const _parameters_elements = rejectBareText(
+		value,
+		'LambdaParameters.parametersElements',
+		'a built ParametersElements'
+	);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.LambdaParameters as const,
 				$source: 2 as const,
 				$named: true as const,
-				_parameters,
+				_parameters_elements,
 				$with: {
-					parameters: (value: T._Parameters) => buildLambdaParameters(value)
+					parametersElements: (value: T.ParametersElements) => buildLambdaParameters(value)
 				}
 			},
 			{
-				parameters: () => _parameters
+				parametersElements: () => _parameters_elements
 			}
 		),
 		methodsEngine
@@ -1021,7 +1114,11 @@ function _buildLambdaParameters(value: T._Parameters): T.LambdaParameters.Built 
 }
 
 export function buildListSplat(value: T.Expression): T.ListSplat.Built {
-	const _expression = coerceMixedEnumStorage<NonNullable<T.ListSplat['_expression']>>(value, []);
+	const _expression = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ListSplat['_expression']>>(value, []),
+		'ListSplat.expression',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1042,7 +1139,11 @@ export function buildListSplat(value: T.Expression): T.ListSplat.Built {
 }
 
 export function buildDictionarySplat(value: T.Expression): T.DictionarySplat.Built {
-	const _expression = coerceMixedEnumStorage<NonNullable<T.DictionarySplat['_expression']>>(value, []);
+	const _expression = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.DictionarySplat['_expression']>>(value, []),
+		'DictionarySplat.expression',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1064,7 +1165,7 @@ export function buildDictionarySplat(value: T.Expression): T.DictionarySplat.Bui
 
 export function buildGlobalStatement(...children: T.Identifier[]): T.GlobalStatement.Built {
 	_assertNonEmpty(children, 'global_statement.children');
-	const _names = children;
+	const _names = rejectBareText(children, 'GlobalStatement.names', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -1084,7 +1185,7 @@ export function buildGlobalStatement(...children: T.Identifier[]): T.GlobalState
 
 export function buildNonlocalStatement(...children: T.Identifier[]): T.NonlocalStatement.Built {
 	_assertNonEmpty(children, 'nonlocal_statement.children');
-	const _names = children;
+	const _names = rejectBareText(children, 'NonlocalStatement.names', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -1103,8 +1204,12 @@ export function buildNonlocalStatement(...children: T.Identifier[]): T.NonlocalS
 }
 
 export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatement.Built {
-	const _code = config.code;
-	const _in_clause = coerceMixedEnumStorage<NonNullable<T.ExecStatement['_in_clause']>>(config.inClause ?? [], []);
+	const _code = rejectBareText(config.code, 'ExecStatement.code', 'buildIdentifier(…)');
+	const _in_clause = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ExecStatement['_in_clause']>>(config.inClause ?? [], []),
+		'ExecStatement.inClause',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1129,8 +1234,8 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 }
 
 export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.TypeAliasStatement.Built {
-	const _left = config.left;
-	const _right = config.right;
+	const _left = rejectBareText(config.left, 'TypeAliasStatement.left', 'a built Type');
+	const _right = rejectBareText(config.right, 'TypeAliasStatement.right', 'a built Type');
 	return withMethods(
 		withAccessors(
 			{
@@ -1154,10 +1259,14 @@ export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.
 }
 
 export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassDefinition.Built {
-	const _name = config.name;
-	const _type_parameters = config.typeParameters;
-	const _superclasses = config.superclasses;
-	const _body = config.body;
+	const _name = rejectBareText(config.name, 'ClassDefinition.name', 'buildIdentifier(…)');
+	const _type_parameters = rejectBareText(
+		config.typeParameters,
+		'ClassDefinition.typeParameters',
+		'a built TypeParameter'
+	);
+	const _superclasses = rejectBareText(config.superclasses, 'ClassDefinition.superclasses', 'a built ArgumentList');
+	const _body = rejectBareText(config.body, 'ClassDefinition.body', 'a built Suite');
 	return withMethods(
 		withAccessors(
 			{
@@ -1206,7 +1315,7 @@ export function buildTypeParameter(...args: unknown[]) {
 		: _buildTypeParameter((buildTypes as (...a: unknown[]) => unknown)(...args) as T.Types);
 }
 function _buildTypeParameter(value: T.Types): T.TypeParameter.Built {
-	const _types = value;
+	const _types = rejectBareText(value, 'TypeParameter.types', 'a built Types');
 	return withMethods(
 		withAccessors(
 			{
@@ -1229,7 +1338,11 @@ function _buildTypeParameter(value: T.Types): T.TypeParameter.Built {
 export function buildParenthesizedListSplat(
 	value: T.ParenthesizedListSplat | T.ListSplat
 ): T.ParenthesizedListSplat.Built {
-	const _content = value;
+	const _content = rejectBareText(
+		value,
+		'ParenthesizedListSplat.content',
+		'a built ParenthesizedListSplat / ListSplat'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1277,7 +1390,7 @@ export function buildArgumentList(...args: unknown[]) {
 			);
 }
 function _buildArgumentList(value?: T.ArgumentListElements): T.ArgumentList.Built {
-	const _arguments = value;
+	const _arguments = rejectBareText(value, 'ArgumentList.arguments', 'a built ArgumentListElements');
 	return withMethods(
 		withAccessors(
 			{
@@ -1298,8 +1411,12 @@ function _buildArgumentList(value?: T.ArgumentListElements): T.ArgumentList.Buil
 }
 
 export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): T.DecoratedDefinition.Built {
-	const _decorator = config.decorator ?? [];
-	const _definition = config.definition;
+	const _decorator = rejectBareText(config.decorator ?? [], 'DecoratedDefinition.decorator', 'a built Decorator');
+	const _definition = rejectBareText(
+		config.definition,
+		'DecoratedDefinition.definition',
+		'a built ClassDefinition / FunctionDefinition'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1325,7 +1442,11 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 }
 
 export function buildDecorator(value: T.Expression): T.Decorator.Built {
-	const _expression = coerceMixedEnumStorage<NonNullable<T.Decorator['_expression']>>(value, []);
+	const _expression = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Decorator['_expression']>>(value, []),
+		'Decorator.expression',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1346,7 +1467,7 @@ export function buildDecorator(value: T.Expression): T.Decorator.Built {
 }
 
 export function buildBlock(...children: (T.SimpleStatements | T.CompoundStatement)[]): T.Block.Built {
-	const _statements = children;
+	const _statements = rejectBareText(children, 'Block.statements', 'a built SimpleStatements / CompoundStatement');
 	return withMethods(
 		withAccessors(
 			{
@@ -1365,10 +1486,16 @@ export function buildBlock(...children: (T.SimpleStatements | T.CompoundStatemen
 }
 
 export function buildExpressionList(config: T.ExpressionList.Config): T.ExpressionList.Built {
-	const _expression = coerceMixedEnumStorage<NonNullable<T.ExpressionList['_expression']>>(config.expression, []);
-	const _tail = coerceMixedEnumStorage<NonNullable<T.ExpressionList['_tail']>>(config.tail, [
-		[',', TSKindId.Comma] as const
-	]);
+	const _expression = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ExpressionList['_expression']>>(config.expression, []),
+		'ExpressionList.expression',
+		'a built Expression'
+	);
+	const _tail = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ExpressionList['_tail']>>(config.tail, [[',', TSKindId.Comma] as const]),
+		'ExpressionList.tail',
+		'a built ExpressionListExpressions'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1394,7 +1521,7 @@ export function buildExpressionList(config: T.ExpressionList.Config): T.Expressi
 
 export function buildDottedName(...children: T.Identifier[]): T.DottedName.Built {
 	_assertNonEmpty(children, 'dotted_name.children');
-	const _names = children;
+	const _names = rejectBareText(children, 'DottedName.names', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -1412,10 +1539,33 @@ export function buildDottedName(...children: T.Identifier[]): T.DottedName.Built
 	);
 }
 
-export function buildCasePattern(
+export function buildCasePattern(value: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern): T.CasePattern.Built {
+	const _content = rejectBareText(
+		value,
+		'CasePattern.content',
+		'a built CaseAsPattern / KeywordPattern / SimplePattern'
+	);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CasePattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern) => buildCasePattern(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildSimplePattern(
 	value:
-		| T.CaseAsPattern
-		| T.KeywordPattern
 		| T.ClassPattern
 		| T.SplatPattern
 		| T.UnionPattern
@@ -1431,25 +1581,27 @@ export function buildCasePattern(
 		| T.ComplexPattern
 		| T.DottedName
 		| TSKindId.WildcardPattern
-): T.CasePattern.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.CasePattern['_content']>>(value, [
-		['True', TSKindId.True] as const,
-		['False', TSKindId.False] as const,
-		['None', TSKindId.None] as const,
-		['_', TSKindId.WildcardPattern] as const
-	]);
+): T.SimplePattern.Built {
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.SimplePattern['_content']>>(value, [
+			['True', TSKindId.True] as const,
+			['False', TSKindId.False] as const,
+			['None', TSKindId.None] as const,
+			['_', TSKindId.WildcardPattern] as const
+		]),
+		'SimplePattern.content',
+		'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / SimplePatternNegative / ComplexPattern / DottedName'
+	);
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.CasePattern as const,
+				$type: TSKindId.SimplePattern as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
 				$with: {
 					content: (
 						value: NonNullable<
-							| T.CaseAsPattern
-							| T.KeywordPattern
 							| T.ClassPattern
 							| T.SplatPattern
 							| T.UnionPattern
@@ -1466,11 +1618,36 @@ export function buildCasePattern(
 							| T.DottedName
 							| TSKindId.WildcardPattern
 						>
-					) => buildCasePattern(value)
+					) => buildSimplePattern(value)
 				}
 			},
 			{
 				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPattern.Built {
+	const _case_pattern = rejectBareText(config.casePattern, 'CaseAsPattern.casePattern', 'a built CasePattern');
+	const _identifier = rejectBareText(config.identifier, 'CaseAsPattern.identifier', 'buildIdentifier(…)');
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CaseAsPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_case_pattern,
+				_identifier,
+				$with: {
+					casePattern: (value: T.CasePattern) => buildCaseAsPattern({ ...config, casePattern: value }),
+					identifier: (value: T.Identifier) => buildCaseAsPattern({ ...config, identifier: value })
+				}
+			},
+			{
+				casePattern: () => _case_pattern,
+				identifier: () => _identifier
 			}
 		),
 		methodsEngine
@@ -1497,7 +1674,11 @@ export function buildUnionPattern(
 	)[]
 ): T.UnionPattern.Built {
 	_assertNonEmpty(children, 'union_pattern.children');
-	const _patterns = children;
+	const _patterns = rejectBareText(
+		children,
+		'UnionPattern.patterns',
+		'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / SimplePatternNegative / ComplexPattern / DottedName'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1557,7 +1738,11 @@ export function buildDictPattern(...args: unknown[]) {
 		: _buildDictPattern((buildDictPatternElements as (...a: unknown[]) => unknown)(...args) as T.DictPatternElements);
 }
 function _buildDictPattern(value?: T.DictPatternElements): T.DictPattern.Built {
-	const _dict_pattern_elements = value;
+	const _dict_pattern_elements = rejectBareText(
+		value,
+		'DictPattern.dictPatternElements',
+		'a built DictPatternElements'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1578,13 +1763,17 @@ function _buildDictPattern(value?: T.DictPatternElements): T.DictPattern.Built {
 }
 
 export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyValuePattern.Built {
-	const _key = coerceMixedEnumStorage<NonNullable<T.KeyValuePattern['_key']>>(config.key, [
-		['True', TSKindId.True] as const,
-		['False', TSKindId.False] as const,
-		['None', TSKindId.None] as const,
-		['_', TSKindId.WildcardPattern] as const
-	]);
-	const _value = config.value;
+	const _key = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.KeyValuePattern['_key']>>(config.key, [
+			['True', TSKindId.True] as const,
+			['False', TSKindId.False] as const,
+			['None', TSKindId.None] as const,
+			['_', TSKindId.WildcardPattern] as const
+		]),
+		'KeyValuePattern.key',
+		'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / SimplePatternNegative / ComplexPattern / DottedName'
+	);
+	const _value = rejectBareText(config.value, 'KeyValuePattern.value', 'a built CasePattern');
 	return withMethods(
 		withAccessors(
 			{
@@ -1608,13 +1797,17 @@ export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyVal
 }
 
 export function buildKeywordPattern(config: T.KeywordPattern.Config): T.KeywordPattern.Built {
-	const _name = config.name;
-	const _value = coerceMixedEnumStorage<NonNullable<T.KeywordPattern['_value']>>(config.value, [
-		['True', TSKindId.True] as const,
-		['False', TSKindId.False] as const,
-		['None', TSKindId.None] as const,
-		['_', TSKindId.WildcardPattern] as const
-	]);
+	const _name = rejectBareText(config.name, 'KeywordPattern.name', 'buildIdentifier(…)');
+	const _value = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.KeywordPattern['_value']>>(config.value, [
+			['True', TSKindId.True] as const,
+			['False', TSKindId.False] as const,
+			['None', TSKindId.None] as const,
+			['_', TSKindId.WildcardPattern] as const
+		]),
+		'KeywordPattern.value',
+		'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / SimplePatternNegative / ComplexPattern / DottedName'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1643,9 +1836,11 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 		['*', TSKindId.Star] as const,
 		['**', TSKindId.StarStar] as const
 	]);
-	const _name = coerceMixedEnumStorage<NonNullable<T.SplatPattern['_name']>>(config.name, [
-		['_', TSKindId.Underscore] as const
-	]);
+	const _name = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.SplatPattern['_name']>>(config.name, [['_', TSKindId.Underscore] as const]),
+		'SplatPattern.name',
+		'buildIdentifier(…)'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1670,8 +1865,8 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 }
 
 export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern.Built {
-	const _name = config.name ?? buildDottedName();
-	const _arguments = config.arguments;
+	const _name = rejectBareText(config.name ?? buildDottedName(), 'ClassPattern.name', 'a built DottedName');
+	const _arguments = rejectBareText(config.arguments, 'ClassPattern.arguments', 'a built ListPatternCasePatterns');
 	return withMethods(
 		withAccessors(
 			{
@@ -1695,49 +1890,53 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 }
 
 export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexPattern.Built {
-	const _real = coerceBooleanKeywordStorage(config.real);
-	const _imaginary = config.imaginary;
+	const _sign = coerceBooleanKeywordStorage(config.sign);
+	const _real = rejectBareText(config.real, 'ComplexPattern.real', 'a built Integer / Float');
 	const _operator = coerceKindEnumStorage<NonNullable<T.ComplexPattern['_operator']>>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['-', TSKindId.Dash] as const
 	]);
-	const _content = config.content;
+	const _imaginary = rejectBareText(config.imaginary, 'ComplexPattern.imaginary', 'a built Integer / Float');
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ComplexPattern as const,
 				$source: 2 as const,
 				$named: true as const,
+				_sign,
 				_real,
-				_imaginary,
 				_operator,
-				_content,
+				_imaginary,
 				$with: {
-					real: (value?: NonNullable<T.ComplexPattern.Config>['real']) =>
-						buildComplexPattern({ ...config, real: value }),
-					imaginary: (value: T.Integer | T.Float) => buildComplexPattern({ ...config, imaginary: value }),
+					sign: (value?: NonNullable<T.ComplexPattern.Config>['sign']) =>
+						buildComplexPattern({ ...config, sign: value }),
+					real: (value: T.Integer | T.Float) => buildComplexPattern({ ...config, real: value }),
 					operator: (value: NonNullable<T.ComplexPattern.Config>['operator']) =>
 						buildComplexPattern({ ...config, operator: value }),
-					content: (value: T.Integer | T.Float) => buildComplexPattern({ ...config, content: value })
+					imaginary: (value: T.Integer | T.Float) => buildComplexPattern({ ...config, imaginary: value })
 				}
 			},
 			{
+				sign: () => _sign,
 				real: () => _real,
-				imaginary: () => _imaginary,
 				operator: () => _operator,
-				content: () => _content
+				imaginary: () => _imaginary
 			}
 		),
 		methodsEngine
 	);
 }
 
-export function build_Parameters(...elements: NonEmptyArray<T.Parameter>): ReturnType<typeof _build_Parameters>;
-export function build_Parameters(
+export function buildParametersElements(
+	...elements: NonEmptyArray<T.Parameter>
+): ReturnType<typeof _buildParametersElements>;
+export function buildParametersElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<T.Parameter>
-): ReturnType<typeof _build_Parameters>;
-export function build_Parameters(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Parameter)[]) {
+): ReturnType<typeof _buildParametersElements>;
+export function buildParametersElements(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Parameter)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
@@ -1746,27 +1945,27 @@ export function build_Parameters(...args: ({ delimiter?: Delimiter.None | Delimi
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Parameter>;
-	return _build_Parameters(elements, options);
+	return _buildParametersElements(elements, options);
 }
-function _build_Parameters(
+function _buildParametersElements(
 	elements: NonEmptyArray<T.Parameter>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T._Parameters.Built {
-	_assertNonEmpty(elements, '_parameters.elements');
+): T.ParametersElements.Built {
+	_assertNonEmpty(elements, 'parameters_elements.elements');
 	const _parameter = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._Parameters as const,
+				$type: TSKindId.ParametersElements as const,
 				$source: 2 as const,
 				$named: true as const,
 				_parameter,
 				_delimiter,
 				$with: {
-					parameters: (...vs: NonEmptyArray<T.Parameter>) => build_Parameters(options, ...vs),
+					parameters: (...vs: NonEmptyArray<T.Parameter>) => buildParametersElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-						build_Parameters({ ...options, delimiter: v }, ...elements)
+						buildParametersElements({ ...options, delimiter: v }, ...elements)
 				}
 			},
 			{
@@ -1797,7 +1996,7 @@ function _buildPatterns(
 	elements: NonEmptyArray<T.Pattern>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Patterns.Built {
-	_assertNonEmpty(elements, '_patterns.elements');
+	_assertNonEmpty(elements, 'patterns.elements');
 	const _pattern = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -1842,7 +2041,7 @@ export function buildTuplePattern(...args: unknown[]) {
 		: _buildTuplePattern((buildPatterns as (...a: unknown[]) => unknown)(...args) as T.Patterns);
 }
 function _buildTuplePattern(value?: T.Patterns): T.TuplePattern.Built {
-	const _patterns = value;
+	const _patterns = rejectBareText(value, 'TuplePattern.patterns', 'a built Patterns');
 	return withMethods(
 		withAccessors(
 			{
@@ -1882,7 +2081,7 @@ export function buildListPattern(...args: unknown[]) {
 		: _buildListPattern((buildPatterns as (...a: unknown[]) => unknown)(...args) as T.Patterns);
 }
 function _buildListPattern(value?: T.Patterns): T.ListPattern.Built {
-	const _patterns = value;
+	const _patterns = rejectBareText(value, 'ListPattern.patterns', 'a built Patterns');
 	return withMethods(
 		withAccessors(
 			{
@@ -1903,8 +2102,12 @@ function _buildListPattern(value?: T.Patterns): T.ListPattern.Built {
 }
 
 export function buildDefaultParameter(config: T.DefaultParameter.Config): T.DefaultParameter.Built {
-	const _name = config.name;
-	const _value = coerceMixedEnumStorage<NonNullable<T.DefaultParameter['_value']>>(config.value, []);
+	const _name = rejectBareText(config.name, 'DefaultParameter.name', 'buildIdentifier(…)');
+	const _value = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.DefaultParameter['_value']>>(config.value, []),
+		'DefaultParameter.value',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1929,9 +2132,13 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 }
 
 export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Config): T.TypedDefaultParameter.Built {
-	const _name = config.name;
-	const _type = config.type;
-	const _value = coerceMixedEnumStorage<NonNullable<T.TypedDefaultParameter['_value']>>(config.value, []);
+	const _name = rejectBareText(config.name, 'TypedDefaultParameter.name', 'buildIdentifier(…)');
+	const _type = rejectBareText(config.type, 'TypedDefaultParameter.type', 'a built Type');
+	const _value = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.TypedDefaultParameter['_value']>>(config.value, []),
+		'TypedDefaultParameter.value',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1970,23 +2177,27 @@ export function buildListSplatPattern(
 		| T.Subscript
 		| T.Attribute
 ): T.ListSplatPattern.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.ListSplatPattern['_content']>>(value, [
-		['print', TSKindId.PrintKeyword] as const,
-		['exec', TSKindId.ExecKeyword] as const,
-		['async', TSKindId.AsyncKeyword] as const,
-		['await', TSKindId.AwaitKeyword] as const,
-		['type', TSKindId.TypeKeyword] as const,
-		['match', TSKindId.MatchKeyword] as const
-	]);
+	const _target = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ListSplatPattern['_target']>>(value, [
+			['print', TSKindId.PrintKeyword] as const,
+			['exec', TSKindId.ExecKeyword] as const,
+			['async', TSKindId.AsyncKeyword] as const,
+			['await', TSKindId.AwaitKeyword] as const,
+			['type', TSKindId.TypeKeyword] as const,
+			['match', TSKindId.MatchKeyword] as const
+		]),
+		'ListSplatPattern.target',
+		'buildIdentifier(…)'
+	);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ListSplatPattern as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_target,
 				$with: {
-					content: (
+					target: (
 						value: NonNullable<
 							| T.Identifier
 							| TSKindId.PrintKeyword
@@ -2002,7 +2213,7 @@ export function buildListSplatPattern(
 				}
 			},
 			{
-				content: () => _content
+				target: () => _target
 			}
 		),
 		methodsEngine
@@ -2021,23 +2232,27 @@ export function buildDictionarySplatPattern(
 		| T.Subscript
 		| T.Attribute
 ): T.DictionarySplatPattern.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.DictionarySplatPattern['_content']>>(value, [
-		['print', TSKindId.PrintKeyword] as const,
-		['exec', TSKindId.ExecKeyword] as const,
-		['async', TSKindId.AsyncKeyword] as const,
-		['await', TSKindId.AwaitKeyword] as const,
-		['type', TSKindId.TypeKeyword] as const,
-		['match', TSKindId.MatchKeyword] as const
-	]);
+	const _target = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.DictionarySplatPattern['_target']>>(value, [
+			['print', TSKindId.PrintKeyword] as const,
+			['exec', TSKindId.ExecKeyword] as const,
+			['async', TSKindId.AsyncKeyword] as const,
+			['await', TSKindId.AwaitKeyword] as const,
+			['type', TSKindId.TypeKeyword] as const,
+			['match', TSKindId.MatchKeyword] as const
+		]),
+		'DictionarySplatPattern.target',
+		'buildIdentifier(…)'
+	);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.DictionarySplatPattern as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_target,
 				$with: {
-					content: (
+					target: (
 						value: NonNullable<
 							| T.Identifier
 							| TSKindId.PrintKeyword
@@ -2053,7 +2268,7 @@ export function buildDictionarySplatPattern(
 				}
 			},
 			{
-				content: () => _content
+				target: () => _target
 			}
 		),
 		methodsEngine
@@ -2061,16 +2276,23 @@ export function buildDictionarySplatPattern(
 }
 
 export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
-	const _expression = coerceMixedEnumStorage<NonNullable<T.AsPattern['_expression']>>(config.expression, []);
-	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
+	const _expression = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.AsPattern['_expression']>>(config.expression, []),
+		'AsPattern.expression',
+		'a built Expression'
+	);
+	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(
+		rejectBareText(config.alias, 'AsPattern.alias', 'a built AsPatternTarget'),
 		[
 			[
-				208, 202, 203, 209, 252, 204, 1, 68, 38, 69, 70, 39, 22, 243, 242, 90, 91, 92, 93, 94, 95, 96, 71, 72, 73, 205,
-				216, 217, 219, 228, 233, 231, 234, 229, 235, 230, 237, 236, 64, 196, 241, 139, 198
-			],
-			(v: unknown) => buildAsPatternTarget(v as never)
+				[
+					209, 203, 204, 210, 253, 205, 1, 68, 38, 69, 70, 39, 22, 244, 243, 90, 91, 92, 93, 94, 95, 96, 71, 72, 73,
+					206, 217, 218, 220, 229, 234, 232, 235, 230, 236, 231, 238, 237, 64, 197, 242, 139, 199
+				],
+				(v: unknown) => buildAsPatternTarget(v as never)
+			]
 		]
-	]);
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2095,7 +2317,11 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
 }
 
 export function buildNotOperator(value: T.Expression): T.NotOperator.Built {
-	const _argument = coerceMixedEnumStorage<NonNullable<T.NotOperator['_argument']>>(value, []);
+	const _argument = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.NotOperator['_argument']>>(value, []),
+		'NotOperator.argument',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2116,12 +2342,20 @@ export function buildNotOperator(value: T.Expression): T.NotOperator.Built {
 }
 
 export function buildBooleanOperator(config: T.BooleanOperator.Config): T.BooleanOperator.Built {
-	const _left = coerceMixedEnumStorage<NonNullable<T.BooleanOperator['_left']>>(config.left, []);
+	const _left = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.BooleanOperator['_left']>>(config.left, []),
+		'BooleanOperator.left',
+		'a built Expression'
+	);
 	const _operator = coerceKindEnumStorage<NonNullable<T.BooleanOperator['_operator']>>(config.operator, [
 		['and', TSKindId.AndKeyword] as const,
 		['or', TSKindId.OrKeyword] as const
 	]);
-	const _right = coerceMixedEnumStorage<NonNullable<T.BooleanOperator['_right']>>(config.right, []);
+	const _right = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.BooleanOperator['_right']>>(config.right, []),
+		'BooleanOperator.right',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2151,7 +2385,11 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 }
 
 export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOperator.Built {
-	const _left = coerceMixedEnumStorage<NonNullable<T.BinaryOperator['_left']>>(config.left, []);
+	const _left = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.BinaryOperator['_left']>>(config.left, []),
+		'BinaryOperator.left',
+		'a built PrimaryExpression'
+	);
 	const _operator = coerceKindEnumStorage<NonNullable<T.BinaryOperator['_operator']>>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['-', TSKindId.Dash] as const,
@@ -2167,7 +2405,11 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 		['<<', TSKindId.LtLt] as const,
 		['>>', TSKindId.GtGt] as const
 	]);
-	const _right = coerceMixedEnumStorage<NonNullable<T.BinaryOperator['_right']>>(config.right, []);
+	const _right = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.BinaryOperator['_right']>>(config.right, []),
+		'BinaryOperator.right',
+		'a built PrimaryExpression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2202,7 +2444,11 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 		['-', TSKindId.Dash] as const,
 		['~', TSKindId.Tilde] as const
 	]);
-	const _argument = coerceMixedEnumStorage<NonNullable<T.UnaryOperator['_argument']>>(config.argument, []);
+	const _argument = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.UnaryOperator['_argument']>>(config.argument, []),
+		'UnaryOperator.argument',
+		'a built PrimaryExpression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2228,8 +2474,16 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 }
 
 export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.ComparisonOperator.Built {
-	const _left = coerceMixedEnumStorage<NonNullable<T.ComparisonOperator['_left']>>(config.left, []);
-	const _comparators = config.comparators ?? [];
+	const _left = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ComparisonOperator['_left']>>(config.left, []),
+		'ComparisonOperator.left',
+		'a built PrimaryExpression'
+	);
+	const _comparators = rejectBareText(
+		config.comparators ?? [],
+		'ComparisonOperator.comparators',
+		'a built ComparisonOperatorComparator'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2255,8 +2509,12 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 }
 
 export function buildLambda(config: T.Lambda.Config): T.Lambda.Built {
-	const _parameters = config.parameters;
-	const _body = coerceMixedEnumStorage<NonNullable<T.Lambda['_body']>>(config.body, []);
+	const _parameters = rejectBareText(config.parameters, 'Lambda.parameters', 'a built LambdaParameters');
+	const _body = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Lambda['_body']>>(config.body, []),
+		'Lambda.body',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2282,8 +2540,16 @@ export function buildLambda(config: T.Lambda.Config): T.Lambda.Built {
 export function buildLambdaWithinForInClause(
 	config: T.LambdaWithinForInClause.Config
 ): T.LambdaWithinForInClause.Built {
-	const _parameters = config.parameters;
-	const _body = coerceMixedEnumStorage<NonNullable<T.LambdaWithinForInClause['_body']>>(config.body, []);
+	const _parameters = rejectBareText(
+		config.parameters,
+		'LambdaWithinForInClause.parameters',
+		'a built LambdaParameters'
+	);
+	const _body = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.LambdaWithinForInClause['_body']>>(config.body, []),
+		'LambdaWithinForInClause.body',
+		'a built Expression / LambdaWithinForInClause'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2308,7 +2574,7 @@ export function buildLambdaWithinForInClause(
 }
 
 export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): T.AugmentedAssignment.Built {
-	const _left = config.left;
+	const _left = rejectBareText(config.left, 'AugmentedAssignment.left', 'a built Pattern / PatternList');
 	const _operator = coerceKindEnumStorage<NonNullable<T.AugmentedAssignment['_operator']>>(config.operator, [
 		['+=', TSKindId.PlusEq] as const,
 		['-=', TSKindId.DashEq] as const,
@@ -2324,7 +2590,11 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 		['^=', TSKindId.CaretEq] as const,
 		['|=', TSKindId.PipeEq] as const
 	]);
-	const _right = coerceMixedEnumStorage<NonNullable<T.AugmentedAssignment['_right']>>(config.right, []);
+	const _right = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.AugmentedAssignment['_right']>>(config.right, []),
+		'AugmentedAssignment.right',
+		'a built Expression / ExpressionList / Assignment / AugmentedAssignment / PatternList / Yield'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2353,10 +2623,12 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 }
 
 export function buildPatternList(config: T.PatternList.Config): T.PatternList.Built {
-	const _pattern = config.pattern;
-	const _tail = coerceMixedEnumStorage<NonNullable<T.PatternList['_tail']>>(config.tail, [
-		[',', TSKindId.Comma] as const
-	]);
+	const _pattern = rejectBareText(config.pattern, 'PatternList.pattern', 'a built Pattern');
+	const _tail = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.PatternList['_tail']>>(config.tail, [[',', TSKindId.Comma] as const]),
+		'PatternList.tail',
+		'a built PatternListPatterns'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2380,7 +2652,11 @@ export function buildPatternList(config: T.PatternList.Config): T.PatternList.Bu
 }
 
 export function buildYield(value?: T.YieldFromClause | T.Expression | T.ExpressionList): T.Yield.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.Yield['_content']>>(value, []);
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Yield['_content']>>(value, []),
+		'Yield.content',
+		'a built YieldFromClause / Expression / ExpressionList'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2401,8 +2677,12 @@ export function buildYield(value?: T.YieldFromClause | T.Expression | T.Expressi
 }
 
 export function buildAttribute(config: T.Attribute.Config): T.Attribute.Built {
-	const _object = coerceMixedEnumStorage<NonNullable<T.Attribute['_object']>>(config.object, []);
-	const _attribute = config.attribute;
+	const _object = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Attribute['_object']>>(config.object, []),
+		'Attribute.object',
+		'a built PrimaryExpression'
+	);
+	const _attribute = rejectBareText(config.attribute, 'Attribute.attribute', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -2426,8 +2706,12 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Built {
 }
 
 export function buildSubscript(config: T.Subscript.Config): T.Subscript.Built {
-	const _value = coerceMixedEnumStorage<NonNullable<T.Subscript['_value']>>(config.value, []);
-	const _subscripts = config.subscripts;
+	const _value = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Subscript['_value']>>(config.value, []),
+		'Subscript.value',
+		'a built PrimaryExpression'
+	);
+	const _subscripts = rejectBareText(config.subscripts, 'Subscript.subscripts', 'a built Subscripts');
 	return withMethods(
 		withAccessors(
 			{
@@ -2451,9 +2735,17 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Built {
 }
 
 export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Built {
-	const _start = coerceMixedEnumStorage<NonNullable<T.Slice['_start']>>(config.start, []);
-	const _stop = coerceMixedEnumStorage<NonNullable<T.Slice['_stop']>>(config.stop, []);
-	const _step = config.step;
+	const _start = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Slice['_start']>>(config.start, []),
+		'Slice.start',
+		'a built Expression'
+	);
+	const _stop = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Slice['_stop']>>(config.stop, []),
+		'Slice.stop',
+		'a built Expression'
+	);
+	const _step = rejectBareText(config.step, 'Slice.step', 'a built SliceGroup');
 	return withMethods(
 		withAccessors(
 			{
@@ -2484,8 +2776,12 @@ export function buildEllipsis(): TSKindId.Ellipsis {
 }
 
 export function buildCall(config: T.Call.Config): T.Call.Built {
-	const _function = coerceMixedEnumStorage<NonNullable<T.Call['_function']>>(config.function, []);
-	const _arguments = config.arguments;
+	const _function = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Call['_function']>>(config.function, []),
+		'Call.function',
+		'a built PrimaryExpression'
+	);
+	const _arguments = rejectBareText(config.arguments, 'Call.arguments', 'a built GeneratorExpression / ArgumentList');
 	return withMethods(
 		withAccessors(
 			{
@@ -2509,24 +2805,24 @@ export function buildCall(config: T.Call.Config): T.Call.Built {
 }
 
 export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedParameter.Built {
-	const _content = config.content;
-	const _type = config.type;
+	const _name = rejectBareText(config.name, 'TypedParameter.name', 'buildIdentifier(…)');
+	const _type = rejectBareText(config.type, 'TypedParameter.type', 'a built Type');
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.TypedParameter as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_name,
 				_type,
 				$with: {
-					content: (value: T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern) =>
-						buildTypedParameter({ ...config, content: value }),
+					name: (value: T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern) =>
+						buildTypedParameter({ ...config, name: value }),
 					type: (value: T.Type) => buildTypedParameter({ ...config, type: value })
 				}
 			},
 			{
-				content: () => _content,
+				name: () => _name,
 				type: () => _type
 			}
 		),
@@ -2537,7 +2833,11 @@ export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedPar
 export function buildType(
 	value: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType
 ): T.Type.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.Type['_content']>>(value, []);
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Type['_content']>>(value, []),
+		'Type.content',
+		'a built Expression / SplatType / GenericType / UnionType / ConstrainedType / MemberType'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2566,7 +2866,7 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Built {
 		['*', TSKindId.Star] as const,
 		['**', TSKindId.StarStar] as const
 	]);
-	const _name = config.name;
+	const _name = rejectBareText(config.name, 'SplatType.name', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -2591,10 +2891,12 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Built {
 }
 
 export function buildGenericType(config: T.GenericType.Config): T.GenericType.Built {
-	const _name = coerceMixedEnumStorage<NonNullable<T.GenericType['_name']>>(config.name, [
-		['type', TSKindId.TypeKeyword] as const
-	]);
-	const _type_parameter = config.typeParameter;
+	const _name = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.GenericType['_name']>>(config.name, [['type', TSKindId.TypeKeyword] as const]),
+		'GenericType.name',
+		'buildIdentifier(…)'
+	);
+	const _type_parameter = rejectBareText(config.typeParameter, 'GenericType.typeParameter', 'a built TypeParameter');
 	return withMethods(
 		withAccessors(
 			{
@@ -2618,8 +2920,8 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bu
 }
 
 export function buildUnionType(config: T.UnionType.Config): T.UnionType.Built {
-	const _left = config.left;
-	const _right = config.right;
+	const _left = rejectBareText(config.left, 'UnionType.left', 'a built Type');
+	const _right = rejectBareText(config.right, 'UnionType.right', 'a built Type');
 	return withMethods(
 		withAccessors(
 			{
@@ -2643,8 +2945,8 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Built {
 }
 
 export function buildConstrainedType(config: T.ConstrainedType.Config): T.ConstrainedType.Built {
-	const _base_type = config.baseType;
-	const _constraint = config.constraint;
+	const _base_type = rejectBareText(config.baseType, 'ConstrainedType.baseType', 'a built Type');
+	const _constraint = rejectBareText(config.constraint, 'ConstrainedType.constraint', 'a built Type');
 	return withMethods(
 		withAccessors(
 			{
@@ -2668,8 +2970,8 @@ export function buildConstrainedType(config: T.ConstrainedType.Config): T.Constr
 }
 
 export function buildMemberType(config: T.MemberType.Config): T.MemberType.Built {
-	const _base_type = config.baseType;
-	const _name = config.name;
+	const _base_type = rejectBareText(config.baseType, 'MemberType.baseType', 'a built Type');
+	const _name = rejectBareText(config.name, 'MemberType.name', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -2693,15 +2995,23 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Built
 }
 
 export function buildKeywordArgument(config: T.KeywordArgument.Config): T.KeywordArgument.Built {
-	const _name = coerceMixedEnumStorage<NonNullable<T.KeywordArgument['_name']>>(config.name, [
-		['print', TSKindId.PrintKeyword] as const,
-		['exec', TSKindId.ExecKeyword] as const,
-		['async', TSKindId.AsyncKeyword] as const,
-		['await', TSKindId.AwaitKeyword] as const,
-		['type', TSKindId.TypeKeyword] as const,
-		['match', TSKindId.MatchKeyword] as const
-	]);
-	const _value = coerceMixedEnumStorage<NonNullable<T.KeywordArgument['_value']>>(config.value, []);
+	const _name = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.KeywordArgument['_name']>>(config.name, [
+			['print', TSKindId.PrintKeyword] as const,
+			['exec', TSKindId.ExecKeyword] as const,
+			['async', TSKindId.AsyncKeyword] as const,
+			['await', TSKindId.AwaitKeyword] as const,
+			['type', TSKindId.TypeKeyword] as const,
+			['match', TSKindId.MatchKeyword] as const
+		]),
+		'KeywordArgument.name',
+		'buildIdentifier(…)'
+	);
+	const _value = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.KeywordArgument['_value']>>(config.value, []),
+		'KeywordArgument.value',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2748,7 +3058,7 @@ export function buildList(...args: unknown[]) {
 		: _buildList((buildCollectionElements as (...a: unknown[]) => unknown)(...args) as T.CollectionElements);
 }
 function _buildList(value?: T.CollectionElements): T.List.Built {
-	const _collection_elements = value;
+	const _collection_elements = rejectBareText(value, 'List.collectionElements', 'a built CollectionElements');
 	return withMethods(
 		withAccessors(
 			{
@@ -2790,7 +3100,7 @@ export function buildSet(...args: unknown[]) {
 		: _buildSet((buildCollectionElements as (...a: unknown[]) => unknown)(...args) as T.CollectionElements);
 }
 function _buildSet(value: T.CollectionElements): T.Set.Built {
-	const _collection_elements = value;
+	const _collection_elements = rejectBareText(value, 'Set.collectionElements', 'a built CollectionElements');
 	return withMethods(
 		withAccessors(
 			{
@@ -2832,7 +3142,7 @@ export function buildTuple(...args: unknown[]) {
 		: _buildTuple((buildCollectionElements as (...a: unknown[]) => unknown)(...args) as T.CollectionElements);
 }
 function _buildTuple(value?: T.CollectionElements): T.Tuple.Built {
-	const _collection_elements = value;
+	const _collection_elements = rejectBareText(value, 'Tuple.collectionElements', 'a built CollectionElements');
 	return withMethods(
 		withAccessors(
 			{
@@ -2874,7 +3184,7 @@ export function buildDictionary(...args: unknown[]) {
 		: _buildDictionary((buildDictionaryElements as (...a: unknown[]) => unknown)(...args) as T.DictionaryElements);
 }
 function _buildDictionary(value?: T.DictionaryElements): T.Dictionary.Built {
-	const _entries = value;
+	const _entries = rejectBareText(value, 'Dictionary.entries', 'a built DictionaryElements');
 	return withMethods(
 		withAccessors(
 			{
@@ -2895,8 +3205,16 @@ function _buildDictionary(value?: T.DictionaryElements): T.Dictionary.Built {
 }
 
 export function buildPair(config: T.Pair.Config): T.Pair.Built {
-	const _key = coerceMixedEnumStorage<NonNullable<T.Pair['_key']>>(config.key, []);
-	const _value = coerceMixedEnumStorage<NonNullable<T.Pair['_value']>>(config.value, []);
+	const _key = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Pair['_key']>>(config.key, []),
+		'Pair.key',
+		'a built Expression'
+	);
+	const _value = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Pair['_value']>>(config.value, []),
+		'Pair.value',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2920,8 +3238,16 @@ export function buildPair(config: T.Pair.Config): T.Pair.Built {
 }
 
 export function buildListComprehension(config: T.ListComprehension.Config): T.ListComprehension.Built {
-	const _body = coerceMixedEnumStorage<NonNullable<T.ListComprehension['_body']>>(config.body, []);
-	const _comprehension_clauses = config.comprehensionClauses ?? buildComprehensionClauses();
+	const _body = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ListComprehension['_body']>>(config.body, []),
+		'ListComprehension.body',
+		'a built Expression'
+	);
+	const _comprehension_clauses = rejectBareText(
+		config.comprehensionClauses ?? buildComprehensionClauses(),
+		'ListComprehension.comprehensionClauses',
+		'a built ComprehensionClauses'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2949,8 +3275,12 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 export function buildDictionaryComprehension(
 	config: T.DictionaryComprehension.Config
 ): T.DictionaryComprehension.Built {
-	const _body = config.body;
-	const _comprehension_clauses = config.comprehensionClauses ?? buildComprehensionClauses();
+	const _body = rejectBareText(config.body, 'DictionaryComprehension.body', 'a built Pair');
+	const _comprehension_clauses = rejectBareText(
+		config.comprehensionClauses ?? buildComprehensionClauses(),
+		'DictionaryComprehension.comprehensionClauses',
+		'a built ComprehensionClauses'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2975,8 +3305,16 @@ export function buildDictionaryComprehension(
 }
 
 export function buildSetComprehension(config: T.SetComprehension.Config): T.SetComprehension.Built {
-	const _body = coerceMixedEnumStorage<NonNullable<T.SetComprehension['_body']>>(config.body, []);
-	const _comprehension_clauses = config.comprehensionClauses ?? buildComprehensionClauses();
+	const _body = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.SetComprehension['_body']>>(config.body, []),
+		'SetComprehension.body',
+		'a built Expression'
+	);
+	const _comprehension_clauses = rejectBareText(
+		config.comprehensionClauses ?? buildComprehensionClauses(),
+		'SetComprehension.comprehensionClauses',
+		'a built ComprehensionClauses'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -3002,8 +3340,16 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 }
 
 export function buildGeneratorExpression(config: T.GeneratorExpression.Config): T.GeneratorExpression.Built {
-	const _body = coerceMixedEnumStorage<NonNullable<T.GeneratorExpression['_body']>>(config.body, []);
-	const _comprehension_clauses = config.comprehensionClauses ?? buildComprehensionClauses();
+	const _body = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.GeneratorExpression['_body']>>(config.body, []),
+		'GeneratorExpression.body',
+		'a built Expression'
+	);
+	const _comprehension_clauses = rejectBareText(
+		config.comprehensionClauses ?? buildComprehensionClauses(),
+		'GeneratorExpression.comprehensionClauses',
+		'a built ComprehensionClauses'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -3029,20 +3375,24 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 }
 
 export function buildParenthesizedExpression(value: T.Expression | T.Yield): T.ParenthesizedExpression.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.ParenthesizedExpression['_content']>>(value, []);
+	const _expression = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ParenthesizedExpression['_expression']>>(value, []),
+		'ParenthesizedExpression.expression',
+		'a built Expression / Yield'
+	);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ParenthesizedExpression as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_expression,
 				$with: {
-					content: (value: NonNullable<T.Expression | T.Yield>) => buildParenthesizedExpression(value)
+					expression: (value: NonNullable<T.Expression | T.Yield>) => buildParenthesizedExpression(value)
 				}
 			},
 			{
-				content: () => _content
+				expression: () => _expression
 			}
 		),
 		methodsEngine
@@ -3078,7 +3428,7 @@ function _buildCollectionElements(
 	elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.CollectionElements.Built {
-	_assertNonEmpty(elements, '_collection_elements.elements');
+	_assertNonEmpty(elements, 'collection_elements.elements');
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -3106,8 +3456,12 @@ function _buildCollectionElements(
 
 export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Built {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
-	const _left = config.left;
-	const _right = coerceMixedEnumStorage<NonNullable<T.ForInClause['_right']>>(config.right ?? [], []);
+	const _left = rejectBareText(config.left, 'ForInClause.left', 'a built Pattern / PatternList');
+	const _right = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ForInClause['_right']>>(config.right ?? [], []),
+		'ForInClause.right',
+		'a built Expression / LambdaWithinForInClause'
+	);
 	const _comma = coerceBooleanKeywordStorage(config.comma);
 	return withMethods(
 		withAccessors(
@@ -3139,7 +3493,11 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bu
 }
 
 export function buildIfClause(value: T.Expression): T.IfClause.Built {
-	const _condition = coerceMixedEnumStorage<NonNullable<T.IfClause['_condition']>>(value, []);
+	const _condition = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.IfClause['_condition']>>(value, []),
+		'IfClause.condition',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -3160,11 +3518,20 @@ export function buildIfClause(value: T.Expression): T.IfClause.Built {
 }
 
 export function buildConditionalExpression(config: T.ConditionalExpression.Config): T.ConditionalExpression.Built {
-	const _body = coerceMixedEnumStorage<NonNullable<T.ConditionalExpression['_body']>>(config.body, []);
-	const _condition = coerceMixedEnumStorage<NonNullable<T.ConditionalExpression['_condition']>>(config.condition, []);
-	const _alternative = coerceMixedEnumStorage<NonNullable<T.ConditionalExpression['_alternative']>>(
-		config.alternative,
-		[]
+	const _body = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ConditionalExpression['_body']>>(config.body, []),
+		'ConditionalExpression.body',
+		'a built Expression'
+	);
+	const _condition = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ConditionalExpression['_condition']>>(config.condition, []),
+		'ConditionalExpression.condition',
+		'a built Expression'
+	);
+	const _alternative = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ConditionalExpression['_alternative']>>(config.alternative, []),
+		'ConditionalExpression.alternative',
+		'a built Expression'
 	);
 	return withMethods(
 		withAccessors(
@@ -3196,7 +3563,7 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 
 export function buildConcatenatedString(...children: T.String[]): T.ConcatenatedString.Built {
 	_assertNonEmpty(children, 'concatenated_string.children');
-	const _string = children;
+	const _string = rejectBareText(children, 'ConcatenatedString.string', 'a built String');
 	return withMethods(
 		withAccessors(
 			{
@@ -3215,9 +3582,9 @@ export function buildConcatenatedString(...children: T.String[]): T.Concatenated
 }
 
 export function buildString(config: T.String.Config): T.String.Built {
-	const _string_start = config.stringStart;
-	const _content = config.content ?? [];
-	const _string_end = config.stringEnd;
+	const _string_start = rejectBareText(config.stringStart, 'String.stringStart', 'buildStringStart(…)');
+	const _content = rejectBareText(config.content ?? [], 'String.content', 'a built Interpolation / StringContent');
+	const _string_end = rejectBareText(config.stringEnd, 'String.stringEnd', 'buildStringEnd(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -3244,12 +3611,12 @@ export function buildString(config: T.String.Config): T.String.Built {
 }
 
 export function buildStringContent(
-	...children: ((T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent) | string)[]
+	...children: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment)[]
 ): T.StringContent.Built {
-	const _content = admitHiddenText<NonNullable<T.StringContent['_content']>>(
+	const _content = rejectBareText(
 		children,
-		[['_string_content', _leafRe_build_StringContent, build_StringContent]],
-		'StringContent.content'
+		'StringContent.content',
+		'buildEscapeInterpolation(…) / buildStringFragment(…)'
 	);
 	return withMethods(
 		withAccessors(
@@ -3260,10 +3627,7 @@ export function buildStringContent(
 				_content,
 				$with: {
 					contents: (
-						...vs: (
-							| (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)
-							| string
-						)[]
+						...vs: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment)[]
 					) => buildStringContent(...vs)
 				}
 			},
@@ -3276,10 +3640,22 @@ export function buildStringContent(
 }
 
 export function buildInterpolation(config: T.Interpolation.Config): T.Interpolation.Built {
-	const _expression = coerceMixedEnumStorage<NonNullable<T.Interpolation['_expression']>>(config.expression, []);
+	const _expression = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Interpolation['_expression']>>(config.expression, []),
+		'Interpolation.expression',
+		'a built Expression / ExpressionList / PatternList / Yield'
+	);
 	const _eq_marker = coerceBooleanKeywordStorage(config.eqMarker);
-	const _type_conversion = config.typeConversion;
-	const _format_specifier = config.formatSpecifier;
+	const _type_conversion = rejectBareText(
+		config.typeConversion,
+		'Interpolation.typeConversion',
+		'buildTypeConversion(…)'
+	);
+	const _format_specifier = rejectBareText(
+		config.formatSpecifier,
+		'Interpolation.formatSpecifier',
+		'a built FormatSpecifier'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -3310,11 +3686,15 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 	);
 }
 
+export function buildNotEscapeSequence(): TSKindId.NotEscapeSequence {
+	return TSKindId.NotEscapeSequence;
+}
+
 export function buildFormatSpecifier(
 	...children: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]
 ): T.FormatSpecifier.Built {
-	const _content = admitAliasContent<NonNullable<T.FormatSpecifier['_content']>>(children, [
-		[[245], (v: unknown) => buildFormatExpression(v as never)]
+	const _elements = admitAliasContent<NonNullable<T.FormatSpecifier['_elements']>>(children, [
+		[[246], (v: unknown) => buildFormatExpression(v as never)]
 	]);
 	return withMethods(
 		withAccessors(
@@ -3322,14 +3702,14 @@ export function buildFormatSpecifier(
 				$type: TSKindId.FormatSpecifier as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_elements,
 				$with: {
-					contents: (...vs: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]) =>
+					elements: (...vs: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]) =>
 						buildFormatSpecifier(...vs)
 				}
 			},
 			{
-				contents: () => _content
+				elements: () => _elements
 			}
 		),
 		methodsEngine
@@ -3377,7 +3757,11 @@ export function buildNone(): TSKindId.None {
 }
 
 export function buildAwait(value: T.PrimaryExpression): T.Await.Built {
-	const _expression = coerceMixedEnumStorage<NonNullable<T.Await['_expression']>>(value, []);
+	const _expression = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.Await['_expression']>>(value, []),
+		'Await.expression',
+		'a built PrimaryExpression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4018,7 +4402,11 @@ function _buildDictionaryElements(
 }
 
 export function buildSliceGroup(value?: T.Expression): T.SliceGroup.Built {
-	const _expression = coerceMixedEnumStorage<NonNullable<T.SliceGroup['_expression']>>(value, []);
+	const _expression = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.SliceGroup['_expression']>>(value, []),
+		'SliceGroup.expression',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4041,8 +4429,16 @@ export function buildSliceGroup(value?: T.Expression): T.SliceGroup.Built {
 export function buildExceptClauseExceptionAs(
 	config: T.ExceptClauseExceptionAs.Config
 ): T.ExceptClauseExceptionAs.Built {
-	const _value = coerceMixedEnumStorage<NonNullable<T.ExceptClauseExceptionAs['_value']>>(config.value, []);
-	const _alias = coerceMixedEnumStorage<NonNullable<T.ExceptClauseExceptionAs['_alias']>>(config.alias, []);
+	const _value = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ExceptClauseExceptionAs['_value']>>(config.value, []),
+		'ExceptClauseExceptionAs.value',
+		'a built Expression'
+	);
+	const _alias = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ExceptClauseExceptionAs['_alias']>>(config.alias, []),
+		'ExceptClauseExceptionAs.alias',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4091,7 +4487,11 @@ export function buildCaseTuplePattern(...args: unknown[]) {
 			);
 }
 function _buildCaseTuplePattern(value?: T.ListPatternCasePatterns): T.CaseTuplePattern.Built {
-	const _list_pattern_case_patterns = value;
+	const _list_pattern_case_patterns = rejectBareText(
+		value,
+		'CaseTuplePattern.listPatternCasePatterns',
+		'a built ListPatternCasePatterns'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4135,7 +4535,11 @@ export function buildCaseListPattern(...args: unknown[]) {
 			);
 }
 function _buildCaseListPattern(value?: T.ListPatternCasePatterns): T.CaseListPattern.Built {
-	const _list_pattern_case_patterns = value;
+	const _list_pattern_case_patterns = rejectBareText(
+		value,
+		'CaseListPattern.listPatternCasePatterns',
+		'a built ListPatternCasePatterns'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4149,50 +4553,6 @@ function _buildCaseListPattern(value?: T.ListPatternCasePatterns): T.CaseListPat
 			},
 			{
 				listPatternCasePatterns: () => _list_pattern_case_patterns
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPattern.Built {
-	const _case_pattern = config.casePattern;
-	const _identifier = config.identifier;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CaseAsPattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_case_pattern,
-				_identifier,
-				$with: {
-					casePattern: (value: T.CasePattern) => buildCaseAsPattern({ ...config, casePattern: value }),
-					identifier: (value: T.Identifier) => buildCaseAsPattern({ ...config, identifier: value })
-				}
-			},
-			{
-				casePattern: () => _case_pattern,
-				identifier: () => _identifier
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClause)[]): T.ComprehensionClauses.Built {
-	const _content = children;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ComprehensionClauses as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: { contents: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...vs) }
-			},
-			{
-				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -4219,7 +4579,7 @@ function _buildPrintArguments(
 	elements: NonEmptyArray<T.Expression>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PrintArguments.Built {
-	_assertNonEmpty(elements, '_print_arguments.elements');
+	_assertNonEmpty(elements, 'print_arguments.elements');
 	const _argument = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -4268,7 +4628,7 @@ function _buildPrintChevronArguments(
 	elements: NonEmptyArray<T.Expression>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PrintChevronArguments.Built {
-	_assertNonEmpty(elements, '_print_chevron_arguments.elements');
+	_assertNonEmpty(elements, 'print_chevron_arguments.elements');
 	const _argument = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -4294,10 +4654,15 @@ function _buildPrintChevronArguments(
 }
 
 export function buildPrintStatementChevron(config: T.PrintStatementChevron.Config): T.PrintStatementChevron.Built {
-	const _chevron = config.chevron;
-	const _print_chevron_arguments = coerceMixedEnumStorage<
-		NonNullable<T.PrintStatementChevron['_print_chevron_arguments']>
-	>(config.printChevronArguments, [[',', TSKindId.Comma] as const]);
+	const _chevron = rejectBareText(config.chevron, 'PrintStatementChevron.chevron', 'a built Chevron');
+	const _print_chevron_arguments = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.PrintStatementChevron['_print_chevron_arguments']>>(
+			config.printChevronArguments,
+			[[',', TSKindId.Comma] as const]
+		),
+		'PrintStatementChevron.printChevronArguments',
+		'a built PrintChevronArguments'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4343,7 +4708,7 @@ export function buildPrintStatementPlain(...args: unknown[]) {
 		: _buildPrintStatementPlain((buildPrintArguments as (...a: unknown[]) => unknown)(...args) as T.PrintArguments);
 }
 function _buildPrintStatementPlain(value: T.PrintArguments): T.PrintStatementPlain.Built {
-	const _print_arguments = value;
+	const _print_arguments = rejectBareText(value, 'PrintStatementPlain.printArguments', 'a built PrintArguments');
 	return withMethods(
 		withAccessors(
 			{
@@ -4361,6 +4726,10 @@ function _buildPrintStatementPlain(value: T.PrintArguments): T.PrintStatementPla
 		),
 		methodsEngine
 	);
+}
+
+export function buildWildcardPattern(): TSKindId.WildcardPattern {
+	return TSKindId.WildcardPattern;
 }
 
 export function buildParenthesizedImportList(value: T.ImportList): ReturnType<typeof _buildParenthesizedImportList>;
@@ -4385,7 +4754,7 @@ export function buildParenthesizedImportList(...args: unknown[]) {
 		: _buildParenthesizedImportList((buildImportList as (...a: unknown[]) => unknown)(...args) as T.ImportList);
 }
 function _buildParenthesizedImportList(value: T.ImportList): T.ParenthesizedImportList.Built {
-	const _import_list = value;
+	const _import_list = rejectBareText(value, 'ParenthesizedImportList.importList', 'a built ImportList');
 	return withMethods(
 		withAccessors(
 			{
@@ -4399,6 +4768,25 @@ function _buildParenthesizedImportList(value: T.ImportList): T.ParenthesizedImpo
 			},
 			{
 				importList: () => _import_list
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClause)[]): T.ComprehensionClauses.Built {
+	const _content = rejectBareText(children, 'ComprehensionClauses.content', 'a built ForInClause / IfClause');
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ComprehensionClauses as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { contents: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...vs) }
+			},
+			{
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -4830,7 +5218,7 @@ export function buildLineContinuationNul(): TSKindId.LineContinuationNul {
 
 export function buildSimplePatternNegative(config: T.SimplePatternNegative.Config): T.SimplePatternNegative.Built {
 	const _sign = coerceBooleanKeywordStorage(config.sign);
-	const _content = config.content;
+	const _value = rejectBareText(config.value, 'SimplePatternNegative.value', 'a built Integer / Float');
 	return withMethods(
 		withAccessors(
 			{
@@ -4838,16 +5226,16 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 				$source: 2 as const,
 				$named: true as const,
 				_sign,
-				_content,
+				_value,
 				$with: {
 					sign: (value?: NonNullable<T.SimplePatternNegative.Config>['sign']) =>
 						buildSimplePatternNegative({ ...config, sign: value }),
-					content: (value: T.Integer | T.Float) => buildSimplePatternNegative({ ...config, content: value })
+					value: (value: T.Integer | T.Float) => buildSimplePatternNegative({ ...config, value: value })
 				}
 			},
 			{
 				sign: () => _sign,
-				content: () => _content
+				value: () => _value
 			}
 		),
 		methodsEngine
@@ -4856,7 +5244,7 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 
 export function buildExceptClauseExceptionList(...children: T.Expression[]): T.ExceptClauseExceptionList.Built {
 	_assertNonEmpty(children, 'except_clause_exception_list.children');
-	const _value = children;
+	const _value = rejectBareText(children, 'ExceptClauseExceptionList.value', 'a built Expression');
 	return withMethods(
 		withAccessors(
 			{
@@ -4877,7 +5265,11 @@ export function buildExceptClauseExceptionList(...children: T.Expression[]): T.E
 export function buildExceptClauseException(
 	value: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList
 ): T.ExceptClauseException.Built {
-	const _content = value;
+	const _content = rejectBareText(
+		value,
+		'ExceptClauseException.content',
+		'a built ExceptClauseExceptionAs / ExceptClauseExceptionList'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4898,8 +5290,12 @@ export function buildExceptClauseException(
 }
 
 export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq.Built {
-	const _left = config.left;
-	const _right = coerceMixedEnumStorage<NonNullable<T.AssignmentEq['_right']>>(config.right, []);
+	const _left = rejectBareText(config.left, 'AssignmentEq.left', 'a built Pattern / PatternList');
+	const _right = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.AssignmentEq['_right']>>(config.right, []),
+		'AssignmentEq.right',
+		'a built Expression / ExpressionList / Assignment / AugmentedAssignment / PatternList / Yield'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4923,8 +5319,8 @@ export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq
 }
 
 export function buildAssignmentType(config: T.AssignmentType.Config): T.AssignmentType.Built {
-	const _left = config.left;
-	const _type = config.type;
+	const _left = rejectBareText(config.left, 'AssignmentType.left', 'a built Pattern / PatternList');
+	const _type = rejectBareText(config.type, 'AssignmentType.type', 'a built Type');
 	return withMethods(
 		withAccessors(
 			{
@@ -4948,9 +5344,13 @@ export function buildAssignmentType(config: T.AssignmentType.Config): T.Assignme
 }
 
 export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.AssignmentTyped.Built {
-	const _left = config.left;
-	const _type = config.type;
-	const _right = coerceMixedEnumStorage<NonNullable<T.AssignmentTyped['_right']>>(config.right, []);
+	const _left = rejectBareText(config.left, 'AssignmentTyped.left', 'a built Pattern / PatternList');
+	const _type = rejectBareText(config.type, 'AssignmentTyped.type', 'a built Type');
+	const _right = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.AssignmentTyped['_right']>>(config.right, []),
+		'AssignmentTyped.right',
+		'a built Expression / ExpressionList / Assignment / AugmentedAssignment / PatternList / Yield'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -5093,7 +5493,11 @@ export function buildWithClauseParen(...args: unknown[]) {
 			);
 }
 function _buildWithClauseParen(value: T.WithClauseWithItems): T.WithClauseParen.Built {
-	const _with_clause_with_items = value;
+	const _with_clause_with_items = rejectBareText(
+		value,
+		'WithClauseParen.withClauseWithItems',
+		'a built WithClauseWithItems'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -5114,7 +5518,7 @@ function _buildWithClauseParen(value: T.WithClauseWithItems): T.WithClauseParen.
 }
 
 export function buildMatchBlockBlock(...children: T.CaseClause[]): T.MatchBlockBlock.Built {
-	const _alternative = children;
+	const _alternative = rejectBareText(children, 'MatchBlockBlock.alternative', 'a built CaseClause');
 	return withMethods(
 		withAccessors(
 			{
@@ -5154,7 +5558,11 @@ export function buildSuiteInline(...args: unknown[]) {
 			);
 }
 function _buildSuiteInline(value: T.SimpleStatementsElements): T.SuiteInline.Built {
-	const _simple_statements_elements = value;
+	const _simple_statements_elements = rejectBareText(
+		value,
+		'SuiteInline.simpleStatementsElements',
+		'a built SimpleStatementsElements'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -5195,7 +5603,7 @@ export function buildSuiteBlock(...args: unknown[]) {
 		: _buildSuiteBlock((buildBlock as (...a: unknown[]) => unknown)(...args) as T.Block);
 }
 function _buildSuiteBlock(value: T.Block): T.SuiteBlock.Built {
-	const _block = value;
+	const _block = rejectBareText(value, 'SuiteBlock.block', 'a built Block');
 	return withMethods(
 		withAccessors(
 			{
@@ -5215,7 +5623,25 @@ function _buildSuiteBlock(value: T.Block): T.SuiteBlock.Built {
 	);
 }
 
-export function buildSuiteEmpty(value: TSKindId.Newline): T.SuiteEmpty.Built {
+export function buildSuiteEmpty(): ReturnType<typeof _buildSuiteEmpty>;
+export function buildSuiteEmpty(value: TSKindId.Newline): ReturnType<typeof _buildSuiteEmpty>;
+export function buildSuiteEmpty(...args: unknown[]) {
+	if (args.length === 0) {
+		return _buildSuiteEmpty(buildNewline() as TSKindId.Newline);
+	}
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildSuiteEmpty(args[0] as TSKindId.Newline);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Newline as const);
+	return prebuilt
+		? _buildSuiteEmpty(args[0] as TSKindId.Newline)
+		: _buildSuiteEmpty((buildNewline as (...a: unknown[]) => unknown)(...args) as TSKindId.Newline);
+}
+function _buildSuiteEmpty(value: TSKindId.Newline): T.SuiteEmpty.Built {
 	const _newline = coerceKindEnumStorage<NonNullable<T.SuiteEmpty['_newline']>>(value, [
 		['\n', TSKindId.Newline] as const
 	]);
@@ -5252,14 +5678,19 @@ export function buildComparisonOperatorComparator(
 			['>', TSKindId.Gt] as const,
 			['<>', TSKindId.LtGt] as const,
 			['in', TSKindId.InKeyword] as const,
-			['not in', TSKindId._NotIn] as const,
+			['not in', TSKindId.NotIn] as const,
 			['is', TSKindId.IsKeyword] as const,
-			['is not', TSKindId._IsNot] as const
+			['is not', TSKindId.IsNot] as const
 		]
 	);
-	const _primary_expression = coerceMixedEnumStorage<
-		NonNullable<T.ComparisonOperatorComparator['_primary_expression']>
-	>(config.primaryExpression, []);
+	const _primary_expression = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.ComparisonOperatorComparator['_primary_expression']>>(
+			config.primaryExpression,
+			[]
+		),
+		'ComparisonOperatorComparator.primaryExpression',
+		'a built PrimaryExpression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -5285,7 +5716,11 @@ export function buildComparisonOperatorComparator(
 }
 
 export function buildYieldFromClause(value: T.Expression): T.YieldFromClause.Built {
-	const _expression = coerceMixedEnumStorage<NonNullable<T.YieldFromClause['_expression']>>(value, []);
+	const _expression = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.YieldFromClause['_expression']>>(value, []),
+		'YieldFromClause.expression',
+		'a built Expression'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -5319,12 +5754,12 @@ export function buildStringStart(text: string): T.StringStart.Built {
 	);
 }
 
-export function build_StringContent(text: string): T._StringContent.Built {
-	if (text.length === 0) throw new Error(`_string_content: text must be non-empty`);
-	if (!_leafRe_build_StringContent.test(text)) throw new Error(`_string_content: text does not match pattern: ${text}`);
+export function buildStringFragment(text: string): T.StringFragment.Built {
+	if (text.length === 0) throw new Error(`string_fragment: text must be non-empty`);
+	if (!_leafRe_buildStringFragment.test(text)) throw new Error(`string_fragment: text does not match pattern: ${text}`);
 	return withMethods(
 		{
-			$type: TSKindId._StringContent as const,
+			$type: TSKindId.StringFragment as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -5362,6 +5797,10 @@ export function buildStringEnd(text: string): T.StringEnd.Built {
 	);
 }
 
+export function buildNewline(): TSKindId.Newline {
+	return TSKindId.Newline;
+}
+
 export function buildIndent(text: string): T.Indent.Built {
 	if (text.length === 0) throw new Error(`_indent: text must be non-empty`);
 	return withMethods(
@@ -5388,12 +5827,37 @@ export function buildDedent(text: string): T.Dedent.Built {
 	);
 }
 
-export function buildAsPatternTarget(value: T.Expression): T.AsPatternTarget.Built {
-	const _content = coerceMixedEnumStorage<NonNullable<T.AsPatternTarget['_content']>>(value, []);
+export function buildNames(value: T.ImportList): T.Names.Built {
+	const _content = rejectBareText(value, 'Names.content', 'a built ImportList');
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._AsPatternTarget as const,
+				$type: TSKindId.Names as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: T.ImportList) => buildNames(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildAsPatternTarget(value: T.Expression): T.AsPatternTarget.Built {
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.AsPatternTarget['_content']>>(value, []),
+		'AsPatternTarget.content',
+		'a built Expression'
+	);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.AsPatternTarget as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -5410,11 +5874,11 @@ export function buildAsPatternTarget(value: T.Expression): T.AsPatternTarget.Bui
 }
 
 export function buildFormatExpression(value: T.Interpolation): T.FormatExpression.Built {
-	const _content = value;
+	const _content = rejectBareText(value, 'FormatExpression.content', 'a built Interpolation');
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId._FormatExpression as const,
+				$type: TSKindId.FormatExpression as const,
 				$source: 2 as const,
 				$named: true as const,
 				_content,
@@ -5438,7 +5902,7 @@ export type FluentKindMap = {
 	relative_import: T.RelativeImport.Built;
 	future_import_statement: T.FutureImportStatement.Built;
 	import_from_statement: T.ImportFromStatement.Built;
-	_import_list: T.ImportList.Built;
+	import_list: T.ImportList.Built;
 	aliased_import: T.AliasedImport.Built;
 	wildcard_import: T.WildcardImport;
 	print_statement: T.PrintStatement.Built;
@@ -5456,7 +5920,7 @@ export type FluentKindMap = {
 	elif_clause: T.ElifClause.Built;
 	else_clause: T.ElseClause.Built;
 	match_statement: T.MatchStatement.Built;
-	_match_block: T.MatchBlock.Built;
+	match_block: T.MatchBlock.Built;
 	case_clause: T.CaseClause.Built;
 	for_statement: T.ForStatement.Built;
 	while_statement: T.WhileStatement.Built;
@@ -5484,15 +5948,17 @@ export type FluentKindMap = {
 	expression_list: T.ExpressionList.Built;
 	dotted_name: T.DottedName.Built;
 	case_pattern: T.CasePattern.Built;
+	_simple_pattern: T.SimplePattern.Built;
+	case_as_pattern: T.CaseAsPattern.Built;
 	union_pattern: T.UnionPattern.Built;
 	dict_pattern: T.DictPattern.Built;
-	_key_value_pattern: T.KeyValuePattern.Built;
+	key_value_pattern: T.KeyValuePattern.Built;
 	keyword_pattern: T.KeywordPattern.Built;
 	splat_pattern: T.SplatPattern.Built;
 	class_pattern: T.ClassPattern.Built;
 	complex_pattern: T.ComplexPattern.Built;
-	_parameters: T._Parameters.Built;
-	_patterns: T.Patterns.Built;
+	parameters_elements: T.ParametersElements.Built;
+	patterns: T.Patterns.Built;
 	tuple_pattern: T.TuplePattern.Built;
 	list_pattern: T.ListPattern.Built;
 	default_parameter: T.DefaultParameter.Built;
@@ -5533,7 +5999,7 @@ export type FluentKindMap = {
 	set_comprehension: T.SetComprehension.Built;
 	generator_expression: T.GeneratorExpression.Built;
 	parenthesized_expression: T.ParenthesizedExpression.Built;
-	_collection_elements: T.CollectionElements.Built;
+	collection_elements: T.CollectionElements.Built;
 	for_in_clause: T.ForInClause.Built;
 	if_clause: T.IfClause.Built;
 	conditional_expression: T.ConditionalExpression.Built;
@@ -5541,6 +6007,7 @@ export type FluentKindMap = {
 	string: T.String.Built;
 	string_content: T.StringContent.Built;
 	interpolation: T.Interpolation.Built;
+	not_escape_sequence: T.NotEscapeSequence;
 	format_specifier: T.FormatSpecifier.Built;
 	type_conversion: T.TypeConversion;
 	identifier: T.Identifier;
@@ -5567,13 +6034,13 @@ export type FluentKindMap = {
 	except_clause_exception_as: T.ExceptClauseExceptionAs.Built;
 	case_tuple_pattern: T.CaseTuplePattern.Built;
 	case_list_pattern: T.CaseListPattern.Built;
-	case_as_pattern: T.CaseAsPattern.Built;
-	comprehension_clauses: T.ComprehensionClauses.Built;
-	_print_arguments: T.PrintArguments.Built;
-	_print_chevron_arguments: T.PrintChevronArguments.Built;
+	print_arguments: T.PrintArguments.Built;
+	print_chevron_arguments: T.PrintChevronArguments.Built;
 	print_statement_chevron: T.PrintStatementChevron.Built;
 	print_statement_plain: T.PrintStatementPlain.Built;
-	_parenthesized_import_list: T.ParenthesizedImportList.Built;
+	wildcard_pattern: T.WildcardPattern;
+	parenthesized_import_list: T.ParenthesizedImportList.Built;
+	comprehension_clauses: T.ComprehensionClauses.Built;
 	integer_hex: T.IntegerHex.Built;
 	integer_octal: T.IntegerOctal.Built;
 	integer_binary: T.IntegerBinary.Built;
@@ -5603,14 +6070,16 @@ export type FluentKindMap = {
 	suite_inline: T.SuiteInline.Built;
 	suite_block: T.SuiteBlock.Built;
 	suite_empty: T.SuiteEmpty.Built;
-	_comparison_operator_comparator: T.ComparisonOperatorComparator.Built;
-	_yield_from_clause: T.YieldFromClause.Built;
+	comparison_operator_comparator: T.ComparisonOperatorComparator.Built;
+	yield_from_clause: T.YieldFromClause.Built;
 	string_start: T.StringStart;
-	_string_content: T._StringContent;
+	string_fragment: T.StringFragment;
 	escape_interpolation: T.EscapeInterpolation;
 	string_end: T.StringEnd;
+	_newline: T.Newline;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
+	names: T.Names.Built;
 	as_pattern_target: T.AsPatternTarget.Built;
 	format_expression: T.FormatExpression.Built;
 };
@@ -5623,7 +6092,7 @@ export const _factoryMap = {
 	relative_import: buildRelativeImport,
 	future_import_statement: buildFutureImportStatement,
 	import_from_statement: buildImportFromStatement,
-	_import_list: buildImportList,
+	import_list: buildImportList,
 	aliased_import: buildAliasedImport,
 	wildcard_import: buildWildcardImport,
 	print_statement: buildPrintStatement,
@@ -5641,7 +6110,7 @@ export const _factoryMap = {
 	elif_clause: buildElifClause,
 	else_clause: buildElseClause,
 	match_statement: buildMatchStatement,
-	_match_block: buildMatchBlock,
+	match_block: buildMatchBlock,
 	case_clause: buildCaseClause,
 	for_statement: buildForStatement,
 	while_statement: buildWhileStatement,
@@ -5669,15 +6138,17 @@ export const _factoryMap = {
 	expression_list: buildExpressionList,
 	dotted_name: buildDottedName,
 	case_pattern: buildCasePattern,
+	_simple_pattern: buildSimplePattern,
+	case_as_pattern: buildCaseAsPattern,
 	union_pattern: buildUnionPattern,
 	dict_pattern: buildDictPattern,
-	_key_value_pattern: buildKeyValuePattern,
+	key_value_pattern: buildKeyValuePattern,
 	keyword_pattern: buildKeywordPattern,
 	splat_pattern: buildSplatPattern,
 	class_pattern: buildClassPattern,
 	complex_pattern: buildComplexPattern,
-	_parameters: build_Parameters,
-	_patterns: buildPatterns,
+	parameters_elements: buildParametersElements,
+	patterns: buildPatterns,
 	tuple_pattern: buildTuplePattern,
 	list_pattern: buildListPattern,
 	default_parameter: buildDefaultParameter,
@@ -5718,7 +6189,7 @@ export const _factoryMap = {
 	set_comprehension: buildSetComprehension,
 	generator_expression: buildGeneratorExpression,
 	parenthesized_expression: buildParenthesizedExpression,
-	_collection_elements: buildCollectionElements,
+	collection_elements: buildCollectionElements,
 	for_in_clause: buildForInClause,
 	if_clause: buildIfClause,
 	conditional_expression: buildConditionalExpression,
@@ -5726,6 +6197,7 @@ export const _factoryMap = {
 	string: buildString,
 	string_content: buildStringContent,
 	interpolation: buildInterpolation,
+	not_escape_sequence: buildNotEscapeSequence,
 	format_specifier: buildFormatSpecifier,
 	type_conversion: buildTypeConversion,
 	identifier: buildIdentifier,
@@ -5752,13 +6224,13 @@ export const _factoryMap = {
 	except_clause_exception_as: buildExceptClauseExceptionAs,
 	case_tuple_pattern: buildCaseTuplePattern,
 	case_list_pattern: buildCaseListPattern,
-	case_as_pattern: buildCaseAsPattern,
-	comprehension_clauses: buildComprehensionClauses,
-	_print_arguments: buildPrintArguments,
-	_print_chevron_arguments: buildPrintChevronArguments,
+	print_arguments: buildPrintArguments,
+	print_chevron_arguments: buildPrintChevronArguments,
 	print_statement_chevron: buildPrintStatementChevron,
 	print_statement_plain: buildPrintStatementPlain,
-	_parenthesized_import_list: buildParenthesizedImportList,
+	wildcard_pattern: buildWildcardPattern,
+	parenthesized_import_list: buildParenthesizedImportList,
+	comprehension_clauses: buildComprehensionClauses,
 	integer_hex: buildIntegerHex,
 	integer_octal: buildIntegerOctal,
 	integer_binary: buildIntegerBinary,
@@ -5788,14 +6260,16 @@ export const _factoryMap = {
 	suite_inline: buildSuiteInline,
 	suite_block: buildSuiteBlock,
 	suite_empty: buildSuiteEmpty,
-	_comparison_operator_comparator: buildComparisonOperatorComparator,
-	_yield_from_clause: buildYieldFromClause,
+	comparison_operator_comparator: buildComparisonOperatorComparator,
+	yield_from_clause: buildYieldFromClause,
 	string_start: buildStringStart,
-	_string_content: build_StringContent,
+	string_fragment: buildStringFragment,
 	escape_interpolation: buildEscapeInterpolation,
 	string_end: buildStringEnd,
+	_newline: buildNewline,
 	_indent: buildIndent,
 	_dedent: buildDedent,
+	names: buildNames,
 	as_pattern_target: buildAsPatternTarget,
 	format_expression: buildFormatExpression
 } as const;

@@ -30,7 +30,7 @@
 import { execSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { pathToFileURL } from 'node:url';
 
 import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 import { validateFrom } from '../validate/from.ts';
@@ -38,6 +38,7 @@ import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
 import { boundaryModulePath } from '../validate/common.ts';
 import { load } from '../codegen-surface.ts';
+import { REPO_ROOT, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 
 const { renderModuleFixturesPath, renderModuleLeftOutPath } = await load('renderModulePaths');
 const { loadRawEntries } = await load('nodeTypesLoader');
@@ -47,9 +48,6 @@ const { loadRawEntries } = await load('nodeTypesLoader');
 // ---------------------------------------------------------------------------
 
 export type Backend = 'native';
-export type Grammar = 'python' | 'rust' | 'typescript';
-
-const GRAMMARS: readonly Grammar[] = ['python', 'rust', 'typescript'];
 
 export interface ValidatorResult {
 	pass: number;
@@ -108,7 +106,7 @@ export interface GrammarEntry {
 export interface BackendBaseline {
 	backend: Backend;
 	commit: string;
-	grammars: { readonly [grammar in Grammar]: GrammarEntry };
+	grammars: Readonly<Record<GrammarName, GrammarEntry>>;
 	totals: {
 		pass: number;
 		fail: number;
@@ -120,10 +118,8 @@ export interface BackendBaseline {
 // Repo-relative path helpers
 // ---------------------------------------------------------------------------
 
-const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
-
-function fixturesPathFor(grammar: Grammar): string {
-	return resolve(repoRoot, renderModuleFixturesPath(grammar));
+function fixturesPathFor(grammar: GrammarName): string {
+	return resolve(REPO_ROOT, renderModuleFixturesPath(grammar));
 }
 
 // ---------------------------------------------------------------------------
@@ -161,7 +157,7 @@ interface ParityFixtureLike {
 	readonly input?: { readonly $type?: number };
 }
 
-function loadRenderFixtures(grammar: Grammar): RenderFixture[] {
+function loadRenderFixtures(grammar: GrammarName): RenderFixture[] {
 	const raw = readFileSync(fixturesPathFor(grammar), 'utf-8');
 	const all = JSON.parse(raw) as ParityFixtureLike[];
 	return all.filter((f): f is RenderFixture => f.kind === 'render' && typeof f.input?.$type === 'number');
@@ -193,7 +189,7 @@ export type BoundaryImporter = (path: string) => Promise<unknown>;
  * import; tests inject a stub.
  */
 export async function loadBoundaryRender(
-	grammar: Grammar,
+	grammar: GrammarName,
 	importFn: BoundaryImporter = (p) => import(p)
 ): Promise<(node: unknown) => string> {
 	const boundaryPath = boundaryModulePath(grammar);
@@ -212,13 +208,13 @@ export async function loadBoundaryRender(
 }
 
 /** The render half of the parity harness: the grammar's boundary render, which dispatches to the native engine. */
-async function buildParityRenderer(grammar: Grammar, importFn?: BoundaryImporter): Promise<ParityRenderer> {
+async function buildParityRenderer(grammar: GrammarName, importFn?: BoundaryImporter): Promise<ParityRenderer> {
 	const render = await loadBoundaryRender(grammar, importFn);
 	return { render };
 }
 
 export async function collectParityFixtures(
-	grammar: Grammar,
+	grammar: GrammarName,
 	backend: Backend,
 	importFn?: BoundaryImporter
 ): Promise<ParityFixtures> {
@@ -289,8 +285,8 @@ export async function collectParityFixtures(
 	};
 }
 
-function loadLeftOutByKind(grammar: Grammar): { readonly [kind: string]: number } {
-	const path = resolve(repoRoot, renderModuleLeftOutPath(grammar));
+function loadLeftOutByKind(grammar: GrammarName): { readonly [kind: string]: number } {
+	const path = resolve(REPO_ROOT, renderModuleLeftOutPath(grammar));
 	if (!existsSync(path)) return {};
 	const parsed = JSON.parse(readFileSync(path, 'utf-8')) as Record<string, number>;
 	const sorted: Record<string, number> = {};
@@ -302,7 +298,7 @@ function loadLeftOutByKind(grammar: Grammar): { readonly [kind: string]: number 
 // Validator collection
 // ---------------------------------------------------------------------------
 
-async function collectValidatorsForGrammar(grammar: Grammar, backend: Backend): Promise<GrammarEntry['validators']> {
+async function collectValidatorsForGrammar(grammar: GrammarName, backend: Backend): Promise<GrammarEntry['validators']> {
 	// Pass backend explicitly so each validator uses the correct engine
 	// without touching process.env — avoids cross-contamination when
 	// collectBaseline() is called concurrently.
@@ -363,7 +359,7 @@ async function collectValidatorsForGrammar(grammar: Grammar, backend: Backend): 
 function shortSha(): string {
 	try {
 		const out = execSync('git rev-parse --short=7 HEAD', {
-			cwd: repoRoot,
+			cwd: REPO_ROOT,
 			encoding: 'utf-8',
 			stdio: ['ignore', 'pipe', 'ignore']
 		}).trim();
@@ -377,8 +373,7 @@ function shortSha(): string {
 function computeTotals(grammars: BackendBaseline['grammars']): BackendBaseline['totals'] {
 	let pass = 0;
 	let total = 0;
-	for (const g of GRAMMARS) {
-		const entry = grammars[g];
+	for (const entry of Object.values(grammars)) {
 		// RoundtripResult extends ValidatorResult, so this iteration is
 		// type-correct over the union of validator shapes.
 		const validators: readonly ValidatorResult[] = [
@@ -397,11 +392,11 @@ function computeTotals(grammars: BackendBaseline['grammars']): BackendBaseline['
 	return { pass, fail: total - pass, total };
 }
 
-function computeSupertypeKindCount(grammar: Grammar): number {
+function computeSupertypeKindCount(grammar: GrammarName): number {
 	return loadRawEntries(grammar).filter((e) => e.named && (e.subtypes?.length ?? 0) > 0).length;
 }
 
-async function collectGrammarEntry(grammar: Grammar, backend: Backend): Promise<GrammarEntry> {
+async function collectGrammarEntry(grammar: GrammarName, backend: Backend): Promise<GrammarEntry> {
 	const [validators, parityFixtures] = await Promise.all([
 		collectValidatorsForGrammar(grammar, backend),
 		collectParityFixtures(grammar, backend)
@@ -419,15 +414,11 @@ export async function collectBaseline(): Promise<BackendBaseline> {
 	// them sequentially keeps memory bounded and the order of
 	// diagnostic logs (warnings from inferPolymorphVariant et al.)
 	// stable across runs — material for the determinism guarantee.
-	const tuples: [Grammar, GrammarEntry][] = [];
-	for (const g of GRAMMARS) {
+	const tuples: [GrammarName, GrammarEntry][] = [];
+	for (const g of stableGrammars()) {
 		tuples.push([g, await collectGrammarEntry(g, backend)]);
 	}
-	// The cast remains because TS can't narrow Object.fromEntries over a
-	// tuple union to the exact `Record<Grammar, GrammarEntry>` shape, but
-	// it's now over a proven-complete object — every Grammar key is
-	// present by construction (loop iterates the full GRAMMARS list).
-	const grammars = Object.fromEntries(tuples) as BackendBaseline['grammars'];
+	const grammars: BackendBaseline['grammars'] = Object.fromEntries(tuples);
 
 	return {
 		backend,

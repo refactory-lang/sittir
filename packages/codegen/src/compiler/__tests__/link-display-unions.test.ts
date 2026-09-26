@@ -40,7 +40,11 @@ describe('link builds one display union per alias target', () => {
 				identifier: { type: 'PATTERN', value: '[a-z]+' } as Rule<'evaluate'>
 			})
 		);
-		expect([...linked.displayUnions!.get('property_identifier')!].sort()).toEqual(['identifier', 'type']);
+		const members = [...linked.displayUnions!.get('property_identifier')!].sort((x, y) => x.storage.localeCompare(y.storage));
+		expect(members).toEqual([
+			{ storage: 'identifier', literal: false },
+			{ storage: 'type', literal: true }
+		]);
 	});
 
 	it('a rule that is also an alias target is a member of its own union', () => {
@@ -56,6 +60,10 @@ describe('link builds one display union per alias target', () => {
 				identifier: { type: 'PATTERN', value: '[a-z]+' } as Rule<'evaluate'>
 			})
 		);
-		expect([...linked.displayUnions!.get('generic_type')!].sort()).toEqual(['generic_type', 'generic_type_with_turbofish']);
+		const members = [...linked.displayUnions!.get('generic_type')!].sort((x, y) => x.storage.localeCompare(y.storage));
+		expect(members).toEqual([
+			{ storage: 'generic_type', literal: false },
+			{ storage: 'generic_type_with_turbofish', literal: false }
+		]);
 	});
 });

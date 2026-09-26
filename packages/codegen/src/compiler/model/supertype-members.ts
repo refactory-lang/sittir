@@ -1,18 +1,23 @@
 import type { NodeMap } from '../types.ts';
 import { AssembledEnum, AssembledPolymorph, AssembledSupertype } from './node-map.ts';
 import { SYMBOL } from '../../types/rule-types.ts';
-import { publicKindName } from './render-rules.ts';
+import { displayNameOf } from './display-name.ts';
 
 export type SupertypeMembers = ReadonlyMap<string, readonly string[]>;
 
 export function buildSupertypeMembersMap(nodeMap: NodeMap): Map<string, string[]> {
-	return buildMembersMap(nodeMap, (node) => (node instanceof AssembledSupertype ? node.subtypeNames : null));
+	const out = new Map<string, string[]>();
+	for (const [supertype, members] of buildMembersMap(nodeMap, (node) => (node instanceof AssembledSupertype ? node.subtypeNames : null))) {
+		out.set(supertype, [...new Set(members.flatMap((member) => [member, nodeMap.nodes.get(member)?.display.name ?? member]))]);
+	}
+	return out;
 }
 
-export function supertypeMembersByPublicName(nodeMap: NodeMap): SupertypeMembers {
+export function supertypeMembersByDisplayName(nodeMap: NodeMap): SupertypeMembers {
+	const display = (kind: string): string => displayNameOf(kind, nodeMap);
 	const out = new Map<string, string[]>();
 	for (const [union, members] of buildMembersMap(nodeMap, unionMemberNames)) {
-		out.set(publicKindName(union), [...new Set(members.map(publicKindName))]);
+		out.set(display(union), [...new Set(members.map(display))]);
 	}
 	return out;
 }
@@ -30,11 +35,9 @@ function buildMembersMap(nodeMap: NodeMap, directMembers: (node: unknown) => rea
 		const transitive = node instanceof AssembledSupertype;
 		for (const subtype of direct) {
 			members.add(subtype);
-			if (subtype.startsWith('_')) members.add(subtype.slice(1));
 			if (!transitive) continue;
 			for (const member of expandMembers(subtype, seen)) {
 				members.add(member);
-				if (member.startsWith('_')) members.add(member.slice(1));
 			}
 		}
 		return [...members];

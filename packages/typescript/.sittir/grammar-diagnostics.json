@@ -150,38 +150,6 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "typescript",
-    "ownerKind": "_lhs_expression",
-    "message": "[assemble] typeName collision: kind '_lhs_expression' renamed 'LhsExpression' → '_LhsExpression' (visible sibling(s): 'lhs_expression')",
-    "canProceed": true,
-    "details": {
-      "typeName": "LhsExpression",
-      "newType": "_LhsExpression",
-      "visibleKinds": [
-        "lhs_expression"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_number",
-    "message": "[assemble] typeName collision: kind '_number' renamed 'Number' → '_Number' (visible sibling(s): 'number')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Number",
-      "newType": "_Number",
-      "visibleKinds": [
-        "number"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
     "ownerKind": "_identifier",
     "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')",
     "canProceed": true,
@@ -191,19 +159,6 @@
       "visibleKinds": [
         "identifier"
       ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "multi-slot-nested-seq",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "_type_identifier",
-    "message": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position.",
-    "proposal": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position. Propose: register a visible groups: entry so this substructure becomes a single group slot in the parent.",
-    "canProceed": true,
-    "details": {
-      "slotCount": 2
     }
   },
   {

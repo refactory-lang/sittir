@@ -11,8 +11,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { existsSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
 import { emitRenderModule } from '../render-module.ts';
@@ -25,7 +24,7 @@ import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
 import { loadGrammarJsonAliasMap } from '../../compiler/inline-sets.ts';
-import { loadGeneratedIdTables, deriveGeneratedIdTablesFromParserCSource } from '../../compiler/generated-metadata.ts';
+import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 
@@ -65,7 +64,7 @@ describe('buildSupertypeTransportSet', () => {
 			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 			rules: {},
 			externals: new Set(),
-			word: undefined,
+			word: undefined
 		} as unknown as NodeMap;
 		const result = buildSupertypeTransportSet(nodeMap);
 		expect(result.size).toBe(0);
@@ -135,18 +134,22 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 
 	const raw = await evaluate(entryPath);
-	const parserCPath = resolve(repoRoot, 'packages', grammar, '.sittir', 'src', 'parser.c');
-	const generatedIdTables = await deriveGeneratedIdTablesFromParserCSource(
-		readFileSync(parserCPath, 'utf8'),
-		`packages/${grammar}/.sittir/src/parser.c`
-	);
+	const generatedIdTables = await loadGeneratedIdTables(grammar, repoRoot);
+	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
 	const linked = link(raw, { generatedIdTables });
 	const normalized = normalizeGrammar(linked);
-	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables, undefined, loadGrammarJsonAliasMap(grammar)));
+	const nodeMap = assemble(
+		AssembleCtx.from(normalized, generatedIdTables, undefined, loadGrammarJsonAliasMap(grammar))
+	);
 
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
 	if (grammar === 'rust') _rustKindEntries = kindEntries;
-	const rulesConfig = { nodeMap, kindEntries, options: raw.options, whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap) };
+	const rulesConfig = {
+		nodeMap,
+		kindEntries,
+		options: raw.options,
+		whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap)
+	};
 	const spacedRules = spaceRenderRules(rulesConfig);
 	stampStaticSpacing(nodeMap, grammar, spacedRules);
 	const renderRules = seamRenderRules(spacedRules, rulesConfig);
@@ -317,15 +320,7 @@ async function buildRustFixtureForParity() {
 	const linked = link(raw);
 	const normalized = normalizeGrammar(linked);
 
-	// loadGeneratedIdTables uses process.cwd() which is packages/codegen when vitest runs.
-	// Use the repo root (anchored to this file) to reliably locate parser.c.
-	const parserCPath = resolve(repoRoot, 'packages', grammar, '.sittir', 'src', 'parser.c');
-	const generatedIdTables = existsSync(parserCPath)
-		? await deriveGeneratedIdTablesFromParserCSource(
-				readFileSync(parserCPath, 'utf8'),
-				`packages/${grammar}/.sittir/src/parser.c`
-			)
-		: await loadGeneratedIdTables(grammar);
+	const generatedIdTables = await loadGeneratedIdTables(grammar, repoRoot);
 	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 
 	const renderRules =
@@ -378,7 +373,9 @@ describe('render options on transports', () => {
 
 	it('a list fills its own fields from its own site indices; its owner only recurses', async () => {
 		const src = await getTypescriptTransportRs();
-		const listImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersElementsTransport {'));
+		const listImpl = src.slice(
+			src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersElementsTransport {')
+		);
 		const listFill = listImpl.slice(0, listImpl.indexOf('\n}\n'));
 		expect(listFill).toContain(
 			'self.formal_parameter_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE].arm);'
@@ -386,7 +383,9 @@ describe('render options on transports', () => {
 		expect(listFill).toContain(
 			'self.formal_parameter_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER].arm);'
 		);
-		expect(listFill).toContain('self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER]);');
+		expect(listFill).toContain(
+			'self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER]);'
+		);
 		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersTransport {'));
 		const ownerFill = ownerImpl.slice(0, ownerImpl.indexOf('\n}\n'));
 		expect(ownerFill).toContain('self.formal_parameters_elements.prepare(ctx)?;');
@@ -414,7 +413,9 @@ describe('render options on transports', () => {
 		expect(fillImpl.slice(0, fillImpl.indexOf('\n}\n'))).not.toContain('lparen_after');
 		const fn = src.slice(src.indexOf('fn render_arguments('));
 		const render = fn.slice(0, fn.indexOf('\n}\n'));
-		expect(render).toMatch(/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, node\.edges\.and_then\(\|e\| e\.before\)\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site_at\(options::SITE_ARGUMENTS_LPAREN_AFTER\);/);
+		expect(render).toMatch(
+			/w\.edge\(::sittir_core::types::KindId\(\d+\), ::sittir_core::options::Side::Before, node\.edges\.and_then\(\|e\| e\.before\)\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site_at\(options::SITE_ARGUMENTS_LPAREN_AFTER\);/
+		);
 		expect(src).toContain('    w.finish()?;');
 		const binary = extractStructBody(src, 'BinaryExpressionTransport');
 		expect(binary).not.toContain('pub operator_before: Option<u16>,');
@@ -430,7 +431,9 @@ describe('render options on transports', () => {
 		const src = await getTypescriptTransportRs();
 		const enumSrc = src.slice(src.indexOf('pub enum LexicalDeclarationTerminatorTransportSlot {'));
 		expect(enumSrc.slice(0, enumSrc.indexOf('\n}\n'))).toMatch(/Literal3_73_65_6d_69,/);
-		const render = src.slice(src.indexOf('impl ::sittir_core::render::Render for LexicalDeclarationTerminatorTransportSlot {'));
+		const render = src.slice(
+			src.indexOf('impl ::sittir_core::render::Render for LexicalDeclarationTerminatorTransportSlot {')
+		);
 		expect(render.slice(0, render.indexOf('\n}\n'))).toMatch(
 			/Literal3_73_65_6d_69 => \{\s*w\.site_at\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE\);\s*let written = w\.text\(";"\);/
 		);
@@ -462,9 +465,7 @@ describe('render options on transports', () => {
 		expect(src).toContain('.with_sources(ctx.sources).with_options(ctx.options)');
 		expect(src).not.toMatch(/t\.\w+_after\.get_or_insert/);
 	});
-
 });
-
 
 describe('the typed sink replaces the mark-based Display path', () => {
 	it('decodes a keyword the parser shows as an identifier under the keyword id', async () => {
@@ -475,7 +476,9 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		const from = transportRs.indexOf('impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {');
 		expect(from).toBeGreaterThan(-1);
 		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
-		const tokenId = _rustKindEntries?.find((entry) => entry.literalText === 'default' || entry.symbolName === 'default')?.id;
+		const tokenId = _rustKindEntries?.find(
+			(entry) => entry.literalText === 'default' || entry.symbolName === 'default'
+		)?.id;
 		expect(tokenId).toBeDefined();
 		expect(_rustKindEntries?.some((entry) => entry.kind === '_reserved_identifier')).toBe(false);
 		expect(body).toContain(`${tokenId} => Ok(Self::DefaultKeyword(`);
@@ -491,8 +494,12 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		// The class taken from the source beats the table and loses to the wire:
 		// the classification precedes every `get_or_insert` fill of the same site.
 		expect(body.indexOf('classify_list_gaps')).toBeLessThan(body.indexOf('.get_or_insert(ctx.options.spacing['));
-		expect(body).toContain('if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }');
-		expect(body).toContain('if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }');
+		expect(body).toContain(
+			'if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }'
+		);
+		expect(body).toContain(
+			'if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }'
+		);
 	});
 	it('renders through the typed sink and writes no mark character', async () => {
 		const transportRs = await getRustTemplatesRs();
@@ -568,7 +575,11 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		const transportRs = await getRustTemplatesRs();
 		const optionsRs = await getRustOptionsRs();
 		const table = optionsRs.slice(optionsRs.indexOf('pub static SEATS_SOURCE_FILE_STATEMENTS: &[u16] = &['));
-		const cells = table.slice(table.indexOf('\n') + 1, table.indexOf('];')).split(',').map((c) => c.trim()).filter(Boolean);
+		const cells = table
+			.slice(table.indexOf('\n') + 1, table.indexOf('];'))
+			.split(',')
+			.map((c) => c.trim())
+			.filter(Boolean);
 		expect(cells.filter((c) => c !== 'NO_SITE').length).toBeGreaterThan(0);
 		expect(cells.every((c) => c === 'NO_SITE' || /^\d+$/.test(c))).toBe(true);
 		expect(transportRs).toContain(
@@ -582,7 +593,10 @@ describe('the typed sink replaces the mark-based Display path', () => {
 
 	it('binds a list view over site ids and writes a seam site as a call', async () => {
 		const transportRs = await getRustTemplatesRs();
-		const block = transportRs.slice(transportRs.indexOf('fn render_block('), transportRs.indexOf('fn render_block(') + 2000);
+		const block = transportRs.slice(
+			transportRs.indexOf('fn render_block('),
+			transportRs.indexOf('fn render_block(') + 2000
+		);
 		expect(block).toMatch(/after: node\.statements_separator_space\.unwrap_or\(0\),/);
 		expect(block).toMatch(/w\.site_at\(options::SITE_\w+_LBRACE_AFTER\);/);
 		expect(block).toContain('w.text("{")?;');
