@@ -131,7 +131,6 @@ describe('post-evaluate invariant', () => {
 				'conflicts',
 				'precedences',
 				'word',
-				// The grammar's reserved wordsets, verbatim (ReservedWordsets).
 				'reserved',
 				'references',
 				'ruleCatalog',
