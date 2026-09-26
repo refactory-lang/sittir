@@ -18,13 +18,13 @@ function readComplexPattern(pattern: string): ComplexPattern {
 			body(): {
 				content(): {
 					alternatives(): readonly {
-						casePatterns(): { casePatterns(): readonly { content(): ComplexPattern }[] };
+						casePatterns(): { casePatterns(): readonly { content(): { content(): ComplexPattern } }[] };
 					}[];
 				};
 			};
 		}[];
 	};
-	return module.statements()[0]!.body().content().alternatives()[0]!.casePatterns().casePatterns()[0]!.content();
+	return module.statements()[0]!.body().content().alternatives()[0]!.casePatterns().casePatterns()[0]!.content().content();
 }
 
 describe('complex_pattern names its parts', () => {

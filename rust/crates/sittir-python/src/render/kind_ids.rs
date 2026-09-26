@@ -703,7 +703,7 @@ pub fn is_alias_envelope(kind: KindId) -> bool {
 /// when it has no named child: an unnamed slot of the kind stores terminal
 /// kinds, and the wrap layer reclaims that slot's value from `$other`.
 pub fn keeps_anonymous_children(kind: KindId) -> bool {
-    matches!(kind.0, 131 | 138 | 141 | 142 | 143 | 151 | 177 | 179 | 216 | 222 | 245 | 263 | 269 | 276 | 293 | 294 | 295)
+    matches!(kind.0, 131 | 138 | 141 | 142 | 143 | 151 | 177 | 180 | 216 | 222 | 245 | 263 | 269 | 276 | 293 | 294 | 295)
 }
 
 /// The model slot a child is stored under where its name differs from the
@@ -951,6 +951,21 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (179, None, "case_as_pattern") => Some("content"),
         (179, None, "keyword_pattern") => Some("content"),
         (179, None, "simple_pattern") => Some("content"),
+        (180, None, "case_list_pattern") => Some("content"),
+        (180, None, "case_tuple_pattern") => Some("content"),
+        (180, None, "class_pattern") => Some("content"),
+        (180, None, "complex_pattern") => Some("content"),
+        (180, None, "concatenated_string") => Some("content"),
+        (180, None, "dict_pattern") => Some("content"),
+        (180, None, "dotted_name") => Some("content"),
+        (180, None, "false") => Some("content"),
+        (180, None, "none") => Some("content"),
+        (180, None, "simple_pattern_negative") => Some("content"),
+        (180, None, "splat_pattern") => Some("content"),
+        (180, None, "string") => Some("content"),
+        (180, None, "true") => Some("content"),
+        (180, None, "union_pattern") => Some("content"),
+        (180, None, "wildcard_pattern") => Some("content"),
         (214, None, "async_keyword") => Some("pattern"),
         (214, None, "attribute") => Some("pattern"),
         (214, None, "await_keyword") => Some("pattern"),

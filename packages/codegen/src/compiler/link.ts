@@ -58,6 +58,7 @@ import {
 	parserSupertypeOf,
 	isRenamedEntry,
 	isSurfaceHiddenKind,
+	isAliasedHiddenStorage,
 	stampVisibleExternals,
 	modelKindOfEntry,
 	type GeneratedIdTables,
@@ -1769,7 +1770,7 @@ function classifyHiddenChoiceRule(
 		};
 	}
 
-	if (shape === 'supertype' || supertypes.has(name)) {
+	if ((shape === 'supertype' && !isAliasedHiddenStorage(name, ctx.kindEntries)) || supertypes.has(name)) {
 		const flatMembers = flattenNestedChoiceMembers(rule.members);
 		const subtypes = collectSubtypeRefs(rule, ctx);
 		if (subtypes.length > 0) {

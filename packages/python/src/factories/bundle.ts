@@ -53,6 +53,7 @@ export const block = bundle(F.buildBlock, C.coerceToBlock);
 export const expressionList = bundle(F.buildExpressionList, C.coerceToExpressionList);
 export const dottedName = bundle(F.buildDottedName, C.coerceToDottedName);
 export const casePattern = bundle(F.buildCasePattern, C.coerceToCasePattern);
+export const simplePattern = bundle(F.buildSimplePattern, C.coerceToSimplePattern);
 export const caseAsPattern = bundle(F.buildCaseAsPattern, C.coerceToCaseAsPattern);
 export const unionPattern = bundle(F.buildUnionPattern, C.coerceToUnionPattern);
 export const dictPattern = bundle(F.buildDictPattern, C.coerceToDictPattern);

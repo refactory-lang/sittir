@@ -75,6 +75,7 @@ pub enum AnyTransport {
     ExpressionList(ExpressionListTransport),
     DottedName(DottedNameTransport),
     CasePattern(CasePatternTransport),
+    SimplePattern(SimplePatternTransport),
     CaseAsPattern(CaseAsPatternTransport),
     UnionPattern(UnionPatternTransport),
     DictPattern(DictPatternTransport),
@@ -428,6 +429,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::ExpressionList(t) => t.prepare(ctx),
             AnyTransport::DottedName(t) => t.prepare(ctx),
             AnyTransport::CasePattern(t) => t.prepare(ctx),
+            AnyTransport::SimplePattern(t) => t.prepare(ctx),
             AnyTransport::CaseAsPattern(t) => t.prepare(ctx),
             AnyTransport::UnionPattern(t) => t.prepare(ctx),
             AnyTransport::DictPattern(t) => t.prepare(ctx),
@@ -953,6 +955,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: case_pattern (CASE_PATTERN)
                 179 => Ok(AnyTransport::CasePattern(
                     CasePatternTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _simple_pattern (_SIMPLE_PATTERN)
+                180 => Ok(AnyTransport::SimplePattern(
+                    SimplePatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: case_as_pattern (CASE_AS_PATTERN)
                 181 => Ok(AnyTransport::CaseAsPattern(
@@ -9859,21 +9865,7 @@ impl ::sittir_core::render::Render for ExpressionListTailTransportSlot {
 pub enum CasePatternContentTransportSlot {
     CaseAsPattern(CaseAsPatternTransport),
     KeywordPattern(KeywordPatternTransport),
-    ClassPattern(ClassPatternTransport),
-    SplatPattern(SplatPatternTransport),
-    UnionPattern(UnionPatternTransport),
-    CaseListPattern(CaseListPatternTransport),
-    CaseTuplePattern(CaseTuplePatternTransport),
-    DictPattern(DictPatternTransport),
-    String(StringTransport),
-    ConcatenatedString(ConcatenatedStringTransport),
-    True(TrueTransport),
-    False(FalseTransport),
-    None(NoneTransport),
-    SimplePatternNegative(SimplePatternNegativeTransport),
-    ComplexPattern(ComplexPatternTransport),
-    DottedName(DottedNameTransport),
-    WildcardPattern(WildcardPatternTransport),
+    SimplePattern(SimplePatternTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for CasePatternContentTransportSlot {
@@ -9881,21 +9873,7 @@ impl ::sittir_core::prepare::Prepare for CasePatternContentTransportSlot {
         match self {
             CasePatternContentTransportSlot::CaseAsPattern(t) => t.prepare(ctx),
             CasePatternContentTransportSlot::KeywordPattern(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::ClassPattern(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::SplatPattern(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::UnionPattern(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::CaseListPattern(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::CaseTuplePattern(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::DictPattern(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::String(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::ConcatenatedString(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::True(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::False(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::None(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::SimplePatternNegative(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::ComplexPattern(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::DottedName(t) => t.prepare(ctx),
-            CasePatternContentTransportSlot::WildcardPattern(t) => t.prepare(ctx),
+            CasePatternContentTransportSlot::SimplePattern(t) => t.prepare(ctx),
         }
     }
 }
@@ -9905,21 +9883,7 @@ impl ::sittir_core::view::KindOf for CasePatternContentTransportSlot {
         match self {
             Self::CaseAsPattern(inner) => inner.kind_in(kinds),
             Self::KeywordPattern(inner) => inner.kind_in(kinds),
-            Self::ClassPattern(inner) => inner.kind_in(kinds),
-            Self::SplatPattern(inner) => inner.kind_in(kinds),
-            Self::UnionPattern(inner) => inner.kind_in(kinds),
-            Self::CaseListPattern(inner) => inner.kind_in(kinds),
-            Self::CaseTuplePattern(inner) => inner.kind_in(kinds),
-            Self::DictPattern(inner) => inner.kind_in(kinds),
-            Self::String(inner) => inner.kind_in(kinds),
-            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
-            Self::True(inner) => inner.kind_in(kinds),
-            Self::False(inner) => inner.kind_in(kinds),
-            Self::None(inner) => inner.kind_in(kinds),
-            Self::SimplePatternNegative(inner) => inner.kind_in(kinds),
-            Self::ComplexPattern(inner) => inner.kind_in(kinds),
-            Self::DottedName(inner) => inner.kind_in(kinds),
-            Self::WildcardPattern(inner) => inner.kind_in(kinds),
+            Self::SimplePattern(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -9933,76 +9897,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    71 => Ok(Self::True(
-                        TrueTransport::from_napi_value(env, napi_val)?
-                    )),
-                    72 => Ok(Self::False(
-                        FalseTransport::from_napi_value(env, napi_val)?
-                    )),
-                    73 => Ok(Self::None(
-                        NoneTransport::from_napi_value(env, napi_val)?
-                    )),
-                    278 => Ok(Self::WildcardPattern(
-                        WildcardPatternTransport::from_napi_value(env, napi_val)?
-                    )),
                     181 => Ok(Self::CaseAsPattern(
                         CaseAsPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     185 => Ok(Self::KeywordPattern(
                         KeywordPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    187 => Ok(Self::ClassPattern(
-                        ClassPatternTransport::from_napi_value(env, napi_val)?
+                    180 => Ok(Self::SimplePattern(
+                        SimplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    186 => Ok(Self::SplatPattern(
-                        SplatPatternTransport::from_napi_value(env, napi_val)?
+                    334 => Ok(Self::SimplePattern(
+                        SimplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    182 => Ok(Self::UnionPattern(
-                        UnionPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    273 => Ok(Self::CaseListPattern(
-                        CaseListPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    272 => Ok(Self::CaseTuplePattern(
-                        CaseTuplePatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    183 => Ok(Self::DictPattern(
-                        DictPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    244 => Ok(Self::String(
-                        StringTransport::from_napi_value(env, napi_val)?
-                    )),
-                    243 => Ok(Self::ConcatenatedString(
-                        ConcatenatedStringTransport::from_napi_value(env, napi_val)?
-                    )),
-                    281 => Ok(Self::SimplePatternNegative(
-                        SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    188 => Ok(Self::ComplexPattern(
-                        ComplexPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    178 => Ok(Self::DottedName(
-                        DottedNameTransport::from_napi_value(env, napi_val)?
-                    )),
-                    334 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = TrueTransport::from_napi_value(env, napi_val) { return Ok(Self::True(v)); }
-                        if let Ok(v) = FalseTransport::from_napi_value(env, napi_val) { return Ok(Self::False(v)); }
-                        if let Ok(v) = NoneTransport::from_napi_value(env, napi_val) { return Ok(Self::None(v)); }
-                        if let Ok(v) = WildcardPatternTransport::from_napi_value(env, napi_val) { return Ok(Self::WildcardPattern(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 334 in CasePatternContentTransportSlot: no kind-keyed child slot to unwrap"))
-                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in CasePatternContentTransportSlot",
                     ))),
@@ -10014,76 +9920,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                     ::napi::Error::from_reason("$type property missing in CasePatternContentTransportSlot")
                 )?;
                 match kind_id {
-                    71 => Ok(Self::True(
-                        TrueTransport::from_napi_value(env, napi_val)?
-                    )),
-                    72 => Ok(Self::False(
-                        FalseTransport::from_napi_value(env, napi_val)?
-                    )),
-                    73 => Ok(Self::None(
-                        NoneTransport::from_napi_value(env, napi_val)?
-                    )),
-                    278 => Ok(Self::WildcardPattern(
-                        WildcardPatternTransport::from_napi_value(env, napi_val)?
-                    )),
                     181 => Ok(Self::CaseAsPattern(
                         CaseAsPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     185 => Ok(Self::KeywordPattern(
                         KeywordPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    187 => Ok(Self::ClassPattern(
-                        ClassPatternTransport::from_napi_value(env, napi_val)?
+                    180 => Ok(Self::SimplePattern(
+                        SimplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    186 => Ok(Self::SplatPattern(
-                        SplatPatternTransport::from_napi_value(env, napi_val)?
+                    334 => Ok(Self::SimplePattern(
+                        SimplePatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    182 => Ok(Self::UnionPattern(
-                        UnionPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    273 => Ok(Self::CaseListPattern(
-                        CaseListPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    272 => Ok(Self::CaseTuplePattern(
-                        CaseTuplePatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    183 => Ok(Self::DictPattern(
-                        DictPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    244 => Ok(Self::String(
-                        StringTransport::from_napi_value(env, napi_val)?
-                    )),
-                    243 => Ok(Self::ConcatenatedString(
-                        ConcatenatedStringTransport::from_napi_value(env, napi_val)?
-                    )),
-                    281 => Ok(Self::SimplePatternNegative(
-                        SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    188 => Ok(Self::ComplexPattern(
-                        ComplexPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    178 => Ok(Self::DottedName(
-                        DottedNameTransport::from_napi_value(env, napi_val)?
-                    )),
-                    334 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = TrueTransport::from_napi_value(env, napi_val) { return Ok(Self::True(v)); }
-                        if let Ok(v) = FalseTransport::from_napi_value(env, napi_val) { return Ok(Self::False(v)); }
-                        if let Ok(v) = NoneTransport::from_napi_value(env, napi_val) { return Ok(Self::None(v)); }
-                        if let Ok(v) = WildcardPatternTransport::from_napi_value(env, napi_val) { return Ok(Self::WildcardPattern(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 334 in CasePatternContentTransportSlot: no kind-keyed child slot to unwrap"))
-                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in CasePatternContentTransportSlot",
                     ))),
@@ -10128,21 +9976,7 @@ fn case_pattern_content_transport_slot_to_any(t: CasePatternContentTransportSlot
     match t {
         CasePatternContentTransportSlot::CaseAsPattern(inner) => AnyTransport::CaseAsPattern(inner),
         CasePatternContentTransportSlot::KeywordPattern(inner) => AnyTransport::KeywordPattern(inner),
-        CasePatternContentTransportSlot::ClassPattern(inner) => AnyTransport::ClassPattern(inner),
-        CasePatternContentTransportSlot::SplatPattern(inner) => AnyTransport::SplatPattern(inner),
-        CasePatternContentTransportSlot::UnionPattern(inner) => AnyTransport::UnionPattern(inner),
-        CasePatternContentTransportSlot::CaseListPattern(inner) => AnyTransport::CaseListPattern(inner),
-        CasePatternContentTransportSlot::CaseTuplePattern(inner) => AnyTransport::CaseTuplePattern(inner),
-        CasePatternContentTransportSlot::DictPattern(inner) => AnyTransport::DictPattern(inner),
-        CasePatternContentTransportSlot::String(inner) => AnyTransport::String(inner),
-        CasePatternContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        CasePatternContentTransportSlot::True(inner) => AnyTransport::True(inner),
-        CasePatternContentTransportSlot::False(inner) => AnyTransport::False(inner),
-        CasePatternContentTransportSlot::None(inner) => AnyTransport::None(inner),
-        CasePatternContentTransportSlot::SimplePatternNegative(inner) => AnyTransport::SimplePatternNegative(inner),
-        CasePatternContentTransportSlot::ComplexPattern(inner) => AnyTransport::ComplexPattern(inner),
-        CasePatternContentTransportSlot::DottedName(inner) => AnyTransport::DottedName(inner),
-        CasePatternContentTransportSlot::WildcardPattern(inner) => AnyTransport::WildcardPattern(inner),
+        CasePatternContentTransportSlot::SimplePattern(inner) => AnyTransport::SimplePattern(inner),
     }
 }
 
@@ -10151,21 +9985,246 @@ impl ::sittir_core::render::Render for CasePatternContentTransportSlot {
         match self {
             CasePatternContentTransportSlot::CaseAsPattern(inner) => inner.render(w),
             CasePatternContentTransportSlot::KeywordPattern(inner) => inner.render(w),
-            CasePatternContentTransportSlot::ClassPattern(inner) => inner.render(w),
-            CasePatternContentTransportSlot::SplatPattern(inner) => inner.render(w),
-            CasePatternContentTransportSlot::UnionPattern(inner) => inner.render(w),
-            CasePatternContentTransportSlot::CaseListPattern(inner) => inner.render(w),
-            CasePatternContentTransportSlot::CaseTuplePattern(inner) => inner.render(w),
-            CasePatternContentTransportSlot::DictPattern(inner) => inner.render(w),
-            CasePatternContentTransportSlot::String(inner) => inner.render(w),
-            CasePatternContentTransportSlot::ConcatenatedString(inner) => inner.render(w),
-            CasePatternContentTransportSlot::True(inner) => inner.render(w),
-            CasePatternContentTransportSlot::False(inner) => inner.render(w),
-            CasePatternContentTransportSlot::None(inner) => inner.render(w),
-            CasePatternContentTransportSlot::SimplePatternNegative(inner) => inner.render(w),
-            CasePatternContentTransportSlot::ComplexPattern(inner) => inner.render(w),
-            CasePatternContentTransportSlot::DottedName(inner) => inner.render(w),
-            CasePatternContentTransportSlot::WildcardPattern(inner) => inner.render(w),
+            CasePatternContentTransportSlot::SimplePattern(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum SimplePatternContentTransportSlot {
+    ClassPattern(ClassPatternTransport),
+    SplatPattern(SplatPatternTransport),
+    UnionPattern(UnionPatternTransport),
+    CaseListPattern(CaseListPatternTransport),
+    CaseTuplePattern(CaseTuplePatternTransport),
+    DictPattern(DictPatternTransport),
+    String(StringTransport),
+    ConcatenatedString(ConcatenatedStringTransport),
+    SimplePatternNegative(SimplePatternNegativeTransport),
+    ComplexPattern(ComplexPatternTransport),
+    DottedName(DottedNameTransport),
+    Literal11_74_72_75_65,
+    Literal12_66_61_6c_73_65,
+    Literal13_6e_6f_6e_65,
+    Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e,
+}
+
+impl ::sittir_core::prepare::Prepare for SimplePatternContentTransportSlot {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            SimplePatternContentTransportSlot::ClassPattern(t) => t.prepare(ctx),
+            SimplePatternContentTransportSlot::SplatPattern(t) => t.prepare(ctx),
+            SimplePatternContentTransportSlot::UnionPattern(t) => t.prepare(ctx),
+            SimplePatternContentTransportSlot::CaseListPattern(t) => t.prepare(ctx),
+            SimplePatternContentTransportSlot::CaseTuplePattern(t) => t.prepare(ctx),
+            SimplePatternContentTransportSlot::DictPattern(t) => t.prepare(ctx),
+            SimplePatternContentTransportSlot::String(t) => t.prepare(ctx),
+            SimplePatternContentTransportSlot::ConcatenatedString(t) => t.prepare(ctx),
+            SimplePatternContentTransportSlot::SimplePatternNegative(t) => t.prepare(ctx),
+            SimplePatternContentTransportSlot::ComplexPattern(t) => t.prepare(ctx),
+            SimplePatternContentTransportSlot::DottedName(t) => t.prepare(ctx),
+            SimplePatternContentTransportSlot::Literal11_74_72_75_65 => Ok(()),
+            SimplePatternContentTransportSlot::Literal12_66_61_6c_73_65 => Ok(()),
+            SimplePatternContentTransportSlot::Literal13_6e_6f_6e_65 => Ok(()),
+            SimplePatternContentTransportSlot::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for SimplePatternContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ClassPattern(inner) => inner.kind_in(kinds),
+            Self::SplatPattern(inner) => inner.kind_in(kinds),
+            Self::UnionPattern(inner) => inner.kind_in(kinds),
+            Self::CaseListPattern(inner) => inner.kind_in(kinds),
+            Self::CaseTuplePattern(inner) => inner.kind_in(kinds),
+            Self::DictPattern(inner) => inner.kind_in(kinds),
+            Self::String(inner) => inner.kind_in(kinds),
+            Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::SimplePatternNegative(inner) => inner.kind_in(kinds),
+            Self::ComplexPattern(inner) => inner.kind_in(kinds),
+            Self::DottedName(inner) => inner.kind_in(kinds),
+            Self::Literal11_74_72_75_65 => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
+            Self::Literal12_66_61_6c_73_65 => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
+            Self::Literal13_6e_6f_6e_65 => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
+            Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    71 => Ok(Self::Literal11_74_72_75_65),
+                    72 => Ok(Self::Literal12_66_61_6c_73_65),
+                    73 => Ok(Self::Literal13_6e_6f_6e_65),
+                    278 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
+                    187 => Ok(Self::ClassPattern(
+                        ClassPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    186 => Ok(Self::SplatPattern(
+                        SplatPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    182 => Ok(Self::UnionPattern(
+                        UnionPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    273 => Ok(Self::CaseListPattern(
+                        CaseListPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    272 => Ok(Self::CaseTuplePattern(
+                        CaseTuplePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    183 => Ok(Self::DictPattern(
+                        DictPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    244 => Ok(Self::String(
+                        StringTransport::from_napi_value(env, napi_val)?
+                    )),
+                    243 => Ok(Self::ConcatenatedString(
+                        ConcatenatedStringTransport::from_napi_value(env, napi_val)?
+                    )),
+                    281 => Ok(Self::SimplePatternNegative(
+                        SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    188 => Ok(Self::ComplexPattern(
+                        ComplexPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    178 => Ok(Self::DottedName(
+                        DottedNameTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SimplePatternContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in SimplePatternContentTransportSlot")
+                )?;
+                match kind_id {
+                    71 => Ok(Self::Literal11_74_72_75_65),
+                    72 => Ok(Self::Literal12_66_61_6c_73_65),
+                    73 => Ok(Self::Literal13_6e_6f_6e_65),
+                    278 => Ok(Self::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e),
+                    187 => Ok(Self::ClassPattern(
+                        ClassPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    186 => Ok(Self::SplatPattern(
+                        SplatPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    182 => Ok(Self::UnionPattern(
+                        UnionPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    273 => Ok(Self::CaseListPattern(
+                        CaseListPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    272 => Ok(Self::CaseTuplePattern(
+                        CaseTuplePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    183 => Ok(Self::DictPattern(
+                        DictPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    244 => Ok(Self::String(
+                        StringTransport::from_napi_value(env, napi_val)?
+                    )),
+                    243 => Ok(Self::ConcatenatedString(
+                        ConcatenatedStringTransport::from_napi_value(env, napi_val)?
+                    )),
+                    281 => Ok(Self::SimplePatternNegative(
+                        SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    188 => Ok(Self::ComplexPattern(
+                        ComplexPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    178 => Ok(Self::DottedName(
+                        DottedNameTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SimplePatternContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("SimplePatternContentTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SimplePatternContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SimplePatternContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SimplePatternContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SimplePatternContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SimplePatternContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SimplePatternContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn simple_pattern_content_transport_slot_to_any(t: SimplePatternContentTransportSlot) -> AnyTransport {
+    match t {
+        SimplePatternContentTransportSlot::ClassPattern(inner) => AnyTransport::ClassPattern(inner),
+        SimplePatternContentTransportSlot::SplatPattern(inner) => AnyTransport::SplatPattern(inner),
+        SimplePatternContentTransportSlot::UnionPattern(inner) => AnyTransport::UnionPattern(inner),
+        SimplePatternContentTransportSlot::CaseListPattern(inner) => AnyTransport::CaseListPattern(inner),
+        SimplePatternContentTransportSlot::CaseTuplePattern(inner) => AnyTransport::CaseTuplePattern(inner),
+        SimplePatternContentTransportSlot::DictPattern(inner) => AnyTransport::DictPattern(inner),
+        SimplePatternContentTransportSlot::String(inner) => AnyTransport::String(inner),
+        SimplePatternContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
+        SimplePatternContentTransportSlot::SimplePatternNegative(inner) => AnyTransport::SimplePatternNegative(inner),
+        SimplePatternContentTransportSlot::ComplexPattern(inner) => AnyTransport::ComplexPattern(inner),
+        SimplePatternContentTransportSlot::DottedName(inner) => AnyTransport::DottedName(inner),
+        SimplePatternContentTransportSlot::Literal11_74_72_75_65 => AnyTransport::Literal11_74_72_75_65,
+        SimplePatternContentTransportSlot::Literal12_66_61_6c_73_65 => AnyTransport::Literal12_66_61_6c_73_65,
+        SimplePatternContentTransportSlot::Literal13_6e_6f_6e_65 => AnyTransport::Literal13_6e_6f_6e_65,
+        SimplePatternContentTransportSlot::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => AnyTransport::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e,
+    }
+}
+
+impl ::sittir_core::render::Render for SimplePatternContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            SimplePatternContentTransportSlot::ClassPattern(inner) => inner.render(w),
+            SimplePatternContentTransportSlot::SplatPattern(inner) => inner.render(w),
+            SimplePatternContentTransportSlot::UnionPattern(inner) => inner.render(w),
+            SimplePatternContentTransportSlot::CaseListPattern(inner) => inner.render(w),
+            SimplePatternContentTransportSlot::CaseTuplePattern(inner) => inner.render(w),
+            SimplePatternContentTransportSlot::DictPattern(inner) => inner.render(w),
+            SimplePatternContentTransportSlot::String(inner) => inner.render(w),
+            SimplePatternContentTransportSlot::ConcatenatedString(inner) => inner.render(w),
+            SimplePatternContentTransportSlot::SimplePatternNegative(inner) => inner.render(w),
+            SimplePatternContentTransportSlot::ComplexPattern(inner) => inner.render(w),
+            SimplePatternContentTransportSlot::DottedName(inner) => inner.render(w),
+            SimplePatternContentTransportSlot::Literal11_74_72_75_65 => w.text("True"),
+            SimplePatternContentTransportSlot::Literal12_66_61_6c_73_65 => w.text("False"),
+            SimplePatternContentTransportSlot::Literal13_6e_6f_6e_65 => w.text("None"),
+            SimplePatternContentTransportSlot::Literal14_77_69_6c_64_63_61_72_64_5f_70_61_74_74_65_72_6e => w.text("_"),
         }
     }
 }
@@ -27821,6 +27880,62 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CasePatternTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         CasePatternTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct SimplePatternTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
+    pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: ::sittir_core::SlotValue<SimplePatternContentTransportSlot>,
+}
+
+impl ::sittir_core::view::KindOf for SimplePatternTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(180)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for SimplePatternTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(180) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for SimplePatternTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_simple_pattern(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for SimplePatternTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.content.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SimplePatternTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SimplePatternTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SimplePatternTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SimplePatternTransport::to_napi_value(env, *val)
     }
 }
 
@@ -48150,6 +48265,15 @@ impl ::sittir_core::prepare::SeatTarget for CasePatternContentTransportSlot {
         match self {
             Self::CaseAsPattern(t) => t.seat_target(table),
             Self::KeywordPattern(t) => t.seat_target(table),
+            #[allow(unreachable_patterns)]
+            _ => None,
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for SimplePatternContentTransportSlot {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
             Self::ClassPattern(t) => t.seat_target(table),
             Self::SplatPattern(t) => t.seat_target(table),
             Self::CaseListPattern(t) => t.seat_target(table),
@@ -49654,6 +49778,12 @@ fn render_dotted_name(node: &DottedNameTransport, w: &mut dyn ::sittir_core::ren
 }
 
 fn render_case_pattern(node: &CasePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = &node.content;
+    content.render(w)?;
+    Ok(())
+}
+
+fn render_simple_pattern(node: &SimplePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     content.render(w)?;
     Ok(())
@@ -51864,6 +51994,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::ExpressionList(inner) => inner.kind_in(kinds),
             Self::DottedName(inner) => inner.kind_in(kinds),
             Self::CasePattern(inner) => inner.kind_in(kinds),
+            Self::SimplePattern(inner) => inner.kind_in(kinds),
             Self::CaseAsPattern(inner) => inner.kind_in(kinds),
             Self::UnionPattern(inner) => inner.kind_in(kinds),
             Self::DictPattern(inner) => inner.kind_in(kinds),
@@ -52154,6 +52285,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::ExpressionList(t) => t.render(w),
             AnyTransport::DottedName(t) => t.render(w),
             AnyTransport::CasePattern(t) => t.render(w),
+            AnyTransport::SimplePattern(t) => t.render(w),
             AnyTransport::CaseAsPattern(t) => t.render(w),
             AnyTransport::UnionPattern(t) => t.render(w),
             AnyTransport::DictPattern(t) => t.render(w),

@@ -20,7 +20,6 @@ import type {
 	ImportIdentifier,
 	ImportSpecifier,
 	IndexSignature,
-	LhsExpression,
 	MetaProperty,
 	ModuleExportName,
 	Number,
@@ -203,6 +202,9 @@ export interface IsGuards {
 	subscriptExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SubscriptExpression };
+	LhsExpression<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LhsExpression };
 	assignmentExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssignmentExpression };
@@ -529,7 +531,6 @@ export interface IsGuards {
 	primaryExpression(v: { readonly $type: string | number } | number): v is PrimaryExpression;
 	formalParameter(v: { readonly $type: string | number } | number): v is FormalParameter;
 	callExpression(v: { readonly $type: string | number } | number): v is CallExpression;
-	lhsExpression(v: { readonly $type: string | number } | number): v is LhsExpression;
 	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number } | number): v is DestructuringPattern;
 	updateExpression(v: { readonly $type: string | number } | number): v is UpdateExpression;
@@ -629,6 +630,7 @@ export interface AssertGuards {
 	subscriptExpression(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.SubscriptExpression };
+	LhsExpression(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.LhsExpression };
 	assignmentExpression(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.AssignmentExpression };
@@ -833,7 +835,6 @@ export interface AssertGuards {
 	primaryExpression(v: { readonly $type: string | number } | number): asserts v is PrimaryExpression;
 	formalParameter(v: { readonly $type: string | number } | number): asserts v is FormalParameter;
 	callExpression(v: { readonly $type: string | number } | number): asserts v is CallExpression;
-	lhsExpression(v: { readonly $type: string | number } | number): asserts v is LhsExpression;
 	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): asserts v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number } | number): asserts v is DestructuringPattern;
 	updateExpression(v: { readonly $type: string | number } | number): asserts v is UpdateExpression;
@@ -881,9 +882,6 @@ const _supertype_primaryExpression_ids = new Set<number>([
 ]);
 const _supertype_formalParameter_ids = new Set<number>([315, 316]);
 const _supertype_callExpression_ids = new Set<number>([410, 411, 412]);
-const _supertype_lhsExpression_ids = new Set<number>([
-	251, 252, 124, 1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 231, 235, 287
-]);
 const _supertype_augmentedAssignmentLhs_ids = new Set<number>([
 	251, 252, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 287
 ]);
@@ -894,10 +892,7 @@ const _supertype_comment_ids = new Set<number>([152, 153]);
 const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160, 161]);
 const _supertype_identifier_ids = new Set<number>([124, 1]);
 const _supertype_metaProperty_ids = new Set<number>([429, 430]);
-const _supertype_pattern_ids = new Set<number>([
-	251, 252, 124, 1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 231, 235,
-	287, 279
-]);
+const _supertype_pattern_ids = new Set<number>([253, 279]);
 const _supertype_propertyName_ids = new Set<number>([118, 284]);
 const _supertype_importIdentifier_ids = new Set<number>([1, 7]);
 const _supertype_type_ids = new Set<number>([370, 367, 332, 336]);
@@ -963,6 +958,7 @@ export const is = {
 	awaitExpression: _g(TSKindId.AwaitExpression),
 	memberExpression: _g(TSKindId.MemberExpression),
 	subscriptExpression: _g(TSKindId.SubscriptExpression),
+	LhsExpression: _g(TSKindId.LhsExpression),
 	assignmentExpression: _g(TSKindId.AssignmentExpression),
 	augmentedAssignmentExpression: _g(TSKindId.AugmentedAssignmentExpression),
 	spreadElement: _g(TSKindId.SpreadElement),
@@ -1081,7 +1077,6 @@ export const is = {
 	primaryExpression: _sg(_supertype_primaryExpression_ids),
 	formalParameter: _sg(_supertype_formalParameter_ids),
 	callExpression: _sg(_supertype_callExpression_ids),
-	lhsExpression: _sg(_supertype_lhsExpression_ids),
 	augmentedAssignmentLhs: _sg(_supertype_augmentedAssignmentLhs_ids),
 	destructuringPattern: _sg(_supertype_destructuringPattern_ids),
 	updateExpression: _sg(_supertype_updateExpression_ids),
@@ -1181,6 +1176,7 @@ export const assert = {
 	awaitExpression: _makeAssert('awaitExpression', is.awaitExpression as _AnyGuard),
 	memberExpression: _makeAssert('memberExpression', is.memberExpression as _AnyGuard),
 	subscriptExpression: _makeAssert('subscriptExpression', is.subscriptExpression as _AnyGuard),
+	LhsExpression: _makeAssert('LhsExpression', is.LhsExpression as _AnyGuard),
 	assignmentExpression: _makeAssert('assignmentExpression', is.assignmentExpression as _AnyGuard),
 	augmentedAssignmentExpression: _makeAssert(
 		'augmentedAssignmentExpression',
@@ -1308,7 +1304,6 @@ export const assert = {
 	primaryExpression: _makeAssert('primaryExpression', is.primaryExpression as _AnyGuard),
 	formalParameter: _makeAssert('formalParameter', is.formalParameter as _AnyGuard),
 	callExpression: _makeAssert('callExpression', is.callExpression as _AnyGuard),
-	lhsExpression: _makeAssert('lhsExpression', is.lhsExpression as _AnyGuard),
 	augmentedAssignmentLhs: _makeAssert('augmentedAssignmentLhs', is.augmentedAssignmentLhs as _AnyGuard),
 	destructuringPattern: _makeAssert('destructuringPattern', is.destructuringPattern as _AnyGuard),
 	updateExpression: _makeAssert('updateExpression', is.updateExpression as _AnyGuard),

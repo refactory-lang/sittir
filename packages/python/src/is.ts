@@ -22,7 +22,6 @@ import type {
 	Pattern,
 	PrimaryExpression,
 	RightHandSide,
-	SimplePattern,
 	SimpleStatement,
 	Statement,
 	Suite,
@@ -170,6 +169,9 @@ export interface IsGuards {
 	casePattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CasePattern };
+	SimplePattern<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SimplePattern };
 	unionPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnionPattern };
@@ -403,7 +405,6 @@ export interface IsGuards {
 	compoundStatement(v: { readonly $type: string | number } | number): v is CompoundStatement;
 	withClause(v: { readonly $type: string | number } | number): v is WithClause;
 	suite(v: { readonly $type: string | number } | number): v is Suite;
-	simplePattern(v: { readonly $type: string | number } | number): v is SimplePattern;
 	parameter(v: { readonly $type: string | number } | number): v is Parameter;
 	pattern(v: { readonly $type: string | number } | number): v is Pattern;
 	expressionWithinForInClause(v: { readonly $type: string | number } | number): v is ExpressionWithinForInClause;
@@ -484,6 +485,7 @@ export interface AssertGuards {
 	expressionList(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExpressionList };
 	dottedName(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.DottedName };
 	casePattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CasePattern };
+	SimplePattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.SimplePattern };
 	unionPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.UnionPattern };
 	dictPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.DictPattern };
 	keywordPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.KeywordPattern };
@@ -615,7 +617,6 @@ export interface AssertGuards {
 	compoundStatement(v: { readonly $type: string | number } | number): asserts v is CompoundStatement;
 	withClause(v: { readonly $type: string | number } | number): asserts v is WithClause;
 	suite(v: { readonly $type: string | number } | number): asserts v is Suite;
-	simplePattern(v: { readonly $type: string | number } | number): asserts v is SimplePattern;
 	parameter(v: { readonly $type: string | number } | number): asserts v is Parameter;
 	pattern(v: { readonly $type: string | number } | number): asserts v is Pattern;
 	expressionWithinForInClause(
@@ -651,9 +652,6 @@ const _supertype_expressions_ids = new Set<number>([177]);
 const _supertype_compoundStatement_ids = new Set<number>([147, 153, 154, 155, 158, 161, 170, 174, 150]);
 const _supertype_withClause_ids = new Set<number>([288, 289]);
 const _supertype_suite_ids = new Set<number>([291, 292, 293]);
-const _supertype_simplePattern_ids = new Set<number>([
-	187, 186, 182, 273, 272, 183, 244, 243, 71, 72, 73, 281, 188, 178
-]);
 const _supertype_parameter_ids = new Set<number>([1, 221, 195, 196, 197, 193, 255, 254, 198]);
 const _supertype_pattern_ids = new Set<number>([1, 68, 38, 69, 70, 39, 22, 218, 217, 197, 193, 194]);
 const _supertype_expressionWithinForInClause_ids = new Set<number>([211]);
@@ -719,6 +717,7 @@ export const is = {
 	expressionList: _g(TSKindId.ExpressionList),
 	dottedName: _g(TSKindId.DottedName),
 	casePattern: _g(TSKindId.CasePattern),
+	SimplePattern: _g(TSKindId.SimplePattern),
 	unionPattern: _g(TSKindId.UnionPattern),
 	dictPattern: _g(TSKindId.DictPattern),
 	keywordPattern: _g(TSKindId.KeywordPattern),
@@ -802,7 +801,6 @@ export const is = {
 	compoundStatement: _sg(_supertype_compoundStatement_ids),
 	withClause: _sg(_supertype_withClause_ids),
 	suite: _sg(_supertype_suite_ids),
-	simplePattern: _sg(_supertype_simplePattern_ids),
 	parameter: _sg(_supertype_parameter_ids),
 	pattern: _sg(_supertype_pattern_ids),
 	expressionWithinForInClause: _sg(_supertype_expressionWithinForInClause_ids),
@@ -888,6 +886,7 @@ export const assert = {
 	expressionList: _makeAssert('expressionList', is.expressionList as _AnyGuard),
 	dottedName: _makeAssert('dottedName', is.dottedName as _AnyGuard),
 	casePattern: _makeAssert('casePattern', is.casePattern as _AnyGuard),
+	SimplePattern: _makeAssert('SimplePattern', is.SimplePattern as _AnyGuard),
 	unionPattern: _makeAssert('unionPattern', is.unionPattern as _AnyGuard),
 	dictPattern: _makeAssert('dictPattern', is.dictPattern as _AnyGuard),
 	keywordPattern: _makeAssert('keywordPattern', is.keywordPattern as _AnyGuard),
@@ -971,7 +970,6 @@ export const assert = {
 	compoundStatement: _makeAssert('compoundStatement', is.compoundStatement as _AnyGuard),
 	withClause: _makeAssert('withClause', is.withClause as _AnyGuard),
 	suite: _makeAssert('suite', is.suite as _AnyGuard),
-	simplePattern: _makeAssert('simplePattern', is.simplePattern as _AnyGuard),
 	parameter: _makeAssert('parameter', is.parameter as _AnyGuard),
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
 	expressionWithinForInClause: _makeAssert('expressionWithinForInClause', is.expressionWithinForInClause as _AnyGuard),

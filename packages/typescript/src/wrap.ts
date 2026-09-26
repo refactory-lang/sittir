@@ -686,37 +686,6 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	]),
 	_formal_parameter: new Set(['required_parameter', 'optional_parameter']),
 	call_expression: new Set(['call_expression_call', 'call_expression_template_call', 'call_expression_member']),
-	_lhs_expression: new Set([
-		'member_expression',
-		'subscript_expression',
-		'undefined',
-		'identifier',
-		'declare_keyword',
-		'namespace_keyword',
-		'type_keyword',
-		'public_keyword',
-		'private_keyword',
-		'protected_keyword',
-		'override_keyword',
-		'readonly_keyword',
-		'module_keyword',
-		'any_keyword',
-		'number_keyword',
-		'boolean_keyword',
-		'string_keyword',
-		'symbol_keyword',
-		'export_keyword',
-		'object_keyword',
-		'new_keyword',
-		'get_keyword',
-		'set_keyword',
-		'async_keyword',
-		'static_keyword',
-		'let_keyword',
-		'object_pattern',
-		'array_pattern',
-		'non_null_expression'
-	]),
 	_augmented_assignment_lhs: new Set([
 		'member_expression',
 		'subscript_expression',
@@ -764,40 +733,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	]),
 	_identifier: new Set(['undefined', 'identifier']),
 	meta_property: new Set(['meta_property_new_target', 'meta_property_import_meta']),
-	pattern: new Set([
-		'_lhs_expression',
-		'lhs_expression',
-		'member_expression',
-		'subscript_expression',
-		'undefined',
-		'identifier',
-		'declare_keyword',
-		'namespace_keyword',
-		'type_keyword',
-		'public_keyword',
-		'private_keyword',
-		'protected_keyword',
-		'override_keyword',
-		'readonly_keyword',
-		'module_keyword',
-		'any_keyword',
-		'number_keyword',
-		'boolean_keyword',
-		'string_keyword',
-		'symbol_keyword',
-		'export_keyword',
-		'object_keyword',
-		'new_keyword',
-		'get_keyword',
-		'set_keyword',
-		'async_keyword',
-		'static_keyword',
-		'let_keyword',
-		'object_pattern',
-		'array_pattern',
-		'non_null_expression',
-		'rest_pattern'
-	]),
+	pattern: new Set(['_lhs_expression', 'lhs_expression', 'rest_pattern']),
 	_property_name: new Set([
 		'property_identifier',
 		'private_property_identifier',
@@ -3605,39 +3541,12 @@ export function wrapAssignmentPattern(data: T.AssignmentPattern, tree: TreeHandl
 		{
 			...data,
 			$type: TSKindId.AssignmentPattern as const,
-			_left: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'left',
-					span: (data as _NodeData).$span
-				}),
-				{
-					undefined: 124,
-					declare: 30,
-					namespace: 31,
-					type: 7,
-					public: 32,
-					private: 33,
-					protected: 34,
-					override: 35,
-					readonly: 36,
-					module: 37,
-					any: 38,
-					number: 39,
-					boolean: 40,
-					string: 41,
-					symbol: 42,
-					export: 43,
-					object: 44,
-					new: 45,
-					get: 46,
-					set: 47,
-					async: 48,
-					static: 49,
-					let: 50
-				}
-			),
+			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'left',
+				span: (data as _NodeData).$span
+			}),
 			_right: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 					tree,
@@ -4754,121 +4663,144 @@ export function wrapSubscriptExpression(data: T.SubscriptExpression, tree: TreeH
 	return _node;
 }
 
-export function wrapLhsExpression(
-	data: T.LhsExpression & { readonly $other?: T.LhsExpression | readonly T.LhsExpression[] },
-	tree: TreeHandle
-) {
-	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, [
-		'_member_expression',
-		'_subscript_expression',
-		'_undefined',
-		'_identifier',
-		'_declare_keyword',
-		'_namespace_keyword',
-		'_type_keyword',
-		'_public_keyword',
-		'_private_keyword',
-		'_protected_keyword',
-		'_override_keyword',
-		'_readonly_keyword',
-		'_module_keyword',
-		'_any_keyword',
-		'_number_keyword',
-		'_boolean_keyword',
-		'_string_keyword',
-		'_symbol_keyword',
-		'_export_keyword',
-		'_object_keyword',
-		'_new_keyword',
-		'_get_keyword',
-		'_set_keyword',
-		'_async_keyword',
-		'_static_keyword',
-		'_let_keyword',
-		'_object_pattern',
-		'_array_pattern',
-		'_non_null_expression'
-	]);
-	const kindKeyed = _firstKindKeyedWrapChild(node, [
-		'member_expression',
-		'subscript_expression',
-		'undefined',
-		'identifier',
-		'declare_keyword',
-		'namespace_keyword',
-		'type_keyword',
-		'public_keyword',
-		'private_keyword',
-		'protected_keyword',
-		'override_keyword',
-		'readonly_keyword',
-		'module_keyword',
-		'any_keyword',
-		'number_keyword',
-		'boolean_keyword',
-		'string_keyword',
-		'symbol_keyword',
-		'export_keyword',
-		'object_keyword',
-		'new_keyword',
-		'get_keyword',
-		'set_keyword',
-		'async_keyword',
-		'static_keyword',
-		'let_keyword',
-		'object_pattern',
-		'array_pattern',
-		'non_null_expression'
-	]) as T.LhsExpression | readonly T.LhsExpression[] | undefined;
-	const filtered =
-		kindKeyed ??
-		_filterWrapChildrenByKind(node.$other, [
-			'member_expression',
-			'subscript_expression',
-			'undefined',
-			'identifier',
-			'declare_keyword',
-			'namespace_keyword',
-			'type_keyword',
-			'public_keyword',
-			'private_keyword',
-			'protected_keyword',
-			'override_keyword',
-			'readonly_keyword',
-			'module_keyword',
-			'any_keyword',
-			'number_keyword',
-			'boolean_keyword',
-			'string_keyword',
-			'symbol_keyword',
-			'export_keyword',
-			'object_keyword',
-			'new_keyword',
-			'get_keyword',
-			'set_keyword',
-			'async_keyword',
-			'static_keyword',
-			'let_keyword',
-			'object_pattern',
-			'array_pattern',
-			'non_null_expression'
-		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
-		return drillInSelf<T.LhsExpression>(node as T.LhsExpression, tree);
-	}
-	return drillIn<T.LhsExpression>(
-		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
-			tree,
-			nodeType: node.$type,
-			slotName: 'children',
-			span: (node as _NodeData).$span
-		}),
-		tree
+export function wrapLhsExpression(data: T.LhsExpression, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.LhsExpression as const }, _treeEngine(tree));
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.LhsExpression as const,
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ??
+						readTerminalFromOther<
+							| T.MemberExpression
+							| T.SubscriptExpression
+							| TSKindId.Undefined
+							| T.Identifier
+							| TSKindId.DeclareKeyword
+							| TSKindId.NamespaceKeyword
+							| TSKindId.TypeKeyword
+							| TSKindId.PublicKeyword
+							| TSKindId.PrivateKeyword
+							| TSKindId.ProtectedKeyword
+							| TSKindId.OverrideKeyword
+							| TSKindId.ReadonlyKeyword
+							| TSKindId.ModuleKeyword
+							| TSKindId.AnyKeyword
+							| TSKindId.NumberKeyword
+							| TSKindId.BooleanKeyword
+							| TSKindId.StringKeyword
+							| TSKindId.SymbolKeyword
+							| TSKindId.ExportKeyword
+							| TSKindId.ObjectKeyword
+							| TSKindId.NewKeyword
+							| TSKindId.GetKeyword
+							| TSKindId.SetKeyword
+							| TSKindId.AsyncKeyword
+							| TSKindId.StaticKeyword
+							| TSKindId.LetKeyword
+							| T.ObjectPattern
+							| T.ArrayPattern
+							| T.NonNullExpression
+						>(data, [
+							TSKindId.Undefined,
+							TSKindId.DeclareKeyword,
+							TSKindId.NamespaceKeyword,
+							TSKindId.TypeKeyword,
+							TSKindId.PublicKeyword,
+							TSKindId.PrivateKeyword,
+							TSKindId.ProtectedKeyword,
+							TSKindId.OverrideKeyword,
+							TSKindId.ReadonlyKeyword,
+							TSKindId.ModuleKeyword,
+							TSKindId.AnyKeyword,
+							TSKindId.NumberKeyword,
+							TSKindId.BooleanKeyword,
+							TSKindId.StringKeyword,
+							TSKindId.SymbolKeyword,
+							TSKindId.ExportKeyword,
+							TSKindId.ObjectKeyword,
+							TSKindId.NewKeyword,
+							TSKindId.GetKeyword,
+							TSKindId.SetKeyword,
+							TSKindId.AsyncKeyword,
+							TSKindId.StaticKeyword,
+							TSKindId.LetKeyword
+						]),
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{
+					undefined: 124,
+					declare: 30,
+					namespace: 31,
+					type: 7,
+					public: 32,
+					private: 33,
+					protected: 34,
+					override: 35,
+					readonly: 36,
+					module: 37,
+					any: 38,
+					number: 39,
+					boolean: 40,
+					string: 41,
+					symbol: 42,
+					export: 43,
+					object: 44,
+					new: 45,
+					get: 46,
+					set: 47,
+					async: 48,
+					static: 49,
+					let: 50
+				}
+			),
+
+			content() {
+				return drillIn<
+					| T.MemberExpression
+					| T.SubscriptExpression
+					| TSKindId.Undefined
+					| T.Identifier
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
+					| T.ObjectPattern
+					| T.ArrayPattern
+					| T.NonNullExpression
+				>(this._content, tree);
+			},
+			$with: {
+				content: (v: NonNullable<T.LhsExpression['_content']>) =>
+					wrapLhsExpression({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
 	);
+	return _node;
 }
 
 export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: TreeHandle) {
@@ -4887,15 +4819,12 @@ export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: Tre
 					span: (data as _NodeData).$span
 				})
 			),
-			_left: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'left',
-					span: (data as _NodeData).$span
-				}),
-				{ undefined: 124 }
-			),
+			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'left',
+				span: (data as _NodeData).$span
+			}),
 			_right: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 					tree,
@@ -5969,110 +5898,13 @@ export function wrapPattern(
 	tree: TreeHandle
 ) {
 	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, [
-		'__lhs_expression',
-		'_lhs_expression',
-		'_member_expression',
-		'_subscript_expression',
-		'_undefined',
-		'_identifier',
-		'_declare_keyword',
-		'_namespace_keyword',
-		'_type_keyword',
-		'_public_keyword',
-		'_private_keyword',
-		'_protected_keyword',
-		'_override_keyword',
-		'_readonly_keyword',
-		'_module_keyword',
-		'_any_keyword',
-		'_number_keyword',
-		'_boolean_keyword',
-		'_string_keyword',
-		'_symbol_keyword',
-		'_export_keyword',
-		'_object_keyword',
-		'_new_keyword',
-		'_get_keyword',
-		'_set_keyword',
-		'_async_keyword',
-		'_static_keyword',
-		'_let_keyword',
-		'_object_pattern',
-		'_array_pattern',
-		'_non_null_expression',
-		'_rest_pattern'
-	]);
-	const kindKeyed = _firstKindKeyedWrapChild(node, [
-		'_lhs_expression',
-		'lhs_expression',
-		'member_expression',
-		'subscript_expression',
-		'undefined',
-		'identifier',
-		'declare_keyword',
-		'namespace_keyword',
-		'type_keyword',
-		'public_keyword',
-		'private_keyword',
-		'protected_keyword',
-		'override_keyword',
-		'readonly_keyword',
-		'module_keyword',
-		'any_keyword',
-		'number_keyword',
-		'boolean_keyword',
-		'string_keyword',
-		'symbol_keyword',
-		'export_keyword',
-		'object_keyword',
-		'new_keyword',
-		'get_keyword',
-		'set_keyword',
-		'async_keyword',
-		'static_keyword',
-		'let_keyword',
-		'object_pattern',
-		'array_pattern',
-		'non_null_expression',
-		'rest_pattern'
-	]) as T.Pattern | readonly T.Pattern[] | undefined;
+	const node = _keepModelledSlots(data, ['__lhs_expression', '_lhs_expression', '_rest_pattern']);
+	const kindKeyed = _firstKindKeyedWrapChild(node, ['_lhs_expression', 'lhs_expression', 'rest_pattern']) as
+		| T.Pattern
+		| readonly T.Pattern[]
+		| undefined;
 	const filtered =
-		kindKeyed ??
-		_filterWrapChildrenByKind(node.$other, [
-			'_lhs_expression',
-			'lhs_expression',
-			'member_expression',
-			'subscript_expression',
-			'undefined',
-			'identifier',
-			'declare_keyword',
-			'namespace_keyword',
-			'type_keyword',
-			'public_keyword',
-			'private_keyword',
-			'protected_keyword',
-			'override_keyword',
-			'readonly_keyword',
-			'module_keyword',
-			'any_keyword',
-			'number_keyword',
-			'boolean_keyword',
-			'string_keyword',
-			'symbol_keyword',
-			'export_keyword',
-			'object_keyword',
-			'new_keyword',
-			'get_keyword',
-			'set_keyword',
-			'async_keyword',
-			'static_keyword',
-			'let_keyword',
-			'object_pattern',
-			'array_pattern',
-			'non_null_expression',
-			'rest_pattern'
-		]);
+		kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['_lhs_expression', 'lhs_expression', 'rest_pattern']);
 	if (
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
@@ -6597,39 +6429,12 @@ export function wrapPairPattern(data: T.PairPattern, tree: TreeHandle) {
 					let: 50
 				}
 			),
-			_value: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'value',
-					span: (data as _NodeData).$span
-				}),
-				{
-					undefined: 124,
-					declare: 30,
-					namespace: 31,
-					type: 7,
-					public: 32,
-					private: 33,
-					protected: 34,
-					override: 35,
-					readonly: 36,
-					module: 37,
-					any: 38,
-					number: 39,
-					boolean: 40,
-					string: 41,
-					symbol: 42,
-					export: 43,
-					object: 44,
-					new: 45,
-					get: 46,
-					set: 47,
-					async: 48,
-					static: 49,
-					let: 50
-				}
-			),
+			_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'value',
+				span: (data as _NodeData).$span
+			}),
 
 			key() {
 				return drillIn<
@@ -8602,32 +8407,7 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{
-					undefined: 124,
-					declare: 30,
-					namespace: 31,
-					type: 7,
-					public: 32,
-					private: 33,
-					protected: 34,
-					override: 35,
-					readonly: 36,
-					module: 37,
-					any: 38,
-					number: 39,
-					boolean: 40,
-					string: 41,
-					symbol: 42,
-					export: 43,
-					object: 44,
-					new: 45,
-					get: 46,
-					set: 47,
-					async: 48,
-					static: 49,
-					let: 50,
-					this: 119
-				}
+				{ this: 119 }
 			),
 			_type: normalizeSingularWrapSlot(data._type, 'type', false, data.$type, {
 				tree,
@@ -8748,32 +8528,7 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{
-					undefined: 124,
-					declare: 30,
-					namespace: 31,
-					type: 7,
-					public: 32,
-					private: 33,
-					protected: 34,
-					override: 35,
-					readonly: 36,
-					module: 37,
-					any: 38,
-					number: 39,
-					boolean: 40,
-					string: 41,
-					symbol: 42,
-					export: 43,
-					object: 44,
-					new: 45,
-					get: 46,
-					set: 47,
-					async: 48,
-					static: 49,
-					let: 50,
-					this: 119
-				}
+				{ this: 119 }
 			),
 			_type: normalizeSingularWrapSlot(data._type, 'type', false, data.$type, {
 				tree,
@@ -14124,15 +13879,12 @@ export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.ForHeaderLhs as const,
-			_left: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'left',
-					span: (data as _NodeData).$span
-				}),
-				{ undefined: 124 }
-			),
+			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'left',
+				span: (data as _NodeData).$span
+			}),
 			_operator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
 					tree,

@@ -1003,6 +1003,12 @@ export interface LexicalDeclarationTransport {
   _declarators_separator_space_after?: number
 }
 
+export interface LhsExpressionTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _content: SlotValue<Box<LhsExpressionContentTransportSlot>>
+}
+
 export interface LiteralTypeNegativeNumberTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges

@@ -482,7 +482,8 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		decorator_member_expression: (r) => `@${r}\nclass _W {}`,
 		decorator_call_expression: (r) => `@${r}\nclass _W {}`,
 		decorator_parenthesized_expression: (r) => `@${r}\nclass _W {}`,
-		rest_pattern: (r) => `const [${r}] = [];`
+		rest_pattern: (r) => `const [${r}] = [];`,
+		lhs_expression: (r) => `(${r} = null);`
 	},
 	python: {
 		module: (r) => r,

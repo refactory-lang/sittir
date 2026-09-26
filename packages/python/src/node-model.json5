@@ -10,7 +10,6 @@
     "_left_hand_side",
     "_named_expression_lhs",
     "_right_hand_side",
-    "_simple_pattern",
     "_simple_statement",
     "_statement",
     "_suite",
@@ -81,6 +80,12 @@
         "case_as_pattern": "case_as_pattern",
         "keyword_pattern": "keyword_pattern",
         "simple_pattern": "simple_pattern"
+      }
+    },
+    "_simple_pattern": {
+      "definedBy": "override",
+      "childKind": {
+        "simple_pattern_negative": "negative"
       }
     },
     "yield": {
@@ -815,6 +820,15 @@
       }
     },
     "case_pattern": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_simple_pattern": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -2577,20 +2591,156 @@
     },
     {
       "kind": "_simple_pattern",
-      "modelType": "supertype",
+      "modelType": "envelope",
       "typeName": "SimplePattern",
+      "factoryName": "simplePattern",
       "irKey": "simplePattern",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "class_pattern",
+            "splat_pattern",
+            "union_pattern",
+            "case_list_pattern",
+            "case_tuple_pattern",
+            "dict_pattern",
+            "string",
+            "concatenated_string",
+            "true",
+            "false",
+            "none",
+            "simple_pattern_negative",
+            "complex_pattern",
+            "dotted_name",
+            "wildcard_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "class_pattern",
+              "parseKind": "class_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "splat_pattern",
+              "parseKind": "splat_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "union_pattern",
+              "parseKind": "union_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "case_list_pattern",
+              "parseKind": "case_list_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "case_tuple_pattern",
+              "parseKind": "case_tuple_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "dict_pattern",
+              "parseKind": "dict_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "concatenated_string",
+              "parseKind": "concatenated_string"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "true",
+              "parseKind": "true"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "false",
+              "parseKind": "false"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "none",
+              "parseKind": "none"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "simple_pattern_negative",
+              "parseKind": "simple_pattern_negative",
+              "seat": {
+                "kind": "simple_pattern_negative",
+                "shape": "arm",
+                "mount": "negative"
+              }
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "complex_pattern",
+              "parseKind": "complex_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "dotted_name",
+              "parseKind": "dotted_name"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "wildcard_pattern",
+              "parseKind": "wildcard_pattern"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "_simple_pattern",
+        "case_as_pattern",
         "case_list_pattern",
+        "case_pattern",
         "case_tuple_pattern",
         "class_pattern",
         "complex_pattern",
         "concatenated_string",
         "dict_pattern",
+        "dict_pattern_elements",
         "dotted_name",
         "false",
+        "key_value_pattern",
+        "keyword_pattern",
+        "list_pattern_case_patterns",
         "none",
         "simple_pattern_negative",
         "splat_pattern",
@@ -4464,6 +4614,7 @@
         "list_pattern_case_patterns"
       ],
       "bareAccepts": [
+        "_simple_pattern",
         "case_as_pattern",
         "case_list_pattern",
         "case_pattern",
@@ -4502,7 +4653,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "case_as_pattern",
             "keyword_pattern",
@@ -4535,6 +4686,7 @@
         "content"
       ],
       "bareAccepts": [
+        "_simple_pattern",
         "case_as_pattern",
         "case_list_pattern",
         "case_pattern",
@@ -4581,6 +4733,7 @@
         "case_pattern"
       ],
       "bareAccepts": [
+        "_simple_pattern",
         "case_as_pattern",
         "case_list_pattern",
         "case_pattern",
@@ -4639,6 +4792,7 @@
         "list_pattern_case_patterns"
       ],
       "bareAccepts": [
+        "_simple_pattern",
         "case_as_pattern",
         "case_list_pattern",
         "case_pattern",
@@ -9964,7 +10118,13 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "simple_pattern_negative",
-              "parseKind": "simple_pattern_negative"
+              "parseKind": "simple_pattern_negative",
+              "seat": {
+                "kind": "simple_pattern_negative",
+                "shape": "arm",
+                "mount": "negative",
+                "seated": true
+              }
             },
             {
               "kind": "node-ref",
@@ -10260,7 +10420,12 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "simple_pattern_negative",
-              "parseKind": "simple_pattern_negative"
+              "parseKind": "simple_pattern_negative",
+              "seat": {
+                "kind": "simple_pattern_negative",
+                "shape": "arm",
+                "mount": "negative"
+              }
             },
             {
               "kind": "node-ref",
@@ -10765,6 +10930,7 @@
         "case_pattern"
       ],
       "bareAccepts": [
+        "_simple_pattern",
         "case_as_pattern",
         "case_list_pattern",
         "case_pattern",

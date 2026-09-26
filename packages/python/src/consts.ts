@@ -2,6 +2,7 @@
 
 /** All branch (non-leaf) node kind strings. */
 const NODE_KINDS = [
+	'_simple_pattern',
 	'_simple_statements',
 	'aliased_import',
 	'argument_list',

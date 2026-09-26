@@ -2776,6 +2776,12 @@ A SYMBOL body is 'alias' when the kind is an alias display
 the rule.
 ```
 
+A leaf-shaped choice over hidden storage that the parser shows under an alias
+(`isAliasedHiddenStorage`: typescript `_lhs_expression`, python
+`_simple_pattern`) is an `'envelope'`, not a `'polymorph'`: the parser issues a
+node for the display, so the kind is a real container whose one slot is the
+choice, and a built value nests the same way a read one does.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::branchClassFor`
 
 ```text

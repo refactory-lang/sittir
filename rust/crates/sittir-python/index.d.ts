@@ -1038,6 +1038,12 @@ export interface SimplePatternNegativeTransport {
   _value: SlotValue<SimplePatternNegativeValueTransportSlot>
 }
 
+export interface SimplePatternTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _content: SlotValue<SimplePatternContentTransportSlot>
+}
+
 export interface SimpleStatementsElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges

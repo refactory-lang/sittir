@@ -308,6 +308,7 @@ export interface KindEntryLike {
 	readonly supertype?: boolean;
 	readonly terminal?: boolean;
 	readonly visibleExternal?: boolean;
+	readonly aliasedNonTerminal?: boolean;
 	readonly parseId?: number;
 	readonly parseName?: string;
 }
@@ -371,6 +372,11 @@ export function surfaceHiddenOf(entry: KindEntryLike | undefined, kind: string):
 
 export function isSurfaceHiddenKind(kind: string, entries: readonly KindEntryLike[]): boolean {
 	return surfaceHiddenOf(findOwnKindEntry(entries, kind), kind);
+}
+
+export function isAliasedHiddenStorage(kind: string, entries: readonly KindEntryLike[]): boolean {
+	const entry = findOwnKindEntry(entries, kind);
+	return entry?.aliasedNonTerminal === true && surfaceHiddenOf(entry, kind);
 }
 
 export function isParserHiddenKind(kind: string, entries: readonly KindEntryLike[]): boolean {

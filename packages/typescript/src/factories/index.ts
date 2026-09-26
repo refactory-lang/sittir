@@ -59,6 +59,7 @@ export const newExpression: Hoisted<typeof O.newExpression> = hoist(O.newExpress
 export const awaitExpression: Hoisted<typeof O.awaitExpression> = hoist(O.awaitExpression);
 export const memberExpression: Hoisted<typeof O.memberExpression> = hoist(O.memberExpression);
 export const subscriptExpression: Hoisted<typeof O.subscriptExpression> = hoist(O.subscriptExpression);
+export const lhsExpression: Hoisted<typeof O.lhsExpression> = hoist(O.lhsExpression);
 export const assignmentExpression: Hoisted<typeof O.assignmentExpression> = hoist(O.assignmentExpression);
 export const augmentedAssignmentExpression: Hoisted<typeof O.augmentedAssignmentExpression> = hoist(
 	O.augmentedAssignmentExpression
@@ -209,6 +210,7 @@ export const comment: Hoisted<typeof O.comment> = hoistRoutes(O.comment);
 export const number: Hoisted<typeof O.number> = hoistRoutes(O.number);
 export const identifier: Hoisted<typeof O.identifier> = hoistRoutes(O.identifier);
 export const metaProperty: Hoisted<typeof O.metaProperty> = hoistRoutes(O.metaProperty);
+export const pattern: Hoisted<typeof O.pattern> = hoistRoutes(O.pattern);
 export const propertyName: Hoisted<typeof O.propertyName> = hoistRoutes(O.propertyName);
 export const indexSignature: Hoisted<typeof O.indexSignature> = hoistRoutes(O.indexSignature);
 export const exportStatementDefault: Hoisted<typeof O.exportStatementDefault> = hoistRoutes(O.exportStatementDefault);

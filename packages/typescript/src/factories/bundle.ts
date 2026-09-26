@@ -62,6 +62,7 @@ export const newExpression = bundle(F.buildNewExpression, C.coerceToNewExpressio
 export const awaitExpression = bundle(F.buildAwaitExpression, C.coerceToAwaitExpression);
 export const memberExpression = bundle(F.buildMemberExpression, C.coerceToMemberExpression);
 export const subscriptExpression = bundle(F.buildSubscriptExpression, C.coerceToSubscriptExpression);
+export const lhsExpression = bundle(F.buildLhsExpression, C.coerceToLhsExpression);
 export const assignmentExpression = bundle(F.buildAssignmentExpression, C.coerceToAssignmentExpression);
 export const augmentedAssignmentExpression = bundle(
 	F.buildAugmentedAssignmentExpression,

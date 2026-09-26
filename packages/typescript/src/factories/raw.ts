@@ -1548,11 +1548,7 @@ export function buildObjectPattern(
 }
 
 export function buildAssignmentPattern(config: T.AssignmentPattern.Config): T.AssignmentPattern.Built {
-	const _left = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AssignmentPattern['_left']>>(config.left, []),
-		'AssignmentPattern.left',
-		'a built Pattern'
-	);
+	const _left = rejectBareText(config.left, 'AssignmentPattern.left', 'a built Pattern');
 	const _right = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.AssignmentPattern['_right']>>(config.right, []),
 		'AssignmentPattern.right',
@@ -1567,8 +1563,7 @@ export function buildAssignmentPattern(config: T.AssignmentPattern.Config): T.As
 				_left,
 				_right,
 				$with: {
-					left: (value: NonNullable<T.AssignmentPattern.Config>['left']) =>
-						buildAssignmentPattern({ ...config, left: value }),
+					left: (value: T.Pattern) => buildAssignmentPattern({ ...config, left: value }),
 					right: (value: NonNullable<T.AssignmentPattern.Config>['right']) =>
 						buildAssignmentPattern({ ...config, right: value })
 				}
@@ -2276,10 +2271,122 @@ export function buildSubscriptExpression(config: T.SubscriptExpression.Config): 
 	);
 }
 
+export function buildLhsExpression(
+	value:
+		| T.MemberExpression
+		| T.SubscriptExpression
+		| TSKindId.Undefined
+		| T.Identifier
+		| TSKindId.DeclareKeyword
+		| TSKindId.NamespaceKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| TSKindId.OverrideKeyword
+		| TSKindId.ReadonlyKeyword
+		| TSKindId.ModuleKeyword
+		| TSKindId.AnyKeyword
+		| TSKindId.NumberKeyword
+		| TSKindId.BooleanKeyword
+		| TSKindId.StringKeyword
+		| TSKindId.SymbolKeyword
+		| TSKindId.ExportKeyword
+		| TSKindId.ObjectKeyword
+		| TSKindId.NewKeyword
+		| TSKindId.GetKeyword
+		| TSKindId.SetKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.StaticKeyword
+		| TSKindId.LetKeyword
+		| T.ObjectPattern
+		| T.ArrayPattern
+		| T.NonNullExpression
+): T.LhsExpression.Built {
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.LhsExpression['_content']>>(value, [
+			['undefined', TSKindId.Undefined] as const,
+			['declare', TSKindId.DeclareKeyword] as const,
+			['namespace', TSKindId.NamespaceKeyword] as const,
+			['type', TSKindId.TypeKeyword] as const,
+			['public', TSKindId.PublicKeyword] as const,
+			['private', TSKindId.PrivateKeyword] as const,
+			['protected', TSKindId.ProtectedKeyword] as const,
+			['override', TSKindId.OverrideKeyword] as const,
+			['readonly', TSKindId.ReadonlyKeyword] as const,
+			['module', TSKindId.ModuleKeyword] as const,
+			['any', TSKindId.AnyKeyword] as const,
+			['number', TSKindId.NumberKeyword] as const,
+			['boolean', TSKindId.BooleanKeyword] as const,
+			['string', TSKindId.StringKeyword] as const,
+			['symbol', TSKindId.SymbolKeyword] as const,
+			['export', TSKindId.ExportKeyword] as const,
+			['object', TSKindId.ObjectKeyword] as const,
+			['new', TSKindId.NewKeyword] as const,
+			['get', TSKindId.GetKeyword] as const,
+			['set', TSKindId.SetKeyword] as const,
+			['async', TSKindId.AsyncKeyword] as const,
+			['static', TSKindId.StaticKeyword] as const,
+			['let', TSKindId.LetKeyword] as const
+		]),
+		'LhsExpression.content',
+		'buildIdentifier(…)'
+	);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.LhsExpression as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (
+						value: NonNullable<
+							| T.MemberExpression
+							| T.SubscriptExpression
+							| TSKindId.Undefined
+							| T.Identifier
+							| TSKindId.DeclareKeyword
+							| TSKindId.NamespaceKeyword
+							| TSKindId.TypeKeyword
+							| TSKindId.PublicKeyword
+							| TSKindId.PrivateKeyword
+							| TSKindId.ProtectedKeyword
+							| TSKindId.OverrideKeyword
+							| TSKindId.ReadonlyKeyword
+							| TSKindId.ModuleKeyword
+							| TSKindId.AnyKeyword
+							| TSKindId.NumberKeyword
+							| TSKindId.BooleanKeyword
+							| TSKindId.StringKeyword
+							| TSKindId.SymbolKeyword
+							| TSKindId.ExportKeyword
+							| TSKindId.ObjectKeyword
+							| TSKindId.NewKeyword
+							| TSKindId.GetKeyword
+							| TSKindId.SetKeyword
+							| TSKindId.AsyncKeyword
+							| TSKindId.StaticKeyword
+							| TSKindId.LetKeyword
+							| T.ObjectPattern
+							| T.ArrayPattern
+							| T.NonNullExpression
+						>
+					) => buildLhsExpression(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildAssignmentExpression(config: T.AssignmentExpression.Config): T.AssignmentExpression.Built {
 	const _using_marker = coerceBooleanKeywordStorage(config.usingMarker);
 	const _left = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AssignmentExpression['_left']>>(config.left, []),
+		config.left,
 		'AssignmentExpression.left',
 		'a built ParenthesizedExpression / LhsExpression'
 	);
@@ -2300,7 +2407,7 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 				$with: {
 					usingMarker: (value?: NonNullable<T.AssignmentExpression.Config>['usingMarker']) =>
 						buildAssignmentExpression({ ...config, usingMarker: value }),
-					left: (value: NonNullable<T.AssignmentExpression.Config>['left']) =>
+					left: (value: T.ParenthesizedExpression | T.LhsExpression) =>
 						buildAssignmentExpression({ ...config, left: value }),
 					right: (value: NonNullable<T.AssignmentExpression.Config>['right']) =>
 						buildAssignmentExpression({ ...config, right: value })
@@ -3385,11 +3492,7 @@ export function buildPairPattern(config: T.PairPattern.Config): T.PairPattern.Bu
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
-	const _value = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.PairPattern['_value']>>(config.value, []),
-		'PairPattern.value',
-		'a built Pattern / AssignmentPattern'
-	);
+	const _value = rejectBareText(config.value, 'PairPattern.value', 'a built Pattern / AssignmentPattern');
 	return withMethods(
 		withAccessors(
 			{
@@ -3400,7 +3503,7 @@ export function buildPairPattern(config: T.PairPattern.Config): T.PairPattern.Bu
 				_value,
 				$with: {
 					key: (value: NonNullable<T.PairPattern.Config>['key']) => buildPairPattern({ ...config, key: value }),
-					value: (value: NonNullable<T.PairPattern.Config>['value']) => buildPairPattern({ ...config, value: value })
+					value: (value: T.Pattern | T.AssignmentPattern) => buildPairPattern({ ...config, value: value })
 				}
 			},
 			{
@@ -9158,11 +9261,7 @@ export function buildMetaPropertyImportMeta(): TSKindId.MetaPropertyImportMeta {
 }
 
 export function buildForHeaderLhs(config: T.ForHeaderLhs.Config): T.ForHeaderLhs.Built {
-	const _left = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.ForHeaderLhs['_left']>>(config.left, []),
-		'ForHeaderLhs.left',
-		'a built LhsExpression / ParenthesizedExpression'
-	);
+	const _left = rejectBareText(config.left, 'ForHeaderLhs.left', 'a built LhsExpression / ParenthesizedExpression');
 	const _operator = coerceKindEnumStorage<NonNullable<T.ForHeaderLhs['_operator']>>(config.operator, [
 		['in', TSKindId.InKeyword] as const,
 		['of', TSKindId.OfKeyword] as const
@@ -9182,7 +9281,7 @@ export function buildForHeaderLhs(config: T.ForHeaderLhs.Config): T.ForHeaderLhs
 				_operator,
 				_right,
 				$with: {
-					left: (value: NonNullable<T.ForHeaderLhs.Config>['left']) => buildForHeaderLhs({ ...config, left: value }),
+					left: (value: T.LhsExpression | T.ParenthesizedExpression) => buildForHeaderLhs({ ...config, left: value }),
 					operator: (value: NonNullable<T.ForHeaderLhs.Config>['operator']) =>
 						buildForHeaderLhs({ ...config, operator: value }),
 					right: (value: NonNullable<T.ForHeaderLhs.Config>['right']) => buildForHeaderLhs({ ...config, right: value })
@@ -9870,6 +9969,7 @@ export type FluentKindMap = {
 	await_expression: T.AwaitExpression.Built;
 	member_expression: T.MemberExpression.Built;
 	subscript_expression: T.SubscriptExpression.Built;
+	_lhs_expression: T.LhsExpression.Built;
 	assignment_expression: T.AssignmentExpression.Built;
 	augmented_assignment_expression: T.AugmentedAssignmentExpression.Built;
 	spread_element: T.SpreadElement.Built;
@@ -10116,6 +10216,7 @@ export const _factoryMap = {
 	await_expression: buildAwaitExpression,
 	member_expression: buildMemberExpression,
 	subscript_expression: buildSubscriptExpression,
+	_lhs_expression: buildLhsExpression,
 	assignment_expression: buildAssignmentExpression,
 	augmented_assignment_expression: buildAugmentedAssignmentExpression,
 	spread_element: buildSpreadElement,

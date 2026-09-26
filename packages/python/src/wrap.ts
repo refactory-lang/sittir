@@ -483,23 +483,6 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	]),
 	with_clause: new Set(['with_clause_bare', 'with_clause_paren']),
 	_suite: new Set(['suite_inline', 'suite_block', 'suite_empty']),
-	_simple_pattern: new Set([
-		'class_pattern',
-		'splat_pattern',
-		'union_pattern',
-		'case_list_pattern',
-		'case_tuple_pattern',
-		'dict_pattern',
-		'string',
-		'concatenated_string',
-		'true',
-		'false',
-		'none',
-		'simple_pattern_negative',
-		'complex_pattern',
-		'dotted_name',
-		'wildcard_pattern'
-	]),
 	parameter: new Set([
 		'identifier',
 		'typed_parameter',
@@ -2832,22 +2815,12 @@ export function wrapCasePattern(data: T.CasePattern, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.CasePattern as const,
-			_content: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(
-					data._content ??
-						readTerminalFromOther<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(data, [
-							TSKindId.True,
-							TSKindId.False,
-							TSKindId.None,
-							TSKindId.WildcardPattern
-						]),
-					'content',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
-				{ True: 71, False: 72, None: 73, _: 278 }
-			),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			content() {
 				return drillIn<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this._content, tree);
@@ -2861,79 +2834,69 @@ export function wrapCasePattern(data: T.CasePattern, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapSimplePattern(
-	data: T.SimplePattern & { readonly $other?: T.SimplePattern | readonly T.SimplePattern[] },
-	tree: TreeHandle
-) {
-	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, [
-		'_class_pattern',
-		'_splat_pattern',
-		'_union_pattern',
-		'_case_list_pattern',
-		'_case_tuple_pattern',
-		'_dict_pattern',
-		'_string',
-		'_concatenated_string',
-		'_true',
-		'_false',
-		'_none',
-		'_simple_pattern_negative',
-		'_complex_pattern',
-		'_dotted_name',
-		'_wildcard_pattern'
-	]);
-	const kindKeyed = _firstKindKeyedWrapChild(node, [
-		'class_pattern',
-		'splat_pattern',
-		'union_pattern',
-		'case_list_pattern',
-		'case_tuple_pattern',
-		'dict_pattern',
-		'string',
-		'concatenated_string',
-		'true',
-		'false',
-		'none',
-		'simple_pattern_negative',
-		'complex_pattern',
-		'dotted_name',
-		'wildcard_pattern'
-	]) as T.SimplePattern | readonly T.SimplePattern[] | undefined;
-	const filtered =
-		kindKeyed ??
-		_filterWrapChildrenByKind(node.$other, [
-			'class_pattern',
-			'splat_pattern',
-			'union_pattern',
-			'case_list_pattern',
-			'case_tuple_pattern',
-			'dict_pattern',
-			'string',
-			'concatenated_string',
-			'true',
-			'false',
-			'none',
-			'simple_pattern_negative',
-			'complex_pattern',
-			'dotted_name',
-			'wildcard_pattern'
-		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
-		return drillInSelf<T.SimplePattern>(node as T.SimplePattern, tree);
-	}
-	return drillIn<T.SimplePattern>(
-		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
-			tree,
-			nodeType: node.$type,
-			slotName: 'children',
-			span: (node as _NodeData).$span
-		}),
-		tree
+export function wrapSimplePattern(data: T.SimplePattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.SimplePattern as const }, _treeEngine(tree));
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.SimplePattern as const,
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(
+					data._content ??
+						readTerminalFromOther<
+							| T.ClassPattern
+							| T.SplatPattern
+							| T.UnionPattern
+							| T.CaseListPattern
+							| T.CaseTuplePattern
+							| T.DictPattern
+							| T.String
+							| T.ConcatenatedString
+							| TSKindId.True
+							| TSKindId.False
+							| TSKindId.None
+							| T.SimplePatternNegative
+							| T.ComplexPattern
+							| T.DottedName
+							| TSKindId.WildcardPattern
+						>(data, [TSKindId.True, TSKindId.False, TSKindId.None, TSKindId.WildcardPattern]),
+					'content',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				),
+				{ True: 71, False: 72, None: 73, _: 278 },
+				{ 48: 278 }
+			),
+
+			content() {
+				return drillIn<
+					| T.ClassPattern
+					| T.SplatPattern
+					| T.UnionPattern
+					| T.CaseListPattern
+					| T.CaseTuplePattern
+					| T.DictPattern
+					| T.String
+					| T.ConcatenatedString
+					| TSKindId.True
+					| TSKindId.False
+					| TSKindId.None
+					| T.SimplePatternNegative
+					| T.ComplexPattern
+					| T.DottedName
+					| TSKindId.WildcardPattern
+				>(this._content, tree);
+			},
+			$with: {
+				content: (v: NonNullable<T.SimplePattern['_content']>) =>
+					wrapSimplePattern({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
 	);
+	return _node;
 }
 
 export function wrapCaseAsPattern(data: T.CaseAsPattern, tree: TreeHandle) {

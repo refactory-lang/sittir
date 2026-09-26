@@ -1,4 +1,10 @@
 {
+	"_simple_pattern": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"_simple_statements": [
 		{
 			"kind": "seam",

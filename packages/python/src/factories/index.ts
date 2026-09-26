@@ -51,6 +51,7 @@ export const block: Hoisted<typeof O.block> = hoist(O.block);
 export const expressionList: Hoisted<typeof O.expressionList> = hoist(O.expressionList);
 export const dottedName: Hoisted<typeof O.dottedName> = hoist(O.dottedName);
 export const casePattern: Hoisted<typeof O.casePattern> = hoist(O.casePattern);
+export const simplePattern: Hoisted<typeof O.simplePattern> = hoist(O.simplePattern);
 export const caseAsPattern: Hoisted<typeof O.caseAsPattern> = hoist(O.caseAsPattern);
 export const unionPattern: Hoisted<typeof O.unionPattern> = hoist(O.unionPattern);
 export const dictPattern: Hoisted<typeof O.dictPattern> = hoist(O.dictPattern);

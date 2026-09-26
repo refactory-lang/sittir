@@ -6364,6 +6364,8 @@ the slot's repeat may be empty, so the built parent renders non-empty text.
 
 The chooser also takes `onPath`: the kinds already on the stub being built (the sole slot's owner, and every compound above the current field). A non-leaf candidate off that path wins over one on it. A stub stamped with the owner's own kind is node data of the target kind, which the coercer's identity rule hands back unbuilt, so the placeholder would never render. A self-recursive arm is chosen only when every non-leaf candidate is on the path and no enum leaf exists.
 
+Among the off-path candidates the first whose stub closes (`stubCloses`) wins, so a slot whose first arm leads back into the path (python `case_pattern`'s `case_as_pattern`, which requires a `case_pattern`) takes a later arm that terminates (the `_simple_pattern` envelope). A surface-hidden kind is a candidate only when it still gets a factory (`classifyFactoryEmission`): an envelope over aliased hidden storage is a node in the tree.
+
 ```text
 /**
  * Resolve a slot's candidate kind names to the first one reachable that has
@@ -6426,6 +6428,14 @@ The chooser also takes `onPath`: the kinds already on the stub being built (the 
 // into it — or fall back to the raw input when nothing resolved at all
 // (e.g. an entirely TSGrammar-only candidate set).
 ```
+
+### `packages/codegen/src/emitters/test.ts::stubCloses`
+
+Whether a dummy stub of `kind` can be built without re-entering `blocked` (the kinds on the stub's path) within `budget` levels: a supertype when some subtype closes, a leaf always, a compound or list when every required slot needs no stub or has a candidate that closes one level down with `kind` added to the path.
+
+### `packages/codegen/src/emitters/test.ts::stubKindsOf`
+
+The kinds a field's dummy must build a stub from: none when `dummyValueForField` fills it without one (a pattern sample, a text enum, a boolean, a bitflag or a kind enum), otherwise its `slotKindNames`. `dummyValueForField` and `stubCloses` both read it.
 
 ### `packages/codegen/src/emitters/test.ts::dummyValueForField`
 

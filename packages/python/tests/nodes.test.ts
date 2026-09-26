@@ -943,7 +943,14 @@ describe('match_block sub-factories', () => {
 						$text: 'test',
 						$source: 2,
 						$named: true,
-						_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+						_content: {
+							$type: TSKindId.KeywordPattern,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+							_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+						} as any
 					} as any
 				]
 			} as any,
@@ -988,7 +995,14 @@ describe('case_clause', () => {
 						$text: 'test',
 						$source: 2,
 						$named: true,
-						_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+						_content: {
+							$type: TSKindId.KeywordPattern,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+							_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+						} as any
 					} as any
 				]
 			} as any,
@@ -1022,7 +1036,14 @@ describe('case_clause', () => {
 						$text: 'test',
 						$source: 2,
 						$named: true,
-						_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+						_content: {
+							$type: TSKindId.KeywordPattern,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+							_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+						} as any
 					} as any
 				]
 			} as any,
@@ -2038,14 +2059,29 @@ describe('dotted_name', () => {
 
 describe('case_pattern', () => {
 	it('factory produces correct type', () => {
-		const node = ir.casePattern({ $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any);
+		const node = ir.casePattern({
+			$type: TSKindId.KeywordPattern,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+		} as any);
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.casePattern({ $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any);
+		const node = ir.casePattern({
+			$type: TSKindId.KeywordPattern,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
 		expect(rendered).toContain('True');
 	});
 });
@@ -2058,12 +2094,19 @@ describe('case_pattern sub-factories', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				_content: {
+					$type: TSKindId.KeywordPattern,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				} as any
 			} as any,
 			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()?.$type).toBe(TSKindId.CaseAsPattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('keywordPattern builds the parent', () => {
@@ -2072,7 +2115,30 @@ describe('case_pattern sub-factories', () => {
 			value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('simplePattern builds the parent', () => {
+		const node = ir.casePattern.simplePattern({ $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any);
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('keywordPattern.negative builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.negative({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('simplePattern.negative builds the parent', () => {
+		const node = ir.casePattern.simplePattern.negative({
+			value: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2085,7 +2151,14 @@ describe('case_as_pattern', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				_content: {
+					$type: TSKindId.KeywordPattern,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				} as any
 			} as any,
 			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -2099,7 +2172,14 @@ describe('case_as_pattern', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				_content: {
+					$type: TSKindId.KeywordPattern,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				} as any
 			} as any,
 			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -2143,7 +2223,14 @@ describe('key_value_pattern', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				_content: {
+					$type: TSKindId.KeywordPattern,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				} as any
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.KeyValuePattern);
@@ -2157,11 +2244,43 @@ describe('key_value_pattern', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				_content: {
+					$type: TSKindId.KeywordPattern,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				} as any
 			} as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('key_value_pattern sub-factories', () => {
+	it('negative builds the parent', () => {
+		const node = ir.keyValuePattern.negative({
+			value: {
+				$type: TSKindId.CasePattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: {
+					$type: TSKindId.KeywordPattern,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				} as any
+			} as any,
+			key: { value: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any }
+		});
+		expect(node.$type).toBe(TSKindId.KeyValuePattern);
+		expect((node as any).key()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -2181,6 +2300,18 @@ describe('keyword_pattern', () => {
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('keyword_pattern sub-factories', () => {
+	it('negative builds the parent', () => {
+		const node = ir.keywordPattern.negative({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: { $type: TSKindId.IntegerDecimal, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.KeywordPattern);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -3727,7 +3858,14 @@ describe('case_patterns', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+					_content: {
+						$type: TSKindId.KeywordPattern,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+						_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+					} as any
 				} as any
 			]
 		);
@@ -3742,7 +3880,14 @@ describe('case_patterns', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+					_content: {
+						$type: TSKindId.KeywordPattern,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+						_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+					} as any
 				} as any
 			]
 		);
@@ -3855,7 +4000,14 @@ describe('list_pattern_case_patterns', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+					_content: {
+						$type: TSKindId.KeywordPattern,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+						_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+					} as any
 				} as any
 			]
 		);
@@ -3870,7 +4022,14 @@ describe('list_pattern_case_patterns', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+					_content: {
+						$type: TSKindId.KeywordPattern,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+						_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+					} as any
 				} as any
 			]
 		);
@@ -3893,7 +4052,14 @@ describe('dict_pattern_elements', () => {
 						$text: 'test',
 						$source: 2,
 						$named: true,
-						_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+						_content: {
+							$type: TSKindId.KeywordPattern,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+							_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+						} as any
 					} as any
 				} as any
 			]
@@ -3915,7 +4081,14 @@ describe('dict_pattern_elements', () => {
 						$text: 'test',
 						$source: 2,
 						$named: true,
-						_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+						_content: {
+							$type: TSKindId.KeywordPattern,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+							_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+						} as any
 					} as any
 				} as any
 			]

@@ -2069,24 +2069,6 @@ export enum SuiteKind {
 	SuiteEmpty = 'suite_empty'
 }
 
-export enum SimplePatternKind {
-	ClassPattern = 'class_pattern',
-	SplatPattern = 'splat_pattern',
-	UnionPattern = 'union_pattern',
-	CaseListPattern = 'case_list_pattern',
-	CaseTuplePattern = 'case_tuple_pattern',
-	DictPattern = 'dict_pattern',
-	String = 'string',
-	ConcatenatedString = 'concatenated_string',
-	True = 'true',
-	False = 'false',
-	None = 'none',
-	SimplePatternNegative = 'simple_pattern_negative',
-	ComplexPattern = 'complex_pattern',
-	DottedName = 'dotted_name',
-	WildcardPattern = 'wildcard_pattern'
-}
-
 export enum ParameterKind {
 	Identifier = 'identifier',
 	TypedParameter = 'typed_parameter',
@@ -2803,14 +2785,61 @@ export interface DottedName {
 export interface CasePattern {
 	readonly $type: TSKindId.CasePattern;
 	readonly _content: CaseAsPattern | KeywordPattern | SimplePattern;
+	content(): CaseAsPattern | KeywordPattern | SimplePattern;
+}
+
+export interface SimplePattern {
+	readonly $type: TSKindId.SimplePattern;
+	readonly _content:
+		| ClassPattern
+		| SplatPattern
+		| UnionPattern
+		| CaseListPattern
+		| CaseTuplePattern
+		| DictPattern
+		| String
+		| ConcatenatedString
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
+		| SimplePatternNegative
+		| ComplexPattern
+		| DottedName
+		| TSKindId.WildcardPattern;
 	readonly __inputHints__?: {
 		readonly content:
-			| KindEnum<'True' | 'False' | 'None' | '_', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Underscore>
-			| CaseAsPattern
-			| KeywordPattern
-			| SimplePattern;
+			| KindEnum<
+					'True' | 'False' | 'None' | '_',
+					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Underscore
+			  >
+			| ClassPattern
+			| SplatPattern
+			| UnionPattern
+			| CaseListPattern
+			| CaseTuplePattern
+			| DictPattern
+			| String
+			| ConcatenatedString
+			| SimplePatternNegative
+			| ComplexPattern
+			| DottedName;
 	};
-	content(): CaseAsPattern | KeywordPattern | SimplePattern;
+	content():
+		| ClassPattern
+		| SplatPattern
+		| UnionPattern
+		| CaseListPattern
+		| CaseTuplePattern
+		| DictPattern
+		| String
+		| ConcatenatedString
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
+		| SimplePatternNegative
+		| ComplexPattern
+		| DottedName
+		| TSKindId.WildcardPattern;
 }
 
 export interface CaseAsPattern {
@@ -4422,6 +4451,9 @@ export interface BlockTree extends TreeNode<'block'> {}
 export interface ExpressionListTree extends TreeNode<'expression_list'> {}
 export interface DottedNameTree extends TreeNode<'dotted_name'> {}
 export interface CasePatternTree extends TreeNode<'case_pattern'> {}
+export interface SimplePatternTree extends AnyTreeNode {
+	readonly type: '_simple_pattern';
+}
 export interface CaseAsPatternTree extends TreeNode<'case_as_pattern'> {}
 export interface UnionPatternTree extends TreeNode<'union_pattern'> {}
 export interface DictPatternTree extends TreeNode<'dict_pattern'> {}
@@ -4838,40 +4870,6 @@ export type Suite = SuiteInline | SuiteBlock | SuiteEmpty;
 
 export type SuiteTree = SuiteInlineTree | SuiteBlockTree | SuiteEmptyTree;
 
-export type SimplePattern =
-	| ClassPattern
-	| SplatPattern
-	| UnionPattern
-	| CaseListPattern
-	| CaseTuplePattern
-	| DictPattern
-	| String
-	| ConcatenatedString
-	| True
-	| False
-	| None
-	| SimplePatternNegative
-	| ComplexPattern
-	| DottedName
-	| WildcardPattern;
-
-export type SimplePatternTree =
-	| ClassPatternTree
-	| SplatPatternTree
-	| UnionPatternTree
-	| CaseListPatternTree
-	| CaseTuplePatternTree
-	| DictPatternTree
-	| StringTree
-	| ConcatenatedStringTree
-	| TrueTree
-	| FalseTree
-	| NoneTree
-	| SimplePatternNegativeTree
-	| ComplexPatternTree
-	| DottedNameTree
-	| WildcardPatternTree;
-
 export type Parameter =
 	| Identifier
 	| TypedParameter
@@ -5094,11 +5092,6 @@ export namespace Suite {
 	export type Tree = SuiteTree;
 }
 
-export namespace SimplePattern {
-	export type Kind = '_simple_pattern';
-	export type Tree = SimplePatternTree;
-}
-
 export namespace Parameter {
 	export type Kind = 'parameter';
 	export type Tree = ParameterTree;
@@ -5236,6 +5229,7 @@ export type PythonNode =
 	| ExpressionList
 	| DottedName
 	| CasePattern
+	| SimplePattern
 	| CaseAsPattern
 	| UnionPattern
 	| DictPattern
@@ -6782,18 +6776,9 @@ export namespace CasePatterns {
 		readonly __optionsHint__?: {
 			readonly casePattern?: {
 				readonly caseAsPattern?: { readonly after?: SpacingArm };
-				readonly caseListPattern?: { readonly after?: SpacingArm };
-				readonly caseTuplePattern?: { readonly after?: SpacingArm };
-				readonly classPattern?: { readonly after?: SpacingArm };
-				readonly complexPattern?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictPattern?: { readonly after?: SpacingArm };
 				readonly keywordPattern?: { readonly after?: SpacingArm };
 				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly simplePatternNegative?: { readonly after?: SpacingArm };
-				readonly splatPattern?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
 			};
 		};
 	}
@@ -6932,18 +6917,9 @@ export namespace ListPatternCasePatterns {
 		readonly __optionsHint__?: {
 			readonly casePattern?: {
 				readonly caseAsPattern?: { readonly after?: SpacingArm };
-				readonly caseListPattern?: { readonly after?: SpacingArm };
-				readonly caseTuplePattern?: { readonly after?: SpacingArm };
-				readonly classPattern?: { readonly after?: SpacingArm };
-				readonly complexPattern?: { readonly after?: SpacingArm };
-				readonly concatenatedString?: { readonly after?: SpacingArm };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictPattern?: { readonly after?: SpacingArm };
 				readonly keywordPattern?: { readonly after?: SpacingArm };
 				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly simplePatternNegative?: { readonly after?: SpacingArm };
-				readonly splatPattern?: { readonly after?: SpacingArm };
-				readonly string?: { readonly after?: SpacingArm };
 			};
 		};
 	}
@@ -7932,6 +7908,17 @@ export interface CasePatternNs extends NodeNs<
 	CasePattern.LooseArgs,
 	'content',
 	'case_pattern'
+> {}
+export interface SimplePatternNs extends NodeNs<
+	SimplePattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	SimplePattern.Built,
+	SimplePattern.BuildArgs,
+	SimplePattern.LooseArgs,
+	'content',
+	'_simple_pattern'
 > {}
 export interface CaseAsPatternNs extends NodeNs<
 	CaseAsPattern,
@@ -9350,6 +9337,7 @@ export interface NamespaceMap {
 	[TSKindId.ExpressionList]: ExpressionListNs;
 	[TSKindId.DottedName]: DottedNameNs;
 	[TSKindId.CasePattern]: CasePatternNs;
+	[TSKindId.SimplePattern]: SimplePatternNs;
 	[TSKindId.CaseAsPattern]: CaseAsPatternNs;
 	[TSKindId.UnionPattern]: UnionPatternNs;
 	[TSKindId.DictPattern]: DictPatternNs;
@@ -10397,7 +10385,7 @@ export namespace CasePattern {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: NonNullable<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>): T.CasePattern.Built;
+			content(value: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern): T.CasePattern.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.CasePattern>;
@@ -10413,6 +10401,78 @@ export namespace CasePattern {
 	];
 	export type Tree = TreeFor<TSKindId.CasePattern>;
 	export type Kind = 'case_pattern';
+}
+export namespace SimplePattern {
+	export type Config = ConfigFor<TSKindId.SimplePattern>;
+	export interface Built extends T.SimplePattern, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(
+				value: NonNullable<
+					| T.ClassPattern
+					| T.SplatPattern
+					| T.UnionPattern
+					| T.CaseListPattern
+					| T.CaseTuplePattern
+					| T.DictPattern
+					| T.String
+					| T.ConcatenatedString
+					| TSKindId.True
+					| TSKindId.False
+					| TSKindId.None
+					| T.SimplePatternNegative
+					| T.ComplexPattern
+					| T.DottedName
+					| TSKindId.WildcardPattern
+				>
+			): T.SimplePattern.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.SimplePattern>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SimplePattern>;
+	export type BuildArgs = [
+		value:
+			| T.ClassPattern
+			| T.SplatPattern
+			| T.UnionPattern
+			| T.CaseListPattern
+			| T.CaseTuplePattern
+			| T.DictPattern
+			| T.String
+			| T.ConcatenatedString
+			| TSKindId.True
+			| TSKindId.False
+			| TSKindId.None
+			| T.SimplePatternNegative
+			| T.ComplexPattern
+			| T.DottedName
+			| TSKindId.WildcardPattern
+	];
+	export type LooseArgs = [
+		value: LooseValue<
+			| T.ClassPattern
+			| T.SplatPattern
+			| T.UnionPattern
+			| T.CaseListPattern
+			| T.CaseTuplePattern
+			| T.DictPattern
+			| T.String
+			| T.ConcatenatedString
+			| TSKindId.True
+			| TSKindId.False
+			| TSKindId.None
+			| T.SimplePatternNegative
+			| T.ComplexPattern
+			| T.DottedName
+			| TSKindId.WildcardPattern,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
+	export type Tree = TreeFor<TSKindId.SimplePattern>;
+	export type Kind = '_simple_pattern';
 }
 export namespace CaseAsPattern {
 	export type Config = ConfigFor<TSKindId.CaseAsPattern>;

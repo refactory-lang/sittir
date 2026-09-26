@@ -483,6 +483,47 @@ export const arrowFunction: typeof B.arrowFunction & {
 	}
 };
 
+const lhsExpression$memberExpression =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lhsExpression$subscriptExpression =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lhsExpression$nonNullExpression =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const lhsExpression: typeof B.lhsExpression & {
+	memberExpression: {
+		strict: (...args: ArgsOf<typeof F.buildMemberExpression>) => ReturnType<typeof F.buildLhsExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToMemberExpression>) => ReturnType<typeof F.buildLhsExpression>;
+	};
+	subscriptExpression: {
+		strict: (...args: ArgsOf<typeof F.buildSubscriptExpression>) => ReturnType<typeof F.buildLhsExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSubscriptExpression>) => ReturnType<typeof F.buildLhsExpression>;
+	};
+	nonNullExpression: {
+		strict: (...args: ArgsOf<typeof F.buildNonNullExpression>) => ReturnType<typeof F.buildLhsExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNonNullExpression>) => ReturnType<typeof F.buildLhsExpression>;
+	};
+} = {
+	...B.lhsExpression,
+	memberExpression: {
+		strict: lhsExpression$memberExpression(F.buildLhsExpression, F.buildMemberExpression),
+		coerce: lhsExpression$memberExpression(F.buildLhsExpression, C.coerceToMemberExpression)
+	},
+	subscriptExpression: {
+		strict: lhsExpression$subscriptExpression(F.buildLhsExpression, F.buildSubscriptExpression),
+		coerce: lhsExpression$subscriptExpression(F.buildLhsExpression, C.coerceToSubscriptExpression)
+	},
+	nonNullExpression: {
+		strict: lhsExpression$nonNullExpression(F.buildLhsExpression, F.buildNonNullExpression),
+		coerce: lhsExpression$nonNullExpression(F.buildLhsExpression, C.coerceToNonNullExpression)
+	}
+};
+
 const binaryExpression$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -524,6 +565,47 @@ export const classBody: typeof B.classBody & {
 	method: { strict: F.buildClassBodyMethod, coerce: C.coerceToClassBodyMethod },
 	methodSig: { strict: F.buildClassBodyMethodSig, coerce: C.coerceToClassBodyMethodSig },
 	member: { strict: F.buildClassBodyMember, coerce: C.coerceToClassBodyMember }
+};
+
+const restPattern$memberExpression =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const restPattern$subscriptExpression =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const restPattern$nonNullExpression =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const restPattern: typeof B.restPattern & {
+	memberExpression: {
+		strict: (...args: ArgsOf<typeof F.buildMemberExpression>) => ReturnType<typeof F.buildRestPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToMemberExpression>) => ReturnType<typeof F.buildRestPattern>;
+	};
+	subscriptExpression: {
+		strict: (...args: ArgsOf<typeof F.buildSubscriptExpression>) => ReturnType<typeof F.buildRestPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSubscriptExpression>) => ReturnType<typeof F.buildRestPattern>;
+	};
+	nonNullExpression: {
+		strict: (...args: ArgsOf<typeof F.buildNonNullExpression>) => ReturnType<typeof F.buildRestPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNonNullExpression>) => ReturnType<typeof F.buildRestPattern>;
+	};
+} = {
+	...B.restPattern,
+	memberExpression: {
+		strict: restPattern$memberExpression(F.buildRestPattern, F.buildMemberExpression),
+		coerce: restPattern$memberExpression(F.buildRestPattern, C.coerceToMemberExpression)
+	},
+	subscriptExpression: {
+		strict: restPattern$subscriptExpression(F.buildRestPattern, F.buildSubscriptExpression),
+		coerce: restPattern$subscriptExpression(F.buildRestPattern, C.coerceToSubscriptExpression)
+	},
+	nonNullExpression: {
+		strict: restPattern$nonNullExpression(F.buildRestPattern, F.buildNonNullExpression),
+		coerce: restPattern$nonNullExpression(F.buildRestPattern, C.coerceToNonNullExpression)
+	}
 };
 
 const ambientDeclaration$function =
@@ -4597,6 +4679,14 @@ export const metaProperty: {
 } = {
 	newTarget: { strict: F.buildMetaPropertyNewTarget, coerce: C.coerceToMetaPropertyNewTarget },
 	importMeta: { strict: F.buildMetaPropertyImportMeta, coerce: C.coerceToMetaPropertyImportMeta }
+};
+
+export const pattern: {
+	readonly lhs: typeof lhsExpression;
+	readonly rest: typeof restPattern;
+} = {
+	lhs: lhsExpression,
+	rest: restPattern
 };
 
 export const propertyName: {

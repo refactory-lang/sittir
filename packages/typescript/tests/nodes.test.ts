@@ -545,7 +545,13 @@ describe('for_in_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+				_left: {
+					$type: TSKindId.LhsExpression,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+				} as any,
 				_operator: TSKindId.InKeyword as never,
 				_right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 			} as any,
@@ -561,7 +567,13 @@ describe('for_in_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+				_left: {
+					$type: TSKindId.LhsExpression,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+				} as any,
 				_operator: TSKindId.InKeyword as never,
 				_right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 			} as any,
@@ -576,7 +588,13 @@ describe('for_in_statement sub-factories', () => {
 	it('lhs builds the parent', () => {
 		const node = ir.forInStatement.lhs({
 			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			left: {
+				$type: TSKindId.LhsExpression,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			} as any,
 			operator: 'in',
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
@@ -960,7 +978,13 @@ describe('object_pattern', () => {
 describe('assignment_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.assignmentPattern({
-			left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			left: {
+				$type: TSKindId.LhsExpression,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			} as any,
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.AssignmentPattern);
@@ -968,7 +992,13 @@ describe('assignment_pattern', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.assignmentPattern({
-			left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			left: {
+				$type: TSKindId.LhsExpression,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			} as any,
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
@@ -1426,7 +1456,13 @@ describe('subscript_expression', () => {
 describe('assignment_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.assignmentExpression({
-			left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			left: {
+				$type: TSKindId.LhsExpression,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			} as any,
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.AssignmentExpression);
@@ -1434,7 +1470,13 @@ describe('assignment_expression', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.assignmentExpression({
-			left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			left: {
+				$type: TSKindId.LhsExpression,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			} as any,
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
@@ -1905,6 +1947,45 @@ describe('rest_pattern', () => {
 	});
 });
 
+describe('rest_pattern sub-factories', () => {
+	it('memberExpression builds the parent', () => {
+		const node = ir.restPattern.memberExpression({
+			object: { $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any,
+			separator: '.',
+			property: {
+				$type: TSKindId.PrivatePropertyIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: 'test'
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.RestPattern);
+		expect((node as any).lhsExpression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('subscriptExpression builds the parent', () => {
+		const node = ir.restPattern.subscriptExpression({
+			object: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			index: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.RestPattern);
+		expect((node as any).lhsExpression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('nonNullExpression builds the parent', () => {
+		const node = ir.restPattern.nonNullExpression({
+			$type: TSKindId.Undefined,
+			$text: 'undefined',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.RestPattern);
+		expect((node as any).lhsExpression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('method_definition', () => {
 	it('factory produces correct type', () => {
 		const node = ir.methodDefinition({
@@ -1949,7 +2030,20 @@ describe('pair_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.pairPattern({
 			key: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
-			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			value: {
+				$type: TSKindId.AssignmentPattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_left: {
+					$type: TSKindId.LhsExpression,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+				} as any,
+				_right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.PairPattern);
 		expect(node.$source).toBe(2);
@@ -1957,7 +2051,20 @@ describe('pair_pattern', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.pairPattern({
 			key: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
-			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			value: {
+				$type: TSKindId.AssignmentPattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_left: {
+					$type: TSKindId.LhsExpression,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+				} as any,
+				_right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			} as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -4495,7 +4602,13 @@ describe('parenthesized_expression_typed sub-factories', () => {
 	});
 	it('assignment builds the parent', () => {
 		const node = ir.parenthesizedExpression.typed.assignment.coerce({
-			left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			left: {
+				$type: TSKindId.LhsExpression,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			} as any,
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);

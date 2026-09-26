@@ -57,7 +57,7 @@ export function applyFormatDocStrict() {
 }
 
 function param(name: string, type: string) {
-	return ir.requiredParameter.strict({ pattern: id(name), type: ann(type) });
+	return ir.requiredParameter.strict({ pattern: ir.lhsExpression.strict(id(name)), type: ann(type) });
 }
 
 /** `let <name> = <value>;` — the `;` is the terminator option's default. */

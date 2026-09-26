@@ -503,6 +503,10 @@ would otherwise report a passing 0/0 run.
 // wrapper never reparses; `const [` is unambiguous.
 ```
 
+### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.typescript.lhs_expression`
+
+An assignment target reparses as the left side of a parenthesized assignment, `(${r} = null);`. The parentheses keep an object pattern (`{a} = null`) from parsing as a block statement.
+
 ### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.python.expression`
 
 ```text

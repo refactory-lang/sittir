@@ -1,4 +1,10 @@
 {
+	"_lhs_expression": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"abstract_class_declaration": [
 		{
 			"kind": "seam",

@@ -10,7 +10,6 @@
     "_formal_parameter",
     "_identifier",
     "_import_identifier",
-    "_lhs_expression",
     "_module_export_name",
     "_property_name",
     "_tuple_type_member",
@@ -79,6 +78,14 @@
       "definedBy": "override",
       "childKind": {
         "arrow_function_parameter": "parameter"
+      }
+    },
+    "_lhs_expression": {
+      "definedBy": "enrich",
+      "childKind": {
+        "member_expression": "member_expression",
+        "subscript_expression": "subscript_expression",
+        "non_null_expression": "non_null_expression"
       }
     },
     "binary_expression": {
@@ -1233,6 +1240,15 @@
         "nonEmpty": false
       },
       "index": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_lhs_expression": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -4473,41 +4489,287 @@
     },
     {
       "kind": "_lhs_expression",
-      "modelType": "supertype",
+      "modelType": "envelope",
       "typeName": "LhsExpression",
+      "factoryName": "lhsExpression",
       "irKey": "lhsExpression",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "member_expression",
+            "subscript_expression",
+            "undefined",
+            "identifier",
+            "object_pattern",
+            "array_pattern",
+            "non_null_expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "member_expression",
+              "parseKind": "member_expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "subscript_expression",
+              "parseKind": "subscript_expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "undefined",
+              "parseKind": "undefined"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "declare_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "namespace_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "type_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "public_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "private_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "protected_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "override_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "readonly_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "module_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "any_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "number_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "boolean_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "string_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "symbol_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "export_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "object_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "new_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "get_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "set_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "async_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "static_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
+              "parseKind": "let_keyword"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "object_pattern",
+              "parseKind": "object_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "array_pattern",
+              "parseKind": "array_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "non_null_expression",
+              "parseKind": "non_null_expression"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
         "any_keyword",
+        "array",
         "array_pattern",
+        "arrow_function",
+        "as_expression",
+        "assignment_expression",
         "async_keyword",
+        "augmented_assignment_expression",
+        "await_expression",
+        "binary_expression",
         "boolean_keyword",
+        "call_expression_call",
+        "call_expression_member",
+        "call_expression_template_call",
+        "class",
         "declare_keyword",
         "export_keyword",
+        "false",
+        "function_expression",
+        "generator_function",
         "get_keyword",
         "identifier",
+        "instantiation_expression",
+        "internal_module",
         "let_keyword",
         "member_expression",
+        "meta_property_import_meta",
+        "meta_property_new_target",
         "module_keyword",
         "namespace_keyword",
+        "new_expression",
         "new_keyword",
         "non_null_expression",
+        "null",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
+        "object",
         "object_keyword",
         "object_pattern",
         "override_keyword",
+        "parenthesized_expression_sequence",
+        "parenthesized_expression_typed",
         "private_keyword",
         "protected_keyword",
         "public_keyword",
         "readonly_keyword",
+        "regex",
+        "satisfies_expression",
+        "sequence_expression",
         "set_keyword",
         "static_keyword",
+        "string_double",
         "string_keyword",
+        "string_single",
         "subscript_expression",
+        "super",
         "symbol_keyword",
+        "template_string",
+        "ternary_expression",
+        "this",
+        "true",
+        "type_assertion",
         "type_keyword",
-        "undefined"
+        "unary_expression",
+        "undefined",
+        "update_expression_postfix",
+        "update_expression_prefix",
+        "yield_expression"
       ]
     },
     {
@@ -5595,7 +5857,7 @@
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "pattern",
             "assignment_pattern"
@@ -6209,7 +6471,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "parenthesized_expression",
             "_lhs_expression"
@@ -6272,7 +6534,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "pattern"
           ],
@@ -12258,7 +12520,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "_lhs_expression",
             "parenthesized_expression"
@@ -20596,7 +20858,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "pattern",
             "assignment_pattern"
@@ -20841,36 +21103,7 @@
       "transparent": true,
       "subtypes": [
         "_lhs_expression",
-        "any_keyword",
-        "array_pattern",
-        "async_keyword",
-        "boolean_keyword",
-        "declare_keyword",
-        "export_keyword",
-        "get_keyword",
-        "identifier",
-        "let_keyword",
-        "member_expression",
-        "module_keyword",
-        "namespace_keyword",
-        "new_keyword",
-        "non_null_expression",
-        "number_keyword",
-        "object_keyword",
-        "object_pattern",
-        "override_keyword",
-        "private_keyword",
-        "protected_keyword",
-        "public_keyword",
-        "readonly_keyword",
-        "rest_pattern",
-        "set_keyword",
-        "static_keyword",
-        "string_keyword",
-        "subscript_expression",
-        "symbol_keyword",
-        "type_keyword",
-        "undefined"
+        "rest_pattern"
       ]
     },
     {

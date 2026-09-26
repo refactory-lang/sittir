@@ -154,24 +154,6 @@ export const primaryExpression: {
 	nonNull: F.nonNullExpression
 };
 
-export const lhsExpression: {
-	readonly member: typeof F.memberExpression;
-	readonly subscript: typeof F.subscriptExpression;
-	readonly undefined: typeof F.buildUndefined;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly object: typeof F.objectPattern;
-	readonly array: typeof F.arrayPattern;
-	readonly nonNull: typeof F.nonNullExpression;
-} = {
-	member: F.memberExpression,
-	subscript: F.subscriptExpression,
-	undefined: F.buildUndefined,
-	identifier: F.buildIdentifier,
-	object: F.objectPattern,
-	array: F.arrayPattern,
-	nonNull: F.nonNullExpression
-};
-
 export const augmentedAssignmentLhs: {
 	readonly member: typeof F.memberExpression;
 	readonly subscript: typeof F.subscriptExpression;
@@ -184,26 +166,6 @@ export const augmentedAssignmentLhs: {
 	identifier: F.buildIdentifier,
 	parenthesized: F.parenthesizedExpression,
 	nonNull: F.nonNullExpression
-};
-
-export const pattern: {
-	readonly member: typeof F.memberExpression;
-	readonly subscript: typeof F.subscriptExpression;
-	readonly undefined: typeof F.buildUndefined;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly object: typeof F.objectPattern;
-	readonly array: typeof F.arrayPattern;
-	readonly nonNull: typeof F.nonNullExpression;
-	readonly rest: typeof F.restPattern;
-} = {
-	member: F.memberExpression,
-	subscript: F.subscriptExpression,
-	undefined: F.buildUndefined,
-	identifier: F.buildIdentifier,
-	object: F.objectPattern,
-	array: F.arrayPattern,
-	nonNull: F.nonNullExpression,
-	rest: F.restPattern
 };
 
 export const importIdentifier: {
@@ -286,6 +248,8 @@ export const destructuringPattern: typeof F.destructuringPattern = F.destructuri
 
 export const identifier: typeof F.buildIdentifier & typeof F.identifier = attachProps(F.buildIdentifier, F.identifier);
 
+export const pattern: typeof F.pattern = F.pattern;
+
 export const propertyName: typeof F.propertyName = F.propertyName;
 
 export const moduleExportName: typeof F.moduleExportName = F.moduleExportName;
@@ -347,6 +311,7 @@ export const ir: {
 	readonly awaitExpression: typeof F.awaitExpression;
 	readonly memberExpression: typeof F.memberExpression;
 	readonly subscriptExpression: typeof F.subscriptExpression;
+	readonly lhsExpression: typeof F.lhsExpression;
 	readonly assignmentExpression: typeof F.assignmentExpression;
 	readonly augmentedAssignmentExpression: typeof F.augmentedAssignmentExpression;
 	readonly spreadElement: typeof F.spreadElement;
@@ -563,9 +528,7 @@ export const ir: {
 	readonly expressions: typeof expressions;
 	readonly expression: typeof expression;
 	readonly primaryExpression: typeof primaryExpression;
-	readonly lhsExpression: typeof lhsExpression;
 	readonly augmentedAssignmentLhs: typeof augmentedAssignmentLhs;
-	readonly pattern: typeof pattern;
 	readonly importIdentifier: typeof importIdentifier;
 	readonly type: typeof type;
 	readonly tupleTypeMember: typeof tupleTypeMember;
@@ -574,6 +537,7 @@ export const ir: {
 	readonly formalParameter: typeof formalParameter;
 	readonly destructuringPattern: typeof destructuringPattern;
 	readonly identifier: typeof identifier;
+	readonly pattern: typeof pattern;
 	readonly propertyName: typeof propertyName;
 	readonly moduleExportName: typeof moduleExportName;
 	readonly statement: typeof statement;
@@ -634,6 +598,7 @@ export const ir: {
 	awaitExpression: F.awaitExpression,
 	memberExpression: F.memberExpression,
 	subscriptExpression: F.subscriptExpression,
+	lhsExpression: F.lhsExpression,
 	assignmentExpression: F.assignmentExpression,
 	augmentedAssignmentExpression: F.augmentedAssignmentExpression,
 	spreadElement: F.spreadElement,
@@ -858,9 +823,7 @@ export const ir: {
 	expressions,
 	expression,
 	primaryExpression,
-	lhsExpression,
 	augmentedAssignmentLhs,
-	pattern,
 	importIdentifier,
 	type,
 	tupleTypeMember,
@@ -869,6 +832,7 @@ export const ir: {
 	formalParameter,
 	destructuringPattern,
 	identifier,
+	pattern,
 	propertyName,
 	moduleExportName,
 	statement,

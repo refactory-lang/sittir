@@ -964,7 +964,7 @@ pub fn is_alias_envelope(kind: KindId) -> bool {
 /// when it has no named child: an unnamed slot of the kind stores terminal
 /// kinds, and the wrap layer reclaims that slot's value from `$other`.
 pub fn keeps_anonymous_children(kind: KindId) -> bool {
-    matches!(kind.0, 279 | 315 | 316 | 341 | 349 | 362 | 382 | 408 | 419 | 420 | 426)
+    matches!(kind.0, 253 | 279 | 315 | 316 | 341 | 349 | 362 | 382 | 408 | 419 | 420 | 426)
 }
 
 /// The model slot a child is stored under where its name differs from the
@@ -986,6 +986,35 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (239, None, "implements_clause") => Some("content"),
         (244, None, "arrow_function_parameter") => Some("content"),
         (244, None, "call_signature") => Some("content"),
+        (253, None, "any_keyword") => Some("content"),
+        (253, None, "array_pattern") => Some("content"),
+        (253, None, "async_keyword") => Some("content"),
+        (253, None, "boolean_keyword") => Some("content"),
+        (253, None, "declare_keyword") => Some("content"),
+        (253, None, "export_keyword") => Some("content"),
+        (253, None, "get_keyword") => Some("content"),
+        (253, None, "identifier") => Some("content"),
+        (253, None, "let_keyword") => Some("content"),
+        (253, None, "member_expression") => Some("content"),
+        (253, None, "module_keyword") => Some("content"),
+        (253, None, "namespace_keyword") => Some("content"),
+        (253, None, "new_keyword") => Some("content"),
+        (253, None, "non_null_expression") => Some("content"),
+        (253, None, "number_keyword") => Some("content"),
+        (253, None, "object_keyword") => Some("content"),
+        (253, None, "object_pattern") => Some("content"),
+        (253, None, "override_keyword") => Some("content"),
+        (253, None, "private_keyword") => Some("content"),
+        (253, None, "protected_keyword") => Some("content"),
+        (253, None, "public_keyword") => Some("content"),
+        (253, None, "readonly_keyword") => Some("content"),
+        (253, None, "set_keyword") => Some("content"),
+        (253, None, "static_keyword") => Some("content"),
+        (253, None, "string_keyword") => Some("content"),
+        (253, None, "subscript_expression") => Some("content"),
+        (253, None, "symbol_keyword") => Some("content"),
+        (253, None, "type_keyword") => Some("content"),
+        (253, None, "undefined") => Some("content"),
         (279, None, "any_keyword") => Some("lhs_expression"),
         (279, None, "array_pattern") => Some("lhs_expression"),
         (279, None, "async_keyword") => Some("lhs_expression"),

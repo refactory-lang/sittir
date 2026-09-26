@@ -29,6 +29,7 @@ import {
 	findEntryForKindName,
 	findEntryForLiteralText,
 	findOwnKindEntry,
+	isAliasedHiddenStorage,
 	surfaceHiddenOf
 } from '../generated-metadata.ts';
 import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
@@ -1814,7 +1815,8 @@ export function compoundModelTypeFor(
 	if (body.type === SEQ && body.members.length === 0) return 'envelope';
 	if (body.type === CHOICE && (body.multiplicity === 'array' || body.multiplicity === 'nonEmptyArray'))
 		return 'envelope';
-	if (body.type === CHOICE && body.members.length > 0 && body.members.every(isLeafShapedMember)) return 'polymorph';
+	if (body.type === CHOICE && body.members.length > 0 && body.members.every(isLeafShapedMember))
+		return isAliasedHiddenStorage(kind, ctx.kindEntries) ? 'envelope' : 'polymorph';
 	return 'branch';
 }
 

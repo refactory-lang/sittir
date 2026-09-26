@@ -79,6 +79,7 @@ pub enum AnyTransport {
     AwaitExpression(AwaitExpressionTransport),
     MemberExpression(MemberExpressionTransport),
     SubscriptExpression(SubscriptExpressionTransport),
+    LhsExpression(LhsExpressionTransport),
     AssignmentExpression(AssignmentExpressionTransport),
     AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
     SpreadElement(SpreadElementTransport),
@@ -462,52 +463,52 @@ pub enum AnyTransport {
     Literal31_69_6d_70_6f_72_74,
     Literal32_64_6f_74,
     Literal33_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e,
-    Literal34_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72,
-    Literal35_70_6c_75_73_5f_65_71,
-    Literal36_64_61_73_68_5f_65_71,
-    Literal37_73_74_61_72_5f_65_71,
-    Literal38_73_6c_61_73_68_5f_65_71,
-    Literal39_70_65_72_63_65_6e_74_5f_65_71,
-    Literal40_63_61_72_65_74_5f_65_71,
-    Literal41_61_6d_70_5f_65_71,
-    Literal42_70_69_70_65_5f_65_71,
-    Literal43_67_74_5f_67_74_5f_65_71,
-    Literal44_67_74_5f_67_74_5f_67_74_5f_65_71,
-    Literal45_6c_74_5f_6c_74_5f_65_71,
-    Literal46_73_74_61_72_5f_73_74_61_72_5f_65_71,
-    Literal47_61_6d_70_5f_61_6d_70_5f_65_71,
-    Literal48_70_69_70_65_5f_70_69_70_65_5f_65_71,
-    Literal49_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71,
-    Literal50_61_6d_70_5f_61_6d_70,
-    Literal51_70_69_70_65_5f_70_69_70_65,
-    Literal52_67_74_5f_67_74,
-    Literal53_67_74_5f_67_74_5f_67_74,
-    Literal54_6c_74_5f_6c_74,
-    Literal55_61_6d_70,
-    Literal56_63_61_72_65_74,
-    Literal57_70_69_70_65,
-    Literal58_70_6c_75_73,
-    Literal59_64_61_73_68,
-    Literal60_73_74_61_72,
-    Literal61_73_6c_61_73_68,
-    Literal62_70_65_72_63_65_6e_74,
-    Literal63_73_74_61_72_5f_73_74_61_72,
-    Literal64_6c_74,
-    Literal65_6c_74_5f_65_71,
-    Literal66_65_71_5f_65_71,
-    Literal67_65_71_5f_65_71_5f_65_71,
-    Literal68_62_61_6e_67_5f_65_71,
-    Literal69_62_61_6e_67_5f_65_71_5f_65_71,
-    Literal70_67_74_5f_65_71,
-    Literal71_67_74,
-    Literal72_71_6d_61_72_6b_5f_71_6d_61_72_6b,
-    Literal73_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64,
-    Literal74_62_61_6e_67,
-    Literal75_74_69_6c_64_65,
-    Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
-    Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64,
-    Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72,
-    Literal79_75_6e_64_65_66_69_6e_65_64,
+    Literal34_75_6e_64_65_66_69_6e_65_64,
+    Literal35_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72,
+    Literal36_70_6c_75_73_5f_65_71,
+    Literal37_64_61_73_68_5f_65_71,
+    Literal38_73_74_61_72_5f_65_71,
+    Literal39_73_6c_61_73_68_5f_65_71,
+    Literal40_70_65_72_63_65_6e_74_5f_65_71,
+    Literal41_63_61_72_65_74_5f_65_71,
+    Literal42_61_6d_70_5f_65_71,
+    Literal43_70_69_70_65_5f_65_71,
+    Literal44_67_74_5f_67_74_5f_65_71,
+    Literal45_67_74_5f_67_74_5f_67_74_5f_65_71,
+    Literal46_6c_74_5f_6c_74_5f_65_71,
+    Literal47_73_74_61_72_5f_73_74_61_72_5f_65_71,
+    Literal48_61_6d_70_5f_61_6d_70_5f_65_71,
+    Literal49_70_69_70_65_5f_70_69_70_65_5f_65_71,
+    Literal50_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71,
+    Literal51_61_6d_70_5f_61_6d_70,
+    Literal52_70_69_70_65_5f_70_69_70_65,
+    Literal53_67_74_5f_67_74,
+    Literal54_67_74_5f_67_74_5f_67_74,
+    Literal55_6c_74_5f_6c_74,
+    Literal56_61_6d_70,
+    Literal57_63_61_72_65_74,
+    Literal58_70_69_70_65,
+    Literal59_70_6c_75_73,
+    Literal60_64_61_73_68,
+    Literal61_73_74_61_72,
+    Literal62_73_6c_61_73_68,
+    Literal63_70_65_72_63_65_6e_74,
+    Literal64_73_74_61_72_5f_73_74_61_72,
+    Literal65_6c_74,
+    Literal66_6c_74_5f_65_71,
+    Literal67_65_71_5f_65_71,
+    Literal68_65_71_5f_65_71_5f_65_71,
+    Literal69_62_61_6e_67_5f_65_71,
+    Literal70_62_61_6e_67_5f_65_71_5f_65_71,
+    Literal71_67_74_5f_65_71,
+    Literal72_67_74,
+    Literal73_71_6d_61_72_6b_5f_71_6d_61_72_6b,
+    Literal74_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64,
+    Literal75_62_61_6e_67,
+    Literal76_74_69_6c_64_65,
+    Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
+    Literal78_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64,
+    Literal79_65_6d_70_74_79_5f_6d_65_6d_62_65_72,
     Literal80_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
     Literal81_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
     Literal82_71_6d_61_72_6b,
@@ -606,6 +607,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::AwaitExpression(t) => t.prepare(ctx),
             AnyTransport::MemberExpression(t) => t.prepare(ctx),
             AnyTransport::SubscriptExpression(t) => t.prepare(ctx),
+            AnyTransport::LhsExpression(t) => t.prepare(ctx),
             AnyTransport::AssignmentExpression(t) => t.prepare(ctx),
             AnyTransport::AugmentedAssignmentExpression(t) => t.prepare(ctx),
             AnyTransport::SpreadElement(t) => t.prepare(ctx),
@@ -989,52 +991,52 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Literal31_69_6d_70_6f_72_74 => Ok(()),
             AnyTransport::Literal32_64_6f_74 => Ok(()),
             AnyTransport::Literal33_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => Ok(()),
-            AnyTransport::Literal34_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72 => Ok(()),
-            AnyTransport::Literal35_70_6c_75_73_5f_65_71 => Ok(()),
-            AnyTransport::Literal36_64_61_73_68_5f_65_71 => Ok(()),
-            AnyTransport::Literal37_73_74_61_72_5f_65_71 => Ok(()),
-            AnyTransport::Literal38_73_6c_61_73_68_5f_65_71 => Ok(()),
-            AnyTransport::Literal39_70_65_72_63_65_6e_74_5f_65_71 => Ok(()),
-            AnyTransport::Literal40_63_61_72_65_74_5f_65_71 => Ok(()),
-            AnyTransport::Literal41_61_6d_70_5f_65_71 => Ok(()),
-            AnyTransport::Literal42_70_69_70_65_5f_65_71 => Ok(()),
-            AnyTransport::Literal43_67_74_5f_67_74_5f_65_71 => Ok(()),
-            AnyTransport::Literal44_67_74_5f_67_74_5f_67_74_5f_65_71 => Ok(()),
-            AnyTransport::Literal45_6c_74_5f_6c_74_5f_65_71 => Ok(()),
-            AnyTransport::Literal46_73_74_61_72_5f_73_74_61_72_5f_65_71 => Ok(()),
-            AnyTransport::Literal47_61_6d_70_5f_61_6d_70_5f_65_71 => Ok(()),
-            AnyTransport::Literal48_70_69_70_65_5f_70_69_70_65_5f_65_71 => Ok(()),
-            AnyTransport::Literal49_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71 => Ok(()),
-            AnyTransport::Literal50_61_6d_70_5f_61_6d_70 => Ok(()),
-            AnyTransport::Literal51_70_69_70_65_5f_70_69_70_65 => Ok(()),
-            AnyTransport::Literal52_67_74_5f_67_74 => Ok(()),
-            AnyTransport::Literal53_67_74_5f_67_74_5f_67_74 => Ok(()),
-            AnyTransport::Literal54_6c_74_5f_6c_74 => Ok(()),
-            AnyTransport::Literal55_61_6d_70 => Ok(()),
-            AnyTransport::Literal56_63_61_72_65_74 => Ok(()),
-            AnyTransport::Literal57_70_69_70_65 => Ok(()),
-            AnyTransport::Literal58_70_6c_75_73 => Ok(()),
-            AnyTransport::Literal59_64_61_73_68 => Ok(()),
-            AnyTransport::Literal60_73_74_61_72 => Ok(()),
-            AnyTransport::Literal61_73_6c_61_73_68 => Ok(()),
-            AnyTransport::Literal62_70_65_72_63_65_6e_74 => Ok(()),
-            AnyTransport::Literal63_73_74_61_72_5f_73_74_61_72 => Ok(()),
-            AnyTransport::Literal64_6c_74 => Ok(()),
-            AnyTransport::Literal65_6c_74_5f_65_71 => Ok(()),
-            AnyTransport::Literal66_65_71_5f_65_71 => Ok(()),
-            AnyTransport::Literal67_65_71_5f_65_71_5f_65_71 => Ok(()),
-            AnyTransport::Literal68_62_61_6e_67_5f_65_71 => Ok(()),
-            AnyTransport::Literal69_62_61_6e_67_5f_65_71_5f_65_71 => Ok(()),
-            AnyTransport::Literal70_67_74_5f_65_71 => Ok(()),
-            AnyTransport::Literal71_67_74 => Ok(()),
-            AnyTransport::Literal72_71_6d_61_72_6b_5f_71_6d_61_72_6b => Ok(()),
-            AnyTransport::Literal73_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            AnyTransport::Literal74_62_61_6e_67 => Ok(()),
-            AnyTransport::Literal75_74_69_6c_64_65 => Ok(()),
-            AnyTransport::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            AnyTransport::Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            AnyTransport::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => Ok(()),
-            AnyTransport::Literal79_75_6e_64_65_66_69_6e_65_64 => Ok(()),
+            AnyTransport::Literal34_75_6e_64_65_66_69_6e_65_64 => Ok(()),
+            AnyTransport::Literal35_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72 => Ok(()),
+            AnyTransport::Literal36_70_6c_75_73_5f_65_71 => Ok(()),
+            AnyTransport::Literal37_64_61_73_68_5f_65_71 => Ok(()),
+            AnyTransport::Literal38_73_74_61_72_5f_65_71 => Ok(()),
+            AnyTransport::Literal39_73_6c_61_73_68_5f_65_71 => Ok(()),
+            AnyTransport::Literal40_70_65_72_63_65_6e_74_5f_65_71 => Ok(()),
+            AnyTransport::Literal41_63_61_72_65_74_5f_65_71 => Ok(()),
+            AnyTransport::Literal42_61_6d_70_5f_65_71 => Ok(()),
+            AnyTransport::Literal43_70_69_70_65_5f_65_71 => Ok(()),
+            AnyTransport::Literal44_67_74_5f_67_74_5f_65_71 => Ok(()),
+            AnyTransport::Literal45_67_74_5f_67_74_5f_67_74_5f_65_71 => Ok(()),
+            AnyTransport::Literal46_6c_74_5f_6c_74_5f_65_71 => Ok(()),
+            AnyTransport::Literal47_73_74_61_72_5f_73_74_61_72_5f_65_71 => Ok(()),
+            AnyTransport::Literal48_61_6d_70_5f_61_6d_70_5f_65_71 => Ok(()),
+            AnyTransport::Literal49_70_69_70_65_5f_70_69_70_65_5f_65_71 => Ok(()),
+            AnyTransport::Literal50_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71 => Ok(()),
+            AnyTransport::Literal51_61_6d_70_5f_61_6d_70 => Ok(()),
+            AnyTransport::Literal52_70_69_70_65_5f_70_69_70_65 => Ok(()),
+            AnyTransport::Literal53_67_74_5f_67_74 => Ok(()),
+            AnyTransport::Literal54_67_74_5f_67_74_5f_67_74 => Ok(()),
+            AnyTransport::Literal55_6c_74_5f_6c_74 => Ok(()),
+            AnyTransport::Literal56_61_6d_70 => Ok(()),
+            AnyTransport::Literal57_63_61_72_65_74 => Ok(()),
+            AnyTransport::Literal58_70_69_70_65 => Ok(()),
+            AnyTransport::Literal59_70_6c_75_73 => Ok(()),
+            AnyTransport::Literal60_64_61_73_68 => Ok(()),
+            AnyTransport::Literal61_73_74_61_72 => Ok(()),
+            AnyTransport::Literal62_73_6c_61_73_68 => Ok(()),
+            AnyTransport::Literal63_70_65_72_63_65_6e_74 => Ok(()),
+            AnyTransport::Literal64_73_74_61_72_5f_73_74_61_72 => Ok(()),
+            AnyTransport::Literal65_6c_74 => Ok(()),
+            AnyTransport::Literal66_6c_74_5f_65_71 => Ok(()),
+            AnyTransport::Literal67_65_71_5f_65_71 => Ok(()),
+            AnyTransport::Literal68_65_71_5f_65_71_5f_65_71 => Ok(()),
+            AnyTransport::Literal69_62_61_6e_67_5f_65_71 => Ok(()),
+            AnyTransport::Literal70_62_61_6e_67_5f_65_71_5f_65_71 => Ok(()),
+            AnyTransport::Literal71_67_74_5f_65_71 => Ok(()),
+            AnyTransport::Literal72_67_74 => Ok(()),
+            AnyTransport::Literal73_71_6d_61_72_6b_5f_71_6d_61_72_6b => Ok(()),
+            AnyTransport::Literal74_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            AnyTransport::Literal75_62_61_6e_67 => Ok(()),
+            AnyTransport::Literal76_74_69_6c_64_65 => Ok(()),
+            AnyTransport::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            AnyTransport::Literal78_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            AnyTransport::Literal79_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => Ok(()),
             AnyTransport::Literal80_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => Ok(()),
             AnyTransport::Literal81_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => Ok(()),
             AnyTransport::Literal82_71_6d_61_72_6b => Ok(()),
@@ -1317,6 +1319,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: subscript_expression (SUBSCRIPT_EXPRESSION)
                 252 => Ok(AnyTransport::SubscriptExpression(
                     SubscriptExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _lhs_expression (_LHS_EXPRESSION)
+                253 => Ok(AnyTransport::LhsExpression(
+                    LhsExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: assignment_expression (ASSIGNMENT_EXPRESSION)
                 254 => Ok(AnyTransport::AssignmentExpression(
@@ -6150,604 +6156,6 @@ impl ::sittir_core::render::Render for CallExpressionTransport {
 }
 
 #[derive(Debug, Clone)]
-pub enum LhsExpressionTransport {
-    MemberExpression(MemberExpressionTransport),
-    SubscriptExpression(SubscriptExpressionTransport),
-    Undefined(UndefinedTransport),
-    Identifier(IdentifierTransport),
-    DeclareKeyword(DeclareKeywordTransport),
-    NamespaceKeyword(NamespaceKeywordTransport),
-    TypeKeyword(TypeKeywordTransport),
-    PublicKeyword(PublicKeywordTransport),
-    PrivateKeyword(PrivateKeywordTransport),
-    ProtectedKeyword(ProtectedKeywordTransport),
-    OverrideKeyword(OverrideKeywordTransport),
-    ReadonlyKeyword(ReadonlyKeywordTransport),
-    ModuleKeyword(ModuleKeywordTransport),
-    AnyKeyword(AnyKeywordTransport),
-    NumberKeyword(NumberKeywordTransport),
-    BooleanKeyword(BooleanKeywordTransport),
-    StringKeyword(StringKeywordTransport),
-    SymbolKeyword(SymbolKeywordTransport),
-    ExportKeyword(ExportKeywordTransport),
-    ObjectKeyword(ObjectKeywordTransport),
-    NewKeyword(NewKeywordTransport),
-    GetKeyword(GetKeywordTransport),
-    SetKeyword(SetKeywordTransport),
-    AsyncKeyword(AsyncKeywordTransport),
-    StaticKeyword(StaticKeywordTransport),
-    LetKeyword(LetKeywordTransport),
-    ObjectPattern(ObjectPatternTransport),
-    ArrayPattern(ArrayPatternTransport),
-    NonNullExpression(NonNullExpressionTransport),
-    Verbatim(VerbatimTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for LhsExpressionTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            LhsExpressionTransport::MemberExpression(t) => t.prepare(ctx),
-            LhsExpressionTransport::SubscriptExpression(t) => t.prepare(ctx),
-            LhsExpressionTransport::Undefined(t) => t.prepare(ctx),
-            LhsExpressionTransport::Identifier(t) => t.prepare(ctx),
-            LhsExpressionTransport::DeclareKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::NamespaceKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::TypeKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::PublicKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::PrivateKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::ProtectedKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::OverrideKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::ReadonlyKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::ModuleKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::AnyKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::NumberKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::BooleanKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::StringKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::SymbolKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::ExportKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::ObjectKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::NewKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::GetKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::SetKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::AsyncKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::StaticKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::LetKeyword(t) => t.prepare(ctx),
-            LhsExpressionTransport::ObjectPattern(t) => t.prepare(ctx),
-            LhsExpressionTransport::ArrayPattern(t) => t.prepare(ctx),
-            LhsExpressionTransport::NonNullExpression(t) => t.prepare(ctx),
-            LhsExpressionTransport::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    253 => {
-                        if let Ok(value) = MemberExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::MemberExpression(value));
-                        }
-                        if let Ok(value) = SubscriptExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::SubscriptExpression(value));
-                        }
-                        if let Ok(value) = UndefinedTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Undefined(value));
-                        }
-                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Identifier(value));
-                        }
-                        if let Ok(value) = DeclareKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::DeclareKeyword(value));
-                        }
-                        if let Ok(value) = NamespaceKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NamespaceKeyword(value));
-                        }
-                        if let Ok(value) = TypeKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TypeKeyword(value));
-                        }
-                        if let Ok(value) = PublicKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::PublicKeyword(value));
-                        }
-                        if let Ok(value) = PrivateKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::PrivateKeyword(value));
-                        }
-                        if let Ok(value) = ProtectedKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ProtectedKeyword(value));
-                        }
-                        if let Ok(value) = OverrideKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::OverrideKeyword(value));
-                        }
-                        if let Ok(value) = ReadonlyKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ReadonlyKeyword(value));
-                        }
-                        if let Ok(value) = ModuleKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ModuleKeyword(value));
-                        }
-                        if let Ok(value) = AnyKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::AnyKeyword(value));
-                        }
-                        if let Ok(value) = NumberKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NumberKeyword(value));
-                        }
-                        if let Ok(value) = BooleanKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::BooleanKeyword(value));
-                        }
-                        if let Ok(value) = StringKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::StringKeyword(value));
-                        }
-                        if let Ok(value) = SymbolKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::SymbolKeyword(value));
-                        }
-                        if let Ok(value) = ExportKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ExportKeyword(value));
-                        }
-                        if let Ok(value) = ObjectKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ObjectKeyword(value));
-                        }
-                        if let Ok(value) = NewKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NewKeyword(value));
-                        }
-                        if let Ok(value) = GetKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::GetKeyword(value));
-                        }
-                        if let Ok(value) = SetKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::SetKeyword(value));
-                        }
-                        if let Ok(value) = AsyncKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::AsyncKeyword(value));
-                        }
-                        if let Ok(value) = StaticKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::StaticKeyword(value));
-                        }
-                        if let Ok(value) = LetKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::LetKeyword(value));
-                        }
-                        if let Ok(value) = NonNullExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NonNullExpression(value));
-                        }
-                        if let Ok(value) = ObjectPatternTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ObjectPattern(value));
-                        }
-                        if let Ok(value) = ArrayPatternTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ArrayPattern(value));
-                        }
-                        Err(::napi::Error::from_reason("aliased kind id 253 in LhsExpressionTransport decodes as none of its members"))
-                    },
-                    459 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
-                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("self-alias kind id 459 in LhsExpressionTransport: no kind-keyed child slot to unwrap"))
-                    },
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::ObjectPattern(
-                        ObjectPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::ArrayPattern(
-                        ArrayPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LhsExpressionTransport",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in LhsExpressionTransport")
-                )?;
-                match kind_id {
-                    253 => {
-                        if let Ok(value) = MemberExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::MemberExpression(value));
-                        }
-                        if let Ok(value) = SubscriptExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::SubscriptExpression(value));
-                        }
-                        if let Ok(value) = UndefinedTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Undefined(value));
-                        }
-                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Identifier(value));
-                        }
-                        if let Ok(value) = DeclareKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::DeclareKeyword(value));
-                        }
-                        if let Ok(value) = NamespaceKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NamespaceKeyword(value));
-                        }
-                        if let Ok(value) = TypeKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TypeKeyword(value));
-                        }
-                        if let Ok(value) = PublicKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::PublicKeyword(value));
-                        }
-                        if let Ok(value) = PrivateKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::PrivateKeyword(value));
-                        }
-                        if let Ok(value) = ProtectedKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ProtectedKeyword(value));
-                        }
-                        if let Ok(value) = OverrideKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::OverrideKeyword(value));
-                        }
-                        if let Ok(value) = ReadonlyKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ReadonlyKeyword(value));
-                        }
-                        if let Ok(value) = ModuleKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ModuleKeyword(value));
-                        }
-                        if let Ok(value) = AnyKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::AnyKeyword(value));
-                        }
-                        if let Ok(value) = NumberKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NumberKeyword(value));
-                        }
-                        if let Ok(value) = BooleanKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::BooleanKeyword(value));
-                        }
-                        if let Ok(value) = StringKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::StringKeyword(value));
-                        }
-                        if let Ok(value) = SymbolKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::SymbolKeyword(value));
-                        }
-                        if let Ok(value) = ExportKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ExportKeyword(value));
-                        }
-                        if let Ok(value) = ObjectKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ObjectKeyword(value));
-                        }
-                        if let Ok(value) = NewKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NewKeyword(value));
-                        }
-                        if let Ok(value) = GetKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::GetKeyword(value));
-                        }
-                        if let Ok(value) = SetKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::SetKeyword(value));
-                        }
-                        if let Ok(value) = AsyncKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::AsyncKeyword(value));
-                        }
-                        if let Ok(value) = StaticKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::StaticKeyword(value));
-                        }
-                        if let Ok(value) = LetKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::LetKeyword(value));
-                        }
-                        if let Ok(value) = NonNullExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NonNullExpression(value));
-                        }
-                        if let Ok(value) = ObjectPatternTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ObjectPattern(value));
-                        }
-                        if let Ok(value) = ArrayPatternTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ArrayPattern(value));
-                        }
-                        Err(::napi::Error::from_reason("aliased kind id 253 in LhsExpressionTransport decodes as none of its members"))
-                    },
-                    459 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
-                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("self-alias kind id 459 in LhsExpressionTransport: no kind-keyed child slot to unwrap"))
-                    },
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::ObjectPattern(
-                        ObjectPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::ArrayPattern(
-                        ArrayPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LhsExpressionTransport",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("LhsExpressionTransport: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LhsExpressionTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LhsExpressionTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LhsExpressionTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LhsExpressionTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LhsExpressionTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LhsExpressionTransport::to_napi_value(env, *val)
-    }
-}
-
-impl ::sittir_core::view::KindOf for LhsExpressionTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::MemberExpression(inner) => inner.kind_in(kinds),
-            Self::SubscriptExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::DeclareKeyword(inner) => inner.kind_in(kinds),
-            Self::NamespaceKeyword(inner) => inner.kind_in(kinds),
-            Self::TypeKeyword(inner) => inner.kind_in(kinds),
-            Self::PublicKeyword(inner) => inner.kind_in(kinds),
-            Self::PrivateKeyword(inner) => inner.kind_in(kinds),
-            Self::ProtectedKeyword(inner) => inner.kind_in(kinds),
-            Self::OverrideKeyword(inner) => inner.kind_in(kinds),
-            Self::ReadonlyKeyword(inner) => inner.kind_in(kinds),
-            Self::ModuleKeyword(inner) => inner.kind_in(kinds),
-            Self::AnyKeyword(inner) => inner.kind_in(kinds),
-            Self::NumberKeyword(inner) => inner.kind_in(kinds),
-            Self::BooleanKeyword(inner) => inner.kind_in(kinds),
-            Self::StringKeyword(inner) => inner.kind_in(kinds),
-            Self::SymbolKeyword(inner) => inner.kind_in(kinds),
-            Self::ExportKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectKeyword(inner) => inner.kind_in(kinds),
-            Self::NewKeyword(inner) => inner.kind_in(kinds),
-            Self::GetKeyword(inner) => inner.kind_in(kinds),
-            Self::SetKeyword(inner) => inner.kind_in(kinds),
-            Self::AsyncKeyword(inner) => inner.kind_in(kinds),
-            Self::StaticKeyword(inner) => inner.kind_in(kinds),
-            Self::LetKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectPattern(inner) => inner.kind_in(kinds),
-            Self::ArrayPattern(inner) => inner.kind_in(kinds),
-            Self::NonNullExpression(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-fn lhs_expression_transport_to_any(t: LhsExpressionTransport) -> AnyTransport {
-    match t {
-        LhsExpressionTransport::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        LhsExpressionTransport::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        LhsExpressionTransport::Undefined(inner) => AnyTransport::Undefined(inner),
-        LhsExpressionTransport::Identifier(inner) => AnyTransport::Identifier(inner),
-        LhsExpressionTransport::DeclareKeyword(inner) => AnyTransport::DeclareKeyword(inner),
-        LhsExpressionTransport::NamespaceKeyword(inner) => AnyTransport::NamespaceKeyword(inner),
-        LhsExpressionTransport::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        LhsExpressionTransport::PublicKeyword(inner) => AnyTransport::PublicKeyword(inner),
-        LhsExpressionTransport::PrivateKeyword(inner) => AnyTransport::PrivateKeyword(inner),
-        LhsExpressionTransport::ProtectedKeyword(inner) => AnyTransport::ProtectedKeyword(inner),
-        LhsExpressionTransport::OverrideKeyword(inner) => AnyTransport::OverrideKeyword(inner),
-        LhsExpressionTransport::ReadonlyKeyword(inner) => AnyTransport::ReadonlyKeyword(inner),
-        LhsExpressionTransport::ModuleKeyword(inner) => AnyTransport::ModuleKeyword(inner),
-        LhsExpressionTransport::AnyKeyword(inner) => AnyTransport::AnyKeyword(inner),
-        LhsExpressionTransport::NumberKeyword(inner) => AnyTransport::NumberKeyword(inner),
-        LhsExpressionTransport::BooleanKeyword(inner) => AnyTransport::BooleanKeyword(inner),
-        LhsExpressionTransport::StringKeyword(inner) => AnyTransport::StringKeyword(inner),
-        LhsExpressionTransport::SymbolKeyword(inner) => AnyTransport::SymbolKeyword(inner),
-        LhsExpressionTransport::ExportKeyword(inner) => AnyTransport::ExportKeyword(inner),
-        LhsExpressionTransport::ObjectKeyword(inner) => AnyTransport::ObjectKeyword(inner),
-        LhsExpressionTransport::NewKeyword(inner) => AnyTransport::NewKeyword(inner),
-        LhsExpressionTransport::GetKeyword(inner) => AnyTransport::GetKeyword(inner),
-        LhsExpressionTransport::SetKeyword(inner) => AnyTransport::SetKeyword(inner),
-        LhsExpressionTransport::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        LhsExpressionTransport::StaticKeyword(inner) => AnyTransport::StaticKeyword(inner),
-        LhsExpressionTransport::LetKeyword(inner) => AnyTransport::LetKeyword(inner),
-        LhsExpressionTransport::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
-        LhsExpressionTransport::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
-        LhsExpressionTransport::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
-        LhsExpressionTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl ::sittir_core::render::Render for LhsExpressionTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_lhs_expression(self, w)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum UpdateExpressionTransport {
     UpdateExpressionPostfix(UpdateExpressionPostfixTransport),
     UpdateExpressionPrefix(UpdateExpressionPrefixTransport),
@@ -7359,74 +6767,14 @@ impl ::sittir_core::render::Render for MetaPropertyTransport {
 #[derive(Debug, Clone)]
 pub enum PatternTransport {
     LhsExpression(LhsExpressionTransport),
-    MemberExpression(MemberExpressionTransport),
-    SubscriptExpression(SubscriptExpressionTransport),
-    Undefined(UndefinedTransport),
-    Identifier(IdentifierTransport),
-    DeclareKeyword(DeclareKeywordTransport),
-    NamespaceKeyword(NamespaceKeywordTransport),
-    TypeKeyword(TypeKeywordTransport),
-    PublicKeyword(PublicKeywordTransport),
-    PrivateKeyword(PrivateKeywordTransport),
-    ProtectedKeyword(ProtectedKeywordTransport),
-    OverrideKeyword(OverrideKeywordTransport),
-    ReadonlyKeyword(ReadonlyKeywordTransport),
-    ModuleKeyword(ModuleKeywordTransport),
-    AnyKeyword(AnyKeywordTransport),
-    NumberKeyword(NumberKeywordTransport),
-    BooleanKeyword(BooleanKeywordTransport),
-    StringKeyword(StringKeywordTransport),
-    SymbolKeyword(SymbolKeywordTransport),
-    ExportKeyword(ExportKeywordTransport),
-    ObjectKeyword(ObjectKeywordTransport),
-    NewKeyword(NewKeywordTransport),
-    GetKeyword(GetKeywordTransport),
-    SetKeyword(SetKeywordTransport),
-    AsyncKeyword(AsyncKeywordTransport),
-    StaticKeyword(StaticKeywordTransport),
-    LetKeyword(LetKeywordTransport),
-    ObjectPattern(ObjectPatternTransport),
-    ArrayPattern(ArrayPatternTransport),
-    NonNullExpression(NonNullExpressionTransport),
     RestPattern(RestPatternTransport),
-    Verbatim(VerbatimTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             PatternTransport::LhsExpression(t) => t.prepare(ctx),
-            PatternTransport::MemberExpression(t) => t.prepare(ctx),
-            PatternTransport::SubscriptExpression(t) => t.prepare(ctx),
-            PatternTransport::Undefined(t) => t.prepare(ctx),
-            PatternTransport::Identifier(t) => t.prepare(ctx),
-            PatternTransport::DeclareKeyword(t) => t.prepare(ctx),
-            PatternTransport::NamespaceKeyword(t) => t.prepare(ctx),
-            PatternTransport::TypeKeyword(t) => t.prepare(ctx),
-            PatternTransport::PublicKeyword(t) => t.prepare(ctx),
-            PatternTransport::PrivateKeyword(t) => t.prepare(ctx),
-            PatternTransport::ProtectedKeyword(t) => t.prepare(ctx),
-            PatternTransport::OverrideKeyword(t) => t.prepare(ctx),
-            PatternTransport::ReadonlyKeyword(t) => t.prepare(ctx),
-            PatternTransport::ModuleKeyword(t) => t.prepare(ctx),
-            PatternTransport::AnyKeyword(t) => t.prepare(ctx),
-            PatternTransport::NumberKeyword(t) => t.prepare(ctx),
-            PatternTransport::BooleanKeyword(t) => t.prepare(ctx),
-            PatternTransport::StringKeyword(t) => t.prepare(ctx),
-            PatternTransport::SymbolKeyword(t) => t.prepare(ctx),
-            PatternTransport::ExportKeyword(t) => t.prepare(ctx),
-            PatternTransport::ObjectKeyword(t) => t.prepare(ctx),
-            PatternTransport::NewKeyword(t) => t.prepare(ctx),
-            PatternTransport::GetKeyword(t) => t.prepare(ctx),
-            PatternTransport::SetKeyword(t) => t.prepare(ctx),
-            PatternTransport::AsyncKeyword(t) => t.prepare(ctx),
-            PatternTransport::StaticKeyword(t) => t.prepare(ctx),
-            PatternTransport::LetKeyword(t) => t.prepare(ctx),
-            PatternTransport::ObjectPattern(t) => t.prepare(ctx),
-            PatternTransport::ArrayPattern(t) => t.prepare(ctx),
-            PatternTransport::NonNullExpression(t) => t.prepare(ctx),
             PatternTransport::RestPattern(t) => t.prepare(ctx),
-            PatternTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
@@ -7441,188 +6789,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     278 => {
-                        if let Ok(value) = MemberExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::MemberExpression(value));
-                        }
-                        if let Ok(value) = SubscriptExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::SubscriptExpression(value));
-                        }
-                        if let Ok(value) = UndefinedTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Undefined(value));
-                        }
-                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Identifier(value));
-                        }
-                        if let Ok(value) = DeclareKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::DeclareKeyword(value));
-                        }
-                        if let Ok(value) = NamespaceKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NamespaceKeyword(value));
-                        }
-                        if let Ok(value) = TypeKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TypeKeyword(value));
-                        }
-                        if let Ok(value) = PublicKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::PublicKeyword(value));
-                        }
-                        if let Ok(value) = PrivateKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::PrivateKeyword(value));
-                        }
-                        if let Ok(value) = ProtectedKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ProtectedKeyword(value));
-                        }
-                        if let Ok(value) = OverrideKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::OverrideKeyword(value));
-                        }
-                        if let Ok(value) = ReadonlyKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ReadonlyKeyword(value));
-                        }
-                        if let Ok(value) = ModuleKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ModuleKeyword(value));
-                        }
-                        if let Ok(value) = AnyKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::AnyKeyword(value));
-                        }
-                        if let Ok(value) = NumberKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NumberKeyword(value));
-                        }
-                        if let Ok(value) = BooleanKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::BooleanKeyword(value));
-                        }
-                        if let Ok(value) = StringKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::StringKeyword(value));
-                        }
-                        if let Ok(value) = SymbolKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::SymbolKeyword(value));
-                        }
-                        if let Ok(value) = ExportKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ExportKeyword(value));
-                        }
-                        if let Ok(value) = ObjectKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ObjectKeyword(value));
-                        }
-                        if let Ok(value) = NewKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NewKeyword(value));
-                        }
-                        if let Ok(value) = GetKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::GetKeyword(value));
-                        }
-                        if let Ok(value) = SetKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::SetKeyword(value));
-                        }
-                        if let Ok(value) = AsyncKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::AsyncKeyword(value));
-                        }
-                        if let Ok(value) = StaticKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::StaticKeyword(value));
-                        }
-                        if let Ok(value) = LetKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::LetKeyword(value));
-                        }
-                        if let Ok(value) = NonNullExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NonNullExpression(value));
+                        if let Ok(value) = LhsExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LhsExpression(value));
                         }
                         if let Ok(value) = RestPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::RestPattern(value));
                         }
-                        if let Ok(value) = LhsExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::LhsExpression(value));
-                        }
-                        if let Ok(value) = ObjectPatternTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ObjectPattern(value));
-                        }
-                        if let Ok(value) = ArrayPatternTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ArrayPattern(value));
-                        }
                         Err(::napi::Error::from_reason("aliased kind id 278 in PatternTransport decodes as none of its members"))
                     },
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     253 => Ok(Self::LhsExpression(
                         LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -7644,188 +6818,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                 )?;
                 match kind_id {
                     278 => {
-                        if let Ok(value) = MemberExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::MemberExpression(value));
-                        }
-                        if let Ok(value) = SubscriptExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::SubscriptExpression(value));
-                        }
-                        if let Ok(value) = UndefinedTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Undefined(value));
-                        }
-                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Identifier(value));
-                        }
-                        if let Ok(value) = DeclareKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::DeclareKeyword(value));
-                        }
-                        if let Ok(value) = NamespaceKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NamespaceKeyword(value));
-                        }
-                        if let Ok(value) = TypeKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TypeKeyword(value));
-                        }
-                        if let Ok(value) = PublicKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::PublicKeyword(value));
-                        }
-                        if let Ok(value) = PrivateKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::PrivateKeyword(value));
-                        }
-                        if let Ok(value) = ProtectedKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ProtectedKeyword(value));
-                        }
-                        if let Ok(value) = OverrideKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::OverrideKeyword(value));
-                        }
-                        if let Ok(value) = ReadonlyKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ReadonlyKeyword(value));
-                        }
-                        if let Ok(value) = ModuleKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ModuleKeyword(value));
-                        }
-                        if let Ok(value) = AnyKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::AnyKeyword(value));
-                        }
-                        if let Ok(value) = NumberKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NumberKeyword(value));
-                        }
-                        if let Ok(value) = BooleanKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::BooleanKeyword(value));
-                        }
-                        if let Ok(value) = StringKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::StringKeyword(value));
-                        }
-                        if let Ok(value) = SymbolKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::SymbolKeyword(value));
-                        }
-                        if let Ok(value) = ExportKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ExportKeyword(value));
-                        }
-                        if let Ok(value) = ObjectKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ObjectKeyword(value));
-                        }
-                        if let Ok(value) = NewKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NewKeyword(value));
-                        }
-                        if let Ok(value) = GetKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::GetKeyword(value));
-                        }
-                        if let Ok(value) = SetKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::SetKeyword(value));
-                        }
-                        if let Ok(value) = AsyncKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::AsyncKeyword(value));
-                        }
-                        if let Ok(value) = StaticKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::StaticKeyword(value));
-                        }
-                        if let Ok(value) = LetKeywordTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::LetKeyword(value));
-                        }
-                        if let Ok(value) = NonNullExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NonNullExpression(value));
+                        if let Ok(value) = LhsExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LhsExpression(value));
                         }
                         if let Ok(value) = RestPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::RestPattern(value));
                         }
-                        if let Ok(value) = LhsExpressionTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::LhsExpression(value));
-                        }
-                        if let Ok(value) = ObjectPatternTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ObjectPattern(value));
-                        }
-                        if let Ok(value) = ArrayPatternTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ArrayPattern(value));
-                        }
                         Err(::napi::Error::from_reason("aliased kind id 278 in PatternTransport decodes as none of its members"))
                     },
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::LhsExpression(
-                        LhsExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     253 => Ok(Self::LhsExpression(
                         LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -7840,8 +6840,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     ))),
                 }
             }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("PatternTransport: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("PatternTransport: expected u16 kind_id or object with $type")),
         }
     }
 }
@@ -7880,37 +6879,7 @@ impl ::sittir_core::view::KindOf for PatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::LhsExpression(inner) => inner.kind_in(kinds),
-            Self::MemberExpression(inner) => inner.kind_in(kinds),
-            Self::SubscriptExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::DeclareKeyword(inner) => inner.kind_in(kinds),
-            Self::NamespaceKeyword(inner) => inner.kind_in(kinds),
-            Self::TypeKeyword(inner) => inner.kind_in(kinds),
-            Self::PublicKeyword(inner) => inner.kind_in(kinds),
-            Self::PrivateKeyword(inner) => inner.kind_in(kinds),
-            Self::ProtectedKeyword(inner) => inner.kind_in(kinds),
-            Self::OverrideKeyword(inner) => inner.kind_in(kinds),
-            Self::ReadonlyKeyword(inner) => inner.kind_in(kinds),
-            Self::ModuleKeyword(inner) => inner.kind_in(kinds),
-            Self::AnyKeyword(inner) => inner.kind_in(kinds),
-            Self::NumberKeyword(inner) => inner.kind_in(kinds),
-            Self::BooleanKeyword(inner) => inner.kind_in(kinds),
-            Self::StringKeyword(inner) => inner.kind_in(kinds),
-            Self::SymbolKeyword(inner) => inner.kind_in(kinds),
-            Self::ExportKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectKeyword(inner) => inner.kind_in(kinds),
-            Self::NewKeyword(inner) => inner.kind_in(kinds),
-            Self::GetKeyword(inner) => inner.kind_in(kinds),
-            Self::SetKeyword(inner) => inner.kind_in(kinds),
-            Self::AsyncKeyword(inner) => inner.kind_in(kinds),
-            Self::StaticKeyword(inner) => inner.kind_in(kinds),
-            Self::LetKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectPattern(inner) => inner.kind_in(kinds),
-            Self::ArrayPattern(inner) => inner.kind_in(kinds),
-            Self::NonNullExpression(inner) => inner.kind_in(kinds),
             Self::RestPattern(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -20197,75 +19166,17 @@ impl ::sittir_core::render::Render for ArrayElementsTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum ArrayPatternElementsTransportSlot {
-    MemberExpression(MemberExpressionTransport),
-    SubscriptExpression(SubscriptExpressionTransport),
-    Undefined(UndefinedTransport),
-    Identifier(IdentifierTransport),
-    DeclareKeyword(DeclareKeywordTransport),
-    NamespaceKeyword(NamespaceKeywordTransport),
-    TypeKeyword(TypeKeywordTransport),
-    PublicKeyword(PublicKeywordTransport),
-    PrivateKeyword(PrivateKeywordTransport),
-    ProtectedKeyword(ProtectedKeywordTransport),
-    OverrideKeyword(OverrideKeywordTransport),
-    ReadonlyKeyword(ReadonlyKeywordTransport),
-    ModuleKeyword(ModuleKeywordTransport),
-    AnyKeyword(AnyKeywordTransport),
-    NumberKeyword(NumberKeywordTransport),
-    BooleanKeyword(BooleanKeywordTransport),
-    StringKeyword(StringKeywordTransport),
-    SymbolKeyword(SymbolKeywordTransport),
-    ExportKeyword(ExportKeywordTransport),
-    ObjectKeyword(ObjectKeywordTransport),
-    NewKeyword(NewKeywordTransport),
-    GetKeyword(GetKeywordTransport),
-    SetKeyword(SetKeywordTransport),
-    AsyncKeyword(AsyncKeywordTransport),
-    StaticKeyword(StaticKeywordTransport),
-    LetKeyword(LetKeywordTransport),
-    ObjectPattern(ObjectPatternTransport),
-    ArrayPattern(ArrayPatternTransport),
-    NonNullExpression(NonNullExpressionTransport),
+    LhsExpression(LhsExpressionTransport),
     RestPattern(RestPatternTransport),
     AssignmentPattern(AssignmentPatternTransport),
-    Verbatim(VerbatimTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ArrayPatternElementsTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ArrayPatternElementsTransportSlot::MemberExpression(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::SubscriptExpression(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::Undefined(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::Identifier(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::DeclareKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::NamespaceKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::TypeKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::PublicKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::PrivateKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::ProtectedKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::OverrideKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::ReadonlyKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::ModuleKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::AnyKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::NumberKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::BooleanKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::StringKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::SymbolKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::ExportKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::ObjectKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::NewKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::GetKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::SetKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::AsyncKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::StaticKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::LetKeyword(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::ObjectPattern(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::ArrayPattern(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::NonNullExpression(t) => t.prepare(ctx),
+            ArrayPatternElementsTransportSlot::LhsExpression(t) => t.prepare(ctx),
             ArrayPatternElementsTransportSlot::RestPattern(t) => t.prepare(ctx),
             ArrayPatternElementsTransportSlot::AssignmentPattern(t) => t.prepare(ctx),
-            ArrayPatternElementsTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
@@ -20273,38 +19184,9 @@ impl ::sittir_core::prepare::Prepare for ArrayPatternElementsTransportSlot {
 impl ::sittir_core::view::KindOf for ArrayPatternElementsTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::MemberExpression(inner) => inner.kind_in(kinds),
-            Self::SubscriptExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::DeclareKeyword(inner) => inner.kind_in(kinds),
-            Self::NamespaceKeyword(inner) => inner.kind_in(kinds),
-            Self::TypeKeyword(inner) => inner.kind_in(kinds),
-            Self::PublicKeyword(inner) => inner.kind_in(kinds),
-            Self::PrivateKeyword(inner) => inner.kind_in(kinds),
-            Self::ProtectedKeyword(inner) => inner.kind_in(kinds),
-            Self::OverrideKeyword(inner) => inner.kind_in(kinds),
-            Self::ReadonlyKeyword(inner) => inner.kind_in(kinds),
-            Self::ModuleKeyword(inner) => inner.kind_in(kinds),
-            Self::AnyKeyword(inner) => inner.kind_in(kinds),
-            Self::NumberKeyword(inner) => inner.kind_in(kinds),
-            Self::BooleanKeyword(inner) => inner.kind_in(kinds),
-            Self::StringKeyword(inner) => inner.kind_in(kinds),
-            Self::SymbolKeyword(inner) => inner.kind_in(kinds),
-            Self::ExportKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectKeyword(inner) => inner.kind_in(kinds),
-            Self::NewKeyword(inner) => inner.kind_in(kinds),
-            Self::GetKeyword(inner) => inner.kind_in(kinds),
-            Self::SetKeyword(inner) => inner.kind_in(kinds),
-            Self::AsyncKeyword(inner) => inner.kind_in(kinds),
-            Self::StaticKeyword(inner) => inner.kind_in(kinds),
-            Self::LetKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectPattern(inner) => inner.kind_in(kinds),
-            Self::ArrayPattern(inner) => inner.kind_in(kinds),
-            Self::NonNullExpression(inner) => inner.kind_in(kinds),
+            Self::LhsExpression(inner) => inner.kind_in(kinds),
             Self::RestPattern(inner) => inner.kind_in(kinds),
             Self::AssignmentPattern(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -20318,92 +19200,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::ObjectPattern(
-                        ObjectPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::ArrayPattern(
-                        ArrayPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     279 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
@@ -20411,23 +19209,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                     232 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    459 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
-                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 459 in ArrayPatternElementsTransportSlot: no kind-keyed child slot to unwrap"))
-                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ArrayPatternElementsTransportSlot",
                     ))),
@@ -20439,92 +19220,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                     ::napi::Error::from_reason("$type property missing in ArrayPatternElementsTransportSlot")
                 )?;
                 match kind_id {
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::ObjectPattern(
-                        ObjectPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::ArrayPattern(
-                        ArrayPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     279 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
@@ -20532,30 +19229,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternElementsTransportSlo
                     232 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    459 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
-                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 459 in ArrayPatternElementsTransportSlot: no kind-keyed child slot to unwrap"))
-                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ArrayPatternElementsTransportSlot",
                     ))),
                 }
             }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("ArrayPatternElementsTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("ArrayPatternElementsTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
@@ -20592,76 +19271,18 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ArrayPatternElementsTransportS
 
 fn array_pattern_elements_transport_slot_to_any(t: ArrayPatternElementsTransportSlot) -> AnyTransport {
     match t {
-        ArrayPatternElementsTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        ArrayPatternElementsTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        ArrayPatternElementsTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
-        ArrayPatternElementsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ArrayPatternElementsTransportSlot::DeclareKeyword(inner) => AnyTransport::DeclareKeyword(inner),
-        ArrayPatternElementsTransportSlot::NamespaceKeyword(inner) => AnyTransport::NamespaceKeyword(inner),
-        ArrayPatternElementsTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        ArrayPatternElementsTransportSlot::PublicKeyword(inner) => AnyTransport::PublicKeyword(inner),
-        ArrayPatternElementsTransportSlot::PrivateKeyword(inner) => AnyTransport::PrivateKeyword(inner),
-        ArrayPatternElementsTransportSlot::ProtectedKeyword(inner) => AnyTransport::ProtectedKeyword(inner),
-        ArrayPatternElementsTransportSlot::OverrideKeyword(inner) => AnyTransport::OverrideKeyword(inner),
-        ArrayPatternElementsTransportSlot::ReadonlyKeyword(inner) => AnyTransport::ReadonlyKeyword(inner),
-        ArrayPatternElementsTransportSlot::ModuleKeyword(inner) => AnyTransport::ModuleKeyword(inner),
-        ArrayPatternElementsTransportSlot::AnyKeyword(inner) => AnyTransport::AnyKeyword(inner),
-        ArrayPatternElementsTransportSlot::NumberKeyword(inner) => AnyTransport::NumberKeyword(inner),
-        ArrayPatternElementsTransportSlot::BooleanKeyword(inner) => AnyTransport::BooleanKeyword(inner),
-        ArrayPatternElementsTransportSlot::StringKeyword(inner) => AnyTransport::StringKeyword(inner),
-        ArrayPatternElementsTransportSlot::SymbolKeyword(inner) => AnyTransport::SymbolKeyword(inner),
-        ArrayPatternElementsTransportSlot::ExportKeyword(inner) => AnyTransport::ExportKeyword(inner),
-        ArrayPatternElementsTransportSlot::ObjectKeyword(inner) => AnyTransport::ObjectKeyword(inner),
-        ArrayPatternElementsTransportSlot::NewKeyword(inner) => AnyTransport::NewKeyword(inner),
-        ArrayPatternElementsTransportSlot::GetKeyword(inner) => AnyTransport::GetKeyword(inner),
-        ArrayPatternElementsTransportSlot::SetKeyword(inner) => AnyTransport::SetKeyword(inner),
-        ArrayPatternElementsTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        ArrayPatternElementsTransportSlot::StaticKeyword(inner) => AnyTransport::StaticKeyword(inner),
-        ArrayPatternElementsTransportSlot::LetKeyword(inner) => AnyTransport::LetKeyword(inner),
-        ArrayPatternElementsTransportSlot::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
-        ArrayPatternElementsTransportSlot::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
-        ArrayPatternElementsTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
+        ArrayPatternElementsTransportSlot::LhsExpression(inner) => AnyTransport::LhsExpression(inner),
         ArrayPatternElementsTransportSlot::RestPattern(inner) => AnyTransport::RestPattern(inner),
         ArrayPatternElementsTransportSlot::AssignmentPattern(inner) => AnyTransport::AssignmentPattern(inner),
-        ArrayPatternElementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
 impl ::sittir_core::render::Render for ArrayPatternElementsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ArrayPatternElementsTransportSlot::MemberExpression(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::SubscriptExpression(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::Undefined(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::Identifier(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::DeclareKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::NamespaceKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::TypeKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::PublicKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::PrivateKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::ProtectedKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::OverrideKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::ReadonlyKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::ModuleKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::AnyKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::NumberKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::BooleanKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::StringKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::SymbolKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::ExportKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::ObjectKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::NewKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::GetKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::SetKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::AsyncKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::StaticKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::LetKeyword(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::ObjectPattern(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::ArrayPattern(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::NonNullExpression(inner) => inner.render(w),
+            ArrayPatternElementsTransportSlot::LhsExpression(inner) => inner.render(w),
             ArrayPatternElementsTransportSlot::RestPattern(inner) => inner.render(w),
             ArrayPatternElementsTransportSlot::AssignmentPattern(inner) => inner.render(w),
-            ArrayPatternElementsTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -26453,14 +25074,337 @@ impl ::sittir_core::render::Render for SubscriptExpressionIndexTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum LhsExpressionContentTransportSlot {
+    MemberExpression(MemberExpressionTransport),
+    SubscriptExpression(SubscriptExpressionTransport),
+    Identifier(IdentifierTransport),
+    ObjectPattern(ObjectPatternTransport),
+    ArrayPattern(ArrayPatternTransport),
+    NonNullExpression(NonNullExpressionTransport),
+    Literal34_75_6e_64_65_66_69_6e_65_64,
+    Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64,
+    Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64,
+    Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64,
+    Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64,
+    Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64,
+    Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64,
+    Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64,
+    Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64,
+    Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64,
+    Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64,
+    Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64,
+    Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64,
+    Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64,
+    Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64,
+    Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64,
+    Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64,
+    Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64,
+    Literal26_67_65_74_5f_6b_65_79_77_6f_72_64,
+    Literal27_73_65_74_5f_6b_65_79_77_6f_72_64,
+    Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
+    Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64,
+    Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64,
+    Verbatim(VerbatimTransport),
+}
+
+impl ::sittir_core::prepare::Prepare for LhsExpressionContentTransportSlot {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            LhsExpressionContentTransportSlot::MemberExpression(t) => t.prepare(ctx),
+            LhsExpressionContentTransportSlot::SubscriptExpression(t) => t.prepare(ctx),
+            LhsExpressionContentTransportSlot::Identifier(t) => t.prepare(ctx),
+            LhsExpressionContentTransportSlot::ObjectPattern(t) => t.prepare(ctx),
+            LhsExpressionContentTransportSlot::ArrayPattern(t) => t.prepare(ctx),
+            LhsExpressionContentTransportSlot::NonNullExpression(t) => t.prepare(ctx),
+            LhsExpressionContentTransportSlot::Literal34_75_6e_64_65_66_69_6e_65_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            LhsExpressionContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for LhsExpressionContentTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::MemberExpression(inner) => inner.kind_in(kinds),
+            Self::SubscriptExpression(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::ObjectPattern(inner) => inner.kind_in(kinds),
+            Self::ArrayPattern(inner) => inner.kind_in(kinds),
+            Self::NonNullExpression(inner) => inner.kind_in(kinds),
+            Self::Literal34_75_6e_64_65_66_69_6e_65_64 => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
+            Self::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
+            Self::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
+            Self::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
+            Self::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
+            Self::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k)),
+            Self::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
+            Self::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
+            Self::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
+            Self::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
+            Self::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
+            Self::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
+            Self::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
+            Self::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
+            Self::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
+            Self::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
+            Self::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
+            Self::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
+            Self::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
+            Self::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
+            Self::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    124 => Ok(Self::Literal34_75_6e_64_65_66_69_6e_65_64),
+                    30 => Ok(Self::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64),
+                    31 => Ok(Self::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64),
+                    7 => Ok(Self::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64),
+                    32 => Ok(Self::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64),
+                    33 => Ok(Self::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64),
+                    34 => Ok(Self::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64),
+                    35 => Ok(Self::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64),
+                    36 => Ok(Self::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64),
+                    37 => Ok(Self::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64),
+                    38 => Ok(Self::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64),
+                    39 => Ok(Self::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64),
+                    40 => Ok(Self::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64),
+                    41 => Ok(Self::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64),
+                    42 => Ok(Self::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64),
+                    43 => Ok(Self::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64),
+                    44 => Ok(Self::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64),
+                    45 => Ok(Self::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64),
+                    46 => Ok(Self::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64),
+                    47 => Ok(Self::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64),
+                    48 => Ok(Self::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64),
+                    49 => Ok(Self::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64),
+                    50 => Ok(Self::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64),
+                    251 => Ok(Self::MemberExpression(
+                        MemberExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    252 => Ok(Self::SubscriptExpression(
+                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    231 => Ok(Self::ObjectPattern(
+                        ObjectPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    235 => Ok(Self::ArrayPattern(
+                        ArrayPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    287 => Ok(Self::NonNullExpression(
+                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in LhsExpressionContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in LhsExpressionContentTransportSlot")
+                )?;
+                match kind_id {
+                    124 => Ok(Self::Literal34_75_6e_64_65_66_69_6e_65_64),
+                    30 => Ok(Self::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64),
+                    31 => Ok(Self::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64),
+                    7 => Ok(Self::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64),
+                    32 => Ok(Self::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64),
+                    33 => Ok(Self::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64),
+                    34 => Ok(Self::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64),
+                    35 => Ok(Self::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64),
+                    36 => Ok(Self::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64),
+                    37 => Ok(Self::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64),
+                    38 => Ok(Self::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64),
+                    39 => Ok(Self::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64),
+                    40 => Ok(Self::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64),
+                    41 => Ok(Self::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64),
+                    42 => Ok(Self::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64),
+                    43 => Ok(Self::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64),
+                    44 => Ok(Self::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64),
+                    45 => Ok(Self::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64),
+                    46 => Ok(Self::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64),
+                    47 => Ok(Self::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64),
+                    48 => Ok(Self::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64),
+                    49 => Ok(Self::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64),
+                    50 => Ok(Self::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64),
+                    251 => Ok(Self::MemberExpression(
+                        MemberExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    252 => Ok(Self::SubscriptExpression(
+                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    231 => Ok(Self::ObjectPattern(
+                        ObjectPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    235 => Ok(Self::ArrayPattern(
+                        ArrayPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    287 => Ok(Self::NonNullExpression(
+                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in LhsExpressionContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
+            _ => Err(::napi::Error::from_reason("LhsExpressionContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LhsExpressionContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("LhsExpressionContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LhsExpressionContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        LhsExpressionContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LhsExpressionContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        LhsExpressionContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn lhs_expression_content_transport_slot_to_any(t: LhsExpressionContentTransportSlot) -> AnyTransport {
+    match t {
+        LhsExpressionContentTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
+        LhsExpressionContentTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
+        LhsExpressionContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        LhsExpressionContentTransportSlot::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
+        LhsExpressionContentTransportSlot::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
+        LhsExpressionContentTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
+        LhsExpressionContentTransportSlot::Literal34_75_6e_64_65_66_69_6e_65_64 => AnyTransport::Literal34_75_6e_64_65_66_69_6e_65_64,
+        LhsExpressionContentTransportSlot::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64,
+        LhsExpressionContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl ::sittir_core::render::Render for LhsExpressionContentTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            LhsExpressionContentTransportSlot::MemberExpression(inner) => inner.render(w),
+            LhsExpressionContentTransportSlot::SubscriptExpression(inner) => inner.render(w),
+            LhsExpressionContentTransportSlot::Identifier(inner) => inner.render(w),
+            LhsExpressionContentTransportSlot::ObjectPattern(inner) => inner.render(w),
+            LhsExpressionContentTransportSlot::ArrayPattern(inner) => inner.render(w),
+            LhsExpressionContentTransportSlot::NonNullExpression(inner) => inner.render(w),
+            LhsExpressionContentTransportSlot::Literal34_75_6e_64_65_66_69_6e_65_64 => w.text("undefined"),
+            LhsExpressionContentTransportSlot::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64 => w.text("declare"),
+            LhsExpressionContentTransportSlot::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64 => w.text("namespace"),
+            LhsExpressionContentTransportSlot::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => w.text("type"),
+            LhsExpressionContentTransportSlot::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64 => w.text("public"),
+            LhsExpressionContentTransportSlot::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64 => w.text("private"),
+            LhsExpressionContentTransportSlot::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64 => w.text("protected"),
+            LhsExpressionContentTransportSlot::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64 => w.text("override"),
+            LhsExpressionContentTransportSlot::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64 => w.text("readonly"),
+            LhsExpressionContentTransportSlot::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64 => w.text("module"),
+            LhsExpressionContentTransportSlot::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64 => w.text("any"),
+            LhsExpressionContentTransportSlot::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64 => w.text("number"),
+            LhsExpressionContentTransportSlot::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64 => w.text("boolean"),
+            LhsExpressionContentTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => w.text("string"),
+            LhsExpressionContentTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => w.text("symbol"),
+            LhsExpressionContentTransportSlot::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64 => w.text("export"),
+            LhsExpressionContentTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => w.text("object"),
+            LhsExpressionContentTransportSlot::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64 => w.text("new"),
+            LhsExpressionContentTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => w.text("get"),
+            LhsExpressionContentTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => w.text("set"),
+            LhsExpressionContentTransportSlot::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
+            LhsExpressionContentTransportSlot::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64 => w.text("static"),
+            LhsExpressionContentTransportSlot::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64 => w.text("let"),
+            LhsExpressionContentTransportSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum AssignmentExpressionUsingMarkerTransportSlot {
-    Literal34_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72,
+    Literal35_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72,
 }
 
 impl ::sittir_core::prepare::Prepare for AssignmentExpressionUsingMarkerTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            AssignmentExpressionUsingMarkerTransportSlot::Literal34_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72 => Ok(()),
+            AssignmentExpressionUsingMarkerTransportSlot::Literal35_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72 => Ok(()),
         }
     }
 }
@@ -26468,7 +25412,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentExpressionUsingMarkerTranspor
 impl ::sittir_core::view::KindOf for AssignmentExpressionUsingMarkerTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal34_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72 => [::sittir_core::types::KindId(148)].iter().any(|k| kinds.contains(k)),
+            Self::Literal35_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72 => [::sittir_core::types::KindId(148)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -26482,7 +25426,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionUsingMarkerT
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    148 => Ok(Self::Literal34_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72),
+                    148 => Ok(Self::Literal35_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AssignmentExpressionUsingMarkerTransportSlot",
                     ))),
@@ -26494,7 +25438,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionUsingMarkerT
                     ::napi::Error::from_reason("$type property missing in AssignmentExpressionUsingMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    148 => Ok(Self::Literal34_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72),
+                    148 => Ok(Self::Literal35_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AssignmentExpressionUsingMarkerTransportSlot",
                     ))),
@@ -26537,14 +25481,14 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssignmentExpressionUsingMarke
 
 fn assignment_expression_using_marker_transport_slot_to_any(t: AssignmentExpressionUsingMarkerTransportSlot) -> AnyTransport {
     match t {
-        AssignmentExpressionUsingMarkerTransportSlot::Literal34_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72 => AnyTransport::Literal34_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72,
+        AssignmentExpressionUsingMarkerTransportSlot::Literal35_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72,
     }
 }
 
 impl ::sittir_core::render::Render for AssignmentExpressionUsingMarkerTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AssignmentExpressionUsingMarkerTransportSlot::Literal34_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72 => w.text("using"),
+            AssignmentExpressionUsingMarkerTransportSlot::Literal35_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72 => w.text("using"),
         }
     }
 }
@@ -26553,36 +25497,7 @@ impl ::sittir_core::render::Render for AssignmentExpressionUsingMarkerTransportS
 pub enum AssignmentExpressionLeftTransportSlot {
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
-    MemberExpression(MemberExpressionTransport),
-    SubscriptExpression(SubscriptExpressionTransport),
-    Undefined(UndefinedTransport),
-    Identifier(IdentifierTransport),
-    DeclareKeyword(DeclareKeywordTransport),
-    NamespaceKeyword(NamespaceKeywordTransport),
-    TypeKeyword(TypeKeywordTransport),
-    PublicKeyword(PublicKeywordTransport),
-    PrivateKeyword(PrivateKeywordTransport),
-    ProtectedKeyword(ProtectedKeywordTransport),
-    OverrideKeyword(OverrideKeywordTransport),
-    ReadonlyKeyword(ReadonlyKeywordTransport),
-    ModuleKeyword(ModuleKeywordTransport),
-    AnyKeyword(AnyKeywordTransport),
-    NumberKeyword(NumberKeywordTransport),
-    BooleanKeyword(BooleanKeywordTransport),
-    StringKeyword(StringKeywordTransport),
-    SymbolKeyword(SymbolKeywordTransport),
-    ExportKeyword(ExportKeywordTransport),
-    ObjectKeyword(ObjectKeywordTransport),
-    NewKeyword(NewKeywordTransport),
-    GetKeyword(GetKeywordTransport),
-    SetKeyword(SetKeywordTransport),
-    AsyncKeyword(AsyncKeywordTransport),
-    StaticKeyword(StaticKeywordTransport),
-    LetKeyword(LetKeywordTransport),
-    ObjectPattern(ObjectPatternTransport),
-    ArrayPattern(ArrayPatternTransport),
-    NonNullExpression(NonNullExpressionTransport),
-    Verbatim(VerbatimTransport),
+    LhsExpression(LhsExpressionTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for AssignmentExpressionLeftTransportSlot {
@@ -26590,36 +25505,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentExpressionLeftTransportSlot {
         match self {
             AssignmentExpressionLeftTransportSlot::ParenthesizedExpressionTyped(t) => t.prepare(ctx),
             AssignmentExpressionLeftTransportSlot::ParenthesizedExpressionSequence(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::MemberExpression(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::SubscriptExpression(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::Undefined(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::Identifier(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::DeclareKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::NamespaceKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::TypeKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::PublicKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::PrivateKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::ProtectedKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::OverrideKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::ReadonlyKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::ModuleKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::AnyKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::NumberKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::BooleanKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::StringKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::SymbolKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::ExportKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::ObjectKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::NewKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::GetKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::SetKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::AsyncKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::StaticKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::LetKeyword(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::ObjectPattern(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::ArrayPattern(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::NonNullExpression(t) => t.prepare(ctx),
-            AssignmentExpressionLeftTransportSlot::Verbatim(t) => t.prepare(ctx),
+            AssignmentExpressionLeftTransportSlot::LhsExpression(t) => t.prepare(ctx),
         }
     }
 }
@@ -26629,36 +25515,7 @@ impl ::sittir_core::view::KindOf for AssignmentExpressionLeftTransportSlot {
         match self {
             Self::ParenthesizedExpressionTyped(inner) => inner.kind_in(kinds),
             Self::ParenthesizedExpressionSequence(inner) => inner.kind_in(kinds),
-            Self::MemberExpression(inner) => inner.kind_in(kinds),
-            Self::SubscriptExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::DeclareKeyword(inner) => inner.kind_in(kinds),
-            Self::NamespaceKeyword(inner) => inner.kind_in(kinds),
-            Self::TypeKeyword(inner) => inner.kind_in(kinds),
-            Self::PublicKeyword(inner) => inner.kind_in(kinds),
-            Self::PrivateKeyword(inner) => inner.kind_in(kinds),
-            Self::ProtectedKeyword(inner) => inner.kind_in(kinds),
-            Self::OverrideKeyword(inner) => inner.kind_in(kinds),
-            Self::ReadonlyKeyword(inner) => inner.kind_in(kinds),
-            Self::ModuleKeyword(inner) => inner.kind_in(kinds),
-            Self::AnyKeyword(inner) => inner.kind_in(kinds),
-            Self::NumberKeyword(inner) => inner.kind_in(kinds),
-            Self::BooleanKeyword(inner) => inner.kind_in(kinds),
-            Self::StringKeyword(inner) => inner.kind_in(kinds),
-            Self::SymbolKeyword(inner) => inner.kind_in(kinds),
-            Self::ExportKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectKeyword(inner) => inner.kind_in(kinds),
-            Self::NewKeyword(inner) => inner.kind_in(kinds),
-            Self::GetKeyword(inner) => inner.kind_in(kinds),
-            Self::SetKeyword(inner) => inner.kind_in(kinds),
-            Self::AsyncKeyword(inner) => inner.kind_in(kinds),
-            Self::StaticKeyword(inner) => inner.kind_in(kinds),
-            Self::LetKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectPattern(inner) => inner.kind_in(kinds),
-            Self::ArrayPattern(inner) => inner.kind_in(kinds),
-            Self::NonNullExpression(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+            Self::LhsExpression(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -26672,116 +25529,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
                     408 => Ok(Self::ParenthesizedExpressionTyped(
                         ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     409 => Ok(Self::ParenthesizedExpressionSequence(
                         ParenthesizedExpressionSequenceTransport::from_napi_value(env, napi_val)?
                     )),
-                    251 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
+                    459 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::ObjectPattern(
-                        ObjectPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::ArrayPattern(
-                        ArrayPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    459 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
-                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 459 in AssignmentExpressionLeftTransportSlot: no kind-keyed child slot to unwrap"))
-                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AssignmentExpressionLeftTransportSlot",
                     ))),
@@ -26793,123 +25552,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                     ::napi::Error::from_reason("$type property missing in AssignmentExpressionLeftTransportSlot")
                 )?;
                 match kind_id {
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
                     408 => Ok(Self::ParenthesizedExpressionTyped(
                         ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     409 => Ok(Self::ParenthesizedExpressionSequence(
                         ParenthesizedExpressionSequenceTransport::from_napi_value(env, napi_val)?
                     )),
-                    251 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    252 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
+                    459 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::ObjectPattern(
-                        ObjectPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::ArrayPattern(
-                        ArrayPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    459 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
-                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 459 in AssignmentExpressionLeftTransportSlot: no kind-keyed child slot to unwrap"))
-                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AssignmentExpressionLeftTransportSlot",
                     ))),
                 }
             }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("AssignmentExpressionLeftTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("AssignmentExpressionLeftTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
@@ -26948,36 +25608,7 @@ fn assignment_expression_left_transport_slot_to_any(t: AssignmentExpressionLeftT
     match t {
         AssignmentExpressionLeftTransportSlot::ParenthesizedExpressionTyped(inner) => AnyTransport::ParenthesizedExpressionTyped(inner),
         AssignmentExpressionLeftTransportSlot::ParenthesizedExpressionSequence(inner) => AnyTransport::ParenthesizedExpressionSequence(inner),
-        AssignmentExpressionLeftTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        AssignmentExpressionLeftTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        AssignmentExpressionLeftTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
-        AssignmentExpressionLeftTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        AssignmentExpressionLeftTransportSlot::DeclareKeyword(inner) => AnyTransport::DeclareKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::NamespaceKeyword(inner) => AnyTransport::NamespaceKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::PublicKeyword(inner) => AnyTransport::PublicKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::PrivateKeyword(inner) => AnyTransport::PrivateKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::ProtectedKeyword(inner) => AnyTransport::ProtectedKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::OverrideKeyword(inner) => AnyTransport::OverrideKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::ReadonlyKeyword(inner) => AnyTransport::ReadonlyKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::ModuleKeyword(inner) => AnyTransport::ModuleKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::AnyKeyword(inner) => AnyTransport::AnyKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::NumberKeyword(inner) => AnyTransport::NumberKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::BooleanKeyword(inner) => AnyTransport::BooleanKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::StringKeyword(inner) => AnyTransport::StringKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::SymbolKeyword(inner) => AnyTransport::SymbolKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::ExportKeyword(inner) => AnyTransport::ExportKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::ObjectKeyword(inner) => AnyTransport::ObjectKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::NewKeyword(inner) => AnyTransport::NewKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::GetKeyword(inner) => AnyTransport::GetKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::SetKeyword(inner) => AnyTransport::SetKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::StaticKeyword(inner) => AnyTransport::StaticKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::LetKeyword(inner) => AnyTransport::LetKeyword(inner),
-        AssignmentExpressionLeftTransportSlot::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
-        AssignmentExpressionLeftTransportSlot::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
-        AssignmentExpressionLeftTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
-        AssignmentExpressionLeftTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        AssignmentExpressionLeftTransportSlot::LhsExpression(inner) => AnyTransport::LhsExpression(inner),
     }
 }
 
@@ -26986,36 +25617,7 @@ impl ::sittir_core::render::Render for AssignmentExpressionLeftTransportSlot {
         match self {
             AssignmentExpressionLeftTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             AssignmentExpressionLeftTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::MemberExpression(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::SubscriptExpression(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::Undefined(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::Identifier(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::DeclareKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::NamespaceKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::TypeKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::PublicKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::PrivateKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::ProtectedKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::OverrideKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::ReadonlyKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::ModuleKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::AnyKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::NumberKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::BooleanKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::StringKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::SymbolKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::ExportKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::ObjectKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::NewKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::GetKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::SetKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::AsyncKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::StaticKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::LetKeyword(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::ObjectPattern(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::ArrayPattern(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::NonNullExpression(inner) => inner.render(w),
-            AssignmentExpressionLeftTransportSlot::Verbatim(inner) => inner.render(w),
+            AssignmentExpressionLeftTransportSlot::LhsExpression(inner) => inner.render(w),
         }
     }
 }
@@ -27338,41 +25940,41 @@ impl ::sittir_core::render::Render for AugmentedAssignmentExpressionLeftTranspor
 
 #[derive(Debug, Clone)]
 pub enum AugmentedAssignmentExpressionOperatorTransportSlot {
-    Literal35_70_6c_75_73_5f_65_71,
-    Literal36_64_61_73_68_5f_65_71,
-    Literal37_73_74_61_72_5f_65_71,
-    Literal38_73_6c_61_73_68_5f_65_71,
-    Literal39_70_65_72_63_65_6e_74_5f_65_71,
-    Literal40_63_61_72_65_74_5f_65_71,
-    Literal41_61_6d_70_5f_65_71,
-    Literal42_70_69_70_65_5f_65_71,
-    Literal43_67_74_5f_67_74_5f_65_71,
-    Literal44_67_74_5f_67_74_5f_67_74_5f_65_71,
-    Literal45_6c_74_5f_6c_74_5f_65_71,
-    Literal46_73_74_61_72_5f_73_74_61_72_5f_65_71,
-    Literal47_61_6d_70_5f_61_6d_70_5f_65_71,
-    Literal48_70_69_70_65_5f_70_69_70_65_5f_65_71,
-    Literal49_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71,
+    Literal36_70_6c_75_73_5f_65_71,
+    Literal37_64_61_73_68_5f_65_71,
+    Literal38_73_74_61_72_5f_65_71,
+    Literal39_73_6c_61_73_68_5f_65_71,
+    Literal40_70_65_72_63_65_6e_74_5f_65_71,
+    Literal41_63_61_72_65_74_5f_65_71,
+    Literal42_61_6d_70_5f_65_71,
+    Literal43_70_69_70_65_5f_65_71,
+    Literal44_67_74_5f_67_74_5f_65_71,
+    Literal45_67_74_5f_67_74_5f_67_74_5f_65_71,
+    Literal46_6c_74_5f_6c_74_5f_65_71,
+    Literal47_73_74_61_72_5f_73_74_61_72_5f_65_71,
+    Literal48_61_6d_70_5f_61_6d_70_5f_65_71,
+    Literal49_70_69_70_65_5f_70_69_70_65_5f_65_71,
+    Literal50_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71,
 }
 
 impl ::sittir_core::prepare::Prepare for AugmentedAssignmentExpressionOperatorTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal35_70_6c_75_73_5f_65_71 => Ok(()),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal36_64_61_73_68_5f_65_71 => Ok(()),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal37_73_74_61_72_5f_65_71 => Ok(()),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal38_73_6c_61_73_68_5f_65_71 => Ok(()),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal39_70_65_72_63_65_6e_74_5f_65_71 => Ok(()),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal40_63_61_72_65_74_5f_65_71 => Ok(()),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal41_61_6d_70_5f_65_71 => Ok(()),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal42_70_69_70_65_5f_65_71 => Ok(()),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal43_67_74_5f_67_74_5f_65_71 => Ok(()),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal44_67_74_5f_67_74_5f_67_74_5f_65_71 => Ok(()),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal45_6c_74_5f_6c_74_5f_65_71 => Ok(()),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal46_73_74_61_72_5f_73_74_61_72_5f_65_71 => Ok(()),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal47_61_6d_70_5f_61_6d_70_5f_65_71 => Ok(()),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal48_70_69_70_65_5f_70_69_70_65_5f_65_71 => Ok(()),
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal49_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal36_70_6c_75_73_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal37_64_61_73_68_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal38_73_74_61_72_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal39_73_6c_61_73_68_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal40_70_65_72_63_65_6e_74_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal41_63_61_72_65_74_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal42_61_6d_70_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal43_70_69_70_65_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal44_67_74_5f_67_74_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal45_67_74_5f_67_74_5f_67_74_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal46_6c_74_5f_6c_74_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal47_73_74_61_72_5f_73_74_61_72_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal48_61_6d_70_5f_61_6d_70_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal49_70_69_70_65_5f_70_69_70_65_5f_65_71 => Ok(()),
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal50_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71 => Ok(()),
         }
     }
 }
@@ -27380,21 +25982,21 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentExpressionOperatorTr
 impl ::sittir_core::view::KindOf for AugmentedAssignmentExpressionOperatorTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal35_70_6c_75_73_5f_65_71 => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::Literal36_64_61_73_68_5f_65_71 => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::Literal37_73_74_61_72_5f_65_71 => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::Literal38_73_6c_61_73_68_5f_65_71 => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::Literal39_70_65_72_63_65_6e_74_5f_65_71 => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::Literal40_63_61_72_65_74_5f_65_71 => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::Literal41_61_6d_70_5f_65_71 => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::Literal42_70_69_70_65_5f_65_71 => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::Literal43_67_74_5f_67_74_5f_65_71 => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::Literal44_67_74_5f_67_74_5f_67_74_5f_65_71 => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
-            Self::Literal45_6c_74_5f_6c_74_5f_65_71 => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
-            Self::Literal46_73_74_61_72_5f_73_74_61_72_5f_65_71 => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
-            Self::Literal47_61_6d_70_5f_61_6d_70_5f_65_71 => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
-            Self::Literal48_70_69_70_65_5f_70_69_70_65_5f_65_71 => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
-            Self::Literal49_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71 => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
+            Self::Literal36_70_6c_75_73_5f_65_71 => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
+            Self::Literal37_64_61_73_68_5f_65_71 => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
+            Self::Literal38_73_74_61_72_5f_65_71 => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
+            Self::Literal39_73_6c_61_73_68_5f_65_71 => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
+            Self::Literal40_70_65_72_63_65_6e_74_5f_65_71 => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+            Self::Literal41_63_61_72_65_74_5f_65_71 => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
+            Self::Literal42_61_6d_70_5f_65_71 => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
+            Self::Literal43_70_69_70_65_5f_65_71 => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
+            Self::Literal44_67_74_5f_67_74_5f_65_71 => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
+            Self::Literal45_67_74_5f_67_74_5f_67_74_5f_65_71 => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::Literal46_6c_74_5f_6c_74_5f_65_71 => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::Literal47_73_74_61_72_5f_73_74_61_72_5f_65_71 => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
+            Self::Literal48_61_6d_70_5f_61_6d_70_5f_65_71 => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
+            Self::Literal49_70_69_70_65_5f_70_69_70_65_5f_65_71 => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
+            Self::Literal50_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71 => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -27408,21 +26010,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentExpressionOpe
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    66 => Ok(Self::Literal35_70_6c_75_73_5f_65_71),
-                    67 => Ok(Self::Literal36_64_61_73_68_5f_65_71),
-                    68 => Ok(Self::Literal37_73_74_61_72_5f_65_71),
-                    69 => Ok(Self::Literal38_73_6c_61_73_68_5f_65_71),
-                    70 => Ok(Self::Literal39_70_65_72_63_65_6e_74_5f_65_71),
-                    71 => Ok(Self::Literal40_63_61_72_65_74_5f_65_71),
-                    72 => Ok(Self::Literal41_61_6d_70_5f_65_71),
-                    73 => Ok(Self::Literal42_70_69_70_65_5f_65_71),
-                    74 => Ok(Self::Literal43_67_74_5f_67_74_5f_65_71),
-                    75 => Ok(Self::Literal44_67_74_5f_67_74_5f_67_74_5f_65_71),
-                    76 => Ok(Self::Literal45_6c_74_5f_6c_74_5f_65_71),
-                    77 => Ok(Self::Literal46_73_74_61_72_5f_73_74_61_72_5f_65_71),
-                    78 => Ok(Self::Literal47_61_6d_70_5f_61_6d_70_5f_65_71),
-                    79 => Ok(Self::Literal48_70_69_70_65_5f_70_69_70_65_5f_65_71),
-                    80 => Ok(Self::Literal49_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71),
+                    66 => Ok(Self::Literal36_70_6c_75_73_5f_65_71),
+                    67 => Ok(Self::Literal37_64_61_73_68_5f_65_71),
+                    68 => Ok(Self::Literal38_73_74_61_72_5f_65_71),
+                    69 => Ok(Self::Literal39_73_6c_61_73_68_5f_65_71),
+                    70 => Ok(Self::Literal40_70_65_72_63_65_6e_74_5f_65_71),
+                    71 => Ok(Self::Literal41_63_61_72_65_74_5f_65_71),
+                    72 => Ok(Self::Literal42_61_6d_70_5f_65_71),
+                    73 => Ok(Self::Literal43_70_69_70_65_5f_65_71),
+                    74 => Ok(Self::Literal44_67_74_5f_67_74_5f_65_71),
+                    75 => Ok(Self::Literal45_67_74_5f_67_74_5f_67_74_5f_65_71),
+                    76 => Ok(Self::Literal46_6c_74_5f_6c_74_5f_65_71),
+                    77 => Ok(Self::Literal47_73_74_61_72_5f_73_74_61_72_5f_65_71),
+                    78 => Ok(Self::Literal48_61_6d_70_5f_61_6d_70_5f_65_71),
+                    79 => Ok(Self::Literal49_70_69_70_65_5f_70_69_70_65_5f_65_71),
+                    80 => Ok(Self::Literal50_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AugmentedAssignmentExpressionOperatorTransportSlot",
                     ))),
@@ -27434,21 +26036,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentExpressionOpe
                     ::napi::Error::from_reason("$type property missing in AugmentedAssignmentExpressionOperatorTransportSlot")
                 )?;
                 match kind_id {
-                    66 => Ok(Self::Literal35_70_6c_75_73_5f_65_71),
-                    67 => Ok(Self::Literal36_64_61_73_68_5f_65_71),
-                    68 => Ok(Self::Literal37_73_74_61_72_5f_65_71),
-                    69 => Ok(Self::Literal38_73_6c_61_73_68_5f_65_71),
-                    70 => Ok(Self::Literal39_70_65_72_63_65_6e_74_5f_65_71),
-                    71 => Ok(Self::Literal40_63_61_72_65_74_5f_65_71),
-                    72 => Ok(Self::Literal41_61_6d_70_5f_65_71),
-                    73 => Ok(Self::Literal42_70_69_70_65_5f_65_71),
-                    74 => Ok(Self::Literal43_67_74_5f_67_74_5f_65_71),
-                    75 => Ok(Self::Literal44_67_74_5f_67_74_5f_67_74_5f_65_71),
-                    76 => Ok(Self::Literal45_6c_74_5f_6c_74_5f_65_71),
-                    77 => Ok(Self::Literal46_73_74_61_72_5f_73_74_61_72_5f_65_71),
-                    78 => Ok(Self::Literal47_61_6d_70_5f_61_6d_70_5f_65_71),
-                    79 => Ok(Self::Literal48_70_69_70_65_5f_70_69_70_65_5f_65_71),
-                    80 => Ok(Self::Literal49_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71),
+                    66 => Ok(Self::Literal36_70_6c_75_73_5f_65_71),
+                    67 => Ok(Self::Literal37_64_61_73_68_5f_65_71),
+                    68 => Ok(Self::Literal38_73_74_61_72_5f_65_71),
+                    69 => Ok(Self::Literal39_73_6c_61_73_68_5f_65_71),
+                    70 => Ok(Self::Literal40_70_65_72_63_65_6e_74_5f_65_71),
+                    71 => Ok(Self::Literal41_63_61_72_65_74_5f_65_71),
+                    72 => Ok(Self::Literal42_61_6d_70_5f_65_71),
+                    73 => Ok(Self::Literal43_70_69_70_65_5f_65_71),
+                    74 => Ok(Self::Literal44_67_74_5f_67_74_5f_65_71),
+                    75 => Ok(Self::Literal45_67_74_5f_67_74_5f_67_74_5f_65_71),
+                    76 => Ok(Self::Literal46_6c_74_5f_6c_74_5f_65_71),
+                    77 => Ok(Self::Literal47_73_74_61_72_5f_73_74_61_72_5f_65_71),
+                    78 => Ok(Self::Literal48_61_6d_70_5f_61_6d_70_5f_65_71),
+                    79 => Ok(Self::Literal49_70_69_70_65_5f_70_69_70_65_5f_65_71),
+                    80 => Ok(Self::Literal50_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AugmentedAssignmentExpressionOperatorTransportSlot",
                     ))),
@@ -27491,126 +26093,126 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AugmentedAssignmentExpressionO
 
 fn augmented_assignment_expression_operator_transport_slot_to_any(t: AugmentedAssignmentExpressionOperatorTransportSlot) -> AnyTransport {
     match t {
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal35_70_6c_75_73_5f_65_71 => AnyTransport::Literal35_70_6c_75_73_5f_65_71,
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal36_64_61_73_68_5f_65_71 => AnyTransport::Literal36_64_61_73_68_5f_65_71,
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal37_73_74_61_72_5f_65_71 => AnyTransport::Literal37_73_74_61_72_5f_65_71,
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal38_73_6c_61_73_68_5f_65_71 => AnyTransport::Literal38_73_6c_61_73_68_5f_65_71,
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal39_70_65_72_63_65_6e_74_5f_65_71 => AnyTransport::Literal39_70_65_72_63_65_6e_74_5f_65_71,
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal40_63_61_72_65_74_5f_65_71 => AnyTransport::Literal40_63_61_72_65_74_5f_65_71,
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal41_61_6d_70_5f_65_71 => AnyTransport::Literal41_61_6d_70_5f_65_71,
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal42_70_69_70_65_5f_65_71 => AnyTransport::Literal42_70_69_70_65_5f_65_71,
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal43_67_74_5f_67_74_5f_65_71 => AnyTransport::Literal43_67_74_5f_67_74_5f_65_71,
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal44_67_74_5f_67_74_5f_67_74_5f_65_71 => AnyTransport::Literal44_67_74_5f_67_74_5f_67_74_5f_65_71,
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal45_6c_74_5f_6c_74_5f_65_71 => AnyTransport::Literal45_6c_74_5f_6c_74_5f_65_71,
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal46_73_74_61_72_5f_73_74_61_72_5f_65_71 => AnyTransport::Literal46_73_74_61_72_5f_73_74_61_72_5f_65_71,
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal47_61_6d_70_5f_61_6d_70_5f_65_71 => AnyTransport::Literal47_61_6d_70_5f_61_6d_70_5f_65_71,
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal48_70_69_70_65_5f_70_69_70_65_5f_65_71 => AnyTransport::Literal48_70_69_70_65_5f_70_69_70_65_5f_65_71,
-        AugmentedAssignmentExpressionOperatorTransportSlot::Literal49_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71 => AnyTransport::Literal49_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal36_70_6c_75_73_5f_65_71 => AnyTransport::Literal36_70_6c_75_73_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal37_64_61_73_68_5f_65_71 => AnyTransport::Literal37_64_61_73_68_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal38_73_74_61_72_5f_65_71 => AnyTransport::Literal38_73_74_61_72_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal39_73_6c_61_73_68_5f_65_71 => AnyTransport::Literal39_73_6c_61_73_68_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal40_70_65_72_63_65_6e_74_5f_65_71 => AnyTransport::Literal40_70_65_72_63_65_6e_74_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal41_63_61_72_65_74_5f_65_71 => AnyTransport::Literal41_63_61_72_65_74_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal42_61_6d_70_5f_65_71 => AnyTransport::Literal42_61_6d_70_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal43_70_69_70_65_5f_65_71 => AnyTransport::Literal43_70_69_70_65_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal44_67_74_5f_67_74_5f_65_71 => AnyTransport::Literal44_67_74_5f_67_74_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal45_67_74_5f_67_74_5f_67_74_5f_65_71 => AnyTransport::Literal45_67_74_5f_67_74_5f_67_74_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal46_6c_74_5f_6c_74_5f_65_71 => AnyTransport::Literal46_6c_74_5f_6c_74_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal47_73_74_61_72_5f_73_74_61_72_5f_65_71 => AnyTransport::Literal47_73_74_61_72_5f_73_74_61_72_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal48_61_6d_70_5f_61_6d_70_5f_65_71 => AnyTransport::Literal48_61_6d_70_5f_61_6d_70_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal49_70_69_70_65_5f_70_69_70_65_5f_65_71 => AnyTransport::Literal49_70_69_70_65_5f_70_69_70_65_5f_65_71,
+        AugmentedAssignmentExpressionOperatorTransportSlot::Literal50_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71 => AnyTransport::Literal50_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71,
     }
 }
 
 impl ::sittir_core::render::Render for AugmentedAssignmentExpressionOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal35_70_6c_75_73_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal36_70_6c_75_73_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PLUS_EQ_BEFORE);
                 let written = w.text("+=");
                 written?;
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PLUS_EQ_AFTER);
                 Ok(())
             }
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal36_64_61_73_68_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal37_64_61_73_68_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_DASH_EQ_BEFORE);
                 let written = w.text("-=");
                 written?;
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_DASH_EQ_AFTER);
                 Ok(())
             }
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal37_73_74_61_72_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal38_73_74_61_72_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_STAR_EQ_BEFORE);
                 let written = w.text("*=");
                 written?;
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_STAR_EQ_AFTER);
                 Ok(())
             }
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal38_73_6c_61_73_68_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal39_73_6c_61_73_68_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_SLASH_EQ_BEFORE);
                 let written = w.text("/=");
                 written?;
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_SLASH_EQ_AFTER);
                 Ok(())
             }
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal39_70_65_72_63_65_6e_74_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal40_70_65_72_63_65_6e_74_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PERCENT_EQ_BEFORE);
                 let written = w.text("%=");
                 written?;
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PERCENT_EQ_AFTER);
                 Ok(())
             }
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal40_63_61_72_65_74_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal41_63_61_72_65_74_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_CARET_EQ_BEFORE);
                 let written = w.text("^=");
                 written?;
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_CARET_EQ_AFTER);
                 Ok(())
             }
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal41_61_6d_70_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal42_61_6d_70_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_AMP_EQ_BEFORE);
                 let written = w.text("&=");
                 written?;
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_AMP_EQ_AFTER);
                 Ok(())
             }
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal42_70_69_70_65_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal43_70_69_70_65_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PIPE_EQ_BEFORE);
                 let written = w.text("|=");
                 written?;
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PIPE_EQ_AFTER);
                 Ok(())
             }
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal43_67_74_5f_67_74_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal44_67_74_5f_67_74_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_GT_GT_EQ_BEFORE);
                 let written = w.text(">>=");
                 written?;
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_GT_GT_EQ_AFTER);
                 Ok(())
             }
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal44_67_74_5f_67_74_5f_67_74_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal45_67_74_5f_67_74_5f_67_74_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_GT_GT_GT_EQ_BEFORE);
                 let written = w.text(">>>=");
                 written?;
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_GT_GT_GT_EQ_AFTER);
                 Ok(())
             }
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal45_6c_74_5f_6c_74_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal46_6c_74_5f_6c_74_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_LT_LT_EQ_BEFORE);
                 let written = w.text("<<=");
                 written?;
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_LT_LT_EQ_AFTER);
                 Ok(())
             }
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal46_73_74_61_72_5f_73_74_61_72_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal47_73_74_61_72_5f_73_74_61_72_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_STAR_STAR_EQ_BEFORE);
                 let written = w.text("**=");
                 written?;
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_STAR_STAR_EQ_AFTER);
                 Ok(())
             }
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal47_61_6d_70_5f_61_6d_70_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal48_61_6d_70_5f_61_6d_70_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_AMP_AMP_EQ_BEFORE);
                 let written = w.text("&&=");
                 written?;
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_AMP_AMP_EQ_AFTER);
                 Ok(())
             }
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal48_70_69_70_65_5f_70_69_70_65_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal49_70_69_70_65_5f_70_69_70_65_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PIPE_PIPE_EQ_BEFORE);
                 let written = w.text("||=");
                 written?;
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_PIPE_PIPE_EQ_AFTER);
                 Ok(())
             }
-            AugmentedAssignmentExpressionOperatorTransportSlot::Literal49_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71 => {
+            AugmentedAssignmentExpressionOperatorTransportSlot::Literal50_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71 => {
                 w.site_at(options::SITE_AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATOR_QMARK_QMARK_EQ_BEFORE);
                 let written = w.text("??=");
                 written?;
@@ -27623,59 +26225,59 @@ impl ::sittir_core::render::Render for AugmentedAssignmentExpressionOperatorTran
 
 #[derive(Debug, Clone)]
 pub enum BinaryExpressionOperatorTransportSlot {
-    Literal50_61_6d_70_5f_61_6d_70,
-    Literal51_70_69_70_65_5f_70_69_70_65,
-    Literal52_67_74_5f_67_74,
-    Literal53_67_74_5f_67_74_5f_67_74,
-    Literal54_6c_74_5f_6c_74,
-    Literal55_61_6d_70,
-    Literal56_63_61_72_65_74,
-    Literal57_70_69_70_65,
-    Literal58_70_6c_75_73,
-    Literal59_64_61_73_68,
-    Literal60_73_74_61_72,
-    Literal61_73_6c_61_73_68,
-    Literal62_70_65_72_63_65_6e_74,
-    Literal63_73_74_61_72_5f_73_74_61_72,
-    Literal64_6c_74,
-    Literal65_6c_74_5f_65_71,
-    Literal66_65_71_5f_65_71,
-    Literal67_65_71_5f_65_71_5f_65_71,
-    Literal68_62_61_6e_67_5f_65_71,
-    Literal69_62_61_6e_67_5f_65_71_5f_65_71,
-    Literal70_67_74_5f_65_71,
-    Literal71_67_74,
-    Literal72_71_6d_61_72_6b_5f_71_6d_61_72_6b,
-    Literal73_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64,
+    Literal51_61_6d_70_5f_61_6d_70,
+    Literal52_70_69_70_65_5f_70_69_70_65,
+    Literal53_67_74_5f_67_74,
+    Literal54_67_74_5f_67_74_5f_67_74,
+    Literal55_6c_74_5f_6c_74,
+    Literal56_61_6d_70,
+    Literal57_63_61_72_65_74,
+    Literal58_70_69_70_65,
+    Literal59_70_6c_75_73,
+    Literal60_64_61_73_68,
+    Literal61_73_74_61_72,
+    Literal62_73_6c_61_73_68,
+    Literal63_70_65_72_63_65_6e_74,
+    Literal64_73_74_61_72_5f_73_74_61_72,
+    Literal65_6c_74,
+    Literal66_6c_74_5f_65_71,
+    Literal67_65_71_5f_65_71,
+    Literal68_65_71_5f_65_71_5f_65_71,
+    Literal69_62_61_6e_67_5f_65_71,
+    Literal70_62_61_6e_67_5f_65_71_5f_65_71,
+    Literal71_67_74_5f_65_71,
+    Literal72_67_74,
+    Literal73_71_6d_61_72_6b_5f_71_6d_61_72_6b,
+    Literal74_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64,
 }
 
 impl ::sittir_core::prepare::Prepare for BinaryExpressionOperatorTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            BinaryExpressionOperatorTransportSlot::Literal50_61_6d_70_5f_61_6d_70 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal51_70_69_70_65_5f_70_69_70_65 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal52_67_74_5f_67_74 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal53_67_74_5f_67_74_5f_67_74 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal54_6c_74_5f_6c_74 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal55_61_6d_70 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal56_63_61_72_65_74 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal57_70_69_70_65 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal58_70_6c_75_73 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal59_64_61_73_68 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal60_73_74_61_72 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal61_73_6c_61_73_68 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal62_70_65_72_63_65_6e_74 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal63_73_74_61_72_5f_73_74_61_72 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal64_6c_74 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal65_6c_74_5f_65_71 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal66_65_71_5f_65_71 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal67_65_71_5f_65_71_5f_65_71 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal68_62_61_6e_67_5f_65_71 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal69_62_61_6e_67_5f_65_71_5f_65_71 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal70_67_74_5f_65_71 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal71_67_74 => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal72_71_6d_61_72_6b_5f_71_6d_61_72_6b => Ok(()),
-            BinaryExpressionOperatorTransportSlot::Literal73_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal51_61_6d_70_5f_61_6d_70 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal52_70_69_70_65_5f_70_69_70_65 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal53_67_74_5f_67_74 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal54_67_74_5f_67_74_5f_67_74 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal55_6c_74_5f_6c_74 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal56_61_6d_70 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal57_63_61_72_65_74 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal58_70_69_70_65 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal59_70_6c_75_73 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal60_64_61_73_68 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal61_73_74_61_72 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal62_73_6c_61_73_68 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal63_70_65_72_63_65_6e_74 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal64_73_74_61_72_5f_73_74_61_72 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal65_6c_74 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal66_6c_74_5f_65_71 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal67_65_71_5f_65_71 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal68_65_71_5f_65_71_5f_65_71 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal69_62_61_6e_67_5f_65_71 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal70_62_61_6e_67_5f_65_71_5f_65_71 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal71_67_74_5f_65_71 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal72_67_74 => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal73_71_6d_61_72_6b_5f_71_6d_61_72_6b => Ok(()),
+            BinaryExpressionOperatorTransportSlot::Literal74_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64 => Ok(()),
         }
     }
 }
@@ -27683,30 +26285,30 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionOperatorTransportSlot {
 impl ::sittir_core::view::KindOf for BinaryExpressionOperatorTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal50_61_6d_70_5f_61_6d_70 => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
-            Self::Literal51_70_69_70_65_5f_70_69_70_65 => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
-            Self::Literal52_67_74_5f_67_74 => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
-            Self::Literal53_67_74_5f_67_74_5f_67_74 => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
-            Self::Literal54_6c_74_5f_6c_74 => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
-            Self::Literal55_61_6d_70 => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
-            Self::Literal56_63_61_72_65_74 => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
-            Self::Literal57_70_69_70_65 => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
-            Self::Literal58_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
-            Self::Literal59_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::Literal60_73_74_61_72 => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
-            Self::Literal61_73_6c_61_73_68 => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
-            Self::Literal62_70_65_72_63_65_6e_74 => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
-            Self::Literal63_73_74_61_72_5f_73_74_61_72 => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
-            Self::Literal64_6c_74 => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
-            Self::Literal65_6c_74_5f_65_71 => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
-            Self::Literal66_65_71_5f_65_71 => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
-            Self::Literal67_65_71_5f_65_71_5f_65_71 => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
-            Self::Literal68_62_61_6e_67_5f_65_71 => [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k)),
-            Self::Literal69_62_61_6e_67_5f_65_71_5f_65_71 => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
-            Self::Literal70_67_74_5f_65_71 => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
-            Self::Literal71_67_74 => [::sittir_core::types::KindId(102)].iter().any(|k| kinds.contains(k)),
-            Self::Literal72_71_6d_61_72_6b_5f_71_6d_61_72_6b => [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k)),
-            Self::Literal73_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k)),
+            Self::Literal51_61_6d_70_5f_61_6d_70 => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
+            Self::Literal52_70_69_70_65_5f_70_69_70_65 => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
+            Self::Literal53_67_74_5f_67_74 => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
+            Self::Literal54_67_74_5f_67_74_5f_67_74 => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
+            Self::Literal55_6c_74_5f_6c_74 => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
+            Self::Literal56_61_6d_70 => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
+            Self::Literal57_63_61_72_65_74 => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
+            Self::Literal58_70_69_70_65 => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
+            Self::Literal59_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::Literal60_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::Literal61_73_74_61_72 => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
+            Self::Literal62_73_6c_61_73_68 => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
+            Self::Literal63_70_65_72_63_65_6e_74 => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
+            Self::Literal64_73_74_61_72_5f_73_74_61_72 => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
+            Self::Literal65_6c_74 => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
+            Self::Literal66_6c_74_5f_65_71 => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Literal67_65_71_5f_65_71 => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
+            Self::Literal68_65_71_5f_65_71_5f_65_71 => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
+            Self::Literal69_62_61_6e_67_5f_65_71 => [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k)),
+            Self::Literal70_62_61_6e_67_5f_65_71_5f_65_71 => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
+            Self::Literal71_67_74_5f_65_71 => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
+            Self::Literal72_67_74 => [::sittir_core::types::KindId(102)].iter().any(|k| kinds.contains(k)),
+            Self::Literal73_71_6d_61_72_6b_5f_71_6d_61_72_6b => [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k)),
+            Self::Literal74_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -27720,30 +26322,30 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionOperatorTranspor
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    82 => Ok(Self::Literal50_61_6d_70_5f_61_6d_70),
-                    83 => Ok(Self::Literal51_70_69_70_65_5f_70_69_70_65),
-                    84 => Ok(Self::Literal52_67_74_5f_67_74),
-                    85 => Ok(Self::Literal53_67_74_5f_67_74_5f_67_74),
-                    86 => Ok(Self::Literal54_6c_74_5f_6c_74),
-                    87 => Ok(Self::Literal55_61_6d_70),
-                    88 => Ok(Self::Literal56_63_61_72_65_74),
-                    89 => Ok(Self::Literal57_70_69_70_65),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    3 => Ok(Self::Literal60_73_74_61_72),
-                    92 => Ok(Self::Literal61_73_6c_61_73_68),
-                    93 => Ok(Self::Literal62_70_65_72_63_65_6e_74),
-                    94 => Ok(Self::Literal63_73_74_61_72_5f_73_74_61_72),
-                    95 => Ok(Self::Literal64_6c_74),
-                    96 => Ok(Self::Literal65_6c_74_5f_65_71),
-                    97 => Ok(Self::Literal66_65_71_5f_65_71),
-                    98 => Ok(Self::Literal67_65_71_5f_65_71_5f_65_71),
-                    99 => Ok(Self::Literal68_62_61_6e_67_5f_65_71),
-                    100 => Ok(Self::Literal69_62_61_6e_67_5f_65_71_5f_65_71),
-                    101 => Ok(Self::Literal70_67_74_5f_65_71),
-                    102 => Ok(Self::Literal71_67_74),
-                    103 => Ok(Self::Literal72_71_6d_61_72_6b_5f_71_6d_61_72_6b),
-                    104 => Ok(Self::Literal73_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64),
+                    82 => Ok(Self::Literal51_61_6d_70_5f_61_6d_70),
+                    83 => Ok(Self::Literal52_70_69_70_65_5f_70_69_70_65),
+                    84 => Ok(Self::Literal53_67_74_5f_67_74),
+                    85 => Ok(Self::Literal54_67_74_5f_67_74_5f_67_74),
+                    86 => Ok(Self::Literal55_6c_74_5f_6c_74),
+                    87 => Ok(Self::Literal56_61_6d_70),
+                    88 => Ok(Self::Literal57_63_61_72_65_74),
+                    89 => Ok(Self::Literal58_70_69_70_65),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    3 => Ok(Self::Literal61_73_74_61_72),
+                    92 => Ok(Self::Literal62_73_6c_61_73_68),
+                    93 => Ok(Self::Literal63_70_65_72_63_65_6e_74),
+                    94 => Ok(Self::Literal64_73_74_61_72_5f_73_74_61_72),
+                    95 => Ok(Self::Literal65_6c_74),
+                    96 => Ok(Self::Literal66_6c_74_5f_65_71),
+                    97 => Ok(Self::Literal67_65_71_5f_65_71),
+                    98 => Ok(Self::Literal68_65_71_5f_65_71_5f_65_71),
+                    99 => Ok(Self::Literal69_62_61_6e_67_5f_65_71),
+                    100 => Ok(Self::Literal70_62_61_6e_67_5f_65_71_5f_65_71),
+                    101 => Ok(Self::Literal71_67_74_5f_65_71),
+                    102 => Ok(Self::Literal72_67_74),
+                    103 => Ok(Self::Literal73_71_6d_61_72_6b_5f_71_6d_61_72_6b),
+                    104 => Ok(Self::Literal74_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in BinaryExpressionOperatorTransportSlot",
                     ))),
@@ -27755,30 +26357,30 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionOperatorTranspor
                     ::napi::Error::from_reason("$type property missing in BinaryExpressionOperatorTransportSlot")
                 )?;
                 match kind_id {
-                    82 => Ok(Self::Literal50_61_6d_70_5f_61_6d_70),
-                    83 => Ok(Self::Literal51_70_69_70_65_5f_70_69_70_65),
-                    84 => Ok(Self::Literal52_67_74_5f_67_74),
-                    85 => Ok(Self::Literal53_67_74_5f_67_74_5f_67_74),
-                    86 => Ok(Self::Literal54_6c_74_5f_6c_74),
-                    87 => Ok(Self::Literal55_61_6d_70),
-                    88 => Ok(Self::Literal56_63_61_72_65_74),
-                    89 => Ok(Self::Literal57_70_69_70_65),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    3 => Ok(Self::Literal60_73_74_61_72),
-                    92 => Ok(Self::Literal61_73_6c_61_73_68),
-                    93 => Ok(Self::Literal62_70_65_72_63_65_6e_74),
-                    94 => Ok(Self::Literal63_73_74_61_72_5f_73_74_61_72),
-                    95 => Ok(Self::Literal64_6c_74),
-                    96 => Ok(Self::Literal65_6c_74_5f_65_71),
-                    97 => Ok(Self::Literal66_65_71_5f_65_71),
-                    98 => Ok(Self::Literal67_65_71_5f_65_71_5f_65_71),
-                    99 => Ok(Self::Literal68_62_61_6e_67_5f_65_71),
-                    100 => Ok(Self::Literal69_62_61_6e_67_5f_65_71_5f_65_71),
-                    101 => Ok(Self::Literal70_67_74_5f_65_71),
-                    102 => Ok(Self::Literal71_67_74),
-                    103 => Ok(Self::Literal72_71_6d_61_72_6b_5f_71_6d_61_72_6b),
-                    104 => Ok(Self::Literal73_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64),
+                    82 => Ok(Self::Literal51_61_6d_70_5f_61_6d_70),
+                    83 => Ok(Self::Literal52_70_69_70_65_5f_70_69_70_65),
+                    84 => Ok(Self::Literal53_67_74_5f_67_74),
+                    85 => Ok(Self::Literal54_67_74_5f_67_74_5f_67_74),
+                    86 => Ok(Self::Literal55_6c_74_5f_6c_74),
+                    87 => Ok(Self::Literal56_61_6d_70),
+                    88 => Ok(Self::Literal57_63_61_72_65_74),
+                    89 => Ok(Self::Literal58_70_69_70_65),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    3 => Ok(Self::Literal61_73_74_61_72),
+                    92 => Ok(Self::Literal62_73_6c_61_73_68),
+                    93 => Ok(Self::Literal63_70_65_72_63_65_6e_74),
+                    94 => Ok(Self::Literal64_73_74_61_72_5f_73_74_61_72),
+                    95 => Ok(Self::Literal65_6c_74),
+                    96 => Ok(Self::Literal66_6c_74_5f_65_71),
+                    97 => Ok(Self::Literal67_65_71_5f_65_71),
+                    98 => Ok(Self::Literal68_65_71_5f_65_71_5f_65_71),
+                    99 => Ok(Self::Literal69_62_61_6e_67_5f_65_71),
+                    100 => Ok(Self::Literal70_62_61_6e_67_5f_65_71_5f_65_71),
+                    101 => Ok(Self::Literal71_67_74_5f_65_71),
+                    102 => Ok(Self::Literal72_67_74),
+                    103 => Ok(Self::Literal73_71_6d_61_72_6b_5f_71_6d_61_72_6b),
+                    104 => Ok(Self::Literal74_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in BinaryExpressionOperatorTransportSlot",
                     ))),
@@ -27821,85 +26423,85 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryExpressionOperatorTransp
 
 fn binary_expression_operator_transport_slot_to_any(t: BinaryExpressionOperatorTransportSlot) -> AnyTransport {
     match t {
-        BinaryExpressionOperatorTransportSlot::Literal50_61_6d_70_5f_61_6d_70 => AnyTransport::Literal50_61_6d_70_5f_61_6d_70,
-        BinaryExpressionOperatorTransportSlot::Literal51_70_69_70_65_5f_70_69_70_65 => AnyTransport::Literal51_70_69_70_65_5f_70_69_70_65,
-        BinaryExpressionOperatorTransportSlot::Literal52_67_74_5f_67_74 => AnyTransport::Literal52_67_74_5f_67_74,
-        BinaryExpressionOperatorTransportSlot::Literal53_67_74_5f_67_74_5f_67_74 => AnyTransport::Literal53_67_74_5f_67_74_5f_67_74,
-        BinaryExpressionOperatorTransportSlot::Literal54_6c_74_5f_6c_74 => AnyTransport::Literal54_6c_74_5f_6c_74,
-        BinaryExpressionOperatorTransportSlot::Literal55_61_6d_70 => AnyTransport::Literal55_61_6d_70,
-        BinaryExpressionOperatorTransportSlot::Literal56_63_61_72_65_74 => AnyTransport::Literal56_63_61_72_65_74,
-        BinaryExpressionOperatorTransportSlot::Literal57_70_69_70_65 => AnyTransport::Literal57_70_69_70_65,
-        BinaryExpressionOperatorTransportSlot::Literal58_70_6c_75_73 => AnyTransport::Literal58_70_6c_75_73,
-        BinaryExpressionOperatorTransportSlot::Literal59_64_61_73_68 => AnyTransport::Literal59_64_61_73_68,
-        BinaryExpressionOperatorTransportSlot::Literal60_73_74_61_72 => AnyTransport::Literal60_73_74_61_72,
-        BinaryExpressionOperatorTransportSlot::Literal61_73_6c_61_73_68 => AnyTransport::Literal61_73_6c_61_73_68,
-        BinaryExpressionOperatorTransportSlot::Literal62_70_65_72_63_65_6e_74 => AnyTransport::Literal62_70_65_72_63_65_6e_74,
-        BinaryExpressionOperatorTransportSlot::Literal63_73_74_61_72_5f_73_74_61_72 => AnyTransport::Literal63_73_74_61_72_5f_73_74_61_72,
-        BinaryExpressionOperatorTransportSlot::Literal64_6c_74 => AnyTransport::Literal64_6c_74,
-        BinaryExpressionOperatorTransportSlot::Literal65_6c_74_5f_65_71 => AnyTransport::Literal65_6c_74_5f_65_71,
-        BinaryExpressionOperatorTransportSlot::Literal66_65_71_5f_65_71 => AnyTransport::Literal66_65_71_5f_65_71,
-        BinaryExpressionOperatorTransportSlot::Literal67_65_71_5f_65_71_5f_65_71 => AnyTransport::Literal67_65_71_5f_65_71_5f_65_71,
-        BinaryExpressionOperatorTransportSlot::Literal68_62_61_6e_67_5f_65_71 => AnyTransport::Literal68_62_61_6e_67_5f_65_71,
-        BinaryExpressionOperatorTransportSlot::Literal69_62_61_6e_67_5f_65_71_5f_65_71 => AnyTransport::Literal69_62_61_6e_67_5f_65_71_5f_65_71,
-        BinaryExpressionOperatorTransportSlot::Literal70_67_74_5f_65_71 => AnyTransport::Literal70_67_74_5f_65_71,
-        BinaryExpressionOperatorTransportSlot::Literal71_67_74 => AnyTransport::Literal71_67_74,
-        BinaryExpressionOperatorTransportSlot::Literal72_71_6d_61_72_6b_5f_71_6d_61_72_6b => AnyTransport::Literal72_71_6d_61_72_6b_5f_71_6d_61_72_6b,
-        BinaryExpressionOperatorTransportSlot::Literal73_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal73_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64,
+        BinaryExpressionOperatorTransportSlot::Literal51_61_6d_70_5f_61_6d_70 => AnyTransport::Literal51_61_6d_70_5f_61_6d_70,
+        BinaryExpressionOperatorTransportSlot::Literal52_70_69_70_65_5f_70_69_70_65 => AnyTransport::Literal52_70_69_70_65_5f_70_69_70_65,
+        BinaryExpressionOperatorTransportSlot::Literal53_67_74_5f_67_74 => AnyTransport::Literal53_67_74_5f_67_74,
+        BinaryExpressionOperatorTransportSlot::Literal54_67_74_5f_67_74_5f_67_74 => AnyTransport::Literal54_67_74_5f_67_74_5f_67_74,
+        BinaryExpressionOperatorTransportSlot::Literal55_6c_74_5f_6c_74 => AnyTransport::Literal55_6c_74_5f_6c_74,
+        BinaryExpressionOperatorTransportSlot::Literal56_61_6d_70 => AnyTransport::Literal56_61_6d_70,
+        BinaryExpressionOperatorTransportSlot::Literal57_63_61_72_65_74 => AnyTransport::Literal57_63_61_72_65_74,
+        BinaryExpressionOperatorTransportSlot::Literal58_70_69_70_65 => AnyTransport::Literal58_70_69_70_65,
+        BinaryExpressionOperatorTransportSlot::Literal59_70_6c_75_73 => AnyTransport::Literal59_70_6c_75_73,
+        BinaryExpressionOperatorTransportSlot::Literal60_64_61_73_68 => AnyTransport::Literal60_64_61_73_68,
+        BinaryExpressionOperatorTransportSlot::Literal61_73_74_61_72 => AnyTransport::Literal61_73_74_61_72,
+        BinaryExpressionOperatorTransportSlot::Literal62_73_6c_61_73_68 => AnyTransport::Literal62_73_6c_61_73_68,
+        BinaryExpressionOperatorTransportSlot::Literal63_70_65_72_63_65_6e_74 => AnyTransport::Literal63_70_65_72_63_65_6e_74,
+        BinaryExpressionOperatorTransportSlot::Literal64_73_74_61_72_5f_73_74_61_72 => AnyTransport::Literal64_73_74_61_72_5f_73_74_61_72,
+        BinaryExpressionOperatorTransportSlot::Literal65_6c_74 => AnyTransport::Literal65_6c_74,
+        BinaryExpressionOperatorTransportSlot::Literal66_6c_74_5f_65_71 => AnyTransport::Literal66_6c_74_5f_65_71,
+        BinaryExpressionOperatorTransportSlot::Literal67_65_71_5f_65_71 => AnyTransport::Literal67_65_71_5f_65_71,
+        BinaryExpressionOperatorTransportSlot::Literal68_65_71_5f_65_71_5f_65_71 => AnyTransport::Literal68_65_71_5f_65_71_5f_65_71,
+        BinaryExpressionOperatorTransportSlot::Literal69_62_61_6e_67_5f_65_71 => AnyTransport::Literal69_62_61_6e_67_5f_65_71,
+        BinaryExpressionOperatorTransportSlot::Literal70_62_61_6e_67_5f_65_71_5f_65_71 => AnyTransport::Literal70_62_61_6e_67_5f_65_71_5f_65_71,
+        BinaryExpressionOperatorTransportSlot::Literal71_67_74_5f_65_71 => AnyTransport::Literal71_67_74_5f_65_71,
+        BinaryExpressionOperatorTransportSlot::Literal72_67_74 => AnyTransport::Literal72_67_74,
+        BinaryExpressionOperatorTransportSlot::Literal73_71_6d_61_72_6b_5f_71_6d_61_72_6b => AnyTransport::Literal73_71_6d_61_72_6b_5f_71_6d_61_72_6b,
+        BinaryExpressionOperatorTransportSlot::Literal74_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal74_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64,
     }
 }
 
 impl ::sittir_core::render::Render for BinaryExpressionOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            BinaryExpressionOperatorTransportSlot::Literal50_61_6d_70_5f_61_6d_70 => w.text("&&"),
-            BinaryExpressionOperatorTransportSlot::Literal51_70_69_70_65_5f_70_69_70_65 => w.text("||"),
-            BinaryExpressionOperatorTransportSlot::Literal52_67_74_5f_67_74 => w.text(">>"),
-            BinaryExpressionOperatorTransportSlot::Literal53_67_74_5f_67_74_5f_67_74 => w.text(">>>"),
-            BinaryExpressionOperatorTransportSlot::Literal54_6c_74_5f_6c_74 => w.text("<<"),
-            BinaryExpressionOperatorTransportSlot::Literal55_61_6d_70 => w.text("&"),
-            BinaryExpressionOperatorTransportSlot::Literal56_63_61_72_65_74 => w.text("^"),
-            BinaryExpressionOperatorTransportSlot::Literal57_70_69_70_65 => w.text("|"),
-            BinaryExpressionOperatorTransportSlot::Literal58_70_6c_75_73 => w.text("+"),
-            BinaryExpressionOperatorTransportSlot::Literal59_64_61_73_68 => w.text("-"),
-            BinaryExpressionOperatorTransportSlot::Literal60_73_74_61_72 => w.text("*"),
-            BinaryExpressionOperatorTransportSlot::Literal61_73_6c_61_73_68 => w.text("/"),
-            BinaryExpressionOperatorTransportSlot::Literal62_70_65_72_63_65_6e_74 => w.text("%"),
-            BinaryExpressionOperatorTransportSlot::Literal63_73_74_61_72_5f_73_74_61_72 => w.text("**"),
-            BinaryExpressionOperatorTransportSlot::Literal64_6c_74 => w.text("<"),
-            BinaryExpressionOperatorTransportSlot::Literal65_6c_74_5f_65_71 => w.text("<="),
-            BinaryExpressionOperatorTransportSlot::Literal66_65_71_5f_65_71 => w.text("=="),
-            BinaryExpressionOperatorTransportSlot::Literal67_65_71_5f_65_71_5f_65_71 => w.text("==="),
-            BinaryExpressionOperatorTransportSlot::Literal68_62_61_6e_67_5f_65_71 => w.text("!="),
-            BinaryExpressionOperatorTransportSlot::Literal69_62_61_6e_67_5f_65_71_5f_65_71 => w.text("!=="),
-            BinaryExpressionOperatorTransportSlot::Literal70_67_74_5f_65_71 => w.text(">="),
-            BinaryExpressionOperatorTransportSlot::Literal71_67_74 => w.text(">"),
-            BinaryExpressionOperatorTransportSlot::Literal72_71_6d_61_72_6b_5f_71_6d_61_72_6b => w.text("??"),
-            BinaryExpressionOperatorTransportSlot::Literal73_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64 => w.text("instanceof"),
+            BinaryExpressionOperatorTransportSlot::Literal51_61_6d_70_5f_61_6d_70 => w.text("&&"),
+            BinaryExpressionOperatorTransportSlot::Literal52_70_69_70_65_5f_70_69_70_65 => w.text("||"),
+            BinaryExpressionOperatorTransportSlot::Literal53_67_74_5f_67_74 => w.text(">>"),
+            BinaryExpressionOperatorTransportSlot::Literal54_67_74_5f_67_74_5f_67_74 => w.text(">>>"),
+            BinaryExpressionOperatorTransportSlot::Literal55_6c_74_5f_6c_74 => w.text("<<"),
+            BinaryExpressionOperatorTransportSlot::Literal56_61_6d_70 => w.text("&"),
+            BinaryExpressionOperatorTransportSlot::Literal57_63_61_72_65_74 => w.text("^"),
+            BinaryExpressionOperatorTransportSlot::Literal58_70_69_70_65 => w.text("|"),
+            BinaryExpressionOperatorTransportSlot::Literal59_70_6c_75_73 => w.text("+"),
+            BinaryExpressionOperatorTransportSlot::Literal60_64_61_73_68 => w.text("-"),
+            BinaryExpressionOperatorTransportSlot::Literal61_73_74_61_72 => w.text("*"),
+            BinaryExpressionOperatorTransportSlot::Literal62_73_6c_61_73_68 => w.text("/"),
+            BinaryExpressionOperatorTransportSlot::Literal63_70_65_72_63_65_6e_74 => w.text("%"),
+            BinaryExpressionOperatorTransportSlot::Literal64_73_74_61_72_5f_73_74_61_72 => w.text("**"),
+            BinaryExpressionOperatorTransportSlot::Literal65_6c_74 => w.text("<"),
+            BinaryExpressionOperatorTransportSlot::Literal66_6c_74_5f_65_71 => w.text("<="),
+            BinaryExpressionOperatorTransportSlot::Literal67_65_71_5f_65_71 => w.text("=="),
+            BinaryExpressionOperatorTransportSlot::Literal68_65_71_5f_65_71_5f_65_71 => w.text("==="),
+            BinaryExpressionOperatorTransportSlot::Literal69_62_61_6e_67_5f_65_71 => w.text("!="),
+            BinaryExpressionOperatorTransportSlot::Literal70_62_61_6e_67_5f_65_71_5f_65_71 => w.text("!=="),
+            BinaryExpressionOperatorTransportSlot::Literal71_67_74_5f_65_71 => w.text(">="),
+            BinaryExpressionOperatorTransportSlot::Literal72_67_74 => w.text(">"),
+            BinaryExpressionOperatorTransportSlot::Literal73_71_6d_61_72_6b_5f_71_6d_61_72_6b => w.text("??"),
+            BinaryExpressionOperatorTransportSlot::Literal74_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64 => w.text("instanceof"),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum UnaryExpressionOperatorTransportSlot {
-    Literal74_62_61_6e_67,
-    Literal75_74_69_6c_64_65,
-    Literal59_64_61_73_68,
-    Literal58_70_6c_75_73,
+    Literal75_62_61_6e_67,
+    Literal76_74_69_6c_64_65,
+    Literal60_64_61_73_68,
+    Literal59_70_6c_75_73,
     Literal1_74_79_70_65_6f_66_5f_6b_65_79_77_6f_72_64,
-    Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
-    Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64,
+    Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
+    Literal78_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64,
 }
 
 impl ::sittir_core::prepare::Prepare for UnaryExpressionOperatorTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            UnaryExpressionOperatorTransportSlot::Literal74_62_61_6e_67 => Ok(()),
-            UnaryExpressionOperatorTransportSlot::Literal75_74_69_6c_64_65 => Ok(()),
-            UnaryExpressionOperatorTransportSlot::Literal59_64_61_73_68 => Ok(()),
-            UnaryExpressionOperatorTransportSlot::Literal58_70_6c_75_73 => Ok(()),
+            UnaryExpressionOperatorTransportSlot::Literal75_62_61_6e_67 => Ok(()),
+            UnaryExpressionOperatorTransportSlot::Literal76_74_69_6c_64_65 => Ok(()),
+            UnaryExpressionOperatorTransportSlot::Literal60_64_61_73_68 => Ok(()),
+            UnaryExpressionOperatorTransportSlot::Literal59_70_6c_75_73 => Ok(()),
             UnaryExpressionOperatorTransportSlot::Literal1_74_79_70_65_6f_66_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UnaryExpressionOperatorTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            UnaryExpressionOperatorTransportSlot::Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UnaryExpressionOperatorTransportSlot::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            UnaryExpressionOperatorTransportSlot::Literal78_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
         }
     }
 }
@@ -27907,13 +26509,13 @@ impl ::sittir_core::prepare::Prepare for UnaryExpressionOperatorTransportSlot {
 impl ::sittir_core::view::KindOf for UnaryExpressionOperatorTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal74_62_61_6e_67 => [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k)),
-            Self::Literal75_74_69_6c_64_65 => [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k)),
-            Self::Literal59_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::Literal58_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::Literal75_62_61_6e_67 => [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k)),
+            Self::Literal76_74_69_6c_64_65 => [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k)),
+            Self::Literal60_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::Literal59_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
             Self::Literal1_74_79_70_65_6f_66_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
-            Self::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
-            Self::Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
+            Self::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
+            Self::Literal78_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -27927,13 +26529,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnaryExpressionOperatorTransport
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    105 => Ok(Self::Literal74_62_61_6e_67),
-                    106 => Ok(Self::Literal75_74_69_6c_64_65),
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
+                    105 => Ok(Self::Literal75_62_61_6e_67),
+                    106 => Ok(Self::Literal76_74_69_6c_64_65),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
                     8 => Ok(Self::Literal1_74_79_70_65_6f_66_5f_6b_65_79_77_6f_72_64),
-                    107 => Ok(Self::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64),
-                    108 => Ok(Self::Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64),
+                    107 => Ok(Self::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64),
+                    108 => Ok(Self::Literal78_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in UnaryExpressionOperatorTransportSlot",
                     ))),
@@ -27945,13 +26547,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnaryExpressionOperatorTransport
                     ::napi::Error::from_reason("$type property missing in UnaryExpressionOperatorTransportSlot")
                 )?;
                 match kind_id {
-                    105 => Ok(Self::Literal74_62_61_6e_67),
-                    106 => Ok(Self::Literal75_74_69_6c_64_65),
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
+                    105 => Ok(Self::Literal75_62_61_6e_67),
+                    106 => Ok(Self::Literal76_74_69_6c_64_65),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
                     8 => Ok(Self::Literal1_74_79_70_65_6f_66_5f_6b_65_79_77_6f_72_64),
-                    107 => Ok(Self::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64),
-                    108 => Ok(Self::Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64),
+                    107 => Ok(Self::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64),
+                    108 => Ok(Self::Literal78_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in UnaryExpressionOperatorTransportSlot",
                     ))),
@@ -27994,41 +26596,41 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnaryExpressionOperatorTranspo
 
 fn unary_expression_operator_transport_slot_to_any(t: UnaryExpressionOperatorTransportSlot) -> AnyTransport {
     match t {
-        UnaryExpressionOperatorTransportSlot::Literal74_62_61_6e_67 => AnyTransport::Literal74_62_61_6e_67,
-        UnaryExpressionOperatorTransportSlot::Literal75_74_69_6c_64_65 => AnyTransport::Literal75_74_69_6c_64_65,
-        UnaryExpressionOperatorTransportSlot::Literal59_64_61_73_68 => AnyTransport::Literal59_64_61_73_68,
-        UnaryExpressionOperatorTransportSlot::Literal58_70_6c_75_73 => AnyTransport::Literal58_70_6c_75_73,
+        UnaryExpressionOperatorTransportSlot::Literal75_62_61_6e_67 => AnyTransport::Literal75_62_61_6e_67,
+        UnaryExpressionOperatorTransportSlot::Literal76_74_69_6c_64_65 => AnyTransport::Literal76_74_69_6c_64_65,
+        UnaryExpressionOperatorTransportSlot::Literal60_64_61_73_68 => AnyTransport::Literal60_64_61_73_68,
+        UnaryExpressionOperatorTransportSlot::Literal59_70_6c_75_73 => AnyTransport::Literal59_70_6c_75_73,
         UnaryExpressionOperatorTransportSlot::Literal1_74_79_70_65_6f_66_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal1_74_79_70_65_6f_66_5f_6b_65_79_77_6f_72_64,
-        UnaryExpressionOperatorTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
-        UnaryExpressionOperatorTransportSlot::Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64,
+        UnaryExpressionOperatorTransportSlot::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
+        UnaryExpressionOperatorTransportSlot::Literal78_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal78_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64,
     }
 }
 
 impl ::sittir_core::render::Render for UnaryExpressionOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            UnaryExpressionOperatorTransportSlot::Literal74_62_61_6e_67 => {
+            UnaryExpressionOperatorTransportSlot::Literal75_62_61_6e_67 => {
                 w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_BANG_BEFORE);
                 let written = w.text("!");
                 written?;
                 w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_BANG_AFTER);
                 Ok(())
             }
-            UnaryExpressionOperatorTransportSlot::Literal75_74_69_6c_64_65 => {
+            UnaryExpressionOperatorTransportSlot::Literal76_74_69_6c_64_65 => {
                 w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_TILDE_BEFORE);
                 let written = w.text("~");
                 written?;
                 w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_TILDE_AFTER);
                 Ok(())
             }
-            UnaryExpressionOperatorTransportSlot::Literal59_64_61_73_68 => {
+            UnaryExpressionOperatorTransportSlot::Literal60_64_61_73_68 => {
                 w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_DASH_BEFORE);
                 let written = w.text("-");
                 written?;
                 w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_DASH_AFTER);
                 Ok(())
             }
-            UnaryExpressionOperatorTransportSlot::Literal58_70_6c_75_73 => {
+            UnaryExpressionOperatorTransportSlot::Literal59_70_6c_75_73 => {
                 w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_PLUS_BEFORE);
                 let written = w.text("+");
                 written?;
@@ -28042,14 +26644,14 @@ impl ::sittir_core::render::Render for UnaryExpressionOperatorTransportSlot {
                 w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_TYPEOF_KEYWORD_AFTER);
                 Ok(())
             }
-            UnaryExpressionOperatorTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => {
+            UnaryExpressionOperatorTransportSlot::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => {
                 w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_VOID_KEYWORD_BEFORE);
                 let written = w.text("void");
                 written?;
                 w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_VOID_KEYWORD_AFTER);
                 Ok(())
             }
-            UnaryExpressionOperatorTransportSlot::Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => {
+            UnaryExpressionOperatorTransportSlot::Literal78_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => {
                 w.site_at(options::SITE_UNARY_EXPRESSION_OPERATOR_DELETE_KEYWORD_BEFORE);
                 let written = w.text("delete");
                 written?;
@@ -30771,7 +29373,7 @@ pub enum ClassBodyContentTransportSlot {
     ClassBodyMethodSig(ClassBodyMethodSigTransport),
     ClassStaticBlock(ClassStaticBlockTransport),
     ClassBodyMember(ClassBodyMemberTransport),
-    Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72,
+    Literal79_65_6d_70_74_79_5f_6d_65_6d_62_65_72,
 }
 
 impl ::sittir_core::prepare::Prepare for ClassBodyContentTransportSlot {
@@ -30781,7 +29383,7 @@ impl ::sittir_core::prepare::Prepare for ClassBodyContentTransportSlot {
             ClassBodyContentTransportSlot::ClassBodyMethodSig(t) => t.prepare(ctx),
             ClassBodyContentTransportSlot::ClassStaticBlock(t) => t.prepare(ctx),
             ClassBodyContentTransportSlot::ClassBodyMember(t) => t.prepare(ctx),
-            ClassBodyContentTransportSlot::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => Ok(()),
+            ClassBodyContentTransportSlot::Literal79_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => Ok(()),
         }
     }
 }
@@ -30793,7 +29395,7 @@ impl ::sittir_core::view::KindOf for ClassBodyContentTransportSlot {
             Self::ClassBodyMethodSig(inner) => inner.kind_in(kinds),
             Self::ClassStaticBlock(inner) => inner.kind_in(kinds),
             Self::ClassBodyMember(inner) => inner.kind_in(kinds),
-            Self::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => [::sittir_core::types::KindId(399)].iter().any(|k| kinds.contains(k)),
+            Self::Literal79_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => [::sittir_core::types::KindId(399)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -30807,7 +29409,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyContentTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    399 => Ok(Self::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72),
+                    399 => Ok(Self::Literal79_65_6d_70_74_79_5f_6d_65_6d_62_65_72),
                     400 => Ok(Self::ClassBodyMethod(
                         ClassBodyMethodTransport::from_napi_value(env, napi_val)?
                     )),
@@ -30831,7 +29433,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ClassBodyContentTransportSlot")
                 )?;
                 match kind_id {
-                    399 => Ok(Self::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72),
+                    399 => Ok(Self::Literal79_65_6d_70_74_79_5f_6d_65_6d_62_65_72),
                     400 => Ok(Self::ClassBodyMethod(
                         ClassBodyMethodTransport::from_napi_value(env, napi_val)?
                     )),
@@ -30890,7 +29492,7 @@ fn class_body_content_transport_slot_to_any(t: ClassBodyContentTransportSlot) ->
         ClassBodyContentTransportSlot::ClassBodyMethodSig(inner) => AnyTransport::ClassBodyMethodSig(inner),
         ClassBodyContentTransportSlot::ClassStaticBlock(inner) => AnyTransport::ClassStaticBlock(inner),
         ClassBodyContentTransportSlot::ClassBodyMember(inner) => AnyTransport::ClassBodyMember(inner),
-        ClassBodyContentTransportSlot::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => AnyTransport::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72,
+        ClassBodyContentTransportSlot::Literal79_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => AnyTransport::Literal79_65_6d_70_74_79_5f_6d_65_6d_62_65_72,
     }
 }
 
@@ -30901,7 +29503,7 @@ impl ::sittir_core::render::Render for ClassBodyContentTransportSlot {
             ClassBodyContentTransportSlot::ClassBodyMethodSig(inner) => inner.render(w),
             ClassBodyContentTransportSlot::ClassStaticBlock(inner) => inner.render(w),
             ClassBodyContentTransportSlot::ClassBodyMember(inner) => inner.render(w),
-            ClassBodyContentTransportSlot::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => w.text(";"),
+            ClassBodyContentTransportSlot::Literal79_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => w.text(";"),
         }
     }
 }
@@ -31011,7 +29613,7 @@ pub enum RestPatternLhsExpressionTransportSlot {
     ObjectPattern(ObjectPatternTransport),
     ArrayPattern(ArrayPatternTransport),
     NonNullExpression(NonNullExpressionTransport),
-    Literal79_75_6e_64_65_66_69_6e_65_64,
+    Literal34_75_6e_64_65_66_69_6e_65_64,
     Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64,
     Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64,
     Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64,
@@ -31046,7 +29648,7 @@ impl ::sittir_core::prepare::Prepare for RestPatternLhsExpressionTransportSlot {
             RestPatternLhsExpressionTransportSlot::ObjectPattern(t) => t.prepare(ctx),
             RestPatternLhsExpressionTransportSlot::ArrayPattern(t) => t.prepare(ctx),
             RestPatternLhsExpressionTransportSlot::NonNullExpression(t) => t.prepare(ctx),
-            RestPatternLhsExpressionTransportSlot::Literal79_75_6e_64_65_66_69_6e_65_64 => Ok(()),
+            RestPatternLhsExpressionTransportSlot::Literal34_75_6e_64_65_66_69_6e_65_64 => Ok(()),
             RestPatternLhsExpressionTransportSlot::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
             RestPatternLhsExpressionTransportSlot::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
             RestPatternLhsExpressionTransportSlot::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
@@ -31083,7 +29685,7 @@ impl ::sittir_core::view::KindOf for RestPatternLhsExpressionTransportSlot {
             Self::ObjectPattern(inner) => inner.kind_in(kinds),
             Self::ArrayPattern(inner) => inner.kind_in(kinds),
             Self::NonNullExpression(inner) => inner.kind_in(kinds),
-            Self::Literal79_75_6e_64_65_66_69_6e_65_64 => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Literal34_75_6e_64_65_66_69_6e_65_64 => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -31120,7 +29722,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RestPatternLhsExpressionTranspor
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    124 => Ok(Self::Literal79_75_6e_64_65_66_69_6e_65_64),
+                    124 => Ok(Self::Literal34_75_6e_64_65_66_69_6e_65_64),
                     30 => Ok(Self::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64),
                     31 => Ok(Self::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64),
                     7 => Ok(Self::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64),
@@ -31172,7 +29774,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RestPatternLhsExpressionTranspor
                     ::napi::Error::from_reason("$type property missing in RestPatternLhsExpressionTransportSlot")
                 )?;
                 match kind_id {
-                    124 => Ok(Self::Literal79_75_6e_64_65_66_69_6e_65_64),
+                    124 => Ok(Self::Literal34_75_6e_64_65_66_69_6e_65_64),
                     30 => Ok(Self::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64),
                     31 => Ok(Self::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64),
                     7 => Ok(Self::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64),
@@ -31262,7 +29864,7 @@ fn rest_pattern_lhs_expression_transport_slot_to_any(t: RestPatternLhsExpression
         RestPatternLhsExpressionTransportSlot::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
         RestPatternLhsExpressionTransportSlot::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
         RestPatternLhsExpressionTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
-        RestPatternLhsExpressionTransportSlot::Literal79_75_6e_64_65_66_69_6e_65_64 => AnyTransport::Literal79_75_6e_64_65_66_69_6e_65_64,
+        RestPatternLhsExpressionTransportSlot::Literal34_75_6e_64_65_66_69_6e_65_64 => AnyTransport::Literal34_75_6e_64_65_66_69_6e_65_64,
         RestPatternLhsExpressionTransportSlot::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64,
         RestPatternLhsExpressionTransportSlot::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64,
         RestPatternLhsExpressionTransportSlot::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64,
@@ -31298,7 +29900,7 @@ impl ::sittir_core::render::Render for RestPatternLhsExpressionTransportSlot {
             RestPatternLhsExpressionTransportSlot::ObjectPattern(inner) => inner.render(w),
             RestPatternLhsExpressionTransportSlot::ArrayPattern(inner) => inner.render(w),
             RestPatternLhsExpressionTransportSlot::NonNullExpression(inner) => inner.render(w),
-            RestPatternLhsExpressionTransportSlot::Literal79_75_6e_64_65_66_69_6e_65_64 => w.text("undefined"),
+            RestPatternLhsExpressionTransportSlot::Literal34_75_6e_64_65_66_69_6e_65_64 => w.text("undefined"),
             RestPatternLhsExpressionTransportSlot::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64 => w.text("declare"),
             RestPatternLhsExpressionTransportSlot::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64 => w.text("namespace"),
             RestPatternLhsExpressionTransportSlot::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => w.text("type"),
@@ -31829,7 +30431,7 @@ impl ::sittir_core::render::Render for MethodDefinitionAsyncMarkerTransportSlot 
 pub enum MethodDefinitionAccessorKindTransportSlot {
     Literal26_67_65_74_5f_6b_65_79_77_6f_72_64,
     Literal27_73_65_74_5f_6b_65_79_77_6f_72_64,
-    Literal60_73_74_61_72,
+    Literal61_73_74_61_72,
 }
 
 impl ::sittir_core::prepare::Prepare for MethodDefinitionAccessorKindTransportSlot {
@@ -31837,7 +30439,7 @@ impl ::sittir_core::prepare::Prepare for MethodDefinitionAccessorKindTransportSl
         match self {
             MethodDefinitionAccessorKindTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
             MethodDefinitionAccessorKindTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            MethodDefinitionAccessorKindTransportSlot::Literal60_73_74_61_72 => Ok(()),
+            MethodDefinitionAccessorKindTransportSlot::Literal61_73_74_61_72 => Ok(()),
         }
     }
 }
@@ -31847,7 +30449,7 @@ impl ::sittir_core::view::KindOf for MethodDefinitionAccessorKindTransportSlot {
         match self {
             Self::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
             Self::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::Literal60_73_74_61_72 => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
+            Self::Literal61_73_74_61_72 => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -31863,7 +30465,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionAccessorKindTran
                 match u16::from_napi_value(env, napi_val)? {
                     46 => Ok(Self::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64),
                     47 => Ok(Self::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64),
-                    3 => Ok(Self::Literal60_73_74_61_72),
+                    3 => Ok(Self::Literal61_73_74_61_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodDefinitionAccessorKindTransportSlot",
                     ))),
@@ -31877,7 +30479,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionAccessorKindTran
                 match kind_id {
                     46 => Ok(Self::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64),
                     47 => Ok(Self::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64),
-                    3 => Ok(Self::Literal60_73_74_61_72),
+                    3 => Ok(Self::Literal61_73_74_61_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodDefinitionAccessorKindTransportSlot",
                     ))),
@@ -31922,7 +30524,7 @@ fn method_definition_accessor_kind_transport_slot_to_any(t: MethodDefinitionAcce
     match t {
         MethodDefinitionAccessorKindTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64,
         MethodDefinitionAccessorKindTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64,
-        MethodDefinitionAccessorKindTransportSlot::Literal60_73_74_61_72 => AnyTransport::Literal60_73_74_61_72,
+        MethodDefinitionAccessorKindTransportSlot::Literal61_73_74_61_72 => AnyTransport::Literal61_73_74_61_72,
     }
 }
 
@@ -31931,7 +30533,7 @@ impl ::sittir_core::render::Render for MethodDefinitionAccessorKindTransportSlot
         match self {
             MethodDefinitionAccessorKindTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => w.text("get"),
             MethodDefinitionAccessorKindTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => w.text("set"),
-            MethodDefinitionAccessorKindTransportSlot::Literal60_73_74_61_72 => w.text("*"),
+            MethodDefinitionAccessorKindTransportSlot::Literal61_73_74_61_72 => w.text("*"),
         }
     }
 }
@@ -33337,75 +31939,17 @@ impl ::sittir_core::render::Render for PairPatternKeyTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum PairPatternValueTransportSlot {
-    MemberExpression(MemberExpressionTransport),
-    SubscriptExpression(SubscriptExpressionTransport),
-    Undefined(UndefinedTransport),
-    Identifier(IdentifierTransport),
-    DeclareKeyword(DeclareKeywordTransport),
-    NamespaceKeyword(NamespaceKeywordTransport),
-    TypeKeyword(TypeKeywordTransport),
-    PublicKeyword(PublicKeywordTransport),
-    PrivateKeyword(PrivateKeywordTransport),
-    ProtectedKeyword(ProtectedKeywordTransport),
-    OverrideKeyword(OverrideKeywordTransport),
-    ReadonlyKeyword(ReadonlyKeywordTransport),
-    ModuleKeyword(ModuleKeywordTransport),
-    AnyKeyword(AnyKeywordTransport),
-    NumberKeyword(NumberKeywordTransport),
-    BooleanKeyword(BooleanKeywordTransport),
-    StringKeyword(StringKeywordTransport),
-    SymbolKeyword(SymbolKeywordTransport),
-    ExportKeyword(ExportKeywordTransport),
-    ObjectKeyword(ObjectKeywordTransport),
-    NewKeyword(NewKeywordTransport),
-    GetKeyword(GetKeywordTransport),
-    SetKeyword(SetKeywordTransport),
-    AsyncKeyword(AsyncKeywordTransport),
-    StaticKeyword(StaticKeywordTransport),
-    LetKeyword(LetKeywordTransport),
-    ObjectPattern(ObjectPatternTransport),
-    ArrayPattern(ArrayPatternTransport),
-    NonNullExpression(NonNullExpressionTransport),
+    LhsExpression(LhsExpressionTransport),
     RestPattern(RestPatternTransport),
     AssignmentPattern(AssignmentPatternTransport),
-    Verbatim(VerbatimTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for PairPatternValueTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            PairPatternValueTransportSlot::MemberExpression(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::SubscriptExpression(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::Undefined(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::Identifier(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::DeclareKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::NamespaceKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::TypeKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::PublicKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::PrivateKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::ProtectedKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::OverrideKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::ReadonlyKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::ModuleKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::AnyKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::NumberKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::BooleanKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::StringKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::SymbolKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::ExportKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::ObjectKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::NewKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::GetKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::SetKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::AsyncKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::StaticKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::LetKeyword(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::ObjectPattern(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::ArrayPattern(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::NonNullExpression(t) => t.prepare(ctx),
+            PairPatternValueTransportSlot::LhsExpression(t) => t.prepare(ctx),
             PairPatternValueTransportSlot::RestPattern(t) => t.prepare(ctx),
             PairPatternValueTransportSlot::AssignmentPattern(t) => t.prepare(ctx),
-            PairPatternValueTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
@@ -33413,38 +31957,9 @@ impl ::sittir_core::prepare::Prepare for PairPatternValueTransportSlot {
 impl ::sittir_core::view::KindOf for PairPatternValueTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::MemberExpression(inner) => inner.kind_in(kinds),
-            Self::SubscriptExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::DeclareKeyword(inner) => inner.kind_in(kinds),
-            Self::NamespaceKeyword(inner) => inner.kind_in(kinds),
-            Self::TypeKeyword(inner) => inner.kind_in(kinds),
-            Self::PublicKeyword(inner) => inner.kind_in(kinds),
-            Self::PrivateKeyword(inner) => inner.kind_in(kinds),
-            Self::ProtectedKeyword(inner) => inner.kind_in(kinds),
-            Self::OverrideKeyword(inner) => inner.kind_in(kinds),
-            Self::ReadonlyKeyword(inner) => inner.kind_in(kinds),
-            Self::ModuleKeyword(inner) => inner.kind_in(kinds),
-            Self::AnyKeyword(inner) => inner.kind_in(kinds),
-            Self::NumberKeyword(inner) => inner.kind_in(kinds),
-            Self::BooleanKeyword(inner) => inner.kind_in(kinds),
-            Self::StringKeyword(inner) => inner.kind_in(kinds),
-            Self::SymbolKeyword(inner) => inner.kind_in(kinds),
-            Self::ExportKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectKeyword(inner) => inner.kind_in(kinds),
-            Self::NewKeyword(inner) => inner.kind_in(kinds),
-            Self::GetKeyword(inner) => inner.kind_in(kinds),
-            Self::SetKeyword(inner) => inner.kind_in(kinds),
-            Self::AsyncKeyword(inner) => inner.kind_in(kinds),
-            Self::StaticKeyword(inner) => inner.kind_in(kinds),
-            Self::LetKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectPattern(inner) => inner.kind_in(kinds),
-            Self::ArrayPattern(inner) => inner.kind_in(kinds),
-            Self::NonNullExpression(inner) => inner.kind_in(kinds),
+            Self::LhsExpression(inner) => inner.kind_in(kinds),
             Self::RestPattern(inner) => inner.kind_in(kinds),
             Self::AssignmentPattern(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -33458,92 +31973,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::ObjectPattern(
-                        ObjectPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::ArrayPattern(
-                        ArrayPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     279 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
@@ -33551,23 +31982,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                     232 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    459 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
-                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 459 in PairPatternValueTransportSlot: no kind-keyed child slot to unwrap"))
-                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PairPatternValueTransportSlot",
                     ))),
@@ -33579,92 +31993,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                     ::napi::Error::from_reason("$type property missing in PairPatternValueTransportSlot")
                 )?;
                 match kind_id {
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::ObjectPattern(
-                        ObjectPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::ArrayPattern(
-                        ArrayPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     279 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
@@ -33672,30 +32002,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
                     232 => Ok(Self::AssignmentPattern(
                         AssignmentPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    459 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
-                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 459 in PairPatternValueTransportSlot: no kind-keyed child slot to unwrap"))
-                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PairPatternValueTransportSlot",
                     ))),
                 }
             }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("PairPatternValueTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("PairPatternValueTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
@@ -33732,76 +32044,18 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PairPatternValueTransportSlot>
 
 fn pair_pattern_value_transport_slot_to_any(t: PairPatternValueTransportSlot) -> AnyTransport {
     match t {
-        PairPatternValueTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        PairPatternValueTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        PairPatternValueTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
-        PairPatternValueTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        PairPatternValueTransportSlot::DeclareKeyword(inner) => AnyTransport::DeclareKeyword(inner),
-        PairPatternValueTransportSlot::NamespaceKeyword(inner) => AnyTransport::NamespaceKeyword(inner),
-        PairPatternValueTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        PairPatternValueTransportSlot::PublicKeyword(inner) => AnyTransport::PublicKeyword(inner),
-        PairPatternValueTransportSlot::PrivateKeyword(inner) => AnyTransport::PrivateKeyword(inner),
-        PairPatternValueTransportSlot::ProtectedKeyword(inner) => AnyTransport::ProtectedKeyword(inner),
-        PairPatternValueTransportSlot::OverrideKeyword(inner) => AnyTransport::OverrideKeyword(inner),
-        PairPatternValueTransportSlot::ReadonlyKeyword(inner) => AnyTransport::ReadonlyKeyword(inner),
-        PairPatternValueTransportSlot::ModuleKeyword(inner) => AnyTransport::ModuleKeyword(inner),
-        PairPatternValueTransportSlot::AnyKeyword(inner) => AnyTransport::AnyKeyword(inner),
-        PairPatternValueTransportSlot::NumberKeyword(inner) => AnyTransport::NumberKeyword(inner),
-        PairPatternValueTransportSlot::BooleanKeyword(inner) => AnyTransport::BooleanKeyword(inner),
-        PairPatternValueTransportSlot::StringKeyword(inner) => AnyTransport::StringKeyword(inner),
-        PairPatternValueTransportSlot::SymbolKeyword(inner) => AnyTransport::SymbolKeyword(inner),
-        PairPatternValueTransportSlot::ExportKeyword(inner) => AnyTransport::ExportKeyword(inner),
-        PairPatternValueTransportSlot::ObjectKeyword(inner) => AnyTransport::ObjectKeyword(inner),
-        PairPatternValueTransportSlot::NewKeyword(inner) => AnyTransport::NewKeyword(inner),
-        PairPatternValueTransportSlot::GetKeyword(inner) => AnyTransport::GetKeyword(inner),
-        PairPatternValueTransportSlot::SetKeyword(inner) => AnyTransport::SetKeyword(inner),
-        PairPatternValueTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        PairPatternValueTransportSlot::StaticKeyword(inner) => AnyTransport::StaticKeyword(inner),
-        PairPatternValueTransportSlot::LetKeyword(inner) => AnyTransport::LetKeyword(inner),
-        PairPatternValueTransportSlot::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
-        PairPatternValueTransportSlot::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
-        PairPatternValueTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
+        PairPatternValueTransportSlot::LhsExpression(inner) => AnyTransport::LhsExpression(inner),
         PairPatternValueTransportSlot::RestPattern(inner) => AnyTransport::RestPattern(inner),
         PairPatternValueTransportSlot::AssignmentPattern(inner) => AnyTransport::AssignmentPattern(inner),
-        PairPatternValueTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
 impl ::sittir_core::render::Render for PairPatternValueTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            PairPatternValueTransportSlot::MemberExpression(inner) => inner.render(w),
-            PairPatternValueTransportSlot::SubscriptExpression(inner) => inner.render(w),
-            PairPatternValueTransportSlot::Undefined(inner) => inner.render(w),
-            PairPatternValueTransportSlot::Identifier(inner) => inner.render(w),
-            PairPatternValueTransportSlot::DeclareKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::NamespaceKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::TypeKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::PublicKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::PrivateKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::ProtectedKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::OverrideKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::ReadonlyKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::ModuleKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::AnyKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::NumberKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::BooleanKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::StringKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::SymbolKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::ExportKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::ObjectKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::NewKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::GetKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::SetKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::AsyncKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::StaticKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::LetKeyword(inner) => inner.render(w),
-            PairPatternValueTransportSlot::ObjectPattern(inner) => inner.render(w),
-            PairPatternValueTransportSlot::ArrayPattern(inner) => inner.render(w),
-            PairPatternValueTransportSlot::NonNullExpression(inner) => inner.render(w),
+            PairPatternValueTransportSlot::LhsExpression(inner) => inner.render(w),
             PairPatternValueTransportSlot::RestPattern(inner) => inner.render(w),
             PairPatternValueTransportSlot::AssignmentPattern(inner) => inner.render(w),
-            PairPatternValueTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -34798,14 +33052,14 @@ impl ::sittir_core::render::Render for PublicFieldDefinitionNameTransportSlot {
 #[derive(Debug, Clone)]
 pub enum PublicFieldDefinitionOptionalityMarkerTransportSlot {
     Literal82_71_6d_61_72_6b,
-    Literal74_62_61_6e_67,
+    Literal75_62_61_6e_67,
 }
 
 impl ::sittir_core::prepare::Prepare for PublicFieldDefinitionOptionalityMarkerTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             PublicFieldDefinitionOptionalityMarkerTransportSlot::Literal82_71_6d_61_72_6b => Ok(()),
-            PublicFieldDefinitionOptionalityMarkerTransportSlot::Literal74_62_61_6e_67 => Ok(()),
+            PublicFieldDefinitionOptionalityMarkerTransportSlot::Literal75_62_61_6e_67 => Ok(()),
         }
     }
 }
@@ -34814,7 +33068,7 @@ impl ::sittir_core::view::KindOf for PublicFieldDefinitionOptionalityMarkerTrans
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal82_71_6d_61_72_6b => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
-            Self::Literal74_62_61_6e_67 => [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k)),
+            Self::Literal75_62_61_6e_67 => [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -34829,7 +33083,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionOptionality
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     126 => Ok(Self::Literal82_71_6d_61_72_6b),
-                    105 => Ok(Self::Literal74_62_61_6e_67),
+                    105 => Ok(Self::Literal75_62_61_6e_67),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionOptionalityMarkerTransportSlot",
                     ))),
@@ -34842,7 +33096,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionOptionality
                 )?;
                 match kind_id {
                     126 => Ok(Self::Literal82_71_6d_61_72_6b),
-                    105 => Ok(Self::Literal74_62_61_6e_67),
+                    105 => Ok(Self::Literal75_62_61_6e_67),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PublicFieldDefinitionOptionalityMarkerTransportSlot",
                     ))),
@@ -34886,7 +33140,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionOptionali
 fn public_field_definition_optionality_marker_transport_slot_to_any(t: PublicFieldDefinitionOptionalityMarkerTransportSlot) -> AnyTransport {
     match t {
         PublicFieldDefinitionOptionalityMarkerTransportSlot::Literal82_71_6d_61_72_6b => AnyTransport::Literal82_71_6d_61_72_6b,
-        PublicFieldDefinitionOptionalityMarkerTransportSlot::Literal74_62_61_6e_67 => AnyTransport::Literal74_62_61_6e_67,
+        PublicFieldDefinitionOptionalityMarkerTransportSlot::Literal75_62_61_6e_67 => AnyTransport::Literal75_62_61_6e_67,
     }
 }
 
@@ -34894,7 +33148,7 @@ impl ::sittir_core::render::Render for PublicFieldDefinitionOptionalityMarkerTra
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             PublicFieldDefinitionOptionalityMarkerTransportSlot::Literal82_71_6d_61_72_6b => w.text("?"),
-            PublicFieldDefinitionOptionalityMarkerTransportSlot::Literal74_62_61_6e_67 => w.text("!"),
+            PublicFieldDefinitionOptionalityMarkerTransportSlot::Literal75_62_61_6e_67 => w.text("!"),
         }
     }
 }
@@ -35499,7 +33753,7 @@ impl ::sittir_core::render::Render for MethodSignatureAsyncMarkerTransportSlot {
 pub enum MethodSignatureAccessorKindTransportSlot {
     Literal26_67_65_74_5f_6b_65_79_77_6f_72_64,
     Literal27_73_65_74_5f_6b_65_79_77_6f_72_64,
-    Literal60_73_74_61_72,
+    Literal61_73_74_61_72,
 }
 
 impl ::sittir_core::prepare::Prepare for MethodSignatureAccessorKindTransportSlot {
@@ -35507,7 +33761,7 @@ impl ::sittir_core::prepare::Prepare for MethodSignatureAccessorKindTransportSlo
         match self {
             MethodSignatureAccessorKindTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
             MethodSignatureAccessorKindTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            MethodSignatureAccessorKindTransportSlot::Literal60_73_74_61_72 => Ok(()),
+            MethodSignatureAccessorKindTransportSlot::Literal61_73_74_61_72 => Ok(()),
         }
     }
 }
@@ -35517,7 +33771,7 @@ impl ::sittir_core::view::KindOf for MethodSignatureAccessorKindTransportSlot {
         match self {
             Self::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
             Self::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::Literal60_73_74_61_72 => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
+            Self::Literal61_73_74_61_72 => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -35533,7 +33787,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureAccessorKindTrans
                 match u16::from_napi_value(env, napi_val)? {
                     46 => Ok(Self::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64),
                     47 => Ok(Self::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64),
-                    3 => Ok(Self::Literal60_73_74_61_72),
+                    3 => Ok(Self::Literal61_73_74_61_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodSignatureAccessorKindTransportSlot",
                     ))),
@@ -35547,7 +33801,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureAccessorKindTrans
                 match kind_id {
                     46 => Ok(Self::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64),
                     47 => Ok(Self::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64),
-                    3 => Ok(Self::Literal60_73_74_61_72),
+                    3 => Ok(Self::Literal61_73_74_61_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodSignatureAccessorKindTransportSlot",
                     ))),
@@ -35592,7 +33846,7 @@ fn method_signature_accessor_kind_transport_slot_to_any(t: MethodSignatureAccess
     match t {
         MethodSignatureAccessorKindTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64,
         MethodSignatureAccessorKindTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64,
-        MethodSignatureAccessorKindTransportSlot::Literal60_73_74_61_72 => AnyTransport::Literal60_73_74_61_72,
+        MethodSignatureAccessorKindTransportSlot::Literal61_73_74_61_72 => AnyTransport::Literal61_73_74_61_72,
     }
 }
 
@@ -35601,7 +33855,7 @@ impl ::sittir_core::render::Render for MethodSignatureAccessorKindTransportSlot 
         match self {
             MethodSignatureAccessorKindTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => w.text("get"),
             MethodSignatureAccessorKindTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => w.text("set"),
-            MethodSignatureAccessorKindTransportSlot::Literal60_73_74_61_72 => w.text("*"),
+            MethodSignatureAccessorKindTransportSlot::Literal61_73_74_61_72 => w.text("*"),
         }
     }
 }
@@ -36431,7 +34685,7 @@ impl ::sittir_core::render::Render for AbstractMethodSignatureOverrideModifierTr
 pub enum AbstractMethodSignatureAccessorKindTransportSlot {
     Literal26_67_65_74_5f_6b_65_79_77_6f_72_64,
     Literal27_73_65_74_5f_6b_65_79_77_6f_72_64,
-    Literal60_73_74_61_72,
+    Literal61_73_74_61_72,
 }
 
 impl ::sittir_core::prepare::Prepare for AbstractMethodSignatureAccessorKindTransportSlot {
@@ -36439,7 +34693,7 @@ impl ::sittir_core::prepare::Prepare for AbstractMethodSignatureAccessorKindTran
         match self {
             AbstractMethodSignatureAccessorKindTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
             AbstractMethodSignatureAccessorKindTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            AbstractMethodSignatureAccessorKindTransportSlot::Literal60_73_74_61_72 => Ok(()),
+            AbstractMethodSignatureAccessorKindTransportSlot::Literal61_73_74_61_72 => Ok(()),
         }
     }
 }
@@ -36449,7 +34703,7 @@ impl ::sittir_core::view::KindOf for AbstractMethodSignatureAccessorKindTranspor
         match self {
             Self::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
             Self::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::Literal60_73_74_61_72 => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
+            Self::Literal61_73_74_61_72 => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -36465,7 +34719,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureAccessorK
                 match u16::from_napi_value(env, napi_val)? {
                     46 => Ok(Self::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64),
                     47 => Ok(Self::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64),
-                    3 => Ok(Self::Literal60_73_74_61_72),
+                    3 => Ok(Self::Literal61_73_74_61_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AbstractMethodSignatureAccessorKindTransportSlot",
                     ))),
@@ -36479,7 +34733,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureAccessorK
                 match kind_id {
                     46 => Ok(Self::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64),
                     47 => Ok(Self::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64),
-                    3 => Ok(Self::Literal60_73_74_61_72),
+                    3 => Ok(Self::Literal61_73_74_61_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AbstractMethodSignatureAccessorKindTransportSlot",
                     ))),
@@ -36524,7 +34778,7 @@ fn abstract_method_signature_accessor_kind_transport_slot_to_any(t: AbstractMeth
     match t {
         AbstractMethodSignatureAccessorKindTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64,
         AbstractMethodSignatureAccessorKindTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64,
-        AbstractMethodSignatureAccessorKindTransportSlot::Literal60_73_74_61_72 => AnyTransport::Literal60_73_74_61_72,
+        AbstractMethodSignatureAccessorKindTransportSlot::Literal61_73_74_61_72 => AnyTransport::Literal61_73_74_61_72,
     }
 }
 
@@ -36533,7 +34787,7 @@ impl ::sittir_core::render::Render for AbstractMethodSignatureAccessorKindTransp
         match self {
             AbstractMethodSignatureAccessorKindTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => w.text("get"),
             AbstractMethodSignatureAccessorKindTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => w.text("set"),
-            AbstractMethodSignatureAccessorKindTransportSlot::Literal60_73_74_61_72 => w.text("*"),
+            AbstractMethodSignatureAccessorKindTransportSlot::Literal61_73_74_61_72 => w.text("*"),
         }
     }
 }
@@ -40451,75 +38705,17 @@ impl ::sittir_core::render::Render for RequiredParameterReadonlyMarkerTransportS
 
 #[derive(Debug, Clone)]
 pub enum RequiredParameterPatternTransportSlot {
-    MemberExpression(MemberExpressionTransport),
-    SubscriptExpression(SubscriptExpressionTransport),
-    Undefined(UndefinedTransport),
-    Identifier(IdentifierTransport),
-    DeclareKeyword(DeclareKeywordTransport),
-    NamespaceKeyword(NamespaceKeywordTransport),
-    TypeKeyword(TypeKeywordTransport),
-    PublicKeyword(PublicKeywordTransport),
-    PrivateKeyword(PrivateKeywordTransport),
-    ProtectedKeyword(ProtectedKeywordTransport),
-    OverrideKeyword(OverrideKeywordTransport),
-    ReadonlyKeyword(ReadonlyKeywordTransport),
-    ModuleKeyword(ModuleKeywordTransport),
-    AnyKeyword(AnyKeywordTransport),
-    NumberKeyword(NumberKeywordTransport),
-    BooleanKeyword(BooleanKeywordTransport),
-    StringKeyword(StringKeywordTransport),
-    SymbolKeyword(SymbolKeywordTransport),
-    ExportKeyword(ExportKeywordTransport),
-    ObjectKeyword(ObjectKeywordTransport),
-    NewKeyword(NewKeywordTransport),
-    GetKeyword(GetKeywordTransport),
-    SetKeyword(SetKeywordTransport),
-    AsyncKeyword(AsyncKeywordTransport),
-    StaticKeyword(StaticKeywordTransport),
-    LetKeyword(LetKeywordTransport),
-    ObjectPattern(ObjectPatternTransport),
-    ArrayPattern(ArrayPatternTransport),
-    NonNullExpression(NonNullExpressionTransport),
+    LhsExpression(LhsExpressionTransport),
     RestPattern(RestPatternTransport),
     Literal88_74_68_69_73,
-    Verbatim(VerbatimTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for RequiredParameterPatternTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            RequiredParameterPatternTransportSlot::MemberExpression(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::SubscriptExpression(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::Undefined(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::Identifier(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::DeclareKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::NamespaceKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::TypeKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::PublicKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::PrivateKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::ProtectedKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::OverrideKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::ReadonlyKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::ModuleKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::AnyKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::NumberKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::BooleanKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::StringKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::SymbolKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::ExportKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::ObjectKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::NewKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::GetKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::SetKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::AsyncKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::StaticKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::LetKeyword(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::ObjectPattern(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::ArrayPattern(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::NonNullExpression(t) => t.prepare(ctx),
+            RequiredParameterPatternTransportSlot::LhsExpression(t) => t.prepare(ctx),
             RequiredParameterPatternTransportSlot::RestPattern(t) => t.prepare(ctx),
             RequiredParameterPatternTransportSlot::Literal88_74_68_69_73 => Ok(()),
-            RequiredParameterPatternTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
@@ -40527,38 +38723,9 @@ impl ::sittir_core::prepare::Prepare for RequiredParameterPatternTransportSlot {
 impl ::sittir_core::view::KindOf for RequiredParameterPatternTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::MemberExpression(inner) => inner.kind_in(kinds),
-            Self::SubscriptExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::DeclareKeyword(inner) => inner.kind_in(kinds),
-            Self::NamespaceKeyword(inner) => inner.kind_in(kinds),
-            Self::TypeKeyword(inner) => inner.kind_in(kinds),
-            Self::PublicKeyword(inner) => inner.kind_in(kinds),
-            Self::PrivateKeyword(inner) => inner.kind_in(kinds),
-            Self::ProtectedKeyword(inner) => inner.kind_in(kinds),
-            Self::OverrideKeyword(inner) => inner.kind_in(kinds),
-            Self::ReadonlyKeyword(inner) => inner.kind_in(kinds),
-            Self::ModuleKeyword(inner) => inner.kind_in(kinds),
-            Self::AnyKeyword(inner) => inner.kind_in(kinds),
-            Self::NumberKeyword(inner) => inner.kind_in(kinds),
-            Self::BooleanKeyword(inner) => inner.kind_in(kinds),
-            Self::StringKeyword(inner) => inner.kind_in(kinds),
-            Self::SymbolKeyword(inner) => inner.kind_in(kinds),
-            Self::ExportKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectKeyword(inner) => inner.kind_in(kinds),
-            Self::NewKeyword(inner) => inner.kind_in(kinds),
-            Self::GetKeyword(inner) => inner.kind_in(kinds),
-            Self::SetKeyword(inner) => inner.kind_in(kinds),
-            Self::AsyncKeyword(inner) => inner.kind_in(kinds),
-            Self::StaticKeyword(inner) => inner.kind_in(kinds),
-            Self::LetKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectPattern(inner) => inner.kind_in(kinds),
-            Self::ArrayPattern(inner) => inner.kind_in(kinds),
-            Self::NonNullExpression(inner) => inner.kind_in(kinds),
+            Self::LhsExpression(inner) => inner.kind_in(kinds),
             Self::RestPattern(inner) => inner.kind_in(kinds),
             Self::Literal88_74_68_69_73 => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -40573,113 +38740,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     119 => Ok(Self::Literal88_74_68_69_73),
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::ObjectPattern(
-                        ObjectPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::ArrayPattern(
-                        ArrayPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     279 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    459 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
-                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 459 in RequiredParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
-                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RequiredParameterPatternTransportSlot",
                     ))),
@@ -40692,120 +38758,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
                 )?;
                 match kind_id {
                     119 => Ok(Self::Literal88_74_68_69_73),
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::ObjectPattern(
-                        ObjectPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::ArrayPattern(
-                        ArrayPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     279 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    459 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
-                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 459 in RequiredParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
-                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RequiredParameterPatternTransportSlot",
                     ))),
                 }
             }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("RequiredParameterPatternTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("RequiredParameterPatternTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
@@ -40842,76 +38806,18 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RequiredParameterPatternTransp
 
 fn required_parameter_pattern_transport_slot_to_any(t: RequiredParameterPatternTransportSlot) -> AnyTransport {
     match t {
-        RequiredParameterPatternTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        RequiredParameterPatternTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        RequiredParameterPatternTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
-        RequiredParameterPatternTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        RequiredParameterPatternTransportSlot::DeclareKeyword(inner) => AnyTransport::DeclareKeyword(inner),
-        RequiredParameterPatternTransportSlot::NamespaceKeyword(inner) => AnyTransport::NamespaceKeyword(inner),
-        RequiredParameterPatternTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        RequiredParameterPatternTransportSlot::PublicKeyword(inner) => AnyTransport::PublicKeyword(inner),
-        RequiredParameterPatternTransportSlot::PrivateKeyword(inner) => AnyTransport::PrivateKeyword(inner),
-        RequiredParameterPatternTransportSlot::ProtectedKeyword(inner) => AnyTransport::ProtectedKeyword(inner),
-        RequiredParameterPatternTransportSlot::OverrideKeyword(inner) => AnyTransport::OverrideKeyword(inner),
-        RequiredParameterPatternTransportSlot::ReadonlyKeyword(inner) => AnyTransport::ReadonlyKeyword(inner),
-        RequiredParameterPatternTransportSlot::ModuleKeyword(inner) => AnyTransport::ModuleKeyword(inner),
-        RequiredParameterPatternTransportSlot::AnyKeyword(inner) => AnyTransport::AnyKeyword(inner),
-        RequiredParameterPatternTransportSlot::NumberKeyword(inner) => AnyTransport::NumberKeyword(inner),
-        RequiredParameterPatternTransportSlot::BooleanKeyword(inner) => AnyTransport::BooleanKeyword(inner),
-        RequiredParameterPatternTransportSlot::StringKeyword(inner) => AnyTransport::StringKeyword(inner),
-        RequiredParameterPatternTransportSlot::SymbolKeyword(inner) => AnyTransport::SymbolKeyword(inner),
-        RequiredParameterPatternTransportSlot::ExportKeyword(inner) => AnyTransport::ExportKeyword(inner),
-        RequiredParameterPatternTransportSlot::ObjectKeyword(inner) => AnyTransport::ObjectKeyword(inner),
-        RequiredParameterPatternTransportSlot::NewKeyword(inner) => AnyTransport::NewKeyword(inner),
-        RequiredParameterPatternTransportSlot::GetKeyword(inner) => AnyTransport::GetKeyword(inner),
-        RequiredParameterPatternTransportSlot::SetKeyword(inner) => AnyTransport::SetKeyword(inner),
-        RequiredParameterPatternTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        RequiredParameterPatternTransportSlot::StaticKeyword(inner) => AnyTransport::StaticKeyword(inner),
-        RequiredParameterPatternTransportSlot::LetKeyword(inner) => AnyTransport::LetKeyword(inner),
-        RequiredParameterPatternTransportSlot::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
-        RequiredParameterPatternTransportSlot::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
-        RequiredParameterPatternTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
+        RequiredParameterPatternTransportSlot::LhsExpression(inner) => AnyTransport::LhsExpression(inner),
         RequiredParameterPatternTransportSlot::RestPattern(inner) => AnyTransport::RestPattern(inner),
         RequiredParameterPatternTransportSlot::Literal88_74_68_69_73 => AnyTransport::Literal88_74_68_69_73,
-        RequiredParameterPatternTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
 impl ::sittir_core::render::Render for RequiredParameterPatternTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            RequiredParameterPatternTransportSlot::MemberExpression(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::SubscriptExpression(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::Undefined(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::Identifier(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::DeclareKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::NamespaceKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::TypeKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::PublicKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::PrivateKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::ProtectedKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::OverrideKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::ReadonlyKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::ModuleKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::AnyKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::NumberKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::BooleanKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::StringKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::SymbolKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::ExportKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::ObjectKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::NewKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::GetKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::SetKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::AsyncKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::StaticKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::LetKeyword(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::ObjectPattern(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::ArrayPattern(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::NonNullExpression(inner) => inner.render(w),
+            RequiredParameterPatternTransportSlot::LhsExpression(inner) => inner.render(w),
             RequiredParameterPatternTransportSlot::RestPattern(inner) => inner.render(w),
             RequiredParameterPatternTransportSlot::Literal88_74_68_69_73 => w.text("this"),
-            RequiredParameterPatternTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -41223,75 +39129,17 @@ impl ::sittir_core::render::Render for OptionalParameterReadonlyMarkerTransportS
 
 #[derive(Debug, Clone)]
 pub enum OptionalParameterPatternTransportSlot {
-    MemberExpression(MemberExpressionTransport),
-    SubscriptExpression(SubscriptExpressionTransport),
-    Undefined(UndefinedTransport),
-    Identifier(IdentifierTransport),
-    DeclareKeyword(DeclareKeywordTransport),
-    NamespaceKeyword(NamespaceKeywordTransport),
-    TypeKeyword(TypeKeywordTransport),
-    PublicKeyword(PublicKeywordTransport),
-    PrivateKeyword(PrivateKeywordTransport),
-    ProtectedKeyword(ProtectedKeywordTransport),
-    OverrideKeyword(OverrideKeywordTransport),
-    ReadonlyKeyword(ReadonlyKeywordTransport),
-    ModuleKeyword(ModuleKeywordTransport),
-    AnyKeyword(AnyKeywordTransport),
-    NumberKeyword(NumberKeywordTransport),
-    BooleanKeyword(BooleanKeywordTransport),
-    StringKeyword(StringKeywordTransport),
-    SymbolKeyword(SymbolKeywordTransport),
-    ExportKeyword(ExportKeywordTransport),
-    ObjectKeyword(ObjectKeywordTransport),
-    NewKeyword(NewKeywordTransport),
-    GetKeyword(GetKeywordTransport),
-    SetKeyword(SetKeywordTransport),
-    AsyncKeyword(AsyncKeywordTransport),
-    StaticKeyword(StaticKeywordTransport),
-    LetKeyword(LetKeywordTransport),
-    ObjectPattern(ObjectPatternTransport),
-    ArrayPattern(ArrayPatternTransport),
-    NonNullExpression(NonNullExpressionTransport),
+    LhsExpression(LhsExpressionTransport),
     RestPattern(RestPatternTransport),
     Literal88_74_68_69_73,
-    Verbatim(VerbatimTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for OptionalParameterPatternTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            OptionalParameterPatternTransportSlot::MemberExpression(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::SubscriptExpression(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::Undefined(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::Identifier(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::DeclareKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::NamespaceKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::TypeKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::PublicKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::PrivateKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::ProtectedKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::OverrideKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::ReadonlyKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::ModuleKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::AnyKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::NumberKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::BooleanKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::StringKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::SymbolKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::ExportKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::ObjectKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::NewKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::GetKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::SetKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::AsyncKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::StaticKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::LetKeyword(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::ObjectPattern(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::ArrayPattern(t) => t.prepare(ctx),
-            OptionalParameterPatternTransportSlot::NonNullExpression(t) => t.prepare(ctx),
+            OptionalParameterPatternTransportSlot::LhsExpression(t) => t.prepare(ctx),
             OptionalParameterPatternTransportSlot::RestPattern(t) => t.prepare(ctx),
             OptionalParameterPatternTransportSlot::Literal88_74_68_69_73 => Ok(()),
-            OptionalParameterPatternTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
@@ -41299,38 +39147,9 @@ impl ::sittir_core::prepare::Prepare for OptionalParameterPatternTransportSlot {
 impl ::sittir_core::view::KindOf for OptionalParameterPatternTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::MemberExpression(inner) => inner.kind_in(kinds),
-            Self::SubscriptExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::DeclareKeyword(inner) => inner.kind_in(kinds),
-            Self::NamespaceKeyword(inner) => inner.kind_in(kinds),
-            Self::TypeKeyword(inner) => inner.kind_in(kinds),
-            Self::PublicKeyword(inner) => inner.kind_in(kinds),
-            Self::PrivateKeyword(inner) => inner.kind_in(kinds),
-            Self::ProtectedKeyword(inner) => inner.kind_in(kinds),
-            Self::OverrideKeyword(inner) => inner.kind_in(kinds),
-            Self::ReadonlyKeyword(inner) => inner.kind_in(kinds),
-            Self::ModuleKeyword(inner) => inner.kind_in(kinds),
-            Self::AnyKeyword(inner) => inner.kind_in(kinds),
-            Self::NumberKeyword(inner) => inner.kind_in(kinds),
-            Self::BooleanKeyword(inner) => inner.kind_in(kinds),
-            Self::StringKeyword(inner) => inner.kind_in(kinds),
-            Self::SymbolKeyword(inner) => inner.kind_in(kinds),
-            Self::ExportKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectKeyword(inner) => inner.kind_in(kinds),
-            Self::NewKeyword(inner) => inner.kind_in(kinds),
-            Self::GetKeyword(inner) => inner.kind_in(kinds),
-            Self::SetKeyword(inner) => inner.kind_in(kinds),
-            Self::AsyncKeyword(inner) => inner.kind_in(kinds),
-            Self::StaticKeyword(inner) => inner.kind_in(kinds),
-            Self::LetKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectPattern(inner) => inner.kind_in(kinds),
-            Self::ArrayPattern(inner) => inner.kind_in(kinds),
-            Self::NonNullExpression(inner) => inner.kind_in(kinds),
+            Self::LhsExpression(inner) => inner.kind_in(kinds),
             Self::RestPattern(inner) => inner.kind_in(kinds),
             Self::Literal88_74_68_69_73 => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -41345,113 +39164,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     119 => Ok(Self::Literal88_74_68_69_73),
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::ObjectPattern(
-                        ObjectPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::ArrayPattern(
-                        ArrayPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     279 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    459 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
-                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 459 in OptionalParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
-                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in OptionalParameterPatternTransportSlot",
                     ))),
@@ -41464,120 +39182,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
                 )?;
                 match kind_id {
                     119 => Ok(Self::Literal88_74_68_69_73),
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::ObjectPattern(
-                        ObjectPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::ArrayPattern(
-                        ArrayPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     279 => Ok(Self::RestPattern(
                         RestPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    459 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
-                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 459 in OptionalParameterPatternTransportSlot: no kind-keyed child slot to unwrap"))
-                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in OptionalParameterPatternTransportSlot",
                     ))),
                 }
             }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("OptionalParameterPatternTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("OptionalParameterPatternTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
@@ -41614,76 +39230,18 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<OptionalParameterPatternTransp
 
 fn optional_parameter_pattern_transport_slot_to_any(t: OptionalParameterPatternTransportSlot) -> AnyTransport {
     match t {
-        OptionalParameterPatternTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        OptionalParameterPatternTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        OptionalParameterPatternTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
-        OptionalParameterPatternTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        OptionalParameterPatternTransportSlot::DeclareKeyword(inner) => AnyTransport::DeclareKeyword(inner),
-        OptionalParameterPatternTransportSlot::NamespaceKeyword(inner) => AnyTransport::NamespaceKeyword(inner),
-        OptionalParameterPatternTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        OptionalParameterPatternTransportSlot::PublicKeyword(inner) => AnyTransport::PublicKeyword(inner),
-        OptionalParameterPatternTransportSlot::PrivateKeyword(inner) => AnyTransport::PrivateKeyword(inner),
-        OptionalParameterPatternTransportSlot::ProtectedKeyword(inner) => AnyTransport::ProtectedKeyword(inner),
-        OptionalParameterPatternTransportSlot::OverrideKeyword(inner) => AnyTransport::OverrideKeyword(inner),
-        OptionalParameterPatternTransportSlot::ReadonlyKeyword(inner) => AnyTransport::ReadonlyKeyword(inner),
-        OptionalParameterPatternTransportSlot::ModuleKeyword(inner) => AnyTransport::ModuleKeyword(inner),
-        OptionalParameterPatternTransportSlot::AnyKeyword(inner) => AnyTransport::AnyKeyword(inner),
-        OptionalParameterPatternTransportSlot::NumberKeyword(inner) => AnyTransport::NumberKeyword(inner),
-        OptionalParameterPatternTransportSlot::BooleanKeyword(inner) => AnyTransport::BooleanKeyword(inner),
-        OptionalParameterPatternTransportSlot::StringKeyword(inner) => AnyTransport::StringKeyword(inner),
-        OptionalParameterPatternTransportSlot::SymbolKeyword(inner) => AnyTransport::SymbolKeyword(inner),
-        OptionalParameterPatternTransportSlot::ExportKeyword(inner) => AnyTransport::ExportKeyword(inner),
-        OptionalParameterPatternTransportSlot::ObjectKeyword(inner) => AnyTransport::ObjectKeyword(inner),
-        OptionalParameterPatternTransportSlot::NewKeyword(inner) => AnyTransport::NewKeyword(inner),
-        OptionalParameterPatternTransportSlot::GetKeyword(inner) => AnyTransport::GetKeyword(inner),
-        OptionalParameterPatternTransportSlot::SetKeyword(inner) => AnyTransport::SetKeyword(inner),
-        OptionalParameterPatternTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        OptionalParameterPatternTransportSlot::StaticKeyword(inner) => AnyTransport::StaticKeyword(inner),
-        OptionalParameterPatternTransportSlot::LetKeyword(inner) => AnyTransport::LetKeyword(inner),
-        OptionalParameterPatternTransportSlot::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
-        OptionalParameterPatternTransportSlot::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
-        OptionalParameterPatternTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
+        OptionalParameterPatternTransportSlot::LhsExpression(inner) => AnyTransport::LhsExpression(inner),
         OptionalParameterPatternTransportSlot::RestPattern(inner) => AnyTransport::RestPattern(inner),
         OptionalParameterPatternTransportSlot::Literal88_74_68_69_73 => AnyTransport::Literal88_74_68_69_73,
-        OptionalParameterPatternTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
 impl ::sittir_core::render::Render for OptionalParameterPatternTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            OptionalParameterPatternTransportSlot::MemberExpression(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::SubscriptExpression(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::Undefined(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::Identifier(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::DeclareKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::NamespaceKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::TypeKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::PublicKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::PrivateKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::ProtectedKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::OverrideKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::ReadonlyKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::ModuleKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::AnyKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::NumberKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::BooleanKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::StringKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::SymbolKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::ExportKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::ObjectKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::NewKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::GetKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::SetKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::AsyncKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::StaticKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::LetKeyword(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::ObjectPattern(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::ArrayPattern(inner) => inner.render(w),
-            OptionalParameterPatternTransportSlot::NonNullExpression(inner) => inner.render(w),
+            OptionalParameterPatternTransportSlot::LhsExpression(inner) => inner.render(w),
             OptionalParameterPatternTransportSlot::RestPattern(inner) => inner.render(w),
             OptionalParameterPatternTransportSlot::Literal88_74_68_69_73 => w.text("this"),
-            OptionalParameterPatternTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -43587,7 +41145,7 @@ pub enum TypePredicateNameTransportSlot {
     Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64,
     Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64,
     Literal89_75_6e_69_71_75_65,
-    Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
+    Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
     Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64,
     Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64,
     Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64,
@@ -43605,7 +41163,7 @@ impl ::sittir_core::prepare::Prepare for TypePredicateNameTransportSlot {
             TypePredicateNameTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => Ok(()),
             TypePredicateNameTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => Ok(()),
             TypePredicateNameTransportSlot::Literal89_75_6e_69_71_75_65 => Ok(()),
-            TypePredicateNameTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            TypePredicateNameTransportSlot::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => Ok(()),
             TypePredicateNameTransportSlot::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             TypePredicateNameTransportSlot::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64 => Ok(()),
             TypePredicateNameTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
@@ -43625,7 +41183,7 @@ impl ::sittir_core::view::KindOf for TypePredicateNameTransportSlot {
             Self::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
             Self::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
             Self::Literal89_75_6e_69_71_75_65 => [::sittir_core::types::KindId(143)].iter().any(|k| kinds.contains(k)),
-            Self::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
+            Self::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
             Self::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(144)].iter().any(|k| kinds.contains(k)),
             Self::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(145)].iter().any(|k| kinds.contains(k)),
             Self::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
@@ -43650,7 +41208,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateNameTransportSlot {
                     41 => Ok(Self::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64),
                     42 => Ok(Self::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64),
                     143 => Ok(Self::Literal89_75_6e_69_71_75_65),
-                    107 => Ok(Self::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64),
+                    107 => Ok(Self::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64),
                     144 => Ok(Self::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64),
                     145 => Ok(Self::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64),
                     44 => Ok(Self::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64),
@@ -43723,7 +41281,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateNameTransportSlot {
                     41 => Ok(Self::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64),
                     42 => Ok(Self::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64),
                     143 => Ok(Self::Literal89_75_6e_69_71_75_65),
-                    107 => Ok(Self::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64),
+                    107 => Ok(Self::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64),
                     144 => Ok(Self::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64),
                     145 => Ok(Self::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64),
                     44 => Ok(Self::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64),
@@ -43829,7 +41387,7 @@ fn type_predicate_name_transport_slot_to_any(t: TypePredicateNameTransportSlot) 
         TypePredicateNameTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64,
         TypePredicateNameTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64,
         TypePredicateNameTransportSlot::Literal89_75_6e_69_71_75_65 => AnyTransport::Literal89_75_6e_69_71_75_65,
-        TypePredicateNameTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
+        TypePredicateNameTransportSlot::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
         TypePredicateNameTransportSlot::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64,
         TypePredicateNameTransportSlot::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64,
         TypePredicateNameTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64,
@@ -43884,7 +41442,7 @@ impl ::sittir_core::render::Render for TypePredicateNameTransportSlot {
                 w.site_at(options::SITE_PREDEFINED_TYPE_UNIQUE_AFTER);
                 Ok(())
             }
-            TypePredicateNameTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => {
+            TypePredicateNameTransportSlot::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => {
                 w.site_at(options::SITE_PREDEFINED_TYPE_VOID_KEYWORD_BEFORE);
                 let written = w.text("void");
                 written?;
@@ -44853,7 +42411,7 @@ pub enum TypeQuerySubscriptExpressionIndexTransportSlot {
     Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64,
     Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64,
     Literal89_75_6e_69_71_75_65,
-    Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
+    Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
     Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64,
     Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64,
     Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64,
@@ -44879,7 +42437,7 @@ impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionIndexTransp
             TypeQuerySubscriptExpressionIndexTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => Ok(()),
             TypeQuerySubscriptExpressionIndexTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => Ok(()),
             TypeQuerySubscriptExpressionIndexTransportSlot::Literal89_75_6e_69_71_75_65 => Ok(()),
-            TypeQuerySubscriptExpressionIndexTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            TypeQuerySubscriptExpressionIndexTransportSlot::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => Ok(()),
             TypeQuerySubscriptExpressionIndexTransportSlot::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             TypeQuerySubscriptExpressionIndexTransportSlot::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64 => Ok(()),
             TypeQuerySubscriptExpressionIndexTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
@@ -44907,7 +42465,7 @@ impl ::sittir_core::view::KindOf for TypeQuerySubscriptExpressionIndexTransportS
             Self::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
             Self::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
             Self::Literal89_75_6e_69_71_75_65 => [::sittir_core::types::KindId(143)].iter().any(|k| kinds.contains(k)),
-            Self::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
+            Self::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
             Self::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(144)].iter().any(|k| kinds.contains(k)),
             Self::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(145)].iter().any(|k| kinds.contains(k)),
             Self::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
@@ -44931,7 +42489,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
                     41 => Ok(Self::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64),
                     42 => Ok(Self::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64),
                     143 => Ok(Self::Literal89_75_6e_69_71_75_65),
-                    107 => Ok(Self::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64),
+                    107 => Ok(Self::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64),
                     144 => Ok(Self::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64),
                     145 => Ok(Self::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64),
                     44 => Ok(Self::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64),
@@ -44982,7 +42540,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
                     41 => Ok(Self::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64),
                     42 => Ok(Self::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64),
                     143 => Ok(Self::Literal89_75_6e_69_71_75_65),
-                    107 => Ok(Self::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64),
+                    107 => Ok(Self::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64),
                     144 => Ok(Self::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64),
                     145 => Ok(Self::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64),
                     44 => Ok(Self::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64),
@@ -45075,7 +42633,7 @@ fn type_query_subscript_expression_index_transport_slot_to_any(t: TypeQuerySubsc
         TypeQuerySubscriptExpressionIndexTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64,
         TypeQuerySubscriptExpressionIndexTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64,
         TypeQuerySubscriptExpressionIndexTransportSlot::Literal89_75_6e_69_71_75_65 => AnyTransport::Literal89_75_6e_69_71_75_65,
-        TypeQuerySubscriptExpressionIndexTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
+        TypeQuerySubscriptExpressionIndexTransportSlot::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64,
         TypeQuerySubscriptExpressionIndexTransportSlot::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal90_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64,
         TypeQuerySubscriptExpressionIndexTransportSlot::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal91_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64,
         TypeQuerySubscriptExpressionIndexTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64,
@@ -45138,7 +42696,7 @@ impl ::sittir_core::render::Render for TypeQuerySubscriptExpressionIndexTranspor
                 w.site_at(options::SITE_PREDEFINED_TYPE_UNIQUE_AFTER);
                 Ok(())
             }
-            TypeQuerySubscriptExpressionIndexTransportSlot::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => {
+            TypeQuerySubscriptExpressionIndexTransportSlot::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => {
                 w.site_at(options::SITE_PREDEFINED_TYPE_VOID_KEYWORD_BEFORE);
                 let written = w.text("void");
                 written?;
@@ -46013,7 +43571,7 @@ pub enum LiteralTypeContentTransportSlot {
     Literal93_74_72_75_65,
     Literal94_66_61_6c_73_65,
     Literal95_6e_75_6c_6c,
-    Literal79_75_6e_64_65_66_69_6e_65_64,
+    Literal34_75_6e_64_65_66_69_6e_65_64,
     Verbatim(VerbatimTransport),
 }
 
@@ -46034,7 +43592,7 @@ impl ::sittir_core::prepare::Prepare for LiteralTypeContentTransportSlot {
             LiteralTypeContentTransportSlot::Literal93_74_72_75_65 => Ok(()),
             LiteralTypeContentTransportSlot::Literal94_66_61_6c_73_65 => Ok(()),
             LiteralTypeContentTransportSlot::Literal95_6e_75_6c_6c => Ok(()),
-            LiteralTypeContentTransportSlot::Literal79_75_6e_64_65_66_69_6e_65_64 => Ok(()),
+            LiteralTypeContentTransportSlot::Literal34_75_6e_64_65_66_69_6e_65_64 => Ok(()),
             LiteralTypeContentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -46057,7 +43615,7 @@ impl ::sittir_core::view::KindOf for LiteralTypeContentTransportSlot {
             Self::Literal93_74_72_75_65 => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
             Self::Literal94_66_61_6c_73_65 => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
             Self::Literal95_6e_75_6c_6c => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::Literal79_75_6e_64_65_66_69_6e_65_64 => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Literal34_75_6e_64_65_66_69_6e_65_64 => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -46075,7 +43633,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LiteralTypeContentTransportSlot 
                     121 => Ok(Self::Literal93_74_72_75_65),
                     122 => Ok(Self::Literal94_66_61_6c_73_65),
                     123 => Ok(Self::Literal95_6e_75_6c_6c),
-                    124 => Ok(Self::Literal79_75_6e_64_65_66_69_6e_65_64),
+                    124 => Ok(Self::Literal34_75_6e_64_65_66_69_6e_65_64),
                     397 => Ok(Self::LiteralTypeNegativeNumber(
                         LiteralTypeNegativeNumberTransport::from_napi_value(env, napi_val)?
                     )),
@@ -46123,7 +43681,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LiteralTypeContentTransportSlot 
                     121 => Ok(Self::Literal93_74_72_75_65),
                     122 => Ok(Self::Literal94_66_61_6c_73_65),
                     123 => Ok(Self::Literal95_6e_75_6c_6c),
-                    124 => Ok(Self::Literal79_75_6e_64_65_66_69_6e_65_64),
+                    124 => Ok(Self::Literal34_75_6e_64_65_66_69_6e_65_64),
                     397 => Ok(Self::LiteralTypeNegativeNumber(
                         LiteralTypeNegativeNumberTransport::from_napi_value(env, napi_val)?
                     )),
@@ -46214,7 +43772,7 @@ fn literal_type_content_transport_slot_to_any(t: LiteralTypeContentTransportSlot
         LiteralTypeContentTransportSlot::Literal93_74_72_75_65 => AnyTransport::Literal93_74_72_75_65,
         LiteralTypeContentTransportSlot::Literal94_66_61_6c_73_65 => AnyTransport::Literal94_66_61_6c_73_65,
         LiteralTypeContentTransportSlot::Literal95_6e_75_6c_6c => AnyTransport::Literal95_6e_75_6c_6c,
-        LiteralTypeContentTransportSlot::Literal79_75_6e_64_65_66_69_6e_65_64 => AnyTransport::Literal79_75_6e_64_65_66_69_6e_65_64,
+        LiteralTypeContentTransportSlot::Literal34_75_6e_64_65_66_69_6e_65_64 => AnyTransport::Literal34_75_6e_64_65_66_69_6e_65_64,
         LiteralTypeContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -46236,7 +43794,7 @@ impl ::sittir_core::render::Render for LiteralTypeContentTransportSlot {
             LiteralTypeContentTransportSlot::Literal93_74_72_75_65 => w.text("true"),
             LiteralTypeContentTransportSlot::Literal94_66_61_6c_73_65 => w.text("false"),
             LiteralTypeContentTransportSlot::Literal95_6e_75_6c_6c => w.text("null"),
-            LiteralTypeContentTransportSlot::Literal79_75_6e_64_65_66_69_6e_65_64 => w.text("undefined"),
+            LiteralTypeContentTransportSlot::Literal34_75_6e_64_65_66_69_6e_65_64 => w.text("undefined"),
             LiteralTypeContentTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -50257,15 +47815,15 @@ impl ::sittir_core::render::Render for ExportStatementEqualsExportTerminatorTran
 
 #[derive(Debug, Clone)]
 pub enum LiteralTypeNegativeNumberOperatorTransportSlot {
-    Literal59_64_61_73_68,
-    Literal58_70_6c_75_73,
+    Literal60_64_61_73_68,
+    Literal59_70_6c_75_73,
 }
 
 impl ::sittir_core::prepare::Prepare for LiteralTypeNegativeNumberOperatorTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            LiteralTypeNegativeNumberOperatorTransportSlot::Literal59_64_61_73_68 => Ok(()),
-            LiteralTypeNegativeNumberOperatorTransportSlot::Literal58_70_6c_75_73 => Ok(()),
+            LiteralTypeNegativeNumberOperatorTransportSlot::Literal60_64_61_73_68 => Ok(()),
+            LiteralTypeNegativeNumberOperatorTransportSlot::Literal59_70_6c_75_73 => Ok(()),
         }
     }
 }
@@ -50273,8 +47831,8 @@ impl ::sittir_core::prepare::Prepare for LiteralTypeNegativeNumberOperatorTransp
 impl ::sittir_core::view::KindOf for LiteralTypeNegativeNumberOperatorTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal59_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::Literal58_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::Literal60_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::Literal59_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -50288,8 +47846,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LiteralTypeNegativeNumberOperato
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in LiteralTypeNegativeNumberOperatorTransportSlot",
                     ))),
@@ -50301,8 +47859,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LiteralTypeNegativeNumberOperato
                     ::napi::Error::from_reason("$type property missing in LiteralTypeNegativeNumberOperatorTransportSlot")
                 )?;
                 match kind_id {
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in LiteralTypeNegativeNumberOperatorTransportSlot",
                     ))),
@@ -50345,22 +47903,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LiteralTypeNegativeNumberOpera
 
 fn literal_type_negative_number_operator_transport_slot_to_any(t: LiteralTypeNegativeNumberOperatorTransportSlot) -> AnyTransport {
     match t {
-        LiteralTypeNegativeNumberOperatorTransportSlot::Literal59_64_61_73_68 => AnyTransport::Literal59_64_61_73_68,
-        LiteralTypeNegativeNumberOperatorTransportSlot::Literal58_70_6c_75_73 => AnyTransport::Literal58_70_6c_75_73,
+        LiteralTypeNegativeNumberOperatorTransportSlot::Literal60_64_61_73_68 => AnyTransport::Literal60_64_61_73_68,
+        LiteralTypeNegativeNumberOperatorTransportSlot::Literal59_70_6c_75_73 => AnyTransport::Literal59_70_6c_75_73,
     }
 }
 
 impl ::sittir_core::render::Render for LiteralTypeNegativeNumberOperatorTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            LiteralTypeNegativeNumberOperatorTransportSlot::Literal59_64_61_73_68 => {
+            LiteralTypeNegativeNumberOperatorTransportSlot::Literal60_64_61_73_68 => {
                 w.site_at(options::SITE_NUMBER_OPERATOR_DASH_BEFORE);
                 let written = w.text("-");
                 written?;
                 w.site_at(options::SITE_NUMBER_OPERATOR_DASH_AFTER);
                 Ok(())
             }
-            LiteralTypeNegativeNumberOperatorTransportSlot::Literal58_70_6c_75_73 => {
+            LiteralTypeNegativeNumberOperatorTransportSlot::Literal59_70_6c_75_73 => {
                 w.site_at(options::SITE_NUMBER_OPERATOR_PLUS_BEFORE);
                 let written = w.text("+");
                 written?;
@@ -50573,15 +48131,15 @@ impl ::sittir_core::render::Render for NumberFloatPointMarkerTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum NumberFloatPointSignTransportSlot {
-    Literal59_64_61_73_68,
-    Literal58_70_6c_75_73,
+    Literal60_64_61_73_68,
+    Literal59_70_6c_75_73,
 }
 
 impl ::sittir_core::prepare::Prepare for NumberFloatPointSignTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            NumberFloatPointSignTransportSlot::Literal59_64_61_73_68 => Ok(()),
-            NumberFloatPointSignTransportSlot::Literal58_70_6c_75_73 => Ok(()),
+            NumberFloatPointSignTransportSlot::Literal60_64_61_73_68 => Ok(()),
+            NumberFloatPointSignTransportSlot::Literal59_70_6c_75_73 => Ok(()),
         }
     }
 }
@@ -50589,8 +48147,8 @@ impl ::sittir_core::prepare::Prepare for NumberFloatPointSignTransportSlot {
 impl ::sittir_core::view::KindOf for NumberFloatPointSignTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal59_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::Literal58_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::Literal60_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::Literal59_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -50604,8 +48162,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatPointSignTransportSlo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in NumberFloatPointSignTransportSlot",
                     ))),
@@ -50617,8 +48175,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatPointSignTransportSlo
                     ::napi::Error::from_reason("$type property missing in NumberFloatPointSignTransportSlot")
                 )?;
                 match kind_id {
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in NumberFloatPointSignTransportSlot",
                     ))),
@@ -50661,16 +48219,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberFloatPointSignTransportS
 
 fn number_float_point_sign_transport_slot_to_any(t: NumberFloatPointSignTransportSlot) -> AnyTransport {
     match t {
-        NumberFloatPointSignTransportSlot::Literal59_64_61_73_68 => AnyTransport::Literal59_64_61_73_68,
-        NumberFloatPointSignTransportSlot::Literal58_70_6c_75_73 => AnyTransport::Literal58_70_6c_75_73,
+        NumberFloatPointSignTransportSlot::Literal60_64_61_73_68 => AnyTransport::Literal60_64_61_73_68,
+        NumberFloatPointSignTransportSlot::Literal59_70_6c_75_73 => AnyTransport::Literal59_70_6c_75_73,
     }
 }
 
 impl ::sittir_core::render::Render for NumberFloatPointSignTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NumberFloatPointSignTransportSlot::Literal59_64_61_73_68 => w.text("-"),
-            NumberFloatPointSignTransportSlot::Literal58_70_6c_75_73 => w.text("+"),
+            NumberFloatPointSignTransportSlot::Literal60_64_61_73_68 => w.text("-"),
+            NumberFloatPointSignTransportSlot::Literal59_70_6c_75_73 => w.text("+"),
         }
     }
 }
@@ -50777,15 +48335,15 @@ impl ::sittir_core::render::Render for NumberFloatLeadingPointMarkerTransportSlo
 
 #[derive(Debug, Clone)]
 pub enum NumberFloatLeadingPointSignTransportSlot {
-    Literal59_64_61_73_68,
-    Literal58_70_6c_75_73,
+    Literal60_64_61_73_68,
+    Literal59_70_6c_75_73,
 }
 
 impl ::sittir_core::prepare::Prepare for NumberFloatLeadingPointSignTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            NumberFloatLeadingPointSignTransportSlot::Literal59_64_61_73_68 => Ok(()),
-            NumberFloatLeadingPointSignTransportSlot::Literal58_70_6c_75_73 => Ok(()),
+            NumberFloatLeadingPointSignTransportSlot::Literal60_64_61_73_68 => Ok(()),
+            NumberFloatLeadingPointSignTransportSlot::Literal59_70_6c_75_73 => Ok(()),
         }
     }
 }
@@ -50793,8 +48351,8 @@ impl ::sittir_core::prepare::Prepare for NumberFloatLeadingPointSignTransportSlo
 impl ::sittir_core::view::KindOf for NumberFloatLeadingPointSignTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal59_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::Literal58_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::Literal60_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::Literal59_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -50808,8 +48366,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatLeadingPointSignTrans
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in NumberFloatLeadingPointSignTransportSlot",
                     ))),
@@ -50821,8 +48379,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatLeadingPointSignTrans
                     ::napi::Error::from_reason("$type property missing in NumberFloatLeadingPointSignTransportSlot")
                 )?;
                 match kind_id {
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in NumberFloatLeadingPointSignTransportSlot",
                     ))),
@@ -50865,16 +48423,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberFloatLeadingPointSignTra
 
 fn number_float_leading_point_sign_transport_slot_to_any(t: NumberFloatLeadingPointSignTransportSlot) -> AnyTransport {
     match t {
-        NumberFloatLeadingPointSignTransportSlot::Literal59_64_61_73_68 => AnyTransport::Literal59_64_61_73_68,
-        NumberFloatLeadingPointSignTransportSlot::Literal58_70_6c_75_73 => AnyTransport::Literal58_70_6c_75_73,
+        NumberFloatLeadingPointSignTransportSlot::Literal60_64_61_73_68 => AnyTransport::Literal60_64_61_73_68,
+        NumberFloatLeadingPointSignTransportSlot::Literal59_70_6c_75_73 => AnyTransport::Literal59_70_6c_75_73,
     }
 }
 
 impl ::sittir_core::render::Render for NumberFloatLeadingPointSignTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NumberFloatLeadingPointSignTransportSlot::Literal59_64_61_73_68 => w.text("-"),
-            NumberFloatLeadingPointSignTransportSlot::Literal58_70_6c_75_73 => w.text("+"),
+            NumberFloatLeadingPointSignTransportSlot::Literal60_64_61_73_68 => w.text("-"),
+            NumberFloatLeadingPointSignTransportSlot::Literal59_70_6c_75_73 => w.text("+"),
         }
     }
 }
@@ -50981,15 +48539,15 @@ impl ::sittir_core::render::Render for NumberFloatScientificMarkerTransportSlot 
 
 #[derive(Debug, Clone)]
 pub enum NumberFloatScientificSignTransportSlot {
-    Literal59_64_61_73_68,
-    Literal58_70_6c_75_73,
+    Literal60_64_61_73_68,
+    Literal59_70_6c_75_73,
 }
 
 impl ::sittir_core::prepare::Prepare for NumberFloatScientificSignTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            NumberFloatScientificSignTransportSlot::Literal59_64_61_73_68 => Ok(()),
-            NumberFloatScientificSignTransportSlot::Literal58_70_6c_75_73 => Ok(()),
+            NumberFloatScientificSignTransportSlot::Literal60_64_61_73_68 => Ok(()),
+            NumberFloatScientificSignTransportSlot::Literal59_70_6c_75_73 => Ok(()),
         }
     }
 }
@@ -50997,8 +48555,8 @@ impl ::sittir_core::prepare::Prepare for NumberFloatScientificSignTransportSlot 
 impl ::sittir_core::view::KindOf for NumberFloatScientificSignTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal59_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::Literal58_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::Literal60_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::Literal59_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -51012,8 +48570,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatScientificSignTranspo
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in NumberFloatScientificSignTransportSlot",
                     ))),
@@ -51025,8 +48583,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatScientificSignTranspo
                     ::napi::Error::from_reason("$type property missing in NumberFloatScientificSignTransportSlot")
                 )?;
                 match kind_id {
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in NumberFloatScientificSignTransportSlot",
                     ))),
@@ -51069,16 +48627,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberFloatScientificSignTrans
 
 fn number_float_scientific_sign_transport_slot_to_any(t: NumberFloatScientificSignTransportSlot) -> AnyTransport {
     match t {
-        NumberFloatScientificSignTransportSlot::Literal59_64_61_73_68 => AnyTransport::Literal59_64_61_73_68,
-        NumberFloatScientificSignTransportSlot::Literal58_70_6c_75_73 => AnyTransport::Literal58_70_6c_75_73,
+        NumberFloatScientificSignTransportSlot::Literal60_64_61_73_68 => AnyTransport::Literal60_64_61_73_68,
+        NumberFloatScientificSignTransportSlot::Literal59_70_6c_75_73 => AnyTransport::Literal59_70_6c_75_73,
     }
 }
 
 impl ::sittir_core::render::Render for NumberFloatScientificSignTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            NumberFloatScientificSignTransportSlot::Literal59_64_61_73_68 => w.text("-"),
-            NumberFloatScientificSignTransportSlot::Literal58_70_6c_75_73 => w.text("+"),
+            NumberFloatScientificSignTransportSlot::Literal60_64_61_73_68 => w.text("-"),
+            NumberFloatScientificSignTransportSlot::Literal59_70_6c_75_73 => w.text("+"),
         }
     }
 }
@@ -52674,15 +50232,15 @@ impl ::sittir_core::render::Render for ClassBodyMemberTerminatorTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum IndexSignatureColonSignTransportSlot {
-    Literal59_64_61_73_68,
-    Literal58_70_6c_75_73,
+    Literal60_64_61_73_68,
+    Literal59_70_6c_75_73,
 }
 
 impl ::sittir_core::prepare::Prepare for IndexSignatureColonSignTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            IndexSignatureColonSignTransportSlot::Literal59_64_61_73_68 => Ok(()),
-            IndexSignatureColonSignTransportSlot::Literal58_70_6c_75_73 => Ok(()),
+            IndexSignatureColonSignTransportSlot::Literal60_64_61_73_68 => Ok(()),
+            IndexSignatureColonSignTransportSlot::Literal59_70_6c_75_73 => Ok(()),
         }
     }
 }
@@ -52690,8 +50248,8 @@ impl ::sittir_core::prepare::Prepare for IndexSignatureColonSignTransportSlot {
 impl ::sittir_core::view::KindOf for IndexSignatureColonSignTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal59_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::Literal58_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::Literal60_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::Literal59_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -52705,8 +50263,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureColonSignTransport
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in IndexSignatureColonSignTransportSlot",
                     ))),
@@ -52718,8 +50276,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureColonSignTransport
                     ::napi::Error::from_reason("$type property missing in IndexSignatureColonSignTransportSlot")
                 )?;
                 match kind_id {
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in IndexSignatureColonSignTransportSlot",
                     ))),
@@ -52762,16 +50320,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IndexSignatureColonSignTranspo
 
 fn index_signature_colon_sign_transport_slot_to_any(t: IndexSignatureColonSignTransportSlot) -> AnyTransport {
     match t {
-        IndexSignatureColonSignTransportSlot::Literal59_64_61_73_68 => AnyTransport::Literal59_64_61_73_68,
-        IndexSignatureColonSignTransportSlot::Literal58_70_6c_75_73 => AnyTransport::Literal58_70_6c_75_73,
+        IndexSignatureColonSignTransportSlot::Literal60_64_61_73_68 => AnyTransport::Literal60_64_61_73_68,
+        IndexSignatureColonSignTransportSlot::Literal59_70_6c_75_73 => AnyTransport::Literal59_70_6c_75_73,
     }
 }
 
 impl ::sittir_core::render::Render for IndexSignatureColonSignTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            IndexSignatureColonSignTransportSlot::Literal59_64_61_73_68 => w.text("-"),
-            IndexSignatureColonSignTransportSlot::Literal58_70_6c_75_73 => w.text("+"),
+            IndexSignatureColonSignTransportSlot::Literal60_64_61_73_68 => w.text("-"),
+            IndexSignatureColonSignTransportSlot::Literal59_70_6c_75_73 => w.text("+"),
         }
     }
 }
@@ -53270,15 +50828,15 @@ impl ::sittir_core::render::Render for IndexSignatureColonTypeTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum IndexSignatureMappedTypeClauseSignTransportSlot {
-    Literal59_64_61_73_68,
-    Literal58_70_6c_75_73,
+    Literal60_64_61_73_68,
+    Literal59_70_6c_75_73,
 }
 
 impl ::sittir_core::prepare::Prepare for IndexSignatureMappedTypeClauseSignTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            IndexSignatureMappedTypeClauseSignTransportSlot::Literal59_64_61_73_68 => Ok(()),
-            IndexSignatureMappedTypeClauseSignTransportSlot::Literal58_70_6c_75_73 => Ok(()),
+            IndexSignatureMappedTypeClauseSignTransportSlot::Literal60_64_61_73_68 => Ok(()),
+            IndexSignatureMappedTypeClauseSignTransportSlot::Literal59_70_6c_75_73 => Ok(()),
         }
     }
 }
@@ -53286,8 +50844,8 @@ impl ::sittir_core::prepare::Prepare for IndexSignatureMappedTypeClauseSignTrans
 impl ::sittir_core::view::KindOf for IndexSignatureMappedTypeClauseSignTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal59_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::Literal58_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::Literal60_64_61_73_68 => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::Literal59_70_6c_75_73 => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -53301,8 +50859,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureMappedTypeClauseSi
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in IndexSignatureMappedTypeClauseSignTransportSlot",
                     ))),
@@ -53314,8 +50872,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureMappedTypeClauseSi
                     ::napi::Error::from_reason("$type property missing in IndexSignatureMappedTypeClauseSignTransportSlot")
                 )?;
                 match kind_id {
-                    91 => Ok(Self::Literal59_64_61_73_68),
-                    90 => Ok(Self::Literal58_70_6c_75_73),
+                    91 => Ok(Self::Literal60_64_61_73_68),
+                    90 => Ok(Self::Literal59_70_6c_75_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in IndexSignatureMappedTypeClauseSignTransportSlot",
                     ))),
@@ -53358,16 +50916,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IndexSignatureMappedTypeClause
 
 fn index_signature_mapped_type_clause_sign_transport_slot_to_any(t: IndexSignatureMappedTypeClauseSignTransportSlot) -> AnyTransport {
     match t {
-        IndexSignatureMappedTypeClauseSignTransportSlot::Literal59_64_61_73_68 => AnyTransport::Literal59_64_61_73_68,
-        IndexSignatureMappedTypeClauseSignTransportSlot::Literal58_70_6c_75_73 => AnyTransport::Literal58_70_6c_75_73,
+        IndexSignatureMappedTypeClauseSignTransportSlot::Literal60_64_61_73_68 => AnyTransport::Literal60_64_61_73_68,
+        IndexSignatureMappedTypeClauseSignTransportSlot::Literal59_70_6c_75_73 => AnyTransport::Literal59_70_6c_75_73,
     }
 }
 
 impl ::sittir_core::render::Render for IndexSignatureMappedTypeClauseSignTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            IndexSignatureMappedTypeClauseSignTransportSlot::Literal59_64_61_73_68 => w.text("-"),
-            IndexSignatureMappedTypeClauseSignTransportSlot::Literal58_70_6c_75_73 => w.text("+"),
+            IndexSignatureMappedTypeClauseSignTransportSlot::Literal60_64_61_73_68 => w.text("-"),
+            IndexSignatureMappedTypeClauseSignTransportSlot::Literal59_70_6c_75_73 => w.text("+"),
         }
     }
 }
@@ -58337,75 +55895,17 @@ impl ::sittir_core::render::Render for VariableDeclaratorPlainNameTransportSlot 
 
 #[derive(Debug, Clone)]
 pub enum ForHeaderLhsLeftTransportSlot {
-    MemberExpression(MemberExpressionTransport),
-    SubscriptExpression(SubscriptExpressionTransport),
-    Undefined(UndefinedTransport),
-    Identifier(IdentifierTransport),
-    DeclareKeyword(DeclareKeywordTransport),
-    NamespaceKeyword(NamespaceKeywordTransport),
-    TypeKeyword(TypeKeywordTransport),
-    PublicKeyword(PublicKeywordTransport),
-    PrivateKeyword(PrivateKeywordTransport),
-    ProtectedKeyword(ProtectedKeywordTransport),
-    OverrideKeyword(OverrideKeywordTransport),
-    ReadonlyKeyword(ReadonlyKeywordTransport),
-    ModuleKeyword(ModuleKeywordTransport),
-    AnyKeyword(AnyKeywordTransport),
-    NumberKeyword(NumberKeywordTransport),
-    BooleanKeyword(BooleanKeywordTransport),
-    StringKeyword(StringKeywordTransport),
-    SymbolKeyword(SymbolKeywordTransport),
-    ExportKeyword(ExportKeywordTransport),
-    ObjectKeyword(ObjectKeywordTransport),
-    NewKeyword(NewKeywordTransport),
-    GetKeyword(GetKeywordTransport),
-    SetKeyword(SetKeywordTransport),
-    AsyncKeyword(AsyncKeywordTransport),
-    StaticKeyword(StaticKeywordTransport),
-    LetKeyword(LetKeywordTransport),
-    ObjectPattern(ObjectPatternTransport),
-    ArrayPattern(ArrayPatternTransport),
-    NonNullExpression(NonNullExpressionTransport),
+    LhsExpression(LhsExpressionTransport),
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
-    Verbatim(VerbatimTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ForHeaderLhsLeftTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ForHeaderLhsLeftTransportSlot::MemberExpression(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::SubscriptExpression(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::Undefined(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::Identifier(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::DeclareKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::NamespaceKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::TypeKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::PublicKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::PrivateKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::ProtectedKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::OverrideKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::ReadonlyKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::ModuleKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::AnyKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::NumberKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::BooleanKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::StringKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::SymbolKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::ExportKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::ObjectKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::NewKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::GetKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::SetKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::AsyncKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::StaticKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::LetKeyword(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::ObjectPattern(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::ArrayPattern(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::NonNullExpression(t) => t.prepare(ctx),
+            ForHeaderLhsLeftTransportSlot::LhsExpression(t) => t.prepare(ctx),
             ForHeaderLhsLeftTransportSlot::ParenthesizedExpressionTyped(t) => t.prepare(ctx),
             ForHeaderLhsLeftTransportSlot::ParenthesizedExpressionSequence(t) => t.prepare(ctx),
-            ForHeaderLhsLeftTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
@@ -58413,38 +55913,9 @@ impl ::sittir_core::prepare::Prepare for ForHeaderLhsLeftTransportSlot {
 impl ::sittir_core::view::KindOf for ForHeaderLhsLeftTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::MemberExpression(inner) => inner.kind_in(kinds),
-            Self::SubscriptExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::DeclareKeyword(inner) => inner.kind_in(kinds),
-            Self::NamespaceKeyword(inner) => inner.kind_in(kinds),
-            Self::TypeKeyword(inner) => inner.kind_in(kinds),
-            Self::PublicKeyword(inner) => inner.kind_in(kinds),
-            Self::PrivateKeyword(inner) => inner.kind_in(kinds),
-            Self::ProtectedKeyword(inner) => inner.kind_in(kinds),
-            Self::OverrideKeyword(inner) => inner.kind_in(kinds),
-            Self::ReadonlyKeyword(inner) => inner.kind_in(kinds),
-            Self::ModuleKeyword(inner) => inner.kind_in(kinds),
-            Self::AnyKeyword(inner) => inner.kind_in(kinds),
-            Self::NumberKeyword(inner) => inner.kind_in(kinds),
-            Self::BooleanKeyword(inner) => inner.kind_in(kinds),
-            Self::StringKeyword(inner) => inner.kind_in(kinds),
-            Self::SymbolKeyword(inner) => inner.kind_in(kinds),
-            Self::ExportKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectKeyword(inner) => inner.kind_in(kinds),
-            Self::NewKeyword(inner) => inner.kind_in(kinds),
-            Self::GetKeyword(inner) => inner.kind_in(kinds),
-            Self::SetKeyword(inner) => inner.kind_in(kinds),
-            Self::AsyncKeyword(inner) => inner.kind_in(kinds),
-            Self::StaticKeyword(inner) => inner.kind_in(kinds),
-            Self::LetKeyword(inner) => inner.kind_in(kinds),
-            Self::ObjectPattern(inner) => inner.kind_in(kinds),
-            Self::ArrayPattern(inner) => inner.kind_in(kinds),
-            Self::NonNullExpression(inner) => inner.kind_in(kinds),
+            Self::LhsExpression(inner) => inner.kind_in(kinds),
             Self::ParenthesizedExpressionTyped(inner) => inner.kind_in(kinds),
             Self::ParenthesizedExpressionSequence(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -58458,92 +55929,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::ObjectPattern(
-                        ObjectPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::ArrayPattern(
-                        ArrayPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    459 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     408 => Ok(Self::ParenthesizedExpressionTyped(
                         ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
@@ -58551,23 +55941,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                     409 => Ok(Self::ParenthesizedExpressionSequence(
                         ParenthesizedExpressionSequenceTransport::from_napi_value(env, napi_val)?
                     )),
-                    459 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
-                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 459 in ForHeaderLhsLeftTransportSlot: no kind-keyed child slot to unwrap"))
-                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForHeaderLhsLeftTransportSlot",
                     ))),
@@ -58579,92 +55952,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ForHeaderLhsLeftTransportSlot")
                 )?;
                 match kind_id {
-                    124 => Ok(Self::Undefined(
-                        UndefinedTransport::from_napi_value(env, napi_val)?
+                    253 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::DeclareKeyword(
-                        DeclareKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::NamespaceKeyword(
-                        NamespaceKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    7 => Ok(Self::TypeKeyword(
-                        TypeKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::PublicKeyword(
-                        PublicKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::PrivateKeyword(
-                        PrivateKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::ProtectedKeyword(
-                        ProtectedKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::OverrideKeyword(
-                        OverrideKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::ReadonlyKeyword(
-                        ReadonlyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::ModuleKeyword(
-                        ModuleKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::AnyKeyword(
-                        AnyKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::NumberKeyword(
-                        NumberKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::BooleanKeyword(
-                        BooleanKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::StringKeyword(
-                        StringKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::SymbolKeyword(
-                        SymbolKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::ExportKeyword(
-                        ExportKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    44 => Ok(Self::ObjectKeyword(
-                        ObjectKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    45 => Ok(Self::NewKeyword(
-                        NewKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    46 => Ok(Self::GetKeyword(
-                        GetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    47 => Ok(Self::SetKeyword(
-                        SetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    48 => Ok(Self::AsyncKeyword(
-                        AsyncKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    49 => Ok(Self::StaticKeyword(
-                        StaticKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::LetKeyword(
-                        LetKeywordTransport::from_napi_value(env, napi_val)?
-                    )),
-                    251 => Ok(Self::MemberExpression(
-                        MemberExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    252 => Ok(Self::SubscriptExpression(
-                        SubscriptExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    231 => Ok(Self::ObjectPattern(
-                        ObjectPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    235 => Ok(Self::ArrayPattern(
-                        ArrayPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    287 => Ok(Self::NonNullExpression(
-                        NonNullExpressionTransport::from_napi_value(env, napi_val)?
+                    459 => Ok(Self::LhsExpression(
+                        LhsExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     408 => Ok(Self::ParenthesizedExpressionTyped(
                         ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
@@ -58672,30 +55964,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                     409 => Ok(Self::ParenthesizedExpressionSequence(
                         ParenthesizedExpressionSequenceTransport::from_napi_value(env, napi_val)?
                     )),
-                    459 => {
-                        if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-                            if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {
-                                for key in keys {
-                                    if !key.starts_with('_') {
-                                        continue;
-                                    }
-                                    if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {
-                                        return Self::from_napi_value(env, ::napi::JsValue::raw(&child));
-                                    }
-                                }
-                            }
-                        }
-                        if let Ok(v) = UndefinedTransport::from_napi_value(env, napi_val) { return Ok(Self::Undefined(v)); }
-                        if let Ok(v) = IdentifierTransport::from_napi_value(env, napi_val) { return Ok(Self::Identifier(v)); }
-                        Err(::napi::Error::from_reason("alias-wrapper kind id 459 in ForHeaderLhsLeftTransportSlot: no kind-keyed child slot to unwrap"))
-                    },
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForHeaderLhsLeftTransportSlot",
                     ))),
                 }
             }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("ForHeaderLhsLeftTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("ForHeaderLhsLeftTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
@@ -58732,76 +56006,18 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForHeaderLhsLeftTransportSlot>
 
 fn for_header_lhs_left_transport_slot_to_any(t: ForHeaderLhsLeftTransportSlot) -> AnyTransport {
     match t {
-        ForHeaderLhsLeftTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        ForHeaderLhsLeftTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        ForHeaderLhsLeftTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
-        ForHeaderLhsLeftTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ForHeaderLhsLeftTransportSlot::DeclareKeyword(inner) => AnyTransport::DeclareKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::NamespaceKeyword(inner) => AnyTransport::NamespaceKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::TypeKeyword(inner) => AnyTransport::TypeKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::PublicKeyword(inner) => AnyTransport::PublicKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::PrivateKeyword(inner) => AnyTransport::PrivateKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::ProtectedKeyword(inner) => AnyTransport::ProtectedKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::OverrideKeyword(inner) => AnyTransport::OverrideKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::ReadonlyKeyword(inner) => AnyTransport::ReadonlyKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::ModuleKeyword(inner) => AnyTransport::ModuleKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::AnyKeyword(inner) => AnyTransport::AnyKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::NumberKeyword(inner) => AnyTransport::NumberKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::BooleanKeyword(inner) => AnyTransport::BooleanKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::StringKeyword(inner) => AnyTransport::StringKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::SymbolKeyword(inner) => AnyTransport::SymbolKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::ExportKeyword(inner) => AnyTransport::ExportKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::ObjectKeyword(inner) => AnyTransport::ObjectKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::NewKeyword(inner) => AnyTransport::NewKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::GetKeyword(inner) => AnyTransport::GetKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::SetKeyword(inner) => AnyTransport::SetKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::AsyncKeyword(inner) => AnyTransport::AsyncKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::StaticKeyword(inner) => AnyTransport::StaticKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::LetKeyword(inner) => AnyTransport::LetKeyword(inner),
-        ForHeaderLhsLeftTransportSlot::ObjectPattern(inner) => AnyTransport::ObjectPattern(inner),
-        ForHeaderLhsLeftTransportSlot::ArrayPattern(inner) => AnyTransport::ArrayPattern(inner),
-        ForHeaderLhsLeftTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
+        ForHeaderLhsLeftTransportSlot::LhsExpression(inner) => AnyTransport::LhsExpression(inner),
         ForHeaderLhsLeftTransportSlot::ParenthesizedExpressionTyped(inner) => AnyTransport::ParenthesizedExpressionTyped(inner),
         ForHeaderLhsLeftTransportSlot::ParenthesizedExpressionSequence(inner) => AnyTransport::ParenthesizedExpressionSequence(inner),
-        ForHeaderLhsLeftTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
 impl ::sittir_core::render::Render for ForHeaderLhsLeftTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForHeaderLhsLeftTransportSlot::MemberExpression(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::SubscriptExpression(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::Undefined(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::Identifier(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::DeclareKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::NamespaceKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::TypeKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::PublicKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::PrivateKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::ProtectedKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::OverrideKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::ReadonlyKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::ModuleKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::AnyKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::NumberKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::BooleanKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::StringKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::SymbolKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::ExportKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::ObjectKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::NewKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::GetKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::SetKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::AsyncKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::StaticKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::LetKeyword(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::ObjectPattern(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::ArrayPattern(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::NonNullExpression(inner) => inner.render(w),
+            ForHeaderLhsLeftTransportSlot::LhsExpression(inner) => inner.render(w),
             ForHeaderLhsLeftTransportSlot::ParenthesizedExpressionTyped(inner) => inner.render(w),
             ForHeaderLhsLeftTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
-            ForHeaderLhsLeftTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -67376,6 +64592,62 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SubscriptExpressionTransport> 
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         SubscriptExpressionTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct LhsExpressionTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
+    pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: ::sittir_core::SlotValue<Box<LhsExpressionContentTransportSlot>>,
+}
+
+impl ::sittir_core::view::KindOf for LhsExpressionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(253)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for LhsExpressionTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(253) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
+}
+
+impl ::sittir_core::render::Render for LhsExpressionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_lhs_expression(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for LhsExpressionTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.content.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LhsExpressionTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        LhsExpressionTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LhsExpressionTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        LhsExpressionTransport::to_napi_value(env, *val)
     }
 }
 
@@ -97469,15 +94741,6 @@ impl ::sittir_core::prepare::SeatTarget for ObjectTransport {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for ObjectPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(231)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
-        }
-        None
-    }
-}
-
 impl ::sittir_core::prepare::SeatTarget for AssignmentPatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(232)) {
@@ -97499,15 +94762,6 @@ impl ::sittir_core::prepare::SeatTarget for ObjectAssignmentPatternTransport {
 impl ::sittir_core::prepare::SeatTarget for ArrayTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(234)) {
-            return Some((self.edges.get_or_insert_with(Default::default), site));
-        }
-        None
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for ArrayPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(235)) {
             return Some((self.edges.get_or_insert_with(Default::default), site));
         }
         None
@@ -98575,20 +95829,6 @@ impl ::sittir_core::prepare::SeatTarget for CallExpressionTransport {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for LhsExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        match self {
-            Self::MemberExpression(t) => t.seat_target(table),
-            Self::SubscriptExpression(t) => t.seat_target(table),
-            Self::ObjectPattern(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
-            Self::NonNullExpression(t) => t.seat_target(table),
-            #[allow(unreachable_patterns)]
-            _ => None,
-        }
-    }
-}
-
 impl ::sittir_core::prepare::SeatTarget for UpdateExpressionTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
@@ -98614,12 +95854,6 @@ impl ::sittir_core::prepare::SeatTarget for StringTransport {
 impl ::sittir_core::prepare::SeatTarget for PatternTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::LhsExpression(t) => t.seat_target(table),
-            Self::MemberExpression(t) => t.seat_target(table),
-            Self::SubscriptExpression(t) => t.seat_target(table),
-            Self::ObjectPattern(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
-            Self::NonNullExpression(t) => t.seat_target(table),
             Self::RestPattern(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
@@ -99046,17 +96280,6 @@ impl ::sittir_core::prepare::SeatTarget for ObjectPatternPropertiesTransportSlot
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for ObjectAssignmentPatternLeftTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        match self {
-            Self::ObjectPattern(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
-            #[allow(unreachable_patterns)]
-            _ => None,
-        }
-    }
-}
-
 impl ::sittir_core::prepare::SeatTarget for ArrayElementsTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
@@ -99102,11 +96325,6 @@ impl ::sittir_core::prepare::SeatTarget for ArrayElementsTransportSlot {
 impl ::sittir_core::prepare::SeatTarget for ArrayPatternElementsTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::MemberExpression(t) => t.seat_target(table),
-            Self::SubscriptExpression(t) => t.seat_target(table),
-            Self::ObjectPattern(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
-            Self::NonNullExpression(t) => t.seat_target(table),
             Self::RestPattern(t) => t.seat_target(table),
             Self::AssignmentPattern(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
@@ -99290,16 +96508,23 @@ impl ::sittir_core::prepare::SeatTarget for SubscriptExpressionIndexTransportSlo
     }
 }
 
+impl ::sittir_core::prepare::SeatTarget for LhsExpressionContentTransportSlot {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::MemberExpression(t) => t.seat_target(table),
+            Self::SubscriptExpression(t) => t.seat_target(table),
+            Self::NonNullExpression(t) => t.seat_target(table),
+            #[allow(unreachable_patterns)]
+            _ => None,
+        }
+    }
+}
+
 impl ::sittir_core::prepare::SeatTarget for AssignmentExpressionLeftTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table),
-            Self::MemberExpression(t) => t.seat_target(table),
-            Self::SubscriptExpression(t) => t.seat_target(table),
-            Self::ObjectPattern(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
-            Self::NonNullExpression(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -99431,8 +96656,6 @@ impl ::sittir_core::prepare::SeatTarget for RestPatternLhsExpressionTransportSlo
         match self {
             Self::MemberExpression(t) => t.seat_target(table),
             Self::SubscriptExpression(t) => t.seat_target(table),
-            Self::ObjectPattern(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
             Self::NonNullExpression(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
@@ -99479,11 +96702,6 @@ impl ::sittir_core::prepare::SeatTarget for PairPatternKeyTransportSlot {
 impl ::sittir_core::prepare::SeatTarget for PairPatternValueTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::MemberExpression(t) => t.seat_target(table),
-            Self::SubscriptExpression(t) => t.seat_target(table),
-            Self::ObjectPattern(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
-            Self::NonNullExpression(t) => t.seat_target(table),
             Self::RestPattern(t) => t.seat_target(table),
             Self::AssignmentPattern(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
@@ -99629,11 +96847,6 @@ impl ::sittir_core::prepare::SeatTarget for EnumAssignmentNameTransportSlot {
 impl ::sittir_core::prepare::SeatTarget for RequiredParameterPatternTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::MemberExpression(t) => t.seat_target(table),
-            Self::SubscriptExpression(t) => t.seat_target(table),
-            Self::ObjectPattern(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
-            Self::NonNullExpression(t) => t.seat_target(table),
             Self::RestPattern(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
@@ -99644,11 +96857,6 @@ impl ::sittir_core::prepare::SeatTarget for RequiredParameterPatternTransportSlo
 impl ::sittir_core::prepare::SeatTarget for OptionalParameterPatternTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::MemberExpression(t) => t.seat_target(table),
-            Self::SubscriptExpression(t) => t.seat_target(table),
-            Self::ObjectPattern(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
-            Self::NonNullExpression(t) => t.seat_target(table),
             Self::RestPattern(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
@@ -99855,17 +97063,6 @@ impl ::sittir_core::prepare::SeatTarget for TupleTypeMembersTupleTypeMemberTrans
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for CatchClauseGroupParameterTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        match self {
-            Self::ObjectPattern(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
-            #[allow(unreachable_patterns)]
-            _ => None,
-        }
-    }
-}
-
 impl ::sittir_core::prepare::SeatTarget for ObjectTypeContentMembersTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
@@ -100066,25 +97263,9 @@ impl ::sittir_core::prepare::SeatTarget for ExportStatementDefaultDeclarationDef
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for VariableDeclaratorPlainNameTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        match self {
-            Self::ObjectPattern(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
-            #[allow(unreachable_patterns)]
-            _ => None,
-        }
-    }
-}
-
 impl ::sittir_core::prepare::SeatTarget for ForHeaderLhsLeftTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::MemberExpression(t) => t.seat_target(table),
-            Self::SubscriptExpression(t) => t.seat_target(table),
-            Self::ObjectPattern(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
-            Self::NonNullExpression(t) => t.seat_target(table),
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
@@ -100134,17 +97315,6 @@ impl ::sittir_core::prepare::SeatTarget for ForHeaderLhsRightTransportSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for ForHeaderVarKindLeftTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        match self {
-            Self::ObjectPattern(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
-            #[allow(unreachable_patterns)]
-            _ => None,
-        }
-    }
-}
-
 impl ::sittir_core::prepare::SeatTarget for ForHeaderVarKindRightTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
@@ -100180,17 +97350,6 @@ impl ::sittir_core::prepare::SeatTarget for ForHeaderVarKindRightTransportSlot {
             Self::UpdateExpressionPrefix(t) => t.seat_target(table),
             Self::NewExpression(t) => t.seat_target(table),
             Self::YieldExpression(t) => t.seat_target(table),
-            #[allow(unreachable_patterns)]
-            _ => None,
-        }
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for ForHeaderLetConstKindLeftTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        match self {
-            Self::ObjectPattern(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -100266,11 +97425,9 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
             Self::SwitchDefault(t) => t.seat_target(table),
             Self::YieldExpression(t) => t.seat_target(table),
             Self::Object(t) => t.seat_target(table),
-            Self::ObjectPattern(t) => t.seat_target(table),
             Self::AssignmentPattern(t) => t.seat_target(table),
             Self::ObjectAssignmentPattern(t) => t.seat_target(table),
             Self::Array(t) => t.seat_target(table),
-            Self::ArrayPattern(t) => t.seat_target(table),
             Self::Class(t) => t.seat_target(table),
             Self::ClassDeclaration(t) => t.seat_target(table),
             Self::FunctionExpression(t) => t.seat_target(table),
@@ -101287,6 +98444,12 @@ fn render_subscript_expression(node: &SubscriptExpressionTransport, w: &mut dyn 
     w.site_at(options::SITE_SUBSCRIPT_EXPRESSION_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(252), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
+    Ok(())
+}
+
+fn render_lhs_expression(node: &LhsExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = &node.content;
+    content.render(w)?;
     Ok(())
 }
 
@@ -104700,41 +101863,6 @@ fn render_call_expression(t: &CallExpressionTransport, w: &mut dyn ::sittir_core
     }
 }
 
-fn render_lhs_expression(t: &LhsExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    match t {
-        LhsExpressionTransport::MemberExpression(inner) => inner.render(w),
-        LhsExpressionTransport::SubscriptExpression(inner) => inner.render(w),
-        LhsExpressionTransport::Undefined(inner) => inner.render(w),
-        LhsExpressionTransport::Identifier(inner) => inner.render(w),
-        LhsExpressionTransport::DeclareKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::NamespaceKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::TypeKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::PublicKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::PrivateKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::ProtectedKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::OverrideKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::ReadonlyKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::ModuleKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::AnyKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::NumberKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::BooleanKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::StringKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::SymbolKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::ExportKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::ObjectKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::NewKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::GetKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::SetKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::AsyncKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::StaticKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::LetKeyword(inner) => inner.render(w),
-        LhsExpressionTransport::ObjectPattern(inner) => inner.render(w),
-        LhsExpressionTransport::ArrayPattern(inner) => inner.render(w),
-        LhsExpressionTransport::NonNullExpression(inner) => inner.render(w),
-        LhsExpressionTransport::Verbatim(inner) => inner.render(w),
-    }
-}
-
 fn render_update_expression(t: &UpdateExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         UpdateExpressionTransport::UpdateExpressionPostfix(inner) => inner.render(w),
@@ -104773,37 +101901,7 @@ fn render_meta_property(t: &MetaPropertyTransport, w: &mut dyn ::sittir_core::re
 fn render_pattern(t: &PatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         PatternTransport::LhsExpression(inner) => inner.render(w),
-        PatternTransport::MemberExpression(inner) => inner.render(w),
-        PatternTransport::SubscriptExpression(inner) => inner.render(w),
-        PatternTransport::Undefined(inner) => inner.render(w),
-        PatternTransport::Identifier(inner) => inner.render(w),
-        PatternTransport::DeclareKeyword(inner) => inner.render(w),
-        PatternTransport::NamespaceKeyword(inner) => inner.render(w),
-        PatternTransport::TypeKeyword(inner) => inner.render(w),
-        PatternTransport::PublicKeyword(inner) => inner.render(w),
-        PatternTransport::PrivateKeyword(inner) => inner.render(w),
-        PatternTransport::ProtectedKeyword(inner) => inner.render(w),
-        PatternTransport::OverrideKeyword(inner) => inner.render(w),
-        PatternTransport::ReadonlyKeyword(inner) => inner.render(w),
-        PatternTransport::ModuleKeyword(inner) => inner.render(w),
-        PatternTransport::AnyKeyword(inner) => inner.render(w),
-        PatternTransport::NumberKeyword(inner) => inner.render(w),
-        PatternTransport::BooleanKeyword(inner) => inner.render(w),
-        PatternTransport::StringKeyword(inner) => inner.render(w),
-        PatternTransport::SymbolKeyword(inner) => inner.render(w),
-        PatternTransport::ExportKeyword(inner) => inner.render(w),
-        PatternTransport::ObjectKeyword(inner) => inner.render(w),
-        PatternTransport::NewKeyword(inner) => inner.render(w),
-        PatternTransport::GetKeyword(inner) => inner.render(w),
-        PatternTransport::SetKeyword(inner) => inner.render(w),
-        PatternTransport::AsyncKeyword(inner) => inner.render(w),
-        PatternTransport::StaticKeyword(inner) => inner.render(w),
-        PatternTransport::LetKeyword(inner) => inner.render(w),
-        PatternTransport::ObjectPattern(inner) => inner.render(w),
-        PatternTransport::ArrayPattern(inner) => inner.render(w),
-        PatternTransport::NonNullExpression(inner) => inner.render(w),
         PatternTransport::RestPattern(inner) => inner.render(w),
-        PatternTransport::Verbatim(inner) => inner.render(w),
     }
 }
 
@@ -104929,6 +102027,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::AwaitExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
+            Self::LhsExpression(inner) => inner.kind_in(kinds),
             Self::AssignmentExpression(inner) => inner.kind_in(kinds),
             Self::AugmentedAssignmentExpression(inner) => inner.kind_in(kinds),
             Self::SpreadElement(inner) => inner.kind_in(kinds),
@@ -105343,6 +102442,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::AwaitExpression(t) => t.render(w),
             AnyTransport::MemberExpression(t) => t.render(w),
             AnyTransport::SubscriptExpression(t) => t.render(w),
+            AnyTransport::LhsExpression(t) => t.render(w),
             AnyTransport::AssignmentExpression(t) => t.render(w),
             AnyTransport::AugmentedAssignmentExpression(t) => t.render(w),
             AnyTransport::SpreadElement(t) => t.render(w),
@@ -105726,52 +102826,52 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal31_69_6d_70_6f_72_74 => w.text("import"),
             AnyTransport::Literal32_64_6f_74 => w.text("."),
             AnyTransport::Literal33_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => w.text("?."),
-            AnyTransport::Literal34_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72 => w.text("using"),
-            AnyTransport::Literal35_70_6c_75_73_5f_65_71 => w.text("+="),
-            AnyTransport::Literal36_64_61_73_68_5f_65_71 => w.text("-="),
-            AnyTransport::Literal37_73_74_61_72_5f_65_71 => w.text("*="),
-            AnyTransport::Literal38_73_6c_61_73_68_5f_65_71 => w.text("/="),
-            AnyTransport::Literal39_70_65_72_63_65_6e_74_5f_65_71 => w.text("%="),
-            AnyTransport::Literal40_63_61_72_65_74_5f_65_71 => w.text("^="),
-            AnyTransport::Literal41_61_6d_70_5f_65_71 => w.text("&="),
-            AnyTransport::Literal42_70_69_70_65_5f_65_71 => w.text("|="),
-            AnyTransport::Literal43_67_74_5f_67_74_5f_65_71 => w.text(">>="),
-            AnyTransport::Literal44_67_74_5f_67_74_5f_67_74_5f_65_71 => w.text(">>>="),
-            AnyTransport::Literal45_6c_74_5f_6c_74_5f_65_71 => w.text("<<="),
-            AnyTransport::Literal46_73_74_61_72_5f_73_74_61_72_5f_65_71 => w.text("**="),
-            AnyTransport::Literal47_61_6d_70_5f_61_6d_70_5f_65_71 => w.text("&&="),
-            AnyTransport::Literal48_70_69_70_65_5f_70_69_70_65_5f_65_71 => w.text("||="),
-            AnyTransport::Literal49_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71 => w.text("??="),
-            AnyTransport::Literal50_61_6d_70_5f_61_6d_70 => w.text("&&"),
-            AnyTransport::Literal51_70_69_70_65_5f_70_69_70_65 => w.text("||"),
-            AnyTransport::Literal52_67_74_5f_67_74 => w.text(">>"),
-            AnyTransport::Literal53_67_74_5f_67_74_5f_67_74 => w.text(">>>"),
-            AnyTransport::Literal54_6c_74_5f_6c_74 => w.text("<<"),
-            AnyTransport::Literal55_61_6d_70 => w.text("&"),
-            AnyTransport::Literal56_63_61_72_65_74 => w.text("^"),
-            AnyTransport::Literal57_70_69_70_65 => w.text("|"),
-            AnyTransport::Literal58_70_6c_75_73 => w.text("+"),
-            AnyTransport::Literal59_64_61_73_68 => w.text("-"),
-            AnyTransport::Literal60_73_74_61_72 => w.text("*"),
-            AnyTransport::Literal61_73_6c_61_73_68 => w.text("/"),
-            AnyTransport::Literal62_70_65_72_63_65_6e_74 => w.text("%"),
-            AnyTransport::Literal63_73_74_61_72_5f_73_74_61_72 => w.text("**"),
-            AnyTransport::Literal64_6c_74 => w.text("<"),
-            AnyTransport::Literal65_6c_74_5f_65_71 => w.text("<="),
-            AnyTransport::Literal66_65_71_5f_65_71 => w.text("=="),
-            AnyTransport::Literal67_65_71_5f_65_71_5f_65_71 => w.text("==="),
-            AnyTransport::Literal68_62_61_6e_67_5f_65_71 => w.text("!="),
-            AnyTransport::Literal69_62_61_6e_67_5f_65_71_5f_65_71 => w.text("!=="),
-            AnyTransport::Literal70_67_74_5f_65_71 => w.text(">="),
-            AnyTransport::Literal71_67_74 => w.text(">"),
-            AnyTransport::Literal72_71_6d_61_72_6b_5f_71_6d_61_72_6b => w.text("??"),
-            AnyTransport::Literal73_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64 => w.text("instanceof"),
-            AnyTransport::Literal74_62_61_6e_67 => w.text("!"),
-            AnyTransport::Literal75_74_69_6c_64_65 => w.text("~"),
-            AnyTransport::Literal76_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => w.text("void"),
-            AnyTransport::Literal77_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => w.text("delete"),
-            AnyTransport::Literal78_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => w.text(";"),
-            AnyTransport::Literal79_75_6e_64_65_66_69_6e_65_64 => w.text("undefined"),
+            AnyTransport::Literal34_75_6e_64_65_66_69_6e_65_64 => w.text("undefined"),
+            AnyTransport::Literal35_5f_6b_77_5f_75_73_69_6e_67_5f_6d_61_72_6b_65_72 => w.text("using"),
+            AnyTransport::Literal36_70_6c_75_73_5f_65_71 => w.text("+="),
+            AnyTransport::Literal37_64_61_73_68_5f_65_71 => w.text("-="),
+            AnyTransport::Literal38_73_74_61_72_5f_65_71 => w.text("*="),
+            AnyTransport::Literal39_73_6c_61_73_68_5f_65_71 => w.text("/="),
+            AnyTransport::Literal40_70_65_72_63_65_6e_74_5f_65_71 => w.text("%="),
+            AnyTransport::Literal41_63_61_72_65_74_5f_65_71 => w.text("^="),
+            AnyTransport::Literal42_61_6d_70_5f_65_71 => w.text("&="),
+            AnyTransport::Literal43_70_69_70_65_5f_65_71 => w.text("|="),
+            AnyTransport::Literal44_67_74_5f_67_74_5f_65_71 => w.text(">>="),
+            AnyTransport::Literal45_67_74_5f_67_74_5f_67_74_5f_65_71 => w.text(">>>="),
+            AnyTransport::Literal46_6c_74_5f_6c_74_5f_65_71 => w.text("<<="),
+            AnyTransport::Literal47_73_74_61_72_5f_73_74_61_72_5f_65_71 => w.text("**="),
+            AnyTransport::Literal48_61_6d_70_5f_61_6d_70_5f_65_71 => w.text("&&="),
+            AnyTransport::Literal49_70_69_70_65_5f_70_69_70_65_5f_65_71 => w.text("||="),
+            AnyTransport::Literal50_71_6d_61_72_6b_5f_71_6d_61_72_6b_5f_65_71 => w.text("??="),
+            AnyTransport::Literal51_61_6d_70_5f_61_6d_70 => w.text("&&"),
+            AnyTransport::Literal52_70_69_70_65_5f_70_69_70_65 => w.text("||"),
+            AnyTransport::Literal53_67_74_5f_67_74 => w.text(">>"),
+            AnyTransport::Literal54_67_74_5f_67_74_5f_67_74 => w.text(">>>"),
+            AnyTransport::Literal55_6c_74_5f_6c_74 => w.text("<<"),
+            AnyTransport::Literal56_61_6d_70 => w.text("&"),
+            AnyTransport::Literal57_63_61_72_65_74 => w.text("^"),
+            AnyTransport::Literal58_70_69_70_65 => w.text("|"),
+            AnyTransport::Literal59_70_6c_75_73 => w.text("+"),
+            AnyTransport::Literal60_64_61_73_68 => w.text("-"),
+            AnyTransport::Literal61_73_74_61_72 => w.text("*"),
+            AnyTransport::Literal62_73_6c_61_73_68 => w.text("/"),
+            AnyTransport::Literal63_70_65_72_63_65_6e_74 => w.text("%"),
+            AnyTransport::Literal64_73_74_61_72_5f_73_74_61_72 => w.text("**"),
+            AnyTransport::Literal65_6c_74 => w.text("<"),
+            AnyTransport::Literal66_6c_74_5f_65_71 => w.text("<="),
+            AnyTransport::Literal67_65_71_5f_65_71 => w.text("=="),
+            AnyTransport::Literal68_65_71_5f_65_71_5f_65_71 => w.text("==="),
+            AnyTransport::Literal69_62_61_6e_67_5f_65_71 => w.text("!="),
+            AnyTransport::Literal70_62_61_6e_67_5f_65_71_5f_65_71 => w.text("!=="),
+            AnyTransport::Literal71_67_74_5f_65_71 => w.text(">="),
+            AnyTransport::Literal72_67_74 => w.text(">"),
+            AnyTransport::Literal73_71_6d_61_72_6b_5f_71_6d_61_72_6b => w.text("??"),
+            AnyTransport::Literal74_69_6e_73_74_61_6e_63_65_6f_66_5f_6b_65_79_77_6f_72_64 => w.text("instanceof"),
+            AnyTransport::Literal75_62_61_6e_67 => w.text("!"),
+            AnyTransport::Literal76_74_69_6c_64_65 => w.text("~"),
+            AnyTransport::Literal77_76_6f_69_64_5f_6b_65_79_77_6f_72_64 => w.text("void"),
+            AnyTransport::Literal78_64_65_6c_65_74_65_5f_6b_65_79_77_6f_72_64 => w.text("delete"),
+            AnyTransport::Literal79_65_6d_70_74_79_5f_6d_65_6d_62_65_72 => w.text(";"),
             AnyTransport::Literal80_5f_6b_77_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => w.text("static"),
             AnyTransport::Literal81_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => w.text("override"),
             AnyTransport::Literal82_71_6d_61_72_6b => w.text("?"),

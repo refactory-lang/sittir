@@ -3873,7 +3873,10 @@ declared-supertype override:
 - `'named-arms'` and not a declared supertype: the rule unchanged.
 - `'supertype'`, or a declared supertype: a `SupertypeRule` when at least one
   subtype ref resolves (`collectSubtypeRefs`), with `variantArms` for the
-  members `isAliasMintedRef` marks as mints.
+  members `isAliasMintedRef` marks as mints. A `'supertype'` over aliased hidden
+  storage (`isAliasedHiddenStorage`) that the grammar does not declare a
+  supertype is not one: the parser shows it as a node, so it stays a choice
+  rule and assemble makes it an envelope (`compoundModelTypeFor`).
 - Otherwise the rule unchanged; assemble classifies it by shape. A hidden
   choice of structural members (seqs, fields) is a real alternative, not an
   abstract kind union.
@@ -6275,6 +6278,8 @@ collector parameter.
  */
 ```
 
+`aliasedNonTerminal` is the parser's fact that some `alias()` shows the nonterminal under another name; `isAliasedHiddenStorage` reads it.
+
 ### `packages/codegen/src/compiler/generated-metadata.ts::isRenamedEntry`
 
 Whether a catalog row is a hidden rule the parser shows under another name: not an alias, anonymous or literal row, not declared in the grammar's `visibleExternals` (`visibleExternal`, so a declared whitespace external keeps its own kind), visible in the parser, not an alias fold (`parseId` unset, so its `symbolName` is its own symbol's), its `symbolName` differs from its grammar name, and exactly one visible row carries that tree name (`visibleTreeNameCount`). Such a row's model kind is its tree name.
@@ -6305,6 +6310,10 @@ Whether a kind is hidden on the generated surface, from the two parser symbol fl
 
 - parser-hidden (`.visible = false`, `parserHiddenOf`) and not a supertype. Tree-sitter compiles every supertype as an invisible symbol, but a supertype is the user-facing polymorph parent, so it keeps its namespace, `ir` key and type;
 - or a grammar rule the parser issues as an anonymous token (`.named = false`, the row's `anon`, on a `literalRule` row): typescript `_ternary_qmark`, python `_not_in`/`_is_not`. Its node stays in the model, so an enum slot keeps its own kind id, but it has no factory or `ir` key. Keyword and punctuation leaves minted from anonymous literals are not rules and stay on the surface. This is the one predicate every surface emitter and the link `hidden` stamps read; link's inline decision reads the plain parser fact.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::isAliasedHiddenStorage`
+
+Whether a kind is hidden storage the parser shows under an alias: its own row (`findOwnKindEntry`) is an `aliasedNonTerminal` and `surfaceHiddenOf` holds. Supertypes fail the second test, so an aliased supertype (python `expression` under `as_pattern_target`) stays a supertype. Link and assemble ask it to make such a kind an envelope rather than a supertype or polymorph.
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::isSurfaceHiddenKind`
 

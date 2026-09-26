@@ -1541,7 +1541,7 @@ export function buildDottedName(...children: T.Identifier[]): T.DottedName.Built
 
 export function buildCasePattern(value: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern): T.CasePattern.Built {
 	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.CasePattern['_content']>>(value, []),
+		value,
 		'CasePattern.content',
 		'a built CaseAsPattern / KeywordPattern / SimplePattern'
 	);
@@ -1553,7 +1553,72 @@ export function buildCasePattern(value: T.CaseAsPattern | T.KeywordPattern | T.S
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: NonNullable<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>) => buildCasePattern(value)
+					content: (value: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern) => buildCasePattern(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildSimplePattern(
+	value:
+		| T.ClassPattern
+		| T.SplatPattern
+		| T.UnionPattern
+		| T.CaseListPattern
+		| T.CaseTuplePattern
+		| T.DictPattern
+		| T.String
+		| T.ConcatenatedString
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
+		| T.SimplePatternNegative
+		| T.ComplexPattern
+		| T.DottedName
+		| TSKindId.WildcardPattern
+): T.SimplePattern.Built {
+	const _content = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.SimplePattern['_content']>>(value, [
+			['True', TSKindId.True] as const,
+			['False', TSKindId.False] as const,
+			['None', TSKindId.None] as const,
+			['_', TSKindId.WildcardPattern] as const
+		]),
+		'SimplePattern.content',
+		'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / SimplePatternNegative / ComplexPattern / DottedName'
+	);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.SimplePattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (
+						value: NonNullable<
+							| T.ClassPattern
+							| T.SplatPattern
+							| T.UnionPattern
+							| T.CaseListPattern
+							| T.CaseTuplePattern
+							| T.DictPattern
+							| T.String
+							| T.ConcatenatedString
+							| TSKindId.True
+							| TSKindId.False
+							| TSKindId.None
+							| T.SimplePatternNegative
+							| T.ComplexPattern
+							| T.DottedName
+							| TSKindId.WildcardPattern
+						>
+					) => buildSimplePattern(value)
 				}
 			},
 			{
@@ -5883,6 +5948,7 @@ export type FluentKindMap = {
 	expression_list: T.ExpressionList.Built;
 	dotted_name: T.DottedName.Built;
 	case_pattern: T.CasePattern.Built;
+	_simple_pattern: T.SimplePattern.Built;
 	case_as_pattern: T.CaseAsPattern.Built;
 	union_pattern: T.UnionPattern.Built;
 	dict_pattern: T.DictPattern.Built;
@@ -6072,6 +6138,7 @@ export const _factoryMap = {
 	expression_list: buildExpressionList,
 	dotted_name: buildDottedName,
 	case_pattern: buildCasePattern,
+	_simple_pattern: buildSimplePattern,
 	case_as_pattern: buildCaseAsPattern,
 	union_pattern: buildUnionPattern,
 	dict_pattern: buildDictPattern,

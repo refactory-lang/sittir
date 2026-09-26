@@ -1442,11 +1442,72 @@ export const expressionList: typeof B.expressionList & {
 	}
 };
 
+const keywordPattern$negative =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'sign' || key === 'value') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
+	};
+export const keywordPattern: typeof B.keywordPattern & {
+	negative: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> &
+				ArgsOf<typeof F.buildSimplePatternNegative>[0],
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> &
+				ArgsOf<typeof C.coerceToSimplePatternNegative>[0],
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+} = {
+	...B.keywordPattern,
+	negative: {
+		strict: keywordPattern$negative(F.buildKeywordPattern, F.buildSimplePatternNegative),
+		coerce: keywordPattern$negative(C.coerceToKeywordPattern, C.coerceToSimplePatternNegative)
+	}
+};
+
+const simplePattern$negative =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const simplePattern: typeof B.simplePattern & {
+	negative: {
+		strict: (...args: ArgsOf<typeof F.buildSimplePatternNegative>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSimplePatternNegative>) => ReturnType<typeof F.buildSimplePattern>;
+	};
+} = {
+	...B.simplePattern,
+	negative: {
+		strict: simplePattern$negative(F.buildSimplePattern, F.buildSimplePatternNegative),
+		coerce: simplePattern$negative(F.buildSimplePattern, C.coerceToSimplePatternNegative)
+	}
+};
+
 const casePattern$caseAsPattern =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const casePattern$keywordPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$negative =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$negative =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -1458,6 +1519,18 @@ export const casePattern: typeof B.casePattern & {
 	keywordPattern: {
 		strict: (...args: ArgsOf<typeof F.buildKeywordPattern>) => ReturnType<typeof F.buildCasePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToKeywordPattern>) => ReturnType<typeof F.buildCasePattern>;
+		negative: {
+			strict: (...args: ArgsOf<typeof keywordPattern.negative.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.negative.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+	};
+	simplePattern: {
+		strict: (...args: ArgsOf<typeof F.buildSimplePattern>) => ReturnType<typeof F.buildCasePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSimplePattern>) => ReturnType<typeof F.buildCasePattern>;
+		negative: {
+			strict: (...args: ArgsOf<typeof simplePattern.negative.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.negative.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
 	};
 } = {
 	...B.casePattern,
@@ -1467,7 +1540,19 @@ export const casePattern: typeof B.casePattern & {
 	},
 	keywordPattern: {
 		strict: casePattern$keywordPattern(F.buildCasePattern, F.buildKeywordPattern),
-		coerce: casePattern$keywordPattern(F.buildCasePattern, C.coerceToKeywordPattern)
+		coerce: casePattern$keywordPattern(F.buildCasePattern, C.coerceToKeywordPattern),
+		negative: {
+			strict: casePattern$keywordPattern$negative(F.buildCasePattern, keywordPattern.negative.strict),
+			coerce: casePattern$keywordPattern$negative(F.buildCasePattern, keywordPattern.negative.coerce)
+		}
+	},
+	simplePattern: {
+		strict: casePattern$simplePattern(F.buildCasePattern, F.buildSimplePattern),
+		coerce: casePattern$simplePattern(F.buildCasePattern, C.coerceToSimplePattern),
+		negative: {
+			strict: casePattern$simplePattern$negative(F.buildCasePattern, simplePattern.negative.strict),
+			coerce: casePattern$simplePattern$negative(F.buildCasePattern, simplePattern.negative.coerce)
+		}
 	}
 };
 
@@ -1499,6 +1584,35 @@ export const unionPattern: typeof B.unionPattern & {
 	...B.unionPattern,
 	strict: unionPattern$seated,
 	coerce: unionPattern$seatedCoerce
+};
+
+const keyValuePattern$negative =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) } as never, options as never);
+	};
+export const keyValuePattern: typeof B.keyValuePattern & {
+	negative: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof F.buildSimplePatternNegative>[0];
+			},
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof C.coerceToSimplePatternNegative>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
+} = {
+	...B.keyValuePattern,
+	negative: {
+		strict: keyValuePattern$negative(F.buildKeyValuePattern, F.buildSimplePatternNegative),
+		coerce: keyValuePattern$negative(C.coerceToKeyValuePattern, C.coerceToSimplePatternNegative)
+	}
 };
 
 const classPattern$arguments = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(

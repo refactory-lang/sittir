@@ -2,6 +2,7 @@
 
 /** All branch (non-leaf) node kind strings. */
 const NODE_KINDS = [
+	'_lhs_expression',
 	'abstract_class_declaration',
 	'abstract_method_signature',
 	'adding_type_annotation',

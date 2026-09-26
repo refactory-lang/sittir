@@ -9,13 +9,13 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 				name: ir.identifier("T"),
 			})),
 			parameters: ir.formalParameters.strict({ delimiter: Delimiter.None }, ir.requiredParameter.strict({
-				pattern: ir.identifier("a"),
+				pattern: ir.lhsExpression.strict(ir.identifier("a")),
 				type: ir.typeAnnotation.strict(ir.genericType.strict({
 					name: ir.identifier("Array"),
 					typeArguments: ir.typeArguments.strict({ delimiter: Delimiter.None }, ir.identifier("T")),
 				})),
 			}), ir.requiredParameter.strict({
-				pattern: ir.identifier("b"),
+				pattern: ir.lhsExpression.strict(ir.identifier("b")),
 				type: ir.typeAnnotation.strict(ir.tupleType.strict({ delimiter: Delimiter.None }, TSKindId.NumberKeyword, TSKindId.StringKeyword)),
 			})),
 			returnType: ir.typeAnnotation.strict(ir.arrayType.strict(ir.parenthesizedType.strict(ir.unionType.strict({
@@ -59,7 +59,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					}),
 					body: ir.statementBlock.strict({
 						statements: [ir.expressionStatement.strict(ir.assignmentExpression.strict({
-							left: ir.identifier("x"),
+							left: ir.lhsExpression.strict(ir.identifier("x")),
 							right: ir.parenthesizedExpression.typed.strict({
 								expression: ir.binaryExpression.strict({
 									left: ir.identifier("x"),
@@ -190,7 +190,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 							asyncMarker: true,
 							content: ir.callSignature.strict({
 								parameters: ir.formalParameters.strict({ delimiter: Delimiter.None }, ir.requiredParameter.strict({
-									pattern: ir.identifier("z"),
+									pattern: ir.lhsExpression.strict(ir.identifier("z")),
 								})),
 							}),
 							body: ir.parenthesizedExpression.typed.strict({
