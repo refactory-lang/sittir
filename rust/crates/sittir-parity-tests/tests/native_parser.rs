@@ -45,13 +45,11 @@ fn typescript_lexical_declaration_reads_override_named_fields() {
     }
 }
 
-/// A multi-bucket parent (member routes split across `name` and
-/// `enum_assignment`) must stamp `$slotOrder` so the wrap layer can
-/// interleave the per-route buckets back into document order — the
-/// buckets alone cannot express cross-route order once leaf members
-/// scalarize on the wire.
+/// The reader keys every member by its model slot: the `name`-tagged members
+/// and the untagged `enum_assignment` members all land in `content`, one
+/// bucket in document order, so no `$slotOrder` is needed to interleave them.
 #[test]
-fn typescript_enum_body_elements_stamps_slot_order() {
+fn typescript_enum_body_elements_reads_members_into_one_slot() {
     let source = "enum T {\n    A,\n    'B',\n    'C' = 3,\n    D = 10,\n    E\n}";
     let mut parser = Parser::new();
     parser
@@ -74,18 +72,19 @@ fn typescript_enum_body_elements_stamps_slot_order() {
 
     let data = read_node(&tree, source, Some(elements), Some(0), ReadDepth::Shallow, &sittir_typescript::TypeScriptGrammar);
     let fields = data.fields.as_ref().expect("named fields");
-    assert!(fields.len() >= 2, "expected multi-bucket parent, got {fields:?}");
+    assert_eq!(fields.keys().collect::<Vec<_>>(), vec!["content"]);
+    let members = match &fields["content"] {
+        FieldValue::Multiple(members) => members,
+        other => panic!("expected the members as one list, got {other:?}"),
+    };
+    let starts: Vec<_> = members
+        .iter()
+        .map(|m| m.as_ref().and_then(|m| m.span.as_ref()).map(|s| s.start))
+        .collect();
+    assert_eq!(starts, vec![Some(13), Some(20), Some(29), Some(42), Some(54)]);
+    assert!(data.slot_order.is_none(), "a single-bucket parent must not stamp $slotOrder");
 
-    let order = data.slot_order.as_ref().expect("$slotOrder on multi-bucket parent");
-    assert_eq!(
-        order,
-        &["name", "name", "enum_assignment", "enum_assignment", "name"],
-        "slot order must record member routes in document order"
-    );
-
-    // Single-bucket parents stay clean: the lexical_declaration read in the
-    // test above has multiple DISTINCT singular fields — order still stamps
-    // there. A leaf has no fields at all and must not carry the key.
+    // A leaf has no fields at all and must not carry the key.
     let leaf = read_node(
         &tree,
         source,

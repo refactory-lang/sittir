@@ -52,6 +52,26 @@ describe('is_text_kind', () => {
 	});
 });
 
+describe('wire_slot', () => {
+	it('routes an untagged child by its kind to the model slot that stores it', async () => {
+		const { source, idOf } = await emittedKindIds('typescript');
+		expect(source).toContain(
+			"pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'static str> {"
+		);
+		expect(source).toContain(`(${idOf('for_in_statement')}, None, "for_header_lhs") => Some("for_header"),`);
+	});
+	it('routes a field-tagged child by its field when the model slot has another name', async () => {
+		const { source, idOf } = await emittedKindIds('typescript');
+		expect(source).toContain(`(${idOf('enum_body_elements')}, Some("name"), _) => Some("content"),`);
+		expect(source).toContain(`(${idOf('enum_body_elements')}, None, "enum_assignment") => Some("content"),`);
+	});
+	it('leaves a child whose key already names its slot to the parser', async () => {
+		const { source } = await emittedKindIds('typescript');
+		const table = source.slice(source.indexOf('pub fn wire_slot'), source.indexOf('static SLOT_SEPARATORS'));
+		expect(table).not.toMatch(/, None, "([a-z_]+)"\) => Some\("\1"\)/);
+	});
+});
+
 describe('is_slot_separator', () => {
 	it("names a slot's field-tagged separator by the parent kind and the field", async () => {
 		const { source, idOf } = await emittedKindIds('python');

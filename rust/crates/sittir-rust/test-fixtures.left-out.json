@@ -1,12 +1,8 @@
 {
-  "block": 2,
-  "call_expression": 1,
-  "function_item": 2,
   "if_expression": 1,
-  "impl_item_body": 1,
   "let_declaration": 1,
-  "source_file": 8,
+  "source_file": 5,
   "struct_expression": 1,
   "struct_item_tuple": 1,
-  "use_declaration": 3
+  "use_declaration": 2
 }

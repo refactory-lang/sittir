@@ -177,6 +177,13 @@ export function rebuildFormatGenerated() {
 								property: ir.identifier("sort"),
 							}),
 							arguments: ir.arguments.strict(ir.arrowFunction.strict({
+								content: ir.callSignature.strict({
+									parameters: ir.formalParameters.strict({ delimiter: Delimiter.None }, ir.requiredParameter.strict({
+										pattern: ir.identifier("a"),
+									}), ir.requiredParameter.strict({
+										pattern: ir.identifier("b"),
+									})),
+								}),
 								body: ir.binaryExpression.strict({
 									left: ir.memberExpression.strict({
 										object: ir.identifier("b"),
@@ -189,13 +196,6 @@ export function rebuildFormatGenerated() {
 										separator: TSKindId.Dot,
 										property: ir.identifier("offset"),
 									}),
-								}),
-								content: ir.callSignature.strict({
-									parameters: ir.formalParameters.strict({ delimiter: Delimiter.None }, ir.requiredParameter.strict({
-										pattern: ir.identifier("a"),
-									}), ir.requiredParameter.strict({
-										pattern: ir.identifier("b"),
-									})),
 								}),
 							})),
 						}),
@@ -211,6 +211,12 @@ export function rebuildFormatGenerated() {
 				}, {
 					terminator: TSKindId.Semi,
 				}), ir.forInStatement.strict({
+					forHeader: ir.forHeader.letConstKind.strict({
+						kind: TSKindId.ConstKeyword,
+						left: ir.identifier("item"),
+						operator: TSKindId.OfKeyword,
+						right: ir.identifier("sorted"),
+					}),
 					body: ir.statementBlock.strict({
 						statements: [ir.lexicalDeclaration.strict({
 							kind: TSKindId.ConstKeyword,
@@ -275,12 +281,6 @@ export function rebuildFormatGenerated() {
 							terminator: TSKindId.Semi,
 						})],
 						automaticSemicolon: true,
-					}),
-					forHeader: ir.forHeader.letConstKind.strict({
-						kind: TSKindId.ConstKeyword,
-						left: ir.identifier("item"),
-						operator: TSKindId.OfKeyword,
-						right: ir.identifier("sorted"),
 					}),
 				}), ir.returnStatement.strict(ir.identifier("result"), {
 					terminator: TSKindId.Semi,
@@ -397,6 +397,11 @@ export function rebuildFormatGenerated() {
 						property: ir.identifier("map"),
 					}),
 					arguments: ir.arguments.strict(ir.arrowFunction.strict({
+						content: ir.callSignature.strict({
+							parameters: ir.formalParameters.strict({ delimiter: Delimiter.None }, ir.requiredParameter.strict({
+								pattern: ir.identifier("item"),
+							})),
+						}),
 						body: ir.statementBlock.strict({
 							statements: [ir.ifStatement.strict({
 								condition: ir.parenthesizedExpression.typed.strict({
@@ -442,11 +447,6 @@ export function rebuildFormatGenerated() {
 							})), {
 								terminator: TSKindId.Semi,
 							}).$trivia.leading("// Clamp to zero: a large negative delta must not produce a negative", "// offset (negative indices into slice() silently corrupt output).")],
-						}),
-						content: ir.callSignature.strict({
-							parameters: ir.formalParameters.strict({ delimiter: Delimiter.None }, ir.requiredParameter.strict({
-								pattern: ir.identifier("item"),
-							})),
 						}),
 					})),
 				}), {
@@ -504,6 +504,19 @@ export function rebuildFormatGenerated() {
 				}, {
 					terminator: TSKindId.Semi,
 				}), ir.forInStatement.strict({
+					forHeader: ir.forHeader.letConstKind.strict({
+						kind: TSKindId.ConstKeyword,
+						left: ir.arrayPattern.strict(ir.identifier("key"), ir.identifier("sub")),
+						operator: TSKindId.OfKeyword,
+						right: ir.callExpression.call.strict({
+							function: ir.memberExpression.strict({
+								object: ir.identifier("Object"),
+								separator: TSKindId.Dot,
+								property: ir.identifier("entries"),
+							}),
+							arguments: ir.arguments.strict(ir.identifier("kinds")),
+						}),
+					}),
 					body: ir.statementBlock.strict({
 						statements: [ir.expressionStatement.strict(ir.assignmentExpression.strict({
 							left: ir.subscriptExpression.strict({
@@ -518,19 +531,6 @@ export function rebuildFormatGenerated() {
 							terminator: TSKindId.Semi,
 						})],
 						automaticSemicolon: true,
-					}),
-					forHeader: ir.forHeader.letConstKind.strict({
-						kind: TSKindId.ConstKeyword,
-						left: ir.arrayPattern.strict(ir.identifier("key"), ir.identifier("sub")),
-						operator: TSKindId.OfKeyword,
-						right: ir.callExpression.call.strict({
-							function: ir.memberExpression.strict({
-								object: ir.identifier("Object"),
-								separator: TSKindId.Dot,
-								property: ir.identifier("entries"),
-							}),
-							arguments: ir.arguments.strict(ir.identifier("kinds")),
-						}),
 					}),
 				}), ir.returnStatement.strict(ir.identifier("result"), {
 					terminator: TSKindId.Semi,

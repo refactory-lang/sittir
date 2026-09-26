@@ -98,12 +98,6 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 						automaticSemicolon: true,
 					}),
 				}), ir.forInStatement.strict({
-					body: ir.statementBlock.strict({
-						statements: [ir.continueStatement.strict(undefined, {
-							terminator: TSKindId.Semi,
-						})],
-						automaticSemicolon: true,
-					}),
 					forHeader: ir.forHeader.letConstKind.strict({
 						kind: TSKindId.ConstKeyword,
 						left: ir.identifier("i"),
@@ -111,6 +105,12 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 						right: ir.parenthesizedExpression.typed.strict({
 							expression: ir.identifier("a"),
 						}),
+					}),
+					body: ir.statementBlock.strict({
+						statements: [ir.continueStatement.strict(undefined, {
+							terminator: TSKindId.Semi,
+						})],
+						automaticSemicolon: true,
 					}),
 				}), ir.switchStatement.strict({
 					value: ir.parenthesizedExpression.typed.strict({
@@ -188,13 +188,13 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 						name: ir.identifier("g"),
 						value: ir.arrowFunction.strict({
 							asyncMarker: true,
-							body: ir.parenthesizedExpression.typed.strict({
-								expression: ir.identifier("z"),
-							}),
 							content: ir.callSignature.strict({
 								parameters: ir.formalParameters.strict({ delimiter: Delimiter.None }, ir.requiredParameter.strict({
 									pattern: ir.identifier("z"),
 								})),
+							}),
+							body: ir.parenthesizedExpression.typed.strict({
+								expression: ir.identifier("z"),
 							}),
 						}),
 					})],

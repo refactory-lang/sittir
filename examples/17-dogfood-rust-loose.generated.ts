@@ -85,27 +85,6 @@ export function rebuildSpliceLoose() {
 					statements: [ir.matchExpression({
 						value: TSKindId.Self,
 						body: ir.matchBlock({
-							lastArm: ir.lastMatchArm({
-								pattern: ir.structPattern({
-									type: ir.scopedTypeIdentifier({
-										path: "SpliceError",
-										name: "NonCharBoundary",
-									}),
-									fields: [ir.fieldPattern.shorthand({
-										name: "start",
-									}), ir.fieldPattern.shorthand({
-										name: "end",
-									})],
-								}),
-								value: ir.macroInvocation({
-									macro: "write",
-									arguments: ir.delimTokenTree.paren(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral({
-										stringOpen: "\"",
-										elements: ["edit range not at UTF-8 char boundary: start={start}, end={end}"],
-									})),
-								}),
-								comma: true,
-							}),
 							matchArm: [ir.matchArm.blockEnding({
 								pattern: ir.structPattern({
 									type: ir.scopedTypeIdentifier({
@@ -147,6 +126,27 @@ export function rebuildSpliceLoose() {
 									})),
 								}),
 							})],
+							lastArm: ir.lastMatchArm({
+								pattern: ir.structPattern({
+									type: ir.scopedTypeIdentifier({
+										path: "SpliceError",
+										name: "NonCharBoundary",
+									}),
+									fields: [ir.fieldPattern.shorthand({
+										name: "start",
+									}), ir.fieldPattern.shorthand({
+										name: "end",
+									})],
+								}),
+								value: ir.macroInvocation({
+									macro: "write",
+									arguments: ir.delimTokenTree.paren(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral({
+										stringOpen: "\"",
+										elements: ["edit range not at UTF-8 char boundary: start={start}, end={end}"],
+									})),
+								}),
+								comma: true,
+							}),
 						}),
 					})],
 				}),

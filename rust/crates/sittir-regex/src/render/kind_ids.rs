@@ -214,6 +214,52 @@ pub fn keeps_anonymous_children(kind: KindId) -> bool {
     matches!(kind.0, 55 | 56 | 62 | 76)
 }
 
+/// The model slot a child is stored under where its name differs from the
+/// parser's key: a field-tagged child by (parent kind id, field), a named
+/// child without a field by (parent kind id, the child's kind name).
+/// `None` keeps the parser's key.
+pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'static str> {
+    match (parent.0, field, child) {
+        (50, None, "alternation") => Some("content"),
+        (50, None, "term") => Some("content"),
+        (54, None, "lookahead_assertion") => Some("content"),
+        (54, None, "lookbehind_assertion") => Some("content"),
+        (55, None, "bang") => Some("content"),
+        (55, None, "eq") => Some("content"),
+        (56, None, "bang") => Some("content"),
+        (56, None, "eq") => Some("content"),
+        (62, None, "lparen_qmark_lt") => Some("content"),
+        (62, None, "lparen_qmarkp_lt") => Some("content"),
+        (69, None, "count_quantifier_arm") => Some("content"),
+        (69, None, "decimal_digits") => Some("content"),
+        (72, None, "character_class_escape_arm") => Some("content"),
+        (72, None, "unicode_character_escape") => Some("content"),
+        (76, None, "anonymous_capturing_group") => Some("content"),
+        (76, None, "any_character") => Some("content"),
+        (76, None, "backreference_escape") => Some("content"),
+        (76, None, "boundary_assertion") => Some("content"),
+        (76, None, "character_class") => Some("content"),
+        (76, None, "character_class_escape") => Some("content"),
+        (76, None, "control_escape") => Some("content"),
+        (76, None, "control_letter_escape") => Some("content"),
+        (76, None, "decimal_escape") => Some("content"),
+        (76, None, "end_assertion") => Some("content"),
+        (76, None, "identity_escape") => Some("content"),
+        (76, None, "inline_flags_group_disable") => Some("content"),
+        (76, None, "inline_flags_group_enable") => Some("content"),
+        (76, None, "inline_flags_group_toggle") => Some("content"),
+        (76, None, "lookaround_assertion") => Some("content"),
+        (76, None, "named_capturing_group") => Some("content"),
+        (76, None, "named_group_backreference") => Some("content"),
+        (76, None, "non_boundary_assertion") => Some("content"),
+        (76, None, "non_capturing_group") => Some("content"),
+        (76, None, "pattern_character") => Some("content"),
+        (76, None, "posix_character_class") => Some("content"),
+        (76, None, "start_assertion") => Some("content"),
+        _ => None,
+    }
+}
+
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every
 /// slot the parser field-tags a literal into: the separator of a repeated
 /// slot, or a literal a rule puts beside a singular slot under the same

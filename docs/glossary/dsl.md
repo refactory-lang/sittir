@@ -5075,9 +5075,7 @@ a stamp made there would be lost. The stamp is the declaration link collects
  * minted `_kw_<name>` hidden-rule SYMBOL — via `registerKwRule`, the same
  * mechanism passes 2-4 already use for keyword promotion — so a mixed
  * node+literal choice becomes all-node-shaped and reaches case 1's
- * ordinary `field('elements', repeat(choice(...)))` wrap instead of
- * staying split across per-kind wire buckets joined by
- * `_concatInSourceOrder`.
+ * ordinary `field('elements', repeat(choice(...)))` wrap.
  *
  * Only called on a REPEAT's direct choice content (never a rule's own
  * top-level dispatch choice, which classifies what variant a single node
@@ -5235,10 +5233,8 @@ a stamp made there would be lost. The stamp is the declaration link collects
  * A separated list — `seq(element, repeat(seq(SEP, element)), optional(SEP))`
  * (tree-sitter's `commaSep1`-style desugaring; `dsl/rule-patterns.ts`'s
  * `separatorOf` is the canonical recognizer for the repeat's own
- * `seq(SEP, element)` content) — routes its LEADING element and every
- * REPEATED element into separate per-kind wire buckets today (no field
- * ties them together), needing `_concatInSourceOrder` to reassemble
- * document order at read time.
+ * `seq(SEP, element)` content) — has no field tying its LEADING element
+ * and its REPEATED elements together.
  *
  * Fields the LEADING element and the repeat's per-iteration element with
  * the SAME name. Tree-sitter tracks a field by name across every position
@@ -5427,12 +5423,8 @@ field labels instead of taking the minted `element` field.
  * (bare hidden-CHOICE symbol content) gets the whole repeat wrapped in
  * `field('<stripped>', repeat(...))`.
  *
- * An unnamed union repeat forces the native read to bucket children
- * per concrete kind and the wrap to re-merge them (`_concatInSourceOrder`),
- * which cannot order text-collapsed scalar elements (no `$span` /
- * `$childIndex`) and does not guarantee cross-kind interleaving even for
- * node stubs. A field-keyed read delivers ONE array in cursor order and
- * never enters that path. The field name is the union symbol's name
+ * A field-keyed read delivers the elements as ONE array in cursor order,
+ * under the parser's field. The field name is the union symbol's name
  * stripped of leading underscores — the same name wrapper-deletion
  * derives for the slot, so storage keys are stable.
  *

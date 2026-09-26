@@ -109,27 +109,6 @@ export function rebuildSpliceGenerated() {
 					statements: [ir.expressionStatement.strict(ir.matchExpression.strict({
 						value: TSKindId.Self,
 						body: ir.matchBlock.strict({
-							lastArm: ir.lastMatchArm.strict({
-								pattern: ir.structPattern.strict({
-									type: ir.scopedTypeIdentifier.strict({
-										path: ir.identifier("SpliceError"),
-										name: ir.identifier("NonCharBoundary"),
-									}),
-									fields: [{ delimiter: Delimiter.None }, ir.fieldPattern.shorthand.strict({
-										name: ir.identifier("start"),
-									}), ir.fieldPattern.shorthand.strict({
-										name: ir.identifier("end"),
-									})],
-								}),
-								value: ir.macroInvocation.strict({
-									macro: ir.identifier("write"),
-									arguments: ir.delimTokenTree.paren.strict(ir.nonSpecialToken.strict(ir.identifier("f")), ir.nonSpecialToken.strict(TSKindId.Comma), ir.nonSpecialToken.strict(ir.stringLiteral.strict({
-										stringOpen: ir.stringOpen("\""),
-										elements: [ir.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
-									}))),
-								}),
-								comma: true,
-							}),
 							matchArm: [ir.matchArm.blockEnding.strict({
 								pattern: ir.structPattern.strict({
 									type: ir.scopedTypeIdentifier.strict({
@@ -171,6 +150,27 @@ export function rebuildSpliceGenerated() {
 									}))),
 								}),
 							})],
+							lastArm: ir.lastMatchArm.strict({
+								pattern: ir.structPattern.strict({
+									type: ir.scopedTypeIdentifier.strict({
+										path: ir.identifier("SpliceError"),
+										name: ir.identifier("NonCharBoundary"),
+									}),
+									fields: [{ delimiter: Delimiter.None }, ir.fieldPattern.shorthand.strict({
+										name: ir.identifier("start"),
+									}), ir.fieldPattern.shorthand.strict({
+										name: ir.identifier("end"),
+									})],
+								}),
+								value: ir.macroInvocation.strict({
+									macro: ir.identifier("write"),
+									arguments: ir.delimTokenTree.paren.strict(ir.nonSpecialToken.strict(ir.identifier("f")), ir.nonSpecialToken.strict(TSKindId.Comma), ir.nonSpecialToken.strict(ir.stringLiteral.strict({
+										stringOpen: ir.stringOpen("\""),
+										elements: [ir.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
+									}))),
+								}),
+								comma: true,
+							}),
 						}),
 					}))],
 				}),

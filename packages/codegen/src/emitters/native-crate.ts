@@ -203,6 +203,15 @@ impl sittir_core::read_node::ReadModel for ${v.Name}Grammar {
     fn keeps_anonymous_children(&self, kind: sittir_core::types::KindId) -> bool {
         render::kind_ids::keeps_anonymous_children(kind)
     }
+
+    fn wire_slot(
+        &self,
+        parent: sittir_core::types::KindId,
+        field: Option<&str>,
+        child: &str,
+    ) -> Option<&'static str> {
+        render::kind_ids::wire_slot(parent, field, child)
+    }
 }
 
 // The engine class itself — parse, read, render, edits, and the live-tree

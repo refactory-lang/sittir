@@ -1523,17 +1523,6 @@ and is read with `readFileSync` on the path.
  *  compiler may not — hence the explicit `readFacts` seam. */
 ```
 
-### `packages/tools/src/validate/common.ts::declaredSlotNameForKey`
-
-```text
-/**
- * The declared slot a read key belongs to. The read stores an unnamed slot
- * under the child's own kind (`_parameter` for `attributed_parameter.content`),
- * and the factory map stamps those spellings as the slot's `wireKeys`; a key
- * that is a declared slot name, or that no slot claims, resolves to itself.
- */
-```
-
 ### `packages/tools/src/validate/common.ts::getChildFactoryArgs`
 
 ```text

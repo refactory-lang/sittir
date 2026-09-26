@@ -3011,6 +3011,49 @@ holes, so the wrap layer splits by them (`splitElidedWrapSlot`) and the
 reader must hand them over. Only an anonymous child is ever dropped — a
 named child sharing the kind id is a member.
 
+### `packages/codegen/src/emitters/kind-id-rust.ts::wire_slot`
+
+The reader↔model naming contract: the reader keys every modelled child by
+its model slot, so a slot has one spelling from the read to the wrap.
+`read_children` asks `wire_slot(parent, field, child)` for every child it
+seats. A field-tagged child routes by its field (`Some(field)`); a named child
+without a field routes by its kind name (`None`); a row exists only where the
+slot's name differs from that key. The field wins over the kind: a
+field-tagged child never routes by its kind, and keeps its field name when no
+row names it. `None` keeps the parser's key: the slot is named for the child,
+or the model has no slot for it (a literal the template prints, or a parent
+with no slots, such as an alias over hidden supertype storage). The wrap reads
+only slot keys, and `_keepModelledSlots` drops any other `_` key. The parent
+is the reader's grammar id (`findOwnKindEntry`), as in `is_slot_separator`;
+the child is keyed by its name, the key the reader stored it under before
+the contract existed. Rows come from `wireSlotRows`.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::wireSlotRows`
+
+The `wire_slot` rows: for every unnamed slot of every catalogued parent, a
+field row per field label (`wireRoutesOf(...).fields`) and a kind row per
+concrete kind (`wireRoutesOf(...).kinds`), each naming `slot.storageName`.
+Throws when one parent routes one field, or one untagged kind, to two slots,
+because the reader's lookup must be a function. Rows whose key already equals
+the slot name are dropped, since the reader's default is that key.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::WireSlotRow`
+
+One `wire_slot` arm: the parent kind id, either the field or the child kind
+name, and the slot name the reader stores the child under.
+
+### `packages/codegen/src/emitters/shared.ts::wireRoutesOf`
+
+The parser keys that land in an unnamed slot: its field labels
+(`valueParseLabelsOf`, the tree-sitter field names routed into the slot) and
+its values' parse kinds expanded to concrete kinds
+(`expandToConcreteParseKinds`), with the labels excluded from the kinds. A
+named slot has no routes, since its field is its name.
+
+### `packages/codegen/src/emitters/shared.ts::WireRoutes`
+
+The fields and the concrete kinds `wireRoutesOf` finds for one slot.
+
 ### `packages/codegen/src/emitters/refine-emit.ts::collectRefineKindInfos`
 
 ```text
@@ -7415,75 +7458,6 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
 	 */
 ```
 
-### `packages/codegen/src/emitters/shared.ts::collectConcreteStorageKeys`
-
-```text
-/**
- * For a kind-origin slot whose `values[]` reference one or more concrete
- * grammar kinds (possibly through a supertype), collect the concrete
- * `_<kind>` storage keys the runtime reader will populate.
- *
- * Background (spec 2026-05-17 kind-named slots):
- *   The native reader routes UNNAMED-but-named CST children by their
- *   `child.kind()` (the CONCRETE kind, e.g. `identifier`, `call_expression`).
- *   That becomes the `_<kind_name>` storage key in the serialized NodeData.
- *
- *   For a grammar rule like `await_expression: seq($._expression, '.', 'await')`
- *   the slot is named after the supertype (`expression`), but the data on the
- *   wire is keyed by the CONCRETE subtype (`_identifier`, `_call_expression`,
- *   ...). Accessing `data._expression` always returns undefined.
- *
- *   This helper expands each value's referenced kind through
- *   `expandToConcreteParseKinds`, which normalizes the leading underscore on
- *   supertype names and reads each supertype's stamped `transitiveParseKinds`
- *   closure (`stampSupertypeClosures`, computed once during assemble — see
- *   `docs/glossary/compiler-model.md`) to enumerate concrete subtypes. The
- *   result is a list of concrete `_<kind>` keys — exactly one of which will
- *   be populated on the data object at runtime.
- *
- * Returns undefined when expansion produces a single key that already
- * matches the slot's nominal `_<slot.name>` — the legacy single-key access
- * is sufficient and no probe shape is needed.
- *
- * Union-slot design §5: a degenerate arm's value is LABEL-routed
- * (`parseName`, {@link valueParseLabelsOf}) — for that value, `storageName !=
- * parseName` by construction, and the wire key IS the literal tree-sitter
- * field name (`read_node.rs` keys a field-tagged child by field name, not by
- * kind). Expanding a label through the supertype tree — treating it as a kind
- * to expand — replaces the literal wire key with subtype kinds that are never
- * populated for a field-tagged child, so label names are unioned in
- * UNEXPANDED. Kind-derived names (including any that happen to equal a label,
- * e.g. `field('declaration', declaration)`) keep expanding as before.
- */
-```
-
-#### body
-
-```text
-// Route by the slot's parse-names — the kinds the parser can actually emit:
-// ref-kinds PLUS alias targets (collect-slots now folds the targets into
-// parseNames). Expand supertypes. No base→variant rewrite: parseNames
-// already carries both the base kind (validation-only polymorph variants,
-// which the parser emits as the base — e.g. type_query's
-// instantiation_expression) AND the alias target (real tree-sitter aliases
-// like decorator, which the parser emits as the target). The old rewrite
-// REPLACED base with target, mis-routing the validation-only case.
-```
-
-### `packages/codegen/src/emitters/wrap.ts::computeConsumedCandidateKeys`
-
-```text
-/**
- * Consumed candidate keys: concrete kind-keyed wire keys any field's
- * `??`-chain reads (`collectConcreteStorageKeys`) that are NOT some field's
- * own canonical `storageKey`. Shared by `emitFieldCarryingWrap` (its
- * `slots` param) and `emitSeparatedListWrap` (its `node.slots` — the same
- * `_slots` source, single- or multi-slot) so both spread bases omit
- * the SAME raw un-dispatched shadow stubs instead of drifting apart — see
- * `_omitWrapKeys`'s doc comment for the masking bug this prevents.
- */
-```
-
 ### `packages/codegen/src/emitters/wrap.ts::_keepModelledSlots`
 
 ```text
@@ -7495,65 +7469,15 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
 // and drops those before they can be spread into the wrapped node.
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::collectWrapWireKeyTypes`
-
-```text
-/**
- * Union the wire-only `_<kind>` storage keys (see `collectConcreteStorageKeys`)
- * across every field of a wrap function, mapped to the SAME element type as
- * the field's own canonical key (`fieldElementType`) — not a generic
- * catch-all. This matters: each probe key feeds the same `??`-coalesce /
- * `_concatInSourceOrder` expression as the field's canonical key, whose
- * result flows (via the generic `normalizeSingularWrapSlot<T>` /
- * `normalizeRepeatedWrapSlot<T>` helpers) into a `drillIn<ElemType>`-typed
- * accessor. A broad probe-key type would widen that inferred `T`, breaking
- * the accessor's explicit generic argument — so precision here isn't
- * cosmetic, it's required for the coalesce chain to type-check.
- *
- * Excludes each field's own canonical `storageKey` (already declared on the
- * canonical `T.X` interface). When the SAME wire key is probed by more than
- * one field with different element types (a key collision that can't
- * actually happen at runtime — a physical key holds one value shape — but
- * isn't structurally impossible to encode), the member types are unioned.
- */
-```
-
-#### body
-
-```text
-// A wire key that coincides with SOME OTHER field's own canonical
-// `storageKey` (e.g. a `block`-aliased field sharing the physical wire
-// key with an unrelated `_block` field — tree-sitter alias-source
-// sharing) is already declared, with its own authoritative type, on the
-// canonical `T.X` interface. Adding a second, differently-typed member
-// for that same key would form an incoherent property-type intersection
-// (e.g. `Block & (SimpleStatements | Newline)`) and break assignability
-// at every existing `T.X`-typed call site. The field that legitimately
-// owns that key already reads it through its canonical declaration; skip
-// re-declaring it here.
-```
-
-#### body
-
-```text
-// `resolveSlotStoreExpr`'s `arity: 'many'` branch documents that each
-// wire candidate key may hold EITHER a scalar (text-collapsed leaf) OR
-// an array of node stubs — that's what `_toArr`/`_concatInSourceOrder`
-// normalize. Mirror that shape here (same widening pattern as
-// `resolveSlotAccessorBody`'s `arrayElemType`), or the declared type
-// would be narrower than what the runtime actually delivers.
-```
-
 ### `packages/codegen/src/emitters/wrap.ts::buildWrapParamType`
 
 ```text
 /**
  * Build the wrap function's `data` parameter type: the canonical `T.X`
- * interface widened with the wire-only keys the function body actually
- * reads/writes (`_<concreteKind>` probe keys from `collectWrapWireKeyTypes`,
- * and/or `$other`). The canonical interface intentionally omits these —
- * they're wire-shape artifacts, not part of the public `T.X` surface — so
- * the wrap body needs a widened LOCAL view. All added members are optional,
+ * interface, widened with `$other` when the function body reads it. The
+ * canonical interface intentionally omits `$other` — it is a wire-shape
+ * artifact, not part of the public `T.X` surface — so the wrap body needs a
+ * widened LOCAL view. The added member is optional,
  * so `T.X` values remain assignable to the widened type (no cast needed at
  * existing `T.X`-typed call sites).
  *
@@ -7605,16 +7529,12 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
 /**
  * Build the synthetic `AssembledNonterminal` representing a
  * separatedList node's `elements` as a positional (unnamed) repeated
- * slot — routes through the SAME storage-info / concrete-kind-expansion
- * machinery real 'branch' repeated content fields use (`resolveFieldStorageInfo`,
- * `expandToConcreteParseKinds`), so `_content`'s READ SOURCE matches
- * whatever kind-named wire keys the native reader actually populates for
- * these elements (verified empirically — see `collectSeparatedListContentStorageKeys`).
- * `fieldName` is intentionally left `undefined` (positional/unnamed) so
- * `valueParseKindsOf` — not a literal field name — drives that expansion;
- * the OUTPUT storage key is forced to the fixed `_content` name separately
- * (see `emitSeparatedListWrap`), decoupling "what we call it" from "where
- * the data actually lives on the wire".
+ * slot — routes through the SAME storage-info machinery real 'branch'
+ * repeated content fields use (`resolveFieldStorageInfo`), so the elements'
+ * types resolve as a positional repeated slot's would. `fieldName` is
+ * intentionally left `undefined` (positional/unnamed); the reader stores
+ * the elements under the list's slot name (`kind-id-rust.ts::wireSlotRows`),
+ * which is the key the wrap reads.
  *
  * Exported for reuse by factories.ts, which needs the SAME synthetic
  * "elements as an unnamed repeated slot" to resolve the `elements`
@@ -7623,84 +7543,13 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
  */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::collectSeparatedListContentStorageKeys`
-
-```text
-/**
- * Concrete `_<kind>` wire storage keys for a separatedList's content
- * elements. Deliberately NOT `collectConcreteStorageKeys` (which elides
- * the result to `undefined` when the expansion matches the slot's OWN
- * nominal name) — `_content` is a fixed target name that never matches
- * the elements' real kind name, so that elision would silently produce
- * `data._content` (a key that does not exist on the wire; verified via
- * `probe-kind` — the native reader keys unnamed repeated children by
- * their CONCRETE kind, e.g. `data._with_item` / `data._identifier`, never
- * by a generic slot name). Always returns the real expansion instead.
- */
-```
-
-#### body
-
-```text
-// A fielded element arm routes by its field label, not its kind — the
-// raw read stores those elements under `_<label>` (the value's stamped
-// `parseName`), so the label is a capture key alongside the kind buckets.
-```
-
-### `packages/codegen/src/emitters/wrap.ts::collectSeparatedListWireKeyTypes`
-
-```text
-/**
- * Union the wire-only `_<kind>` storage keys a separatedList wrap function
- * body actually reads (`collectSeparatedListContentStorageKeys`) to the
- * content slot's own element type — mirrors the SAME wire-widening pattern
- * `emitFieldCarryingWrap`'s per-field version needs for real 'branch' fields
- * (see this function's commit message for provenance).
- *
- * Excludes any candidate key that coincides with a member `T.<TypeName>`
- * already declares (its OWN canonical `_<name>` storage key, from whatever
- * naming the Task-2 `_slots` stub's `types.ts` derivation picked for this
- * kind — e.g. `_with_item` for `WithClauseBare`, already typed
- * `NonEmptyArray<WithItem>` there) — re-declaring that same key with a
- * different (optional, elemType-only) shape here would form an incoherent
- * intersection.
- *
- * The widened type is derived from `canonicalField` — `node.slots`'s own
- * slot, the SAME `_slots`-derived source `types.ts` types `T.<TypeName>`'s
- * declared members from (see `emitSeparatedListWrap`'s Bug B fix comment) —
- * not from `contentSlot`. `contentSlot` (`buildSeparatedListContentSlot`)
- * is a raw, pre-simplify-normalization view used here only to enumerate the
- * real wire-level `_<kind>` discriminator keys; its per-kind element types
- * can disagree with the post-normalization kind `types.ts` settled on for
- * an equivalent choice arm (e.g. a merged/aliased sibling), which is
- * exactly the mismatch this widening exists to avoid re-introducing.
- */
-```
-
-#### body
-
-```text
-// `resolveSlotStoreExpr` always appends the target slot's OWN storage
-// key as a final probe fallback (its normal behavior for ANY slot whose
-// nominal key isn't already among the concrete candidates — see its doc
-// comment) — so `data[fallbackStorageKey]` is read regardless, even
-// though it is never a REAL wire key. `fallbackStorageKey` is the
-// model's OWN derived slot name (Bug B fix — `node.slots`'s real
-// storage key, e.g. `_pattern`, NOT a hardcoded `_content`; single-field
-// kinds pass their sole field's storage key here). Widen for it too
-// unless it already happens to be this kind's canonical key (the common
-// case for genuinely multi-kind content, where `types.ts`'s own
-// `_slots`-derived naming already fell back to the same generic name).
-```
-
 ### `packages/codegen/src/emitters/wrap.ts::buildSeparatedListWrapParamType`
 
 ```text
 /**
  * Build a separatedList wrap function's `data` parameter type: the
  * canonical `T.<TypeName>` interface widened with the wire-only members the
- * function body actually reads — the concrete-kind content probe keys
- * (`collectSeparatedListWireKeyTypes`), plus `$other` and `$span` (both read
+ * function body actually reads — `$other` and `$span` (both read
  * directly by `_hasSeparatorFlank` / `_separatorKindOf`, and neither
  * declared on `T.<TypeName>` — that interface is the public, de-hoisted
  * surface; `$other`/`$span` are raw-wire-only). All added members are
@@ -7732,12 +7581,10 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
  * `object_type_content_semi` — the only 5 real `'list'` kinds
  * across all 3 grammars as of this task):
  *
- * - `_content`: the elements array. The wire has NO `_content` key —
- *   the native reader buckets unnamed repeated children by their CONCRETE
- *   kind (`data._with_item`, `data._identifier`, ...; see
- *   `collectSeparatedListContentStorageKeys`). Populated via the same
- *   `resolveSlotDrillExprs` a real repeated field uses, just targeting a
- *   fixed output key instead of the kind-projected name.
+ * - `_content`: the elements array, read from the list's slot key, where
+ *   the reader stores the elements (`kind-id-rust.ts::wireSlotRows`).
+ *   Populated via the same `resolveSlotDrillExprs` a real repeated field
+ *   uses.
  *
  * - `_leading_sep` / `_trailing_sep`: whether an optional flank separator
  *   is present in THIS instance, verified against real
@@ -7790,34 +7637,13 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
 #### body
 
 ```text
-// `node.slots` is the SAME source `types.ts`
-// derives `T.<TypeName>`'s declared members from — the canonical-key
-// exclusion set for `collectSeparatedListWireKeyTypes` must match it
-// exactly, or a still-declared key gets redundantly (and incoherently)
-// re-widened.
-```
-
-#### body
-
-```text
 // Multi-field kinds (see doc comment above) route each field through
 // emitFieldStorageLines/emitFieldAccessorLines separately — `_content`
 // here is ONLY the internal `_hasSeparatorFlank`/`_separatorKindOf`
-// probe bucket, never a real storage key or accessor. Its candidate
-// keys can span more than one field's element type (e.g. TypeScript's
+// probe bucket, never a real storage key or accessor. Its elements
+// can span more than one field's element type (e.g. TypeScript's
 // enum_body_elements mixes PropertyName-kind and EnumAssignment-kind
-// keys), which don't share a common generic T.
-```
-
-#### body
-
-```text
-// Same consumed-key omission as `emitFieldCarryingWrap` (shared via
-// `computeConsumedCandidateKeys`) — a raw kind-keyed wire stub any real
-// field's `??`-chain consumed (single-field: `canonical`/`_content`'s own
-// source keys; multi-field: each of `node.slots`) must not survive on
-// the spread base, or it wins the validator's deep-walk dedupe over the
-// canonical `_<name>` key it was folded into (see `_omitWrapKeys`).
+// elements), which don't share a common generic T.
 ```
 
 #### body
@@ -8804,16 +8630,6 @@ seat the child into a config or tuple take the value arguments only.
  *   `this._<name>` directly — the literal declares the property so
  *   TS resolves it from the inferred literal type).
  */
-```
-
-### `packages/codegen/src/emitters/wrap.ts::candidateStorageKeys`
-
-```text
-/**
-	 * Optional list of concrete `_<kind>` storage keys to probe in lieu of
-	 * the slot's nominal single key. When set, the storeExpr becomes a
-	 * `??`-coalesce chain over these keys. See `collectConcreteStorageKeys`.
-	 */
 ```
 
 ### `packages/codegen/src/emitters/wrap.ts::reclaimKindIdsExpr`
@@ -13651,76 +13467,6 @@ folds by text unconditionally.
 // `_'` / `_$` / `_.` — all valid object keys but invalid dotted accessors.
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::resolveSlotStoreExpr`
-
-#### body
-
-```text
-// Probe the slot's own canonical storage key WITH PRIORITY over the
-// concrete-kind candidate keys, rather than as a final fallback. On a
-// genuinely fresh wire read the reader never populates the canonical
-// key (only the concrete-kind-keyed candidates), so this is a no-op for
-// that case. But `$with` setters re-invoke the wrap function via
-// `{ ...data, [storageKey]: v }` (see `emitInlineWithProperty`), which
-// spreads the ORIGINAL data — carrying the stale candidate-key values
-// from the original read — alongside the newly patched canonical key.
-// Probing candidates first would mask the patched value entirely
-// (singular: the stale `??` operand wins) or merge stale-and-patched
-// (repeated: concat includes both) — the canonical key must win
-// outright once populated. Exclude it from the candidate list itself
-// so it isn't probed twice.
-```
-
-#### body
-
-```text
-// Repeated supertype-list slot: the runtime reader populates EACH
-// concrete-kind wire field as a separate array (e.g. `_primitive_type:
-// ["i32"]`, `_type_identifier: ["String"]`). A ??-coalesce returns
-// only the first non-null source, dropping the rest.
-// Concatenate ALL source arrays instead, preserving child order
-// (each kind-keyed array is already in source order; cross-kind
-// ordering within a single slot relies on child position in the CST,
-// which the reader preserves within each kind bucket — interleaved
-// ordering across kinds is not guaranteed, but all elements are kept).
-//
-// Each wire field may be a scalar value (text-collapsed leaf, e.g.
-// "i32" for primitive_type) OR an array of node stubs. The native
-// reader buckets by kind, so a plain declaration-order concat
-// interleaves cross-kind members wrongly (e.g. an object_type's
-// `call_signature` + `property_signature` swap). `_concatInSourceOrder`
-// normalizes each source (via _toArr) and STABLE-sorts the result by
-// CST position (`$span.start` / `$childIndex`) to restore source order.
-//
-// The canonical key, once populated by a `$with` setter, is
-// authoritative on its own — normalize it (scalar-or-array, via the
-// same `_toArr` the concat path uses) rather than merging it into
-// the candidate concat.
-// Pair each candidate storage key with its read-route name (the
-// storage key minus the `_` prefix — the same name the reader
-// records in `$slotOrder`), so `_interleaveBySlotOrder` can walk
-// the parent's stamped document order with per-bucket cursors.
-```
-
-#### body
-
-```text
-// See resolveSlotDrillExprs's ResolveSlotDrillConfig.forceUnknownElement
-// doc comment: a multi-field AssembledList's internal
-// `_content` probe can combine candidate keys from more than one real
-// slot with no common element type — `_interleaveBySlotOrder`'s own
-// generic inference (independent of the outer normalizeRepeatedWrapSlot
-// call) needs the same explicit widening, or it silently picks one
-// candidate's type and rejects the others.
-```
-
-#### body
-
-```text
-// Singular slot: exactly one of these will be populated on a fresh
-// read; the canonical key wins outright once a `$with` setter patches it.
-```
-
 ### `packages/codegen/src/emitters/wrap.ts::emitTransparentSupertypeWrap`
 
 The kinds the wrapper accepts as a child are the supertype's direct subtypes plus everything reachable through nested supertypes (`transitiveParseKinds`): a parser node arrives under the concrete arm kind (`integer_literal_decimal`), never under the supertype that groups it, so a wrapper listing only direct subtypes returned the node empty.
@@ -13770,25 +13516,6 @@ The kinds the wrapper accepts as a child are the supertype's direct subtypes plu
 ```
 
 After the kind-id pass-through the node is read through a typed local (`_NodeData` plus a `$other` typed as the member union), never the narrowed parameter: a supertype whose members are all kind-id valued would otherwise narrow the parameter to `never`. A supertype whose subtypes are all tokens or keywords has nothing to drill into at all, and its wrap returns the value unchanged.
-
-### `packages/codegen/src/emitters/wrap.ts::isFieldBackedSeparatedList`
-
-```text
-// A 'list'-classified kind's content position is genuinely field-backed when
-// wrapper-deletion stamped a `fieldName` directly onto its simplified rule
-// (carried down from the REPEAT wrapper it deleted — see
-// `compiler/model/node-map.ts`'s `AssembledList` doc comment).
-// That's a real tree-sitter `field()` the native reader always populates —
-// confirmed empirically (a fielded list kind's canonical storage key is
-// present on every genuine parse) — as opposed to a kind
-// classified purely by structural shape (`isSeparatedListShape`,
-// compiler/assemble.ts) with no grammar-level field backing it, where the
-// canonical key is a compiler-only abstraction and the candidate-kind-bucket
-// keys below are the ONLY thing a fresh read ever populates. Conflating the
-// two (dropping candidates whenever there's a "single" canonical slot,
-// regardless of whether it's a real field) breaks the many 'list'-classified
-// kinds that fall in the second bucket — verified the hard way.
-```
 
 ### `packages/codegen/src/emitters/wrap.ts::separatorIdsExprOf`
 
@@ -13850,17 +13577,6 @@ After the kind-id pass-through the node is read through a typed local (`_NodeDat
 // When $with setters are present, we hoist the literal to `const _node`
 // so the closures inside $with can reference it (arrow functions capture
 // the variable by reference; _node is initialized before any setter runs).
-```
-
-#### body
-
-```text
-// Consumed candidate keys: concrete kind-keyed wire keys any field's
-// `??`-chain reads (collectConcreteStorageKeys) that are NOT some field's
-// own canonical storageKey. Omit them from the spread base so the wrapped
-// object carries exactly ONE copy of each child — the canonical `_<name>`
-// assignment below — never a raw un-dispatched shadow stub (see
-// `_omitWrapKeys`' doc comment).
 ```
 
 #### body
@@ -13950,13 +13666,6 @@ normalization; a node that already carries slot storage (built or edited) is lef
 #### body
 
 ```text
-// `_interleaveBySlotOrder` falls back to `_concatInSourceOrder` (and both
-// call `_toArr`), so emit each helper whenever a caller above it is used.
-```
-
-#### body
-
-```text
 // A reference site can materialize the enum choice as its OWN
 // wrapper node (a dedicated kind_id distinct from any member
 // literal's id, carrying which member matched only in `$text`
@@ -14027,7 +13736,7 @@ normalization; a node that already carries slot storage (built or edited) is lef
 // Kinds absent from the NodeMap entirely (no `_wrapTable` entry — e.g.
 // python's `case_pattern_group1`, a hidden alias-mint wrapper the
 // grammar produces but our model doesn't represent) have no dedicated
-// wrap function to drill into their own kind-named-slot children.
+// wrap function to drill into their own children.
 // `read_node.rs`'s one-level read (`read_children` / `read_child_stub`)
 // leaves an unlabeled named child with sub-structure as a shallow stub
 // (`$nodeHandle`/`$childIndex`, no fields of its own) — normally a
@@ -14039,9 +13748,9 @@ normalization; a node that already carries slot storage (built or edited) is lef
 // (confirmed via `tool probe-kind`: python's `case_pattern` → `content`
 // → `_dotted_name` arrives as `{$type, $text, $span, ...}` only, no
 // `_identifier`, because `case_pattern_group1` triggers exactly this
-// fallback). Drill in every `_`-prefixed property here — mirrors
-// `_firstKindKeyedWrapChild`'s kind-named-slot convention above, just
-// applied unconditionally instead of gated to one matching kind.
+// fallback). Drill in every `_`-prefixed property here, whatever key the
+// reader stored it under: a slot name, or the child's kind where the
+// parent has no slot for it.
 ```
 
 #### body

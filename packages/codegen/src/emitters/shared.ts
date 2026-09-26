@@ -973,22 +973,16 @@ export function expandToConcreteParseKinds(names: readonly string[], nodeMap: No
 	return expanded;
 }
 
-export function collectConcreteStorageKeys(
-	slot: AssembledNonterminal,
-	nodeMap: NodeMap
-): readonly string[] | undefined {
-	if (!slot.isUnnamed) return undefined;
-	const labelNames = valueParseLabelsOf(slot);
-	const kindNames = valueParseKindsOf(slot).filter((k) => !labelNames.includes(k));
-	if (labelNames.length === 0 && kindNames.length === 0) return undefined;
-	const concrete = kindNames.length > 0 ? expandToConcreteParseKinds(kindNames, nodeMap) : [];
-	if (labelNames.length === 0 && concrete.length === 0) return undefined;
-	const storageKeys = [...new Set([...labelNames, ...concrete].map((k) => `_${k}`))];
-	const legacyKey = `_${slot.name}`;
-	if (storageKeys.length === 1 && storageKeys[0] === legacyKey) {
-		return undefined;
-	}
-	return storageKeys;
+export interface WireRoutes {
+	readonly fields: readonly string[];
+	readonly kinds: readonly string[];
+}
+
+export function wireRoutesOf(slot: AssembledNonterminal, nodeMap: NodeMap): WireRoutes {
+	if (!slot.isUnnamed) return { fields: [], kinds: [] };
+	const fields = valueParseLabelsOf(slot);
+	const kindNames = valueParseKindsOf(slot).filter((k) => !fields.includes(k));
+	return { fields, kinds: kindNames.length > 0 ? expandToConcreteParseKinds(kindNames, nodeMap) : [] };
 }
 
 export function classifyFactoryEmission(

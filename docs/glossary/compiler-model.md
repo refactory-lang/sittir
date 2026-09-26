@@ -777,8 +777,8 @@ Distinct from `hidden`, which means "has no factory".
  * expansion of the label (treating it as a kind to expand, e.g. `declaration`
  * as the supertype) would replace the literal wire key with its subtype kinds
  * and never match. Consumers that expand `parseNames` through the supertype
- * tree (`wrap.ts`'s `collectConcreteStorageKeys`) must union these back in
- * UNEXPANDED, as literal keys. Empty for every non-PR-1.5 slot.
+ * tree (`shared.ts::wireRoutesOf`) keep these UNEXPANDED, as field routes.
+ * Empty for a slot no field label routes into.
  */
 ```
 

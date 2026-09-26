@@ -1544,16 +1544,6 @@ function createChildrenConfigSlotModel(
 	return createUnnamedChildrenSlotModel(slotModelArityFromMeta(slotMeta, true));
 }
 
-function declaredSlotNameForKey(parentKind: string | undefined, key: string, opts: NodeToConfigOpts): string {
-	const slots = parentKind ? opts.factorySlots?.[parentKind] : undefined;
-	if (!slots || key in slots) return key;
-	const wireKey = `_${key}`;
-	for (const [name, meta] of Object.entries(slots)) {
-		if (meta.wireKeys?.includes(wireKey)) return name;
-	}
-	return key;
-}
-
 function hasDeclaredFactorySlot(parentKind: string | undefined, name: string, opts: NodeToConfigOpts): boolean {
 	if (!parentKind) return false;
 	if (opts.factorySlots?.[parentKind]?.[name] !== undefined) return true;
@@ -1846,9 +1836,8 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 			namedSlotEntries.push([key.slice(1), rec[key]]);
 		}
 	}
-	for (const [key, v] of namedSlotEntries) {
+	for (const [k, v] of namedSlotEntries) {
 		if (v === undefined) continue;
-		const k = declaredSlotNameForKey(parentKind, key, opts);
 		if (!isIdentifierShapedFieldKey(k)) continue;
 		if (!hasDeclaredFactorySlot(parentKind, k, opts)) continue;
 		const slot = createNamedConfigSlotModel(parentKind, k, opts.factorySlots);

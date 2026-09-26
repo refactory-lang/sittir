@@ -47,26 +47,6 @@ function _projectLexed<D extends object>(data: D, interior: TokenInterior, kind:
 	return out as D;
 }
 
-// Drop CONSUMED raw candidate storage keys from the spread base. A
-// field whose `??`-chain reads concrete kind-keyed wire keys
-// (`_binary_expression`, …) copies the winner into its canonical
-// `_<name>` key — leaving the raw stub on the object gives generic
-// key-walkers (the validator deep walk dedupes candidates by node
-// coords) a never-wrap-dispatched shadow copy that can win by
-// Object.keys insertion order and mask the canonical one (the
-// deep-read Missing-field class). Copy-on-first-delete keeps the
-// no-candidate fast path allocation-free.
-function _omitWrapKeys<T extends object>(data: T, keys: readonly string[]): T {
-	let out: T = data;
-	for (const key of keys) {
-		if (key in out) {
-			if (out === data) out = { ...data };
-			delete (out as Record<string, unknown>)[key];
-		}
-	}
-	return out;
-}
-
 const WRAP_WARNING_MODE = typeof process !== 'undefined' && process.env?.SITTIR_WRAP_WARNING_MODE === '1';
 interface WrapDiagnosticContext {
 	tree?: TreeHandle;
@@ -213,70 +193,6 @@ function normalizeRepeatedWrapSlot<T>(
 	if (nonEmpty && items.length === 0)
 		return handleWrapViolation(`repeated slot ${JSON.stringify(slotName)} requires at least one value`, items, context);
 	return items;
-}
-// _toArr — normalize a single wire field (may be a scalar value or an
-// array of node stubs) to a readonly array. Used by repeated supertype-
-// list slot concatenation so that spreading a text-collapsed leaf (e.g.
-// primitive_type "i32" arriving as the string "i32") does not split it
-// character-by-character.
-function _toArr<T>(value: T | readonly T[] | undefined): readonly T[] {
-	if (value == null) return [];
-	return Array.isArray(value) ? (value as readonly T[]) : [value as T];
-}
-// _concatInSourceOrder — concatenate the per-kind wire arrays of a
-// repeated heterogeneous-union slot, then STABLE-sort by CST position.
-// The native reader buckets repeated unfielded children by kind, so a
-// plain declaration-order concat loses cross-kind source order. Each
-// node stub carries `$span.start` (byte offset) / `$childIndex` (position
-// in parent); sort on those to restore order. Text-collapsed scalar
-// leaves lack both → sorted to the end, stable among themselves (so a
-// homogeneous single-bucket slot is a no-op).
-function _concatInSourceOrder<T>(parts: readonly (T | readonly T[] | undefined)[]): readonly T[] {
-	const flat = parts.flatMap((p) => _toArr(p));
-	const pos = (e: T): number => {
-		const n = e as unknown as { $span?: { start?: number }; $childIndex?: number };
-		return n?.$span?.start ?? n?.$childIndex ?? Number.MAX_SAFE_INTEGER;
-	};
-	return flat
-		.map((e, i) => [e, i] as const)
-		.sort(([a, ai], [b, bi]) => pos(a) - pos(b) || ai - bi)
-		.map(([e]) => e);
-}
-// _interleaveBySlotOrder — reassemble a repeated heterogeneous-union
-// slot's per-route wire buckets into document order by walking the
-// parent's `$slotOrder` stamp (route names in child order, emitted by
-// the native reader on multi-bucket parents) with a cursor per bucket.
-// Text-collapsed scalar leaves carry no `$span`, so a position sort
-// cannot order them — the stamp is the only cross-bucket order source.
-// Nodes without the stamp (older captures) fall back to the position
-// sort; elements the stamp does not cover are appended in bucket order
-// so a mismatch never drops members.
-function _interleaveBySlotOrder<T>(
-	data: { readonly $slotOrder?: readonly string[] },
-	pairs: readonly (readonly [string, T | readonly T[] | undefined])[]
-): readonly T[] {
-	const order = data.$slotOrder;
-	if (!Array.isArray(order)) return _concatInSourceOrder(pairs.map(([, v]) => v));
-	const buckets = new Map<string, readonly T[]>();
-	for (const [route, value] of pairs) {
-		if (value === undefined) continue;
-		buckets.set(route, _toArr(value));
-	}
-	const cursors = new Map<string, number>();
-	const out: T[] = [];
-	for (const route of order) {
-		const bucket = buckets.get(route);
-		if (!bucket) continue;
-		const i = cursors.get(route) ?? 0;
-		if (i < bucket.length) {
-			out.push(bucket[i] as T);
-			cursors.set(route, i + 1);
-		}
-	}
-	for (const [route, bucket] of buckets) {
-		for (let i = cursors.get(route) ?? 0; i < bucket.length; i++) out.push(bucket[i] as T);
-	}
-	return out;
 }
 // The wrap layer's method engine. A wrapped node carries accessor
 // methods over storage the reader spelled its own way, so
@@ -850,26 +766,19 @@ export function wrapImmediateString(data: T.ImmediateString, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapStringContent(
-	data: T.StringContent & {
-		readonly _escape_sequence?: '[^"\\\\\\n]+' | T.EscapeSequence | readonly ('[^"\\\\\\n]+' | T.EscapeSequence)[];
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_escape_sequence']);
+export function wrapStringContent(data: T.StringContent, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.StringContent as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_escape_sequence']),
+			...data,
 			$type: TSKindId.StringContent as const,
-			_content: normalizeRepeatedWrapSlot(
-				data._content !== undefined
-					? _toArr(data._content)
-					: _interleaveBySlotOrder(data as _NodeData, [['escape_sequence', data._escape_sequence]]),
-				false,
-				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeRepeatedWrapSlot(data._content, false, 'content', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			contents() {
 				return drillInAll<'[^"\\\\\\n]+' | T.EscapeSequence>(
@@ -942,28 +851,12 @@ export function wrapComment(data: T.Comment, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapList(
-	data: T.List & {
-		readonly _quantifier?:
-			| T.Capture
-			| TSKindId.Star
-			| TSKindId.Plus
-			| TSKindId.Qmark
-			| readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
-		readonly _capture?:
-			| T.Capture
-			| TSKindId.Star
-			| TSKindId.Plus
-			| TSKindId.Qmark
-			| readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_definitions', '_content', '_quantifier', '_capture']);
+export function wrapList(data: T.List, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_definitions', '_content']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.List as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_capture', '_quantifier']),
+			...data,
 			$type: TSKindId.List as const,
 			_definitions: normalizeRepeatedWrapSlot(data._definitions, true, 'definitions', {
 				tree,
@@ -973,12 +866,7 @@ export function wrapList(
 			}),
 			_content: projectMixedEnumStorage(
 				normalizeRepeatedWrapSlot(
-					(data._content !== undefined
-						? _toArr(data._content)
-						: _interleaveBySlotOrder(data as _NodeData, [
-								['quantifier', data._quantifier],
-								['capture', data._capture]
-							])) ??
+					data._content ??
 						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
 							TSKindId.Star,
 							TSKindId.Plus,
@@ -1013,28 +901,12 @@ export function wrapList(
 	return _node;
 }
 
-export function wrapGrouping(
-	data: T.Grouping & {
-		readonly _quantifier?:
-			| T.Capture
-			| TSKindId.Star
-			| TSKindId.Plus
-			| TSKindId.Qmark
-			| readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
-		readonly _capture?:
-			| T.Capture
-			| TSKindId.Star
-			| TSKindId.Plus
-			| TSKindId.Qmark
-			| readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_grouping_group', '_content', '_quantifier', '_capture']);
+export function wrapGrouping(data: T.Grouping, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_grouping_group', '_content']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Grouping as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_capture', '_quantifier']),
+			...data,
 			$type: TSKindId.Grouping as const,
 			_grouping_group: normalizeRepeatedWrapSlot(data._grouping_group, true, 'grouping_group', {
 				tree,
@@ -1044,12 +916,7 @@ export function wrapGrouping(
 			}),
 			_content: projectMixedEnumStorage(
 				normalizeRepeatedWrapSlot(
-					(data._content !== undefined
-						? _toArr(data._content)
-						: _interleaveBySlotOrder(data as _NodeData, [
-								['quantifier', data._quantifier],
-								['capture', data._capture]
-							])) ??
+					data._content ??
 						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
 							TSKindId.Star,
 							TSKindId.Plus,
@@ -1085,28 +952,12 @@ export function wrapGrouping(
 	return _node;
 }
 
-export function wrapMissingNode(
-	data: T.MissingNode & {
-		readonly _quantifier?:
-			| T.Capture
-			| TSKindId.Star
-			| TSKindId.Plus
-			| TSKindId.Qmark
-			| readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
-		readonly _capture?:
-			| T.Capture
-			| TSKindId.Star
-			| TSKindId.Plus
-			| TSKindId.Qmark
-			| readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_name', '_content', '_quantifier', '_capture']);
+export function wrapMissingNode(data: T.MissingNode, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_name', '_content']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.MissingNode as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_capture', '_quantifier']),
+			...data,
 			$type: TSKindId.MissingNode as const,
 			_name: normalizeSingularWrapSlot(data._name, 'name', false, data.$type, {
 				tree,
@@ -1116,12 +967,7 @@ export function wrapMissingNode(
 			}),
 			_content: projectMixedEnumStorage(
 				normalizeRepeatedWrapSlot(
-					(data._content !== undefined
-						? _toArr(data._content)
-						: _interleaveBySlotOrder(data as _NodeData, [
-								['quantifier', data._quantifier],
-								['capture', data._capture]
-							])) ??
+					data._content ??
 						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
 							TSKindId.Star,
 							TSKindId.Plus,
@@ -1156,28 +1002,12 @@ export function wrapMissingNode(
 	return _node;
 }
 
-export function wrapAnonymousNode(
-	data: T.AnonymousNode & {
-		readonly _quantifier?:
-			| T.Capture
-			| TSKindId.Star
-			| TSKindId.Plus
-			| TSKindId.Qmark
-			| readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
-		readonly _capture?:
-			| T.Capture
-			| TSKindId.Star
-			| TSKindId.Plus
-			| TSKindId.Qmark
-			| readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_name', '_content', '_quantifier', '_capture']);
+export function wrapAnonymousNode(data: T.AnonymousNode, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_name', '_content']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.AnonymousNode as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_capture', '_quantifier']),
+			...data,
 			$type: TSKindId.AnonymousNode as const,
 			_name: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
@@ -1190,12 +1020,7 @@ export function wrapAnonymousNode(
 			),
 			_content: projectMixedEnumStorage(
 				normalizeRepeatedWrapSlot(
-					(data._content !== undefined
-						? _toArr(data._content)
-						: _interleaveBySlotOrder(data as _NodeData, [
-								['quantifier', data._quantifier],
-								['capture', data._capture]
-							])) ??
+					data._content ??
 						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
 							TSKindId.Star,
 							TSKindId.Plus,
@@ -1230,26 +1055,12 @@ export function wrapAnonymousNode(
 	return _node;
 }
 
-export function wrapNamedNode(
-	data: T.NamedNode & {
-		readonly _named_node_group_children?: T.NamedNodeGroup;
-		readonly _named_node_group_anchored_last?: T.NamedNodeGroup;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_name',
-		'_named_node_arm',
-		'_named_node_group',
-		'_quantifier',
-		'_capture',
-		'_named_node_group_children',
-		'_named_node_group_anchored_last'
-	]);
+export function wrapNamedNode(data: T.NamedNode, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_name', '_named_node_arm', '_named_node_group', '_quantifier', '_capture']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.NamedNode as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_named_node_group_anchored_last', '_named_node_group_children']),
+			...data,
 			$type: TSKindId.NamedNode as const,
 			_name: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._name, 'name', false, data.$type, {
@@ -1266,13 +1077,12 @@ export function wrapNamedNode(
 				slotName: 'named_node_arm',
 				span: (data as _NodeData).$span
 			}),
-			_named_node_group: normalizeSingularWrapSlot(
-				data._named_node_group ?? data._named_node_group_children ?? data._named_node_group_anchored_last,
-				'named_node_group',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'named_node_group', span: (data as _NodeData).$span }
-			),
+			_named_node_group: normalizeSingularWrapSlot(data._named_node_group, 'named_node_group', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'named_node_group',
+				span: (data as _NodeData).$span
+			}),
 			_quantifier: projectKindEnumStorage(
 				normalizeRepeatedWrapSlot(data._quantifier, false, 'quantifier', {
 					tree,
@@ -1383,22 +1193,16 @@ export function wrapNegatedField(data: T.NegatedField, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapPredicate(
-	data: T.Predicate & { readonly _pound?: '#' | '.'; readonly _dot?: '#' | '.' },
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_immediate_identifier', '_type', '_parameters', '_pound', '_dot']);
+export function wrapPredicate(data: T.Predicate, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content', '_immediate_identifier', '_type', '_parameters']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Predicate as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_dot', '_pound']),
+			...data,
 			$type: TSKindId.Predicate as const,
 			_content: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._content ??
-						data._pound ??
-						data._dot ??
-						readTerminalFromOther<'#' | '.'>(data, [TSKindId.Pound, TSKindId.Dot]),
+					data._content ?? readTerminalFromOther<'#' | '.'>(data, [TSKindId.Pound, TSKindId.Dot]),
 					'content',
 					true,
 					data.$type,
@@ -1529,58 +1333,18 @@ export function wrapNamedNodeExpressionArm(data: T.NamedNodeExpressionArm, tree:
 	return _node;
 }
 
-export function wrapGroupingGroup(
-	data: T.GroupingGroup & {
-		readonly _named_node?: T.Definition | T.GroupExpressionArm;
-		readonly _anonymous_node?: T.Definition | T.GroupExpressionArm;
-		readonly _missing_node?: T.Definition | T.GroupExpressionArm;
-		readonly _grouping?: T.Definition | T.GroupExpressionArm;
-		readonly _predicate?: T.Definition | T.GroupExpressionArm;
-		readonly _list?: T.Definition | T.GroupExpressionArm;
-		readonly _field_definition?: T.Definition | T.GroupExpressionArm;
-		readonly _group_expression_arm?: T.Definition | T.GroupExpressionArm;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_group_expression',
-		'_named_node',
-		'_anonymous_node',
-		'_missing_node',
-		'_grouping',
-		'_predicate',
-		'_list',
-		'_field_definition',
-		'_group_expression_arm'
-	]);
+export function wrapGroupingGroup(data: T.GroupingGroup, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_group_expression']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_anonymous_node',
-				'_field_definition',
-				'_group_expression_arm',
-				'_grouping',
-				'_list',
-				'_missing_node',
-				'_named_node',
-				'_predicate'
-			]),
+			...data,
 			$type: TSKindId.GroupingGroup as const,
-			_group_expression: normalizeSingularWrapSlot(
-				data._group_expression ??
-					data._named_node ??
-					data._anonymous_node ??
-					data._missing_node ??
-					data._grouping ??
-					data._predicate ??
-					data._list ??
-					data._field_definition ??
-					data._group_expression_arm,
-				'group_expression',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'group_expression', span: (data as _NodeData).$span }
-			),
+			_group_expression: normalizeSingularWrapSlot(data._group_expression, 'group_expression', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'group_expression',
+				span: (data as _NodeData).$span
+			}),
 
 			groupExpression() {
 				return drillIn<T.Definition | T.GroupExpressionArm>(this._group_expression, tree);
@@ -1833,7 +1597,7 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// catalog-less kind (the deprecated JS diagnostic lane stamps those
 	// as strings), which never had a table entry to reach.
 	const fn = typeof data.$type === 'number' ? _wrapTable[data.$type] : undefined;
-	if (!fn) return _drillUnknownKindChildren(data, tree); // unknown kind — still drill in its kind-named-slot children
+	if (!fn) return _drillUnknownKindChildren(data, tree);
 	return fn(data, tree);
 }
 

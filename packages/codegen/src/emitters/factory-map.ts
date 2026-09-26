@@ -4,7 +4,6 @@ import { deriveSlotCardinality, resolveSlotAliasPairs } from '../compiler/model/
 import {
 	classifyFactoryShape,
 	collectAliasSourceKinds,
-	collectConcreteStorageKeys,
 	forwardedTargetKind,
 	resolveFactoryFieldNames,
 	isAuthoredCompound,
@@ -22,7 +21,6 @@ export interface FactorySlotMeta {
 	readonly required: boolean;
 	readonly multiple: boolean;
 	readonly nonEmpty: boolean;
-	readonly wireKeys?: readonly string[];
 	readonly registered?: boolean;
 }
 
@@ -69,9 +67,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		const slots: Record<string, FactorySlotMeta> = {};
 		const registered = new Set(registeredSlots(node));
 		for (const field of node.slots) {
-			const meta = createFactorySlotMeta(false, 1, deriveSlotCardinality(field), registered.has(field));
-			const wireKeys = collectConcreteStorageKeys(field, nodeMap);
-			slots[field.name] = wireKeys === undefined ? meta : { ...meta, wireKeys };
+			slots[field.name] = createFactorySlotMeta(false, 1, deriveSlotCardinality(field), registered.has(field));
 		}
 		if (Object.keys(slots).length > 0) factorySlots[kind] = slots;
 	}

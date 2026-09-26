@@ -156,6 +156,37 @@ pub fn keeps_anonymous_children(kind: KindId) -> bool {
     matches!(kind.0, 38 | 39 | 40 | 41 | 46)
 }
 
+/// The model slot a child is stored under where its name differs from the
+/// parser's key: a field-tagged child by (parent kind id, field), a named
+/// child without a field by (parent kind id, the child's kind name).
+/// `None` keeps the parser's key.
+pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'static str> {
+    match (parent.0, field, child) {
+        (36, None, "escape_sequence") => Some("content"),
+        (38, None, "capture") => Some("content"),
+        (38, Some("quantifier"), _) => Some("content"),
+        (39, None, "capture") => Some("content"),
+        (39, Some("quantifier"), _) => Some("content"),
+        (40, None, "capture") => Some("content"),
+        (40, Some("quantifier"), _) => Some("content"),
+        (41, None, "capture") => Some("content"),
+        (41, Some("quantifier"), _) => Some("content"),
+        (42, None, "named_node_group_anchored_last") => Some("named_node_group"),
+        (42, None, "named_node_group_children") => Some("named_node_group"),
+        (46, None, "dot") => Some("content"),
+        (46, None, "pound") => Some("content"),
+        (49, None, "anonymous_node") => Some("group_expression"),
+        (49, None, "field_definition") => Some("group_expression"),
+        (49, None, "group_expression_arm") => Some("group_expression"),
+        (49, None, "grouping") => Some("group_expression"),
+        (49, None, "list") => Some("group_expression"),
+        (49, None, "missing_node") => Some("group_expression"),
+        (49, None, "named_node") => Some("group_expression"),
+        (49, None, "predicate") => Some("group_expression"),
+        _ => None,
+    }
+}
+
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every
 /// slot the parser field-tags a literal into: the separator of a repeated
 /// slot, or a literal a rule puts beside a singular slot under the same

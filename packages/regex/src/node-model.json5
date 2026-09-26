@@ -83,11 +83,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_alternation",
-          "_term"
-        ]
+        "nonEmpty": false
       }
     },
     "alternation": {
@@ -114,11 +110,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_lookahead_assertion",
-          "_lookbehind_assertion"
-        ]
+        "nonEmpty": false
       }
     },
     "lookahead_assertion": {
@@ -127,11 +119,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_eq",
-          "_bang"
-        ]
+        "nonEmpty": false
       },
       "pattern": {
         "unnamed": false,
@@ -147,11 +135,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_eq",
-          "_bang"
-        ]
+        "nonEmpty": false
       },
       "pattern": {
         "unnamed": false,
@@ -210,11 +194,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_lparen_qmark_lt",
-          "_lparen_qmarkp_lt"
-        ]
+        "nonEmpty": false
       },
       "group_name": {
         "unnamed": false,
@@ -246,11 +226,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_count_quantifier_arm",
-          "_decimal_digits"
-        ]
+        "nonEmpty": false
       }
     },
     "backreference_escape": {
@@ -277,11 +253,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_character_class_escape_arm",
-          "_unicode_character_escape"
-        ]
+        "nonEmpty": false
       }
     },
     "unicode_property_value_expression": {
@@ -315,31 +287,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_start_assertion",
-          "_end_assertion",
-          "_boundary_assertion",
-          "_non_boundary_assertion",
-          "_lookaround_assertion",
-          "_pattern_character",
-          "_character_class",
-          "_posix_character_class",
-          "_any_character",
-          "_decimal_escape",
-          "_character_class_escape",
-          "_control_escape",
-          "_control_letter_escape",
-          "_identity_escape",
-          "_backreference_escape",
-          "_named_group_backreference",
-          "_anonymous_capturing_group",
-          "_named_capturing_group",
-          "_non_capturing_group",
-          "_inline_flags_group_enable",
-          "_inline_flags_group_toggle",
-          "_inline_flags_group_disable"
-        ]
+        "nonEmpty": false
       },
       "quantifier": {
         "unnamed": false,

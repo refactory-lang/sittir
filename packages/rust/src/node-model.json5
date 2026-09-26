@@ -303,21 +303,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_expression_statement_with_semi",
-          "_unsafe_block",
-          "_async_block",
-          "_gen_block",
-          "_try_block",
-          "_block",
-          "_if_expression",
-          "_match_expression",
-          "_while_expression",
-          "_loop_expression",
-          "_for_expression",
-          "_const_block"
-        ]
+        "nonEmpty": false
       }
     },
     "macro_rule": {
@@ -404,28 +390,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_string_literal",
-          "_raw_string_literal",
-          "_char_literal_escaped",
-          "_char_literal_plain",
-          "_char_literal_empty",
-          "_boolean_literal",
-          "_integer_literal_decimal",
-          "_integer_literal_hex",
-          "_integer_literal_binary",
-          "_integer_literal_octal",
-          "_float_literal",
-          "_identifier",
-          "_mutable_specifier",
-          "_self",
-          "_super",
-          "_crate",
-          "_primitive_type",
-          "_token_tree_punctuation",
-          "_token_keywords"
-        ]
+        "nonEmpty": false
       }
     },
     "attribute_item": {
@@ -1284,11 +1249,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_crate",
-          "_visibility_modifier_pub"
-        ]
+        "nonEmpty": false
       }
     },
     "bracketed_type": {
@@ -1363,11 +1324,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_function_type_trait_form",
-          "_function_type_fn_form"
-        ]
+        "nonEmpty": false
       },
       "parameters": {
         "unnamed": false,
@@ -1616,13 +1573,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_range_expression_binary",
-          "_range_expression_postfix",
-          "_range_expression_prefix",
-          "_range_expression_bare"
-        ]
+        "nonEmpty": false
       }
     },
     "unary_expression": {
@@ -2113,84 +2064,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_unary_expression",
-          "_reference_expression_raw_const",
-          "_reference_expression_raw_mut",
-          "_reference_expression_mut",
-          "_reference_expression_bare",
-          "_try_expression",
-          "_binary_expression",
-          "_assignment_expression",
-          "_compound_assignment_expr",
-          "_type_cast_expression",
-          "_call_expression",
-          "_return_expression",
-          "_yield_expression",
-          "_string_literal",
-          "_raw_string_literal",
-          "_char_literal_escaped",
-          "_char_literal_plain",
-          "_char_literal_empty",
-          "_boolean_literal",
-          "_integer_literal_decimal",
-          "_integer_literal_hex",
-          "_integer_literal_binary",
-          "_integer_literal_octal",
-          "_float_literal",
-          "_u8_keyword",
-          "_i8_keyword",
-          "_u16_keyword",
-          "_i16_keyword",
-          "_u32_keyword",
-          "_i32_keyword",
-          "_u64_keyword",
-          "_i64_keyword",
-          "_u128_keyword",
-          "_i128_keyword",
-          "_isize_keyword",
-          "_usize_keyword",
-          "_f32_keyword",
-          "_f64_keyword",
-          "_bool_keyword",
-          "_str_keyword",
-          "_char_keyword",
-          "_default_keyword",
-          "_union_keyword",
-          "_gen_keyword",
-          "_self",
-          "_scoped_identifier",
-          "_generic_function",
-          "_await_expression",
-          "_field_expression",
-          "_array_expression_semi",
-          "_array_expression_list",
-          "_tuple_expression",
-          "_macro_invocation",
-          "_unit_expression",
-          "_break_expression",
-          "_continue_expression",
-          "_index_expression",
-          "_metavariable",
-          "_closure_expression_block",
-          "_closure_expression_expr",
-          "_parenthesized_expression",
-          "_struct_expression",
-          "_unsafe_block",
-          "_async_block",
-          "_gen_block",
-          "_try_block",
-          "_block",
-          "_if_expression",
-          "_match_expression",
-          "_while_expression",
-          "_loop_expression",
-          "_for_expression",
-          "_const_block",
-          "_range_expression"
-        ]
+        "nonEmpty": false
       }
     },
     "continue_expression": {
@@ -2486,13 +2360,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_line_comment_extra_slashes",
-          "_line_comment_doc_outer",
-          "_line_comment_doc_inner",
-          "_line_comment_regular"
-        ]
+        "nonEmpty": false
       }
     },
     "block_comment": {
@@ -2501,12 +2369,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_block_comment_doc_outer",
-          "_block_comment_doc_inner",
-          "_block_comment_content"
-        ]
+        "nonEmpty": false
       }
     },
     "shebang": {
@@ -3107,35 +2970,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_self",
-          "_u8_keyword",
-          "_i8_keyword",
-          "_u16_keyword",
-          "_i16_keyword",
-          "_u32_keyword",
-          "_i32_keyword",
-          "_u64_keyword",
-          "_i64_keyword",
-          "_u128_keyword",
-          "_i128_keyword",
-          "_isize_keyword",
-          "_usize_keyword",
-          "_f32_keyword",
-          "_f64_keyword",
-          "_bool_keyword",
-          "_str_keyword",
-          "_char_keyword",
-          "_metavariable",
-          "_super",
-          "_crate",
-          "_identifier",
-          "_scoped_identifier",
-          "_default_keyword",
-          "_union_keyword",
-          "_gen_keyword"
-        ]
+        "nonEmpty": false
       }
     },
     "visibility_modifier_pub_scope": {
@@ -3144,13 +2979,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_self",
-          "_super",
-          "_crate",
-          "_visibility_modifier_pub_scope_in_path"
-        ]
+        "nonEmpty": false
       }
     },
     "visibility_modifier_pub": {
@@ -3621,11 +3450,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_dot_dot_eq",
-          "_dot_dot"
-        ]
+        "nonEmpty": false
       },
       "right": {
         "unnamed": false,
@@ -3641,12 +3466,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_dot_dot_dot",
-          "_dot_dot_eq",
-          "_dot_dot"
-        ]
+        "nonEmpty": false
       },
       "right": {
         "unnamed": false,
@@ -3669,11 +3489,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_range_pattern_with_left_with_right",
-          "_range_pattern_with_left_bare"
-        ]
+        "nonEmpty": false
       }
     },
     "struct_item_brace": {
@@ -3818,31 +3634,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_parameter",
-          "_self_parameter",
-          "_variadic_parameter",
-          "_underscore",
-          "_type_identifier",
-          "_abstract_type",
-          "_reference_type",
-          "_metavariable",
-          "_pointer_type_const",
-          "_pointer_type_mut",
-          "_generic_type",
-          "_scoped_type_identifier",
-          "_tuple_type",
-          "_unit_type",
-          "_array_type",
-          "_function_type",
-          "_macro_invocation",
-          "_never_type",
-          "_dynamic_type",
-          "_bounded_type",
-          "_removed_trait_bound",
-          "_primitive_type"
-        ]
+        "nonEmpty": false
       }
     },
     "attributed_type_parameter": {
@@ -3858,13 +3650,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_metavariable",
-          "_type_parameter",
-          "_lifetime_parameter",
-          "_const_parameter"
-        ]
+        "nonEmpty": false
       }
     },
     "attributed_argument": {
@@ -3880,84 +3666,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_unary_expression",
-          "_reference_expression_raw_const",
-          "_reference_expression_raw_mut",
-          "_reference_expression_mut",
-          "_reference_expression_bare",
-          "_try_expression",
-          "_binary_expression",
-          "_assignment_expression",
-          "_compound_assignment_expr",
-          "_type_cast_expression",
-          "_call_expression",
-          "_return_expression",
-          "_yield_expression",
-          "_string_literal",
-          "_raw_string_literal",
-          "_char_literal_escaped",
-          "_char_literal_plain",
-          "_char_literal_empty",
-          "_boolean_literal",
-          "_integer_literal_decimal",
-          "_integer_literal_hex",
-          "_integer_literal_binary",
-          "_integer_literal_octal",
-          "_float_literal",
-          "_u8_keyword",
-          "_i8_keyword",
-          "_u16_keyword",
-          "_i16_keyword",
-          "_u32_keyword",
-          "_i32_keyword",
-          "_u64_keyword",
-          "_i64_keyword",
-          "_u128_keyword",
-          "_i128_keyword",
-          "_isize_keyword",
-          "_usize_keyword",
-          "_f32_keyword",
-          "_f64_keyword",
-          "_bool_keyword",
-          "_str_keyword",
-          "_char_keyword",
-          "_default_keyword",
-          "_union_keyword",
-          "_gen_keyword",
-          "_self",
-          "_scoped_identifier",
-          "_generic_function",
-          "_await_expression",
-          "_field_expression",
-          "_array_expression_semi",
-          "_array_expression_list",
-          "_tuple_expression",
-          "_macro_invocation",
-          "_unit_expression",
-          "_break_expression",
-          "_continue_expression",
-          "_index_expression",
-          "_metavariable",
-          "_closure_expression_block",
-          "_closure_expression_expr",
-          "_parenthesized_expression",
-          "_struct_expression",
-          "_unsafe_block",
-          "_async_block",
-          "_gen_block",
-          "_try_block",
-          "_block",
-          "_if_expression",
-          "_match_expression",
-          "_while_expression",
-          "_loop_expression",
-          "_for_expression",
-          "_const_block",
-          "_range_expression"
-        ]
+        "nonEmpty": false
       }
     },
     "attributed_ordered_field": {
@@ -3989,41 +3698,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_type_identifier",
-          "_abstract_type",
-          "_reference_type",
-          "_metavariable",
-          "_pointer_type_const",
-          "_pointer_type_mut",
-          "_generic_type",
-          "_scoped_type_identifier",
-          "_tuple_type",
-          "_unit_type",
-          "_array_type",
-          "_function_type",
-          "_macro_invocation",
-          "_never_type",
-          "_dynamic_type",
-          "_bounded_type",
-          "_removed_trait_bound",
-          "_primitive_type",
-          "_type_binding",
-          "_lifetime",
-          "_string_literal",
-          "_raw_string_literal",
-          "_char_literal_escaped",
-          "_char_literal_plain",
-          "_char_literal_empty",
-          "_boolean_literal",
-          "_integer_literal_decimal",
-          "_integer_literal_hex",
-          "_integer_literal_binary",
-          "_integer_literal_octal",
-          "_float_literal",
-          "_block"
-        ]
+        "nonEmpty": false
       },
       "trait_bounds": {
         "unnamed": false,
@@ -4039,11 +3714,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_match_arm_with_comma",
-          "_match_arm_block_ending"
-        ]
+        "nonEmpty": false
       },
       "last_arm": {
         "unnamed": false,

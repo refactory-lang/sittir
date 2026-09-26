@@ -47,26 +47,6 @@ function _projectLexed<D extends object>(data: D, interior: TokenInterior, kind:
 	return out as D;
 }
 
-// Drop CONSUMED raw candidate storage keys from the spread base. A
-// field whose `??`-chain reads concrete kind-keyed wire keys
-// (`_binary_expression`, …) copies the winner into its canonical
-// `_<name>` key — leaving the raw stub on the object gives generic
-// key-walkers (the validator deep walk dedupes candidates by node
-// coords) a never-wrap-dispatched shadow copy that can win by
-// Object.keys insertion order and mask the canonical one (the
-// deep-read Missing-field class). Copy-on-first-delete keeps the
-// no-candidate fast path allocation-free.
-function _omitWrapKeys<T extends object>(data: T, keys: readonly string[]): T {
-	let out: T = data;
-	for (const key of keys) {
-		if (key in out) {
-			if (out === data) out = { ...data };
-			delete (out as Record<string, unknown>)[key];
-		}
-	}
-	return out;
-}
-
 const WRAP_WARNING_MODE = typeof process !== 'undefined' && process.env?.SITTIR_WRAP_WARNING_MODE === '1';
 interface WrapDiagnosticContext {
 	tree?: TreeHandle;
@@ -492,22 +472,18 @@ function splitElidedWrapSlot<T>(
 	return positions;
 }
 
-export function wrapPattern(
-	data: T.Pattern & { readonly _alternation?: T.Alternation | T.Term; readonly _term?: T.Alternation | T.Term },
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_alternation', '_term']);
+export function wrapPattern(data: T.Pattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_alternation', '_term']),
+			...data,
 			$type: TSKindId.Pattern as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._alternation ?? data._term,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			content() {
 				return drillIn<T.Alternation | T.Term>(this._content, tree);
@@ -568,25 +544,18 @@ export function wrapTerm(data: T.Term, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapLookaroundAssertion(
-	data: T.LookaroundAssertion & {
-		readonly _lookahead_assertion?: T.LookaheadAssertion | T.LookbehindAssertion;
-		readonly _lookbehind_assertion?: T.LookaheadAssertion | T.LookbehindAssertion;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_lookahead_assertion', '_lookbehind_assertion']);
+export function wrapLookaroundAssertion(data: T.LookaroundAssertion, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_lookahead_assertion', '_lookbehind_assertion']),
+			...data,
 			$type: TSKindId.LookaroundAssertion as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._lookahead_assertion ?? data._lookbehind_assertion,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			content() {
 				return drillIn<T.LookaheadAssertion | T.LookbehindAssertion>(this._content, tree);
@@ -601,23 +570,17 @@ export function wrapLookaroundAssertion(
 	return _node;
 }
 
-export function wrapLookaheadAssertion(
-	data: T.LookaheadAssertion & { readonly _eq?: '=' | '!'; readonly _bang?: '=' | '!' },
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_pattern', '_eq', '_bang']);
+export function wrapLookaheadAssertion(data: T.LookaheadAssertion, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content', '_pattern']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.LookaheadAssertion as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_bang', '_eq']),
+			...data,
 			$type: TSKindId.LookaheadAssertion as const,
 			_content: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._content ??
-						data._eq ??
-						data._bang ??
-						readTerminalFromOther<'=' | '!'>(data, [TSKindId.Eq, TSKindId.Bang]),
+					data._content ?? readTerminalFromOther<'=' | '!'>(data, [TSKindId.Eq, TSKindId.Bang]),
 					'content',
 					true,
 					data.$type,
@@ -650,23 +613,17 @@ export function wrapLookaheadAssertion(
 	return _node;
 }
 
-export function wrapLookbehindAssertion(
-	data: T.LookbehindAssertion & { readonly _eq?: '=' | '!'; readonly _bang?: '=' | '!' },
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_pattern', '_eq', '_bang']);
+export function wrapLookbehindAssertion(data: T.LookbehindAssertion, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content', '_pattern']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.LookbehindAssertion as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_bang', '_eq']),
+			...data,
 			$type: TSKindId.LookbehindAssertion as const,
 			_content: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._content ??
-						data._eq ??
-						data._bang ??
-						readTerminalFromOther<'=' | '!'>(data, [TSKindId.Eq, TSKindId.Bang]),
+					data._content ?? readTerminalFromOther<'=' | '!'>(data, [TSKindId.Eq, TSKindId.Bang]),
 					'content',
 					true,
 					data.$type,
@@ -847,25 +804,17 @@ export function wrapAnonymousCapturingGroup(data: T.AnonymousCapturingGroup, tre
 	return _node;
 }
 
-export function wrapNamedCapturingGroup(
-	data: T.NamedCapturingGroup & {
-		readonly _lparen_qmark_lt?: '(?<' | '(?P<';
-		readonly _lparen_qmarkp_lt?: '(?<' | '(?P<';
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_group_name', '_pattern', '_lparen_qmark_lt', '_lparen_qmarkp_lt']);
+export function wrapNamedCapturingGroup(data: T.NamedCapturingGroup, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content', '_group_name', '_pattern']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.NamedCapturingGroup as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_lparen_qmark_lt', '_lparen_qmarkp_lt']),
+			...data,
 			$type: TSKindId.NamedCapturingGroup as const,
 			_content: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._content ??
-						data._lparen_qmark_lt ??
-						data._lparen_qmarkp_lt ??
 						readTerminalFromOther<'(?<' | '(?P<'>(data, [TSKindId.LparenQmarkLt, TSKindId.LparenQmarkpLt]),
 					'content',
 					true,
@@ -975,25 +924,18 @@ export function wrapInlineFlagsGroup(
 	);
 }
 
-export function wrapCountQuantifier(
-	data: T.CountQuantifier & {
-		readonly _count_quantifier_arm?: T.CountQuantifierArm | T.DecimalDigits;
-		readonly _decimal_digits?: T.CountQuantifierArm | T.DecimalDigits;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_count_quantifier_arm', '_decimal_digits']);
+export function wrapCountQuantifier(data: T.CountQuantifier, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_count_quantifier_arm', '_decimal_digits']),
+			...data,
 			$type: TSKindId.CountQuantifier as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._count_quantifier_arm ?? data._decimal_digits,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			content() {
 				return drillIn<T.CountQuantifierArm | T.DecimalDigits>(this._content, tree);
@@ -1060,27 +1002,20 @@ export function wrapNamedGroupBackreference(data: T.NamedGroupBackreference, tre
 	return _node;
 }
 
-export function wrapCharacterClassEscape(
-	data: T.CharacterClassEscape & {
-		readonly _character_class_escape_arm?: '\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape;
-		readonly _unicode_character_escape?: '\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_character_class_escape_arm', '_unicode_character_escape']);
+export function wrapCharacterClassEscape(data: T.CharacterClassEscape, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.CharacterClassEscape as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_character_class_escape_arm', '_unicode_character_escape']),
+			...data,
 			$type: TSKindId.CharacterClassEscape as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._character_class_escape_arm ?? data._unicode_character_escape,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			content() {
 				return drillIn<'\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>(this._content, tree);
@@ -1171,552 +1106,16 @@ export function wrapIdentityEscape(data: T.IdentityEscape, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapTermGroup(
-	data: T.TermGroup & {
-		readonly _start_assertion?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _end_assertion?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _boundary_assertion?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _non_boundary_assertion?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _lookaround_assertion?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _pattern_character?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _character_class?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _posix_character_class?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _any_character?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _decimal_escape?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _character_class_escape?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _control_escape?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _control_letter_escape?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _identity_escape?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _backreference_escape?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _named_group_backreference?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _anonymous_capturing_group?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _named_capturing_group?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _non_capturing_group?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _inline_flags_group_enable?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _inline_flags_group_toggle?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-		readonly _inline_flags_group_disable?:
-			| TSKindId.StartAssertion
-			| TSKindId.EndAssertion
-			| TSKindId.BoundaryAssertion
-			| TSKindId.NonBoundaryAssertion
-			| T.LookaroundAssertion
-			| T.PatternCharacter
-			| T.CharacterClass
-			| T.PosixCharacterClass
-			| TSKindId.AnyCharacter
-			| T.DecimalEscape
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.BackreferenceEscape
-			| T.NamedGroupBackreference
-			| T.AnonymousCapturingGroup
-			| T.NamedCapturingGroup
-			| T.NonCapturingGroup
-			| T.InlineFlagsGroup;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_content',
-		'_quantifier',
-		'_start_assertion',
-		'_end_assertion',
-		'_boundary_assertion',
-		'_non_boundary_assertion',
-		'_lookaround_assertion',
-		'_pattern_character',
-		'_character_class',
-		'_posix_character_class',
-		'_any_character',
-		'_decimal_escape',
-		'_character_class_escape',
-		'_control_escape',
-		'_control_letter_escape',
-		'_identity_escape',
-		'_backreference_escape',
-		'_named_group_backreference',
-		'_anonymous_capturing_group',
-		'_named_capturing_group',
-		'_non_capturing_group',
-		'_inline_flags_group_enable',
-		'_inline_flags_group_toggle',
-		'_inline_flags_group_disable'
-	]);
+export function wrapTermGroup(data: T.TermGroup, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content', '_quantifier']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.TermGroup as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_anonymous_capturing_group',
-				'_any_character',
-				'_backreference_escape',
-				'_boundary_assertion',
-				'_character_class',
-				'_character_class_escape',
-				'_control_escape',
-				'_control_letter_escape',
-				'_decimal_escape',
-				'_end_assertion',
-				'_identity_escape',
-				'_inline_flags_group_disable',
-				'_inline_flags_group_enable',
-				'_inline_flags_group_toggle',
-				'_lookaround_assertion',
-				'_named_capturing_group',
-				'_named_group_backreference',
-				'_non_boundary_assertion',
-				'_non_capturing_group',
-				'_pattern_character',
-				'_posix_character_class',
-				'_start_assertion'
-			]),
+			...data,
 			$type: TSKindId.TermGroup as const,
 			_content: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
 					data._content ??
-						data._start_assertion ??
-						data._end_assertion ??
-						data._boundary_assertion ??
-						data._non_boundary_assertion ??
-						data._lookaround_assertion ??
-						data._pattern_character ??
-						data._character_class ??
-						data._posix_character_class ??
-						data._any_character ??
-						data._decimal_escape ??
-						data._character_class_escape ??
-						data._control_escape ??
-						data._control_letter_escape ??
-						data._identity_escape ??
-						data._backreference_escape ??
-						data._named_group_backreference ??
-						data._anonymous_capturing_group ??
-						data._named_capturing_group ??
-						data._non_capturing_group ??
-						data._inline_flags_group_enable ??
-						data._inline_flags_group_toggle ??
-						data._inline_flags_group_disable ??
 						readTerminalFromOther<
 							| TSKindId.StartAssertion
 							| TSKindId.EndAssertion
@@ -2278,7 +1677,7 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// catalog-less kind (the deprecated JS diagnostic lane stamps those
 	// as strings), which never had a table entry to reach.
 	const fn = typeof data.$type === 'number' ? _wrapTable[data.$type] : undefined;
-	if (!fn) return _drillUnknownKindChildren(data, tree); // unknown kind — still drill in its kind-named-slot children
+	if (!fn) return _drillUnknownKindChildren(data, tree);
 	return fn(data, tree);
 }
 

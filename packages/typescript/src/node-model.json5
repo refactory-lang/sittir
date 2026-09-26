@@ -251,12 +251,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_string_double",
-          "_string_single"
-        ]
+        "nonEmpty": false
       }
     },
     "export_clause": {
@@ -328,12 +323,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_namespace_import",
-          "_named_imports",
-          "_import_clause_default_import"
-        ]
+        "nonEmpty": false
       }
     },
     "namespace_import": {
@@ -535,12 +525,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_for_header_lhs",
-          "_for_header_var_kind",
-          "_for_header_let_const_kind"
-        ]
+        "nonEmpty": false
       },
       "body": {
         "unnamed": false,
@@ -961,11 +946,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_class_heritage_extends_clause",
-          "_implements_clause"
-        ]
+        "nonEmpty": false
       }
     },
     "function_expression": {
@@ -1171,11 +1152,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_arrow_function_parameter",
-          "_call_signature"
-        ]
+        "nonEmpty": false
       },
       "body": {
         "unnamed": false,
@@ -1545,38 +1522,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_member_expression",
-          "_subscript_expression",
-          "_undefined",
-          "_identifier",
-          "_declare_keyword",
-          "_namespace_keyword",
-          "_type_keyword",
-          "_public_keyword",
-          "_private_keyword",
-          "_protected_keyword",
-          "_override_keyword",
-          "_readonly_keyword",
-          "_module_keyword",
-          "_any_keyword",
-          "_number_keyword",
-          "_boolean_keyword",
-          "_string_keyword",
-          "_symbol_keyword",
-          "_export_keyword",
-          "_object_keyword",
-          "_new_keyword",
-          "_get_keyword",
-          "_set_keyword",
-          "_async_keyword",
-          "_static_keyword",
-          "_let_keyword",
-          "_object_pattern",
-          "_array_pattern",
-          "_non_null_expression"
-        ]
+        "nonEmpty": false
       }
     },
     "method_definition": {
@@ -2112,25 +2058,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_function_declaration",
-          "_generator_function_declaration",
-          "_class_declaration",
-          "_lexical_declaration",
-          "_variable_declaration",
-          "_function_signature",
-          "_abstract_class_declaration",
-          "_module",
-          "_internal_module",
-          "_type_alias_declaration",
-          "_enum_declaration",
-          "_interface_declaration",
-          "_import_alias",
-          "_ambient_declaration",
-          "_ambient_declaration_global",
-          "_ambient_declaration_module"
-        ]
+        "nonEmpty": false
       }
     },
     "abstract_class_declaration": {
@@ -2746,11 +2674,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_dot",
-          "_qmark_dot"
-        ]
+        "nonEmpty": false
       },
       "property": {
         "unnamed": false,
@@ -2871,24 +2795,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_literal_type_negative_number",
-          "_number_hex",
-          "_number_float_point",
-          "_number_float_leading_point",
-          "_number_float_scientific",
-          "_number_decimal",
-          "_number_binary",
-          "_number_octal",
-          "_number_bigint",
-          "_string_double",
-          "_string_single",
-          "_true",
-          "_false",
-          "_null",
-          "_undefined"
-        ]
+        "nonEmpty": false
       }
     },
     "flow_maybe_type": {
@@ -3069,11 +2976,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_extends_keyword",
-          "_colon"
-        ]
+        "nonEmpty": false
       },
       "type": {
         "unnamed": false,
@@ -3228,24 +3131,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_name",
-          "_enum_assignment",
-          "_property_identifier",
-          "_private_property_identifier",
-          "_string_double",
-          "_string_single",
-          "_number_hex",
-          "_number_float_point",
-          "_number_float_leading_point",
-          "_number_float_scientific",
-          "_number_decimal",
-          "_number_binary",
-          "_number_octal",
-          "_number_bigint",
-          "_computed_property_name"
-        ]
+        "nonEmpty": false
       }
     },
     "types": {
@@ -3281,11 +3167,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_namespace_import",
-          "_named_imports"
-        ]
+        "nonEmpty": false
       }
     },
     "catch_clause_group": {
@@ -3799,81 +3681,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_as_expression",
-          "_satisfies_expression",
-          "_instantiation_expression",
-          "_internal_module",
-          "_type_assertion",
-          "_identifier",
-          "_subscript_expression",
-          "_member_expression",
-          "_parenthesized_expression_typed",
-          "_parenthesized_expression_sequence",
-          "_undefined",
-          "_declare_keyword",
-          "_namespace_keyword",
-          "_type_keyword",
-          "_public_keyword",
-          "_private_keyword",
-          "_protected_keyword",
-          "_override_keyword",
-          "_readonly_keyword",
-          "_module_keyword",
-          "_any_keyword",
-          "_number_keyword",
-          "_boolean_keyword",
-          "_string_keyword",
-          "_symbol_keyword",
-          "_export_keyword",
-          "_object_keyword",
-          "_new_keyword",
-          "_get_keyword",
-          "_set_keyword",
-          "_async_keyword",
-          "_static_keyword",
-          "_let_keyword",
-          "_this",
-          "_super",
-          "_number_hex",
-          "_number_float_point",
-          "_number_float_leading_point",
-          "_number_float_scientific",
-          "_number_decimal",
-          "_number_binary",
-          "_number_octal",
-          "_number_bigint",
-          "_string_double",
-          "_string_single",
-          "_template_string",
-          "_regex",
-          "_true",
-          "_false",
-          "_null",
-          "_object",
-          "_array",
-          "_function_expression",
-          "_arrow_function",
-          "_generator_function",
-          "_class",
-          "_meta_property_new_target",
-          "_meta_property_import_meta",
-          "_call_expression_call",
-          "_call_expression_template_call",
-          "_call_expression_member",
-          "_non_null_expression",
-          "_assignment_expression",
-          "_augmented_assignment_expression",
-          "_await_expression",
-          "_unary_expression",
-          "_binary_expression",
-          "_ternary_expression",
-          "_update_expression_postfix",
-          "_update_expression_prefix",
-          "_new_expression",
-          "_yield_expression"
-        ]
+        "nonEmpty": false
       },
       "type": {
         "unnamed": false,
@@ -4035,11 +3843,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_identifier",
-          "_type_keyword"
-        ]
+        "nonEmpty": false
       },
       "import_clause_group": {
         "unnamed": false,
@@ -4055,13 +3859,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_export_statement_default_from_star_from",
-          "_export_statement_default_from_ns_from",
-          "_export_statement_default_from_clause_from",
-          "_export_clause"
-        ]
+        "nonEmpty": false
       },
       "automatic_semicolon": {
         "unnamed": false,
@@ -4069,11 +3867,7 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true,
-        "wireKeys": [
-          "_automatic_semicolon",
-          "_semi"
-        ]
+        "registered": true
       }
     },
     "export_statement_default_declaration": {
@@ -4089,11 +3883,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_declaration",
-          "_export_statement_default_declaration_default_kw"
-        ]
+        "nonEmpty": false
       }
     },
     "export_statement_default_from_star_from": {
@@ -4143,11 +3933,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_declaration",
-          "_export_statement_default_declaration_default_kw_value"
-        ]
+        "nonEmpty": false
       }
     },
     "export_statement_default_declaration_default_kw_value": {
@@ -4164,11 +3950,7 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false,
-        "registered": true,
-        "wireKeys": [
-          "_automatic_semicolon",
-          "_semi"
-        ]
+        "registered": true
       }
     },
     "variable_declarator_plain": {

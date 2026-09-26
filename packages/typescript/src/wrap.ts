@@ -48,26 +48,6 @@ function _projectLexed<D extends object>(data: D, interior: TokenInterior, kind:
 	return out as D;
 }
 
-// Drop CONSUMED raw candidate storage keys from the spread base. A
-// field whose `??`-chain reads concrete kind-keyed wire keys
-// (`_binary_expression`, …) copies the winner into its canonical
-// `_<name>` key — leaving the raw stub on the object gives generic
-// key-walkers (the validator deep walk dedupes candidates by node
-// coords) a never-wrap-dispatched shadow copy that can win by
-// Object.keys insertion order and mask the canonical one (the
-// deep-read Missing-field class). Copy-on-first-delete keeps the
-// no-candidate fast path allocation-free.
-function _omitWrapKeys<T extends object>(data: T, keys: readonly string[]): T {
-	let out: T = data;
-	for (const key of keys) {
-		if (key in out) {
-			if (out === data) out = { ...data };
-			delete (out as Record<string, unknown>)[key];
-		}
-	}
-	return out;
-}
-
 const WRAP_WARNING_MODE = typeof process !== 'undefined' && process.env?.SITTIR_WRAP_WARNING_MODE === '1';
 interface WrapDiagnosticContext {
 	tree?: TreeHandle;
@@ -214,70 +194,6 @@ function normalizeRepeatedWrapSlot<T>(
 	if (nonEmpty && items.length === 0)
 		return handleWrapViolation(`repeated slot ${JSON.stringify(slotName)} requires at least one value`, items, context);
 	return items;
-}
-// _toArr — normalize a single wire field (may be a scalar value or an
-// array of node stubs) to a readonly array. Used by repeated supertype-
-// list slot concatenation so that spreading a text-collapsed leaf (e.g.
-// primitive_type "i32" arriving as the string "i32") does not split it
-// character-by-character.
-function _toArr<T>(value: T | readonly T[] | undefined): readonly T[] {
-	if (value == null) return [];
-	return Array.isArray(value) ? (value as readonly T[]) : [value as T];
-}
-// _concatInSourceOrder — concatenate the per-kind wire arrays of a
-// repeated heterogeneous-union slot, then STABLE-sort by CST position.
-// The native reader buckets repeated unfielded children by kind, so a
-// plain declaration-order concat loses cross-kind source order. Each
-// node stub carries `$span.start` (byte offset) / `$childIndex` (position
-// in parent); sort on those to restore order. Text-collapsed scalar
-// leaves lack both → sorted to the end, stable among themselves (so a
-// homogeneous single-bucket slot is a no-op).
-function _concatInSourceOrder<T>(parts: readonly (T | readonly T[] | undefined)[]): readonly T[] {
-	const flat = parts.flatMap((p) => _toArr(p));
-	const pos = (e: T): number => {
-		const n = e as unknown as { $span?: { start?: number }; $childIndex?: number };
-		return n?.$span?.start ?? n?.$childIndex ?? Number.MAX_SAFE_INTEGER;
-	};
-	return flat
-		.map((e, i) => [e, i] as const)
-		.sort(([a, ai], [b, bi]) => pos(a) - pos(b) || ai - bi)
-		.map(([e]) => e);
-}
-// _interleaveBySlotOrder — reassemble a repeated heterogeneous-union
-// slot's per-route wire buckets into document order by walking the
-// parent's `$slotOrder` stamp (route names in child order, emitted by
-// the native reader on multi-bucket parents) with a cursor per bucket.
-// Text-collapsed scalar leaves carry no `$span`, so a position sort
-// cannot order them — the stamp is the only cross-bucket order source.
-// Nodes without the stamp (older captures) fall back to the position
-// sort; elements the stamp does not cover are appended in bucket order
-// so a mismatch never drops members.
-function _interleaveBySlotOrder<T>(
-	data: { readonly $slotOrder?: readonly string[] },
-	pairs: readonly (readonly [string, T | readonly T[] | undefined])[]
-): readonly T[] {
-	const order = data.$slotOrder;
-	if (!Array.isArray(order)) return _concatInSourceOrder(pairs.map(([, v]) => v));
-	const buckets = new Map<string, readonly T[]>();
-	for (const [route, value] of pairs) {
-		if (value === undefined) continue;
-		buckets.set(route, _toArr(value));
-	}
-	const cursors = new Map<string, number>();
-	const out: T[] = [];
-	for (const route of order) {
-		const bucket = buckets.get(route);
-		if (!bucket) continue;
-		const i = cursors.get(route) ?? 0;
-		if (i < bucket.length) {
-			out.push(bucket[i] as T);
-			cursors.set(route, i + 1);
-		}
-	}
-	for (const [route, bucket] of buckets) {
-		for (let i = cursors.get(route) ?? 0; i < bucket.length; i++) out.push(bucket[i] as T);
-	}
-	return out;
 }
 // The wrap layer's method engine. A wrapped node carries accessor
 // methods over storage the reader spelled its own way, so
@@ -1295,26 +1211,18 @@ export function wrapExportStatement(
 	);
 }
 
-export function wrapNamespaceExport(
-	data: T.NamespaceExport & {
-		readonly _identifier?: T.Identifier | T.String;
-		readonly _string_double?: T.Identifier | T.String;
-		readonly _string_single?: T.Identifier | T.String;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_module_export_name', '_identifier', '_string_double', '_string_single']);
+export function wrapNamespaceExport(data: T.NamespaceExport, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_module_export_name']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_identifier', '_string_double', '_string_single']),
+			...data,
 			$type: TSKindId.NamespaceExport as const,
-			_module_export_name: normalizeSingularWrapSlot(
-				data._module_export_name ?? data._identifier ?? data._string_double ?? data._string_single,
-				'module_export_name',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'module_export_name', span: (data as _NodeData).$span }
-			),
+			_module_export_name: normalizeSingularWrapSlot(data._module_export_name, 'module_export_name', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'module_export_name',
+				span: (data as _NodeData).$span
+			}),
 
 			moduleExportName() {
 				return drillIn<T.Identifier | T.String>(this._module_export_name, tree);
@@ -1575,26 +1483,18 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapImportClause(
-	data: T.ImportClause & {
-		readonly _namespace_import?: T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport;
-		readonly _named_imports?: T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport;
-		readonly _import_clause_default_import?: T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_namespace_import', '_named_imports', '_import_clause_default_import']);
+export function wrapImportClause(data: T.ImportClause, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_import_clause_default_import', '_named_imports', '_namespace_import']),
+			...data,
 			$type: TSKindId.ImportClause as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._namespace_import ?? data._named_imports ?? data._import_clause_default_import,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			content() {
 				return drillIn<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>(this._content, tree);
@@ -2284,27 +2184,13 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapForInStatement(
-	data: T.ForInStatement & {
-		readonly _for_header_lhs?: T.ForHeader;
-		readonly _for_header_var_kind?: T.ForHeader;
-		readonly _for_header_let_const_kind?: T.ForHeader;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_await_marker',
-		'_for_header',
-		'_body',
-		'_for_header_lhs',
-		'_for_header_var_kind',
-		'_for_header_let_const_kind'
-	]);
+export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_await_marker', '_for_header', '_body']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ForInStatement as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_for_header_let_const_kind', '_for_header_lhs', '_for_header_var_kind']),
+			...data,
 			$type: TSKindId.ForInStatement as const,
 			_await_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._await_marker, 'await_marker', false, data.$type, {
@@ -2314,13 +2200,12 @@ export function wrapForInStatement(
 					span: (data as _NodeData).$span
 				})
 			),
-			_for_header: normalizeSingularWrapSlot(
-				data._for_header ?? data._for_header_lhs ?? data._for_header_var_kind ?? data._for_header_let_const_kind,
-				'for_header',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'for_header', span: (data as _NodeData).$span }
-			),
+			_for_header: normalizeSingularWrapSlot(data._for_header, 'for_header', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'for_header',
+				span: (data as _NodeData).$span
+			}),
 			_body: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
 					tree,
@@ -4119,25 +4004,18 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 	return _node;
 }
 
-export function wrapClassHeritage(
-	data: T.ClassHeritage & {
-		readonly _class_heritage_extends_clause?: T.ClassHeritageExtendsClause | T.ImplementsClause;
-		readonly _implements_clause?: T.ClassHeritageExtendsClause | T.ImplementsClause;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_class_heritage_extends_clause', '_implements_clause']);
+export function wrapClassHeritage(data: T.ClassHeritage, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_class_heritage_extends_clause', '_implements_clause']),
+			...data,
 			$type: TSKindId.ClassHeritage as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._class_heritage_extends_clause ?? data._implements_clause,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			content() {
 				return drillIn<T.ClassHeritageExtendsClause | T.ImplementsClause>(this._content, tree);
@@ -4560,24 +4438,12 @@ export function wrapGeneratorFunctionDeclaration(data: T.GeneratorFunctionDeclar
 	return _node;
 }
 
-export function wrapArrowFunction(
-	data: T.ArrowFunction & {
-		readonly _arrow_function_parameter?: T.ArrowFunctionParameter | T.CallSignature;
-		readonly _call_signature?: T.ArrowFunctionParameter | T.CallSignature;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_async_marker',
-		'_content',
-		'_body',
-		'_arrow_function_parameter',
-		'_call_signature'
-	]);
+export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_async_marker', '_content', '_body']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.ArrowFunction as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_arrow_function_parameter', '_call_signature']),
+			...data,
 			$type: TSKindId.ArrowFunction as const,
 			_async_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._async_marker, 'async_marker', false, data.$type, {
@@ -4587,13 +4453,12 @@ export function wrapArrowFunction(
 					span: (data as _NodeData).$span
 				})
 			),
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._arrow_function_parameter ?? data._call_signature,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 			_body: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
 					tree,
@@ -6225,980 +6090,16 @@ export function wrapPattern(
 	);
 }
 
-export function wrapRestPattern(
-	data: T.RestPattern & {
-		readonly _member_expression?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _subscript_expression?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _undefined?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _identifier?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _declare_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _namespace_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _type_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _public_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _private_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _protected_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _override_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _readonly_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _module_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _any_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _number_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _boolean_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _string_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _symbol_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _export_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _object_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _new_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _get_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _set_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _async_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _static_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _let_keyword?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _object_pattern?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _array_pattern?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-		readonly _non_null_expression?:
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_lhs_expression',
-		'_member_expression',
-		'_subscript_expression',
-		'_undefined',
-		'_identifier',
-		'_declare_keyword',
-		'_namespace_keyword',
-		'_type_keyword',
-		'_public_keyword',
-		'_private_keyword',
-		'_protected_keyword',
-		'_override_keyword',
-		'_readonly_keyword',
-		'_module_keyword',
-		'_any_keyword',
-		'_number_keyword',
-		'_boolean_keyword',
-		'_string_keyword',
-		'_symbol_keyword',
-		'_export_keyword',
-		'_object_keyword',
-		'_new_keyword',
-		'_get_keyword',
-		'_set_keyword',
-		'_async_keyword',
-		'_static_keyword',
-		'_let_keyword',
-		'_object_pattern',
-		'_array_pattern',
-		'_non_null_expression'
-	]);
+export function wrapRestPattern(data: T.RestPattern, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_lhs_expression']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.RestPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_any_keyword',
-				'_array_pattern',
-				'_async_keyword',
-				'_boolean_keyword',
-				'_declare_keyword',
-				'_export_keyword',
-				'_get_keyword',
-				'_identifier',
-				'_let_keyword',
-				'_member_expression',
-				'_module_keyword',
-				'_namespace_keyword',
-				'_new_keyword',
-				'_non_null_expression',
-				'_number_keyword',
-				'_object_keyword',
-				'_object_pattern',
-				'_override_keyword',
-				'_private_keyword',
-				'_protected_keyword',
-				'_public_keyword',
-				'_readonly_keyword',
-				'_set_keyword',
-				'_static_keyword',
-				'_string_keyword',
-				'_subscript_expression',
-				'_symbol_keyword',
-				'_type_keyword',
-				'_undefined'
-			]),
+			...data,
 			$type: TSKindId.RestPattern as const,
 			_lhs_expression: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
 					data._lhs_expression ??
-						data._member_expression ??
-						data._subscript_expression ??
-						data._undefined ??
-						data._identifier ??
-						data._declare_keyword ??
-						data._namespace_keyword ??
-						data._type_keyword ??
-						data._public_keyword ??
-						data._private_keyword ??
-						data._protected_keyword ??
-						data._override_keyword ??
-						data._readonly_keyword ??
-						data._module_keyword ??
-						data._any_keyword ??
-						data._number_keyword ??
-						data._boolean_keyword ??
-						data._string_keyword ??
-						data._symbol_keyword ??
-						data._export_keyword ??
-						data._object_keyword ??
-						data._new_keyword ??
-						data._get_keyword ??
-						data._set_keyword ??
-						data._async_keyword ??
-						data._static_keyword ??
-						data._let_keyword ??
-						data._object_pattern ??
-						data._array_pattern ??
-						data._non_null_expression ??
 						readTerminalFromOther<
 							| T.MemberExpression
 							| T.SubscriptExpression
@@ -9047,90 +7948,18 @@ export function wrapImplementsClause(data: T.ImplementsClause, tree: TreeHandle)
 	return _node;
 }
 
-export function wrapAmbientDeclaration(
-	data: T.AmbientDeclaration & {
-		readonly _function_declaration?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _generator_function_declaration?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _class_declaration?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _lexical_declaration?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _variable_declaration?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _function_signature?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _abstract_class_declaration?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _module?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _internal_module?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _type_alias_declaration?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _enum_declaration?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _interface_declaration?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _import_alias?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _ambient_declaration?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _ambient_declaration_global?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly _ambient_declaration_module?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_content',
-		'_function_declaration',
-		'_generator_function_declaration',
-		'_class_declaration',
-		'_lexical_declaration',
-		'_variable_declaration',
-		'_function_signature',
-		'_abstract_class_declaration',
-		'_module',
-		'_internal_module',
-		'_type_alias_declaration',
-		'_enum_declaration',
-		'_interface_declaration',
-		'_import_alias',
-		'_ambient_declaration',
-		'_ambient_declaration_global',
-		'_ambient_declaration_module'
-	]);
+export function wrapAmbientDeclaration(data: T.AmbientDeclaration, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_abstract_class_declaration',
-				'_ambient_declaration',
-				'_ambient_declaration_global',
-				'_ambient_declaration_module',
-				'_class_declaration',
-				'_enum_declaration',
-				'_function_declaration',
-				'_function_signature',
-				'_generator_function_declaration',
-				'_import_alias',
-				'_interface_declaration',
-				'_internal_module',
-				'_lexical_declaration',
-				'_module',
-				'_type_alias_declaration',
-				'_variable_declaration'
-			]),
+			...data,
 			$type: TSKindId.AmbientDeclaration as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ??
-					data._function_declaration ??
-					data._generator_function_declaration ??
-					data._class_declaration ??
-					data._lexical_declaration ??
-					data._variable_declaration ??
-					data._function_signature ??
-					data._abstract_class_declaration ??
-					data._module ??
-					data._internal_module ??
-					data._type_alias_declaration ??
-					data._enum_declaration ??
-					data._interface_declaration ??
-					data._import_alias ??
-					data._ambient_declaration ??
-					data._ambient_declaration_global ??
-					data._ambient_declaration_module,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			content() {
 				return drillIn<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>(this._content, tree);
@@ -11275,16 +10104,13 @@ export function wrapTypePredicateAnnotation(data: T.TypePredicateAnnotation, tre
 	return _node;
 }
 
-export function wrapTypeQueryMemberExpression(
-	data: T.TypeQueryMemberExpression & { readonly _dot?: '.' | '?.'; readonly _qmark_dot?: '.' | '?.' },
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_object', '_content', '_property', '_dot', '_qmark_dot']);
+export function wrapTypeQueryMemberExpression(data: T.TypeQueryMemberExpression, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_object', '_content', '_property']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.TypeQueryMemberExpression as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_dot', '_qmark_dot']),
+			...data,
 			$type: TSKindId.TypeQueryMemberExpression as const,
 			_object: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._object, 'object', true, data.$type, {
@@ -11297,10 +10123,7 @@ export function wrapTypeQueryMemberExpression(
 			),
 			_content: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._content ??
-						data._dot ??
-						data._qmark_dot ??
-						readTerminalFromOther<'.' | '?.'>(data, [TSKindId.Dot, TSKindId.QmarkDot]),
+					data._content ?? readTerminalFromOther<'.' | '?.'>(data, [TSKindId.Dot, TSKindId.QmarkDot]),
 					'content',
 					true,
 					data.$type,
@@ -11744,188 +10567,16 @@ export function wrapMappedTypeClause(data: T.MappedTypeClause, tree: TreeHandle)
 	return _node;
 }
 
-export function wrapLiteralType(
-	data: T.LiteralType & {
-		readonly _literal_type_negative_number?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-		readonly _number_hex?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-		readonly _number_float_point?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-		readonly _number_float_leading_point?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-		readonly _number_float_scientific?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-		readonly _number_decimal?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-		readonly _number_binary?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-		readonly _number_octal?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-		readonly _number_bigint?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-		readonly _string_double?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-		readonly _string_single?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-		readonly _true?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-		readonly _false?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-		readonly _null?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-		readonly _undefined?:
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_content',
-		'_literal_type_negative_number',
-		'_number_hex',
-		'_number_float_point',
-		'_number_float_leading_point',
-		'_number_float_scientific',
-		'_number_decimal',
-		'_number_binary',
-		'_number_octal',
-		'_number_bigint',
-		'_string_double',
-		'_string_single',
-		'_true',
-		'_false',
-		'_null',
-		'_undefined'
-	]);
+export function wrapLiteralType(data: T.LiteralType, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.LiteralType as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_false',
-				'_literal_type_negative_number',
-				'_null',
-				'_number_bigint',
-				'_number_binary',
-				'_number_decimal',
-				'_number_float_leading_point',
-				'_number_float_point',
-				'_number_float_scientific',
-				'_number_hex',
-				'_number_octal',
-				'_string_double',
-				'_string_single',
-				'_true',
-				'_undefined'
-			]),
+			...data,
 			$type: TSKindId.LiteralType as const,
 			_content: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
 					data._content ??
-						data._literal_type_negative_number ??
-						data._number_hex ??
-						data._number_float_point ??
-						data._number_float_leading_point ??
-						data._number_float_scientific ??
-						data._number_decimal ??
-						data._number_binary ??
-						data._number_octal ??
-						data._number_bigint ??
-						data._string_double ??
-						data._string_single ??
-						data._true ??
-						data._false ??
-						data._null ??
-						data._undefined ??
 						readTerminalFromOther<
 							| T.LiteralTypeNegativeNumber
 							| T.Number
@@ -12472,22 +11123,16 @@ export function wrapDefaultType(data: T.DefaultType, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapConstraint(
-	data: T.Constraint & { readonly _extends_keyword?: 'extends' | ':'; readonly _colon?: 'extends' | ':' },
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_type', '_extends_keyword', '_colon']);
+export function wrapConstraint(data: T.Constraint, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content', '_type']);
 	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Constraint as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_colon', '_extends_keyword']),
+			...data,
 			$type: TSKindId.Constraint as const,
 			_content: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._content ??
-						data._extends_keyword ??
-						data._colon ??
-						readTerminalFromOther<'extends' | ':'>(data, [TSKindId.ExtendsKeyword, TSKindId.Colon]),
+					data._content ?? readTerminalFromOther<'extends' | ':'>(data, [TSKindId.ExtendsKeyword, TSKindId.Colon]),
 					'content',
 					true,
 					data.$type,
@@ -13038,510 +11683,21 @@ export function wrapFormalParametersElements(
 }
 
 export function wrapEnumBodyElements(
-	data: T.EnumBodyElements & {
-		readonly _name?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _property_identifier?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _private_property_identifier?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _string_double?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _string_single?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _number_hex?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _number_float_point?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _number_float_leading_point?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _number_float_scientific?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _number_decimal?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _number_binary?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _number_octal?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _number_bigint?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _computed_property_name?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _enum_assignment?:
-			| T.EnumAssignment
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly $other?: _NodeData['$other'];
-		readonly $span?: { start: number; end: number };
-	},
+	data: T.EnumBodyElements & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, [
-		'_content',
-		'_name',
-		'_property_identifier',
-		'_private_property_identifier',
-		'_string_double',
-		'_string_single',
-		'_number_hex',
-		'_number_float_point',
-		'_number_float_leading_point',
-		'_number_float_scientific',
-		'_number_decimal',
-		'_number_binary',
-		'_number_octal',
-		'_number_bigint',
-		'_computed_property_name',
-		'_enum_assignment'
-	]);
+	data = _keepModelledSlots(data, ['_content']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.EnumBodyElements as const }, _treeEngine(tree));
-	const _content = normalizeRepeatedWrapSlot(
-		data._content !== undefined
-			? _toArr(data._content)
-			: _interleaveBySlotOrder(data as _NodeData, [
-					['name', data._name],
-					['property_identifier', data._property_identifier],
-					['private_property_identifier', data._private_property_identifier],
-					['string_double', data._string_double],
-					['string_single', data._string_single],
-					['number_hex', data._number_hex],
-					['number_float_point', data._number_float_point],
-					['number_float_leading_point', data._number_float_leading_point],
-					['number_float_scientific', data._number_float_scientific],
-					['number_decimal', data._number_decimal],
-					['number_binary', data._number_binary],
-					['number_octal', data._number_octal],
-					['number_bigint', data._number_bigint],
-					['computed_property_name', data._computed_property_name],
-					['enum_assignment', data._enum_assignment]
-				]),
-		true,
-		'content',
-		{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-	);
+	const _content = normalizeRepeatedWrapSlot(data._content, true, 'content', {
+		tree,
+		nodeType: data.$type,
+		slotName: 'content',
+		span: (data as _NodeData).$span
+	});
 	return withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_computed_property_name',
-				'_enum_assignment',
-				'_name',
-				'_number_bigint',
-				'_number_binary',
-				'_number_decimal',
-				'_number_float_leading_point',
-				'_number_float_point',
-				'_number_float_scientific',
-				'_number_hex',
-				'_number_octal',
-				'_private_property_identifier',
-				'_property_identifier',
-				'_string_double',
-				'_string_single'
-			]),
+			...data,
 			$type: TSKindId.EnumBodyElements as const,
 			_content: _content,
 			_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
@@ -13715,25 +11871,18 @@ export function wrapTupleTypeMembers(
 	);
 }
 
-export function wrapImportClauseGroup(
-	data: T.ImportClauseGroup & {
-		readonly _namespace_import?: T.NamespaceImport | T.NamedImports;
-		readonly _named_imports?: T.NamespaceImport | T.NamedImports;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_content', '_namespace_import', '_named_imports']);
+export function wrapImportClauseGroup(data: T.ImportClauseGroup, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_named_imports', '_namespace_import']),
+			...data,
 			$type: TSKindId.ImportClauseGroup as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._namespace_import ?? data._named_imports,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			content() {
 				return drillIn<T.NamespaceImport | T.NamedImports>(this._content, tree);
@@ -15074,311 +13223,15 @@ export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandl
 	return _node;
 }
 
-export function wrapParenthesizedExpressionTyped(
-	data: T.ParenthesizedExpressionTyped & {
-		readonly _as_expression?: T.Expression;
-		readonly _satisfies_expression?: T.Expression;
-		readonly _instantiation_expression?: T.Expression;
-		readonly _internal_module?: T.Expression;
-		readonly _type_assertion?: T.Expression;
-		readonly _identifier?: T.Expression;
-		readonly _subscript_expression?: T.Expression;
-		readonly _member_expression?: T.Expression;
-		readonly _parenthesized_expression_typed?: T.Expression;
-		readonly _parenthesized_expression_sequence?: T.Expression;
-		readonly _undefined?: T.Expression;
-		readonly _declare_keyword?: T.Expression;
-		readonly _namespace_keyword?: T.Expression;
-		readonly _type_keyword?: T.Expression;
-		readonly _public_keyword?: T.Expression;
-		readonly _private_keyword?: T.Expression;
-		readonly _protected_keyword?: T.Expression;
-		readonly _override_keyword?: T.Expression;
-		readonly _readonly_keyword?: T.Expression;
-		readonly _module_keyword?: T.Expression;
-		readonly _any_keyword?: T.Expression;
-		readonly _number_keyword?: T.Expression;
-		readonly _boolean_keyword?: T.Expression;
-		readonly _string_keyword?: T.Expression;
-		readonly _symbol_keyword?: T.Expression;
-		readonly _export_keyword?: T.Expression;
-		readonly _object_keyword?: T.Expression;
-		readonly _new_keyword?: T.Expression;
-		readonly _get_keyword?: T.Expression;
-		readonly _set_keyword?: T.Expression;
-		readonly _async_keyword?: T.Expression;
-		readonly _static_keyword?: T.Expression;
-		readonly _let_keyword?: T.Expression;
-		readonly _this?: T.Expression;
-		readonly _super?: T.Expression;
-		readonly _number_hex?: T.Expression;
-		readonly _number_float_point?: T.Expression;
-		readonly _number_float_leading_point?: T.Expression;
-		readonly _number_float_scientific?: T.Expression;
-		readonly _number_decimal?: T.Expression;
-		readonly _number_binary?: T.Expression;
-		readonly _number_octal?: T.Expression;
-		readonly _number_bigint?: T.Expression;
-		readonly _string_double?: T.Expression;
-		readonly _string_single?: T.Expression;
-		readonly _template_string?: T.Expression;
-		readonly _regex?: T.Expression;
-		readonly _true?: T.Expression;
-		readonly _false?: T.Expression;
-		readonly _null?: T.Expression;
-		readonly _object?: T.Expression;
-		readonly _array?: T.Expression;
-		readonly _function_expression?: T.Expression;
-		readonly _arrow_function?: T.Expression;
-		readonly _generator_function?: T.Expression;
-		readonly _class?: T.Expression;
-		readonly _meta_property_new_target?: T.Expression;
-		readonly _meta_property_import_meta?: T.Expression;
-		readonly _call_expression_call?: T.Expression;
-		readonly _call_expression_template_call?: T.Expression;
-		readonly _call_expression_member?: T.Expression;
-		readonly _non_null_expression?: T.Expression;
-		readonly _assignment_expression?: T.Expression;
-		readonly _augmented_assignment_expression?: T.Expression;
-		readonly _await_expression?: T.Expression;
-		readonly _unary_expression?: T.Expression;
-		readonly _binary_expression?: T.Expression;
-		readonly _ternary_expression?: T.Expression;
-		readonly _update_expression_postfix?: T.Expression;
-		readonly _update_expression_prefix?: T.Expression;
-		readonly _new_expression?: T.Expression;
-		readonly _yield_expression?: T.Expression;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_expression',
-		'_type',
-		'_as_expression',
-		'_satisfies_expression',
-		'_instantiation_expression',
-		'_internal_module',
-		'_type_assertion',
-		'_identifier',
-		'_subscript_expression',
-		'_member_expression',
-		'_parenthesized_expression_typed',
-		'_parenthesized_expression_sequence',
-		'_undefined',
-		'_declare_keyword',
-		'_namespace_keyword',
-		'_type_keyword',
-		'_public_keyword',
-		'_private_keyword',
-		'_protected_keyword',
-		'_override_keyword',
-		'_readonly_keyword',
-		'_module_keyword',
-		'_any_keyword',
-		'_number_keyword',
-		'_boolean_keyword',
-		'_string_keyword',
-		'_symbol_keyword',
-		'_export_keyword',
-		'_object_keyword',
-		'_new_keyword',
-		'_get_keyword',
-		'_set_keyword',
-		'_async_keyword',
-		'_static_keyword',
-		'_let_keyword',
-		'_this',
-		'_super',
-		'_number_hex',
-		'_number_float_point',
-		'_number_float_leading_point',
-		'_number_float_scientific',
-		'_number_decimal',
-		'_number_binary',
-		'_number_octal',
-		'_number_bigint',
-		'_string_double',
-		'_string_single',
-		'_template_string',
-		'_regex',
-		'_true',
-		'_false',
-		'_null',
-		'_object',
-		'_array',
-		'_function_expression',
-		'_arrow_function',
-		'_generator_function',
-		'_class',
-		'_meta_property_new_target',
-		'_meta_property_import_meta',
-		'_call_expression_call',
-		'_call_expression_template_call',
-		'_call_expression_member',
-		'_non_null_expression',
-		'_assignment_expression',
-		'_augmented_assignment_expression',
-		'_await_expression',
-		'_unary_expression',
-		'_binary_expression',
-		'_ternary_expression',
-		'_update_expression_postfix',
-		'_update_expression_prefix',
-		'_new_expression',
-		'_yield_expression'
-	]);
+export function wrapParenthesizedExpressionTyped(data: T.ParenthesizedExpressionTyped, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_expression', '_type']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_any_keyword',
-				'_array',
-				'_arrow_function',
-				'_as_expression',
-				'_assignment_expression',
-				'_async_keyword',
-				'_augmented_assignment_expression',
-				'_await_expression',
-				'_binary_expression',
-				'_boolean_keyword',
-				'_call_expression_call',
-				'_call_expression_member',
-				'_call_expression_template_call',
-				'_class',
-				'_declare_keyword',
-				'_export_keyword',
-				'_false',
-				'_function_expression',
-				'_generator_function',
-				'_get_keyword',
-				'_identifier',
-				'_instantiation_expression',
-				'_internal_module',
-				'_let_keyword',
-				'_member_expression',
-				'_meta_property_import_meta',
-				'_meta_property_new_target',
-				'_module_keyword',
-				'_namespace_keyword',
-				'_new_expression',
-				'_new_keyword',
-				'_non_null_expression',
-				'_null',
-				'_number_bigint',
-				'_number_binary',
-				'_number_decimal',
-				'_number_float_leading_point',
-				'_number_float_point',
-				'_number_float_scientific',
-				'_number_hex',
-				'_number_keyword',
-				'_number_octal',
-				'_object',
-				'_object_keyword',
-				'_override_keyword',
-				'_parenthesized_expression_sequence',
-				'_parenthesized_expression_typed',
-				'_private_keyword',
-				'_protected_keyword',
-				'_public_keyword',
-				'_readonly_keyword',
-				'_regex',
-				'_satisfies_expression',
-				'_set_keyword',
-				'_static_keyword',
-				'_string_double',
-				'_string_keyword',
-				'_string_single',
-				'_subscript_expression',
-				'_super',
-				'_symbol_keyword',
-				'_template_string',
-				'_ternary_expression',
-				'_this',
-				'_true',
-				'_type_assertion',
-				'_type_keyword',
-				'_unary_expression',
-				'_undefined',
-				'_update_expression_postfix',
-				'_update_expression_prefix',
-				'_yield_expression'
-			]),
+			...data,
 			$type: TSKindId.ParenthesizedExpressionTyped as const,
 			_expression: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
 					data._expression ??
-						data._as_expression ??
-						data._satisfies_expression ??
-						data._instantiation_expression ??
-						data._internal_module ??
-						data._type_assertion ??
-						data._identifier ??
-						data._subscript_expression ??
-						data._member_expression ??
-						data._parenthesized_expression_typed ??
-						data._parenthesized_expression_sequence ??
-						data._undefined ??
-						data._declare_keyword ??
-						data._namespace_keyword ??
-						data._type_keyword ??
-						data._public_keyword ??
-						data._private_keyword ??
-						data._protected_keyword ??
-						data._override_keyword ??
-						data._readonly_keyword ??
-						data._module_keyword ??
-						data._any_keyword ??
-						data._number_keyword ??
-						data._boolean_keyword ??
-						data._string_keyword ??
-						data._symbol_keyword ??
-						data._export_keyword ??
-						data._object_keyword ??
-						data._new_keyword ??
-						data._get_keyword ??
-						data._set_keyword ??
-						data._async_keyword ??
-						data._static_keyword ??
-						data._let_keyword ??
-						data._this ??
-						data._super ??
-						data._number_hex ??
-						data._number_float_point ??
-						data._number_float_leading_point ??
-						data._number_float_scientific ??
-						data._number_decimal ??
-						data._number_binary ??
-						data._number_octal ??
-						data._number_bigint ??
-						data._string_double ??
-						data._string_single ??
-						data._template_string ??
-						data._regex ??
-						data._true ??
-						data._false ??
-						data._null ??
-						data._object ??
-						data._array ??
-						data._function_expression ??
-						data._arrow_function ??
-						data._generator_function ??
-						data._class ??
-						data._meta_property_new_target ??
-						data._meta_property_import_meta ??
-						data._call_expression_call ??
-						data._call_expression_template_call ??
-						data._call_expression_member ??
-						data._non_null_expression ??
-						data._assignment_expression ??
-						data._augmented_assignment_expression ??
-						data._await_expression ??
-						data._unary_expression ??
-						data._binary_expression ??
-						data._ternary_expression ??
-						data._update_expression_postfix ??
-						data._update_expression_prefix ??
-						data._new_expression ??
-						data._yield_expression ??
 						readTerminalFromOther<T.Expression>(data, [
 							TSKindId.Undefined,
 							TSKindId.This,
@@ -15854,22 +13707,17 @@ export function wrapClassHeritageExtendsClause(data: T.ClassHeritageExtendsClaus
 	return _node;
 }
 
-export function wrapImportClauseDefaultImport(
-	data: T.ImportClauseDefaultImport & { readonly _type_keyword?: T.Identifier | TSKindId.TypeKeyword },
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_identifier', '_import_clause_group', '_type_keyword']);
+export function wrapImportClauseDefaultImport(data: T.ImportClauseDefaultImport, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_identifier', '_import_clause_group']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ImportClauseDefaultImport as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_type_keyword']),
+			...data,
 			$type: TSKindId.ImportClauseDefaultImport as const,
 			_identifier: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
-					data._identifier ??
-						data._type_keyword ??
-						readTerminalFromOther<T.Identifier | TSKindId.TypeKeyword>(data, [TSKindId.TypeKeyword]),
+					data._identifier ?? readTerminalFromOther<T.Identifier | TSKindId.TypeKeyword>(data, [TSKindId.TypeKeyword]),
 					'identifier',
 					true,
 					data.$type,
@@ -15903,68 +13751,23 @@ export function wrapImportClauseDefaultImport(
 	return _node;
 }
 
-export function wrapExportStatementDefaultFrom(
-	data: T.ExportStatementDefaultFrom & {
-		readonly _export_statement_default_from_star_from?:
-			| T.ExportStatementDefaultFromStarFrom
-			| T.ExportStatementDefaultFromNsFrom
-			| T.ExportStatementDefaultFromClauseFrom
-			| T.ExportClause;
-		readonly _export_statement_default_from_ns_from?:
-			| T.ExportStatementDefaultFromStarFrom
-			| T.ExportStatementDefaultFromNsFrom
-			| T.ExportStatementDefaultFromClauseFrom
-			| T.ExportClause;
-		readonly _export_statement_default_from_clause_from?:
-			| T.ExportStatementDefaultFromStarFrom
-			| T.ExportStatementDefaultFromNsFrom
-			| T.ExportStatementDefaultFromClauseFrom
-			| T.ExportClause;
-		readonly _export_clause?:
-			| T.ExportStatementDefaultFromStarFrom
-			| T.ExportStatementDefaultFromNsFrom
-			| T.ExportStatementDefaultFromClauseFrom
-			| T.ExportClause;
-		readonly _semi?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_content',
-		'_automatic_semicolon',
-		'_export_statement_default_from_star_from',
-		'_export_statement_default_from_ns_from',
-		'_export_statement_default_from_clause_from',
-		'_export_clause',
-		'_semi'
-	]);
+export function wrapExportStatementDefaultFrom(data: T.ExportStatementDefaultFrom, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content', '_automatic_semicolon']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ExportStatementDefaultFrom as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_export_clause',
-				'_export_statement_default_from_clause_from',
-				'_export_statement_default_from_ns_from',
-				'_export_statement_default_from_star_from',
-				'_semi'
-			]),
+			...data,
 			$type: TSKindId.ExportStatementDefaultFrom as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ??
-					data._export_statement_default_from_star_from ??
-					data._export_statement_default_from_ns_from ??
-					data._export_statement_default_from_clause_from ??
-					data._export_clause,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 			_automatic_semicolon: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._automatic_semicolon ??
-						data._semi ??
 						readTerminalFromOther<TSKindId.AutomaticSemicolon | TSKindId.Semi>(data, [
 							TSKindId.AutomaticSemicolon,
 							TSKindId.Semi
@@ -16000,24 +13803,11 @@ export function wrapExportStatementDefaultFrom(
 	return _node;
 }
 
-export function wrapExportStatementDefaultDeclaration(
-	data: T.ExportStatementDefaultDeclaration & {
-		readonly _declaration?: T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration;
-		readonly _export_statement_default_declaration_default_kw?:
-			| T.ExportStatementDefaultDeclarationDefaultKw
-			| T.Declaration;
-	},
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, [
-		'_decorator',
-		'_content',
-		'_declaration',
-		'_export_statement_default_declaration_default_kw'
-	]);
+export function wrapExportStatementDefaultDeclaration(data: T.ExportStatementDefaultDeclaration, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_decorator', '_content']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_declaration', '_export_statement_default_declaration_default_kw']),
+			...data,
 			$type: TSKindId.ExportStatementDefaultDeclaration as const,
 			_decorator: normalizeRepeatedWrapSlot(data._decorator, false, 'decorator', {
 				tree,
@@ -16025,13 +13815,12 @@ export function wrapExportStatementDefaultDeclaration(
 				slotName: 'decorator',
 				span: (data as _NodeData).$span
 			}),
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._declaration ?? data._export_statement_default_declaration_default_kw,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			decorators() {
 				return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree);
@@ -16155,30 +13944,20 @@ export function wrapExportStatementDefaultFromClauseFrom(
 }
 
 export function wrapExportStatementDefaultDeclarationDefaultKw(
-	data: T.ExportStatementDefaultDeclarationDefaultKw & {
-		readonly _declaration?: T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration;
-		readonly _export_statement_default_declaration_default_kw_value?:
-			| T.ExportStatementDefaultDeclarationDefaultKwValue
-			| T.Declaration;
-	},
+	data: T.ExportStatementDefaultDeclarationDefaultKw,
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, [
-		'_content',
-		'_declaration',
-		'_export_statement_default_declaration_default_kw_value'
-	]);
+	data = _keepModelledSlots(data, ['_content']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_declaration', '_export_statement_default_declaration_default_kw_value']),
+			...data,
 			$type: TSKindId.ExportStatementDefaultDeclarationDefaultKw as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._declaration ?? data._export_statement_default_declaration_default_kw_value,
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
 
 			content() {
 				return drillIn<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>(this._content, tree);
@@ -16194,12 +13973,10 @@ export function wrapExportStatementDefaultDeclarationDefaultKw(
 }
 
 export function wrapExportStatementDefaultDeclarationDefaultKwValue(
-	data: T.ExportStatementDefaultDeclarationDefaultKwValue & {
-		readonly _semi?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-	},
+	data: T.ExportStatementDefaultDeclarationDefaultKwValue,
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, ['_value', '_automatic_semicolon', '_semi']);
+	data = _keepModelledSlots(data, ['_value', '_automatic_semicolon']);
 	if (_isReadTextLeaf(data))
 		return withMethods(
 			{ ...data, $type: TSKindId.ExportStatementDefaultDeclarationDefaultKwValue as const },
@@ -16207,7 +13984,7 @@ export function wrapExportStatementDefaultDeclarationDefaultKwValue(
 		);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_semi']),
+			...data,
 			$type: TSKindId.ExportStatementDefaultDeclarationDefaultKwValue as const,
 			_value: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
@@ -16221,7 +13998,6 @@ export function wrapExportStatementDefaultDeclarationDefaultKwValue(
 			_automatic_semicolon: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._automatic_semicolon ??
-						data._semi ??
 						readTerminalFromOther<TSKindId.AutomaticSemicolon | TSKindId.Semi>(data, [
 							TSKindId.AutomaticSemicolon,
 							TSKindId.Semi
@@ -17607,7 +15383,7 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// catalog-less kind (the deprecated JS diagnostic lane stamps those
 	// as strings), which never had a table entry to reach.
 	const fn = typeof data.$type === 'number' ? _wrapTable[data.$type] : undefined;
-	if (!fn) return _drillUnknownKindChildren(data, tree); // unknown kind — still drill in its kind-named-slot children
+	if (!fn) return _drillUnknownKindChildren(data, tree);
 	return fn(data, tree);
 }
 

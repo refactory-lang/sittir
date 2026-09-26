@@ -112,10 +112,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_escape_sequence"
-        ]
+        "nonEmpty": false
       }
     },
     "parameters": {
@@ -149,11 +146,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_quantifier",
-          "_capture"
-        ]
+        "nonEmpty": false
       }
     },
     "grouping": {
@@ -169,11 +162,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_quantifier",
-          "_capture"
-        ]
+        "nonEmpty": false
       }
     },
     "missing_node": {
@@ -189,11 +178,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_quantifier",
-          "_capture"
-        ]
+        "nonEmpty": false
       }
     },
     "anonymous_node": {
@@ -209,11 +194,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_quantifier",
-          "_capture"
-        ]
+        "nonEmpty": false
       }
     },
     "named_node": {
@@ -236,11 +217,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_named_node_group_children",
-          "_named_node_group_anchored_last"
-        ]
+        "nonEmpty": false
       },
       "quantifier": {
         "unnamed": false,
@@ -288,11 +265,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_pound",
-          "_dot"
-        ]
+        "nonEmpty": false
       },
       "immediate_identifier": {
         "unnamed": false,
@@ -354,17 +327,7 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_named_node",
-          "_anonymous_node",
-          "_missing_node",
-          "_grouping",
-          "_predicate",
-          "_list",
-          "_field_definition",
-          "_group_expression_arm"
-        ]
+        "nonEmpty": false
       }
     },
     "named_node_arm": {
