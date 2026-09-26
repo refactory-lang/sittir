@@ -9,7 +9,7 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 
-import { enrich, field, alias, variant, arm, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
+import { enrich, field, alias, variant, arm, flatten, regex, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
 
 declare const string: (value: string) => unknown;
 
@@ -83,11 +83,42 @@ export default grammar(
 				},
 
 				_: {
-					'_/separator/","/before': preference('tight'),
-					'_/separator/";"/before': preference('tight'),
 					'_/separator/"+"/before': preference('space'),
 					'_/separator/"+"/after': preference('space'),
+					'"("/before': preference('tight'),
+					'"("/after': preference('tight'),
+					'")"/before': preference('tight'),
+					'"["/before': preference('tight'),
+					'"["/after': preference('tight'),
+					'"]"/before': preference('tight'),
+					'"{"/after': preference('tight'),
+					'"}"/before': preference('tight'),
+					'"."/before': preference('tight'),
+					'"."/after': preference('tight'),
+					'".."/before': preference('tight'),
+					'".."/after': preference('tight'),
+					'"..="/before': preference('tight'),
+					'"..="/after': preference('tight'),
+					'"..."/before': preference('tight'),
+					'"..."/after': preference('tight'),
+					'","/before': preference('tight'),
+					'_/separator/","/before': preference('tight'),
+					'_/separator/";"/before': preference('tight'),
+					'";"/before': preference('tight'),
+					'":"/before': preference('tight'),
 					'":"/after': preference('space'),
+					'"::"/before': preference('tight'),
+					'"::"/after': preference('tight'),
+					'"<"/before': preference('tight'),
+					'"<"/after': preference('tight'),
+					'">"/before': preference('tight'),
+					'"!"/before': preference('tight'),
+					'"!"/after': preference('tight'),
+					'"&"/after': preference('tight'),
+					'"#"/after': preference('tight'),
+					'"$"/after': preference('tight'),
+					'"\'"/before': preference('tight'),
+					'"\'"/after': preference('tight'),
 					'"->"/before': preference('space'),
 					'"->"/after': preference('space'),
 					'"="/before': preference('space'),
@@ -95,26 +126,22 @@ export default grammar(
 					'"=>"/before': preference('space'),
 					'"=>"/after': preference('space'),
 					'operator:/before': preference('space'),
-					'operator:/after': preference('space'),
-					'"if"/after': preference('space'),
-					'"in"/after': preference('space')
+					'operator:/after': preference('space')
 				},
+
+				struct_pattern: { '"{"/before': preference('tight') },
+				macro_invocation: { '"!"/after': preference('tight') },
+				visibility_modifier_pub: { '"pub"/after': preference('tight') },
+				self_parameter: { 'reference:/after': preference('tight') },
+				variadic_parameter: { '"..."/before': preference('space') },
+				function_modifiers: { 'modifier:/separator': preference('space') },
+				closure_parameters: { '"|"/after': preference('tight'), '"|"/before': preference('tight'), after: preference('space') },
 
 				source_file: {
 					'statements:/separator': preference('tight'),
 					'statements:/(_)/after': preference('blankline'),
 					'statements:/(attribute_item)/after': preference('newline')
 				},
-
-				delim_token_tree_brace: { 'delim_tokens:/separator': preference('tight') },
-				delim_token_tree_bracket: { 'delim_tokens:/separator': preference('tight') },
-				delim_token_tree_paren: { 'delim_tokens:/separator': preference('tight') },
-				token_tree_brace: { 'tokens:/separator': preference('tight') },
-				token_tree_bracket: { 'tokens:/separator': preference('tight') },
-				token_tree_paren: { 'tokens:/separator': preference('tight') },
-				token_tree_pattern_brace: { 'token_patterns:/separator': preference('tight') },
-				token_tree_pattern_bracket: { 'token_patterns:/separator': preference('tight') },
-				token_tree_pattern_paren: { 'token_patterns:/separator': preference('tight') },
 
 				block: { before: preference('space'), 'statements:/end': preference('newline') },
 				match_block: { before: preference('space') },
@@ -130,8 +157,9 @@ export default grammar(
 
 				range_expression_binary: { 'operator:/before': preference('tight'), 'operator:/after': preference('tight') },
 				range_expression_prefix: { 'operator:/after': preference('tight') },
+				range_expression_postfix: { 'operator:/before': preference('tight') },
 				unary_expression: { 'operator:/after': preference('tight') },
-				token_tree_punctuation: { '","/after': preference('space') },
+				token_tree_punctuation: { '","/after': preference('space'), '"..."/before': preference('space'), '"..."/after': preference('space') },
 
 				_bindings: {
 					'block/"{"/after': 'body/before',
@@ -154,7 +182,6 @@ export default grammar(
 					'block/statements:/separator': 'gap/separator',
 					'declaration_list/declarations:/separator': 'gap/separator',
 					'field_initializer/attribute_item:/separator': 'gap/separator',
-					'function_modifiers/modifier:/separator': 'gap/separator',
 					'last_match_arm/attributes:/separator': 'gap/separator',
 					'match_arm/attributes:/separator': 'gap/separator',
 					'match_block_arms/match_arm:/separator': 'gap/separator',
@@ -166,6 +193,30 @@ export default grammar(
 			},
 
 			patches: {
+				bracketed_type: { 1: field('type') },
+				else_clause: { 1: field('body') },
+				generic_pattern: { 0: field('name') },
+				integer_literal: {
+					0: variant('decimal', { default: true }),
+					1: variant('hex'),
+					2: variant('binary'),
+					3: variant('octal')
+				},
+				char_literal: {
+					0: variant('escaped'),
+					1: variant('plain', { default: true }),
+					2: variant('empty')
+				},
+				escape_sequence: {
+					0: variant('simple', { default: true }),
+					1: variant('unicode_fixed'),
+					2: variant('unicode_braced'),
+					3: variant('hex')
+				},
+				metavariable: { '.': regex(/\$(?<name>[a-zA-Z_]\w*)/) },
+
+				shebang: { '.': regex(/#!(?<content>[\r\f\t\v ]*(?:[^\[\n].*)?)\n/) },
+
 				// See docs/rust-grammar-sittir-glossary.md::use_wildcard
 				use_wildcard: {
 					'0/0/0': field('path')
@@ -207,6 +258,7 @@ export default grammar(
 				},
 				last_match_arm: {
 					'0': field('attributes'),
+					'1': flatten(),
 					'4/0': field('comma')
 				},
 
@@ -235,7 +287,25 @@ export default grammar(
 					2: field('right')
 				},
 
+				_let_chain: {
+					'0/0': field('left'),
+					'0/2': field('right'),
+					'1/0': field('left'),
+					'1/2': field('right'),
+					'2/0': field('left'),
+					'2/2': field('right'),
+					'3/0': field('left'),
+					'3/2': field('right'),
+					'4/0': field('left'),
+					'4/2': field('right')
+				},
+
 				closure_expression: { '4/0': variant('block'), '4/1': variant('expr') },
+
+				// A braced, named-field body (`{ x: i32 }`) is what a bare array of
+				// field configs means; the parenthesized, ordered-tuple body stays
+				// reachable by building it explicitly.
+				enum_variant: { '2/0/0/0': arm.default },
 
 				reference_expression: { '1/0/0': variant('raw_const'), '1/0/1': variant('raw_mut'), '1/0/2': variant('mut') },
 
@@ -256,11 +326,9 @@ export default grammar(
 
 				visibility_modifier: [
 					{ '1/1/0/1/3/0': field('in') },
-					{
-						'1/1/0/1/3': variant('in_path'),
-						'0': variant('crate'),
-						'1': variant('pub')
-					}
+					{ '1/1/0/1/3': variant('in_path') },
+					{ '1/1/0': variant('scope') },
+					{ '0': variant('crate'), '1': variant('pub') }
 				],
 
 				function_type: { '1/0/0': variant('trait_form'), '1/0/1': variant('fn_form') },
@@ -303,13 +371,11 @@ export default grammar(
 				},
 
 				// string_literal's opening token carries the b"/c" byte-/C-string
-				// prefix (`alias(/[bc]?"/, $.string_open)` in `rules:` below) — a
-				// NAMED alias, so its real per-occurrence text (`c"`/`b"`/`"`)
-				// survives instead of collapsing to the base grammar's anonymous
-				// `alias(/[bc]?"/, '"')` display string.
-				string_literal: {
-					0: field('string_open')
-				},
+				// prefix. The base grammar's `alias(/[bc]?"/, '"')` is unnamed, so
+				// the prefix would collapse to the display string '"'; alias() names
+				// it `string_open`, so its real per-occurrence text (`c"`/`b"`/`"`)
+				// survives as a captured slot.
+				string_literal: [{ 0: alias('string_open') }, { 0: field('string_open') }],
 
 				// raw_string_literal's delimiters are HIDDEN external-scanner
 				// tokens (`$._raw_string_literal_start`/`_end`) — invisible in
@@ -400,25 +466,25 @@ export default grammar(
 					'2/1': variant('body')
 				},
 
-				match_arm: [{ 0: field('attributes') }, { '3/0': variant('with_comma'), '3/1': variant('block_ending') }],
+				match_arm: [{ 0: field('attributes'), 1: flatten() }, { '3/0': variant('with_comma'), '3/1': variant('block_ending') }],
 
 				// `///` and `//!` reach this choice as separate arms: their
 				// outer/inner marker fields are alternatives, which enrich
 				// distributes over the doc sequence rather than fusing onto one
 				// kind as two independent optional markers.
 				line_comment: {
-					'1/0': variant('regular_dslash'),
+					'1/0': variant('extra_slashes'),
 					'1/1': variant('doc_outer'),
 					'1/2': variant('doc_inner'),
-					'1/3': variant('content')
+					'1/3': variant('regular', { default: true })
 				},
 
-				// `/**` and `/*!`, the block spelling of the same split. Only
-				// the two distributed arms are named; the third is already a
-				// reference to a named content rule.
+				// `/**` and `/*!`, the block spelling of the same split; the
+				// plain `/* … */` arm is the default.
 				block_comment: {
 					'1/0/0': variant('doc_outer'),
-					'1/0/1': variant('doc_inner')
+					'1/0/1': variant('doc_inner'),
+					'1/0/2': variant('regular', { default: true })
 				},
 
 				// The token-tree repeats' element fields (`field('delim_tokens',
@@ -449,7 +515,7 @@ export default grammar(
 				// $._pattern)` in tuple_struct_pattern, tuple_pattern, slice_pattern,
 				// closure parameters) tree-sitter surfaces `_` as an anonymous child
 				// that the read's named-only capture drops. Aliasing it to the named
-				// `wildcard_pattern` kind (the `_wildcard_pattern` rule in `rules:`)
+				// `wildcard_pattern` kind (alias() mints the `_wildcard_pattern` leaf)
 				// gives it a real node, so every `_pattern` list position round-trips
 				// without render-side heuristics.
 				_pattern: { '-1': alias('wildcard_pattern') },
@@ -545,28 +611,12 @@ export default grammar(
 						$._token_keywords
 					),
 
-				// `$` is the one token-tree token the base grammar keeps OUT of
-				// `_non_special_token` (in macro-definition patterns `$` must stay
-				// bindable as the metavariable sigil) and splices into invocation
-				// token trees as a bare STRING arm instead. A bare literal arm has
-				// no kind identity, so the read's array capture cannot materialize
-				// it into `_delim_tokens` — `a!($)` read back and re-rendered as
-				// `a!()`. Alias the STRING itself to the same visible punctuation
-				// kind its 44 sibling tokens already use: the parse content stays
-				// the literal `'$'` (only the node's name changes — no lexing or LR
-				// impact), and definition-context `$` is untouched. NOT the
-				// transform-spec `alias('name')` helper — that substitutes an
-				// aliased reference to the whole `_token_tree_punctuation` RULE,
-				// which makes every punctuation token doubly derivable here and is
-				// a real LR ambiguity.
-				_non_delim_token: ($, original) => ({
-					...original,
-					members: original.members.map((m) =>
-						(m as { type?: string; value?: string }).type === 'STRING' && (m as { value?: string }).value === '$'
-							? alias('$', $.token_tree_punctuation)
-							: m
-					)
-				}),
+				// Enrich mints `_primitive_type` as the storage of upstream's inline
+				// `alias(choice(...primitive types), $.primitive_type)`. As a rule of
+				// its own it is a reduction point, so a bare primitive-type keyword
+				// in a pattern (`fn f((u8))`) reaches it and `_pattern` alike;
+				// `_pattern` is the correct read, so this rule yields.
+				_primitive_type: ($, original) => prec(-1, original),
 
 				_token_keywords: ($) =>
 					choice(
@@ -603,20 +653,7 @@ export default grammar(
 
 				where_predicates: ($, previous) => prec.right(0, previous),
 
-				_wildcard_pattern: ($) => '_',
-
 				_range_expression_bare: ($) => '..',
-
-				// string_literal's opening token is `alias(/[bc]?"/, '"')` in the
-				// base grammar — an UNNAMED alias, so the b"/c" prefix distinction
-				// collapses to the fixed display string '"' before the compiler
-				// ever sees it. Same fix as `_wildcard_pattern`/`_range_expression_bare`
-				// above: alias the pattern into its own real, named node so its
-				// per-occurrence text survives.
-				string_literal: ($, original) =>
-					seq(alias($._string_literal_open, $.string_open), ...original.members.slice(1)),
-
-				_string_literal_open: ($) => /[bc]?"/,
 
 				reference_expression: ($) =>
 					prec(
@@ -646,24 +683,19 @@ export default grammar(
 						field('type', $._type),
 						optional(field('where_clause', $.where_clause)),
 						choice($.declaration_list, ';')
-					),
-
-				_let_chain: ($) =>
-					prec.left(
-						3,
-						choice(
-							seq(field('left', $._let_chain), '&&', field('right', $.let_condition)),
-							seq(field('left', $._let_chain), '&&', field('right', $._expression)),
-							seq(field('left', $.let_condition), '&&', field('right', $._expression)),
-							seq(field('left', $.let_condition), '&&', field('right', $.let_condition)),
-							seq(field('left', $._expression), '&&', field('right', $.let_condition))
-						)
 					)
 			},
 			renderAs: (_$) => ({
-				_inner_line_doc_comment_marker: string('!'),
-				_outer_block_doc_comment_marker: string('*'),
-				_inner_block_doc_comment_marker: string('!')
+				float_literal: /[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?/,
+				string_content: /[^"\\]+/,
+				raw_string_literal_content: /[\s\S]*/,
+				_inner_line_doc_comment_marker: token.immediate('!'),
+				_outer_block_doc_comment_marker: token.immediate('*'),
+				_inner_block_doc_comment_marker: token.immediate('!'),
+				_raw_string_literal_start: /[bc]?r#*"/,
+				_raw_string_literal_end: token.immediate(/"#*/),
+				_line_doc_content: token.immediate(/.*/),
+				_block_comment_content: token.immediate(/[^]*/)
 			})
 		},
 		enrichedBase

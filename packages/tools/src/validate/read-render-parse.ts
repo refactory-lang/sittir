@@ -35,7 +35,8 @@ import {
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData,
-	type AccessorThrowRecord
+	type AccessorThrowRecord,
+	type ValidatorSkip
 } from './common.ts';
 
 /**
@@ -57,19 +58,15 @@ export async function loadVariantChildKindsByOwner(grammar: string): Promise<Rea
 	const { polymorphVariants } = await loadNodeModel(grammar);
 	const byOwner = new Map<string, ReadonlySet<string>>();
 	for (const [parent, desc] of Object.entries(polymorphVariants)) {
-		if (desc.definedBy !== 'override') continue;
 		byOwner.set(parent, new Set(Object.keys(desc.childKind)));
 	}
 	return byOwner;
 }
 
 export async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<string>> {
-	// Only `definedBy: 'override'` descriptors carry a `childKind` map (the
-	// first-named-child dispatch table).
 	const { polymorphVariants } = await loadNodeModel(grammar);
 	const kinds = new Set<string>();
 	for (const [parent, desc] of Object.entries(polymorphVariants)) {
-		if (desc.definedBy !== 'override') continue;
 		kinds.add(parent);
 		for (const childKind of Object.keys(desc.childKind)) kinds.add(childKind);
 	}
@@ -184,96 +181,28 @@ function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
  * Returns `null` if the subtrees match, otherwise a short human-
  * readable diff path explaining the first mismatch.
  */
-/**
- * Per-grammar set of `extras` kind names that are NAMED in tree-sitter's
- * output (line continuations, comments) and therefore appear as children
- * in the strict structural compare. Render reads NodeData fields/children
- * — extras aren't part of the rule structure and don't surface there —
- * so the rendered output can never re-emit them. Filtering them from
- * BOTH sides keeps the compare focused on rule-structural content.
- *
- * Anonymous extras (whitespace regex patterns) are already invisible to
- * the compare's named-child filter. Only NAMED extras need explicit
- * exclusion. (016 Cluster I.)
- */
-export const NAMED_EXTRAS_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {
-	rust: new Set(['line_comment', 'block_comment']),
-	typescript: new Set(['comment', 'html_comment']),
-	python: new Set(['comment', 'line_continuation'])
-};
-
-function collectVisibleChildren(n: TSNode, namedExtras: ReadonlySet<string>): TSNode[] {
+function collectVisibleChildren(n: TSNode): TSNode[] {
 	const out: TSNode[] = [];
 	for (let i = 0; i < n.childCount; i++) {
 		const c = n.child(i);
 		if (!c) continue;
-		if (c.isNamed && namedExtras.has(c.type)) continue;
+		if (c.isNamed && c.isExtra) continue;
 		out.push(c);
 	}
 	return out;
 }
 
-/**
- * Same-text leaf kind pairs the AST compare tolerates, per grammar — an
- * audited allowlist for positional leaf re-classification the reparse
- * wrapper genuinely cannot reproduce. A pair NOT listed here fails the
- * compare even when the bytes match — an unlisted same-text kind swap is
- * a real regression signal, not alias noise. Keys are order-insensitive
- * via {@link leafAliasKey}.
- *
- * Currently EMPTY: every known positional case is handled by a
- * context-faithful reparse wrapper instead (the decorator variant family
- * wraps in a real `@…` position — see `REPARSE_WRAPPERS.typescript`), so
- * leaf classification matches exactly. Adding an entry here requires the
- * same audit that emptied it: instrument the tolerance, run
- * validate:native across all grammars, and list only pairs whose context
- * a wrapper cannot express.
- */
-export const LEAF_ALIAS_TOLERANCE_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {};
-
-export function leafAliasKey(a: string, b: string): string {
-	return a < b ? `${a}|${b}` : `${b}|${a}`;
-}
-
 export function astStructuralDiff(
 	a: TSNode,
 	b: TSNode,
-	namedExtras: ReadonlySet<string>,
 	path: string = '',
-	rootAliasPair?: readonly [string, string],
-	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>,
-	leafAliasPairs?: ReadonlySet<string>
+	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>
 ): string | null {
-	// Root-level alias tolerance: `a`/`b` are the same underlying content —
-	// `wrapForReparse`'s synthetic wrapper context doesn't always reproduce
-	// the exact grammar position that triggered the ORIGINAL parse's named
-	// alias (see `renderedKind`/`targetKind` at this function's call site),
-	// so the reparsed root can legitimately surface under either the alias
-	// source or the alias target's display name. Scoped to path === '' —
-	// deeper mismatches are still real (`findNodeBySpanOfKind` already
-	// anchors nested lookups correctly) and must still fail.
-	const rootAliasTolerated =
-		path === '' &&
-		rootAliasPair !== undefined &&
-		((a.type === rootAliasPair[0] && b.type === rootAliasPair[1]) ||
-			(a.type === rootAliasPair[1] && b.type === rootAliasPair[0]));
-	if (a.type !== b.type && !rootAliasTolerated) {
-		// Byte-identical leaf tolerance, gated on the grammar's audited pair
-		// allowlist ({@link LEAF_ALIAS_TOLERANCE_BY_GRAMMAR}): only childless
-		// nodes with identical text AND an allowlisted kind pair pass — any
-		// structural or byte difference, or an unlisted kind pair, still fails.
-		if (
-			a.childCount === 0 &&
-			b.childCount === 0 &&
-			a.text === b.text &&
-			leafAliasPairs?.has(leafAliasKey(a.type, b.type)) === true
-		) {
-			return null;
-		}
-		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
+	if (a.grammarId !== b.grammarId) {
+		return `${path || 'root'}: grammar type ${a.grammarType} ≠ ${b.grammarType}`;
 	}
-	const aChildren = collectVisibleChildren(a, namedExtras);
-	let bChildren = collectVisibleChildren(b, namedExtras);
+	const aChildren = collectVisibleChildren(a);
+	let bChildren = collectVisibleChildren(b);
 	// Group-lift transparency: sittir's enrich lifts choice arms of canonical
 	// rules into visible variant children (`call_expression` parses as
 	// `(call_expression (call_expression_call …))`; `parenthesized_expression`
@@ -294,7 +223,7 @@ export function astStructuralDiff(
 		const aTypes = new Set(aChildren.map((c) => c.type));
 		if (bChildren.some((c) => ownedVariants.has(c.type) && !aTypes.has(c.type))) {
 			bChildren = bChildren.flatMap((c) =>
-				ownedVariants.has(c.type) && !aTypes.has(c.type) ? collectVisibleChildren(c, namedExtras) : [c]
+				ownedVariants.has(c.type) && !aTypes.has(c.type) ? collectVisibleChildren(c) : [c]
 			);
 		}
 	}
@@ -336,15 +265,7 @@ export function astStructuralDiff(
 			continue;
 		}
 		// Named child — recurse.
-		const sub = astStructuralDiff(
-			ac,
-			bc,
-			namedExtras,
-			`${path || a.type}[${i}].${ac.type}`,
-			undefined,
-			variantChildKinds,
-			leafAliasPairs
-		);
+		const sub = astStructuralDiff(ac, bc, `${path || a.type}[${i}].${ac.type}`, variantChildKinds);
 		if (sub) return sub;
 	}
 	return null;
@@ -393,6 +314,9 @@ export interface ReadRenderParseResult {
 	 * beyond the transient stderr line.
 	 */
 	accessorThrows: AccessorThrowRecord[];
+	skips: ValidatorSkip[];
+	excluded: ValidatorSkip[];
+	trivia: ValidatorSkip[];
 }
 
 /**
@@ -614,7 +538,7 @@ export async function validateReadRenderParse(
 	// native engine.
 	const { loadBoundaryRender } = await import('../scripts/collect-baseline.ts');
 	const render: (node: AnyNodeData) => string = await loadBoundaryRender(
-		grammar as 'rust' | 'typescript' | 'python'
+		grammar
 	);
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);
@@ -657,12 +581,14 @@ export async function validateReadRenderParse(
 		end: number;
 	}[] = [];
 	const accessorThrows: AccessorThrowRecord[] = [];
+	const skips: ValidatorSkip[] = [];
+	const excluded: ValidatorSkip[] = [];
+	const trivia: ValidatorSkip[] = [];
 	const onAccessorThrow = (rec: AccessorThrowRecord): void => {
 		accessorThrows.push(rec);
 	};
 	let pass = 0;
 	let astMatchPass = 0;
-	let skip = 0;
 	let total = 0;
 	let shouldStop = false;
 
@@ -673,7 +599,7 @@ export async function validateReadRenderParse(
 			// Parse original
 			const tree1 = parser.parse(entry.source) as TSTree;
 			if (tree1.rootNode.hasError) {
-				skip++;
+				skips.push({ entry: entry.name, reason: 'parse-error', input: entry.source });
 				if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
 					console.log(`ENTRY\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\tskip-parse-error\tast-fail`);
 				}
@@ -722,7 +648,7 @@ export async function validateReadRenderParse(
 			const testableKinds = [...candidatesByKind.keys()];
 
 			if (testableKinds.length === 0) {
-				skip++;
+				skips.push({ entry: entry.name, reason: 'no-testable-kind', input: entry.source });
 				if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
 					console.log(`ENTRY\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\tskip-no-testable\tast-fail`);
 				}
@@ -833,11 +759,17 @@ export async function validateReadRenderParse(
 							adoptedVariantKinds: adoptedVariantKindNames,
 							targetKind
 						});
-						if (wrapped === null) continue; // no supertype - skip this candidate
+						if (wrapped === null) {
+							excluded.push({ entry: entry.name, kind, reason: 'no-reparse-wrapper', input: inputSource });
+							continue;
+						}
 						// Skip candidates whose render produces only whitespace: an
 						// empty render is indistinguishable from a missing node and
 						// cannot be reparsed meaningfully.
-						if (rendered.trim() === '') continue;
+						if (rendered.trim() === '') {
+							excluded.push({ entry: entry.name, kind, reason: 'empty-render', input: inputSource });
+							continue;
+						}
 
 						// Re-parse
 						const tree2 = parser.parse(wrapped.text) as TSTree;
@@ -925,22 +857,9 @@ export async function validateReadRenderParse(
 						// broken candidate for every WASM node and never set this flag.
 						kindHadCandidate = true;
 						kindOk = true;
-						const namedExtras = NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set<string>();
 						// AST comparison: only when we have a WASM source node to
 						// compare against (native path without $span skips this).
-						const rootAliasPair: readonly [string, string] | undefined =
-							renderedKind !== targetKind ? [renderedKind, targetKind] : undefined;
-						const diff = node1ForAst
-							? astStructuralDiff(
-									node1ForAst,
-									node2,
-									namedExtras,
-									'',
-									rootAliasPair,
-									variantChildKinds,
-									LEAF_ALIAS_TOLERANCE_BY_GRAMMAR[grammar]
-								)
-							: null;
+						const diff = node1ForAst ? astStructuralDiff(node1ForAst, node2, '', variantChildKinds) : null;
 						if (diff) {
 							kindAstMismatches.push({
 								kind: renderedKind,
@@ -1025,26 +944,22 @@ export async function validateReadRenderParse(
 					// error line, no fail count), which masked a whole regression
 					// class from the standard tooling.
 					if (kindErrors.length > 0) {
-						errors.push(kindErrors[0]!);
+						errors.push(...kindErrors);
 						entryHadAnyCandidate = true;
 						entryOk = false;
 						entryAstMatch = false;
-						// KIND_LOG mode: keep walking remaining kinds for full
-						// per-kind coverage — entry scoring is already latched.
-						if (!process.env.SITTIR_VALIDATOR_KIND_LOG) break;
 						continue;
 					}
 					continue; // every candidate neutrally skipped — neutral on this kind
 				}
 				entryHadAnyCandidate = true;
 				if (!kindOk) {
-					if (kindErrors.length > 0) errors.push(kindErrors[0]!);
+					errors.push(...kindErrors);
 					entryOk = false;
 					entryAstMatch = false;
-					if (!process.env.SITTIR_VALIDATOR_KIND_LOG) break;
 				}
 				if (!kindAstMatch) {
-					if (kindAstMismatches.length > 0) astMismatches.push(kindAstMismatches[0]!);
+					astMismatches.push(...kindAstMismatches);
 					entryAstMatch = false;
 				}
 			}
@@ -1053,8 +968,12 @@ export async function validateReadRenderParse(
 			// round-trip attempt ever succeeded past the read step) has tested
 			// nothing — score it like the testableKinds.length===0 case above
 			// (skip), not a silent pass. See entryHadAnyCandidate's doc comment.
-			if (!entryHadAnyCandidate) {
-				skip++;
+			const namedRoots = tree1.rootNode.namedChildren;
+			if (!entryHadAnyCandidate && namedRoots.length > 0 && namedRoots.every((n) => n?.isExtra)) {
+				total--;
+				trivia.push({ entry: entry.name, reason: 'native-read-dropped-extras', input: entry.source });
+			} else if (!entryHadAnyCandidate) {
+				skips.push({ entry: entry.name, reason: 'all-candidates-neutral', input: entry.source });
 			} else {
 				if (entryOk) pass++;
 				if (entryAstMatch) astMatchPass++;
@@ -1086,12 +1005,15 @@ export async function validateReadRenderParse(
 		grammar,
 		total,
 		pass,
-		fail: total - pass - skip,
-		skip,
+		fail: total - pass - skips.length,
+		skip: skips.length,
 		astMatchPass,
 		errors,
 		astMismatches: dedupeMismatchesByContainment(astMismatches),
-		accessorThrows
+		accessorThrows,
+		skips,
+		excluded,
+		trivia
 	};
 }
 

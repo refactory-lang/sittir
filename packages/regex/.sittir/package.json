@@ -1,0 +1,10 @@
+{
+  "name": "tree-sitter-regex",
+  "type": "commonjs",
+  "tree-sitter": [
+    {
+      "scope": "source.regex",
+      "file-types": []
+    }
+  ]
+}

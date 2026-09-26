@@ -1,12 +1,6 @@
 [workspace]
 resolver = "2"
-members = [
-  "rust/crates/sittir-core",
-  "rust/crates/sittir-parity-tests",
-  "rust/crates/sittir-rust",
-  "rust/crates/sittir-typescript",
-  "rust/crates/sittir-python"
-]
+members = ["rust/crates/*"]
 
 # NOTE on workspace-root location (deviation from spec 012 task T002):
 # T002 asked for `/rust/Cargo.toml` as the workspace root with members
@@ -22,6 +16,13 @@ edition = "2021"
 rust-version = "1.88"
 license = "MIT"
 repository = "https://github.com/refactory-lang/sittir"
+
+# A cdylib built with cargo's release default `strip = "debuginfo"` and the
+# explicit `--target` that `napi build --platform` passes comes out with a
+# "mis-aligned LINKEDIT string pool" on current macOS, and dyld refuses to load
+# it. Keeping symbols costs ~4% binary size and loads everywhere.
+[profile.release]
+strip = "none"
 
 # Centralise common dependency versions so core + render + napi stay
 # aligned. Per-crate `Cargo.toml` files pull these via

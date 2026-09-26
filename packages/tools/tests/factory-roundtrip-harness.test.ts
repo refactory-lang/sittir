@@ -11,7 +11,7 @@ describe('factory-roundtrip harness', () => {
 		// Argument spelling is not the contract — routing through
 		// `getChildFactoryArgs` instead of hand-filtering the wire is.
 		expect(content).toMatch(/const elements = getChildFactoryArgs\(kind, config, opts\.factorySlots, opts\.factoryFields\);/);
-		expect(content).toMatch(/directFactoryValue\(kind, config, opts\.factorySlots, opts\.factoryFields\)/);
+		expect(content).toMatch(/directFactoryValue\(kind, base, opts\.factorySlots, opts\.factoryFields\)/);
 		// A direct factory's value is the sole slot resolved from the model's
 		// slot record, falling back to the first child arg.
 		expect(content).toMatch(

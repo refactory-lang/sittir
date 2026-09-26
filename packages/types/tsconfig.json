@@ -1,6 +1,6 @@
 {
 	"extends": "../../tsconfig.json",
 	"compilerOptions": {},
-	"include": ["src"],
+	"include": ["src", "tests/vocabulary-consumers.test-d.ts"],
 	"exclude": ["node_modules", "dist"]
 }

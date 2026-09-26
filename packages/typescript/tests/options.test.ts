@@ -11,29 +11,29 @@ it('the emitted Options type is pinned', () => {
 it('types every site by kind id at its address and rejects a wrong member at compile time', () => {
 	const ok: Options = {
 		array: { elements: { separator: { comma: { after: TSKindId.Newline } }, start: TSKindId.Tight, end: TSKindId.Tight } },
-		formal_parameters_elements: {
-			formal_parameter: { separator: { comma: { after: TSKindId.Space } }, delimiter: Delimiter.Trailing }
+		formalParametersElements: {
+			formalParameter: { separator: { comma: { after: TSKindId.Space } }, delimiter: Delimiter.Trailing }
 		},
-		object_type_content: {
-			content: { separator: { kind: TSKindId.Semi, after: TSKindId.Newline }, delimiter: Delimiter.Trailing }
+		objectTypeContent: {
+			members: { separator: { kind: TSKindId.Semi, after: TSKindId.Newline }, delimiter: Delimiter.Trailing }
 		},
-		enum_body_elements: { content: { separator: { comma: { after: TSKindId.Newline } }, delimiter: Delimiter.Trailing } },
+		enumBodyElements: { content: { separator: { comma: { after: TSKindId.Newline } }, delimiter: Delimiter.Trailing } },
 		statements: { terminator: TSKindId.AutomaticSemicolon },
 		quotes: { style: TSKindId.StringSingle },
-		class_body: { lbrace: { after: TSKindId.Indent }, rbrace: { before: TSKindId.Dedent } },
+		classBody: { lbrace: { after: TSKindId.Indent }, rbrace: { before: TSKindId.Dedent } },
 		indent: '\t'
 	};
 	const bad: Options = {
 		// @ts-expect-error a semicolon is not a whitespace kind
 		array: { elements: { separator: { comma: { after: TSKindId.Semi } } } },
-		formal_parameters_elements: {
+		formalParametersElements: {
 			// @ts-expect-error the leading flank is fixed here
-			formal_parameter: { delimiter: Delimiter.Leading }
+			formalParameter: { delimiter: Delimiter.Leading }
 		},
 		// @ts-expect-error a separator is one of its literal kinds
-		object_type_content: { content: { separator: { kind: TSKindId.Colon } } },
+		objectTypeContent: { members: { separator: { kind: TSKindId.Colon } } },
 		// @ts-expect-error a brace has no 'sideways' edge
-		class_body: { lbrace: { sideways: TSKindId.Space } }
+		classBody: { lbrace: { sideways: TSKindId.Space } }
 	};
 	expect(ok).toBeDefined();
 	expect(bad).toBeDefined();
@@ -61,4 +61,16 @@ it('an unknown key, an address naming no site, and a value a site does not admit
 	expect(() =>
 		createEngine({ options: { array: { elements: { separator: { comma: { after: TSKindId.Semi } } } } } as never })
 	).toThrow(/does not admit kind id/);
+});
+
+it('an omitted registered choice option renders the arm the options resolve, and a set one renders as set', () => {
+	const semi = createEngine();
+	const automatic = createEngine({ options: { statements: { terminator: TSKindId.AutomaticSemicolon } } });
+	const omitted = ir.returnStatement.strict(ir.identifier('r'));
+	expect(semi.render(omitted).toString()).toBe('return r;');
+	expect(automatic.render(omitted).toString()).toBe('return r\n');
+	expect(automatic.render(omitted, { options: { statements: { terminator: TSKindId.Semi } } }).toString()).toBe('return r;');
+	const set = ir.returnStatement.strict(ir.identifier('r'), { terminator: TSKindId.Semi });
+	expect(semi.render(set).toString()).toBe('return r;');
+	expect(automatic.render(set).toString()).toBe('return r;');
 });

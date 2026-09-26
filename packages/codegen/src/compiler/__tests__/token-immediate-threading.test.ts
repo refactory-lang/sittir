@@ -8,7 +8,7 @@
 
 import { FIELD, REPEAT, STRING, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import { deriveSlots, isTerminalValue, AssembledToken } from '../model/node-map.ts';
+import { deriveSlots, isTerminalValue, AssembledPunctuation } from '../model/node-map.ts';
 import { flatten } from '../flatten.ts';
 import type { Rule, StringRule } from '../../types/rule.ts';
 
@@ -60,19 +60,19 @@ describe('token wrapper lexical facts', () => {
 		expect(terminal!.tokenized).toBeUndefined();
 	});
 
-	it('AssembledToken reads immediate/tokenized off the leaf the tokenImmediate builder stamped', () => {
+	it('AssembledPunctuation reads immediate/tokenized off the leaf the tokenImmediate builder stamped', () => {
 		// Post-link shape of `token.immediate('!')`: the wrapper is consumed
 		// and its facts live on the literal it wrapped.
 		const stamped: StringRule = { type: STRING, value: '!', tokenized: true, immediate: true };
-		const tok = new AssembledToken('_inner_marker', stamped);
+		const tok = new AssembledPunctuation('_inner_marker', stamped);
 		expect(tok.immediate).toBe(true);
 		expect(tok.tokenized).toBe(true);
 		expect(tok.text).toBe('!');
 	});
 
-	it('AssembledToken returns immediate=false when rule is plain StringRule', () => {
+	it('AssembledPunctuation returns immediate=false when rule is plain StringRule', () => {
 		const strRule: StringRule = { type: STRING, value: 'pub' };
-		const tok = new AssembledToken('_kw_pub', strRule);
+		const tok = new AssembledPunctuation('_kw_pub', strRule);
 		expect(tok.immediate).toBe(false);
 		expect(tok.tokenized).toBe(false);
 		expect(tok.text).toBe('pub');

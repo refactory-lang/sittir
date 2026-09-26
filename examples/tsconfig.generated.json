@@ -3,7 +3,10 @@
 	"include": [
 		"./17-dogfood-rust.generated.ts",
 		"./18-dogfood-typescript.generated.ts",
-		"./19-dogfood-python.generated.ts"
+		"./19-dogfood-python.generated.ts",
+		"./17-dogfood-rust-loose.generated.ts",
+		"./18-dogfood-typescript-loose.generated.ts",
+		"./19-dogfood-python-loose.generated.ts"
 	],
 	"exclude": []
 }

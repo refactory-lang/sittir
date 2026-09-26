@@ -1,6 +1,6 @@
 # Factory overlays — the ergonomic construction surface over raw builders
 
-**Status:** approved design, not yet implemented
+**Status:** Landed — `packages/<lang>/src/factories/overlays/` (sub-factories, polymorph mount routes), emitted from `packages/codegen/src/emitters/overlays/`.
 **Date:** 2026-08-30
 
 ## Problem

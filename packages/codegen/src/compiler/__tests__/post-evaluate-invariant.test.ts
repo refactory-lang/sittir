@@ -24,6 +24,7 @@
 import { describe, it, expect } from 'vitest';
 import { evaluate } from '../evaluate.ts';
 import { resolveOverridesPath } from '../resolve-grammar.ts';
+import { stableGrammars } from '../../grammars.ts';
 import { expectCompleteCatalog, serializeCatalog } from '../../__tests__/helpers/rule-catalog.ts';
 
 const KNOWN_RULE_TYPES = new Set([
@@ -52,7 +53,7 @@ const KNOWN_RULE_TYPES = new Set([
 	'TOKEN'
 ]);
 
-const GRAMMARS = ['python', 'rust', 'typescript'] as const;
+const GRAMMARS = stableGrammars();
 
 describe('post-evaluate invariant', () => {
 	for (const grammar of GRAMMARS) {
@@ -130,6 +131,7 @@ describe('post-evaluate invariant', () => {
 				'conflicts',
 				'precedences',
 				'word',
+				'reserved',
 				'references',
 				'ruleCatalog',
 				// Documented sidecar — populated by role() accumulator.
@@ -141,6 +143,8 @@ describe('post-evaluate invariant', () => {
 				// wire() config sidecars — drained from __wireContext__ in evaluate.ts.
 				'groups',
 				'renderAs',
+				// The wire context's automatic-variant record; link reads definedBy from it.
+				'automaticVariants',
 				// visibleExternals: — externals auto-aliased visible with a
 				// fixed render body (drainVisibleExternalsMetadata).
 				'visibleExternals',
@@ -159,7 +163,6 @@ describe('post-evaluate invariant', () => {
 				// redeclaring their recorded owner — read by
 				// collectGrammarDiagnosticsForGrammar to suppress phantom diagnostics.
 				'orphanedSyntheticGroups',
-				'visibleInlineNames',
 				// groups: body-pattern entries referenced nowhere after pattern
 				// replacement (silently-dead elevation) — read by
 				// collectGrammarDiagnosticsForGrammar for `body-pattern-zero-match`.

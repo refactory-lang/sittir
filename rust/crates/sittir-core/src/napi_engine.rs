@@ -24,15 +24,14 @@
 ///
 /// - `$grammar` — the crate's [`EngineGrammar`](crate::engine::EngineGrammar) adapter.
 /// - `$render_root` — the generated transport root type accepted by `render`.
-/// - `$options` — the generated per-grammar options struct (`render::options::Options`), the napi-typed shape `EngineOptions.options` and `render`/`render_to_file` accept.
+/// - `$options` — the grammar's `sittir_core::options::Options<Sites>` (`render::options::Options`), read through its address trie; the shape `EngineOptions.options` and `render`/`render_to_file` accept.
 /// - `$render_parts` — `fn(&$render_root) -> Result<(Source, String), _>`.
 /// - `$abi` — the render transport ABI version this crate was generated against.
 /// - `$defaults` — `fn() -> ResolvedOptions`, the grammar's site table at its declared defaults.
-/// - `$resolve` — `fn(&$options, &ResolvedOptions) -> Result<ResolvedOptions, String>`, applying an options object over a base table.
 #[macro_export]
 macro_rules! napi_engine {
-    ($grammar:ty, $render_root:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path, $resolve:path) => {
-        #[::napi_derive::napi(object)]
+    ($grammar:ty, $render_root:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path) => {
+        #[::napi_derive::napi(object, object_to_js = false)]
         pub struct EngineOptions {
             pub format: Option<String>,
             /// Resolved once here against the grammar's site table at
@@ -68,7 +67,7 @@ macro_rules! napi_engine {
                     })?;
                 let table = match opts {
                     Some(opts) => {
-                        $resolve(&opts, &$defaults()).map_err(::napi::Error::from_reason)?
+                        opts.resolve(&$defaults()).map_err(::napi::Error::from_reason)?
                     }
                     None => $defaults(),
                 };
@@ -210,7 +209,7 @@ macro_rules! napi_engine {
                 let resolved;
                 let table = match options {
                     Some(opts) => {
-                        resolved = $resolve(&opts, self.engine.options())
+                        resolved = opts.resolve(self.engine.options())
                             .map_err(::napi::Error::from_reason)?;
                         &resolved
                     }

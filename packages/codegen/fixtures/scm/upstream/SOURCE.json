@@ -1,0 +1,9 @@
+{
+	"repository": "https://github.com/tree-sitter-grammars/tree-sitter-query",
+	"version": "0.8.0",
+	"ref": "a225e21d81201be77da58de614e2b7851735677a",
+	"commit": "a225e21d81201be77da58de614e2b7851735677a",
+	"files": [
+		"statements.txt"
+	]
+}

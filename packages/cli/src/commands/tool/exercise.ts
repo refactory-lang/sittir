@@ -1,6 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
-import { exercise as runExercise } from '@sittir/tools';
 
 export const exercise: CommandModule = {
 	name: 'exercise',
@@ -9,6 +8,7 @@ export const exercise: CommandModule = {
 		withGrammar(defineCommand(program, exercise))
 			.option('-k, --kinds <kind,...>', 'Comma-separated kind list to exercise')
 			.action(async (opts: { grammar?: string; kinds?: string }) => {
+				const { exercise: runExercise } = await import('@sittir/tools');
 				const kinds = opts.kinds
 					? opts.kinds
 							.split(',')

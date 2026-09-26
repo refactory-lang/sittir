@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitest/config';
-import { fileURLToPath } from 'node:url';
+import { sourceAliases } from './packages/codegen/src/grammars.ts';
 
 /**
  * Root vitest config. The workspace is still defined in
@@ -20,20 +20,9 @@ export default defineConfig({
 		// Package-scoped tests avoid this via tsconfig paths (`tsx` honors them
 		// at runtime — see project convention), resolving straight to source.
 		// Mirror that here so root-level tests don't have a hard dependency on
-		// a fresh `dist/` build either — matches tsconfig.json's paths exactly.
-		alias: {
-			'@sittir/common/engine': fileURLToPath(new URL('./packages/common/src/engine-boundary.ts', import.meta.url)),
-			'@sittir/common/utils': fileURLToPath(new URL('./packages/common/src/utils.ts', import.meta.url)),
-			'@sittir/common': fileURLToPath(new URL('./packages/common/src/index.ts', import.meta.url)),
-			'@sittir/types': fileURLToPath(new URL('./packages/types/src/index.ts', import.meta.url)),
-			'@sittir/python/utils': fileURLToPath(new URL('./packages/python/src/utils.ts', import.meta.url)),
-			'@sittir/python': fileURLToPath(new URL('./packages/python/src/index.ts', import.meta.url)),
-			'@sittir/rust/utils': fileURLToPath(new URL('./packages/rust/src/utils.ts', import.meta.url)),
-			'@sittir/rust': fileURLToPath(new URL('./packages/rust/src/index.ts', import.meta.url)),
-			'@sittir/typescript/utils': fileURLToPath(new URL('./packages/typescript/src/utils.ts', import.meta.url)),
-			'@sittir/typescript/tsx': fileURLToPath(new URL('./packages/typescript/src/tsx/index.ts', import.meta.url)),
-			'@sittir/typescript': fileURLToPath(new URL('./packages/typescript/src/index.ts', import.meta.url))
-		}
+		// a fresh `dist/` build either — derived from each package's `exports`.
+		alias: sourceAliases()
+
 	},
 	test: {
 		exclude: ['**/node_modules/**', '**/dist/**', '**/.worktrees/**', '**/.claude/worktrees/**'],

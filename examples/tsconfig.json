@@ -15,11 +15,8 @@
 		"./07-read-source.ts",
 		"./09-type-guards.ts",
 		"./16-dogfooding.ts",
-		"./17-dogfood-rust.ts",
 		"./17-dogfood-rust-strict.ts",
-		"./18-dogfood-typescript.ts",
 		"./18-dogfood-typescript-strict.ts",
-		"./19-dogfood-python.ts",
 		"./19-dogfood-python-strict.ts"
 	],
 	"exclude": []

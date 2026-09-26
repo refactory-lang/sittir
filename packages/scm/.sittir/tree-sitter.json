@@ -1,0 +1,23 @@
+{
+    "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+    "grammars": [
+        {
+            "name": "scm",
+            "camelcase": "Scm",
+            "scope": "source.scm",
+            "path": ".",
+            "file-types": []
+        }
+    ],
+    "metadata": {
+        "version": "0.0.1",
+        "license": "MIT",
+        "description": "Sittir-bundled scm grammar",
+        "authors": [
+            {
+                "name": "sittir",
+                "email": "noreply@example.com"
+            }
+        ]
+    }
+}

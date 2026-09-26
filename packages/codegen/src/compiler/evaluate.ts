@@ -3,6 +3,7 @@ import {
 	ALIAS,
 	CHOICE,
 	FIELD,
+	IMMEDIATE_TOKEN,
 	OPTIONAL,
 	PATTERN,
 	REPEAT,
@@ -10,7 +11,7 @@ import {
 	SEQ,
 	STRING,
 	SYMBOL,
-	TOKEN,
+	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
 import type {
@@ -32,16 +33,15 @@ import { normalizeEnumMembers } from '../dsl/rule-metadata.ts';
 import { structuralBuilder } from '../dsl/builders.ts';
 import type { RawGrammar, DesugarDivergenceEvent, RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
-import { isComplexBody, isNonInlinableLeafShape, isParserHiddenName } from '../dsl/rule-patterns.ts';
+import { isComplexBody } from '../dsl/rule-patterns.ts';
 import { collectOrphanedRules } from '../util/reachable-rules.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
-import { ENRICH_UNALIAS_DIAGNOSTICS_KEY, getEnrichUnaliasDiagnostics } from '../dsl/enrich.ts';
 import type { WireContext, RefineForm } from '../dsl/wire/wire.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
 
-interface SymbolRuleWithRef extends SymbolRule<'evaluate'> {
+export interface SymbolRuleWithRef extends SymbolRule<'evaluate'> {
 	readonly _ref?: SymbolRef;
 }
 
@@ -87,7 +87,7 @@ function choice(...members: Input[]): Rule<'evaluate'> {
 	}
 
 	if (normalized.length > 0 && normalized.every((m) => m.type === STRING)) {
-		return normalizeEnumMembers(normalized as StringRule<'evaluate'>[], { author: 'grammar' });
+		return normalizeEnumMembers(normalized as StringRule<'evaluate'>[]);
 	}
 
 	return structuralBuilder.choice(...normalized);
@@ -233,7 +233,7 @@ function stripPrecedenceWrappers(rules: Record<string, Rule<'evaluate'>>): void 
 
 function foldImmediateTokenRule(rule: Rule<'evaluate'>): Rule<'evaluate'> {
 	const toToken = (r: Rule<'evaluate'>): Rule<'evaluate'> =>
-		r.type === 'IMMEDIATE_TOKEN'
+		r.type === IMMEDIATE_TOKEN
 			? ({
 					type: TOKEN,
 					content: (r as unknown as { content: Rule<'evaluate'> }).content,
@@ -280,6 +280,7 @@ interface GrammarOptions {
 	conflicts?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[][];
 	word?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => SymbolRuleWithRef;
 	precedences?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[][];
+	reserved?: Record<string, ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[]>;
 }
 
 interface MetadataSinks {
@@ -290,9 +291,10 @@ interface MetadataSinks {
 	inline: string[];
 	conflicts: string[][];
 	precedences: string[][];
+	reserved: Record<string, Rule<'evaluate'>[]>;
 }
 
-interface EvaluateCtx {
+export interface EvaluateCtx {
 	readonly rules: Record<string, Rule<'evaluate'>>;
 	readonly provenanceByKind: Map<string, RuleProvenance>;
 	readonly refs: SymbolRef[];
@@ -333,9 +335,19 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const inline: string[] = [];
 	const conflicts: string[][] = [];
 	const precedences: string[][] = [];
+	const reserved: Record<string, Rule<'evaluate'>[]> = {};
 	let word: string | null = null;
 
-	const sinks: MetadataSinks = { extras, externals, supertypes, factoryInline, inline, conflicts, precedences };
+	const sinks: MetadataSinks = {
+		extras,
+		externals,
+		supertypes,
+		factoryInline,
+		inline,
+		conflicts,
+		precedences,
+		reserved
+	};
 	const ctx: EvaluateCtx = {
 		rules,
 		provenanceByKind,
@@ -373,7 +385,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
 	const optionsBlock = drainOptionsMetadata(opts);
 
-	synthesizeInlineAliasSources(rules, ctx);
 	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: ctx.sinks.supertypes });
 	const references = attachReferenceRuleIds(refs, { ruleCatalog: identified.ruleCatalog });
 
@@ -388,6 +399,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		conflicts,
 		precedences,
 		word,
+		reserved,
 		references,
 		ruleCatalog: identified.ruleCatalog,
 		externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
@@ -399,111 +411,11 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		expectDiagnostics,
 		expectTestFailures,
 		orphanedSyntheticGroups,
+		automaticVariants: wireCtx?.automaticVariants,
 		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined,
 		desugarDivergences: ctx.desugarDivergences.length > 0 ? [...ctx.desugarDivergences] : undefined
 	} satisfies RawGrammar;
-	const inheritedUnaliasDiagnostics = getEnrichUnaliasDiagnostics(optionsOrBase);
-	if (inheritedUnaliasDiagnostics.length > 0) {
-		Object.defineProperty(grammarResult, ENRICH_UNALIAS_DIAGNOSTICS_KEY, {
-			value: inheritedUnaliasDiagnostics,
-			enumerable: false,
-			writable: false,
-			configurable: true
-		});
-	}
 	return { grammar: grammarResult };
-}
-
-const canonicalWalker = new RuleWalker<Rule<'evaluate'>>({});
-
-function canonicalizeRawGrammar(raw: RawGrammar): RawGrammar {
-	const inlineNames = new Set(raw.inline);
-	const supertypes = new Set(raw.supertypes);
-	const stampRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
-		if (rule.type === ALIAS) {
-			return rule.content.type === SYMBOL && rule.content.inline !== false
-				? { ...rule, content: { ...rule.content, inline: false } }
-				: rule;
-		}
-		if (rule.type !== SYMBOL) return rule;
-		const hidden = isParserHiddenName(rule.name);
-		const target = raw.rules[rule.name];
-		const boundary =
-			supertypes.has(rule.name) ||
-			(!inlineNames.has(rule.name) && target !== undefined && isNonInlinableLeafShape(target));
-		const inline = !boundary && (hidden || inlineNames.has(rule.name));
-		return rule.inline === inline ? rule : { ...rule, inline };
-	};
-	const rules: Record<string, Rule<'evaluate'>> = {};
-	for (const [name, rule] of Object.entries(raw.rules)) {
-		rules[name] = { ...stampRef(canonicalWalker.map(rule, stampRef)), hidden: isParserHiddenName(name) };
-	}
-	return { ...raw, rules, visibleInlineNames: raw.inline.filter((name) => !name.startsWith('_')) };
-}
-
-function synthesizeInlineAliasSources(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
-	const externalSet = new Set(ctx.externals);
-	const ruleEntries = Object.entries(rules);
-	for (const [name, rule] of ruleEntries) {
-		rules[name] = rewriteInlineAliases(rule, ctx, externalSet);
-	}
-}
-
-function innermostNamedAliasContent(rule: Rule<'evaluate'>): Rule<'evaluate'> {
-	let current = rule;
-	while (current.type === ALIAS && current.named && current.value) current = current.content;
-	return current;
-}
-
-function rewriteInlineAliases(
-	rule: Rule<'evaluate'>,
-	ctx: EvaluateCtx,
-	externals: ReadonlySet<string>
-): Rule<'evaluate'> {
-	const { rules, provenanceByKind } = ctx;
-	const recurse = (r: Rule<'evaluate'>): Rule<'evaluate'> => rewriteInlineAliases(r, ctx, externals);
-	switch (rule.type) {
-		case ALIAS: {
-			if (rule.named && rule.value) {
-				const inner = innermostNamedAliasContent(rule.content);
-				const isBareSymbolToKnownSource =
-					inner.type === SYMBOL && (rules[inner.name] !== undefined || externals.has(inner.name));
-				const targetAlreadyExists = rules[rule.value] !== undefined;
-				if (!targetAlreadyExists && !isBareSymbolToKnownSource && inner.type !== STRING) {
-					const syntheticHiddenName = `_${rule.value}`;
-					if (!rules[syntheticHiddenName]) {
-						rules[syntheticHiddenName] = recurse(rule.content);
-						provenanceByKind.set(syntheticHiddenName, 'evaluate-synthesized');
-						ctx.desugarDivergences.push({ site: 'inline-alias-source', name: syntheticHiddenName });
-					}
-					return { ...rule, content: { type: SYMBOL, name: syntheticHiddenName } };
-				}
-			}
-			return { ...rule, content: recurse(rule.content) };
-		}
-		case SEQ:
-			return { ...rule, members: rule.members.map((m) => recurse(m)) } as Rule<'evaluate'>;
-		case CHOICE:
-			return {
-				...rule,
-				members: rule.members.map((m) => recurse(m))
-			} as Rule<'evaluate'>;
-		case OPTIONAL:
-			return {
-				...rule,
-				content: recurse((rule as { content: Rule<'evaluate'> }).content)
-			} as Rule<'evaluate'>;
-		case REPEAT:
-		case REPEAT1:
-		case FIELD:
-		case TOKEN:
-			return {
-				...rule,
-				content: recurse((rule as { content: Rule<'evaluate'> }).content)
-			} as Rule<'evaluate'>;
-		default:
-			return rule;
-	}
 }
 
 function getWireContext(opts: GrammarOptions): WireContext | undefined {
@@ -963,6 +875,7 @@ function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): voi
 		conflicts?: string[][];
 		precedences?: string[][];
 		word?: string;
+		reserved?: Record<string, Rule<'evaluate'>[]>;
 	} | null;
 	if (inherited) {
 		if (!opts.externals && Array.isArray(inherited.externals)) sinks.externals.push(...inherited.externals);
@@ -975,11 +888,16 @@ function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): voi
 		if (!opts.conflicts && Array.isArray(inherited.conflicts)) sinks.conflicts.push(...inherited.conflicts);
 		if (!opts.precedences && Array.isArray(inherited.precedences)) sinks.precedences.push(...inherited.precedences);
 		if (!opts.word && inherited.word) setWord(inherited.word);
+		if (!opts.reserved && inherited.reserved) Object.assign(sinks.reserved, inherited.reserved);
 	}
 }
 
 function appendDedup(sink: string[], value: string): void {
 	if (!sink.includes(value)) sink.push(value);
+}
+
+function baseNameSymbols(names: readonly unknown[] | undefined): unknown[] {
+	return (names ?? []).map((name) => (typeof name === 'string' ? sym(name) : name));
 }
 
 function appendCallbackMetadataNames(sink: string[], result: unknown): void {
@@ -1005,6 +923,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 		conflicts?: string[][];
 		precedences?: string[][];
 		word?: string;
+		reserved?: Record<string, Rule<'evaluate'>[]>;
 	} | null;
 	if (opts.extras) {
 		const $ = createProxy('_extras_', refs);
@@ -1012,6 +931,10 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 		const result = opts.extras.call($, $, baseExtras);
 		if (Array.isArray(result)) {
 			for (const e of result) {
+				if (typeof e === 'string') {
+					appendDedup(sinks.extras, e);
+					continue;
+				}
 				const n = coerceToRule(e);
 				if (n.type === SYMBOL) appendDedup(sinks.extras, n.name);
 				else if (n.type === PATTERN) appendDedup(sinks.extras, n.value);
@@ -1034,7 +957,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 
 	if (opts.supertypes) {
 		const $ = createProxy('_supertypes_', refs);
-		const baseSupertypes = baseGrammar?.supertypes ?? [];
+		const baseSupertypes = baseNameSymbols(baseGrammar?.supertypes);
 		appendCallbackMetadataNames(sinks.supertypes, opts.supertypes.call($, $, baseSupertypes));
 	}
 
@@ -1046,13 +969,13 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 
 	if (opts.inline) {
 		const $ = createProxy('_inline_', refs);
-		const baseInline = baseGrammar?.inline ?? [];
+		const baseInline = baseNameSymbols(baseGrammar?.inline);
 		appendCallbackMetadataNames(sinks.inline, opts.inline.call($, $, baseInline));
 	}
 
 	if (opts.conflicts) {
 		const $ = createProxy('_conflicts_', refs);
-		const baseConflicts = baseGrammar?.conflicts ?? [];
+		const baseConflicts = (baseGrammar?.conflicts ?? []).map((group) => baseNameSymbols(group));
 		const result = opts.conflicts.call($, $, baseConflicts);
 		if (Array.isArray(result)) {
 			for (const c of result) {
@@ -1067,6 +990,14 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 					);
 				}
 			}
+		}
+	}
+
+	if (opts.reserved) {
+		for (const [wordset, members] of Object.entries(opts.reserved)) {
+			const $ = createProxy('_reserved_', refs);
+			const result = members.call($, $, baseGrammar?.reserved?.[wordset] ?? []);
+			sinks.reserved[wordset] = Array.isArray(result) ? result.map(coerceToRule) : [];
 		}
 	}
 
@@ -1097,14 +1028,25 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 	}
 }
 
-export async function evaluate(entryPath: string): Promise<RawGrammar> {
-	const g = globalThis as Record<string, unknown>;
-	const savedGlobals = saveAndInjectDslGlobals(g);
+let evaluateMutex: Promise<void> = Promise.resolve();
 
+export async function evaluate(entryPath: string): Promise<RawGrammar> {
+	let release!: () => void;
+	const previous = evaluateMutex;
+	evaluateMutex = new Promise<void>((resolve) => {
+		release = resolve;
+	});
+	await previous;
 	try {
-		return canonicalizeRawGrammar(await importAndExtractGrammar(entryPath));
+		const g = globalThis as Record<string, unknown>;
+		const savedGlobals = saveAndInjectDslGlobals(g);
+		try {
+			return await importAndExtractGrammar(entryPath);
+		} finally {
+			restoreSavedGlobals(g, savedGlobals);
+		}
 	} finally {
-		restoreSavedGlobals(g, savedGlobals);
+		release();
 	}
 }
 

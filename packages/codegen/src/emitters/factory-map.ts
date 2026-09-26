@@ -4,10 +4,10 @@ import { deriveSlotCardinality, resolveSlotAliasPairs } from '../compiler/model/
 import {
 	classifyFactoryShape,
 	collectAliasSourceKinds,
-	collectConcreteStorageKeys,
 	forwardedTargetKind,
 	resolveFactoryFieldNames,
-	isAuthoredCompound
+	isAuthoredCompound,
+	registeredSlots
 } from './shared.ts';
 import type { FactoryShape } from './shared.ts';
 import type { PolymorphVariantDescriptor, PolymorphVariantMap } from '../polymorph-variant.ts';
@@ -21,7 +21,7 @@ export interface FactorySlotMeta {
 	readonly required: boolean;
 	readonly multiple: boolean;
 	readonly nonEmpty: boolean;
-	readonly wireKeys?: readonly string[];
+	readonly registered?: boolean;
 }
 
 export interface FactoryMapData {
@@ -39,7 +39,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const forwardsTo: Record<string, string> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (node.surfaceHidden && !aliasSet.has(kind)) continue;
 		const shape = shapeOf(node, nodeMap);
 		if (shape) factoryShapes[kind] = shape;
 		if (shape === 'forwarded') forwardsTo[kind] = forwardedTargetKind(node, nodeMap)!;
@@ -56,19 +56,18 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 
 	const factoryFields: Record<string, readonly string[]> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (node.surfaceHidden && !aliasSet.has(kind)) continue;
 		const fieldNames = resolveFactoryFieldNames(node);
 		if (fieldNames) factoryFields[kind] = fieldNames;
 	}
 
 	const factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (node.surfaceHidden && !aliasSet.has(kind)) continue;
 		const slots: Record<string, FactorySlotMeta> = {};
+		const registered = new Set(registeredSlots(node));
 		for (const field of node.slots) {
-			const meta = createFactorySlotMeta(false, 1, deriveSlotCardinality(field));
-			const wireKeys = collectConcreteStorageKeys(field, nodeMap);
-			slots[field.name] = wireKeys === undefined ? meta : { ...meta, wireKeys };
+			slots[field.name] = createFactorySlotMeta(false, 1, deriveSlotCardinality(field), registered.has(field));
 		}
 		if (Object.keys(slots).length > 0) factorySlots[kind] = slots;
 	}
@@ -85,9 +84,9 @@ function collectVariantAdoptedBranches(
 	const polymorphVariants: Record<string, PolymorphVariantDescriptor> = {};
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!isAuthoredCompound(node) || node.variantChildKinds.length === 0) continue;
-		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (node.surfaceHidden && !aliasSet.has(kind)) continue;
 		polymorphVariants[kind] = {
-			definedBy: 'override',
+			definedBy: node.variantChildKinds.every((child) => child.definedBy === 'enrich') ? 'enrich' : 'override',
 			childKind: mapVariantChildKindsToNames(node.variantChildKinds)
 		};
 	}
@@ -109,11 +108,13 @@ function shapeOf(node: AssembledNode, nodeMap: NodeMap): FactoryShape | null {
 function createFactorySlotMeta(
 	unnamed: boolean,
 	slotCount: number,
-	cardinality: ReturnType<typeof deriveSlotCardinality>
+	cardinality: ReturnType<typeof deriveSlotCardinality>,
+	registered = false
 ): FactorySlotMeta {
 	return {
 		unnamed,
 		slotCount,
-		...cardinality
+		...cardinality,
+		...(registered ? { registered: true } : {})
 	};
 }

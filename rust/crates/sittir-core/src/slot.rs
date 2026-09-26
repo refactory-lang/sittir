@@ -17,11 +17,52 @@ use crate::types::Span;
 pub struct NodeCoordinate {
     pub handle: u64,
     pub span: Span,
+    /// The edge seams of the kind this coordinate names, filled by the prepare
+    /// walk so a verbatim slice meets its neighbours like a rendered node does.
+    pub edges: Option<CoordinateEdges>,
+}
+
+/// One edge seam's resolved arm and the strength it carries into the writer.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SeamArm {
+    pub arm: u16,
+    pub strength: u8,
+}
+
+/// The seams a kind writes before and after itself.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct CoordinateEdges {
+    pub before: Option<SeamArm>,
+    pub after: Option<SeamArm>,
 }
 
 impl NodeCoordinate {
     pub fn new(handle: u64, span: Span) -> Self {
-        Self { handle, span }
+        Self {
+            handle,
+            span,
+            edges: None,
+        }
+    }
+
+    /// Write this coordinate's bytes between its kind's edge seams, the seams a
+    /// rendered node of the same kind writes around itself. `adjacent` drops the
+    /// leading seam for a position that forbids whitespace before it.
+    pub fn write_between_edges(
+        &self,
+        w: &mut dyn crate::render::RenderSink,
+        adjacent: bool,
+    ) -> Result<(), crate::render::RenderError> {
+        if adjacent {
+            w.adjacent();
+        } else if let Some(SeamArm { arm, strength }) = self.edges.and_then(|e| e.before) {
+            w.site_with(arm, strength);
+        }
+        w.slice(self)?;
+        if let Some(SeamArm { arm, strength }) = self.edges.and_then(|e| e.after) {
+            w.site_with(arm, strength);
+        }
+        Ok(())
     }
 
     /// The tree this coordinate belongs to — the tag the handle carries.
@@ -95,10 +136,7 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
     ) -> Result<Option<&T>, crate::render::RenderError> {
         match self {
             Self::Coord(coord) => {
-                if ADJACENT {
-                    w.adjacent();
-                }
-                w.slice(coord)?;
+                coord.write_between_edges(w, ADJACENT)?;
                 Ok(None)
             }
             Self::Transport(t) => Ok(Some(t)),
@@ -111,12 +149,7 @@ impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
 {
     fn render(&self, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
         match self {
-            Self::Coord(coord) => {
-                if ADJACENT {
-                    w.adjacent();
-                }
-                w.slice(coord)
-            }
+            Self::Coord(coord) => coord.write_between_edges(w, ADJACENT),
             Self::Transport(t) => t.render(w),
         }
     }
@@ -247,6 +280,74 @@ mod tests {
         assert_eq!(rendered_with(&LetX, &sources).unwrap(), "letx");
     }
 
+    struct Kinded(Sources);
+    impl SourceTable for Kinded {
+        fn source_of(&self, tree_id: u32) -> Option<&Arc<str>> {
+            self.0.source_of(tree_id)
+        }
+        fn kind_of(&self, _: &NodeCoordinate) -> Option<crate::types::KindId> {
+            Some(crate::types::KindId(9))
+        }
+    }
+
+    #[test]
+    fn a_coordinate_meets_the_edge_seams_of_its_kind_like_a_rendered_node() {
+        use crate::options::{EdgeSite, ResolvedOptions, SiteSpec, NO_SITE};
+        use crate::prepare::{Prepare, RenderContext};
+        use crate::spacing::{SEAM_CASCADE, SEAM_DECLARED, SEAM_FALLBACK};
+        const TIGHT: u16 = 1;
+        const SPACE: u16 = 2;
+        fn text_of(kind: u16) -> &'static str {
+            if kind == SPACE {
+                " "
+            } else {
+                ""
+            }
+        }
+        const EDGE_TABLE: WhitespaceTable = WhitespaceTable {
+            text_of,
+            indent: 0,
+            dedent: 0,
+        };
+        static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: NO_SITE }];
+        static EDGE_ROWS: [u16; 10] = [NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 0];
+        static SITES: [SiteSpec; 1] = [SiteSpec { default_arm: TIGHT, strength: SEAM_CASCADE }];
+        let sources = Kinded(Sources(HashMap::from([(1, Arc::from("f()"))])));
+        let render_with = |options: &ResolvedOptions, held: u8| {
+            let mut slot: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
+                encode_handle(1, 0),
+                Span { start: 1, end: 3 },
+            ));
+            slot.prepare(&RenderContext {
+                options,
+                sources: &sources,
+            })
+            .unwrap();
+            let mut out = String::new();
+            let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident())
+                .with_table(&EDGE_TABLE)
+                .with_sources(&sources);
+            w.text("f").unwrap();
+            w.site_with(SPACE, held);
+            slot.render(&mut w).unwrap();
+            w.finish().unwrap();
+            out
+        };
+        let with_edges = ResolvedOptions {
+            spacing: ResolvedOptions::default_spacing(&SITES),
+            edges: &EDGES,
+            edge_rows: &EDGE_ROWS,
+            sites: &SITES,
+            ..ResolvedOptions::default()
+        };
+        // A cascade-tight edge beats the fallback space held before it, and a
+        // declared space still beats the cascade.
+        assert_eq!(render_with(&with_edges, SEAM_FALLBACK), "f()");
+        assert_eq!(render_with(&with_edges, SEAM_DECLARED), "f ()");
+        // A kind that owns no edge site leaves the held space alone.
+        assert_eq!(render_with(&ResolvedOptions::default(), SEAM_FALLBACK), "f ()");
+    }
+
     #[test]
     fn a_coordinate_into_an_unknown_tree_is_refused_with_its_handle() {
         let sources = Sources(HashMap::new());
@@ -303,6 +404,15 @@ mod tests {
     impl Render for Word {
         fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
             w.text(self.0)
+        }
+    }
+
+    impl crate::prepare::Prepare for Word {
+        fn prepare(
+            &mut self,
+            _: &crate::prepare::RenderContext<'_>,
+        ) -> Result<(), CoordinateError> {
+            Ok(())
         }
     }
 

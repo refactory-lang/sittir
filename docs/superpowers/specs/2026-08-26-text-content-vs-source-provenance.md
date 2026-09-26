@@ -6,7 +6,7 @@
 
 `$text` carries two unrelated facts under one name.
 
-**Slot content.** For a text-modeled kind — `AssembledPattern`, `AssembledToken`,
+**Slot content.** For a text-modeled kind — `AssembledPattern`, `AssembledPunctuation`,
 `AssembledKeyword`, anything whose template is `{{ text }}` — the text *is* the
 node. An `identifier`'s text is its name; a `string_content`'s text is its body.
 Nothing else in the node carries the value, and an edit sets it. This is the

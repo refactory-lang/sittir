@@ -14,6 +14,22 @@ function hasStructure(record: Record<string, unknown>): boolean {
 	return record.$other != null || Object.keys(record).some((key) => key.startsWith('_'));
 }
 
+function isInert(value: unknown): boolean {
+	if (Array.isArray(value)) return value.every(isInert);
+	return value === null || typeof value !== 'object';
+}
+
+/**
+ * A node read as text whose slots are only kind ids, booleans and bare text
+ * projected from that text (a lexed token's interior) and that still spans
+ * the bytes it was read from: nothing was rebuilt, so it stays the
+ * coordinate its text names. An edit detaches the span, which ends this.
+ */
+function isDerivedFromText(record: Record<string, unknown>): boolean {
+	if (typeof record.$text !== 'string' || !isRecord(record.$span) || record.$other != null) return false;
+	return Object.entries(record).every(([key, value]) => !key.startsWith('_') || isInert(value));
+}
+
 /**
  * Whether nothing under `value` was rebuilt: it still spans the bytes it was
  * read from, and the same holds all the way down. A kind id, a boolean or a
@@ -152,7 +168,7 @@ export function stripStructuralProvenance<T>(root: T): T {
 		if (!isRecord(value) || typeof value.$type !== 'number') return;
 		if (seen.has(value)) return;
 		seen.add(value);
-		if (hasStructure(value)) {
+		if (hasStructure(value) && !isDerivedFromText(value)) {
 			delete value.$text;
 			for (const key of COORDINATE_KEYS) delete value[key];
 		}

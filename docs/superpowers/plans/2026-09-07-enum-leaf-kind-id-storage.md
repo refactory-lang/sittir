@@ -143,7 +143,7 @@ In `shared.ts::fieldTypeComponents`: when `storage.via === 'kindId' && storage.m
 
 ---
 
-### Task 4: Wrap projection reads an enum leaf node as its member id — NOT NEEDED (measured: rust read-render-parse 134/137 and fixtures 1486 with the existing `projectMixedEnumStorage`; the read data already carries the member id for aliased enum leaves)
+### Task 4: Wrap projection reads an enum leaf node as its member id — DONE (typescript's `predefined_type` and `reserved_identifier` read as their own symbol with the member text; rust's aliased enum leaves already carried the member id)
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/wrap.ts` (`projectMixedEnumStorage` template ~1367: add a `$text` branch guarded by `entry.$type` being one of the slot's enum OWN symbols; thread an `enumSymbolIds` argument from `kindEnumAltIdPairs`-style derivation — the enum's own catalog id per `enumArmsOf` member whose enum has `hasKindId`), and the wrap-emit tests in `packages/codegen/src/emitters/__tests__/wrap-*.test.ts`.

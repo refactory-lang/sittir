@@ -1,25 +1,14 @@
-import { createRequire } from 'node:module';
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
+import { GRAMMAR_ENTRY, grammarPackageDir, grammarRequire, upstreamPackage } from '../grammars.ts';
 
-const require = createRequire(import.meta.url);
-
-const GRAMMAR_JS_PATHS: Record<string, string> = {
-	typescript: 'tree-sitter-typescript/typescript/grammar.js',
-	tsx: 'tree-sitter-typescript/tsx/grammar.js'
+const GRAMMAR_JS_SUBPATHS: Record<string, string> = {
+	typescript: 'typescript/grammar.js'
 };
 
 export function resolveGrammarJsPath(grammar: string): string {
-	const wellKnown = GRAMMAR_JS_PATHS[grammar];
-	if (wellKnown) {
-		return require.resolve(wellKnown);
-	}
-	return require.resolve(`tree-sitter-${grammar}/grammar.js`);
+	return grammarRequire(grammar).resolve(`${upstreamPackage(grammar)}/${GRAMMAR_JS_SUBPATHS[grammar] ?? 'grammar.js'}`);
 }
 
 export function resolveOverridesPath(grammar: string): string {
-	const compilerDir = dirname(new URL(import.meta.url).pathname);
-	const srcDir = dirname(compilerDir);
-	const codegenDir = dirname(srcDir);
-	const packagesDir = dirname(codegenDir);
-	return join(packagesDir, grammar, 'grammar.sittir.ts');
+	return join(grammarPackageDir(grammar), GRAMMAR_ENTRY);
 }

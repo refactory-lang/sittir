@@ -33,7 +33,7 @@ Ground truth for "did tree-sitter see it": `.sittir/src/grammar.json` (the
 normalized grammar tree-sitter compiled), not `grammar.js`.
 
 Separately, id **consumption** is scattered: `deriveValuesForRule`
-(collect-slots time), `AssembledKeyword`/`AssembledToken` constructors
+(collect-slots time), `AssembledKeyword`/`AssembledPunctuation` constructors
 (assemble time), and emit-time fallback chains each do their own catalog
 lookups. The lookups agree today only by discipline, not by construction.
 
@@ -139,7 +139,7 @@ link pass stamps every value-bearing rule-tree leaf:
 Downstream consumers read stamps instead of looking up:
 - `deriveValuesForRule` drops its `DeriveCtx.kindEntries` lookups and copies
   stamps off the leaves.
-- `AssembledKeyword` / `AssembledToken` constructors read the stamped id off
+- `AssembledKeyword` / `AssembledPunctuation` constructors read the stamped id off
   their `StringRule` (subsuming the constructor-time `findEntryForLiteralText`
   lookup that currently computes `resolvedKind`/`resolvedKindId`).
 - Emit-time resolution chains (`resolveLiteralKindId`,

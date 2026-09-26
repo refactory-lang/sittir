@@ -9,16 +9,16 @@ it('the emitted Options type is pinned', () => {
 
 it('types every site by kind id at its address and rejects a wrong member at compile time', () => {
 	const ok: Options = {
-		argument_list_elements: {
+		argumentListElements: {
 			element: { separator: { comma: { after: TSKindId.Space } }, delimiter: Delimiter.Trailing }
 		},
 		block: { statements: { separator: TSKindId.Newline } },
 		module: { statements: { separator: TSKindId.Newline } },
-		decorated_definition: { decorator: { separator: TSKindId.Newline, decorator: { after: TSKindId.Newline } } },
+		decoratedDefinition: { decorator: { separator: TSKindId.Newline, decorator: { after: TSKindId.Newline } } },
 		indent: '    '
 	};
 	const bad: Options = {
-		argument_list_elements: {
+		argumentListElements: {
 			element: {
 				// @ts-expect-error a comma is not a whitespace kind
 				separator: { comma: { after: TSKindId.Comma } },

@@ -211,6 +211,12 @@ polymorph helpers need to appear explicitly.
 				// so the choice becomes symbol-like across all arms.
 ```
 
+The bare `';'` arm (a stray member-separator semicolon) is minted as its own
+hidden leaf kind by `'1/0/4': alias('empty_member')`: `_empty_member` over
+`';'`, shown as `empty_member`. The mint keeps read identity (the node's
+grammar symbol is `_empty_member`, not the shared `';'` token) and does not
+collide with upstream's `_semicolon` (the automatic-semicolon rule).
+
 ### `_for_header` (`packages/typescript/grammar.sittir.ts:373`)
 
 ```text
@@ -252,8 +258,7 @@ class-member ambiguities against `public_field_definition` itself.
 				// The two-slot seq causes the template to flatten both slots, losing the
 				// name–attribute distinction. Registering as a visible group collapses the
 				// parent's optional to a single `jsx_opening_element_content` slot so each
-				// field renders from its own slot. Also fixes _jsx_start_opening_element's
-				// multi-slot-nested-seq diagnostic (it inlines __jsx_start_opening_element_optional1).
+				// field renders from its own slot.
 				// The name+type_arguments arm is NOT written out inline: enrich's group
 				// lift has already hoisted it into `_jsx_start_opening_element_group1`
 				// (aliased visible) by the time pattern replacement compares bodies, so
@@ -932,7 +937,7 @@ a choice over the six whitespace externals (`_tight`, `_space`, `_newline`,
 `options.ts` unions and the whitespace text the render crate writes are
 read from this list (`whitespaceArmsOf` / `spacingArmsOf`); nothing in
 codegen names a whitespace kind. A grammar that wants another gap width
-adds an external here, as python does with `_double_newline`.
+adds an external here, as python does with `_double_blankline`.
 
 ### `visibleExternals` (`packages/typescript/grammar.sittir.ts:1092`)
 

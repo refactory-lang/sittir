@@ -30,6 +30,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
+import { allGrammars } from '../packages/codegen/src/grammars.ts';
 
 const REPO_ROOT = fileURLToPath(new URL('..', import.meta.url));
 
@@ -95,7 +96,7 @@ function expandRef(raw: string): string[] {
   let refs = [raw];
   const brace = raw.match(/\{([^}]+)\}/);
   if (brace) refs = brace[1]!.split(',').map((alt) => raw.replace(brace[0]!, alt.trim()));
-  const langs = ['rust', 'typescript', 'python'];
+  const langs = allGrammars();
   refs = refs.flatMap((r) =>
     r.includes('<lang>') || r.includes('<grammar>') ? langs.map((l) => r.replace(/<lang>|<grammar>/g, l)) : [r]
   );

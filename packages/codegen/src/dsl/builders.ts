@@ -2,6 +2,7 @@ import {
 	ALIAS,
 	CHOICE,
 	FIELD,
+	IMMEDIATE_TOKEN,
 	NEWLINE,
 	OPTIONAL,
 	PATTERN,
@@ -139,7 +140,7 @@ type Structural = Rule<'evaluate'>;
 
 const structuralToken: StructuralToken = Object.assign(
 	(content: Structural): TokenRule<'evaluate'> => ({ type: TOKEN, content, immediate: false }),
-	{ immediate: (content: Structural): ImmediateTokenRule<'evaluate'> => ({ type: 'IMMEDIATE_TOKEN', content }) }
+	{ immediate: (content: Structural): ImmediateTokenRule<'evaluate'> => ({ type: IMMEDIATE_TOKEN, content }) }
 );
 
 const structuralPrec: StructuralPrec = Object.assign(

@@ -16,7 +16,7 @@ function makeFn(name: string) {
 
 /** Build a `LineComment` trivia node from raw text. */
 function makeComment(text: string): LineComment {
-	return F.buildLineComment(F.buildLineCommentContent(text));
+	return F.buildLineComment(F.buildLineCommentRegular(text));
 }
 
 /** The runtime's trivia storage key — `$trivia()` mutates the node and
@@ -76,7 +76,7 @@ describe('$trivia() integration', () => {
 	// AFTER the `//` marker, unlike `makeComment`'s raw-`//`-prefixed text
 	// above (whose callers never render, only assert `$_trivia` shape).
 	function buildLineComment(afterSlashes: string): LineComment {
-		return F.buildLineComment(F.buildLineCommentContent(afterSlashes));
+		return F.buildLineComment(F.buildLineCommentRegular(afterSlashes));
 	}
 
 	// `$trivia()` mutates and returns the SAME node (asserted above), but its

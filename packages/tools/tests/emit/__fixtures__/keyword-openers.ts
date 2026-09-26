@@ -1,0 +1,36 @@
+function f<T>(a: Array<T>, b: [number, string]): (number | string)[] {
+  const x = (1 + 2) * 3;
+  if (x) {
+    return (x);
+  }
+  while (x) {
+    x = (x - 1);
+  }
+  for (let i = 0; i < 3; i++) {
+    continue;
+  }
+  for (const i of (a)) {
+    continue;
+  }
+  switch (x) {
+    case (1):
+      break;
+  }
+  throw (new Error("x"));
+  await (foo());
+  typeof (x);
+  new (Foo)();
+  const t: (string) = "a";
+  const arr = [(1), [2]];
+  const y = x as (Foo);
+  const g = async (z) => (z);
+  void (0);
+  delete (a.b);
+  const k = x instanceof (Foo);
+  const inn = "a" in (obj);
+  const tpl = `a${(x)}b`;
+  const o = { a: (1), b: [2] };
+  const m = a[0].b;
+  foo(x).bar[1](y);
+  return [x, (y)];
+}

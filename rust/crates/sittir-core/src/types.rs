@@ -109,6 +109,12 @@ pub struct NodeTrivia {
 pub struct NodeData {
     pub type_: KindId,
 
+    /// The grammar symbol that parsed the node, stamped beside `type_` only
+    /// when `type_` names an alias envelope and the node is its storage node
+    /// shown under the alias: the wrap layer seats it as the envelope's
+    /// content under this id.
+    pub storage_type: Option<KindId>,
+
     pub source: Source,
 
     pub named: bool,
@@ -174,6 +180,12 @@ pub struct NodeData {
 struct NodeDataSer<'a> {
     #[serde(rename = "$type")]
     type_: KindId,
+    #[serde(
+        rename = "$storageType",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    storage_type: &'a Option<KindId>,
     #[serde(rename = "$source")]
     source: Source,
     #[serde(rename = "$named")]
@@ -217,6 +229,8 @@ struct NodeDataSer<'a> {
 struct NodeDataDe {
     #[serde(rename = "$type")]
     type_: KindId,
+    #[serde(rename = "$storageType", default)]
+    storage_type: Option<KindId>,
     #[serde(rename = "$source")]
     source: Source,
     #[serde(rename = "$named")]
@@ -323,6 +337,7 @@ impl Serialize for NodeData {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         NodeDataSer {
             type_: self.type_,
+            storage_type: &self.storage_type,
             source: self.source,
             named: self.named,
             fields: &self.fields,
@@ -356,6 +371,7 @@ impl<'de> Deserialize<'de> for NodeData {
         };
         Ok(Self {
             type_: wire.type_,
+            storage_type: wire.storage_type,
             source: wire.source,
             named: wire.named,
             fields,
@@ -599,6 +615,7 @@ fn scalar_child_value(node: &NodeData) -> Option<FieldScalar<'_>> {
 fn scalar_text_leaf(text: String) -> NodeData {
     NodeData {
         type_: KindId(0),
+        storage_type: None,
         source: Source::Ts,
         named: true,
         fields: None,
@@ -615,6 +632,7 @@ fn scalar_text_leaf(text: String) -> NodeData {
 fn scalar_kind_leaf(kind: KindId) -> NodeData {
     NodeData {
         type_: kind,
+        storage_type: None,
         source: Source::Ts,
         named: false,
         fields: None,

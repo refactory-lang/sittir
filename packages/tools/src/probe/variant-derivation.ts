@@ -55,10 +55,10 @@
  *   1  at least one DRIFT found (stale commit or predicate regression)
  */
 
+import { assertGrammar, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { load, buildSimplifiedGrammar } from '../codegen-surface.ts';
 import { loadNodeModel } from '../validate/common.ts';
 
-const ALL_GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
 export interface VariantDerivationProbeOptions {
 	grammar?: string;
@@ -72,7 +72,7 @@ export interface VariantDerivationProbeOptions {
 // ---------------------------------------------------------------------------
 
 interface KnownNonBranchParent {
-	readonly grammar: (typeof ALL_GRAMMARS)[number];
+	readonly grammar: GrammarName;
 	readonly parent: string;
 	readonly modelType: 'supertype' | 'group';
 	readonly reason: string;
@@ -154,7 +154,6 @@ async function runForGrammar(grammar: string): Promise<GrammarResult> {
 	const nodeModel = await loadNodeModel(grammar);
 	const committedMap = new Map<string, string[]>();
 	for (const [parent, desc] of Object.entries(nodeModel.polymorphVariants)) {
-		if (desc.definedBy !== 'override') continue;
 		committedMap.set(parent, Object.keys(desc.childKind));
 	}
 
@@ -220,7 +219,7 @@ function formatGrammarResult(result: GrammarResult): string {
 // ---------------------------------------------------------------------------
 
 export async function run(opts: VariantDerivationProbeOptions): Promise<number> {
-	const grammars = opts.allGrammars ? ALL_GRAMMARS : [(opts.grammar ?? 'rust') as (typeof ALL_GRAMMARS)[number]];
+	const grammars = opts.allGrammars ? stableGrammars() : [assertGrammar(opts.grammar ?? 'rust')];
 
 	let totalDrift = 0;
 	for (const grammar of grammars) {

@@ -1,18 +1,16 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isVisibleTextLeaf, isHiddenPunctuationLeaf, isSurfaceHiddenIn } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
 	AssembledSupertype,
-	AssembledKeyword,
-	AssembledPattern,
-	AssembledToken,
+	AssembledPattern
 } from '../compiler/model/node-map.ts';
-import { isValidIdent, irNamespacesChildFactory } from './shared.ts';
-import { isHiddenKind } from '../dsl/rule-patterns.ts';
-import { collectKindEntries, collectCatalogKinds, hasCatalogEntry,
-} from './kind-discriminant.ts';
+import { isValidIdent, irNamespacesChildFactory, lexedContentSlot } from './shared.ts';
+import { supertypeMemberName } from '../dsl/arm-names.ts';
+import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
 import { bundleEntries, flattenedVariantParents } from './overlays/module.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
@@ -92,7 +90,7 @@ export function emitIr(config: EmitIrConfig): string {
 		const memberTypeEntries: string[] = [];
 		const usedMemberKeys = new Set<string>();
 		for (const subKind of sup.subtypeNames) {
-			if (subKind.startsWith('_')) continue;
+			if (isSurfaceHiddenIn(subKind, nodeMap)) continue;
 			const sub = nodeMap.nodes.get(subKind);
 			if (!sub) continue;
 			const flattenedKey = flattenedKeyByKind.get(subKind);
@@ -106,11 +104,8 @@ export function emitIr(config: EmitIrConfig): string {
 			}
 			if (sub.factoryInline) continue;
 			if (!sub.rawFactoryName) continue;
-			if (
-				sub instanceof AssembledSupertype ||
-				(sub instanceof AbstractAssembledCompound && sub.annotations?.hoisted === true) ||
-				sub instanceof AssembledToken
-			)
+			if (sub instanceof AssembledSupertype || isHiddenPunctuationLeaf(sub)) continue;
+			if ((sub instanceof AbstractAssembledCompound || sub instanceof AssembledList) && !bundleKeyByKind.has(subKind))
 				continue;
 			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
 			const memberKey = memberKeyFor(subKind, kind);
@@ -122,7 +117,7 @@ export function emitIr(config: EmitIrConfig): string {
 				const ref = bundleRef(sub);
 				memberEntries.push(`  ${memberKey}: ${ref},`);
 				memberTypeEntries.push(`  readonly ${memberKey}: typeof ${ref};`);
-			} else if (sub instanceof AssembledKeyword || sub instanceof AssembledPattern) {
+			} else if (isVisibleTextLeaf(sub) || sub instanceof AssembledPattern) {
 				if (!sub.rawFactoryName) continue;
 				memberEntries.push(`  ${memberKey}: F.${sub.rawFactoryName},`);
 				memberTypeEntries.push(`  readonly ${memberKey}: typeof F.${sub.rawFactoryName};`);
@@ -149,53 +144,31 @@ export function emitIr(config: EmitIrConfig): string {
 		}
 		groupBlocks.push('');
 	}
-	if (needsAttachProps) lines.splice(lines.indexOf("import * as F from './factories/index.js';") + 1, 0, "import { attachProps } from './utils.js';");
 
+	const variantParentKeys: string[] = [];
+	for (const { key, variants } of flattenedParents) {
+		if (usedGroupNames.has(key)) continue;
+		if (variants.every((route) => route.minted === true)) {
+			variantParentKeys.push(key);
+			continue;
+		}
+		usedGroupNames.add(key);
+		groupNames.push(key);
+		const sameNamedKind = flatRefByKey.get(key);
+		if (sameNamedKind === undefined) {
+			groupBlocks.push(`export const ${key}: typeof F.${key} = F.${key};`, '');
+			continue;
+		}
+		needsAttachProps = true;
+		groupBlocks.push(
+			`export const ${key}: typeof ${sameNamedKind} & typeof F.${key} = attachProps(${sameNamedKind}, F.${key});`,
+			''
+		);
+	}
 	if (groupBlocks.length > 0) {
 		body.push('// Supertype-grouped sub-namespaces — tree-shakeable top-level consts.');
 		body.push('// Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).');
 		body.push(...groupBlocks);
-	}
-
-	const flatKeys = new Set<string>();
-	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') || node.factoryInline) continue;
-		if (!node.irKey || !node.rawFactoryName) continue;
-		if (!isValidIdent(node.irKey)) continue;
-		const isStructuralFactory =
-			(node instanceof AbstractAssembledCompound && node.annotations?.hoisted !== true) || node instanceof AssembledList;
-		const isLeafFactoryNode = node instanceof AssembledKeyword || node instanceof AssembledPattern;
-		if (!isStructuralFactory && !isLeafFactoryNode) {
-			continue;
-		}
-		if (isStructuralFactory && !node.fromFunctionName) continue;
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
-		flatKeys.add(node.irKey);
-	}
-	const shortAliasBundles = new Map<string, string>();
-	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledSupertype)) continue;
-		const sup = node;
-		for (const subKind of sup.subtypeNames) {
-			if (subKind.startsWith('_')) continue;
-			const sub = nodeMap.nodes.get(subKind);
-			if (!sub?.rawFactoryName || sub.factoryInline) continue;
-			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
-			const alias = memberKeyFor(subKind, kind);
-			if (!isValidIdent(alias) || flatKeys.has(alias) || usedGroupNames.has(alias)) continue;
-			let bundle: string | undefined;
-			if ((sub instanceof AbstractAssembledCompound && sub.annotations?.hoisted !== true) || sub instanceof AssembledList) {
-				if (!sub.fromFunctionName) continue;
-				bundle = bundleRef(sub);
-			} else if (sub instanceof AssembledKeyword || sub instanceof AssembledPattern) {
-				if (!sub.rawFactoryName) continue;
-				bundle = `F.${sub.rawFactoryName}`;
-			} else {
-				continue;
-			}
-			if (shortAliasBundles.has(alias)) continue;
-			shortAliasBundles.set(alias, bundle);
-		}
 	}
 
 	const irTypeMembers: string[] = [];
@@ -207,16 +180,21 @@ export function emitIr(config: EmitIrConfig): string {
 		irValueLines.push(`  ${key}: ${ref},`);
 		irTypeMembers.push(`  readonly ${key}: typeof ${ref};`);
 	}
-	for (const { key } of flattenedParents) {
-		if (usedGroupNames.has(key)) continue;
+	for (const key of variantParentKeys) {
 		irValueLines.push(`  ${key}: F.${key},`);
 		irTypeMembers.push(`  readonly ${key}: typeof F.${key};`);
 	}
+
 	irValueLines.push('');
 
 	irValueLines.push('  // Keyword factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledKeyword) || !isFlatLeafOrKeyword(kind, node, kindEntries)) continue;
+		if (
+			!isVisibleTextLeaf(node) ||
+			!isFlatLeafOrKeyword(kind, node, kindEntries) ||
+			node.annotations?.tokenForm === true
+		)
+			continue;
 		if (usedGroupNames.has(node.irKey!)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 		irTypeMembers.push(`  readonly ${node.irKey}: typeof F.${node.rawFactoryName};`);
@@ -225,19 +203,11 @@ export function emitIr(config: EmitIrConfig): string {
 
 	irValueLines.push('  // Leaf node factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledPattern)) continue;
+		if (!(node instanceof AssembledPattern) || node.annotations?.tokenForm === true) continue;
 		if (!isFlatLeafOrKeyword(kind, node, kindEntries)) continue;
 		if (usedGroupNames.has(node.irKey!)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 		irTypeMembers.push(`  readonly ${node.irKey}: typeof F.${node.rawFactoryName};`);
-	}
-	if (shortAliasBundles.size > 0) {
-		irValueLines.push('');
-		irValueLines.push('  // Supertype-stripped short aliases');
-		for (const [alias, bundle] of [...shortAliasBundles.entries()].sort(([a], [b]) => a.localeCompare(b))) {
-			irValueLines.push(`  ${alias}: ${bundle},`);
-			irTypeMembers.push(`  readonly ${alias}: typeof ${bundle};`);
-		}
 	}
 	if (groupNames.length > 0 || hasSynonyms) {
 		irValueLines.push('');
@@ -251,6 +221,12 @@ export function emitIr(config: EmitIrConfig): string {
 			irTypeMembers.push('  readonly synonym: typeof synonym;');
 		}
 	}
+	if (needsAttachProps)
+		lines.splice(
+			lines.indexOf("import * as F from './factories/index.js';") + 1,
+			0,
+			"import { attachProps } from './utils.js';"
+		);
 	body.push('export const ir: {');
 	body.push(...irTypeMembers);
 	body.push('} = {');
@@ -266,8 +242,8 @@ function isFlatLeafOrKeyword(
 	kindEntries: ReturnType<typeof collectKindEntries> | undefined
 ): boolean {
 	if (!node.userFacing || node.factoryInline) return false;
-	if (node instanceof AssembledKeyword ? isHiddenKind(kind) : !(node instanceof AssembledPattern)) return false;
-	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey) || node.irKey.startsWith('_')) return false;
+	if (isVisibleTextLeaf(node) ? node.surfaceHidden : !(node instanceof AssembledPattern)) return false;
+	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey)) return false;
 	return !kindEntries || hasCatalogEntry(kindEntries, kind);
 }
 
@@ -276,48 +252,8 @@ function groupNameFor(supertypeKind: string): string {
 	return toCamel(bare);
 }
 
-const GROUP_TOKEN_SYNONYMS: Readonly<Record<string, string>> = {
-	item: 'statement',
-	stmt: 'statement',
-	expr: 'expression',
-	decl: 'declaration',
-	impl: 'implementation'
-};
-
-const CATEGORY_TOKENS: ReadonlySet<string> = new Set([
-	'expression',
-	'statement',
-	'literal',
-	'declaration',
-	'definition',
-	'operator',
-	'pattern',
-	'type'
-]);
-
-function normalizeGroupToken(token: string): string {
-	return GROUP_TOKEN_SYNONYMS[token] ?? token;
-}
-
 function memberKeyFor(memberKind: string, supertypeKind: string): string {
-	const bareMember = memberKind.replace(/^_+/, '');
-	const parts = bareMember.split('_').filter((t) => t.length > 0);
-	const groupTokens = new Set(
-		supertypeKind
-			.replace(/^_+/, '')
-			.split('_')
-			.filter((t) => t.length > 0)
-			.map(normalizeGroupToken)
-	);
-	let kept = parts.filter((t) => !groupTokens.has(normalizeGroupToken(t)));
-	if (kept.length === parts.length && parts.length >= 2) {
-		const tail = normalizeGroupToken(parts[parts.length - 1]!);
-		if (CATEGORY_TOKENS.has(tail)) kept = parts.slice(0, -1);
-	}
-	if (kept.length === 0) return toCamel(bareMember);
-	const camel = toCamel(kept.join('_'));
-	if (camel === groupNameFor(supertypeKind)) return toCamel(bareMember);
-	return camel;
+	return toCamel(supertypeMemberName(memberKind, supertypeKind));
 }
 
 function toCamel(snake: string): string {
@@ -332,13 +268,38 @@ function toCamel(snake: string): string {
 	);
 }
 
-function resolveRoleNodes(role: Role, grammarRoles: GrammarRoles, nodeMap: NodeMap): AssembledNode[] {
+function isPolymorphTextParent(node: AssembledNode): boolean {
+	return node instanceof AssembledSupertype && node.irKey !== undefined && node.annotations?.hoisted !== true;
+}
+
+function isTextRoleTarget(node: AssembledNode): boolean {
+	return isLeafFactory(node) || isPolymorphTextParent(node);
+}
+
+function roleFactoryRef(node: AssembledNode): string {
+	return isPolymorphTextParent(node) ? `F.${node.irKey}` : factoryRef(node);
+}
+
+function roleReturnType(node: AssembledNode): string {
+	return `ReturnType<typeof ${roleFactoryRef(node)}>`;
+}
+
+function resolveRoleNodes(
+	role: Role,
+	grammarRoles: GrammarRoles,
+	nodeMap: NodeMap,
+	includePolymorphParents = false
+): AssembledNode[] {
 	const kindNames = grammarRoles.get(role);
 	const nodes: AssembledNode[] = [];
 	const seen = new Set<string>();
 	for (const kind of kindNames) {
 		const node = nodeMap.nodes.get(kind) ?? nodeMap.nodes.get(`_${kind}`);
-		if (node && node.rawFactoryName && !seen.has(node.kind)) {
+		if (
+			node &&
+			(node.rawFactoryName || (includePolymorphParents && isPolymorphTextParent(node))) &&
+			!seen.has(node.kind)
+		) {
 			seen.add(node.kind);
 			nodes.push(node);
 		}
@@ -347,11 +308,18 @@ function resolveRoleNodes(role: Role, grammarRoles: GrammarRoles, nodeMap: NodeM
 }
 
 function isLeafFactory(node: AssembledNode): boolean {
-	return (node instanceof AssembledPattern || node instanceof AssembledKeyword) && node.rawFactoryName !== undefined;
+	return (
+		(node instanceof AssembledPattern || isVisibleTextLeaf(node) || lexedContentSlot(node) !== undefined) &&
+		node.rawFactoryName !== undefined
+	);
+}
+
+function factoryRef(node: AssembledNode): string {
+	return lexedContentSlot(node) === undefined ? `F.${node.rawFactoryName}` : `F.${node.factoryName}`;
 }
 
 function returnTypeExpr(node: AssembledNode): string {
-	return `ReturnType<typeof F.${node.rawFactoryName}>`;
+	return `ReturnType<typeof ${factoryRef(node)}>`;
 }
 
 function emitSynonymNamespace(grammarRoles: GrammarRoles, nodeMap: NodeMap): string[] {
@@ -380,10 +348,10 @@ function emitSynonymBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 	const nodes = resolveRoleNodes('boolean', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
 
-	const leafNode = nodes.find((n) => isLeafFactory(n) && !(n instanceof AssembledKeyword));
+	const leafNode = nodes.find((n) => isLeafFactory(n) && !isVisibleTextLeaf(n));
 	if (leafNode) {
 		fns.push(`  boolean(value: boolean): ${returnTypeExpr(leafNode)} {`);
-		fns.push(`    return F.${leafNode.rawFactoryName}(value ? 'true' : 'false');`);
+		fns.push(`    return ${factoryRef(leafNode)}(value ? 'true' : 'false');`);
 		fns.push('  },');
 		return;
 	}
@@ -393,7 +361,7 @@ function emitSynonymBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 	if (trueNode && falseNode) {
 		const retType = `${returnTypeExpr(trueNode)} | ${returnTypeExpr(falseNode)}`;
 		fns.push(`  boolean(value: boolean): ${retType} {`);
-		fns.push(`    return value ? F.${trueNode.rawFactoryName}() : F.${falseNode.rawFactoryName}();`);
+		fns.push(`    return value ? ${factoryRef(trueNode)}() : ${factoryRef(falseNode)}();`);
 		fns.push('  },');
 		return;
 	}
@@ -401,17 +369,17 @@ function emitSynonymBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 	const first = nodes[0];
 	if (first && isLeafFactory(first)) {
 		fns.push(`  boolean(value: boolean): ${returnTypeExpr(first)} {`);
-		fns.push(`    return F.${first.rawFactoryName}(value ? 'true' : 'false');`);
+		fns.push(`    return ${factoryRef(first)}(value ? 'true' : 'false');`);
 		fns.push('  },');
 	}
 }
 
 function emitSynonymNumber(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
-	const nodes = resolveRoleNodes('number', grammarRoles, nodeMap);
-	const leafNodes = nodes.filter(isLeafFactory);
+	const nodes = resolveRoleNodes('number', grammarRoles, nodeMap, true);
+	const leafNodes = nodes.filter(isTextRoleTarget);
 	if (leafNodes.length === 0) return;
 
-	const floatNodes = resolveRoleNodes('number.float', grammarRoles, nodeMap).filter(isLeafFactory);
+	const floatNodes = resolveRoleNodes('number.float', grammarRoles, nodeMap, true).filter(isTextRoleTarget);
 	const floatSet = new Set(floatNodes.map((n) => n.kind));
 	const intNodes = leafNodes.filter((n) => !floatSet.has(n.kind));
 
@@ -419,27 +387,27 @@ function emitSynonymNumber(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: st
 	const floatNode = floatNodes[0];
 
 	if (intNode && floatNode) {
-		const retType = `${returnTypeExpr(intNode)} | ${returnTypeExpr(floatNode)}`;
+		const retType = `${roleReturnType(intNode)} | ${roleReturnType(floatNode)}`;
 		fns.push(`  number: Object.assign(`);
 		fns.push(`    function number(value: number): ${retType} {`);
 		fns.push(`      return Number.isInteger(value)`);
-		fns.push(`        ? F.${intNode.rawFactoryName}(String(value))`);
-		fns.push(`        : F.${floatNode.rawFactoryName}(String(value));`);
+		fns.push(`        ? ${roleFactoryRef(intNode)}(String(value))`);
+		fns.push(`        : ${roleFactoryRef(floatNode)}(String(value));`);
 		fns.push(`    },`);
 		fns.push(`    {`);
 		fns.push(
-			`      integer(value: number): ${returnTypeExpr(intNode)} { return F.${intNode.rawFactoryName}(String(value)); },`
+			`      integer(value: number): ${roleReturnType(intNode)} { return ${roleFactoryRef(intNode)}(String(value)); },`
 		);
 		fns.push(
-			`      float(value: number): ${returnTypeExpr(floatNode)} { return F.${floatNode.rawFactoryName}(String(value)); },`
+			`      float(value: number): ${roleReturnType(floatNode)} { return ${roleFactoryRef(floatNode)}(String(value)); },`
 		);
 		fns.push(`    }`);
 		fns.push(`  ),`);
 	} else {
 		const node = intNode ?? floatNode ?? leafNodes[0];
 		if (!node) return;
-		fns.push(`  number(value: number): ${returnTypeExpr(node)} {`);
-		fns.push(`    return F.${node.rawFactoryName}(String(value));`);
+		fns.push(`  number(value: number): ${roleReturnType(node)} {`);
+		fns.push(`    return ${roleFactoryRef(node)}(String(value));`);
 		fns.push('  },');
 	}
 }
@@ -453,7 +421,7 @@ function emitSynonymString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: st
 
 	if (isLeafFactory(primaryNode)) {
 		fns.push(`  string(value: string): ${returnTypeExpr(primaryNode)} {`);
-		fns.push(`    return F.${primaryNode.rawFactoryName}(value);`);
+		fns.push(`    return ${factoryRef(primaryNode)}(value);`);
 		fns.push('  },');
 		return;
 	}
@@ -461,48 +429,63 @@ function emitSynonymString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: st
 	const contentNode = nodeMap.nodes.get('string_content');
 	if (contentNode && isLeafFactory(contentNode) && irNamespacesChildFactory(primaryNode, nodeMap)) {
 		fns.push(`  string(value: string): ${returnTypeExpr(primaryNode)} {`);
-		fns.push(`    return F.${primaryNode.rawFactoryName}(F.${contentNode.rawFactoryName}(value));`);
+		fns.push(`    return ${factoryRef(primaryNode)}(${factoryRef(contentNode)}(value));`);
 		fns.push('  },');
 	}
 }
 
 function emitSynonymComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
-	const nodes = resolveRoleNodes('trivia', grammarRoles, nodeMap);
+	const refs = new Map<string, string>();
+	const ref = (node: AssembledNode): string => refs.get(node.kind) ?? factoryRef(node);
+	const returnType = (node: AssembledNode): string => `ReturnType<typeof ${ref(node)}>`;
+	const nodes = grammarRoles
+		.get('trivia')
+		.flatMap((kind) => {
+			const node = nodeMap.nodes.get(kind) ?? nodeMap.nodes.get(`_${kind}`);
+			if (node instanceof AssembledSupertype) {
+				return [...node.subtypeNames].flatMap((name) => {
+					const sub = nodeMap.nodes.get(name);
+					if (sub === undefined) return [];
+					const variant = name.startsWith(`${node.kind}_`) ? name.slice(node.kind.length + 1) : undefined;
+					if (variant !== undefined) refs.set(name, `F.${node.irKey}.${variant}`);
+					return [sub];
+				});
+			}
+			return node === undefined ? [] : [node];
+		})
+		.filter(
+			(node, i, all) => node.rawFactoryName !== undefined && all.findIndex((other) => other.kind === node.kind) === i
+		);
 	if (nodes.length === 0) return;
 
 	const leafNodes = nodes.filter(isLeafFactory);
 
 	if (leafNodes.length === 1) {
 		const node = leafNodes[0]!;
-		fns.push(`  comment(text: string): ${returnTypeExpr(node)} {`);
-		fns.push(`    return F.${node.rawFactoryName}(text);`);
+		fns.push(`  comment(text: string): ${returnType(node)} {`);
+		fns.push(`    return ${ref(node)}(text);`);
 		fns.push('  },');
 		return;
 	}
 
 	if (leafNodes.length > 1) {
-		const retType = leafNodes.map(returnTypeExpr).join(' | ');
 		const lineNode = leafNodes.find((n) => /line/.test(n.kind));
 		const blockNode = leafNodes.find((n) => /block/.test(n.kind));
 		if (lineNode && blockNode) {
 			fns.push(`  comment: Object.assign(`);
-			fns.push(`    function comment(text: string): ${retType} {`);
-			fns.push(`      return text.startsWith('/*')`);
-			fns.push(`        ? F.${blockNode.rawFactoryName}(text)`);
-			fns.push(`        : F.${lineNode.rawFactoryName}(text);`);
+			fns.push(`    function comment(content: string): ${returnType(lineNode)} {`);
+			fns.push(`      return ${ref(lineNode)}(content);`);
 			fns.push(`    },`);
 			fns.push(`    {`);
-			fns.push(`      line(text: string): ${returnTypeExpr(lineNode)} { return F.${lineNode.rawFactoryName}(text); },`);
-			fns.push(
-				`      block(text: string): ${returnTypeExpr(blockNode)} { return F.${blockNode.rawFactoryName}(text); },`
-			);
+			fns.push(`      line(text: string): ${returnType(lineNode)} { return ${ref(lineNode)}(text); },`);
+			fns.push(`      block(text: string): ${returnType(blockNode)} { return ${ref(blockNode)}(text); },`);
 			fns.push(`    }`);
 			fns.push(`  ),`);
 			return;
 		}
 		const first = leafNodes[0]!;
-		fns.push(`  comment(text: string): ${returnTypeExpr(first)} {`);
-		fns.push(`    return F.${first.rawFactoryName}(text);`);
+		fns.push(`  comment(text: string): ${returnType(first)} {`);
+		fns.push(`    return ${ref(first)}(text);`);
 		fns.push('  },');
 		return;
 	}

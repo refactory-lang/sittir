@@ -109,19 +109,32 @@ const fn default_ascii_table() -> [bool; 128] {
 /// The indentation unit a writer uses when none is configured.
 pub const DEFAULT_INDENT: &str = "    ";
 
-/// A seam mark's payload, ranked by width so two consecutive payloads
-/// coalesce to the wider: no whitespace, then a run of spaces, then a run
-/// by how many lines it breaks. A blank line outranks a plain newline, and
-/// two blank lines outrank one, so a separator asking for more survives
-/// meeting a kind edge that asks for less. The grammar's whitespace kinds
-/// decide which runs exist; the writer only orders them.
+/// A seam mark's payload, ranked so two consecutive payloads coalesce to
+/// the higher-ranked: a run of spaces, then no whitespace at all, then a
+/// run by how many lines it breaks. Tight beats space (a declared "glue
+/// here" is the specific intent; an undeclared space only says "no word
+/// glued here"), and a line break beats both — whitespace that carries
+/// line structure is never swallowed by a tight or space seam meeting it.
+/// A blank line outranks a plain newline, and two blank lines outrank one,
+/// so a separator asking for more survives meeting a kind edge that asks
+/// for less. Depth marks (indent/dedent) rank above all of this and are
+/// carried on `depth`/`indent_pending`, never through this scale.
 pub type SeamRank = usize;
+
+/// How firmly a mark holds its gap against the mark meeting it there. A
+/// declared arm (a grammar row, or a value set on the node) beats one the
+/// kind edge took from its edge token's face (cascade), which beats the bare
+/// fallback; rank decides only between marks of one strength. Depth marks
+/// stay above the whole scale.
+pub const SEAM_FALLBACK: u8 = 0;
+pub const SEAM_CASCADE: u8 = 1;
+pub const SEAM_DECLARED: u8 = 2;
 
 pub fn seam_rank(text: &str) -> SeamRank {
     match text.matches('\n').count() {
-        0 if text.is_empty() => 0,
+        0 if text.is_empty() => 2,
         0 => 1,
-        breaks => 1 + breaks,
+        breaks => 2 + breaks,
     }
 }
 
@@ -137,9 +150,11 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     indent_pending: bool,
     indent_armed: bool,
     seam: Option<SeamRank>,
+    seam_strength: u8,
     seam_text: String,
     seam_is_token: bool,
     sources: Option<&'a dyn crate::render::SourceTable>,
+    options: Option<&'a crate::options::ResolvedOptions>,
 }
 
 impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
@@ -155,10 +170,21 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             indent_pending: false,
             indent_armed: false,
             seam: None,
+            seam_strength: SEAM_FALLBACK,
             seam_text: String::new(),
             seam_is_token: false,
             sources: None,
+            options: None,
         }
+    }
+
+    /// The resolved options [`crate::render::RenderSink::site_at`] and
+    /// [`crate::render::RenderSink::edge`] read. A render that writes option
+    /// sites must attach them; a writer with none attached is a debug-mode
+    /// bug, like a missing whitespace table.
+    pub fn with_options(mut self, options: &'a crate::options::ResolvedOptions) -> Self {
+        self.options = Some(options);
+        self
     }
 
     /// The text written once per depth level after every newline.
@@ -240,11 +266,18 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// held rank. The payload's own buffer is kept (not dropped) so a
     /// following seam has a ready allocation to merge into.
     fn flush_seam(&mut self) -> std::fmt::Result {
-        if self.seam.take().is_none() {
+        let Some(rank) = self.seam.take() else {
             return Ok(());
-        }
+        };
         let token = std::mem::replace(&mut self.seam_is_token, false);
-        if self.last.is_none() && !token {
+        // A synthesized (non-token) space is redundant at the very start of
+        // output and right after a literal newline the prior text already
+        // wrote: either way the line already starts bare, so a plain space
+        // arm there would be a stray leading space. Literal whitespace text
+        // is untouched (`literal_whitespace_is_never_coalesced`) because
+        // this only ever drops a *seam's own* payload, never text.
+        let redundant = self.last.is_none() || (rank == 1 && self.last == Some('\n'));
+        if !token && redundant {
             self.seam_text.clear();
             return Ok(());
         }
@@ -254,14 +287,22 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         result
     }
 
-    /// Merges a mark's payload into the held one, keeping whichever is
-    /// wider and, on a tie, the one already held.
+    /// Merges a mark's payload into the held one: a stronger mark replaces a
+    /// weaker one whatever their widths; between marks of one strength the
+    /// wider wins and a tie keeps the one already held.
     fn merge_seam(&mut self, text: &str) {
+        self.merge_seam_with(text, SEAM_DECLARED);
+    }
+
+    fn merge_seam_with(&mut self, text: &str, strength: u8) {
         let rank = seam_rank(text);
-        if self.seam.is_some_and(|current| current >= rank) {
-            return;
+        if let Some(current) = self.seam {
+            if strength < self.seam_strength || (strength == self.seam_strength && current >= rank) {
+                return;
+            }
         }
         self.seam = Some(rank);
+        self.seam_strength = strength;
         self.seam_text.clear();
         self.seam_text.push_str(text);
     }
@@ -271,6 +312,10 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     fn write_chunk(&mut self, s: &str) -> std::fmt::Result {
         if s.is_empty() {
             return Ok(());
+        }
+        if s.starts_with('\n') && self.seam == Some(1) && !self.seam_is_token {
+            self.seam = None;
+            self.seam_text.clear();
         }
         self.flush_seam()?;
         self.write_text(s)
@@ -308,6 +353,29 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     /// arm's text as a seam. A writer with no table attached treats every
     /// other kind as unknown and writes nothing.
     fn site(&mut self, kind: u16) {
+        self.site_with(kind, SEAM_DECLARED);
+    }
+
+    fn site_at(&mut self, site: usize) {
+        debug_assert!(self.options.is_some(), "a render that writes option sites must attach the resolved options");
+        let Some(options) = self.options else {
+            return;
+        };
+        let crate::slot::SeamArm { arm, strength } = options.site_arm(site);
+        self.site_with(arm, strength);
+    }
+
+    fn edge(&mut self, kind: crate::types::KindId, side: crate::options::Side, stamped: Option<crate::options::EdgeArm>) {
+        debug_assert!(self.options.is_some(), "a render that writes kind edges must attach the resolved options");
+        let Some(options) = self.options else {
+            return;
+        };
+        if let Some(crate::slot::SeamArm { arm, strength }) = options.edge_arm(kind, side, stamped) {
+            self.site_with(arm, strength);
+        }
+    }
+
+    fn site_with(&mut self, kind: u16, strength: u8) {
         if kind == 0 {
             return;
         }
@@ -326,7 +394,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         if kind == table.indent {
             self.indent();
         }
-        self.merge_seam(text);
+        self.merge_seam_with(text, strength);
     }
 
     fn seam(&mut self, text: &str) {
@@ -690,6 +758,26 @@ mod sink_tests {
     }
 
     #[test]
+    fn a_plain_space_seam_never_precedes_a_line_break() {
+        assert_eq!(
+            run(|w| {
+                w.text("{}").unwrap();
+                w.seam(" ");
+                w.text("\n// tail\n").unwrap();
+            }),
+            "{}\n// tail\n"
+        );
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.seam("\n");
+                w.text("\nb").unwrap();
+            }),
+            "a\n\nb"
+        );
+    }
+
+    #[test]
     fn literal_whitespace_is_never_coalesced() {
         assert_eq!(
             run(|w| {
@@ -780,5 +868,74 @@ mod sink_tests {
         w.seam("\n");
         w.text("y").unwrap();
         assert_eq!(s, "x\n  y");
+    }
+}
+
+#[cfg(test)]
+mod strength_tests {
+    use super::*;
+    use crate::render::{RenderSink, WhitespaceTable};
+
+    fn text_of(kind: u16) -> &'static str {
+        match kind {
+            1 => "",
+            2 => " ",
+            3 => "\n",
+            _ => "",
+        }
+    }
+    const TABLE: WhitespaceTable = WhitespaceTable { text_of, indent: 0, dedent: 0 };
+
+    fn render(f: impl FnOnce(&mut SpacingWriter<'_, String>)) -> String {
+        let mut out = String::new();
+        let word = WordMatcher::default_ident();
+        let mut w = SpacingWriter::new(&mut out, &word).with_table(&TABLE);
+        f(&mut w);
+        w.finish().unwrap();
+        out
+    }
+
+    #[test]
+    fn a_declared_space_holds_against_a_cascaded_tight() {
+        // `= (x) =>`: the operator's declared space meets the parameter list's
+        // cascaded tight edge; the declared mark wins whatever its width.
+        let out = render(|w| {
+            w.text("=").unwrap();
+            w.site_with(2, SEAM_DECLARED);
+            w.site_with(1, SEAM_CASCADE);
+            w.text("(").unwrap();
+        });
+        assert_eq!(out, "= (");
+    }
+
+    #[test]
+    fn a_cascaded_tight_pulls_in_a_fallback_space() {
+        // `f(x)`: the call's fallback space meets the argument list's cascaded
+        // tight edge; cascade outranks fallback.
+        let out = render(|w| {
+            w.text("f").unwrap();
+            w.site_with(2, SEAM_FALLBACK);
+            w.site_with(1, SEAM_CASCADE);
+            w.text("(").unwrap();
+        });
+        assert_eq!(out, "f(");
+    }
+
+    #[test]
+    fn within_one_strength_the_wider_mark_still_wins() {
+        let out = render(|w| {
+            w.text("a").unwrap();
+            w.site_with(1, SEAM_DECLARED);
+            w.site_with(3, SEAM_DECLARED);
+            w.text("b").unwrap();
+        });
+        assert_eq!(out, "a\nb");
+        let tight = render(|w| {
+            w.text("x").unwrap();
+            w.site_with(2, SEAM_DECLARED);
+            w.site_with(1, SEAM_DECLARED);
+            w.text(";").unwrap();
+        });
+        assert_eq!(tight, "x;");
     }
 }

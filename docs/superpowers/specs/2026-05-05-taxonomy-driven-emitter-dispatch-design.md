@@ -20,7 +20,7 @@ modelType
 ├── pattern            (AssembledPattern extends AssembledLeaf, was modelType: 'leaf')
 ├── keyword            (AssembledKeyword extends AssembledLeaf)
 ├── enum               (AssembledEnum extends AssembledLeaf)
-├── token              (AssembledToken extends AssembledLeaf)
+├── token              (AssembledPunctuation extends AssembledLeaf)
 ├── branch
 │   ├── singleSlot     (exactly one slot — named OR unnamed, no other slots)
 │   │   ├── singular
@@ -87,7 +87,7 @@ for (const [kind, node] of nodeMap.nodes) {
     case 'pattern':
     case 'keyword':
     case 'enum':
-    case 'token':
+    case 'punctuation':
       factory.leaf(node, ctx);
       from.leaf(node, ctx);
       types.leaf(node, ctx);

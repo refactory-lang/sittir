@@ -1,8 +1,9 @@
+import { findOwnKindEntry } from '../compiler/generated-metadata.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { AssembledSupertype, snakeToCamel } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { collectKindEntries, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from './kind-discriminant.ts';
+import { collectKindEntries, kindDiscriminantExpr, type KindEnumEntry } from './kind-discriminant.ts';
 import { collectAllKinds } from './types.ts';
 
 export interface EmitIsConfig {
@@ -76,10 +77,8 @@ export function emitIs(config: EmitIsConfig): string {
 		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
 		: undefined;
 
-	const kindIdByKind = new Map<string, number>();
-	if (kindEntries) {
-		for (const e of kindEntries) kindIdByKind.set(e.kind, e.id);
-	}
+	const kindIdOf = (kind: string): number | undefined =>
+		kindEntries !== undefined ? findOwnKindEntry(kindEntries, kind)?.id : undefined;
 
 	const structuralKinds: Array<{
 		kind: string;
@@ -98,6 +97,7 @@ export function emitIs(config: EmitIsConfig): string {
 				structural = node.annotations?.hoisted !== true;
 				break;
 			case 'polymorph':
+			case 'alias':
 				structural = node.annotations?.hoisted !== true;
 				break;
 			case 'supertype':
@@ -107,7 +107,8 @@ export function emitIs(config: EmitIsConfig): string {
 				structural = true;
 				break;
 			case 'pattern':
-			case 'token':
+			case 'keyword':
+			case 'punctuation':
 			case 'enum':
 				structural = false;
 				break;
@@ -115,7 +116,7 @@ export function emitIs(config: EmitIsConfig): string {
 				assertNever(node);
 		}
 		if (!structural) continue;
-		const numericId = kindIdByKind.get(kind);
+		const numericId = kindIdOf(kind);
 		if (kindEntries && numericId === undefined) {
 			continue;
 		}
@@ -128,7 +129,7 @@ export function emitIs(config: EmitIsConfig): string {
 			);
 		}
 		usedCamelKeys.add(guardKey);
-		const member = kindEntries ? kindIdMemberName(nodeMap, kind) : undefined;
+		const member = kindEntries ? findOwnKindEntry(kindEntries, kind)?.member : undefined;
 		structuralKinds.push({ kind, typeName: node.typeName, guardKey, member, numericId });
 	}
 
@@ -152,7 +153,7 @@ export function emitIs(config: EmitIsConfig): string {
 			const subNode = nodeMap.nodes.get(sub);
 			if (!subNode) continue;
 			memberKinds.push(sub);
-			const numId = kindIdByKind.get(sub);
+			const numId = kindIdOf(sub);
 			if (numId !== undefined) memberIds.push(numId);
 		}
 		if (memberKinds.length === 0) continue;

@@ -1,7 +1,7 @@
 /**
  * SC-012: grouped sub-namespace access produces identical output to flat access.
  *
- * `ir.expression.binary(config)` and `ir.binary(config)` must resolve to the
+ * `ir.expression.binary(config)` and `ir.binaryExpression(config)` must resolve to the
  * same factory bundle — same callable, same `.strict` attachment.
  * (The flat `ir.*` already uses supertype-stripped short keys; the grouped
  * surface mirrors those under `ir.<supertype>.<member>`.)
@@ -13,10 +13,10 @@ import { TSKindId } from '../src/types.ts';
 describe('ir grouped sub-namespaces (SC-012)', () => {
 	it('flat and grouped access resolve to the same factory bundle', () => {
 		const irExpression = ir.expression as typeof expression;
-		// `ir.binary` (flat) and `ir.expression.binary` (grouped) point
+		// `ir.binaryExpression` (flat) and `ir.expression.binary` (grouped) point
 		// at the same _attach bundle.
-		expect(irExpression.binary).toBe(ir.binary);
-		expect(irExpression.binary.strict).toBe(ir.binary.strict);
+		expect(irExpression.binary).toBe(ir.binaryExpression);
+		expect(irExpression.binary.strict).toBe(ir.binaryExpression.strict);
 	});
 
 	it('grouped namespace attached to ir is the same object as standalone export', () => {
@@ -31,7 +31,7 @@ describe('ir grouped sub-namespaces (SC-012)', () => {
 		// and flat IR entry points must agree when the same explicit operator is passed.
 		const leaf = { $type: TSKindId.IntegerLiteral, $text: '1' } as any;
 		const leaf2 = { $type: TSKindId.IntegerLiteral, $text: '2' } as any;
-		const flat = ir.binary({ left: leaf, operator: '&&', right: leaf2 });
+		const flat = ir.binaryExpression({ left: leaf, operator: '&&', right: leaf2 });
 		const grouped = irExpression.binary({ left: leaf, operator: '&&', right: leaf2 });
 		expect(JSON.stringify(grouped)).toBe(JSON.stringify(flat));
 	});

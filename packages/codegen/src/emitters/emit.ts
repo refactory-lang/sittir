@@ -1,12 +1,14 @@
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import { isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import type { DiagnosticSink } from '../types/diagnostics.ts';
 import { resolveRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { AssembledToken } from '../compiler/model/node-map.ts';
 import type { EmittedTemplates } from './templates.ts';
 import type { GrammarRoles } from '../scm/extract-roles.ts';
-import type { Grammar, RenderModuleBundle } from './render-module.ts';
+import type { RenderModuleBundle } from './render-module.ts';
+import type { GrammarName } from '../grammars.ts';
 
 import { FactoryEmitter } from './factories.ts';
 import { FromEmitter } from './from.ts';
@@ -21,7 +23,8 @@ import { emitTests } from './test.ts';
 import { TemplateEmitter, stampStaticSpacing } from './templates.ts';
 import { emitClientUtils } from './client-utils.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
-import { isRenderModuleGrammar, RenderModuleEmitter } from './render-module.ts';
+import { RenderModuleEmitter } from './render-module.ts';
+import { isGrammar } from '../grammars.ts';
 import {
 	classifyFactoryEmission,
 	classifyFromEmission,
@@ -53,6 +56,7 @@ export interface EmitAllConfig {
 	expectTestFailures?: Readonly<Record<string, string>>;
 	options?: OptionsConfig;
 	visibleExternals?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
+	diagnostics?: DiagnosticSink;
 }
 
 export interface EmitAllResult {
@@ -74,11 +78,11 @@ export interface EmitAllResult {
 	rootTreeTypeName?: string;
 }
 
-type RenderModuleEmission = { tag: 'emit'; validGrammar: Grammar } | { tag: 'skip' };
+type RenderModuleEmission = { tag: 'emit'; validGrammar: GrammarName } | { tag: 'skip' };
 
 function classifyRenderModuleEmission(grammar: string, emitRenderModule: boolean | undefined): RenderModuleEmission {
 	if (emitRenderModule !== true) return { tag: 'skip' };
-	if (!isRenderModuleGrammar(grammar)) return { tag: 'skip' };
+	if (!isGrammar(grammar)) return { tag: 'skip' };
 	return { tag: 'emit', validGrammar: grammar };
 }
 
@@ -95,7 +99,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		emitRenderModule,
 		expectTestFailures,
 		options: optionsBlock,
-		visibleExternals
+		visibleExternals,
+		diagnostics
 	} = config;
 	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
 	const kindEntries = generatedIdTables
@@ -145,7 +150,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries && renderRules && sitePreferences
 			? addressTablesFor(nodeMap, kindEntries, sitePreferences, optionsBlock)
 			: undefined;
-	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries });
+	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries, diagnostics });
 
 	const renderModuleEmitterInst =
 		renderModuleEmission.tag === 'emit'
@@ -173,7 +178,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const templates = templateEmitter.finalize();
 	const renderModule = renderModuleEmitterInst?.finalize(templates);
 
-	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
+	const types = emitTypes({ grammar, nodeMap, generatedIdTables, sites: sitePreferences, addresses: addressTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
 	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule();
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
@@ -269,8 +274,9 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 				if (templateEmission === 'emit') templateEmitter.emitLeaf(node);
 				renderModuleEmitterInst?.emitLeaf?.(node);
 				break;
-			case 'token':
-				if (node instanceof AssembledToken) break;
+			case 'keyword':
+			case 'punctuation':
+				if (isHiddenPunctuationLeaf(node)) break;
 				if (factoryEmission === 'emit') factoryEmitter.emitLeaf(node);
 				if (fromEmission === 'emit') fromEmitter.emitLeaf(node);
 				if (templateEmission === 'emit') templateEmitter.emitLeaf(node);
@@ -279,6 +285,7 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 			case 'envelope':
 			case 'branch':
 			case 'polymorph':
+			case 'alias':
 				if (fromEmission === 'emit') fromEmitter.emitBranch(node);
 				if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
 				if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);

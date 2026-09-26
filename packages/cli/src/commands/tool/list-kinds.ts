@@ -1,6 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
-import { listKinds as runListKinds } from '@sittir/tools';
 
 export const listKinds: CommandModule = {
 	name: 'list-kinds',
@@ -11,6 +10,7 @@ export const listKinds: CommandModule = {
 			.option('--unaliased', 'List groups with no visible non-group twin')
 			.option('--phantom', 'List phantom kinds (nodeMap without a parser symbol)')
 			.action(async (opts: { grammar?: string; groups?: boolean; unaliased?: boolean; phantom?: boolean }) => {
+				const { listKinds: runListKinds } = await import('@sittir/tools');
 				const code = await runListKinds({
 					grammar: opts.grammar ?? 'rust',
 					groups: opts.groups ?? false,

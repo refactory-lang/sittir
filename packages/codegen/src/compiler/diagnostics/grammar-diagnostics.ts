@@ -1,22 +1,31 @@
 import { writeFileSync } from 'node:fs';
 
 import { assemble, AssembleCtx, type AssembledNodeMap } from '../assemble.ts';
-import { link } from '../link.ts';
+import { collapseRenamedRules, link } from '../link.ts';
 import { normalizeGrammar, NormalizeCtx } from '../normalize.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
-import {
-	loadGrammarJsonInlineList,
-	loadGrammarJsonAliasMap,
-	buildInlinableKinds
-} from '../inline-sets.ts';
+import { loadGrammarJsonInlineList, loadGrammarJsonAliasMap, buildInlinableKinds } from '../inline-sets.ts';
 import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './derive-shapes.ts';
 import type { AssembleWarning } from '../model/node-map.ts';
-import { drainSlotGroupingDiagnostics } from '../simplify.ts';
-import type { SlotGroupingDiagnostic } from './slot-grouping.ts';
-import type { RawGrammar, DesugarDivergenceEvent } from '../types.ts';
-import type { GeneratedIdTables } from '../generated-metadata.ts';
+import { makeSlotGroupingCollector } from '../simplify.ts';
+import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
+import type {
+	RawGrammar,
+	LinkedGrammar,
+	NormalizedGrammar,
+	IncludeFilter,
+	DesugarDivergenceEvent,
+	ReservedWordsets
+} from '../types.ts';
+import {
+	collectGeneratedKindEntries,
+	reservedWordset,
+	type GeneratedIdTables,
+	type KindEntryLike
+} from '../generated-metadata.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
+import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions, symbolSourceOf } from './alias-distributed.ts';
 
 export type { GrammarDiagnostic };
 
@@ -118,7 +127,6 @@ export function fromBodyPatternZeroMatch(grammar: string, hiddenName: string): G
 }
 
 const DESUGAR_DIVERGENCE_DESCRIPTIONS: Record<DesugarDivergenceEvent['site'], string> = {
-	'inline-alias-source': 'synthesizeInlineAliasSources minted an alias source with no wire-side deposit',
 	'body-pattern-group': "evaluateRulesAndInjectSynthetics's body-pattern-group fallback fired with no wire-side deposit"
 };
 
@@ -133,6 +141,25 @@ export function fromDesugarDivergence(grammar: string, event: DesugarDivergenceE
 		proposal: `Route this synthesis through the DSL layer (enrich/wire) pre-generate, so both executions mint the same rule, instead of leaving it to this evaluate-only fallback.`,
 		canProceed: true
 	};
+}
+
+export function reservedMemberDiagnostics(
+	grammar: string,
+	reserved: ReservedWordsets | undefined,
+	entries: readonly KindEntryLike[]
+): GrammarDiagnostic[] {
+	return Object.keys(reserved ?? {}).flatMap((wordset) =>
+		reservedWordset(reserved, wordset, entries).nonLiteral.map((member) => ({
+			scope: 'grammar' as const,
+			code: 'reserved-member-not-literal',
+			severity: 'warning' as const,
+			grammar,
+			ownerKind: member,
+			message: `reserved wordset '${wordset}' member '${member}' has no literal text, so the word builder cannot reject it.`,
+			proposal: `List the word as a string, or as a symbol whose rule is a single literal.`,
+			canProceed: true
+		}))
+	);
 }
 
 export function collectGrammarDiagnostics(input: {
@@ -171,32 +198,53 @@ export function collectGrammarDiagnostics(input: {
 
 export function collectGrammarDiagnosticsForGrammar(input: {
 	rawGrammar: RawGrammar;
+	include?: IncludeFilter;
 	generatedIdTables?: GeneratedIdTables;
 }): {
+	raw: RawGrammar;
+	linked: LinkedGrammar;
+	normalized: NormalizedGrammar;
 	nodeMap: AssembledNodeMap;
+	compilerDiagnostics: DiagnosticSink;
+	slotGroupingDiagnostics: readonly SlotGroupingDiagnostic[];
 	diagnostics: readonly GrammarDiagnostic[];
 } {
-	const linkSink = new DiagnosticSink();
-	const linked = link(input.rawGrammar, { generatedIdTables: input.generatedIdTables, diagnostics: linkSink });
-	const inlineKinds = new Set(loadGrammarJsonInlineList(input.rawGrammar.name) ?? []);
+	const kindEntries = collectGeneratedKindEntries(input.generatedIdTables);
+	const rawGrammar = collapseRenamedRules(input.rawGrammar, { kindEntries });
+	const compilerDiagnostics = new DiagnosticSink();
+	const slotGroupingCollector = makeSlotGroupingCollector();
+	const linked = link(rawGrammar, {
+		include: input.include,
+		generatedIdTables: input.generatedIdTables,
+		diagnostics: compilerDiagnostics
+	});
+	const inlineKinds = buildInlinableKinds(new Set(loadGrammarJsonInlineList(rawGrammar.name) ?? []), linked);
+	for (const rec of diagnoseRepeatedSeqGrouping(linked.rules, inlineKinds)) slotGroupingCollector.record(rec);
 	const normalized = normalizeGrammar(
 		linked,
 		new NormalizeCtx({
 			grammar: linked,
-			inlineKinds: buildInlinableKinds(inlineKinds, linked),
-			diagnostics: new DiagnosticSink()
+			inlineKinds,
+			diagnostics: compilerDiagnostics,
+			slotGroupingCollector
 		})
 	);
 	const nodeMap = assemble(
-		AssembleCtx.from(normalized, input.generatedIdTables, undefined, loadGrammarJsonAliasMap(input.rawGrammar.name))
+		AssembleCtx.from(normalized, input.generatedIdTables, compilerDiagnostics, loadGrammarJsonAliasMap(rawGrammar.name))
 	);
-	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
+	const slotGroupingDiagnostics = slotGroupingCollector.all;
 	const contentAliasDiagnostics = diagnoseContentAliasInjectivity({
-		grammar: input.rawGrammar.name,
+		grammar: rawGrammar.name,
 		contentAliasedTo: linked.contentAliasedTo
 	});
-	const orphanedSyntheticGroups = new Set(input.rawGrammar.orphanedSyntheticGroups ?? []);
-	const kindIdStampDiagnostics: GrammarDiagnostic[] = linkSink
+	const symbols = symbolSourceOf({
+		rules: rawGrammar.rules,
+		externals: new Set(rawGrammar.externals),
+		inline: new Set(rawGrammar.inline),
+		kindEntries
+	});
+	const orphanedSyntheticGroups = new Set(rawGrammar.orphanedSyntheticGroups ?? []);
+	const kindIdStampDiagnostics: GrammarDiagnostic[] = compilerDiagnostics
 		.all()
 		.filter(
 			(d) =>
@@ -205,25 +253,31 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 				d.code.startsWith('kindid-inline-excluded') ||
 				d.code.startsWith('kindid-unclassified')
 		)
-		.map((d) => ({ ...d, scope: 'grammar' as const, grammar: input.rawGrammar.name }));
+		.map((d) => ({ ...d, scope: 'grammar' as const, grammar: rawGrammar.name }));
 	const allDiagnostics = [
 		...collectGrammarDiagnostics({
-			grammar: input.rawGrammar.name,
+			grammar: rawGrammar.name,
 			parseKindCollisions: nodeMap.parseKindCollisions,
 			deriveShapeDiagnostics: nodeMap.deriveShapeDiagnostics,
 			assembleWarnings: nodeMap.assembleWarnings,
 			slotGroupingDiagnostics,
-			expectDiagnostics: input.rawGrammar.expectDiagnostics
+			expectDiagnostics: rawGrammar.expectDiagnostics
 		}).diagnostics,
 		...contentAliasDiagnostics,
+		...diagnoseDistributedAliases({ grammar: rawGrammar.name, symbols }),
+		...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols }),
 		...kindIdStampDiagnostics,
-		...(input.rawGrammar.bodyPatternZeroMatches ?? []).map((name) =>
-			fromBodyPatternZeroMatch(input.rawGrammar.name, name)
-		),
-		...(input.rawGrammar.desugarDivergences ?? []).map((event) => fromDesugarDivergence(input.rawGrammar.name, event))
+		...reservedMemberDiagnostics(rawGrammar.name, nodeMap.reserved, kindEntries),
+		...(rawGrammar.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(rawGrammar.name, name)),
+		...(rawGrammar.desugarDivergences ?? []).map((event) => fromDesugarDivergence(rawGrammar.name, event))
 	];
 	return {
+		raw: rawGrammar,
+		linked,
+		normalized,
 		nodeMap,
+		compilerDiagnostics,
+		slotGroupingDiagnostics,
 		diagnostics:
 			orphanedSyntheticGroups.size === 0
 				? allDiagnostics

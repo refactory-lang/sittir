@@ -36,11 +36,6 @@ function coversExactly(kindSet: ReadonlySet<string>, subtypes: ReadonlySet<strin
 	return kindSet.size === subtypes.size && [...kindSet].every((k) => subtypes.has(k));
 }
 
-function addVisibleAliasNameOfHiddenKind(out: Set<string>, nodeMap: NodeMap, kind: string): void {
-	const aliasTarget = nodeMap.aliasedHiddenKinds?.get(kind);
-	if (aliasTarget !== undefined) out.add(aliasTarget);
-}
-
 export function buildSupertypeTransportSet(nodeMap: NodeMap): Map<string, ReadonlySet<string>> {
 	const result = new Map<string, ReadonlySet<string>>();
 	const expandSupertypeKinds = (kind: string, seen: Set<string> = new Set()): Set<string> => {
@@ -88,7 +83,6 @@ export function acceptedTransportKinds(
 	const node = nodeMap.nodes.get(kind);
 	if (!node) return [kind];
 	const out = new Set<string>([kind]);
-	addVisibleAliasNameOfHiddenKind(out, nodeMap, kind);
 	if (parseAliases) {
 		for (const [target, source] of Object.entries(parseAliases)) {
 			if (source === kind) out.add(target);

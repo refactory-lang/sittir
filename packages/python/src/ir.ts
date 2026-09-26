@@ -20,20 +20,20 @@ export const synonym = {
 		return value ? F.buildTrue() : F.buildFalse();
 	},
 	number: Object.assign(
-		function number(value: number): ReturnType<typeof F.buildInteger> | ReturnType<typeof F.buildFloat> {
-			return Number.isInteger(value) ? F.buildInteger(String(value)) : F.buildFloat(String(value));
+		function number(value: number): ReturnType<typeof F.integer> | ReturnType<typeof F.float> {
+			return Number.isInteger(value) ? F.integer(String(value)) : F.float(String(value));
 		},
 		{
-			integer(value: number): ReturnType<typeof F.buildInteger> {
-				return F.buildInteger(String(value));
+			integer(value: number): ReturnType<typeof F.integer> {
+				return F.integer(String(value));
 			},
-			float(value: number): ReturnType<typeof F.buildFloat> {
-				return F.buildFloat(String(value));
+			float(value: number): ReturnType<typeof F.float> {
+				return F.float(String(value));
 			}
 		}
 	),
-	comment(text: string): ReturnType<typeof F.buildComment> {
-		return F.buildComment(text);
+	comment(text: string): ReturnType<typeof F.comment> {
+		return F.comment(text);
 	},
 	type(name: string): ReturnType<typeof F.buildIdentifier> {
 		return F.buildIdentifier(name);
@@ -75,42 +75,6 @@ export const statement: {
 	match: F.matchStatement
 };
 
-export const simpleStatement: {
-	readonly futureImport: typeof F.futureImportStatement;
-	readonly import: typeof F.importStatement;
-	readonly importFrom: typeof F.importFromStatement;
-	readonly print: typeof F.printStatement;
-	readonly assert: typeof F.assertStatement;
-	readonly expression: typeof F.expressionStatement;
-	readonly return: typeof F.returnStatement;
-	readonly delete: typeof F.deleteStatement;
-	readonly raise: typeof F.raiseStatement;
-	readonly pass: typeof F.buildPassStatement;
-	readonly break: typeof F.buildBreakStatement;
-	readonly continue: typeof F.buildContinueStatement;
-	readonly global: typeof F.globalStatement;
-	readonly nonlocal: typeof F.nonlocalStatement;
-	readonly exec: typeof F.execStatement;
-	readonly typeAlias: typeof F.typeAliasStatement;
-} = {
-	futureImport: F.futureImportStatement,
-	import: F.importStatement,
-	importFrom: F.importFromStatement,
-	print: F.printStatement,
-	assert: F.assertStatement,
-	expression: F.expressionStatement,
-	return: F.returnStatement,
-	delete: F.deleteStatement,
-	raise: F.raiseStatement,
-	pass: F.buildPassStatement,
-	break: F.buildBreakStatement,
-	continue: F.buildContinueStatement,
-	global: F.globalStatement,
-	nonlocal: F.nonlocalStatement,
-	exec: F.execStatement,
-	typeAlias: F.typeAliasStatement
-};
-
 export const namedExpressionLhs: {
 	readonly identifier: typeof F.buildIdentifier;
 } = {
@@ -121,80 +85,6 @@ export const expressions: {
 	readonly expressionList: typeof F.expressionList;
 } = {
 	expressionList: F.expressionList
-};
-
-export const compoundStatement: {
-	readonly if: typeof F.ifStatement;
-	readonly for: typeof F.forStatement;
-	readonly while: typeof F.whileStatement;
-	readonly try: typeof F.tryStatement;
-	readonly with: typeof F.withStatement;
-	readonly function: typeof F.functionDefinition;
-	readonly class: typeof F.classDefinition;
-	readonly decorated: typeof F.decoratedDefinition;
-	readonly match: typeof F.matchStatement;
-} = {
-	if: F.ifStatement,
-	for: F.forStatement,
-	while: F.whileStatement,
-	try: F.tryStatement,
-	with: F.withStatement,
-	function: F.functionDefinition,
-	class: F.classDefinition,
-	decorated: F.decoratedDefinition,
-	match: F.matchStatement
-};
-
-export const simplePattern: {
-	readonly class: typeof F.classPattern;
-	readonly splat: typeof F.splatPattern;
-	readonly union: typeof F.unionPattern;
-	readonly caseList: typeof F.caseListPattern;
-	readonly caseTuple: typeof F.caseTuplePattern;
-	readonly dict: typeof F.dictPattern;
-	readonly string: typeof F.string;
-	readonly concatenatedString: typeof F.concatenatedString;
-	readonly true: typeof F.buildTrue;
-	readonly false: typeof F.buildFalse;
-	readonly none: typeof F.buildNone;
-	readonly complex: typeof F.complexPattern;
-	readonly dottedName: typeof F.dottedName;
-} = {
-	class: F.classPattern,
-	splat: F.splatPattern,
-	union: F.unionPattern,
-	caseList: F.caseListPattern,
-	caseTuple: F.caseTuplePattern,
-	dict: F.dictPattern,
-	string: F.string,
-	concatenatedString: F.concatenatedString,
-	true: F.buildTrue,
-	false: F.buildFalse,
-	none: F.buildNone,
-	complex: F.complexPattern,
-	dottedName: F.dottedName
-};
-
-export const parameter: {
-	readonly identifier: typeof F.buildIdentifier;
-	readonly typed: typeof F.typedParameter;
-	readonly default: typeof F.defaultParameter;
-	readonly typedDefault: typeof F.typedDefaultParameter;
-	readonly listSplat: typeof F.listSplatPattern;
-	readonly tuple: typeof F.tuplePattern;
-	readonly keywordSeparator: typeof F.buildKeywordSeparator;
-	readonly positionalSeparator: typeof F.buildPositionalSeparator;
-	readonly dictionarySplat: typeof F.dictionarySplatPattern;
-} = {
-	identifier: F.buildIdentifier,
-	typed: F.typedParameter,
-	default: F.defaultParameter,
-	typedDefault: F.typedDefaultParameter,
-	listSplat: F.listSplatPattern,
-	tuple: F.tuplePattern,
-	keywordSeparator: F.buildKeywordSeparator,
-	positionalSeparator: F.buildPositionalSeparator,
-	dictionarySplat: F.dictionarySplatPattern
 };
 
 export const pattern: {
@@ -243,8 +133,8 @@ export const primaryExpression: {
 	readonly identifier: typeof F.buildIdentifier;
 	readonly string: typeof F.string;
 	readonly concatenatedString: typeof F.concatenatedString;
-	readonly integer: typeof F.buildInteger;
-	readonly float: typeof F.buildFloat;
+	readonly integer: typeof F.integer;
+	readonly float: typeof F.float;
 	readonly true: typeof F.buildTrue;
 	readonly false: typeof F.buildFalse;
 	readonly none: typeof F.buildNone;
@@ -269,8 +159,8 @@ export const primaryExpression: {
 	identifier: F.buildIdentifier,
 	string: F.string,
 	concatenatedString: F.concatenatedString,
-	integer: F.buildInteger,
-	float: F.buildFloat,
+	integer: F.integer,
+	float: F.float,
 	true: F.buildTrue,
 	false: F.buildFalse,
 	none: F.buildNone,
@@ -321,11 +211,17 @@ export const fExpression: {
 	yield: F.yield_
 };
 
-export const keywordIdentifier: {
-	readonly identifier: typeof F.buildIdentifier;
+export const whitespace: {
+	readonly newline: typeof F.buildNewline;
 } = {
-	identifier: F.buildIdentifier
+	newline: F.buildNewline
 };
+
+export const simpleStatement: typeof F.simpleStatement = F.simpleStatement;
+
+export const compoundStatement: typeof F.compoundStatement = F.compoundStatement;
+
+export const parameter: typeof F.parameter = F.parameter;
 
 export const ir: {
 	readonly module: typeof F.module;
@@ -376,6 +272,8 @@ export const ir: {
 	readonly expressionList: typeof F.expressionList;
 	readonly dottedName: typeof F.dottedName;
 	readonly casePattern: typeof F.casePattern;
+	readonly simplePattern: typeof F.simplePattern;
+	readonly caseAsPattern: typeof F.caseAsPattern;
 	readonly unionPattern: typeof F.unionPattern;
 	readonly dictPattern: typeof F.dictPattern;
 	readonly keyValuePattern: typeof F.keyValuePattern;
@@ -383,7 +281,7 @@ export const ir: {
 	readonly splatPattern: typeof F.splatPattern;
 	readonly classPattern: typeof F.classPattern;
 	readonly complexPattern: typeof F.complexPattern;
-	readonly _parameters: typeof F._parameters;
+	readonly parametersElements: typeof F.parametersElements;
 	readonly patterns: typeof F.patterns;
 	readonly tuplePattern: typeof F.tuplePattern;
 	readonly listPattern: typeof F.listPattern;
@@ -434,6 +332,7 @@ export const ir: {
 	readonly interpolation: typeof F.interpolation;
 	readonly formatSpecifier: typeof F.formatSpecifier;
 	readonly await: typeof F.await_;
+	readonly comment: typeof F.comment;
 	readonly simpleStatementsElements: typeof F.simpleStatementsElements;
 	readonly subjects: typeof F.subjects;
 	readonly casePatterns: typeof F.casePatterns;
@@ -449,90 +348,44 @@ export const ir: {
 	readonly exceptClauseExceptionAs: typeof F.exceptClauseExceptionAs;
 	readonly caseTuplePattern: typeof F.caseTuplePattern;
 	readonly caseListPattern: typeof F.caseListPattern;
-	readonly caseAsPattern: typeof F.caseAsPattern;
-	readonly comprehensionClauses: typeof F.comprehensionClauses;
 	readonly printArguments: typeof F.printArguments;
 	readonly printChevronArguments: typeof F.printChevronArguments;
 	readonly printStatementChevron: typeof F.printStatementChevron;
 	readonly printStatementPlain: typeof F.printStatementPlain;
 	readonly parenthesizedImportList: typeof F.parenthesizedImportList;
+	readonly comprehensionClauses: typeof F.comprehensionClauses;
 	readonly expressionStatementTuple: typeof F.expressionStatementTuple;
 	readonly withClauseBare: typeof F.withClauseBare;
 	readonly withClause: typeof F.withClause;
 	readonly suite: typeof F.suite;
 	readonly assignment: typeof F.assignment;
+	readonly escapeSequence: typeof F.escapeSequence;
+	readonly integer: typeof F.integer;
+	readonly float: typeof F.float;
+	readonly lineContinuation: typeof F.lineContinuation;
 	readonly wildcardImport: typeof F.buildWildcardImport;
 	readonly passStatement: typeof F.buildPassStatement;
 	readonly breakStatement: typeof F.buildBreakStatement;
 	readonly continueStatement: typeof F.buildContinueStatement;
 	readonly ellipsis: typeof F.buildEllipsis;
+	readonly notEscapeSequence: typeof F.buildNotEscapeSequence;
 	readonly true: typeof F.buildTrue;
 	readonly false: typeof F.buildFalse;
 	readonly none: typeof F.buildNone;
 	readonly positionalSeparator: typeof F.buildPositionalSeparator;
 	readonly keywordSeparator: typeof F.buildKeywordSeparator;
+	readonly wildcardPattern: typeof F.buildWildcardPattern;
+	readonly newline: typeof F.buildNewline;
 	readonly importPrefix: typeof F.buildImportPrefix;
-	readonly escapeSequence: typeof F.buildEscapeSequence;
 	readonly typeConversion: typeof F.buildTypeConversion;
-	readonly integer: typeof F.buildInteger;
-	readonly float: typeof F.buildFloat;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly comment: typeof F.buildComment;
-	readonly lineContinuation: typeof F.buildLineContinuation;
 	readonly stringStart: typeof F.buildStringStart;
+	readonly stringFragment: typeof F.buildStringFragment;
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
 	readonly stringEnd: typeof F.buildStringEnd;
-	readonly as: typeof F.asPattern;
-	readonly assert: typeof F.assertStatement;
-	readonly bare: typeof F.withClauseBare;
-	readonly binary: typeof F.binaryOperator;
-	readonly boolean: typeof F.booleanOperator;
-	readonly break: typeof F.buildBreakStatement;
-	readonly caseList: typeof F.caseListPattern;
-	readonly caseTuple: typeof F.caseTuplePattern;
-	readonly class: typeof F.classDefinition;
-	readonly comparison: typeof F.comparisonOperator;
-	readonly complex: typeof F.complexPattern;
-	readonly conditional: typeof F.conditionalExpression;
-	readonly continue: typeof F.buildContinueStatement;
-	readonly decorated: typeof F.decoratedDefinition;
-	readonly default: typeof F.defaultParameter;
-	readonly delete: typeof F.deleteStatement;
-	readonly dict: typeof F.dictPattern;
-	readonly exec: typeof F.execStatement;
-	readonly for: typeof F.forStatement;
-	readonly function: typeof F.functionDefinition;
-	readonly futureImport: typeof F.futureImportStatement;
-	readonly generator: typeof F.generatorExpression;
-	readonly global: typeof F.globalStatement;
-	readonly if: typeof F.ifStatement;
-	readonly import: typeof F.importStatement;
-	readonly importFrom: typeof F.importFromStatement;
-	readonly match: typeof F.matchStatement;
-	readonly named: typeof F.namedExpression;
-	readonly nonlocal: typeof F.nonlocalStatement;
-	readonly not: typeof F.notOperator;
-	readonly parenthesized: typeof F.parenthesizedExpression;
-	readonly pass: typeof F.buildPassStatement;
-	readonly print: typeof F.printStatement;
-	readonly raise: typeof F.raiseStatement;
-	readonly return: typeof F.returnStatement;
-	readonly splat: typeof F.splatPattern;
-	readonly try: typeof F.tryStatement;
-	readonly typeAlias: typeof F.typeAliasStatement;
-	readonly typed: typeof F.typedParameter;
-	readonly typedDefault: typeof F.typedDefaultParameter;
-	readonly unary: typeof F.unaryOperator;
-	readonly union: typeof F.unionPattern;
-	readonly while: typeof F.whileStatement;
-	readonly with: typeof F.withStatement;
 	readonly statement: typeof statement;
-	readonly simpleStatement: typeof simpleStatement;
 	readonly namedExpressionLhs: typeof namedExpressionLhs;
 	readonly expressions: typeof expressions;
-	readonly compoundStatement: typeof compoundStatement;
-	readonly simplePattern: typeof simplePattern;
-	readonly parameter: typeof parameter;
 	readonly pattern: typeof pattern;
 	readonly expressionWithinForInClause: typeof expressionWithinForInClause;
 	readonly expression: typeof expression;
@@ -540,7 +393,10 @@ export const ir: {
 	readonly leftHandSide: typeof leftHandSide;
 	readonly rightHandSide: typeof rightHandSide;
 	readonly fExpression: typeof fExpression;
-	readonly keywordIdentifier: typeof keywordIdentifier;
+	readonly whitespace: typeof whitespace;
+	readonly simpleStatement: typeof simpleStatement;
+	readonly compoundStatement: typeof compoundStatement;
+	readonly parameter: typeof parameter;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
@@ -592,6 +448,8 @@ export const ir: {
 	expressionList: F.expressionList,
 	dottedName: F.dottedName,
 	casePattern: F.casePattern,
+	simplePattern: F.simplePattern,
+	caseAsPattern: F.caseAsPattern,
 	unionPattern: F.unionPattern,
 	dictPattern: F.dictPattern,
 	keyValuePattern: F.keyValuePattern,
@@ -599,7 +457,7 @@ export const ir: {
 	splatPattern: F.splatPattern,
 	classPattern: F.classPattern,
 	complexPattern: F.complexPattern,
-	_parameters: F._parameters,
+	parametersElements: F.parametersElements,
 	patterns: F.patterns,
 	tuplePattern: F.tuplePattern,
 	listPattern: F.listPattern,
@@ -650,6 +508,7 @@ export const ir: {
 	interpolation: F.interpolation,
 	formatSpecifier: F.formatSpecifier,
 	await: F.await_,
+	comment: F.comment,
 	simpleStatementsElements: F.simpleStatementsElements,
 	subjects: F.subjects,
 	casePatterns: F.casePatterns,
@@ -665,18 +524,21 @@ export const ir: {
 	exceptClauseExceptionAs: F.exceptClauseExceptionAs,
 	caseTuplePattern: F.caseTuplePattern,
 	caseListPattern: F.caseListPattern,
-	caseAsPattern: F.caseAsPattern,
-	comprehensionClauses: F.comprehensionClauses,
 	printArguments: F.printArguments,
 	printChevronArguments: F.printChevronArguments,
 	printStatementChevron: F.printStatementChevron,
 	printStatementPlain: F.printStatementPlain,
 	parenthesizedImportList: F.parenthesizedImportList,
+	comprehensionClauses: F.comprehensionClauses,
 	expressionStatementTuple: F.expressionStatementTuple,
 	withClauseBare: F.withClauseBare,
 	withClause: F.withClause,
 	suite: F.suite,
 	assignment: F.assignment,
+	escapeSequence: F.escapeSequence,
+	integer: F.integer,
+	float: F.float,
+	lineContinuation: F.lineContinuation,
 
 	// Keyword factories
 	wildcardImport: F.buildWildcardImport,
@@ -684,79 +546,28 @@ export const ir: {
 	breakStatement: F.buildBreakStatement,
 	continueStatement: F.buildContinueStatement,
 	ellipsis: F.buildEllipsis,
+	notEscapeSequence: F.buildNotEscapeSequence,
 	true: F.buildTrue,
 	false: F.buildFalse,
 	none: F.buildNone,
 	positionalSeparator: F.buildPositionalSeparator,
 	keywordSeparator: F.buildKeywordSeparator,
+	wildcardPattern: F.buildWildcardPattern,
+	newline: F.buildNewline,
 
 	// Leaf node factories
 	importPrefix: F.buildImportPrefix,
-	escapeSequence: F.buildEscapeSequence,
 	typeConversion: F.buildTypeConversion,
-	integer: F.buildInteger,
-	float: F.buildFloat,
 	identifier: F.buildIdentifier,
-	comment: F.buildComment,
-	lineContinuation: F.buildLineContinuation,
 	stringStart: F.buildStringStart,
+	stringFragment: F.buildStringFragment,
 	escapeInterpolation: F.buildEscapeInterpolation,
 	stringEnd: F.buildStringEnd,
 
-	// Supertype-stripped short aliases
-	as: F.asPattern,
-	assert: F.assertStatement,
-	bare: F.withClauseBare,
-	binary: F.binaryOperator,
-	boolean: F.booleanOperator,
-	break: F.buildBreakStatement,
-	caseList: F.caseListPattern,
-	caseTuple: F.caseTuplePattern,
-	class: F.classDefinition,
-	comparison: F.comparisonOperator,
-	complex: F.complexPattern,
-	conditional: F.conditionalExpression,
-	continue: F.buildContinueStatement,
-	decorated: F.decoratedDefinition,
-	default: F.defaultParameter,
-	delete: F.deleteStatement,
-	dict: F.dictPattern,
-	exec: F.execStatement,
-	for: F.forStatement,
-	function: F.functionDefinition,
-	futureImport: F.futureImportStatement,
-	generator: F.generatorExpression,
-	global: F.globalStatement,
-	if: F.ifStatement,
-	import: F.importStatement,
-	importFrom: F.importFromStatement,
-	match: F.matchStatement,
-	named: F.namedExpression,
-	nonlocal: F.nonlocalStatement,
-	not: F.notOperator,
-	parenthesized: F.parenthesizedExpression,
-	pass: F.buildPassStatement,
-	print: F.printStatement,
-	raise: F.raiseStatement,
-	return: F.returnStatement,
-	splat: F.splatPattern,
-	try: F.tryStatement,
-	typeAlias: F.typeAliasStatement,
-	typed: F.typedParameter,
-	typedDefault: F.typedDefaultParameter,
-	unary: F.unaryOperator,
-	union: F.unionPattern,
-	while: F.whileStatement,
-	with: F.withStatement,
-
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	statement,
-	simpleStatement,
 	namedExpressionLhs,
 	expressions,
-	compoundStatement,
-	simplePattern,
-	parameter,
 	pattern,
 	expressionWithinForInClause,
 	expression,
@@ -764,6 +575,9 @@ export const ir: {
 	leftHandSide,
 	rightHandSide,
 	fExpression,
-	keywordIdentifier,
+	whitespace,
+	simpleStatement,
+	compoundStatement,
+	parameter,
 	synonym
 };

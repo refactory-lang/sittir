@@ -83,7 +83,11 @@ describe('from emitter — separatedList', () => {
 		expect(emitted).toMatch(
 			/F\.buildMemberList\(\{ delimiter: .*\}, \.\.\.\(children as unknown as NonEmptyArray<T\.Member>\)\)/
 		);
-		expect(emitted).toMatch(/F\.buildMemberList\(\.\.\.\(input as unknown as NonEmptyArray<T\.Member>\)\)/);
+		// The fresh path resolves each element through the content slot before
+		// spreading, with a leading options object passed through untouched.
+		expect(emitted).toMatch(
+			/F\.buildMemberList\(\.\.\.\(_listElements\(input, \["delimiter"\], undefined, \(els\) => .*\) as unknown as NonEmptyArray<T\.Member>\)\)/
+		);
 	});
 
 	it('passes a captured separator kind id straight through on self-unwrap', () => {
@@ -102,11 +106,13 @@ describe('from emitter — separatedList', () => {
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
 
-		expect(emitted).toContain('separator: (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._separator');
+		expect(emitted).toContain(
+			'separator: (data as unknown as { _separator?: number; _delimiter?: T.Delimiter })._separator'
+		);
 		expect(emitted).not.toContain('KIND_LITERAL_TEXT');
 	});
 
-	it('_wrapWithChildren dispatches separatedList kinds by spreading the children array, never indexing', () => {
+	it('_wrapWithChildren dispatches separatedList kinds through their coercer, spreading the children, never indexing', () => {
 		const rule: SeparatedListElementRule = {
 			type: SYMBOL,
 			name: 'member',
@@ -117,8 +123,54 @@ describe('from emitter — separatedList', () => {
 
 		expect(emitted).toContain('function _wrapWithChildren(');
 		expect(emitted).not.toContain('return F.buildMemberList(children[0]');
+		// A list kind is built through its own coercer, so the children resolve
+		// through the content slot exactly as a direct call would.
+		expect(emitted).toContain(
+			'case "member_list": return (coerceToMemberList as (...args: unknown[]) => unknown)(...children);'
+		);
+	});
+
+	it('requires an element from a non-empty list, with the options object first when it has one', () => {
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
+		};
+		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
+
 		expect(emitted).toMatch(
-			/case "member_list": return \(F\.buildMemberList as \(\.\.\.args: unknown\[\]\) => unknown\)\(\.\.\.children\);/
+			/export function coerceToMemberList\(\.\.\.input: \[first: [^]*?\.\.\.rest: [^]*?\] \| \[options: \{ delimiter\?: [^}]*\}, first: /
+		);
+		expect(emitted).not.toContain('first?:');
+	});
+
+	it('lets an empty-capable list with options take the options object as its only argument', () => {
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'array',
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
+		};
+		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
+
+		expect(emitted).toMatch(
+			/export function coerceToMemberList\(\.\.\.input: \[first\?: [^]*\{ delimiter\?: [^}]*\}, \.\.\.rest: /
+		);
+	});
+
+	it('types a non-empty list with no options as at least one element, and an empty-capable one as any number', () => {
+		const rule = (multiplicity: 'array' | 'nonEmptyArray'): SeparatedListElementRule => ({
+			type: SYMBOL,
+			name: 'member',
+			multiplicity,
+			separator: { value: { type: STRING, value: ',' } }
+		});
+		expect(emit(makeMemberNodeMap(rule('nonEmptyArray'), { separatorRule: undefined }))).toMatch(
+			/export function coerceToMemberList\(\.\.\.input: \[first: /
+		);
+		expect(emit(makeMemberNodeMap(rule('array'), { separatorRule: undefined }))).toMatch(
+			/export function coerceToMemberList\(\.\.\.input: readonly/
 		);
 	});
 });

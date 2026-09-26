@@ -9,6 +9,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { generate } from '../generate.ts';
+import { stableGrammars } from '../../grammars.ts';
 
 const baselineDir = resolve(import.meta.dirname!, '../../../../../specs/005-five-phase-compiler/baseline');
 
@@ -49,7 +50,7 @@ function diffSummary(
 	};
 }
 
-for (const grammar of ['python', 'rust', 'typescript']) {
+for (const grammar of stableGrammars()) {
 	describe(`Baseline diff — ${grammar}`, () => {
 		let result: Awaited<ReturnType<typeof generate>>;
 

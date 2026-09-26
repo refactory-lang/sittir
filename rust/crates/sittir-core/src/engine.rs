@@ -517,6 +517,7 @@ mod tests {
         // the numeric id — tests assert on the number, not the name.
         NodeData {
             type_: crate::types::KindId(1),
+            storage_type: None,
             source,
             named: true,
             fields: None,

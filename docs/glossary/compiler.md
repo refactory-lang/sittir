@@ -170,7 +170,7 @@ parents.
 #### body
 
 ```text
-// Leaf constructors (AssembledPattern/AssembledKeyword/AssembledToken)
+// Leaf constructors (AssembledPattern/AssembledKeyword/AssembledPunctuation)
 // build off the SIMPLIFIED rule: simplify's literal-only fold
 // (`collectFixedLiteral` via `isAllTextRender`) is what produces the
 // STRING body these leaves read. A kind's lexical facts
@@ -207,41 +207,6 @@ parents.
 // its constructor slot derivation, so wrap/render/factory
 // emission stays byte-identical with the pre-taxonomy
 // 'branch' output for these kinds.
-```
-
-#### body
-
-```text
-// Nested-supertype alias materialization: a nested SUPERTYPE rule (e.g.
-// rust's `_non_special_token`, itself a SUPERTYPE referenced as a
-// subtype of `_tokens`/`_non_delim_token`/ `_token_pattern`) can be
-// aliased by tree-sitter's real compile into a genuinely distinct, named
-// CST node at that occurrence (`SupertypeRule.subtypeParseNames`,
-// confirmed against grammar.json — see `resolveHiddenSubtypes`'s doc
-// comment). That aliased name has no entry of its own in
-// `normalized.normalizedRules` (it's a parse-time label, not a rule
-// sittir's own grammar declares), so the main loop above never assembles
-// it. Give it one here: reuse the nested rule's OWN already-resolved
-// subtypes (identical union either way — the alias and the hidden rule
-// are the same underlying content, just a different name at this
-// occurrence) under a fresh `AssembledSupertype` keyed by the alias, so
-// it gets a real kindId/typeName/dispatch entry like any other node.
-// Multiple parents aliasing the SAME nested rule to the SAME name
-// (confirmed: `_tokens`/`_non_delim_token`/ `_token_pattern` all alias
-// `_non_special_token` to "token_pattern_group1") register it exactly
-// once.
-```
-
-#### body
-
-```text
-// Only nested SUPERTYPE arms materialize their own node —
-// other parse-alias occurrences (e.g. an ENUM-shaped hidden
-// rule like rust's `_primitive_type`, aliased to
-// `primitive_type` at this same site) aren't a case of
-// tree-sitter inserting a distinct intermediate node; they
-// stay resolved via `resolveHiddenSubtypes`'s existing
-// flatten-through path.
 ```
 
 #### body
@@ -331,13 +296,14 @@ parents.
 #### body
 
 ```text
-// A literal-bodied kind is a keyword-class leaf (a factory, a type, a
-// union member, an `is` guard) when its text is word-shaped OR the kind is
-// a visible parser kind (a catalog entry that is neither anonymous nor a
-// hidden `_` rule): `unit_expression`, `never_type`, `empty_statement`,
-// `ellipsis`, `wildcard_import`. Only an anonymous punctuation token has no
-// surface of its own (`AssembledToken`). Word shape stays the spacing fact
-// (`AssembledKeyword.word`), not the surface fact.
+// A literal-bodied kind is an `AssembledKeyword` only when its text is
+// word-shaped. Every other literal is an `AssembledPunctuation`, hidden when the
+// kind is anonymous or a `_` rule and visible when it is a named parser kind
+// (a catalog entry that is neither anonymous nor a hidden `_` rule):
+// `unit_expression`, `never_type`, `empty_statement`, `ellipsis`,
+// `wildcard_import`, `optional_chain`. A visible token keeps its factory,
+// type, union membership and `is` guard; visibility is the leaf's `hidden`
+// attribute, and the class answers only whether the text is word-shaped.
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::resolveSupertypeSubtypes`
@@ -450,11 +416,9 @@ parents.
 
 ```text
 // Post-synthesis-removal: the rules map is keyed by SOURCE kinds
-// only (hidden `_X`). Subtype names surface as source kinds; we
-// no longer redirect through the aliasedHiddenKinds table (which
-// pointed at visible alias targets). Hidden kinds that have their
-// own rule body are resolved via the rules map directly; the
-// chain terminates at a concrete symbol.
+// only (hidden `_X`). Subtype names surface as source kinds.
+// Hidden kinds that have their own rule body are resolved via the
+// rules map directly; the chain terminates at a concrete symbol.
 ```
 
 #### body
@@ -612,7 +576,7 @@ parents.
 
 ```text
 // Same catalog-first resolution `collectAnonymousNodes` keys its
-// minted AssembledKeyword/AssembledToken nodes by — this literal's
+// minted AssembledKeyword/AssembledPunctuation nodes by — this literal's
 // NodeMap key is the catalog row's kind name when one exists (e.g.
 // `$` may dedupe under a sanitized/named catalog entry), not the
 // raw literal text. Returning the raw text here when a resolved
@@ -646,6 +610,18 @@ parents.
 // noticing the case is gone.
 ```
 
+### `packages/codegen/src/compiler/assemble.ts::HydrateSlotRefsConfig`
+
+```text
+/**
+ * What hydration needs beside the NodeMap: `inline`, the grammar's declared
+ * inline kinds (`.sittir/src/grammar.json` `inline` list), which the parser
+ * never issues a node for and which may therefore be referenced without
+ * being assembled; and `diagnostics`, the compilation's sink, where a
+ * reference that is neither external nor inline is reported.
+ */
+```
+
 ### `packages/codegen/src/compiler/assemble.ts::hydrateSlotRefs`
 
 ```text
@@ -653,25 +629,25 @@ parents.
  * Hydrate every slot value's `node` reference from `UnresolvedRef` to the
  * concrete `AssembledNode` produced during assembly.
  *
- * Called by the codegen pipeline AFTER `assemble()` returns AND AFTER the
- * raw NodeMap has been serialized (e.g. `node-model.json5` emit) but
- * BEFORE the in-memory consumers (factories, types, render, etc.) read
- * slot graphs. Once hydrated, `slot.values[*].node` carries the full
- * `AssembledNode` reference — the consumer-side
- * `storageKindOfRef(v.node)` ternary becomes
- * unnecessary; emitters can read `v.node.kind` (or `.modelType`) directly.
+ * Runs inside `compileGrammar`, after `assemble()` and before the
+ * `Compilation` is returned, so every consumer — the node-model
+ * serializer included — sees the hydrated graph. Once hydrated,
+ * `slot.values[*].node` carries the full `AssembledNode`; emitters read
+ * `v.node.kind` (or `.modelType`) directly.
  *
- * THROWS on any reference that points to a kind absent from `nodes` —
- * unresolvable refs are codegen bugs, not runtime data, and must surface
- * loudly. The error names source kind, slot, and unresolved target.
+ * A reference whose target is absent from `nodes` is classified: an
+ * external symbol or a grammar-declared inline kind is legitimate and stays
+ * an `UnresolvedRef` (the parser never issues either a node); anything
+ * else is a dangling internal reference and enters the sink as the
+ * blocking diagnostic `dangling-internal-ref`, naming the owning kind, the
+ * slot and the target. `assertCompilation` refuses such a compilation.
  *
  * Mutation: rewrites `NodeRef.node` in place via a single justified
  * `readonly` cast. Slot `values` array identity is preserved; only the
- * `.node` field updates. Constitution VIII exception — this IS the
- * legitimate boundary turning the `T | UnresolvedRef` placeholder into
- * the resolved `T`. After hydration the node graph is CYCLIC, so the
- * NodeMap is no longer JSON-serializable — call this only after any
- * serialization passes.
+ * `.node` field updates. This is the one boundary turning the
+ * `T | UnresolvedRef` placeholder into the resolved `T`. After hydration
+ * the node graph is cyclic; the serializer emits node refs by name, never
+ * by walking `.node`.
  */
 ```
 
@@ -739,7 +715,7 @@ parents.
  * @param typeName - The shared `typeName` string before disambiguation.
  * @remarks
  *   Only renames when a visible sibling actually gets an exported TypeScript declaration.
- *   Token nodes (`modelType === 'token'`) are anonymous structural delimiters that only
+ *   Punctuation nodes (`modelType === 'punctuation'`) are anonymous structural delimiters that only
  *   appear as exported type aliases if they are referenced in a field/child union — many
  *   aren't. If ALL visible siblings are tokens, there is no actual TypeScript collision
  *   and the hidden kind's name is left unchanged.
@@ -886,10 +862,9 @@ parents.
  * to read a slot from. Otherwise a
  * fielded/multiplicity-free body dispatches structurally: an enum
  * choice (`isEnumChoiceRule`) → 'enum'; a SUPERTYPE → 'polymorph'; a PATTERN
- * → 'pattern'; a STRING → 'token' (the keyword-vs-token split — which
- * concrete class, `AssembledKeyword` or `AssembledToken`, to construct —
- * happens later in `assemble()`'s own switch, via `matchesWordShape`, not
- * here).
+ * → 'pattern'; a STRING → 'keyword' when its text is word-shaped
+ * (`matchesWordShape` against `opts.wordMatcher`), else 'punctuation'; each
+ * value names the class `assemble()` constructs for it.
  *
  * Otherwise (fielded or multiplicity-bearing): a separated-list shape
  * (`isSeparatedListShape`) → 'list'; a slot-bearing body
@@ -952,7 +927,7 @@ parents.
 #### body
 
 ```text
-// The keyword-vs-token split (AssembledKeyword vs AssembledToken, honouring
+// The keyword-vs-token split (AssembledKeyword vs AssembledPunctuation, honouring
 // the grammar's `word` rule via matchesWordShape) happens in assemble()'s
 // own switch on this function's 'token' return value, not here.
 ```
@@ -1687,15 +1662,55 @@ parents.
 	 */
 ```
 
-### `packages/codegen/src/compiler/emit-gate.ts::assertEmittable`
+### `packages/codegen/src/compiler/compile.ts::Compilation`
 
 ```text
-/**
- * The single Assemble→Project boundary check (spec §4b/§7.5).
- *
- * Throws EmitHaltedError if the sink contains any 'fail'-severity
- * diagnostics. Inert until PR-L: no producer currently emits 'fail'.
- */
+One evaluate→link→normalize→assemble pass and everything derived from it:
+the raw/linked/normalized grammars, the assembled NodeMap, the
+compiler-internal severity-based sink (`diagnostics` — the same one
+threaded through link/normalize/assemble, e.g. `assemble.ts`'s
+`emitUnnestable` fail), and the grammar-authoring canProceed-based list
+(`grammarDiagnostics` — parse-kind collisions, derive-shape, assemble
+warnings, slot-grouping, content-alias, kindid-stamp misses, body-pattern
+zero-matches, desugar divergences). These two diagnostic vocabularies stay
+separate rather than merged into one severity scale — `grammarDiagnostics`
+entries are `canProceed:false` without ever being `severity:'fail'` — but
+both are now reachable from ONE compile instead of two independent ones.
+```
+
+`generatedIdTables` is the id tables after `stampVisibleExternals`; generation reads them from the compilation instead of loading and stamping a second copy.
+
+### `packages/codegen/src/compiler/compile.ts::compileGrammar`
+
+```text
+Runs evaluate→link→normalize→assemble exactly once and computes both
+diagnostic vocabularies — the compiler sink and the grammar-authoring
+diagnostics (parse-kind collisions, storage-name collisions, derive
+shapes, slots, content aliases, kind ids) — from that single pass. The CLI
+preflight and a library call to `generate()` consume the same
+`Compilation`, so both see the same checks and `evaluate()` (which
+installs the DSL on `globalThis`) runs once per generation.
+
+The `raw` it returns is the grammar `collectGrammarDiagnosticsForGrammar`
+handed on, with renamed rules already collapsed.
+
+Calls `hydrateSlotRefs` (assemble.ts) before returning — the last mutation
+performed on the graph (UnresolvedRef → AssembledNode), so
+`assertCompilation` sees a dangling internal reference the same way it
+sees every other grammar-authoring diagnostic, and `generate()` receives an
+already-hydrated `nodeMap` ahead of `emitNodeModel`: node-model.json5
+carries an `unresolved: true` entry only for a reference that is
+legitimately external or inline.
+```
+
+### `packages/codegen/src/compiler/compile.ts::assertCompilation`
+
+```text
+The single Assemble→Project boundary check. Throws `EmitHaltedError` for
+a compiler-internal fail diagnostic, or `GrammarDiagnosticError` for a
+grammar-authoring diagnostic whose code is `canProceed:false` and not in
+the caller's `allowDiagnostics`. One gate, reached by the CLI preflight and
+by a plain `generate()` call alike.
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::seq`
@@ -1870,44 +1885,6 @@ parents.
  * bodies can use `string('x')` syntax (as specified) without relying on
  * bare string literals, and so that any author rule body that calls
  * `string(...)` explicitly continues to work.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::synthesizeInlineAliasSources`
-
-```text
-/**
- * For every `alias(inlineContent, $.target)` whose source isn't a
- * bare symbol reference to an existing rule or external token,
- * synthesize a hidden rule `_${target}` carrying the inline content
- * and rewrite the alias's source to point at it.
- *
- * Before:
- *    alias(choice('u8','u16',...), $.primitive_type)
- *
- * After:
- *    rules[_primitive_type] = choice('u8','u16',...)
- *    alias(symbol(_primitive_type), $.primitive_type)
- *
- * Why: the storage identity an alias's content carries is a NAME
- * (`SymbolRule.name`) — inline content (a CHOICE, a SEQ, …) has no name for
- * `aliasedTo`/`aliasedToId` (wrapper-deletion's `attributeAlias`) to attach
- * to, and without a name the display-name ↔ storage-kind linkage is lost to
- * everything downstream that resolves it by name (the node model's
- * `fieldAliasMap`, validator name normalization). By making every alias
- * source a named hidden rule here, the alias content is always a bare
- * symbol reference, so the storage identity is always a name, uniformly.
- *
- * Also: the rules map now has a single named entry per alias target
- * (the `_${target}` source) without adding entries for visible-only
- * kinds — matching tree-sitter's declaration view.
- *
- * External scanner tokens (listed in `externals`) are treated the same
- * as declared rules: they already have parser-assigned symbol IDs and
- * need no synthetic source. `alias($._line_doc_content, $.doc_comment)`
- * must NOT produce `_doc_comment` — the source is an external with its
- * own parser identity; the visible target `doc_comment` is the alias
- * destination, not a hidden kind.
  */
 ```
 
@@ -2457,6 +2434,22 @@ parents.
  */
 ```
 
+### `packages/codegen/src/compiler/evaluate.ts::evaluate`
+
+```text
+/**
+ * Run the grammar's DSL a second time, sittir-side, and return the
+ * `RawGrammar`. The bundled grammar is written against tree-sitter's global
+ * DSL, so for the duration of one call the DSL functions are installed on
+ * `globalThis` and restored in `finally`. Calls are serialized behind a
+ * module-level promise chain (`evaluateMutex`): the body awaits the module
+ * import, and two interleaved calls would save and restore each other's
+ * globals. Serializing `evaluate` is what makes the module-level
+ * collectors downstream (link → normalize → assemble never await) safe
+ * to reset at the start of a compile and drain at its end.
+ */
+```
+
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateRulesAndInjectSynthetics`
 
 ```text
@@ -2870,6 +2863,8 @@ runs once the metadata callbacks have been evaluated.
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateMetadataCallbacks`
 
+Each `reserved` wordset callback runs like the list callbacks, with a fresh `$` and the base grammar's wordset of the same name, and records its members as rules in the order written (`ReservedWordsets`). An extension that declares no `reserved` inherits the base's wordsets (`inheritBaseGrammarMetadata`).
+
 ```text
 /**
  * Run all the metadata callbacks (extras, externals, supertypes,
@@ -2882,7 +2877,12 @@ runs once the metadata callbacks have been evaluated.
  *
  * tree-sitter's pattern: each callback receives `($, baseValue)`
  * where `$` is a fresh proxy and `baseValue` is the base grammar's
- * version of that property.
+ * version of that property. Extras entries can be bare names (the base's
+ * own spelling in this pass) as well as rules; both land in the extras sink.
+ * The base `supertypes`, `inline` and `conflicts` (group-wise) arrive as
+ * SYMBOL rules (`baseNameSymbols`), exactly as the tree-sitter CLI hands
+ * them, so a wired callback's removals, renames and dedupe act the same in
+ * both pipelines.
  */
 ```
 
@@ -2892,13 +2892,20 @@ runs once the metadata callbacks have been evaluated.
 /**
  * Evaluate a grammar.js (or grammar.sittir.ts) file and return a RawGrammar.
  *
- * Injects DSL functions as globals, then imports the module, then runs the
- * imported result through `canonicalizeRawGrammar` — the one place
- * `hidden`/`inline` get their final evaluate-phase stamp before link ever
- * sees the grammar.
+ * Injects DSL functions as globals, then imports the module. Evaluate has
+ * no parser catalog, so it stamps no `hidden` or `inline` fact; link stamps
+ * both from the catalog (`stampParserVisibility`).
  * Tree-sitter's grammar(base, { rules }) handles extension merging natively.
  */
 ```
+
+Serialized behind a module-level `evaluateMutex`: `saveAndInjectDslGlobals` writes
+the DSL onto `globalThis` and `restoreSavedGlobals` restores it in `finally` —
+two concurrent calls (e.g. two grammars compiling at once) would interleave
+their save/inject/restore and could hand one call the other's globals. Each
+call installs its own pending promise as the new mutex value and awaits the
+previous one first, so calls run one at a time regardless of call order or
+which one fails; this is the only place `globalThis` is touched.
 
 ### `packages/codegen/src/compiler/evaluate.ts::saveAndInjectDslGlobals`
 
@@ -2946,52 +2953,6 @@ runs once the metadata callbacks have been evaluated.
  */
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::canonicalizeRawGrammar`
-
-```text
-/**
- * Evaluate's exit gate. `hidden` is stamped ONLY on top-level rules
- * (`hidden = isParserHiddenName(name)`, one stamp per entry in
- * `raw.rules`); a SYMBOL reference never carries `hidden` —
- * reference-level classification is `inline` alone. `isParserHiddenName`
- * (`dsl/rule-patterns.ts`) is the single source both stamps read: `inline`
- * gets stamped on every rule reference in the grammar, and
- * `RawGrammar.visibleInlineNames` gets recorded here (the grammar's
- * `inline:` array entries that do NOT start with `_` — link reports these
- * as the `inline-array-visible-name` diagnostic, since the parser inlines
- * them regardless of the leading-underscore convention, so they never
- * surface as their own nodes). Every rule link resolves afterward has its
- * `hidden`/`inline` facts already settled.
- *
- * For a SYMBOL reference: a local `hidden = isParserHiddenName(rule.name)`
- * feeds only the `inline` computation below, never the returned rule (a
- * reference's own `hidden` field is never set); a reference is a
- * `boundary` — never eligible to inline — when its name is a declared
- * supertype, OR when it is not itself in the grammar's `inline:` array and
- * its target rule's shape is {@link isNonInlinableLeafShape} (an enum
- * choice, SUPERTYPE, PATTERN, or STRING body — splicing one of those into
- * every occurrence site would duplicate a whole leaf class rather than
- * fold a single reference). `inline = !boundary && (hidden ||
- * inlineNames.has(name))`. For a named ALIAS wrapping a bare SYMBOL:
- * forces that symbol's `inline` to `false` regardless of what the
- * name-based computation would give — an alias confers a real visible CST
- * kind that must materialize, not flatten, however the ALIAS was built
- * (`structuralAlias`, an enrich-injected alias, a hand-built rule
- * literal). Runs bottom-up over every node in every rule
- * (`RuleWalker.map`), so it corrects a symbol's `inline` no matter how
- * deep under an ALIAS it sits.
- */
-```
-
-### body
-
-```text
-// A hidden-only grammar has no visible roots, so an empty seed set would
-// prune EVERY rule as "orphaned" — but nothing is orphaned relative to a
-// nonexistent root set, and evaluate() does not decide visibility policy
-// (classification happens at Assemble). Keep every top-level rule.
-```
-
 ### `packages/codegen/src/compiler/rule-catalog.ts::classifyIntrinsic`
 
 ```text
@@ -3013,6 +2974,20 @@ runs once the metadata callbacks have been evaluated.
  * evaluate(grammar.js) → link → normalize → assemble → adapter → emitters
  */
 ```
+
+The compile-and-emit body runs inside a `try`/`finally` around the
+`addUnnamedChoiceListener` registration: `removeUnnamedChoiceListener()` used
+to run only on the success path, so a thrown diagnostic (or any other
+mid-generate failure) left that closure registered in
+`collect-slots.ts`'s `_extraUnnamedChoiceListeners` forever — a leak that
+grows by one stale listener per failed `generate()` call in a long-lived
+process (a watch daemon, a test run that retries).
+
+The node model is serialized after the emitters' walk, not before it: the
+site-preference resolution that walk runs (`collectSitePreferences`) stamps
+each list's `resolvedDelimiterArm` on the model, and the serialized
+`defaultDelimiter` must be the stamped arm the factory bakes in, not the
+fallback an unstamped list reports.
 
 #### body
 
@@ -3136,7 +3111,7 @@ runs once the metadata callbacks have been evaluated.
 ```text
 // Surface accumulated compiler-phase warnings — e.g. the link-phase
 // `non-literal-separator` warning — to the author. `fail` diagnostics
-// already halted the pipeline via assertEmittable above.
+// already halted the pipeline via assertCompilation above.
 //
 // Deliberately scoped to `severity === 'warning'` AND `scope ===
 // 'compiler'` — NOT "every non-`fail` diagnostic". Empirically (all 3
@@ -3167,11 +3142,9 @@ runs once the metadata callbacks have been evaluated.
 #### body
 
 ```text
-// Kinds that were synthesized by evaluate's inline-alias-source pass
-// (synthesizeInlineAliasSources). These have no parser symbol because
-// tree-sitter inlined the alias body at parse time — the `_doc_comment`
-// intermediary exists only in the codegen rule map. They're intentional
-// pipeline constructs; warn-and-skip at emit time is correct.
+// Kinds evaluate synthesized on the sittir side only (provenance
+// 'evaluate-synthesized') have no parser symbol — tree-sitter's execution
+// never registers them. Warn-and-skip at emit time is correct.
 ```
 
 #### body
@@ -3262,10 +3235,10 @@ runs once the metadata callbacks have been evaluated.
 
 ```text
 /**
- * Collect kinds whose root rule was synthesized by evaluate's inline-alias-
- * source pass (`synthesizeInlineAliasSources`). These have no parser symbol
- * because tree-sitter inlines the alias body at parse time — the `_${target}`
- * intermediary exists only in the codegen rule map.
+ * Collect kinds whose root rule evaluate synthesized on the sittir side only
+ * (the body-pattern-group fallback, synthetic rule injection). These have no
+ * parser symbol: tree-sitter's execution of the grammar never registers them,
+ * so they exist only in the codegen rule map.
  *
  * @remarks
  * The provenance is set to `'evaluate-synthesized'` on the root
@@ -3276,6 +3249,10 @@ runs once the metadata callbacks have been evaluated.
  * @returns A `ReadonlySet<string>` of synthesized kind names.
  */
 ```
+
+### `packages/codegen/src/compiler/generated-metadata.ts::reservedWordset`
+
+The one reader of a grammar's declared reserved wordsets. For the named wordset it returns the members' literal texts (`words`): a `STRING` member's value, a `SYMBOL` member's catalog `literalText`. Every other member is listed in `nonLiteral` (a symbol by name, anything else by rule type), which `reservedMemberDiagnostics` reports. An absent wordset reads as empty.
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::findEntryForKindName`
 
@@ -3298,6 +3275,21 @@ runs once the metadata callbacks have been evaluated.
  *    `"is not"`). Ordered AFTER the anon step so an anon twin always wins
  *    for texts both could match; reachable only when steps 1-3 all miss.
  */
+```
+
+#### body
+
+```text
+An `alias_sym` row is never claimed by an exact parser-name match: its
+parser name is `_<display>`, which collides with hidden rules and minted
+content unions of that name. The row resolves only through its display name.
+modelKindOfEntry (kind-discriminant.ts) is the inverse.
+
+The exclusion covers the exact-name step only: the symbol-name steps (3, 4)
+still return an alias row whose display string matches. A caller that must
+never land on another kind's row resolves through `findOwnKindEntry`
+(kind-discriminant.ts), which keeps this chain's answer only when its
+`modelKindOfEntry` is the requested kind.
 ```
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::findAnonEntryForLiteralText`
@@ -3330,7 +3322,11 @@ runs once the metadata callbacks have been evaluated.
  * NAMED rule shares the spelling (python's `'type'` keyword vs the `type`
  * rule). Falls back to the literal-rule chain for literals with no anon
  * twin — a named rule whose body is exactly a bare STRING or an unnamed
- * ALIAS (rust `'crate'`/`'self'`, python's `'is not'`/`'not in'`).
+ * ALIAS (rust `'crate'`/`'self'`, python's `'is not'`/`'not in'`). The last
+ * arm is the lexical fact: a terminal row carrying `literalText` is a string
+ * token whatever its namedness, which catches a token every use aliases to a
+ * named kind (regex `'\-'` under `alias('\-', $.identity_escape)`): tree-sitter
+ * stamps it `.named`, so it has no `anon` and the first arm misses it.
  */
 ```
 
@@ -3466,6 +3462,10 @@ runs once the metadata callbacks have been evaluated.
 // ---------------------------------------------------------------------------
 ```
 
+### `packages/codegen/src/compiler/link.ts::collectLeafTextPatterns`
+
+The whole-text regex of every linked rule that composes to one (`composeTokenText`, following symbol references through the linked rules), keyed by kind. It reads the linked rules because later phases drop a token's literal affixes (a comment's `//`, a character literal's quotes) from the model rule; the map is carried on the linked, normalized and simplified grammar to assembly, which stamps it on each pattern node.
+
 ### `packages/codegen/src/compiler/link.ts::stripResolvedRoleRules`
 
 ```text
@@ -3549,46 +3549,6 @@ runs once the metadata callbacks have been evaluated.
 // builds a fresh EnumRule/SupertypeRule that would otherwise lose them.
 ```
 
-### `packages/codegen/src/compiler/link.ts::markSupertypeRefsNonInline`
-
-```text
-/**
- * Flip `inline=false` on every SYMBOL ref whose target kind must MATERIALIZE
- * rather than flatten — implementing the `!supertype && !self-recursive` terms
- * of `inline = hidden && !aliased && !supertype && !self-recursive`.
- *
- * Two non-inline categories (the construction default stamps `inline=true` for
- * any leading-`_` name, which wrongly includes both):
- *
- *  1. SUPERTYPE kinds (grammar-declared OR link-promoted). A supertype is a
- *     transparent dispatch choice: its CST node never materializes inline — it
- *     surfaces via its slot (`_expression`, `_path`,
- *     `_expression_ending_with_block`). Inlining one yields an empty body
- *     (unused-lifetime E0392). Keyed on the classified `type === SUPERTYPE`, so
- *     promoted supertypes (absent from the grammar `supertypes` array) are
- *     included — hence this runs AFTER `classifyAndLogHiddenRules`.
- *
- *  2. SELF-RECURSIVE kinds — a kind whose own body references itself
- *     (`_let_chain = seq(optional($._let_chain), '&&', let_condition)`). The
- *     emit-time inline path has only a one-level `visitingHelpers` cycle guard,
- *     so inlining a self-ref expands one level (duplicating the tail) and drops
- *     the wrapper's multiplicity gate. Materializing instead pushes the
- *     `optional`/`array` down onto the inner slot via `emitSlotReference`
- *     (`{% if let_chain | isPresent %}{{ let_chain }}{% endif %}`), matching the
- *     box-at-back-edge transport. Direct self-reference is detected here; the
- *     box-SCC pass handles the boxing.
- */
-```
-
-### `packages/codegen/src/compiler/link.ts::referencesSelf`
-
-```text
-/** True when `rule`'s tree contains a SYMBOL ref back to its own kind `self`.
- *  Shallow (no separator-rule descent needed here in practice, but `find`
- *  intentionally does NOT deref symbol refs — a direct self-reference only,
- *  matching the original hand-rolled walk's members/content-only descent). */
-```
-
 ### `packages/codegen/src/compiler/link.ts::topLevelAliasOf`
 
 ```text
@@ -3598,28 +3558,15 @@ runs once the metadata callbacks have been evaluated.
  *  name) without re-deriving the walk at each call site. */
 ```
 
-### `packages/codegen/src/compiler/link.ts::unhideAliasedTargets`
-
-```text
-/** A hidden rule some named alias wraps produces a real, separately-named
- *  CST node (the parser emits it under the alias's display name) — it is
- *  not swallowed the way an ordinary hidden helper is. Walks every rule
- *  for a `named` ALIAS over a bare SYMBOL and flips that symbol's target
- *  rule to `hidden: false`, correcting the leading-underscore default
- *  `canonicalizeRawGrammar` (evaluate) stamped before link ever ran. Runs once,
- *  after every top-level rule has been resolved, so it sees the final
- *  ALIAS shapes `resolveRule` produced. */
-```
-
 ### `packages/codegen/src/compiler/link.ts::stampLinkMintedVisibility`
 
 ```text
 /** A rule link mints with no counterpart in `ctx.rules` (the raw grammar's
  *  own rule names — an external role rule, a synthesized supertype, …)
- *  never went through evaluate's visibility stamping, so it has no
- *  `hidden` stamp yet — back-fill it from the leading-underscore
- *  convention. A rule with a raw-grammar counterpart, or one that already
- *  carries a `hidden` stamp (from `unhideAliasedTargets`), is left alone. */
+ *  never went through `stampParserVisibility`, so it has no `hidden`
+ *  stamp yet — back-fill it from the leading-underscore convention (a
+ *  link mint has no parser row). A rule with a raw-grammar counterpart,
+ *  or one that already carries a `hidden` stamp, is left alone. */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::namedAliasFaceOf`
@@ -3654,15 +3601,17 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  *  the occurrence site, not the definition site. The spliced body drops
  *  its source kind's own `hidden` stamp — it describes the SOURCE kind,
  *  not the host occurrence site, and simplify's single-member collapse
- *  would otherwise hoist that fact onto the host. Runs to a fixed point (no
- *  rule changed in a pass) or a 64-pass cap, whichever comes first; hitting
- *  the cap emits the `inline-fixpoint-unreached` diagnostic (`canProceed:
- *  true` — a stalled inline chain degrades slot naming, it does not break
- *  the build) rather than looping forever on a mutually-inlining cycle
- *  `cyclicInlineTargets` failed to catch. */
+ *  would otherwise hoist that fact onto the host. Runs via `fixpoint.ts`'s
+ *  `runToFixpoint` to a fixed point (no rule changed in a pass) or a
+ *  64-pass cap, whichever comes first; hitting the cap raises the blocking
+ *  `fixpoint-cap-reached` diagnostic naming this pass, rather than looping
+ *  forever on a mutually-inlining cycle `cyclicInlineTargets` failed to
+ *  catch. */
 ```
 
 The ref's own annotations survive the splice, merged over the body's: a fact stamped on the occurrence (`hoisted` on a variant deposit whose body is a single hidden symbol, `variant`/`variantOf` on an arm) describes the occurrence, not the rule being inlined, and dropping it would silently change how the host classifies.
+
+An external is never inlined: a ref to an external keeps its symbol even when the external carries a renderAs body and is stamped `inline`, so the parent slot still names the external kind instead of the body's pattern.
 
 ### `packages/codegen/src/compiler/link.ts::cyclicInlineTargets`
 
@@ -3686,69 +3635,19 @@ The ref's own annotations survive the splice, merged over the body's: a fact sta
  *  target reference. */
 ```
 
-### `packages/codegen/src/compiler/link.ts::collectAliasedHiddenKinds`
-
-```text
-/**
- * Walk the raw (pre-Link) rule tree and return a map of
- * `hiddenRuleName → aliasTargetName` for every rule whose body is a
- * top-level named alias. Tree-sitter's `alias($.x, $.y)` emits a
- * parse-tree node typed `y` for every match of `x`; without this map
- * Link's alias-collapse would leave downstream passes thinking the
- * hidden rule still produces the original kind.
- */
-```
-
-#### body
-
-```text
-// rawRules is Rule<'evaluate'> (pre-link); extractTopLevelAliasTarget
-// only walks the OPTIONAL/ALIAS/SEQ/CHOICE shell around a top-level
-// alias, present in both phases — widen the phase view with a cast.
-```
-
 ### `packages/codegen/src/compiler/link.ts::collectHiddenNamedArmChoices`
 
-```text
-/**
- * Collect the set of hidden (`_`-prefixed) kind names whose OWN raw rule
- * body is a `choice` where **ALL** members are named arms: a named alias over
- * a symbol, or a symbol the grammar declared as a variant of this choice
- * (`annotations.variantOf`, the shape a visible variant rule takes).
- *
- * These are dispatch choices where every arm names its own CST node. `resolveRule`
- * keeps a bare-symbol-content named alias as the ALIAS wrapper rather than
- * collapsing it to a plain `symbol` ref (`aliasedSymbolWithin` is what makes
- * that shape eligible to stay wrapped) — but without this set,
- * `classifyHiddenChoiceRule`'s supertype-compatible check treats an
- * ALIAS-of-SYMBOL member the same as a bare `symbol` and would still promote
- * the choice to a supertype. Every alias target here IS a real runtime CST
- * node, not an erased abstraction. Classifying them as `supertype` would
- * make the transport expect transparent subtype dispatch, which fails at
- * decode when the reader sees the concrete kind ID.
- *
- * A choice with an arm that is neither (a bare, undeclared symbol) is
- * excluded: it may still need supertype treatment for that arm.
- *
- * Used in `classifyHiddenChoiceRule` to block unwanted supertype promotion.
- *
- * @param rawRules - The EVALUATED (pre-link/pre-resolveRule) rules map.
- *   Must be called before `resolveRule` flattens alias nodes to symbols.
- */
-```
-
-#### body
-
-```text
-// Only pure alias-dispatch choices: every member must be a named alias
-// OF A RULE (content is a SYMBOL). An alias-of-terminal member
-// (`alias('$', $.token_tree_punctuation)`) is a renamed token, not a
-// dispatch arm — a choice carrying one is a plain union whose literal
-// arm happens to have a kind identity, and blocking its supertype
-// promotion reclassifies the whole union as a branch (observed:
-// `_non_delim_token` losing its supertype shape and with it the
-// repeat slot's per-kind wrap routing).
-```
+Hidden (`_`-prefixed) kind names whose raw rule body is a named-arm choice
+(`isNamedArmChoice`, `dsl/rule-patterns.ts`: a root CHOICE whose every member
+is a named ALIAS of a SYMBOL), computed on the evaluated rules before
+`resolveRule` flattens such aliases to plain symbols. `classifyHiddenChoiceRule`
+passes membership to `hiddenChoiceClass`, which then leaves the choice a
+polymorph: every alias target is a real CST node, and classifying the choice
+a supertype would make the transport expect transparent subtype dispatch,
+which fails at decode when the reader sees the concrete kind id. A
+`variant`/`variantOf` annotation plays no part in the test; labels sit on
+almost every unfielded choice arm and do not tell a dispatch choice from an
+ordinary union.
 
 ### `packages/codegen/src/compiler/link.ts::collectAliasedByParents`
 
@@ -3758,7 +3657,7 @@ The ref's own annotations survive the splice, merged over the body's: a fact sta
  * `alias(symbol(X), $.target)` usage — derived from ONE traversal so the
  * hidden-aliased set and the visible-alias-target map can never drift:
  *
- * - `parentAliasedKinds`: hidden (`_`-prefixed) source kinds `X`. These produce
+ * - `parentAliasedKinds`: parser-hidden (`isParserHiddenKind`) source kinds `X`. These produce
  *   REAL runtime CST nodes (tree-sitter exposes them under the alias target,
  *   e.g. `_with_clause_bare` → `with_clause_bare`). Even when normalized to a
  *   `repeat1` body (making `isHiddenRepeatHelper` fire) they must NOT be
@@ -3781,7 +3680,7 @@ The ref's own annotations survive the splice, merged over the body's: a fact sta
 ```text
 // rawRules is Rule<'evaluate'> (pre-resolveRule); walk only reads
 // ALIAS/SYMBOL/structural shapes present in both phases — widen the phase
-// view (post-PR-S cast), same pattern as collectAliasedHiddenKinds above.
+// view with a cast.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::emitVariantChildDerivations`
@@ -3967,141 +3866,26 @@ The ref's own annotations survive the splice, merged over the body's: a fact sta
 
 ### `packages/codegen/src/compiler/link.ts::classifyHiddenChoiceRule`
 
-```text
-/**
- * Classify a hidden `choice` rule per the spec taxonomy.
- *
- * @param rule - A `ChoiceRule<'link'>` to classify.
- * @param ctx - Link phase context; `ctx.supertypes` are kind names explicitly
- *   declared in `grammar.supertypes`.
- * @param name - The grammar kind name (used to check `ctx.supertypes`).
- * @param rules - The resolved rules map under construction (same map
- *   `classifyAndLogHiddenRules` iterates) — needed to compute `variantArms`
- *   via `isAliasMintedRef`'s independent-body test. See `RuleBase.variantArms`
- *   doc comment (types/rule.ts).
- * @returns A {@link ClassifyResult}: `rule` is an `EnumRule<'link'>`,
- *   `SupertypeRule<'link'>`, or the original rule unchanged; `classification`
- *   / `classifiedBy` are set only when a new classification was made.
- * @remarks
- *   Classification:
- *   - All-string members → `EnumRule<'link'>` (promoted), unless the grammar
- *     declares the rule in `supertypes:` — `_whitespace` is a choice over
- *     fixed-text tokens and must stay a supertype.
- *   - Supertype-compatible members (symbols, named aliases, enums/strings) →
- *     `SupertypeRule<'link'>` when at least one concrete subtype name can be resolved.
- *   - Mixed/structural members → rule unchanged; Assemble classifies by shape.
- *
- *   The old rule ("any hidden choice → supertype, subtypes best-effort")
- *   produced zero-subtype supertypes for hidden choices of structural members
- *   (`_match_block`, `_line_doc_comment_marker`, `_jsx_string`, …). Those are
- *   real alternatives with fields/seqs, not abstract kind unions.
- *
- *   A choice member is "supertype-compatible" when it is: a bare `symbol`
- *   ($.foo), a named `alias(..., $.foo)`, or an `enum`/`string`. Mixed
- *   structural members (seq, field, nested choice/optional/repeat) disqualify.
- */
-```
-
-#### body
-
-```text
-// Enum admission. Three member shapes qualify:
-//   - bare STRING literals (the original all-STRING enum);
-//   - an already-literal-carrying SYMBOL (`.literal !== undefined`, set by
-//     `canonicalizeRuleLiterals`' STRING-target case); and
-//   - a named ALIAS whose content resolves to a STRING (`alias('x', $.kind)`)
-//     or to a SYMBOL whose STORAGE rule body (`rules[content.name]`) is a
-//     bare STRING — the kind's whole realization is one fixed render text
-//     (visibleExternals: `_semicolon`'s `automatic_semicolon` arm, storage
-//     `_automatic_semicolon := '\n'`). Both ALIAS cases synthesize a
-//     literal-carrying SYMBOL (`name: <alias name>`) so the choice classifies
-//     as an ENUM of {literal → kind} members instead of a supertype whose
-//     member set can never project a type union.
-```
-
-#### body
-
-```text
-// If this hidden choice's ORIGINAL (pre-resolveRule) rule body contained
-// named-alias members, its choice arms represent REAL aliased CST nodes —
-// NOT abstract supertypes that tree-sitter erases at parse time. Block
-// supertype promotion so these kinds fall through to branch classification.
-// Grammar-declared supertypes (in grammar.supertypes) are never blocked.
-```
-
-#### body
-
-```text
-// Grammar inheritance idioms author a hidden union as `choice(previous,
-// $.new_arm)` — a CHOICE member that is ITSELF a CHOICE, not a leaf. Since
-// choice-of-choice is parse-equivalent (tree-sitter erases the nesting),
-// flatten before checking supertype-compatibility and before computing
-// variantArms below; otherwise a single nested-CHOICE member fails
-// `supertypeCompatible` outright and blocks promotion for the WHOLE
-// hidden union, even though every actual leaf arm qualifies (confirmed
-// case: typescript's `_lhs_expression`, authored as
-// `choice(previous, $.non_null_expression)`).
-```
-
-#### body
-
-```text
-// Only promote if we actually resolved subtype names. An empty
-// subtypes list means the choice members aren't symbols and we
-// can't project a union — fall through to leave-as-is.
-```
-
-#### body
-
-```text
-// stamp the variant-arm linkage THIS flatten is about to erase —
-// see `RuleBase.variantArms`'s doc comment. Computed from the
-// PRE-flatten CHOICE's own members (not `subtypes`, which already
-// lost per-arm rule-shape info): a bare SYMBOL/ALIAS arm that is
-// alias-minted (the exact `isAliasMintedRef` condition
-// `variant-structural.ts`'s CHOICE-arm predicate uses, shared not
-// re-derived) names its subtype-list entry by STORAGE name (an
-// ALIAS arm by its wrapped symbol's `.name`, a SYMBOL arm by its
-// own `.name` — matching `collectSubtypeRefs`'s own per-arm naming
-// exactly, so `variantArms` entries are always a subset of
-// `subtypes`' storage names).
-//
-// This surfaces MORE alias-minted arms than the wire channel ever
-// registered for SUPERTYPE parents: every `alias($.hidden,
-// $.visible)` construct inside a supertype's choice qualifies,
-// whether hand-authored in an override `rules:` replacement OR
-// inherited from the upstream base grammar (verified during Task
-// 1 development: rust's `_pattern`/`wildcard_pattern`,
-// `_condition`/`let_chain`, `_type`/`primitive_type` are all
-// genuine upstream `alias` calls in tree-sitter-rust's own
-// grammar.js, not false positives). This is the SAME
-// reviewed-additive widening V1 already accepted for
-// CHOICE-classified parents (rust's
-// `impl_item`/`reference_expression`, ts `string`'s
-// `string_fragment` — hand-authored `alias()` calls with no
-// `variant()` registration); Task 3's probe
-// exceptions table enumerates the SUPERTYPE-parent instances the
-// same way.
-```
-
-#### body
-
-```text
-// Named ALIAS arm: record the HIDDEN symbol name (content.name),
-// matching collectSubtypeRefs' per-arm naming — variantArms
-// entries must stay a subset of `subtypes`, and assemble's
-// lookup keys on the hidden name. Live today: link's `resolveRule`
-// keeps a bare-symbol-content named alias as the ALIAS wrapper (it
-// no longer collapses to a plain symbol), so this arm's raw ALIAS
-// shape is the common case reaching this walk, not a defensive
-// fallback.
-```
-
-#### body
-
-```text
-// Mixed/structural hidden choice — survive as-is.
-```
+Classifies a hidden choice rule. The decision is `hiddenChoiceClass`
+(`dsl/rule-patterns.ts`), the same predicate the automatic stamp's
+`isSupertypeOwner` asks, fed the rule, a storage lookup into the rules map
+under construction, and the named-arm fact from
+`collectHiddenNamedArmChoices`. What remains here is construction and the
+declared-supertype override:
+- `'enum'` and not a declared supertype: the members become an enum rule
+  (`normalizeEnumMembers` when all are strings, else a choice of literal
+  symbols). A declared supertype (`_whitespace`, a
+  choice over fixed-text tokens) stays a supertype.
+- `'named-arms'` and not a declared supertype: the rule unchanged.
+- `'supertype'`, or a declared supertype: a `SupertypeRule` when at least one
+  subtype ref resolves (`collectSubtypeRefs`), with `variantArms` for the
+  members `isAliasMintedRef` marks as mints. A `'supertype'` over aliased hidden
+  storage (`isAliasedHiddenStorage`) that the grammar does not declare a
+  supertype is not one: the parser shows it as a node, so it stays a choice
+  rule and assemble makes it an envelope (`compoundModelTypeFor`).
+- Otherwise the rule unchanged; assemble classifies it by shape. A hidden
+  choice of structural members (seqs, fields) is a real alternative, not an
+  abstract kind union.
 
 ### `packages/codegen/src/compiler/link.ts::collectSubtypeRefs`
 
@@ -4472,16 +4256,18 @@ The ref's own annotations survive the splice, merged over the body's: a fact sta
 
 ```text
 /**
- * §D-2a Task 4 — relocate group-inlining from the late `simplify` slot-wash to
- * a normalize-time rule-tree hoist so render AND slot projections derive the
- * inlined form from ONE source.
+ * Group-inlining as a normalize-time rule-tree hoist (relocated from the late
+ * `simplify` slot-wash) so render AND slot projections derive the inlined
+ * form from ONE source.
  *
  * Operates on the WRAPPER-DELETED rule map (multiplicity already pushed onto the
  * leaf `symbol(_x)` ref as a `multiplicity` / `separator` attribute). For each
  * parent reference `symbol(_x)` where `_x` is a fold-eligible hoisted /
  * MULTI helper (`resolveGroupOrMultiInlineTarget` ≠ null, the hoisted fact
- * read off `ctx.grammar.hoistedKinds`) AND `!keepRef.has(_x)`
- * AND `_x !== '_import_list'` (gated until the deferred), the symbol is replaced
+ * read off `ctx.grammar.hoistedKinds`) AND `!keepRef.has(_x)` — `keepRef`
+ * holds every hidden rule referenced more than once, twinned, or named by a
+ * supertype, which is what keeps a shared list helper such as python's
+ * `_import_list` out of the fold — the symbol is replaced
  * by the group's body **as a unit**, carrying the referring symbol's
  * multiplicity / separator onto the spliced SEQ node (NOT distributed onto its
  * leaves). When `_x` has no remaining reference, its entry is deleted.
@@ -4838,7 +4624,9 @@ The ref's own annotations survive the splice, merged over the body's: a fact sta
  * @remarks
  * One pass is usually enough; up to four iterations catch cascading
  * opportunities where a parent being inlined exposes a new single-use child.
- * The loop breaks early when a full pass produces no changes.
+ * Runs via `fixpoint.ts`'s `runToFixpoint`, which returns as soon as a pass
+ * produces no changes, or raises the blocking `fixpoint-cap-reached`
+ * diagnostic naming this pass if the four-pass cap is reached first.
  */
 ```
 
@@ -5063,20 +4851,11 @@ The ref's own annotations survive the splice, merged over the body's: a fact sta
 
 ### `packages/codegen/src/compiler/resolve-grammar.ts::resolveGrammarJsPath`
 
-```text
-/**
- * Resolve a grammar name to the absolute path of its grammar.js file.
- */
-```
+Resolve a grammar name to the absolute path of its upstream `grammar.js`, resolving the upstream package (`upstreamPackage`) from the grammar's own package directory (`grammarRequire`) — the grammar package is the one place its upstream dependency is declared.
 
 ### `packages/codegen/src/compiler/resolve-grammar.ts::resolveOverridesPath`
 
-```text
-/**
- * Resolve a grammar name to its grammar.sittir.ts path (if it exists).
- * Returns the path in packages/{grammar}/grammar.sittir.ts.
- */
-```
+The grammar's `grammar.sittir.ts` entry: `GRAMMAR_ENTRY` inside `grammarPackageDir(grammar)`.
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::classifyByType`
 
@@ -5745,21 +5524,24 @@ the text a SEQ collapses to is spaced by the grammar's word shape, not `\w`.
 
 ### `packages/codegen/src/compiler/variant-structural.ts::VariantChild`
 
-One variant of a parent: the kind the arm names and the variant name it is
-addressed by, both resolved once in the derivation and read unchanged by
-every consumer.
+One variant of a parent: the kind the arm names, the variant name it is
+addressed by, and `definedBy` — `'enrich'` when the arm's label is automatic
+(its key is in the automatic-variant record), `'override'` when an authored
+label (`variant()`, `alias()`, a group) placed it (`definedByOf`). All three
+resolved once in the derivation and read unchanged by every consumer.
 
-### `packages/codegen/src/compiler/variant-structural.ts::prefixNamedSuffix`
+### `packages/codegen/src/compiler/variant-structural.ts::definedByOf`
 
-The suffix that turns `parentKind`'s visible name into `targetName`
-(`polymorphVisibleName(parentKind, suffix)`), or `null` when `targetName` is
-not so named or the suffix would be empty. Both names may carry a leading
-`_`. A naming helper only: it never decides whether an arm is a variant.
+`'enrich'` when the arm's key (`automaticVariantKey`) is in the automatic-variant
+record link was handed (`RawGrammar.automaticVariants`), else `'override'`.
+The record is the only source for whether a label is automatic; nothing reads
+rule metadata for it.
 
 ### `packages/codegen/src/compiler/variant-structural.ts::deriveVariantChildren`
 
 `{parent -> VariantChild[]}` for every rule in `rules` that has at least one
-variant, by `variantChildrenOf`.
+variant, by `variantChildrenOf`, with `definedBy` read from the given
+automatic-variant record.
 
 ### `packages/codegen/src/compiler/variant-structural.ts::variantChildrenOf`
 
@@ -5774,6 +5556,7 @@ The variant a node declares for `parentKind`: a symbol carrying the
 annotations (the child kind is the symbol's name), or a named alias whose own
 annotations — or its content symbol's — carry them (the child kind is the
 alias's visible value). Annotations for a different parent do not count.
+`definedBy` comes from the automatic-variant record (`definedByOf`).
 
 ### `packages/codegen/src/compiler/variant-structural.ts::annotationsOf`
 
@@ -5896,6 +5679,10 @@ parts with the space its parser needs.
 
 ### `packages/codegen/src/compiler/assemble.ts::AssembleCtx`
 
+Carries the phase's `assembleDiagnostics` collector, one per context, so the
+helpers that report into it take `(target, ctx)` rather than a bare
+collector parameter.
+
 ```text
 /**
  * Phase context for the Assemble phase (S2, `BaseCtx<'simplify'>` — Assemble
@@ -5995,7 +5782,7 @@ parts with the space its parser needs.
  * for whether emitters (templates, factories, types, IR) should
  * produce output for the kind.
  *
- * - `token` / `multi` modelTypes: never user-facing (structural helpers).
+ * - A hidden `punctuation` leaf is never user-facing (structural helper).
  * - Visible kinds (not `_`-prefixed): user-facing.
  * - Hidden kinds: user-facing only when they're alias sources
  *   (referenced elsewhere by their storage `name`, meaning factories
@@ -6497,6 +6284,80 @@ parts with the space its parser needs.
  */
 ```
 
+`aliasedNonTerminal` is the parser's fact that some `alias()` shows the nonterminal under another name; `isAliasedHiddenStorage` reads it.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::isRenamedEntry`
+
+Whether a catalog row is a hidden rule the parser shows under another name: not an alias, anonymous or literal row, not declared in the grammar's `visibleExternals` (`visibleExternal`, so a declared whitespace external keeps its own kind), visible in the parser, not an alias fold (`parseId` unset, so its `symbolName` is its own symbol's), its `symbolName` differs from its grammar name, and exactly one visible row carries that tree name (`visibleTreeNameCount`). Such a row's model kind is its tree name.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::visibleTreeNameCount`
+
+How many visible, named rows show a tree name, counted once per entry list (cached by list identity).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::modelKindOfEntry`
+
+The model kind a catalog row names: an alias row's display name, a renamed row's tree name (`isRenamedEntry`), otherwise its grammar name. The inverse of `findEntryForKindName`; the id → name tables and the `TSKindId` member names read it so both directions agree.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::parserHiddenOf`
+
+Whether a kind is hidden in the parser: its catalog row's `hidden` fact (never for an alias row). The leading-underscore spelling decides only for a name with no catalog row: a phantom kind (a sittir mint with no parser symbol, held to the phantom-kind ceilings) or an `inline:` entry, which the parser never gives a symbol. A name the catalog owns never reaches that fallback (`findOwnKindEntry` throws instead).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::isParserHiddenKind`
+
+`parserHiddenOf` for a kind name, looked up by its own row (`findOwnKindEntry`).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::parserSupertypeOf`
+
+Whether a kind is a supertype: its catalog row's `supertype` flag. For a name with no catalog row it is the grammar's `supertypes:` declaration, because tree-sitter issues no symbol for a hidden supertype (rust `_declaration_statement`, python `_suite`, every grammar's `_whitespace`); this is the same rowless-only class as `parserHiddenOf`'s spelling fallback.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::surfaceHiddenOf`
+
+Whether a kind is hidden on the generated surface, from the two parser symbol flags in `ts_symbol_metadata`:
+
+- parser-hidden (`.visible = false`, `parserHiddenOf`) and not a supertype. Tree-sitter compiles every supertype as an invisible symbol, but a supertype is the user-facing polymorph parent, so it keeps its namespace, `ir` key and type;
+- or a grammar rule the parser issues as an anonymous token (`.named = false`, the row's `anon`, on a `literalRule` row): typescript `_ternary_qmark`, python `_not_in`/`_is_not`. Its node stays in the model, so an enum slot keeps its own kind id, but it has no factory or `ir` key. Keyword and punctuation leaves minted from anonymous literals are not rules and stay on the surface. This is the one predicate every surface emitter and the link `hidden` stamps read; link's inline decision reads the plain parser fact.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::isAliasedHiddenStorage`
+
+Whether a kind is hidden storage the parser shows under an alias: its own row (`findOwnKindEntry`) is an `aliasedNonTerminal` and `surfaceHiddenOf` holds. Supertypes fail the second test, so an aliased supertype (python `expression` under `as_pattern_target`) stays a supertype. Link and assemble ask it to make such a kind an envelope rather than a supertype or polymorph.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::isSurfaceHiddenKind`
+
+`surfaceHiddenOf` for a kind name, looked up by its own row (`findOwnKindEntry`).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::findOwnKindEntry`
+
+The catalog row whose model kind is exactly `kind` (`findEntryForKindName`, then `modelKindOfEntry` must agree), or `undefined` for a name with no row. Whether any row owns `kind` is one lookup in a per-catalog `modelKind → row` index (`modelKindOwner`), so a rowless name returns without scanning the catalog. A kind that some row names as its model kind but that the resolution chain misses throws: a rowless fallback (the leading-underscore name rule) is only for synthetic grammars and sittir mints, never for a kind the catalog owns.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::modelKindOwner`
+
+The first catalog row whose `modelKindOfEntry` is `kind`, from an index built once per catalog array and cached in a WeakMap keyed by that array (the same scheme as `visibleTreeNameCount`).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::stampVisibleExternals`
+
+Marks the rows named in the grammar's `visibleExternals` with `parser.visibleExternal`, returning new tables (idempotent; tables without such rows pass through). `compileGrammar` stamps once and hands the stamped tables to generation on `Compilation.generatedIdTables`; link stamps again at entry so a caller that passes raw tables sees the same fact. Consumers read the stamp, never the grammar's list: `isRenamedEntry` excludes the rows, so `collapseRenamedRules` keeps their kinds, and the slot-preservation check accepts a declared token written as a seam (`rendersAsDeclaredTokenSeam`).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::collectSymbolFlags`
+
+Reads `ts_symbol_metadata[]` from `parser.c`: each symbol's `.visible` and `.named` flags (keyed by C symbol name) and the set of symbols flagged `.supertype`. The catalog `hidden` fact derives from `.visible`, `anon` from `.named`, and `supertype` from `.supertype`; the C-name prefix only names a row, never classifies it.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::GeneratedKindEntry`
+
+One catalog row. Beyond the id tables, it carries:
+
+- `parseName`: set only on an alias fold (`joinIdNames`), the display name tree-sitter issues under `parseId`. The row keeps its own `symbolName`, so the storage id still names the row's own symbol and the parse id names the display;
+- `supertype`: the symbol is a tree-sitter supertype (`collectSymbolFlags`), read by `surfaceHiddenOf` and `parserSupertypeOf`;
+- `terminal`: the symbol's id is below parser.c's `TOKEN_COUNT` (`collectTokenCount`), so the parser issues it as a token;
+- `visibleExternal`: the row is declared in the grammar's `visibleExternals` (`stampVisibleExternals`).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::ParserSymbolFacts`
+
+The per-symbol facts read from `parser.c` beside the name tables: the symbols in `ts_non_terminal_alias_map`, each symbol's `.visible` and `.named` flags, the symbols flagged `.supertype` (`collectSymbolFlags`), and `TOKEN_COUNT` (`collectTokenCount`), below which every symbol id is a terminal.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::collectTokenCount`
+
+parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (terminals), ids at or above it its nonterminals and aliases. `undefined` when the define is absent, in which case no row is stamped `terminal`.
+
 ### `packages/codegen/src/compiler/inline-sets.ts::GrammarJsonNode`
 
 ```text
@@ -6534,7 +6395,7 @@ parts with the space its parser needs.
 	 * Pipeline-wide `DiagnosticSink` (ctx threading). When supplied, Link
 	 * phase diagnostics (e.g. `liftSeparators`'s `non-literal-separator`
 	 * warning) land in THIS sink — the same instance `generate.ts` threads
-	 * through `NormalizeCtx`/`AssembleCtx.from`/`assertEmittable` — so they
+	 * through `NormalizeCtx`/`AssembleCtx.from`/`assertCompilation` — so they
 	 * are visible to callers reading the sink after the pipeline runs.
 	 * Defaults to a fresh, throwaway `DiagnosticSink` (pre-PR-S task 5
 	 * behavior) for callers (mostly tests) that only care about the returned
@@ -6629,7 +6490,7 @@ parts with the space its parser needs.
  * stamp off the rule to decide whether to log a derivation + mutate the rule
  * map. Per decision 3's corollary, that "stamp then re-inspect the rule"
  * pattern must become direct return-value dataflow: the classifier now
- * returns its classification/classifiedBy ALONGSIDE the rule, and the caller
+ * returns its classification ALONGSIDE the rule, and the caller
  * reads ONLY the return value — never re-reads a tag off `rule`.
  */
 ```
@@ -6644,18 +6505,6 @@ parts with the space its parser needs.
 
 ```text
 /** Set only when `rule` was newly classified this call (enum or supertype). */
-```
-
-### `packages/codegen/src/compiler/link.ts::classifiedBy`
-
-```text
-/**
-	 * Whether this classification was declared in the grammar (`'grammar'`,
-	 * e.g. present in `grammar.supertypes`) or inferred by this structural
-	 * classifier (`'link'`). For the derivation log (diagnostics only) — NOT
-	 * an authorship fact (decision 6: `'promoted'` is not an `author` value;
-	 * it lives on its own `classifiedBy` axis in `RuleMetadataShape`).
-	 */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::fieldName`
@@ -6725,34 +6574,17 @@ parts with the space its parser needs.
 
 ### `packages/codegen/src/compiler/types.ts::RuleProvenance`
 
-```text
-/**
- * (debt: source-homonym resolution, decision 6 — STOP, NOT migrated) Decision
- * 6 asks for `RuleProvenance`'s three values to fold into `RuleMetadataShape`'s
- * unified `author` field ('grammar-authored'→'grammar',
- * 'override-authored-or-replaced'→'override', 'evaluate-synthesized'→
- * 'evaluate'). That migration is NOT done here: `compiler/generate.ts`'s
- * `collectEvaluateSynthesizedKinds` reads
- * `RuleCatalogEntry.provenance === 'evaluate-synthesized'` and BRANCHES ON IT
- * to decide which kinds get factory/wrap emission skipped
- * (`emitters/shared.ts`'s `synthesizedKinds?.has(kind)` skip-gate) — a
- * genuine compiler-behavior read. `generate.ts` is not a sanctioned reader of
- * the opaque `RuleMetadata` bag (sanctioned set: dsl/enrich, dsl/wire incl.
- * transform machinery, diagnostics-emission code — see
- * `dsl/rule-metadata.ts`'s header). Moving this fact into `metadata.author`
- * would force that read through the restricted `readRuleMetadata` from a
- * non-sanctioned compiler file, which is exactly the doctrine violation
- * decision 3 forbids. Per decision 6's own instruction ("if a compiler-side
- * consumer BRANCHES ON IT for behavior, STOP and report"): `RuleProvenance`
- * stays a separate, already-well-layered, non-opaque, structurally-typed
- * field on `RuleCatalogEntry` (set once at rule-catalog construction time,
- * never stamped-then-reread) — it is a DIFFERENT, correctly-single-sourced
- * mechanism from the `metadata.source` / `FieldRule.source` / `SymbolRule.
- * source` homonym family decision 6 actually targets (see this research
- * doc's §1b table, which already marks "Rule catalog/provenance" as
- * "single" — not one of §5.4's five broken homonyms).
- */
-```
+Where a rule in the catalog came from: the base grammar
+(`'grammar-authored'`), a grammar.sittir.ts override that authored or replaced
+it (`'override-authored-or-replaced'`), or evaluate's own synthesis
+(`'evaluate-synthesized'`). Set once when the rule catalog is built.
+`compiler/generate.ts`'s `collectEvaluateSynthesizedKinds` reads it to skip
+factory and wrap emission for evaluate-synthesized kinds. It is a catalog
+field, not rule metadata, so compiler code reads it directly. For a grammar
+extension (`grammar.sittir.ts`), `evaluateRuleFunctions` gives every rule the
+callback returns `'override-authored-or-replaced'` — base rules, enrich's
+mints and overridden rules alike — so in practice the value only separates
+evaluate's synthesized kinds from the rest.
 
 ### `packages/codegen/src/compiler/types.ts::KindParserMetadata`
 
@@ -6764,6 +6596,30 @@ parts with the space its parser needs.
  * diagnostics only.
  */
 ```
+
+`keyword` is set on a kind sittir minted as `<text>_keyword` (see
+`generated-metadata.ts::keywordTextOf`). The suffix exists so a keyword
+token cannot collide with a kind of the same name; the fact lets a consumer
+that wants the keyword's own text (a literal arm's name) read `literalText`
+instead of stripping the suffix from the name. `collectGeneratedKindEntries`
+carries it onto `GeneratedKindEntry.keyword`.
+
+`terminal` is set when the symbol's id is below parser.c's `TOKEN_COUNT` (`collectTokenCount`): the parser issues it as a token. It is the parser fact after the catalog exists; the DSL phase, which runs before parser.c is generated, predicts it from rule shape instead (`dsl/rule-patterns.ts::parserSymbolClassOf`).
+
+`aliasedNonTerminal` is set on a nonterminal that parser.c lists in
+`ts_non_terminal_alias_map` (see
+`generated-metadata.ts::collectAliasedNonTerminals`): tree-sitter lists a
+nonterminal there when some parent shows it under an alias name while it
+keeps its own symbol, so the parser issues the nonterminal's node renamed
+rather than renaming the symbol itself (a symbol aliased alike at every use
+is renamed in place and is not listed). It is the parser's own fact, stamped
+separately from `hidden`; a consumer that needs a hidden nonterminal shown
+under an alias reads both. `collectGeneratedKindEntries` carries it onto
+`GeneratedKindEntry.aliasedNonTerminal`.
+
+#### lexicalRank
+
+The symbol's position in the grammar's lexical precedence order (`collectLexicalRanks`). The generated catalog copies it onto `GeneratedKindEntry`, and the from emitter orders `_TEXT_KINDS_BY_RANK` by it.
 
 ### `packages/codegen/src/compiler/types.ts::presence`
 
@@ -7075,20 +6931,6 @@ parts with the space its parser needs.
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::aliasedHiddenKinds`
-
-```text
-/**
-	 * Hidden-rule → alias-target mapping, collected from `raw.rules` (the
-	 * evaluate-phase, pre-link grammar) for a hidden rule like
-	 * `_type_identifier: $ => alias($.identifier, $.type_identifier)`. Records
-	 * the rename — the name tree-sitter actually emits at parse time — so
-	 * Assemble can rewrite supertype subtype lists from `_type_identifier` to
-	 * `type_identifier`. Optional so unit tests that construct a
-	 * LinkedGrammar directly don't have to fill in an empty map.
-	 */
-```
-
 ### `packages/codegen/src/compiler/types.ts::topLevelAliasBodies`
 
 ```text
@@ -7126,15 +6968,11 @@ parts with the space its parser needs.
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::visibleInlineNames`
+### `packages/codegen/src/compiler/types.ts::automaticVariants`
 
-```text
-/** Entries of the grammar's `inline:` array that do NOT start with `_` —
- *  computed once at evaluate's exit (`canonicalizeRawGrammar`). The parser
- *  inlines these regardless of the leading-underscore convention, so they
- *  never surface as their own nodes; link reports a non-empty set as the
- *  `inline-array-visible-name` diagnostic. */
-```
+The wire context's automatic-variant record, carried by evaluate so link can
+tell an automatic arm label from an authored one (`definedByOf`). Absent for a
+grammar that never ran through `wire()`; then no label is automatic.
 
 ### `packages/codegen/src/compiler/types.ts::visibleAliasTargets`
 
@@ -7160,8 +6998,8 @@ parts with the space its parser needs.
 ```text
 /** `{parent -> childTargetName[]}` for every variant-adoption parent, stamped
  *  once at the end of link from the final link rules
- *  (`deriveStructuralVariantChildren`). Normalize's `variantSkip` and
- *  assemble's `variantChildrenByParent` consume this table; it is carried
+ *  (`deriveStructuralVariantChildren`). Assemble's `variantChildrenByParent`
+ *  consumes this table; it is carried
  *  unchanged onto `NormalizedGrammar` and `SimplifiedGrammar`. Absent when
  *  no kind adopts variants. */
 ```
@@ -7399,25 +7237,6 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::aliasedHiddenKinds`
-
-```text
-/**
-	 * Carried from {@link SimplifiedGrammar.aliasedHiddenKinds} (itself
-	 * carried from `LinkedGrammar`) — hidden alias-source kind → visible
-	 * alias-target name, e.g. `_wrapped_item` → `wrapped_item`. The
-	 * hidden/subtype-resolution family in `compiler/assemble.ts`
-	 * (`resolveHiddenSubtypes`) migrated off this map for ITS purpose
-	 * (see that function's doc comment), but the underlying fact — a
-	 * hidden kind sharing its runtime numeric kind id with a visible
-	 * alias — is still needed by transport emission: the generated id
-	 * catalog (KIND_NAMES, `emitters/types.ts`) records that id under
-	 * the visible name only, so per-slot child enum id-dispatch
-	 * (`emitters/transport-common.ts`'s `acceptedTransportKinds`) must
-	 * resolve a hidden kind to its alias target before looking up its id.
-	 */
-```
-
 ### `packages/codegen/src/compiler/types.ts::derivations`
 
 ```text
@@ -7623,14 +7442,9 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
  */
 ```
 
-### `packages/codegen/src/compiler/resolve-grammar.ts::GRAMMAR_JS_PATHS`
+### `packages/codegen/src/compiler/resolve-grammar.ts::GRAMMAR_JS_SUBPATHS`
 
-```text
-/**
- * Well-known grammar.js paths for grammars with non-standard layouts.
- * Most grammars use `tree-sitter-{grammar}/grammar.js`.
- */
-```
+`grammar.js` locations inside the upstream package for grammars with a non-standard layout (typescript ships its dialects in subdirectories). Every other grammar keeps `grammar.js` at the package root.
 
 ### `packages/codegen/src/compiler/simplify.ts::attributeBuilder`
 
@@ -7753,6 +7567,10 @@ source, one derivation.
  * recorded (a real regex body has no anon token by design).
  */
 ```
+
+### `packages/codegen/src/compiler/link.ts::KindCatalogCtx`
+
+The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exists: `collapseRenamedRules` and `stampParserVisibility` shape the grammar `LinkCtx` is built from, so they take this slice. `StampKindIdsCtx` extends it, and `LinkCtx` satisfies it.
 
 ### `packages/codegen/src/compiler/link.ts::StampKindIdsCtx`
 
@@ -7918,6 +7736,18 @@ source, one derivation.
 // node (literal, kindId, hidden, …) are kept by spreading the node first.
 ```
 
+#### field annotations
+
+A `FIELD` wrapper's annotations move onto the rule the field name lands on (`withKindFacts`), so a stamp written at a field position (`flatten()`, `group()`) survives into the normalized and simplified rule instead of being dropped with the wrapper.
+
+#### token interior
+
+```text
+A STRING that already carries `nonterminal: true` keeps it: a presence flag inside a token interior is a slot-
+promoted literal, and simplify re-flattens rules that were already flattened, so the builder must not overwrite
+the stamp with the terminal default.
+```
+
 ### `packages/codegen/src/compiler/link.ts::reportKindIdStampMisses`
 
 ```text
@@ -8081,12 +7911,15 @@ source, one derivation.
 ### `packages/codegen/src/compiler/variant-structural.ts::module`
 
 Which arms of a rule are its variants, read from the one fact that declares
-them: the `variant` / `variantOf` annotations a `variant()` patch stamps on
-the arm it resolves. Nothing here recognises a variant by name or by shape —
-a prefix-named sibling rule, a `groups:` entry or an upstream external that
-happens to share the parent's name is not a variant, and a hand-built hidden
-rule plus alias is not one either until the grammar declares it with
-`variant()`.
+them: the `variant` / `variantOf` annotations, stamped either by enrich's
+automatic arm labelling (`dsl/automatic-variants.ts`, every non-blank arm of
+a structural choice) or by a `variant()` patch resolving an override arm.
+Nothing here recognises a variant by name or by shape — a prefix-named
+sibling rule, a `groups:` entry, or an upstream external that happens to
+share the parent's name is not a variant unless one of those two paths
+stamped it. `VariantChild.definedBy` (`definedByOf`, reading the
+automatic-variant record) tells which path stamped a given arm, so a consumer can still single out an
+author-declared variant without re-deriving it.
 
 Link reads the derivation twice (`applyOverridePolymorphs`, and the final
 `LinkedGrammar.variantChildren` table that normalize and assemble consume),
@@ -8209,201 +8042,6 @@ carried through a side channel.
 
 ```text
 /** The field name a degenerate arm (per `isDegenerateFieldArm`) carries, unwrapping the same single-member seq nesting. */
-```
-
-### `packages/codegen/src/compiler/emit-gate.ts::module`
-
-```text
-/**
- * compiler/emit-gate.ts — the Assemble→Project boundary check.
- *
- * Spec §4b / §7.5 (compiler-simplification-design.md).
- *
- * This gate is INERT until PR-L. Nothing currently emits 'fail', so
- * assertEmittable always returns void today. The nodeMap parameter is
- * accepted for forward-compat — PR-L's 'unslotted-child' check reads it —
- * but is intentionally unused here (prefixed with _).
- *
- * Design note: the gate keys on severity === 'fail', NOT on canProceed.
- * This is deliberate: diagnostics/derive-shapes.ts already emits canProceed:false
- * diagnostics — keying on canProceed would halt emission the moment PR-H
- * routes real diagnostics into the sink. The (currently unused) 'fail'
- * severity is what makes the gate inert until PR-L.
- */
-```
-
-### `packages/codegen/src/compiler/variant-structural.ts::module`
-
-```text
-/**
- * compiler/variant-structural.ts — structural derivation of variant()
- * adoption (/ decision-7 V0-V2).
- *
- * `assemble.ts` historically consumed `variantChildKinds` from a WIRE
- * metadata channel (`normalized.polymorphVariants`, populated by
- * `wireRegisterPolymorphVariant` during evaluate). That channel recorded
- * *authored intent*: what a `variant()` override SAID it
- * wanted, not what actually materialized in the post-link rule tree.
- * `link.ts`'s own `isAllAliasChoice` (used by
- * `pushAmbientScaffoldIntoVariantChildren`) already proved the alias-choice
- * shape wire injects is a STRUCTURAL fact, matchable with no metadata at
- * all — see docs/superpowers/specs/2026-07-04-variant-structural-derivation-research.md
- * §2, §4.3, and the "V2 OUTCOME" section.
- *
- * This module derives the same `{parent -> childFullName[]}` shape the wire
- * channel used to produce, straight from the tree, given only a grammar's
- * rule map (`normalized.rules`, the same snapshot `assemble()` already
- * iterates).
- *
- * STATUS (2026-07-04): the wire metadata channel is DELETED —
- * `wireRegisterPolymorphVariant`, `WireContext.polymorphVariants`,
- * `drainPolymorphMetadata`, and the `polymorphVariants` fields on
- * RawGrammar/LinkedGrammar/SimplifiedGrammar are all gone. Every former
- * consumer now reads this module's structural derivation directly:
- * `assemble.ts:158-164` (variantChildrenByParent/variantChildKindsSet — the
- * "V1 flip", unchanged in that change), `link.ts`'s
- * `applyOverridePolymorphs` (its (parent, children) pairs, formerly
- * wire-pair-driven, now discovered structurally too), and `normalize.ts`'s
- * `variantSkip` diagnostic skip-set. The ONE case that used to need a
- * narrow wire-channel supplement — a SUPERTYPE-classified parent (python's
- * `_simple_pattern`) whose CHOICE-flatten (`classifyHiddenChoiceRule`,
- * link.ts) destroys the alias-mint linkage before this module ever sees the
- * rule — is now covered by a DECLARED structural fact instead:
- * `classifyHiddenChoiceRule` stamps `SupertypeRule.variantArms` (see
- * `RuleBase.variantArms`'s doc comment, types/rule.ts) at the exact moment
- * of flatten, using this module's OWN `isAliasMintedRef` helper (exported,
- * shared, not re-derived) applied to the pre-flatten CHOICE's members.
- * `tool variant-derivation-probe` (packages/tools) is no longer a
- * structural-vs-wire equality check — it's now a cross-commit DRIFT
- * DETECTOR comparing this module's live output against the COMMITTED
- * `node-model.json5` `polymorphVariants` section per grammar (see that
- * probe's own doc for the modelType==='branch' restriction its comparison
- * requires).
- *
- * ## The predicate (reproduce-only scope, decisions 1a + 3 accepted)
- *
- * A CHOICE node `C`, found ANYWHERE in a kind `K`'s post-link rule body
- * (recursive descent — decision-1 nested-choice case, e.g. rust's
- * `function_type` / `range_pattern`), qualifies as a variant-adoption site
- * when AT LEAST ONE member of `C` is a "named-kind arm": a bare ALIAS/
- * SYMBOL reference, or a SEQ whose
- * first member is such a reference (the `function_type` shape: alias-then-
- * shared-suffix-content), whose target is BOTH (a) **prefix-named** against
- * `K` (`${K-without-leading-underscore}_<suffix>`, admitting HIDDEN target
- * names per RESOLUTION 3 — the target's own leading `_` is stripped before
- * the prefix comparison, matching `polymorphVisibleName`'s convention) AND
- * (b) **alias-minted** (`isAliasMintedRef` — a bare ALIAS node, or a SYMBOL
- * whose target name has NO independent rule body elsewhere in the grammar's
- * `rules` map; the PR-0c mint-site condition, reapplied here to exclude
- * coincidental prefix-name collisions with ordinary, independently-authored
- * sibling rules — see "Known non-reproductions"). Only qualifying arms
- * contribute a child; sibling arms that reference an unrelated kind (a bare
- * keyword symbol like rust's `crate` arm beside `visibility_modifier`'s
- * `pub` arm), aren't a named-kind ref at all (`NEWLINE`, a literal STRING),
- * or ARE a named-kind ref but not alias-minted (an ordinary sibling rule
- * that happens to share the parent's name prefix) are simply not variant
- * children — they stay ordinary choice arms, exactly mirroring
- * `applyOverridePolymorphs`'s own runtime gate (`symbolInRule`,
- * link.ts:1130), which is ANY-match ("does the found choice contain at
- * least one variant-child alias") rather than `isAllAliasChoice`'s ALL-match
- * (used only by the OTHER, ambient-scaffold-push-down branch when no wire
- * alias is found in the choice at all).
- *
- * This deliberately does NOT implement decision-1's V4 widening (any choice
- * of named kinds) — only prefix-named, alias-minted arms are ever
- * collected, so an ordinary union-of-kinds choice with zero such arms never
- * qualifies at all. See the research doc §2.1 "Tier A" / DECISIONS-NEEDED
- * 1 (a).
- *
- * ## Known non-reproductions (expected, not bugs — see the research doc's
- * "V1 OUTCOME" and "V2 OUTCOME" sections for the full adjudication table)
- *
- * These were originally framed as "wire has a pair; structural search can't
- * reproduce it" (when the wire channel still existed as the comparison
- * target). With the channel deleted, the SAME structural facts below now
- * explain why these parents structurally do NOT appear in
- * `deriveStructuralVariantChildren`'s output at all, full stop — there is
- * no wire side to compare against anymore, only the reasoning for the gap:
- *
- * - **Naming collision with a separate alias mechanism.** A child kind can
- *   fail to structurally materialize with the "expected" `${parent}_
- *   ${suffix}` name at all, when a SEPARATE naming mechanism (e.g. rust's
- *   `groups: { in_path: ... }` body-pattern alias) wins the actual visible
- *   kind name. `visibility_modifier`'s intended `in_path` child would be
- *   named `visibility_modifier_in_path`, but the grammar's real
- *   alias-minted kind is bare `in_path` — a pre-existing naming collision
- *   between two independent alias mechanisms, unrelated to this
- *   derivation. That real `in_path` kind has ZERO node-model/dispatch
- *   coverage today (a pre-existing gap); fixing it is a separate follow-up
- *   (rust's committed node-model.json5 confirms zero drift on this front —
- *   `visibility_modifier`'s only committed child is `pub`).
- * - **No CHOICE node at all.** A variant() registration can target a lone
- *   aliased SEQ member with no sibling alternation — there is no "choice
- *   of named kinds" for the predicate to match against at all, by design
- *   (the predicate is CHOICE-centric, matching `isAllAliasChoice`/
- *   `findVariantChoice`'s own scope).
- * - **Supertype/hoisted-compound union, not (only) a plain BRANCH.** Some
- *   variant-adoption parents classify to `SupertypeRule`/`AssembledSupertype`
- *   (python's `_simple_pattern`) or a hoisted `AbstractAssembledCompound`
- *   (ts's `_export_statement_default_decl_arm` family, `_for_header`) rather
- *   than an ordinary `AssembledBranch`. `_simple_pattern`'s original CHOICE
- *   flattens into a bare `subtypes: string[]` BEFORE this module ever sees
- *   the rule (`classifyHiddenChoiceRule`, link.ts) — the alias-mint linkage
- *   would be destroyed if not for the declared `variantArms` fact that
- *   flatten stamps (see `RuleBase.variantArms`'s doc comment); this module
- *   still can't reproduce it from `normalized.rules` alone (verified: ts
- *   `type`'s `_type_query_member_expression_in_type_annotation` subtype is a
- *   structurally-identical-looking coincidental collision that a generic
- *   body-presence heuristic would readmit as a false positive). A hoisted
- *   compound carries a real `variantChildKinds` field, but `buildFactoryMap`
- *   (emitters/factory-map.ts) gates on `isAuthoredCompound` (compound, not a
- *   list, not hoisted), so neither shape can EVER produce a
- *   `node-model.json5` `polymorphVariants` entry regardless of how the
- *   children were discovered. `tool variant-derivation-probe`'s comparison
- *   restricts to the same non-hoisted-compound parents on both sides for
- *   exactly this reason — see that probe's own doc.
- *
- * EXTRA (structural finds a prefix-named, alias-minted choice that has no
- * historical wire-pair equivalent — REVIEWED-ADDITIVE, these joined the
- * form set during V1 and are now simply part of the baseline):
- *
- * - **Hand-authored `alias()` calls with no `variant()`
- *   registration.** Several kinds are full `rules:` replacements that call
- *   `alias(...)` directly in the override body, or inherit one from the
- *   upstream base grammar (rust's `impl_item`, `reference_expression`,
- *   `_pattern`'s `wildcard_pattern` arm, `_condition`'s `let_chain` arm,
- *   `_type`'s `primitive_type` arm; typescript's `string`'s
- *   `string_fragment` inside a `refine()`-correlated form,
- *   `_jsx_attribute_name`'s `property_identifier` arm, `primary_type`'s
- *   `this` arm) — the structural shape is identical to wire-injected
- *   adoption (arm targets have NO independent rule body, passing
- *   `isAliasMintedRef`), regardless of whether a `variant()`
- *   patch ever registered it. This is the derivation being MORE
- *   complete than the old wire channel ever was, not a false positive on
- *   the grammar — the ones that materialize into their own `AssembledBranch`
- *   (not a supertype/group parent's ordinary subtype-union arm) are
- *   reflected in the committed node-model.json5 today (rust's `impl_item`/
- *   `reference_expression`, ts's `string`).
- *
- * Coincidental prefix-name collisions with an ordinary, independently-
- * authored grammar symbol (python's `dictionary`/`dictionary_splat`,
- * `string`/`string_content`; typescript's `object_type_content`/`_comma`+
- * `_semi` — none `alias()`-minted, all real top-level rules with their own
- * bodies) are EXCLUDED by `isAliasMintedRef` — they are no longer even
- * candidates, not merely filtered post-hoc.
- */
-```
-
-```text
-/**
- * Re-exported so callers that only know a parent kind + short suffix (e.g.
- * `polymorph-metadata-e2e.test.ts`, reconstructing the FULL target name a
- * `variant()` patch arm mints) use the SAME `${parent}_${suffix}`
- * naming convention this module's own predicate matches against
- * (`prefixNamedSuffix` is the inverse), rather than a naive
- * `${parent}_${suffix}` concatenation (unsound for hidden parents — see
- * `deriveStructuralVariantChildren`'s doc).
- */
 ```
 
 ### `packages/codegen/src/compiler/ctx.ts::module`
@@ -8706,104 +8344,25 @@ carried through a side channel.
 // declares no roles.
 ```
 
-#### body
-
-```text
-// Propagate enrich()'s un-aliasing diagnostics from the base grammar result
-// (the `optionsOrBase` first arg in extension mode) onto this evaluated
-// grammar, so the downgraded parsekind-noninjective diagnostics travel with
-// the grammar object `evaluate()` returns — read by run-codegen's diagnostics
-// preflight via getEnrichUnaliasDiagnostics — instead of a module-global
-// accumulator. Non-enumerable, matching enrich()'s own attachment.
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::innermostNamedAliasContent`
-
-```text
-/** The content beneath a chain of named aliases. A named alias nested inside
- *  another is two facts, not one inline body: the inner alias gives a
- *  source its visible kind identity (a hidden external token surfacing as
- *  its visible name), the outer alias names the form the parent sees. The
- *  storage identity of the whole chain is the innermost symbol, which is
- *  exactly what wrapper-deletion's `attributeAlias` resolves to — so the
- *  alias-source synthesizer must look through the chain rather than mint a
- *  `_<outerTarget>` source that only sittir would know about (a phantom kind
- *  with no parser symbol, whose id the transport can never accept). */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::rewriteInlineAliases`
-
-#### body
-
-```text
-// Clause-hoist / visible-group mint aliases (enrich registers
-// their hidden `_<name>` body in the rules bag before this
-// runs) take the `isBareSymbolToKnownSource` path below — no
-// synthesis, alias preserved — and later resolve through
-// link's uniform alias-form routing (`name` the storage kind,
-// `aliasedTo` the display name). The former
-// `isClauseHoistVisibleGroupAlias` early-return here was
-// behaviorally identical for that population and is retired
-// along with link's mint machinery.
-```
-
-#### body
-
-```text
-// Treat both declared rules AND external scanner tokens as
-// "existing" sources — externals already carry parser-assigned
-// symbol IDs and must not trigger `_${target}` synthesis.
-// Without this guard, `alias($._line_doc_content, $.doc_comment)`
-// would synthesize the fictitious hidden kind `_doc_comment`
-// because `_line_doc_content` is external (not in `rules`).
-```
-
-#### body
-
-```text
-// Also skip when the alias TARGET is already a declared
-// kind: `alias(inlineBody, $.existingKind)` just relabels
-// the inline body as that existing kind. Tree-sitter
-// surfaces instances with `$type: existingKind`, and
-// downstream uses the existing rule's factory/shape.
-// Synthesizing `_existingKind` would collide with /
-// over-ride the existing kind's meaning.
-```
-
-#### body
-
-```text
-// A STRING body is self-carrying — link keeps it as the ALIAS(STRING)
-// wrapper and stamps `kindId` on the ALIAS node directly
-// (`canonicalizeRuleLiterals`'s ALIAS case, resolved by the alias name),
-// so no hidden source is needed. Synthesizing here is
-// not just unnecessary: when `_${target}` already exists with a
-// DIFFERENT body (rust `alias('$', $.token_tree_punctuation)` vs
-// the real `_token_tree_punctuation` punctuation choice), the
-// unconditional content rewrite below would silently retarget
-// the alias at that unrelated rule and DISCARD the literal —
-// diverging from the parser, which keeps the string.
-```
-
-#### body
-
-```text
-// This mint has no wire-side counterpart — tree-sitter's
-// separate execution of the same grammar never registers
-// `syntheticHiddenName`, so it phantoms by construction.
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::appendCallbackMetadataNames`
 
 ```text
 // Shared by the `supertypes`, `factoryInline` and `inline` callback results:
-// each accepts a mixed array where the callback's `previous` param carries
-// already-coerced STRING names from the base grammar, while `$.foo` references
-// added in the override coerce to `{ type: 'SYMBOL', name: 'foo' }`. An
-// override body like `previous.concat([$.foo])` produces exactly this mixed
-// shape; without the string branch the base-inherited names silently drop
-// (coerceToRule() turns a bare string into a STRING rule, never SYMBOL, so
-// `n.type === SYMBOL` is always false for them).
+// each accepts a mixed array of bare names and `$.foo` references (which
+// coerce to `{ type: 'SYMBOL', name: 'foo' }`). `factoryInline`'s `previous`
+// still carries bare STRING names from the base grammar; without the string
+// branch those names would silently drop (coerceToRule() turns a bare string
+// into a STRING rule, never SYMBOL).
+```
+
+### `packages/codegen/src/compiler/evaluate.ts::baseNameSymbols`
+
+```text
+// The base grammar's name list as SYMBOL rules: the shape the tree-sitter CLI
+// passes as `previous` to `supertypes`, `inline` and each `conflicts` group.
+// Wired callbacks match SYMBOL entries only (inline removals, symbol renames,
+// existing-name dedupe); bare strings would leave those steps inert on the
+// sittir side and its inline and conflicts would diverge from grammar.json.
 ```
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::BuildResult`
@@ -9179,6 +8738,15 @@ carried through a side channel.
 // Validate refine() forms against the linked rule tree.
 ```
 
+#### token interior
+
+```text
+Token interiors are structured here, after `renderAs` is stamped and before groups seat: `structureTokenInterior`
+rewrites every `token(seq(...))` whose members mix literal text with a pattern, and every bare pattern that draws
+a named group, into a seq of literals and FIELD-named slots. A structured token keeps its kind, its kindId and its
+parser rule; only the sittir-side rule the model reads changes.
+```
+
 ### `packages/codegen/src/compiler/link.ts::stampAliasTargetId`
 
 ```text
@@ -9300,76 +8868,13 @@ carried through a side channel.
 
 ### `packages/codegen/src/compiler/link.ts::applyOverridePolymorphs`
 
-```text
-// ---------------------------------------------------------------------------
-// applyOverridePolymorphs — variant-adoption choice → ambient-scaffold push-down
-// ---------------------------------------------------------------------------
-//
-// (parent, children) pairs are now discovered STRUCTURALLY from `rules`
-// (`deriveStructuralVariantChildren`, variant-structural.ts) instead of the
-// deleted wire-metadata channel (formerly `variants: PolymorphVariant[]`,
-// populated by `wireRegisterPolymorphVariant`). Verified byte-neutral: the ONE
-// parent that reaches this function's real structural mutation
-// (`pushAmbientScaffoldIntoVariantChildren` — the `!anyChildMemberInFoundChoice`
-// branch; the OTHER branch below is a no-op derivation-log-only path since the
-// 2026-06-01 DE-POLYMORPH change) is typescript's `public_field_definition`;
-// `deriveStructuralVariantChildren` reproduces its exact 5-child set (same full
-// names, same order) both mid-link (the `rules` snapshot this function receives,
-// already past wire's alias injection + `resolveRule`) and post-link — confirmed
-// empirically during V2 development. Short suffixes (needed by
-// `emitVariantChildDerivations`'s `${parentKind}_${child}` log format and
-// `polymorphVisibleName`) are recovered from the derivation's full target names
-// via `prefixNamedSuffix` (the exact inverse of `polymorphVisibleName`, shared
-// not re-derived).
-//
-// Form names use the SHORT child suffix from variant() — not the
-// tagVariants-derived names — so generated factories/types align with
-// what the user wrote. Mutates `rules` in place; logs to derivations.
-```
-
-#### body
-
-```text
-// Deep choice: push ambient scaffold into variant children instead.
-```
-
-#### body
-
-```text
-// Check whether any variant-child symbol appears in the found choice — either
-// as a direct member or nested inside choice/seq arms at any shallow depth.
-```
-
-#### body
-
-```text
-// Wire injects variant-child aliases as `optional(alias(...))` for
-// some parents (e.g. public_field_definition) — unwrap OPTIONAL, or
-// the alias is invisible to
-// this check and the parent wrongly falls into the ambient-scaffold
-// pushdown branch below (which is a no-op for it, since the aliases
-// ARE already present — its only effect is to rebuild the rule tree
-// without preserving rule ids, per `rewriteSeqWithVariantAliasChoice`).
-```
-
-#### body
-
-```text
-// DE-POLYMORPH (2026-06-01): wire already injected the variant-child
-// aliases into this choice (confirmed by anyChildMemberInFoundChoice
-// above). We intentionally STOP here — no longer reclassifying the
-// parent into a PolymorphRule / modelType:'polymorph' with forms. The
-// rule stays the wire-produced seq(..., choice(alias_a, alias_b, …), …)
-// and flows through as a plain BRANCH: faithful order-preserving render
-// over a single choice slot, no forms / no $variant dispatch. The
-// `variant()` overlay and wire's alias synthesis are
-// retained, so factory submethod sugar derives from the choice arms
-// (the alias kinds) rather than from a forms list.
-//
-// (Was: rules[parentKind] = { type:'polymorph',
-//   forms: buildOverridePolymorphForms(parentKind, children, found, rules),
-//   source:'override' }.)
-```
+Pushes a variant-adoption choice's ambient scaffold down into its variant
+children. The (parent, children) pairs come from `deriveVariantChildren` over
+the rules as they stand mid-link (past wire's alias injection and
+`resolveRule`), with the automatic-variant record for `definedBy`. The only
+structural mutation is `pushAmbientScaffoldIntoVariantChildren`, for a parent
+whose choice holds none of the children's own members (typescript's
+`public_field_definition`); every other parent only records its derivation.
 
 ### `packages/codegen/src/compiler/link.ts::findVariantChoice`
 
@@ -9459,8 +8964,7 @@ carried through a side channel.
 // KEEPING the ALIAS wrapper — not reducing it to a bespoke stamped
 // symbol — whether its content is a clause-hoist/visible-group mint's
 // freshly-synthesized `_<name>` rule or an authored relabel of a
-// pre-existing rule (PR3's `applyUnaliasDistinct` retarget, e.g.
-// `_simple_statements` → `simple_statements`). Both are
+// pre-existing rule. Both are
 // `alias(symbol(_<name>), $<value>)` with no independent rule under
 // `<value>` — structurally indistinguishable — and the OLD special-case
 // here (`isClauseHoistVisibleGroupAlias`, retired) tried to tell them
@@ -10085,6 +9589,41 @@ the set from that annotation alone.
  */
 ```
 
+### `packages/codegen/src/compiler/generated-metadata.ts::collectLexicalRanks`
+
+The lexical precedence of every rule, external and alias display in the compiled `grammar.json`, as a dense rank (0 first). The loose surface builds a bare string as the first admitted text kind in this order, so the order has to follow the facts tree-sitter's lexer uses when two tokens could match the same text. Each name gets a key, compared element by element:
+
+1. externals before rules — the external scanner runs before the internal lexer;
+2. higher lexical precedence first — a `PREC` directly inside `TOKEN`/`IMMEDIATE_TOKEN` (`tokenLexicalPrec`);
+3. fixed text before a pattern (`isFixedTextRule`) — tree-sitter prefers a string match over a regex match of the same length;
+4. position — the index in `externals` or `rules`.
+
+A sittir mint (a `SYMBOL` stamped `metadata.symbolSource: 'group-lift'`) takes its source rule's position followed by its arm order within that rule, so it ranks where its text was declared. A named `ALIAS` display that is not itself a rule takes its storage symbol's key, since the lexer matches the storage token. Ties at the key are broken by name so the order is deterministic.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::GrammarJsonRule`
+
+The slice of a `grammar.json` rule node `collectLexicalRanks` reads: type, name, value, `named`, content, members and the `symbolSource` stamp.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::LexicalKey`
+
+A lexical sort key: a sequence of numbers compared element by element (`compareLexicalKeys`).
+
+### `packages/codegen/src/compiler/generated-metadata.ts::grammarNameOfSymbol`
+
+The grammar name of a parser symbol's C name: `sym_`, `anon_sym_`, `aux_sym_` or `alias_sym_` stripped. It is the key `collectLexicalRanks` rows are looked up by.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::compareLexicalKeys`
+
+Element-by-element comparison of two `LexicalKey`s; a key that is a prefix of the other sorts first.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::tokenLexicalPrec`
+
+The lexical precedence of a rule: the value of a `PREC` placed directly inside `TOKEN` or `IMMEDIATE_TOKEN`, else 0. A `PREC` outside the token is a parse precedence and does not order the lexer.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::isFixedTextRule`
+
+Whether a rule, under its `TOKEN`/`IMMEDIATE_TOKEN`/`PREC` wrappers, is a single `STRING`.
+
 ### `packages/codegen/src/compiler/generated-metadata.ts::joinIdNames`
 
 #### body
@@ -10136,46 +9675,21 @@ the set from that annotation alone.
 				   on, since that's what tree-sitter really emits. */
 ```
 
+#### parseName
+
+The fold records the alias's display name as `parseName` beside `parseId` and leaves the row's parser metadata (its own `symbolName`) untouched, so a consumer names the storage id by the row's own symbol and the parse id by `parseName`.
+
+#### lexicalRank
+
+Each row's parser metadata carries the symbol's `lexicalRank` from `collectLexicalRanks`, looked up by the symbol's grammar name (`grammarNameOfSymbol`); `createParserMetadata` stamps it and a symbol with no rule, external or alias display gets none.
+
 ### `packages/codegen/src/compiler/generated-metadata.ts::collectGrammarFacts`
 
-```text
-/**
- * Ground truth for a symbol's literal text and alias status, read once from
- * the compiled grammar.json rather than re-derived per symbol: which
- * `ALIAS` nodes target a given display name (`aliasTargetNames`), which
- * `STRING` values exist anywhere in the grammar (`stringLiterals`, used to
- * verify an aliased anon token's raw C suffix is a real literal, never
- * guessed), and which named rules are themselves nothing but a literal — a
- * bare STRING body or an unnamed ALIAS body (`literalRules`, keyed by rule
- * name). The alias TARGET side is all this collects; whether a given rule
- * IS the alias source is decided later, at the symbol, by comparing the
- * parser's own display name against the rule name derived from the C symbol
- * (see `resolveSymbolTextFacts`) — never by re-walking the grammar tree for
- * `ALIAS` content a second time.
- */
-```
+Ground truth for a symbol's literal text and alias status, read once from the compiled grammar.json rather than re-derived per symbol: `aliasTargets` maps every named `ALIAS` target to the set of literals aliased to it (a `STRING` content, seen through `token`/`prec` wrappers — see `aliasedLiteral`; a symbol-content alias contributes the name with no literal), and `literalRules` records the named rules that are themselves nothing but a literal — a bare STRING body or an unnamed ALIAS body, keyed by rule name. Whether a given rule IS the alias source is decided later, at the symbol, by comparing the parser's own display name against the rule name derived from the C symbol (see `resolveSymbolTextFacts`) — never by re-walking the grammar tree.
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::resolveSymbolTextFacts`
 
-```text
-/**
- * Per-C-symbol literal-text and literal-rule facts, keyed by `cName`, fed
- * into `createParserMetadata`. `symbolName` (the parser's own display name)
- * is never touched here — it comes straight from `ts_symbol_names[]`
- * unconditionally, in every case, aliased or not. This resolves the
- * SEPARATE fact `literalText`: for `anon_sym_*`, the display name itself
- * when unaliased, or the verified raw C suffix (checked against
- * `stringLiterals`; throws if it is not a real literal anywhere in the
- * grammar) when the display name is an alias target. For `sym_*`, present
- * only when the rule is a bare-literal rule (`literalRules`) AND the
- * parser's display name for that symbol equals the rule name parsed from
- * `cName` — a mismatch means tree-sitter compiled this rule's hidden body
- * into the SAME symbol id as a differently-named alias elsewhere (python's
- * `_wildcard_pattern` compiling into the `wildcard_pattern` alias symbol),
- * and the alias's own display name must survive untouched, not be
- * overwritten by the literal text of the rule it wraps.
- */
-```
+Per-C-symbol literal-text and literal-rule facts, keyed by `cName`, fed into `createParserMetadata`. `symbolName` (the parser's own display name) is never touched here — it comes straight from `ts_symbol_names[]`. This resolves the separate fact `literalText`: for an aliased `anon_sym_*`, the literal `resolveAliasedTokenLiterals` pairs it with; for any other `anon_sym_*`, the display name itself. For `sym_*`, present only when the rule is a bare-literal rule (`literalRules`) AND the parser's display name for that symbol equals the rule name parsed from `cName` — a mismatch means tree-sitter compiled this rule's hidden body into the same symbol id as a differently-named alias elsewhere (python's `_wildcard_pattern` compiling into the `wildcard_pattern` alias symbol), and the alias's own display name must survive untouched.
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::symbolNameIsNotable`
 
@@ -10229,6 +9743,23 @@ the `TSKindId` member, the kind string, factories, and the nested option key
 `nestedKey` derives all follow from it. If a suffixed name still collides
 with an existing key, `joinIdNames` throws naming both symbols — there is no
 second, id-suffixed fallback.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::collectAliasedNonTerminals`
+
+The C symbol names parser.c lists in `ts_non_terminal_alias_map`. The table is
+a flat run of records, each a nonterminal symbol, a count, and that many
+symbols (the nonterminal itself and the alias symbols it is shown as), ended
+by `0`; the first symbol of each record is collected. The initializer's
+identifiers and numbers are read through the C parser, as the name tables are.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::keywordTextOf`
+
+The keyword predicate described under `deriveSymbolRuntimeName`, in one
+place: the literal text of an anonymous symbol whose C name is `anon_sym_`
+followed by that text verbatim and which is not made only of underscores,
+else `undefined`. `deriveSymbolRuntimeName` suffixes `_keyword` exactly when
+it returns text, and `createParserMetadata` stamps `keyword: true` on the
+same kinds, so the name and the fact cannot disagree.
 
 #### body
 
@@ -10307,6 +9838,10 @@ second, id-suffixed fallback.
 /** Sittir can render/dispatch it. */
 ```
 
+### `packages/codegen/src/compiler/types.ts::ReservedWordsets`
+
+The grammar's `reserved` field as tree-sitter has it: each wordset name mapped to its members as rules, in declaration order. `evaluate` records it verbatim (a member written as a string is a STRING rule), and it equals `.sittir/src/grammar.json`'s `reserved`, which is `{}` for a grammar that declares none. It is carried unchanged through link, normalize and simplify to the node map.
+
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.factoryInline`
 
 ```text
@@ -10321,8 +9856,8 @@ second, id-suffixed fallback.
 
 ```text
 /**
- * A mint at an evaluate-only synthesis site (`synthesizeInlineAliasSources`,
- * or the body-pattern-group fallback in `evaluateRulesAndInjectSynthetics`)
+ * A mint at an evaluate-only synthesis site (the body-pattern-group fallback
+ * in `evaluateRulesAndInjectSynthetics`)
  * that fired without a matching wire-side deposit for the same name — the
  * dual-execution divergence the kindid invariant depends on these sites
  * staying free of. See `fromDesugarDivergence` in grammar-diagnostics.ts.
@@ -10357,12 +9892,6 @@ second, id-suffixed fallback.
  * final stage of `normalizeGrammar()`, producing `SimplifiedGrammar.rules`.
  * Per-function rationale: docs/compiler-phase-glossary.md (Phase 3.5: Simplify).
  */
-```
-
-### `packages/codegen/src/compiler/simplify.ts::SimplifyCtx.polymorphSkipExtra`
-
-```text
-/** Extra kinds the slot-grouping diagnostic skips (variant-resolved). */
 ```
 
 ### `packages/codegen/src/compiler/simplify.ts::SimplifyCtx.constructor`
@@ -10461,18 +9990,13 @@ second, id-suffixed fallback.
 ```text
 /**
  * compiler/inline-sets.ts — shared derivation of the normalize-pipeline's
- * inline-decision and diagnostic-skip sets.
+ * inline-decision set.
  *
  * Extracted from generate.ts so `collectGrammarDiagnosticsForGrammar`
  * (diagnostics/grammar-diagnostics.ts) can build the SAME NormalizeCtx inputs
  * the real pipeline uses. generate.ts imports grammar-diagnostics.ts (for
  * formatCompilerDiagnostics), so the diagnostics module cannot import
- * generate.ts back — this neutral module breaks the cycle. Without shared
- * inputs the preflight's normalize ran ctx-less, `diagnoseSlotGrouping` never
- * saw `inlineKinds`, and every shape-①b `multi-slot-nested-seq` violation
- * (auto-group helper bodies like rust `_match_block_optional1`) was invisible
- * in the persisted grammar-diagnostics.json / validation report — console-only
- * during regen.
+ * generate.ts back — this neutral module breaks the cycle.
  */
 ```
 
@@ -10551,14 +10075,7 @@ second, id-suffixed fallback.
 
 ### `packages/codegen/src/compiler/resolve-grammar.ts::module`
 
-```text
-/**
- * resolve-grammar.ts — resolve grammar name to grammar.js path
- *
- * Maps grammar names (e.g., "rust", "typescript", "python") to the
- * grammar.js file paths in node_modules.
- */
-```
+Maps a grammar name to its authored entry (`grammar.sittir.ts`) and to its upstream `grammar.js`. Grammar names and package locations come from the registry in `grammars.ts`.
 
 ### `packages/codegen/src/compiler/assemble.ts::module`
 
@@ -10685,32 +10202,15 @@ second, id-suffixed fallback.
 #### body
 
 ```text
-// the historical `_<name>` retry (visible alias-target name → hidden
-// MODEL node) was probed across all three grammars and fired ZERO
-// times — the mint now resolves canonical names, so every hydratable
-// ref hits the primary lookup above. Retired per the KindId-NodeRefs
-// spec §2.3 retire-list. A future grammar that reintroduces
-// visible→hidden refs surfaces below as the loud
-// unresolved-slot-reference diagnostic, not a silent rewire. Three
-// legitimate categories where the target ISN'T in the assembled
-// NodeMap and we leave the `UnresolvedRef` in place:
-//
-//   1. External tokens (lexer-callback symbols) — no rule body,
-//      just a name. Tracked in `nodeMap.externals`.
-//   2. Parser-only leaf kinds — the parser symbol table knows
-//      them but codegen has no rule body to assemble (e.g.
-//      `_as_pattern_target` in python). These behave like
-//      externals from the consumer's POV.
-//   3. Kinds inlined before assemble that an override still
-//      references by name.
-//
-// Distinguishing (1) from (2)/(3) without threading the parser
-// kind catalog isn't possible here. Logging a single line per
-// occurrence surfaces the (3) cases for follow-up; (1) and (2)
-// are expected and harmless. Consumers that walk
-// `slot.values[*]` already handle `isUnresolvedRef` defensively,
-// so leaving these as `UnresolvedRef` matches prior
-// behavior.
+// A ref resolves by its canonical name in the primary lookup. Two
+// categories legitimately have no assembled target and keep their
+// `UnresolvedRef`: external tokens (lexer-callback symbols, tracked in
+// `nodeMap.externals`) and the grammar's declared inline kinds
+// (`cfg.inline`) — the parser issues a node for neither, and every
+// consumer that walks `slot.values[*]` handles `isUnresolvedRef`. Any
+// other absent target is a dangling internal reference: a codegen gap, not
+// data, reported to the sink as `dangling-internal-ref` and refused by
+// `assertCompilation`. All three grammars carry zero.
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::resolveCollidingNames`
@@ -10723,16 +10223,18 @@ second, id-suffixed fallback.
 
 ### `packages/codegen/src/compiler/assemble.ts::collectAnonymousNodes`
 
+A literal ref whose storage name is its literal text (`name === literal`, a distributed literal arm such as `u8` under rust's `primitive_type`) is resolved by that name through `findEntryForKindName`, never by its text: parser.c rewrites the catalog's `literalText`/`symbolName` of an aliased anonymous token to the alias's display name, so `findEntryForLiteralText` cannot find it. A SYMBOL whose name differs from its literal (a named keyword rule over a differently spelled token, `in_keyword`/`in`) is not a literal ref and is excluded.
+
 ```text
 // ---------------------------------------------------------------------------
 // collectAnonymousNodes — mint anonymous-symbol token/keyword nodes for the
 // string literals occurring in `rules` (`Record<string, RenderRule>`, the
 // normalize view). Minting is catalog-driven: a literal is only ever minted
-// when the parser's generated-id catalog knows it as an anonymous symbol
-// (`findEntryForLiteralText` → an entry with `anon === true`), keyed by that
-// catalog entry's kind name. A literal the catalog has no anonymous entry
-// for is NOT minted; the occurrence-collecting walk over `rules` is a filter
-// only, never itself a source of new kinds.
+// when `findEntryForLiteralText` finds its catalog row and no node holds that
+// row's kind yet, keyed by the row's kind name. A named literal rule's row
+// already has its node, so namedness never gates the mint. A literal the
+// catalog has no row for is NOT minted; the occurrence-collecting walk over
+// `rules` is a filter only, never itself a source of new kinds.
 // ---------------------------------------------------------------------------
 ```
 
@@ -10767,12 +10269,12 @@ second, id-suffixed fallback.
 
 ```text
 // Resolve through the catalog — the same resolution AssembledKeyword/
-// AssembledToken's own constructor uses to stamp resolvedKind/resolvedKindId
+// AssembledPunctuation's own constructor uses to stamp resolvedKind/resolvedKindId
 // — so the minted node is keyed by the catalog row's kind name, not the
 // literal's raw text: tree-sitter often sanitizes or dedupes anonymous
 // literals under a different name (`,` → `comma`) — keying by raw text mints
 // a phantom name with no id row even though the token already has one. This
-// is the ONLY path to minting: a literal with no anonymous catalog entry is
+// is the ONLY path to minting: a literal with no catalog row is
 // never minted (see the `kindid-unstamped-anon-literal` warning below)
 // rather than falling back to raw-text keying.
 ```
@@ -10784,15 +10286,14 @@ second, id-suffixed fallback.
 #### body
 
 ```text
-// No anonymous-symbol catalog row for this literal — record the
+// No catalog row for this literal — record the
 // kindid-unstamped-anon-literal warning and do NOT mint it. This is the
 // literal's own body as a NAMED rule (e.g. python's `True`/`False`/`None`/
 // `...`, rust's `mut`) or a literal outside the reachable rules — in both
 // cases the kind already exists (or will) under its own name, never under
 // this raw literal text, so minting here would create an unaddressable
-// phantom. A literal that instead resolves to a named (non-anonymous)
-// catalog entry is skipped silently just above — its kind already exists as
-// a named node, so no warning is needed.
+// phantom. A literal whose row is a named rule's is skipped silently by the
+// node check below — its kind already exists as a node.
 ```
 
 #### body
@@ -10814,21 +10315,6 @@ second, id-suffixed fallback.
 // ---------------------------------------------------------------------------
 // classifyNode — structural simplification + visibility
 // ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/compiler/assemble.ts::isNonInlinableLeafShape`
-
-```text
-// `inlineRefs` / `resolveGroupOrMultiInlineTarget` moved to
-// `simplify.ts` so the group-inlining happens inside the simplify
-// fixpoint (enables flatten + canonicalize to re-fire on inlined
-// content). Imported above; no longer defined here.
-```
-
-```text
-// Phase-invariant leaf check, usable by both `classifyNode` and
-// `buildInlinableKinds` (inline-sets.ts) — see "classifyNode's RenderRule-only
-// design" in docs/compiler-phase-glossary.md.
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::peelSeparatedListCore`
@@ -10894,37 +10380,6 @@ second, id-suffixed fallback.
 
 ```text
 /** Inline-decision set (kinds emitters skip / normalize preserves). */
-```
-
-### `packages/codegen/src/compiler/normalize.ts::dbgChoiceId`
-
-```text
-/**
- * Run the full ordered pipeline of non-lossy normalization passes over the
- * raw rule map from the linked grammar.
- *
- * @param linkRules - The rule map produced by the Link phase.
- * @returns A new rule map after all normalization passes have been applied.
- * @remarks
- * Order matters: collapse wrappers first (smallest trees → cleaner
- * downstream), then fan-out (expose nested choices), then factor (pull
- * common prefixes/suffixes), then dedupe adjacent duplicates, then inline
- * single-use hidden helpers, then re-collapse to flatten any degenerate
- * wrappers introduced by the previous passes.
- *
- * Polymorph classification lives in Link (variant()-driven, with
- * suggestion-only heuristic detection). This pipeline is simplification
- * only — it MUST NOT silently classify rules as polymorphs because
- * tree-sitter's parser-generator doesn't see these mutations and the parse
- * tree wouldn't match the typed surface. Heuristic candidates that need
- * promotion are recorded in the derivation log; the user authors variant() in
- * grammar.sittir.ts to make them explicit.
- */
-```
-
-```text
-// DIAGNOSTIC (`DBG_ID_LOSS=<kind>`): print the first choice's id for <kind>
-// after each normalization pass, to pinpoint where a rule id gets dropped.
 ```
 
 ### `packages/codegen/src/compiler/normalize.ts::normalizeGrammar`
@@ -11084,4 +10539,222 @@ second, id-suffixed fallback.
 ```text
 // Extract factored branches (the parts that differ)
 ```
+
+### `packages/codegen/src/compiler/fixpoint.ts::runToFixpoint`
+
+```text
+The one iterate-to-a-fixed-point helper for the compiler passes
+(`simplify.simplifyToFixpoint`, `normalize.inlineHiddenSeqRefs`,
+`normalize.iterateInliningToFixedPoint`, `flatten.factorChoiceArmsToFixpoint`,
+`link.inlineReferences`): one cap per pass, one on-cap behavior for all of
+them, so no pass can loop silently or merely warn. `step()` runs one
+pass and reports whether anything changed; the loop returns as soon as a
+pass reports no change, and raises the blocking `fixpoint-cap-reached`
+diagnostic — naming the pass via `cfg.name` — if `cap` is reached first.
+Callers whose own `step` mutates shared state in place (most of them) fold
+their per-pass "did anything change" signal directly into the boolean
+`step` returns; callers with an immutable return value (`simplifyToFixpoint`,
+`factorChoiceArmsToFixpoint`) close over an outer `current` variable and
+compare it against `step`'s result themselves. Every real caller has a
+`DiagnosticSink` in scope (each phase's `ctx.diagnostics`); the few
+call sites whose own `ctx` parameter is optional (kept for isolated
+rule-level unit tests) fall back to a throwaway `new DiagnosticSink()`
+whose `fail()` is never read — consistent with the same fallback already
+used for `SimplifyCtx`/`NormalizeCtx` construction elsewhere in this file.
+Measured against all three real grammars (rust, typescript, python), every
+caller converges in at most 3 passes — well under its cap in every case.
+```
+
+
+### `packages/codegen/src/compiler/token-interior.ts::structureTokenInterior`
+
+```text
+The token-interior pass. A `token(seq(...))` becomes structured only when its members mix literal text with
+at least one slot that contains a pattern: a plain string is template text, `optional(string)` is a presence
+flag named by its text, a choice of strings is an enum slot (`prefix` before the content, `suffix` after it),
+and any other member run is one text slot named `content` whose pattern is the composed pattern of the run.
+A token with no literal member, or whose only non-literal members have no pattern, stays whole-text.
+A bare pattern that draws named groups becomes a lexed seq of literal runs and group slots; a pattern with no
+group stays whole-text, and a group beside non-literal top-level regex is an error.
+```
+
+#### authored field
+
+```text
+A pattern under an authored `field(name, ...)` inside the token counts toward the gate and keeps that name as its slot name;
+it is its own slot and never merges with a neighbouring pattern run.
+```
+
+#### named parts in nested structure
+
+```text
+A token whose sequence holds an authored `field()` at any depth is structured on the flattened sequence: a
+nested sequence is the same sequence (associativity), so its members become members of the token. A
+`field(name, choice-of-strings)` is an enum slot under its own name, and a `field(name, optional(x))` over a
+pattern is an optional text slot. An optional group (a choice with a blank, or an optional, whose live arm is a
+sequence that holds a named part) stays a group: its members are structured the same way and the group stays
+optional, so its slots are optional and its literal text is written only when it is present. A token with no
+authored field is untouched: its nested sequences still compose into one slot, so no existing kind changes.
+```
+
+### `packages/codegen/src/compiler/token-interior.ts::structureMembers`
+
+The member loop of the token-interior pass, shared by the token's own sequence and by each optional group's arm: classifies each member (template, flag, enum, slot, group), names enums and slots, composes an unnamed run of slot members into one pattern slot, and recurses into a group. Returns nothing when a member cannot be composed, leaving the token whole-text. Inside a group every pattern must be named: an unnamed run there would take a `content<n>` name indexed by the group's own position and could shadow a top-level `content<n>`, so it is a compile-time error naming the kind (`unnamedInGroup`).
+
+### `packages/codegen/src/compiler/token-interior.ts::flattenMembers`
+
+The members of a sequence with every nested (non-lexed) sequence spliced in, recursively.
+
+### `packages/codegen/src/compiler/token-interior.ts::containsField`
+
+Whether a rule holds an authored `field()` at any depth through sequences, choices, optionals and repeats (the same descent as `containsPattern`); the gate for the flattened, group-aware path.
+
+### `packages/codegen/src/compiler/token-interior.ts::groupArm`
+
+The sequence a member's optional group holds, when the member is an optional or a choice with a blank whose one live arm is a sequence that contains a named part; otherwise nothing.
+
+### `packages/codegen/src/compiler/token-interior.ts::optionalArm`
+
+The live arm of an optional or of a choice with a blank and one other member. A zero-or-more repeat reads as an optional one-or-more repeat, so a named repeated pattern is an optional slot rather than a required one.
+
+### `packages/codegen/src/compiler/token-interior.ts::namedGroupParts`
+
+```text
+Splits a pattern into literal runs and named groups. Escapes of punctuation and the control escapes
+`\n \r \t \f \v \0` are literal text; any class escape, class, quantifier, alternation or unnamed group
+at the top level means the pattern is not a template around slots.
+```
+
+### `packages/codegen/src/compiler/link.ts::collectDisplayUnions`
+
+```text
+Builds the display → storage-kinds map from every aliased ref, reading both
+ref forms (`aliasedTo`, and `aliasedFrom` with the target as `name`).
+```
+
+Each member is stamped where it is collected (`DisplayUnionMember`): a
+literal member (a STRING arm, or a SYMBOL's `.literal`) carries its text and
+`literal: true`, a rule member its storage name and `literal: false`. The two
+never share a key, so a keyword arm `'type'` and a rule `type` stay distinct
+members, and no reader has to guess which a string was.
+
+#### body
+
+```text
+A hidden rule's own catalog row has `parseId` only when the parser also
+issues it a symbol of its own, distinct from the alias's type id
+(`_lhs_expression`: id 253 is its own symbol, parseId 457 is the alias's).
+A dissolved rule's row has no separate symbol — its `id` is the alias's
+borrowed type id — so `content.kindId` cannot tell the two apart; the row's
+own `parseId` presence can.
+
+An alias's content can already be a bare choice: inlineReferences flattens a
+hidden single-use rule's body into its one use site, so distribute over its
+arms directly.
+
+A SUPERTYPE's subtypes are not walked: subtypeParseNames /
+resolveHiddenSubtypes already resolve them, and a second envelope minted for
+the same display name would fight that member resolution.
+```
+
+### `packages/codegen/src/compiler/types.ts::DisplayUnionMember`
+
+One storage under a display: the storage's name or literal text, and whether
+it is a literal. Stamped by `collectDisplayUnions`, read by the minter and the
+`display-union-mixed` guard.
+
+### `packages/codegen/src/compiler/types.ts::DisplayUnions`
+
+Display name → the storages tree-sitter shows under it (`DisplayUnionMember`),
+carried from link through normalize to the node map.
+
+### `packages/codegen/src/compiler/link.ts::mintDisplayUnionRules`
+
+```text
+A display name with no rule of its own gets one minted here so the rest of
+the pipeline classifies and builds it like an authored rule:
+FIELD('content', ref) over a single storage kind, or FIELD('content',
+SYMBOL `_<display>`) over a minted hidden CHOICE of several. Every minted
+position carries a rule-catalog id from `createRuleId`, because the template
+emitter resolves slots through rule ids.
+
+Only a display the kind catalog lists as an alias symbol is minted. A display
+without one is only the public name of its storage's own symbol (rust
+`_range_expression_bare` 369 shown as `range_expression_bare`): the parser
+issues no node the display could own, so the storage kind is the node, and a
+minted display would be a second kind claiming the same id.
+```
+
+#### body
+
+```text
+memberRef: a member's own `literal` stamp decides how it resolves: a literal
+member through its anonymous token row (`findEntryForLiteralText`), a rule
+member through its kind row (`findEntryForKindName`), named by the row's
+model kind (`modelKindOfEntry`), since a renamed row is found through its
+old spelling. Nothing is tried in
+order. A literal member keeps `.literal`, which isEnumChoiceRule /
+literalTextOf read to recognize a literal-carrying SYMBOL — dropping it
+re-derives a fact the pipeline already stamps.
+```
+
+### `packages/codegen/src/compiler/link.ts::collapseRenamedRules`
+
+A hidden rule the parser always shows under one tree name (`ts_symbol_names` gives the name; the catalog row is visible, not an alias or anonymous row, and is the only visible row carrying that name — `isRenamedEntry`) is one visible kind. This pass renames it to that tree name everywhere the grammar names it, before anything reads the grammar: rule keys, SYMBOL names and their `_ref` from/to, an identity alias wrapper around the renamed symbol (unwrapped), every name list (externals, extras, supertypes, inline, factoryInline, conflicts, precedences, word, orphanedSyntheticGroups, bodyPatternZeroMatches), the SYMBOL members of each `reserved` wordset (the wordset names are not rule names and keep theirs), the name-keyed side tables (externalRoles, refineForms, groups, renderAs, visibleExternals, options, expectDiagnostics, expectTestFailures), the NUL-joined automaticVariants keys and the desugar divergence events. It rebuilds the rule catalog (keeping each rule's provenance) and re-attaches reference rule ids, since rule ids embed the owner's name. A tree name that another rule or external already uses is an error.
+
+It runs where the evaluated grammar is first consumed: `collectGrammarDiagnosticsForGrammar` collapses its input and hands the result on as `raw`, and `link` collapses again for callers that link an evaluated grammar directly; a collapsed grammar has no renamed rule left, so the second call returns its input.
+
+### `packages/codegen/src/compiler/link.ts::stampParserVisibility`
+
+Stamps each rule's `hidden` (`isSurfaceHiddenKind`) and each reference's `inline` (`inlinesAtReference`) from the parser catalog. A named ALIAS keeps its wrapped SYMBOL un-inlined, since the alias confers a node that must materialize.
+
+### `packages/codegen/src/compiler/link.ts::inlinesAtReference`
+
+The one decision whether a reference to `name` is spliced (`inline: true`), meaning the referenced rule has no node of its own in sittir's model of the tree. It follows the parser: a parser-hidden kind splices and a visible one does not; the grammar's `inline:` array splices whatever the spelling; and a hidden terminal the model can represent (`isModelableKind`) keeps its own leaf kind, since the parser gives it a token of its own.
+
+Three structural boundaries override the parser fact, each derived from the rule, never from the name:
+
+- a supertype (`parserSupertypeOf`) never splices, even when it is also in `inline:`: it is a dispatch over its members, and splicing it would leave its slot with no kind to dispatch on;
+- a rule that references itself (`referencesItself`) never splices: splicing a cycle has no finite result, and tree-sitter keeps the recursion as nested hidden nodes (flattening a hidden left-recursive rule into a repeat, as tree-sitter does, is not modelled yet);
+- a hidden rule whose body is only anonymous tokens (`isLiteralChoiceContent`: one STRING, or a choice of STRINGs) stays a leaf kind. This is the one boundary that is not a parser fact: the parser splices such a nonterminal, but sittir models it as a leaf so its members keep their enum's identity and seams (`enumKind`).
+
+### `packages/codegen/src/compiler/link.ts::ReferenceInlineCtx`
+
+What `inlinesAtReference` reads: the catalog rows, the rule bodies, the grammar's `inline:` and `supertypes:` names, and the per-name self-reference answers already computed (`selfReferencing`, filled by `isSelfReferencing`).
+
+### `packages/codegen/src/compiler/link.ts::isSelfReferencing`
+
+`referencesItself` for a rule, remembered per name in `ReferenceInlineCtx.selfReferencing`, so a rule body is walked once however many references reach it.
+
+### `packages/codegen/src/compiler/link.ts::referencesItself`
+
+Whether a rule body contains a SYMBOL reference to its own name (direct self-reference only; references are not followed).
+
+### `packages/codegen/src/compiler/link.ts::isModelableKind`
+
+Whether sittir can model a kind as a node: it has a rule body, or it is an external the grammar declares in `visibleExternals` (the catalog's `visibleExternal`). A hidden external scanner token with neither (rust `_error_sentinel`, typescript `__error_recovery`, python `_indent`/`_dedent`) has no text to model, so a reference to it splices even though the parser issues it as a terminal.
+
+### `packages/codegen/src/compiler/collect-slots.ts::SlotDeriveCtx`
+
+```text
+The slice of DeriveCtx slot derivation needs (kindEntries, simplifiedRules),
+passed through from the owning node's derive ctx so slots resolve alias
+envelopes the same way element and value derivation does.
+```
+
+### `packages/codegen/src/compiler/generated-metadata.ts::resolveAliasedTokenLiterals`
+
+The literal each aliased anonymous token lexes. Tree-sitter names an anonymous token by its alias only when every use of that token aliases it to the same name, so a parser symbol displayed as an alias target `D` lexes one of the literals aliased to `D` in grammar.json — and the parser keeps no other record of which. Per display name: (a) a C symbol whose `anon_sym_` suffix is itself one of `D`'s literals is that literal (the identifier-safe case, where tree-sitter's C name spells the literal); (b) the symbols left over take the literals no (a) symbol claimed, which resolves only when exactly one symbol and one literal remain; (c) anything else throws, naming the symbol, `D` and the unclaimed literals. A symbol whose display equals its own suffix is not aliased at all and is skipped — its text is its display. No part of tree-sitter's C-name mangling is re-implemented: a non-identifier literal (`'\-'` → `anon_sym_BSLASH_DASH`) is recovered by elimination, never by decoding the mangled name.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::aliasedLiteral`
+
+The literal a named alias wraps: its `STRING` content, looking through `LITERAL_WRAPPERS` (`token`, `token.immediate`, `prec*`), or `undefined` for any other content.
+
+### `packages/codegen/src/compiler/generated-metadata.ts::LITERAL_WRAPPERS`
+
+Rule types that wrap a literal without changing the token it lexes.
+
+### `packages/codegen/src/compiler/link.ts::LinkCtx.sourceSymbols`
+
+The predicted `SymbolSource` (`dsl/rule-patterns.ts::predictedSymbolSource`) over the evaluated grammar's rules, externals and inline names, built on first use and shared by the phase. It is the prediction even when a catalog exists, because link must recognize the separators enrich recognized. `liftSeparators` reads it so link recognizes a separator by the same grammar-source test enrich uses (`separatorOf`).
 

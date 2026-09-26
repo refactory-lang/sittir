@@ -74,6 +74,7 @@ describe('collectSitePreferences — separator sites', () => {
 				{ value: 'semi', kind: 'semi' }
 			],
 			defaultArm: 'semi',
+			origin: 'preference',
 			source: 'separator'
 		});
 	});
@@ -96,5 +97,21 @@ describe('collectSitePreferences — separator sites', () => {
 				options: { member_list: { 'member:/separator/kind': preference('comma') } } as never
 			})
 		).toThrow(/names no site/);
+	});
+
+	it('a terminal symbol arm resolves to its catalog kind; one the catalog lacks is a build error', () => {
+		const withSymbolArm: RenderRule = { type: CHOICE, members: [{ type: STRING, value: ',' }, { type: SYMBOL, name: 'newline' }] };
+		const sites = collectSitePreferences({
+			nodeMap: listNodeMap(withSymbolArm),
+			kindEntries: [...kindEntries, { kind: 'newline', member: 'Newline', id: 5 }],
+			options: { member_list: { 'member:/separator/kind': preference('newline') } } as never
+		});
+		expect(sites.find((s) => s.source === 'separator')?.arms).toEqual([
+			{ value: 'comma', kind: 'comma' },
+			{ value: 'newline', kind: 'newline' }
+		]);
+		expect(() => collectSitePreferences({ nodeMap: listNodeMap(withSymbolArm), kindEntries })).toThrow(
+			/separator token 'newline' of member_list has no kind in the catalog/
+		);
 	});
 });

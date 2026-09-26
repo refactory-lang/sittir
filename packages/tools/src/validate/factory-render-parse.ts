@@ -43,8 +43,10 @@ import {
 	type TSTree,
 	type WrappedNodeData,
 	type IrSurface,
+	type ValidatorSkip,
 	loadIrSurface,
-	buildFactoryNodeFromReference
+	buildFactoryNodeFromReference,
+	importGrammarModule
 } from './common.ts';
 
 /**
@@ -255,13 +257,6 @@ function compareNodeStorage(
 	return null;
 }
 
-/** Relative path from codegen/src/validate to language package factories.ts */
-const FACTORY_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/factories/raw.ts',
-	typescript: '../../../typescript/src/factories/raw.ts',
-	python: '../../../python/src/factories/raw.ts'
-};
-
 // ---------------------------------------------------------------------------
 // Validation
 // ---------------------------------------------------------------------------
@@ -296,6 +291,8 @@ export interface FactoryRenderParseResult {
 		start: number;
 		end: number;
 	}[];
+	skips: ValidatorSkip[];
+	excluded: ValidatorSkip[];
 }
 
 /**
@@ -320,26 +317,25 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	kindNameFromId: ((id: number) => string | undefined) | undefined;
 	importFailure: { message: string } | null;
 }> {
-	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
 	let factoryShapes: Record<string, FactoryShape> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let kindNameFromId: ((id: number) => string | undefined) | undefined = undefined;
-	if (!factoryModulePath) {
-		return {
-			factoryMap,
-			factoryShapes,
-			fieldAliasMap,
-			factoryFields,
-			factorySlots,
-			kindNameFromId,
-			importFailure: null
-		};
-	}
 	try {
-		const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
+		const factoryModule = await importGrammarModule(grammar, 'factories/raw.ts');
+		if (!factoryModule) {
+			return {
+				factoryMap,
+				factoryShapes,
+				fieldAliasMap,
+				factoryFields,
+				factorySlots,
+				kindNameFromId,
+				importFailure: null
+			};
+		}
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata lives in node-model.json5 (PR-K) — pure
 		// data, loaded separately from the factory functions.
@@ -348,42 +344,39 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
 		factorySlots = mapData.factorySlots;
-		const typesModulePath = FACTORY_MODULE_PATHS[grammar]?.replace('factories/raw.ts', 'types.ts');
-		if (typesModulePath) {
-			try {
-				const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
-				// KIND_NAMES (not KIND_DISPLAY_NAMES): this validator's `kind`
-				// resolution feeds factoryMap/factoryShapes/factoryFields lookups,
-				// which are keyed by the canonical (wrap-dispatch) catalog name —
-				// the same identity `wrapNode` stamps. KIND_DISPLAY_NAMES is
-				// tree-sitter's raw parse label, which collapses distinct
-				// canonical kinds sharing one display name (python's `block`
-				// (160) and `_match_block` (135) both display as "block") onto
-				// the wrong factory, producing a false `$type` mismatch even
-				// though the wrapped reference and a correctly-selected factory
-				// would agree.
-				const kindNamesMap = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
-				if (kindNamesMap) {
-					kindNameFromId = (id: number) => kindNamesMap.get(id);
-				}
-			} catch (e) {
-				// Without kindNameFromId every walked candidate is rejected (its
-				// numeric $type can't be resolved to a kind name), so the validator
-				// would silently report an empty 0/0 pass. Route this into the same
-				// failure path as a factory-module load failure instead of
-				// continuing with a resolver that can never succeed.
-				const message = `[validate-factory-roundtrip] failed to load ${typesModulePath}: ${(e as Error)?.message ?? e}`;
-				console.error(message);
-				return {
-					factoryMap,
-					factoryShapes,
-					fieldAliasMap,
-					factoryFields,
-					factorySlots,
-					kindNameFromId,
-					importFailure: { message }
-				};
+		try {
+			const typesModule = await importGrammarModule(grammar, 'types.ts');
+			// KIND_NAMES (not KIND_DISPLAY_NAMES): this validator's `kind`
+			// resolution feeds factoryMap/factoryShapes/factoryFields lookups,
+			// which are keyed by the canonical (wrap-dispatch) catalog name —
+			// the same identity `wrapNode` stamps. KIND_DISPLAY_NAMES is
+			// tree-sitter's raw parse label, which collapses distinct
+			// canonical kinds sharing one display name (python's `block`
+			// (160) and `_match_block` (135) both display as "block") onto
+			// the wrong factory, producing a false `$type` mismatch even
+			// though the wrapped reference and a correctly-selected factory
+			// would agree.
+			const kindNamesMap = typesModule?.KIND_NAMES as ReadonlyMap<number, string> | undefined;
+			if (kindNamesMap) {
+				kindNameFromId = (id: number) => kindNamesMap.get(id);
 			}
+		} catch (e) {
+			// Without kindNameFromId every walked candidate is rejected (its
+			// numeric $type can't be resolved to a kind name), so the validator
+			// would silently report an empty 0/0 pass. Route this into the same
+			// failure path as a factory-module load failure instead of
+			// continuing with a resolver that can never succeed.
+			const message = `[validate-factory-roundtrip] failed to load ${grammar} src/types.ts: ${(e as Error)?.message ?? e}`;
+			console.error(message);
+			return {
+				factoryMap,
+				factoryShapes,
+				fieldAliasMap,
+				factoryFields,
+				factorySlots,
+				kindNameFromId,
+				importFailure: { message }
+			};
 		}
 		return {
 			factoryMap,
@@ -395,7 +388,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			importFailure: null
 		};
 	} catch (e) {
-		const message = `[validate-factory-roundtrip] failed to load ${factoryModulePath}: ${(e as Error)?.message ?? e}`;
+		const message = `[validate-factory-roundtrip] failed to load ${grammar} src/factories/raw.ts: ${(e as Error)?.message ?? e}`;
 		console.error(message);
 		return {
 			factoryMap,
@@ -562,8 +555,9 @@ export async function validateFactoryRenderParse(
 	}[] = [];
 	const testedPairs = initKindEntryDeduplicator();
 	let pass = 0;
-	let skip = 0;
 	let total = 0;
+	const skips: ValidatorSkip[] = [];
+	const excluded: ValidatorSkip[] = [];
 
 	recordFactoryModuleLoadFailure(importFailure, errors);
 	if (options.surface === 'ir' && surface === undefined) {
@@ -578,7 +572,9 @@ export async function validateFactoryRenderParse(
 			skip: 0,
 			astMatchPass: 0,
 			errors,
-			astMismatches: []
+			astMismatches: [],
+			skips: [],
+			excluded: []
 		};
 	}
 
@@ -612,13 +608,18 @@ export async function validateFactoryRenderParse(
 			skip: 0,
 			astMatchPass: 0,
 			errors,
-			astMismatches: []
+			astMismatches: [],
+			skips: [],
+			excluded: []
 		};
 	}
 
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;
-		if (tree1.rootNode.hasError) continue;
+		if (tree1.rootNode.hasError) {
+			excluded.push({ entry: entry.name, reason: 'parse-error', input: entry.source });
+			continue;
+		}
 
 		// Same read path as read-render-parse: build the native read handle,
 		// then walk the WRAPPED tree once. Every node arrives as its true
@@ -687,7 +688,7 @@ export async function validateFactoryRenderParse(
 				if (factoryData === null) {
 					// No factory for this kind, or the factory threw (already
 					// recorded). Either way there's nothing to compare.
-					skip++;
+					skips.push({ entry: entry.name, kind, reason: 'no-factory-data', input: inputSource });
 					continue;
 				}
 
@@ -719,11 +720,13 @@ export async function validateFactoryRenderParse(
 		grammar,
 		total,
 		pass,
-		fail: total - pass - skip,
-		skip,
+		fail: total - pass - skips.length,
+		skip: skips.length,
 		astMatchPass: pass,
 		errors,
-		astMismatches: dedupeMismatchesByContainment(astMismatches)
+		astMismatches: dedupeMismatchesByContainment(astMismatches),
+		skips,
+		excluded
 	};
 }
 

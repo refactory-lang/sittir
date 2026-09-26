@@ -228,9 +228,9 @@ pub const NO_ITEMS: &[&str] = &[];
 /// follows it, a trailing flank what precedes it and the token, so the
 /// list's edges never carry whitespace the surrounding template did not ask
 /// for. `head` and `tail` (spacing) sit inside the template's text and, like
-/// it, are written only when there are items. `before`/`after`/`head`/`tail`
-/// are whitespace site ids (`0` = no site) resolved by the writer's
-/// `WhitespaceTable`, not literal text.
+/// it, are written only when there are items. `before`/`after` are whitespace
+/// arms (`0` = none) the list carries; `head`/`tail` are spacing sites the
+/// writer reads from its resolved options.
 #[derive(Debug, Clone, Copy)]
 pub struct ListView<'a, E: Slot> {
     pub items: &'a [E],
@@ -244,8 +244,10 @@ pub struct ListView<'a, E: Slot> {
     pub after: u16,
     pub leading: bool,
     pub trailing: bool,
-    pub head: u16,
-    pub tail: u16,
+    /// Spacing site read from the resolved options inside the template, before the first item.
+    pub head: Option<usize>,
+    /// Spacing site read from the resolved options inside the template, after the last item.
+    pub tail: Option<usize>,
 }
 
 impl<E: Slot> ListView<'_, E> {
@@ -261,7 +263,9 @@ impl<E: Slot> Render for ListView<'_, E> {
         }
         let (prefix, suffix) = split_template(self.template);
         write_literal(prefix, w)?;
-        w.site(self.head);
+        if let Some(head) = self.head {
+            w.site_at(head);
+        }
         if self.leading {
             w.text(self.token)?;
             w.site(self.after);
@@ -278,7 +282,9 @@ impl<E: Slot> Render for ListView<'_, E> {
             w.site(self.before);
             w.text(self.token)?;
         }
-        w.site(self.tail);
+        if let Some(tail) = self.tail {
+            w.site_at(tail);
+        }
         write_literal(suffix, w)
     }
 }

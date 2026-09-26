@@ -1,8 +1,7 @@
 import * as esbuild from 'esbuild';
 import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+import { PACKAGES_DIR, grammarRequire, upstreamPackage } from '../grammars.ts';
 
 function writeFileIfChanged(path: string, content: string | Uint8Array): void {
 	if (existsSync(path)) {
@@ -15,10 +14,6 @@ function writeFileIfChanged(path: string, content: string | Uint8Array): void {
 	writeFileSync(path, content);
 }
 
-const requireFromHere = createRequire(import.meta.url);
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const packagesRoot = resolve(__dirname, '../../..');
 
 export interface TranspileOptions {
 	grammar: string;
@@ -32,7 +27,7 @@ export interface TranspileResult {
 }
 
 export async function transpileOverrides(opts: TranspileOptions): Promise<TranspileResult> {
-	const root = opts.packagesRoot ?? packagesRoot;
+	const root = opts.packagesRoot ?? PACKAGES_DIR;
 	const inputPath = join(root, opts.grammar, 'grammar.sittir.ts');
 	const outputDir = join(root, opts.grammar, '.sittir');
 	const outputPath = join(outputDir, 'grammar.js');
@@ -127,20 +122,44 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
 	};
 }
 
+const SCANNER_SOURCES = ['scanner.c', 'scanner.cc'];
+
+function stubScannerSource(grammar: string): string {
+	const fn = `tree_sitter_${grammar}_external_scanner`;
+	return [
+		'#include "tree_sitter/parser.h"',
+		'',
+		`void *${fn}_create(void) { return NULL; }`,
+		`void ${fn}_destroy(void *payload) { (void)payload; }`,
+		`unsigned ${fn}_serialize(void *payload, char *buffer) { (void)payload; (void)buffer; return 0; }`,
+		`void ${fn}_deserialize(void *payload, const char *buffer, unsigned length) { (void)payload; (void)buffer; (void)length; }`,
+		`bool ${fn}_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) { (void)payload; (void)lexer; (void)valid_symbols; return false; }`,
+		''
+	].join('\n');
+}
+
 function copyExternalScannerSources(grammar: string, outputDir: string): void {
 	let basePkgPath: string;
 	try {
-		basePkgPath = dirname(requireFromHere.resolve(`tree-sitter-${grammar}/package.json`));
+		basePkgPath = dirname(grammarRequire(grammar).resolve(`${upstreamPackage(grammar)}/package.json`));
 	} catch (e) {
 		if ((e as NodeJS.ErrnoException).code === 'MODULE_NOT_FOUND') return;
 		throw e;
 	}
+	const targetSrc = join(outputDir, 'src');
+	const hasUpstreamScanner = [join(basePkgPath, 'src'), join(basePkgPath, grammar, 'src')].some((dir) =>
+		SCANNER_SOURCES.some((file) => existsSync(join(dir, file)))
+	);
+	if (!hasUpstreamScanner) {
+		mkdirSync(targetSrc, { recursive: true });
+		writeFileIfChanged(join(targetSrc, 'scanner.c'), stubScannerSource(grammar));
+		return;
+	}
 	const baseSrc = join(basePkgPath, 'src');
 	if (!existsSync(baseSrc)) return;
-	const targetSrc = join(outputDir, 'src');
 	mkdirSync(targetSrc, { recursive: true });
 	for (const file of readdirSync(baseSrc)) {
-		if (file === 'scanner.c' || file === 'scanner.cc') {
+		if (SCANNER_SOURCES.includes(file)) {
 			const srcFile = join(baseSrc, file);
 			const dstFile = join(targetSrc, file);
 			if (statSync(srcFile).isFile()) {

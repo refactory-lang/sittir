@@ -99,9 +99,7 @@ import {
 	loadVariantChildKindsByOwner,
 	firstParseDefect,
 	astStructuralDiff,
-	findReparsedNodeAtOffset,
-	NAMED_EXTRAS_BY_GRAMMAR,
-	LEAF_ALIAS_TOLERANCE_BY_GRAMMAR
+	findReparsedNodeAtOffset
 } from '../validate/read-render-parse.ts';
 import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
@@ -141,7 +139,7 @@ export interface ProbeKindOptions {
 
 export async function run(opts: ProbeKindOptions): Promise<number> {
 	if (!opts.grammar) {
-		process.stderr.write('probe-kind: --grammar <rust|typescript|python> required\n');
+		process.stderr.write('probe-kind: --grammar <name> required\n');
 		return 2;
 	}
 	const grammar = opts.grammar;
@@ -400,19 +398,8 @@ async function computeValidatorWrapDiag(
 		};
 	}
 
-	const namedExtras = NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set<string>();
-	const rootAliasPair: readonly [string, string] | undefined =
-		renderedKind !== targetKind ? [renderedKind, targetKind] : undefined;
 	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);
-	const astDiff = astStructuralDiff(
-		targetNode,
-		node2,
-		namedExtras,
-		'',
-		rootAliasPair,
-		variantChildKinds,
-		LEAF_ALIAS_TOLERANCE_BY_GRAMMAR[grammar]
-	);
+	const astDiff = astStructuralDiff(targetNode, node2, '', variantChildKinds);
 
 	return {
 		renderedKind,

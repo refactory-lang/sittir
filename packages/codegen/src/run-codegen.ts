@@ -7,32 +7,30 @@ import { OXFMT_EFFECTIVE_CONFIG } from './oxfmt-config.ts';
 import { validateRenderableFromNodeMap, formatRenderableReport } from './validate/renderable.ts';
 
 import { generate } from './compiler/generate.ts';
-import { evaluate } from './compiler/evaluate.ts';
-import { resolveGrammarJsPath, resolveOverridesPath } from './compiler/resolve-grammar.ts';
+import { compileGrammar, type Compilation } from './compiler/compile.ts';
 import { loadGeneratedIdTables } from './compiler/generated-metadata.ts';
 import {
-	collectGrammarDiagnosticsForGrammar,
 	GrammarDiagnosticError,
 	formatGrammarDiagnostics,
 	writeGrammarDiagnosticsJson,
 	fromSlotGrouping,
-	fromParseKindCollision,
 	type GrammarDiagnostic
 } from './compiler/diagnostics/grammar-diagnostics.ts';
-import { getEnrichUnaliasDiagnostics } from './dsl/enrich.ts';
 import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
-import { writeManifestForGrammar, type Grammar } from './scripts/generated-manifest.ts';
+import { writeManifestForGrammar } from './scripts/generated-manifest.ts';
+import { isGrammar, nativeCrateDir, nativeCrateRelDir } from './grammars.ts';
+import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
 import { OVERLAY_CHAIN } from './emitters/overlays/module.ts';
+import { compareOrdinal } from './emitters/shared.ts';
 
 export interface CodegenOptions {
 	grammar: string;
 	outputDir: string;
-	nodes?: string[];
 	all?: boolean;
 	testsDir?: string;
 	compileParser?: boolean;
@@ -96,31 +94,22 @@ export async function runStandaloneSteps(opts: CodegenOptions): Promise<void> {
 	}
 }
 
-export const RUST_RENDER_GRAMMARS = ['rust', 'typescript', 'python'] as const;
-
 export async function runGrammarDiagnosticsPreflight(input: {
 	grammar: string;
 	allowDiagnostics: ReadonlySet<string>;
 	isTTY: boolean;
 	injectedDiagnostics?: readonly GrammarDiagnostic[];
+	compilation?: Compilation;
 	confirm?: (blocked: readonly GrammarDiagnostic[]) => Promise<boolean>;
-}): Promise<void> {
+}): Promise<ReadonlySet<string>> {
 	let diagnostics: readonly GrammarDiagnostic[];
 	if (input.injectedDiagnostics !== undefined) {
 		diagnostics = input.injectedDiagnostics;
 	} else {
-		const overridesPath = resolveOverridesPath(input.grammar);
-		const grammarJsPath = resolveGrammarJsPath(input.grammar);
-		const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
-		const rawGrammar = await evaluate(entryPath);
-		const unaliasDiagnostics = getEnrichUnaliasDiagnostics(rawGrammar).map((d) =>
-			fromParseKindCollision(input.grammar, d)
-		);
-		const generatedIdTables = await loadGeneratedIdTables(input.grammar);
-		diagnostics = [
-			...collectGrammarDiagnosticsForGrammar({ rawGrammar, generatedIdTables }).diagnostics,
-			...unaliasDiagnostics
-		];
+		const compilation =
+			input.compilation ??
+			(await compileGrammar({ grammar: input.grammar, generatedIdTables: await loadGeneratedIdTables(input.grammar) }));
+		diagnostics = compilation.grammarDiagnostics;
 	}
 
 	const blockedSet = new Set(diagnostics.filter((d) => !input.allowDiagnostics.has(d.code) && d.canProceed === false));
@@ -134,7 +123,7 @@ export async function runGrammarDiagnosticsPreflight(input: {
 		writeGrammarDiagnosticsJson(diagnostics, resolve('packages', input.grammar, '.sittir', 'grammar-diagnostics.json'));
 	}
 
-	if (blocked.length === 0) return;
+	if (blocked.length === 0) return input.allowDiagnostics;
 
 	process.stderr.write(formatGrammarDiagnostics(blocked) + '\n');
 
@@ -145,6 +134,7 @@ export async function runGrammarDiagnosticsPreflight(input: {
 	if (!proceed) {
 		throw new GrammarDiagnosticError(blocked);
 	}
+	return new Set([...input.allowDiagnostics, ...blocked.map((d) => d.code)]);
 }
 
 async function confirmProceed(diagnostics: readonly GrammarDiagnostic[]): Promise<boolean> {
@@ -182,30 +172,47 @@ export async function runCodegenCli(
 	return 0;
 }
 
-export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
+async function withInternalCodegenRun<T>(fn: () => Promise<T>): Promise<T> {
+	const previous = process.env.SITTIR_INTERNAL_CODEGEN_RUN;
 	process.env.SITTIR_INTERNAL_CODEGEN_RUN = '1';
+	try {
+		return await fn();
+	} finally {
+		if (previous === undefined) delete process.env.SITTIR_INTERNAL_CODEGEN_RUN;
+		else process.env.SITTIR_INTERNAL_CODEGEN_RUN = previous;
+	}
+}
 
-	const { grammar, outputDir, all, nodes, testsDir, noEmitDiff, buildNative, nativeDebug, workspaceCheck } = opts;
+export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
+	return withInternalCodegenRun(() => runCodegenInternal(opts));
+}
+
+async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
+	const { grammar, outputDir, all, testsDir, noEmitDiff, buildNative, nativeDebug, workspaceCheck } = opts;
 
 	if (!outputDir) {
 		throw new Error('Missing required argument: --output. Use --help for usage.');
 	}
-	if (!all && (!nodes || nodes.length === 0)) {
-		throw new Error('Must provide --nodes or --all. Use --help for usage.');
-	}
 
-	await runGrammarDiagnosticsPreflight({
+	const compilation = await compileGrammar({
+		grammar,
+		generatedIdTables: await loadGeneratedIdTables(grammar)
+	});
+
+	const allowDiagnostics = await runGrammarDiagnosticsPreflight({
 		grammar,
 		allowDiagnostics: new Set(opts.allowDiagnostics ?? []),
-		isTTY: Boolean((process.stdin as NodeJS.ReadStream).isTTY)
+		isTTY: Boolean((process.stdin as NodeJS.ReadStream).isTTY),
+		compilation
 	});
 
 	console.log(`Generating ${grammar} IR...`);
 	const result = await generate({
 		grammar,
-		nodes: all ? undefined : nodes,
 		outputDir,
-		emitRenderModule: all
+		emitRenderModule: all,
+		compilation,
+		allowDiagnostics
 	});
 
 	if (result.slotGroupingDiagnostics.length > 0) {
@@ -218,6 +225,8 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	await writeFile(join(outDir, 'grammar.ts'), result.grammar);
 	await writeFile(join(outDir, 'engine.ts'), result.engine);
 	await writeFile(join(outDir, 'render-engine.ts'), result.renderEngine);
+	await writeFile(join(outDir, 'backend.ts'), result.backend);
+	await writeFile(join(outDir, 'boundary.ts'), result.boundary);
 	await writeFile(join(outDir, 'types.ts'), result.types);
 	const factoriesDir = join(outDir, 'factories');
 	mkdirSync(join(factoriesDir, 'overlays'), { recursive: true });
@@ -240,8 +249,11 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 
 	writeFileSync(
 		join(dirname(outDir), '.sittir', 'render-bodies.json'),
-		JSON.stringify(Object.fromEntries([...result.templates.bodies].sort(([a], [b]) => a.localeCompare(b))), null, '\t') +
-			'\n',
+		JSON.stringify(
+			Object.fromEntries([...result.templates.bodies].sort(([a], [b]) => compareOrdinal(a, b))),
+			null,
+			'\t'
+		) + '\n',
 		'utf8'
 	);
 
@@ -253,7 +265,8 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 				`${census.staticGlued + census.staticSpaced} static ` +
 				`(${census.staticGlued} glued, ${census.staticSpaced} spaced), ` +
 				`${census.runtimeDerivable} runtime-derivable, ` +
-				`${census.runtimeVarying} runtime-varying (residue)`
+				`${census.runtimeVarying} runtime-varying (residue); ` +
+				`origin: ${census.preferenceOrigin} preference, ${census.literalDefaultOrigin} literal-default, ${census.wordDefaultOrigin} word-default, ${census.cascadeOrigin} cascade, ${census.fallbackOrigin} fallback`
 		);
 		writeFileSync(
 			join(dirname(outDir), '.sittir', 'seam-census.json'),
@@ -264,6 +277,11 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 					staticSpaced: census.staticSpaced,
 					runtimeDerivable: census.runtimeDerivable,
 					runtimeVarying: census.runtimeVarying,
+					preferenceOrigin: census.preferenceOrigin,
+					literalDefaultOrigin: census.literalDefaultOrigin,
+					wordDefaultOrigin: census.wordDefaultOrigin,
+					cascadeOrigin: census.cascadeOrigin,
+					fallbackOrigin: census.fallbackOrigin,
 					boundaries: census.boundaries
 				},
 				null,
@@ -273,10 +291,23 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		);
 	}
 
-	const shouldEmitRustRender = all && (RUST_RENDER_GRAMMARS as readonly string[]).includes(grammar);
+	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
+
+	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
+	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);
+
+	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
+
+	const shouldEmitRustRender = all && isGrammar(grammar);
 
 	if (shouldEmitRustRender) {
-		const grammarTyped = grammar as (typeof RUST_RENDER_GRAMMARS)[number];
+		const crateDir = nativeCrateDir(grammar);
+		const scaffoldCrate = !existsSync(join(crateDir, 'Cargo.toml'));
+		if (scaffoldCrate) {
+			for (const file of nativeCrateFiles(grammar)) await writeFile(join(crateDir, file.path), file.contents);
+			console.log(`  → scaffolded native crate ${nativeCrateRelDir(grammar)}`);
+			execSync('pnpm install --prefer-offline', { stdio: 'inherit', cwd: process.cwd() });
+		}
 		const renderModule = result.renderModule;
 		if (!renderModule) {
 			throw new Error(`generate() did not return renderModule output for ${grammar}`);
@@ -288,7 +319,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		await writeFile(emit.optionsRs.path, emit.optionsRs.contents);
 		await writeFile(emit.libRs.path, emit.libRs.contents);
 		if (result.kindIds) {
-			const kindIdsPath = `${renderModuleSrcDir(grammarTyped)}/kind_ids.rs`;
+			const kindIdsPath = `${renderModuleSrcDir(grammar)}/kind_ids.rs`;
 			await writeFile(kindIdsPath, result.kindIds);
 			console.log(`    ${kindIdsPath}`);
 		}
@@ -300,7 +331,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		console.log(`    ${emit.libRs.path}`);
 
 		if (buildNative !== false) {
-			const nativeCrate = `rust/crates/sittir-${grammar}`;
+			const nativeCrate = nativeCrateRelDir(grammar);
 			const nativeBuildScript = nativeDebug === true ? 'build:debug' : 'build';
 			console.log(
 				`  → rebuilding grammar-owned N-API binding for ${grammar}` +
@@ -337,15 +368,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		}
 	}
 
-	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
-
-	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
-	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);
-
-	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
-
-	const config = { grammar, nodes: all ? undefined : nodes, outputDir };
-	const renderable = validateRenderableFromNodeMap(config.grammar, result.nodeMap);
+	const renderable = validateRenderableFromNodeMap(grammar, result.nodeMap);
 	console.log('');
 	console.log(formatRenderableReport(renderable));
 
@@ -362,11 +385,11 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		);
 	}
 
-	writeManifestForGrammar(grammar as Grammar);
+	writeManifestForGrammar(grammar);
 	console.log(`  → packages/${grammar}/.sittir/generated.manifest.json updated`);
 
 	if (all && !noEmitDiff) {
-		const emitDiff = formatEmitDiff(grammar as Grammar);
+		const emitDiff = formatEmitDiff(grammar);
 		if (emitDiff) console.log(`\n${emitDiff}`);
 	}
 
@@ -381,8 +404,10 @@ Done! Generated:
 }
 
 export async function runFullRegen(opts: CodegenOptions): Promise<NodeMap> {
-	process.env.SITTIR_INTERNAL_CODEGEN_RUN = '1';
+	return withInternalCodegenRun(() => runFullRegenInternal(opts));
+}
 
+async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	const { grammar, skipTsChain, transpile, tsGenerate } = opts;
 
 	if (!skipTsChain && !transpile && !tsGenerate) {

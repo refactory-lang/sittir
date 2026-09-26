@@ -9,6 +9,7 @@ export interface TransportLiteral {
 	readonly text: string;
 	readonly resolvedKindId?: number;
 	readonly immediate?: boolean;
+	readonly enumKind?: string;
 }
 
 export interface TransportProjection {
@@ -39,12 +40,14 @@ function collectTransportNodes(nodeMap: NodeMap): AssembledNode[] {
 function isConcreteTransportNode(node: AssembledNode): boolean {
 	switch (node.modelType) {
 		case 'pattern':
-		case 'token':
+		case 'keyword':
+		case 'punctuation':
 		case 'enum':
 		case 'list':
 		case 'branch':
 		case 'envelope':
 		case 'polymorph':
+		case 'alias':
 			return true;
 		case 'supertype':
 			return false;

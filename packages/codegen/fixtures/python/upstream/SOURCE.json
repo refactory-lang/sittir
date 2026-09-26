@@ -1,0 +1,13 @@
+{
+	"repository": "https://github.com/tree-sitter/tree-sitter-python",
+	"version": "0.25.0",
+	"ref": "v0.25.0",
+	"commit": "293fdc02038ee2bf0e2e206711b69c90ac0d413f",
+	"files": [
+		"errors.txt",
+		"expressions.txt",
+		"literals.txt",
+		"pattern_matching.txt",
+		"statements.txt"
+	]
+}

@@ -12,7 +12,7 @@ function makeFn(name: string) {
 describe('$trivia() on the typescript surface', () => {
 	it('takes a comment node or its verbatim text, leading and trailing', () => {
 		const fn = makeFn('f');
-		fn.$trivia({ leading: ['/** doc */', ir.comment('// second')], trailing: ['// tail'] });
+		fn.$trivia({ leading: ['/** doc */', ir.comment.line(' second')], trailing: ['// tail'] });
 		expect(fn.$render()).toBe('/** doc */\n// second\nfunction f() {}\n// tail\n');
 	});
 

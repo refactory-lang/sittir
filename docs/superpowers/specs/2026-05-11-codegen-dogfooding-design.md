@@ -358,7 +358,7 @@ export const ${factoryName(kind)} = {
 };`;
     }
     if (node.modelType === 'keyword') { /* ... */ }
-    if (node.modelType === 'token')   { /* ... */ }
+    if ((node.modelType === 'keyword' || node.modelType === 'punctuation'))   { /* ... */ }
     // ... 6 more variants
   });
   return [imports, ...factories].join('\n');
@@ -401,7 +401,7 @@ export function emitFactoriesModule(nodeMap: NodeMap): string {
       );
     } else if (node.modelType === 'keyword') {
       factories.push(template(factoriesKeywordTpl).fill({...}).render());
-    } else if (node.modelType === 'token') {
+    } else if ((node.modelType === 'keyword' || node.modelType === 'punctuation')) {
       factories.push(template(factoriesTokenTpl).fill({...}).render());
     }
     // ... 6 more variants

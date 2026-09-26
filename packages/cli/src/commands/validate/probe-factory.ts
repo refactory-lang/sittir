@@ -1,5 +1,4 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
-import { runProbeFactoryCli } from '@sittir/tools';
 import { Option } from 'commander';
 
 export const probeFactory: CommandModule = {
@@ -14,6 +13,7 @@ export const probeFactory: CommandModule = {
 					.default('raw')
 			)
 			.action(async (grammars: string[], opts: { surface: 'raw' | 'ir' }) => {
+				const { runProbeFactoryCli } = await import('@sittir/tools');
 				await runProbeFactoryCli(grammars, 'native', opts.surface);
 			});
 	}

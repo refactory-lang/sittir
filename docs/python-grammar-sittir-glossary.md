@@ -70,7 +70,7 @@ every spacing site from it (`whitespaceArmsOf`): a separator gap admits the
 members other than `_indent`/`_dedent`, a flank or seam all of them, and the
 generated `options.ts` unions and the writer's whitespace text are derived
 from the same list. Each member is written as the visible alias
-`visibleExternals` registers for it. Python's list adds `_double_newline`,
+`visibleExternals` registers for it. Python's list adds `_double_blankline`,
 the external that renders `'\n\n\n'` (two blank lines): the `module` rule's
 options put it after every top-level `function_definition`,
 `class_definition` and `decorated_definition`, and the writer ranks it
@@ -252,10 +252,12 @@ declared supertype is a root.
 ### `complex_pattern` (`packages/python/grammar.sittir.ts:256`)
 
 ```text
-				// complex_pattern: real/imaginary (0,1) + the `+`/`-` operator enum (2)
-				// and a trailing number choice (3). Positions 2 and 3 are both unnamed
-				// → 2 `content` slots; name the operator so the number stays the single
-				// sanctioned `content` (base-rule field, complex_pattern is not a polymorph).
+				// complex_pattern: seq(optional('-'), choice(integer, float),
+				// choice('+', '-'), choice(integer, float)) is `sign real operator
+				// imaginary`: position 0 the optional leading `-` (fielded, so it mints
+				// `_kw_sign`, as `simple_pattern_negative`'s sign does), 1 the real
+				// part, 2 the `+`/`-` operator enum, 3 the imaginary part. Every
+				// position is fielded, so no `content` slot and no automatic arms.
 ```
 
 ### `dictionary` (`packages/python/grammar.sittir.ts:284`)
@@ -510,26 +512,25 @@ they need no entry in `transforms`.
 				// the base grammar's arms verbatim (including precedence).
 ```
 
-### `case_as_pattern` (`packages/python/grammar.sittir.ts:400`)
+### `case_pattern` (`packages/python/grammar.sittir.ts`, `patches`)
 
 ```text
 				// Case-context as-pattern split — same two-rules-one-parse-kind class
-				// as `case_tuple_pattern`/`case_list_pattern` just above. Base
-				// `case_pattern` arm 0 is `alias($._as_pattern, $.as_pattern)`:
-				// match-statement `X as name` patterns parse to the SAME `as_pattern`
-				// kind as the expression-context rule (`seq($.expression, 'as',
+				// as `case_tuple_pattern`/`case_list_pattern`. Base `case_pattern`
+				// arm 0 is `alias($._as_pattern, $.as_pattern)`: match-statement
+				// `X as name` patterns would parse to the SAME `as_pattern` kind as
+				// the expression-context rule (`seq($.expression, 'as',
 				// field('alias', alias($.expression, $.as_pattern_target)))`), whose
 				// wrap requires an `expression` child the case shape
-				// (`seq($.case_pattern, 'as', $.identifier)`) never produces — every
-				// case-context as-pattern threw at wrap time ("singular slot
-				// 'expression' on 'as_pattern' requires one value"). Declare the case
-				// shape as its own REAL visible rule (per the precedent above, a
-				// choice-arm position can't mint a content alias, so `alias($._x, …)`
-				// would never enter the NodeMap). Non-natural name: the natural
+				// (`seq($.case_pattern, 'as', $.identifier)`) never produces.
+				// alias('case_as_pattern') renames arm 0's face, so the parser issues
+				// its own `case_as_pattern` kind for the case shape, stored as the
+				// hidden `_as_pattern` rule (typeName `_AsPattern`, beside the
+				// expression-context `AsPattern`). Non-natural name: the natural
 				// stripped name `as_pattern` is taken by the expression-context kind.
 ```
 
-### `comprehension_clauses` (`packages/python/grammar.sittir.ts:434`)
+### `comprehension_clauses` (`packages/python/grammar.sittir.ts`, `patches`)
 
 ```text
 				// Comprehension-clause visibility (hidden-repeat-helper class): the
@@ -545,7 +546,8 @@ they need no entry in `transforms`.
 				// A Track-B reference-site alias can't help here — every reference
 				// is mandatory (no `optional(...)` site to satisfy
 				// `parentIsOptionalSeq`, see the `set`/`collection_elements` note above) —
-				// so declare it as a REAL visible rule and reference it directly.
+				// so rule() declares it as a REAL visible rule at the clause position
+				// (index 2) of all four comprehension kinds.
 				// Body is `repeat1(choice(...))`, NOT the base's
 				// `seq($.for_in_clause, repeat(choice(...)))`: the seq shape derives
 				// TWO slots (position-0 `for_in_clause` + the repeat as `content`),

@@ -1,8 +1,10 @@
 # Groups seat on their parent
 
-> **Status:** Design (2026-09-08). Follows the strict-rebuild design, whose
-> generated rebuilds measure the gap this closes: the parent-factory row and
-> the no-argument form row in `docs/factory-surface-issues.md`.
+> **Status:** Landed — the four seatings (arm, splice, elements, tuple) are
+> emitted by the overlay, `ir-render-parse` is clean on all three grammars,
+> and the seat of every hoisted slot value is serialized in
+> `node-model.json5`. Follows the strict-rebuild design, whose generated
+> rebuilds measured the gap this closed.
 
 ## Problem
 

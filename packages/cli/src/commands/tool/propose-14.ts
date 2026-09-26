@@ -1,5 +1,4 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
-import { propose14 as runPropose14 } from '@sittir/tools';
 
 export const propose14: CommandModule = {
 	name: 'propose-14',
@@ -11,6 +10,7 @@ export const propose14: CommandModule = {
 			.option('--json', 'Machine-readable JSON output')
 			.option('--baseline <path>', 'Baseline path (default: packages/codegen/.principle14-baseline.json)')
 			.action(async (opts: { update?: boolean; table?: boolean; json?: boolean; baseline?: string }) => {
+				const { propose14: runPropose14 } = await import('@sittir/tools');
 				const code = await runPropose14({
 					update: opts.update ?? false,
 					table: opts.table ?? false,

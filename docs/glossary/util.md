@@ -56,7 +56,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * @param value - The literal text from the grammar (e.g. `"if"`, `"+"`, `"->"`).
  * @param wordMatcher - The compiled word-rule pattern, or `undefined`.
  * @returns `true` when `value` has word shape (→ `AssembledKeyword`); `false`
- *   for punctuation / operators (→ `AssembledToken`).
+ *   for punctuation / operators (→ `AssembledPunctuation`).
  */
 ```
 

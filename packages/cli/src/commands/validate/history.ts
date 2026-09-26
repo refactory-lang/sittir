@@ -1,5 +1,4 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
-import { runHistoryCli } from '@sittir/tools';
 
 export const history: CommandModule = {
 	name: 'history',
@@ -7,7 +6,8 @@ export const history: CommandModule = {
 	register: (program) => {
 		defineCommand(program, history)
 			.argument('[n]', 'Number of entries to show', '10')
-			.action((n: string) => {
+			.action(async (n: string) => {
+				const { runHistoryCli } = await import('@sittir/tools');
 				runHistoryCli([n]);
 			});
 	}

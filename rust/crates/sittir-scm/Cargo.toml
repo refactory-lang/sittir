@@ -1,0 +1,29 @@
+[package]
+name = "sittir-scm"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "napi-rs binding for the sittir Rust engine — Scm grammar."
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["napi-bindings"]
+napi-bindings = ["dep:napi", "dep:napi-derive", "sittir-core/napi-bindings"]
+debug-transport = ["sittir-core/debug-transport"]
+
+[dependencies]
+sittir-core = { path = "../sittir-core" }
+napi = { version = "3", default-features = false, features = ["napi4", "serde-json"], optional = true }
+napi-derive = { version = "3", optional = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tree-sitter = { workspace = true }
+tree-sitter-language = { workspace = true }
+
+[build-dependencies]
+napi-build = "2"
+cc = { workspace = true }

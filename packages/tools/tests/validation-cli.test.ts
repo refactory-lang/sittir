@@ -11,7 +11,10 @@ vi.mock('../src/run.ts', () => ({
 		skip: 0,
 		undefinedCount: 0,
 		divergentCount: 0,
-		errors: []
+		errors: [],
+		skips: [],
+		excluded: [],
+		trivia: []
 	}),
 	runRt: vi.fn().mockResolvedValue({
 		grammar: 'rust',
@@ -26,9 +29,12 @@ vi.mock('../src/run.ts', () => ({
 		// ("accessorThrows is not iterable") and every test below silently
 		// exercises runCountsCli's whole-grammar CATCH path instead of the
 		// happy path it means to pin.
-		accessorThrows: []
+		accessorThrows: [],
+		skips: [],
+		excluded: [],
+		trivia: []
 	}),
-	runCoverage: vi.fn().mockReturnValue({ grammar: 'rust', total: 10, pass: 10, fail: 0, issues: [] }),
+	runCoverage: vi.fn().mockReturnValue({ grammar: 'rust', total: 10, pass: 10, fail: 0, issues: [], excluded: [] }),
 	runFactory: vi.fn().mockResolvedValue({
 		grammar: 'rust',
 		total: 7,
@@ -37,7 +43,9 @@ vi.mock('../src/run.ts', () => ({
 		skip: 0,
 		astMatchPass: 7,
 		errors: [],
-		astMismatches: []
+		astMismatches: [],
+		skips: [],
+		excluded: []
 	}),
 	formatFromReport: vi.fn().mockReturnValue('from: pass=5 total=5'),
 	formatReadRenderParseReport: vi.fn().mockReturnValue('rt: pass=8 total=8'),
@@ -164,7 +172,11 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 				skip: 0,
 				astMatchPass: 8,
 				errors: [],
-				astMismatches: []
+				astMismatches: [],
+				accessorThrows: [],
+				skips: [],
+				excluded: [],
+				trivia: []
 			})
 			.mockResolvedValueOnce({
 				grammar: 'rust',
@@ -174,7 +186,11 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 				skip: 0,
 				astMatchPass: 5,
 				errors: [],
-				astMismatches: []
+				astMismatches: [],
+				accessorThrows: [],
+				skips: [],
+				excluded: [],
+				trivia: []
 			});
 	});
 

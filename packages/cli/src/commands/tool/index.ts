@@ -4,6 +4,8 @@ import { registerNamespace } from '../../framework/command-module.ts';
 
 import { assembleShapeCensus } from './assemble-shape-census.ts';
 import { bench } from './bench.ts';
+import { bootstrapGrammar } from './bootstrap-grammar.ts';
+import { fetchCorpus } from './fetch-corpus.ts';
 import { benchCodemod } from './bench-codemod.ts';
 import { checkBaseline } from './check-baseline.ts';
 import { checkPerf } from './check-perf.ts';
@@ -12,6 +14,7 @@ import { corpusCoverageCensus } from './corpus-coverage-census.ts';
 import { defectHistogram } from './defect-histogram.ts';
 import { diffFailures } from './diff-failures.ts';
 import { dumpAstMismatches } from './dump-ast-mismatches.ts';
+import { bindingsInventory } from './bindings-inventory.ts';
 import { emitFactorySource } from './emit-factory-source.ts';
 import { exercise } from './exercise.ts';
 import { fieldProvenance } from './field-provenance.ts';
@@ -30,6 +33,7 @@ import { profileFactory } from './profile-factory.ts';
 import { propose14 } from './propose-14.ts';
 import { separatedLists } from './separated-lists.ts';
 import { testHistory } from './test-history.ts';
+import { textKindOverlap } from './text-kind-overlap.ts';
 import { variantDerivationProbe } from './variant-derivation-probe.ts';
 import { walk } from './walk.ts';
 
@@ -38,6 +42,8 @@ export const toolModules: readonly CommandModule[] = [
 	assembleShapeCensus,
 	bench,
 	benchCodemod,
+	bootstrapGrammar,
+	fetchCorpus,
 	checkBaseline,
 	checkPerf,
 	classify,
@@ -45,6 +51,7 @@ export const toolModules: readonly CommandModule[] = [
 	defectHistogram,
 	diffFailures,
 	dumpAstMismatches,
+	bindingsInventory,
 	emitFactorySource,
 	exercise,
 	fieldProvenance,
@@ -63,6 +70,7 @@ export const toolModules: readonly CommandModule[] = [
 	propose14,
 	separatedLists,
 	testHistory,
+	textKindOverlap,
 	variantDerivationProbe,
 	walk,
 ];

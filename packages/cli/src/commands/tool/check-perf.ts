@@ -1,5 +1,4 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
-import { checkPerf as runCheckPerf } from '@sittir/tools';
 
 export const checkPerf: CommandModule = {
 	name: 'check-perf',
@@ -9,6 +8,7 @@ export const checkPerf: CommandModule = {
 			.option('--baseline <path>', 'Path to committed PerfBaseline JSON')
 			.option('--metrics <path>', 'Path to freshly produced MetricsFile JSON (default: ./metrics-native.json)')
 			.action(async (opts: { baseline?: string; metrics?: string }) => {
+				const { checkPerf: runCheckPerf } = await import('@sittir/tools');
 				const code = await runCheckPerf({
 					baseline: opts.baseline,
 					metrics: opts.metrics

@@ -20,6 +20,7 @@
 
 import { buildNodeMap } from '../codegen-surface.ts';
 import type { AssembledNode, AssembledNodeMap as NodeMap } from '../codegen-surface.ts';
+import { stableGrammars } from '@sittir/codegen/grammars';
 
 export interface SeparatedListsOptions {
 	grammar: string;
@@ -364,7 +365,7 @@ function printCensus(census: SeparatedListsCensus): void {
 // ---------------------------------------------------------------------------
 
 export async function run(opts: SeparatedListsOptions): Promise<number> {
-	const grammars = opts.allGrammars ? ['rust', 'typescript', 'python'] : [opts.grammar];
+	const grammars = opts.allGrammars ? stableGrammars() : [opts.grammar];
 	const results: SeparatedListsCensus[] = [];
 	for (const grammar of grammars) {
 		let nm: NodeMap;

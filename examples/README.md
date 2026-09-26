@@ -19,7 +19,9 @@ Current compile-checked examples:
 - `02-render-round-trip.ts`
 - `07-read-source.ts`
 - `09-type-guards.ts`
-- `17-dogfood-rust.ts`
+- `17-dogfood-rust-strict.ts`
+- `18-dogfood-typescript-strict.ts`
+- `19-dogfood-python-strict.ts`
 
 | File | Guide section |
 | ---- | ------------- |
@@ -39,10 +41,8 @@ Current compile-checked examples:
 | `14-format-preserving-transform.ts` | Format-preserving transforms *(pending `engine.findAndRead(...)`)* |
 | `15-generate-file.ts` | Generate a file from scratch *(pending richer Rust generation examples)* |
 | `16-dogfooding.ts` | Dogfooding *(pending template/snippet-free rewrite)* |
-| `17-dogfood-rust.ts` | Dogfooding — rebuild `sittir-core/src/splice.rs` with `ir.*` |
-| `18-dogfood-typescript.ts` | Dogfooding — rebuild `common/src/format.ts` with `ir.*` |
-| `17-dogfood-rust-strict.ts` | Dogfooding — same items through `.strict` alone |
-| `18-dogfood-typescript-strict.ts` | Dogfooding — same items through `.strict` alone |
-| `19-dogfood-python.ts` | Dogfooding — rebuild `tools/scripts/probe-sweep.py` with `ir.*` |
-| `19-dogfood-python-strict.ts` | Dogfooding — same items through `.strict` alone |
+| `17-dogfood-rust-strict.ts` | Dogfooding — rebuild `sittir-core/src/splice.rs` through `.strict` alone |
+| `18-dogfood-typescript-strict.ts` | Dogfooding — rebuild `common/src/format.ts` through `.strict` alone |
+| `19-dogfood-python-strict.ts` | Dogfooding — rebuild `tools/scripts/probe-sweep.py` through `.strict` alone |
+| `<n>-dogfood-<g>.generated.ts`, `<n>-dogfood-<g>-loose.generated.ts` | Dogfooding — the strict and loose rebuilds `pnpm run gen:examples` prints from each target; never hand-edited |
 | `index.ts` | Convenience barrel for all use-case modules |

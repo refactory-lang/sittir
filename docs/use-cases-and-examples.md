@@ -207,7 +207,7 @@ import { ir } from '@sittir/rust';
 
 const fn = ir
 	.functionItem({ visibilityModifier: 'pub', name: 'main' })
-	.$trivia(ir.docComment('/// Entry point.'));
+	.$trivia.leading(ir.docComment('/// Entry point.'));
 
 fn.$render();
 // "/// Entry point.\npub fn main() {}"
@@ -218,11 +218,13 @@ fn.$render();
 ```ts
 import { ir } from '@sittir/rust';
 
-const fn = ir.functionItem({ visibilityModifier: 'pub', name: 'main' }).$trivia({
-	leading: [ir.lineComment('// @generated'), ir.docComment('/// Main.')],
-	trailing: [ir.lineComment('// end main')]
-});
+const fn = ir
+	.functionItem({ visibilityModifier: 'pub', name: 'main' })
+	.$trivia.leading(ir.lineComment('// @generated'), ir.docComment('/// Main.'))
+	.$trivia.trailing(ir.lineComment('// end main'));
 ```
+
+`$trivia.leading(...)` and `$trivia.trailing(...)` each take a spread and set one side, keeping the other, so they chain. `$trivia(...)` still takes rest arguments (leading) or one `{ leading, trailing }` object.
 
 ## 4. Construction templates — pre-compiled
 
@@ -566,7 +568,7 @@ const file = ir.sourceFile({
 				name: 'Cache',
 				body: { name: 'entries', type: 'HashMap<String, String>' }
 			})
-			.$trivia(ir.docComment('/// In-memory key-value cache.')),
+			.$trivia.leading(ir.docComment('/// In-memory key-value cache.')),
 
 		snippets.implBlock
 			.fill({

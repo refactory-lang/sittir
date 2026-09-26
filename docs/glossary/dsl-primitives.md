@@ -235,6 +235,28 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `packages/codegen/src/dsl/primitives/rule.ts::rule`
+
+`rule(name, body)` in a `patches:` entry declares a real grammar rule `name`
+whose body is `body($)`, and replaces the patched path with a reference to
+it. It is how a patch introduces a rule the base grammar lacks (python's
+`comprehension_clauses`) without a hand-written `rules:` entry. The rule is
+visible or hidden as named, carries no `hoisted` annotation, and is not
+wrapped in the path's precedence; its body is built by the installed rule from
+that rule's own `$` (`declaredRuleFn`). The same name
+may be declared at several paths with an equal body; a name the grammar
+already has is refused at wire time (`injectPlaceholderHiddenRules`).
+
+### `packages/codegen/src/dsl/primitives/rule.ts::RulePlaceholder`
+
+The inert value `rule()` returns: a name and a body callback taking the
+grammar's `$`. Inside `transform()` it resolves to a reference
+(`resolveRulePlaceholder`); at wire time it installs the rule (`declaredRuleFn`).
+
+### `packages/codegen/src/dsl/primitives/rule.ts::isRulePlaceholder`
+
+Whether a patch value is a `rule()` placeholder.
+
 ### `packages/codegen/src/dsl/primitives/alias.ts::module`
 
 ```text
@@ -432,14 +454,14 @@ the grammar does not name it.
 
 ### `packages/codegen/src/dsl/primitives/variant.ts::variant`
 
-Builds the placeholder; `options.absent` is carried only when set.
+Builds the placeholder; `options.absent` and `options.default` are carried only when set. `default: true` names the arm the parent's own factory builds when given a bare value; it replaces any default the arms already carry (see `clearSiblingDefaults`).
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_SUPERTYPE`
 
 `_whitespace`, the hidden supertype every grammar declares (in `supertypes:`
 and as a rule) listing the whitespace kinds it renders: each member is a
 never-scanned external with a kind id, `tight` renders nothing, and a
-grammar may add its own — python's `_double_newline` leaves two blank
+grammar may add its own — python's `_double_blankline` leaves two blank
 lines. The model reads the arms of every spacing site from it
 (`whitespace-arms.ts`); nothing in codegen lists whitespace kinds by name.
 The supertype is protected from unreachable-rule pruning like any other.
@@ -556,6 +578,12 @@ address is `<slot>_separator` and its arm is a token kind name, checked
 against the list's literal separator kinds where separator sites are
 collected, not by the wire.
 
+### `packages/codegen/src/dsl/primitives/spacing.ts::VARIANT_LABEL`
+
+```text
+The address segment and label of a supertype's variant-choice options site.
+```
+
 ### `packages/codegen/src/dsl/primitives/spacing.ts::isSeparatorAddress`
 
 Whether a site address is a list's separator default (`<slot>_separator`).
@@ -593,3 +621,12 @@ keys, the render-rules seam detection, and the site collection.
  *  spelled that way. */
 ```
 
+### `packages/codegen/src/dsl/primitives/flatten.ts::flatten`
+
+Marks a position in a rule's patches as a visible wrapper flattened onto its parent: the wrapper stays a node of its own kind in the tree and on the surface, and the parent's config takes the wrapper's keys in its place. `splice()` is the only way a reference to a visible kind becomes a splice seat.
+
+### `packages/codegen/src/dsl/primitives/regex.ts::regex`
+
+```text
+A patch placeholder carrying a replacement regex source for the pattern at the patched path.
+```

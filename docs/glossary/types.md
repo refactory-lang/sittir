@@ -113,11 +113,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /**
  * The one symbol reference constructor: `{ type: SYMBOL, name, inline:
  * name.startsWith('_') }`. A reference never carries `hidden` — that fact
- * is rule-level only, stamped on top-level rules by evaluate's
- * `canonicalizeRawGrammar`, never on a SYMBOL. `inline` here is the
- * name's leading-underscore convention alone; `canonicalizeRawGrammar`
- * later corrects it for inline-array entries and supertype names, and
- * forces `inline:false` on a symbol wrapped by an alias. Used wherever a
+ * is rule-level only, stamped on top-level rules by link's
+ * `stampParserVisibility`, never on a SYMBOL. `inline` here is the
+ * name's leading-underscore convention alone; `stampParserVisibility`
+ * later restamps it from the parser catalog, the inline array and the
+ * supertype names, and forces `inline:false` on a symbol wrapped by an alias. Used wherever a
  * rule needs a plain reference built from a name rather than through the
  * DSL proxy: `createProxy`, `structuralBuilder.symbol`, pattern/external-ref
  * rewriting.
@@ -435,6 +435,26 @@ Whether a rule matches nothing, in either runtime's spelling: tree-sitter's
 admit the same input; it is stamped by `arm.default` and read once, by the from
 emitter.
 
+`arm` is the whitespace arm a `whitespaceChoice` member stands for, stamped
+as the member is built; `partOf` and `seamChoiceDefault` read it back rather
+than recover the arm from the member's symbol.
+
+`origin` names where a seam choice's resolved default arm came from, stamped by
+`render-rules.ts::whitespaceChoice` alongside `default: true`. It never selects
+an arm or changes a rendered value: it is read back by the template emitter's
+seam census (`render-rules.ts::originOfSeamChoice`) and by
+`render-options-rs.ts::seamStrength`, which turns it into the site's strength,
+how firmly the default holds against the mark meeting it at the same gap.
+It rides in `RuleAnnotations` because that is the existing channel a
+`whitespaceChoice` member already carries per-arm facts on, not because it is
+meant to influence rendering. Its type, `SeamOrigin` (`'preference'` |
+`'literal-default'` | `'word-default'` | `'cascade'` | `'fallback'`), is defined right above `RuleAnnotations` in
+this file — the lower layer, so `compiler/model/site-addresses.ts` and
+`compiler/model/render-rules.ts` both import it rather than each declaring
+their own copy (`site-addresses.ts`'s `PreferenceOrigin` is
+`Exclude<SeamOrigin, 'fallback' | 'word-default'>`, the subset `resolveBindings`
+itself ever produces).
+
 ```text
 /**
  * Declarative facts an author attached to a rule, carried through the phases
@@ -449,6 +469,11 @@ emitter.
  * was not declared for it.
  */
 ```
+
+`origin` admits `'cascade'` beside the declared origins and the fallback.
+`edgeLiterals` is set on a kind edge's whitespace choice only, naming the
+literal tokens the kind opens or closes with (a single token or every arm of
+a choice of tokens), so the edge can answer to their grammar-wide face.
 
 ### `packages/codegen/src/types/rule.ts::RuleBase`
 
@@ -477,15 +502,22 @@ emitter.
  */
 ```
 
+#### token interior
+
+```text
+`nonterminal` (a slot-promoted literal survives flatten) and `lexed` (a structured bare pattern) are carried at
+every phase from link on; both are set by the token-interior pass, not by the DSL.
+```
+
 ### `packages/codegen/src/types/rule.ts::inline`
 
 ```text
 /**
-	 * Per-ref inline decision. Stamped once, at evaluate, by
-	 * `canonicalizeRawGrammar` (compiler/evaluate.ts):
-	 * `inline = !supertype && (hidden || name in the grammar's inline array)`,
+	 * Per-ref inline decision. Stamped once, at link, by
+	 * `stampParserVisibility` (compiler/link.ts):
+	 * `inline = !boundary && (parser-hidden || name in the grammar's inline array)`,
 	 * with one override — a symbol wrapped by `structuralAlias`
-	 * (`dsl/builders.ts`) or found under an ALIAS by `canonicalizeRawGrammar` is
+	 * (`dsl/builders.ts`) or found under an ALIAS by `stampParserVisibility` is
 	 * forced `inline:false`, because an alias confers a real visible CST kind
 	 * that must materialize, not flatten. Link only ever CONSUMES this stamp
 	 * (`resolveSymbolRoleOrPass`, `canonicalizeRuleLiterals`'s SYMBOL/SUPERTYPE
@@ -499,8 +531,8 @@ emitter.
 ### `packages/codegen/src/types/rule.ts::hidden`
 
 ```text
-/** Grammar-hidden fact: `name.startsWith('_')` for every top-level rule,
- *  stamped once at evaluate (`canonicalizeRawGrammar`) and never
+/** Grammar-hidden fact: the parser's surface-hidden flag for every top-level
+ *  rule, stamped once at link (`stampParserVisibility`) and never
  *  re-derived from the name downstream — `dsl/rule-patterns.ts`'s
  *  `isHiddenRule(name, rules)` reads this stamp. A rule-level fact only:
  *  never stamped on a SYMBOL reference (`sym`'s constructed reference
@@ -511,9 +543,7 @@ emitter.
  *  the stamp describes the SOURCE kind, not the host; flatten's
  *  `withKindFacts` re-carries the PRE-flatten rule's own `hidden` onto its
  *  flattened root, so a rule's OWN fact survives flattening even though a
- *  spliced-in body's does not. Link's `unhideAliasedTargets` flips a
- *  rule's `hidden` to `false` when some named alias wraps it (the parser
- *  now emits it as its own node, not folded into the alias); link's
+ *  spliced-in body's does not. Link's
  *  `stampLinkMintedVisibility` back-fills `hidden` (from the name) on any
  *  rule link minted that has no raw-grammar counterpart. */
 ```
@@ -1114,11 +1144,11 @@ emitter produces it today; the `'error'` / `'warning'` vocabulary plus the
 
 ### `packages/codegen/src/types/parsekind-collisions.ts::ParseKindCollisionDiagnostic.severity`
 
-`diagnoseParseKindCollisions` always produces `'error'`, but the field is
-widened to the full `Severity` so a caller — `applyUnaliasDistinct` in
-`dsl/enrich.ts` — can DOWNGRADE the diagnostic when it auto-fixes the collision
-instead of merely reporting it. The shape is otherwise identical, so this stays
-one type rather than a second near-duplicate interface.
+`diagnoseParseKindCollisions` always produces `'error'`. The field is typed as the full `Severity` because it
+extends the base `Diagnostic` interface, not because any caller downgrades it — `diagnoseParseKindCollisions` has
+exactly one caller, the assemble-time resolution in `node-map.ts`, and its output reaches `GrammarDiagnostic` with
+`severity` forwarded verbatim. The shape is otherwise identical, so this stays one type rather than a second
+near-duplicate interface.
 
 ### Per-type discriminators (`packages/codegen/src/types/runtime-shapes.ts`)
 
@@ -1609,3 +1639,19 @@ narrowing guard.
 ```
 
 Any consumer downstream of the template emitter (e.g. the render-module emitter's writer-choice decision) can read this stamp as already-final without re-running `stampStaticSpacing` itself. That guarantee comes from `emit.ts`'s `emitAll`: every emitter's per-node dispatch (`dispatchNodeMapByTaxonomy`) completes, then `jinjaTemplates = templateEmitter.finalize()` is computed and passed as an explicit argument into `renderModuleEmitterInst.finalize(jinjaTemplates)` — plain sequential code order guarantees the template emitter's full lifecycle (including every `staticSeamBefore` write, whether from the dedicated `stampStaticSpacing` pass or a template walk's own in-pass stamping) is complete before render-module's `finalize` runs. The ordering is not a property of stamp-write timing alone; it depends on `emitAll` continuing to compute `jinjaTemplates` before calling `renderModuleEmitterInst.finalize`, so a reorder of those two calls would need to re-establish it.
+
+### `packages/codegen/src/types/runtime-shapes.ts::compileAnchoredPattern`
+
+The one place a grammar pattern becomes a JavaScript regex: anchored, tried with the `u` flag and then without, returning the regex or the compile error for the caller to report. The leaf guards (`anchoredLeafRegex`) and the emptiness check share it.
+
+### `packages/codegen/src/types/runtime-shapes.ts::patternAcceptsEmpty`
+
+Whether a pattern's anchored regex matches the empty string; a pattern that does not compile does not. `matchesEmpty` asks it for `PATTERN` rules, so every emptiness question about a rule (arm scaffolding, token forms) sees `[a-z]*` as empty.
+
+### `packages/codegen/src/types/rule.ts::aliasTargetOf`
+
+The display name a ref carries (`aliasedTo`), or `undefined` when it has none.
+
+### `packages/codegen/src/types/rule.ts::storageNameOf`
+
+The ref's own storage identity: the rule, or literal symbol, that parsed it.

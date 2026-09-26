@@ -33,6 +33,12 @@
 			"source": "./src/run-codegen.ts",
 			"import": "./dist/run-codegen.js",
 			"default": "./dist/run-codegen.js"
+		},
+		"./grammars": {
+			"types": "./src/grammars.ts",
+			"source": "./src/grammars.ts",
+			"import": "./dist/grammars.js",
+			"default": "./dist/grammars.js"
 		}
 	},
 	"scripts": {

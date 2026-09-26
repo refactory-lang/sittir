@@ -1,14 +1,12 @@
 import { ir } from '@sittir/python';
 
-// The strict half of the python dogfood: the same items through `.strict`
-// alone, so each gap is attributed to the layer that owns it.
+// The strict python dogfood: rebuilds `packages/tools/scripts/probe-sweep.py`
+// through `.strict` alone, so each gap is attributed to the layer that owns it.
 //
 // What rebuilds here is the file's skeleton: real `import` statements, a
 // `def main()` carrying an indented suite, and a module holding them. The
 // suite holds one call statement; the real function bodies and the helper
-// functions are not written. The coercion half renders the imports as
-// comments and the module as a single call line; none of that is a surface
-// limit.
+// functions are not written.
 //
 // Two spellings carry most of the difficulty, because getting either wrong
 // reads as a missing feature rather than a wrong call:
@@ -34,15 +32,15 @@ const id = (text: string) => ir.identifier(text);
 /** The shebang and module docstring, which the reader carries as comments. */
 export function headerStrict() {
 	return [
-		ir.synonym.comment('#!/usr/bin/env python3'),
-		ir.synonym.comment('# """Cross-tree probe-kind sweep for regression diffing."""'),
+		ir.synonym.comment('!/usr/bin/env python3'),
+		ir.synonym.comment(' """Cross-tree probe-kind sweep for regression diffing."""'),
 	];
 }
 
 /** `import argparse`, `import difflib`, … — one statement per module. */
 export function importsStrict() {
 	return ['argparse', 'difflib', 'json', 'os', 're', 'subprocess', 'sys'].map((name) =>
-		ir.simpleStatements.strict(ir.importStatement.strict(ir.dottedName.strict(id(name))))
+		ir.simpleStatements.strict(ir.importStatement.strict(ir.importList.strict(ir.dottedName.strict(id(name)))))
 	);
 }
 
@@ -55,15 +53,15 @@ export function callStatementStrict() {
 
 /** `def main():` with an indented suite. */
 export function mainDefStrict() {
-	return ir.functionDefinition.block.strict({
+	return ir.functionDefinition.strict({
 		name: id('main'),
 		parameters: ir.parameters.strict(),
-		body: [callStatementStrict()],
+		body: ir.suite.block.strict(callStatementStrict()),
 	});
 }
 
 export function rebuildProbeSweepStrict() {
 	return ir.module
 		.strict(...importsStrict(), mainDefStrict(), callStatementStrict())
-		.$trivia({ leading: headerStrict() });
+		.$trivia.leading(...headerStrict());
 }

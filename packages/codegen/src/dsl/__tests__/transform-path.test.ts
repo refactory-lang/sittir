@@ -1,10 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { parsePath, applyPath } from '../transform/transform-path.ts';
-import { transform } from '../transform/transform.ts';
+import { transform as transformRule } from '../transform/transform.ts';
+import { withWireContext } from '../wire/wire.ts';
 import type { Rule } from '../../types/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { makeRuleMetadata, readRuleMetadata } from '../rule-metadata.ts';
 import { field } from '../primitives/field.ts';
+
+const transform: typeof transformRule = (rule, patches) => withWireContext(null, () => transformRule(rule, patches)).result;
 
 // Helpers return `any` so tests can mix them freely with the
 // transform path-helpers, which operate on the `RuntimeRule` supertype

@@ -73,6 +73,24 @@ describe('mergeBranchesForChoice — same-shape branches (wrapper-free input)', 
 		expect((result as { members: Rule[] }).members).toHaveLength(2);
 	});
 
+	it('does NOT merge when two positions each vary while remaining individually mergeable', () => {
+		// Each position is a bare `expr` symbol at both arms — same type,
+		// same name, so `positionsAreMergeable` accepts each position on
+		// its own (it doesn't look at the field name). Only the field name
+		// differs per arm, and it differs at TWO positions in a correlated
+		// pairing: arm one names them 'left'/'right', arm two 'lhs'/'rhs'.
+		// Merging position-by-position would re-pair field names across
+		// arms ('left' with 'rhs', 'lhs' with 'right') that never occur
+		// together in the grammar.
+		const input = choice(
+			seq(fieldAttrs('left', sym('expr')), fieldAttrs('right', sym('expr'))),
+			seq(fieldAttrs('lhs', sym('expr')), fieldAttrs('rhs', sym('expr')))
+		) as ChoiceRule;
+		const result = mergeBranchesForChoice(input);
+		expect(result.type).toBe('CHOICE');
+		expect((result as { members: Rule[] }).members).toHaveLength(2);
+	});
+
 	it('does NOT merge when branches differ in MEMBER KIND at a position', () => {
 		const input = choice(seq(fieldAttrs('op', str('='))), seq(sym('assignment_expression'))) as ChoiceRule;
 		const result = mergeBranchesForChoice(input);

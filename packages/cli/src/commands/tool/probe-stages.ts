@@ -1,6 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
-import { probeStages as runProbeStages } from '@sittir/tools';
 
 export const probeStages: CommandModule = {
 	name: 'probe-stages',
@@ -21,6 +20,7 @@ export const probeStages: CommandModule = {
 					skipEmit?: boolean;
 					brief?: boolean;
 				}) => {
+					const { probeStages: runProbeStages } = await import('@sittir/tools');
 					// Commander stores `--no-overrides` under the positive key
 					// (opts.overrides === false when the flag is passed).
 					const code = await runProbeStages({

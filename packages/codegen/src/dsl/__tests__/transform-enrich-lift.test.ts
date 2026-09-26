@@ -24,7 +24,7 @@ describe('resolvePatch — ALIAS + enrich-lift', () => {
 				const g = globalThis as any;
 				const aliasMember = {
 					type: 'ALIAS',
-					content: { type: 'SYMBOL', name: '_lift1', metadata: { author: 'enrich' } },
+					content: { type: 'SYMBOL', name: '_lift1', metadata: { symbolSource: 'group-lift' } },
 					named: true,
 					value: '_lift1'
 				};
@@ -42,6 +42,26 @@ describe('resolvePatch — ALIAS + enrich-lift', () => {
 		}
 	});
 
+	it('renames the minted arms of a token-form choice when variant() names its top-level arms', () => {
+		const line = { type: 'TOKEN', content: { type: 'SEQ', members: [{ type: 'STRING', value: '//' }, { type: 'PATTERN', value: '.*' }] } } as any;
+		const block = { type: 'TOKEN', content: { type: 'SEQ', members: [{ type: 'STRING', value: '/*' }, { type: 'STRING', value: '*/' }] } } as any;
+		const bodies: Record<string, any> = { comment_arm1: line, comment_arm2: block };
+		setGroupLiftRuleMap({ get: (n: string) => bodies[n], set: () => {} });
+		try {
+			const { result: patched, ctx } = withWireContext('comment', () => {
+				const lift = (name: string) => ({ type: 'SYMBOL', name, metadata: { symbolSource: 'group-lift' } });
+				const original = { type: 'CHOICE', members: [lift('comment_arm1'), lift('comment_arm2')] } as any;
+				return transform(original, { 0: variant('line'), 1: variant('block') }) as any;
+			});
+			expect(ctx.symbolRenames.get('comment_arm1')).toBe('comment_line');
+			expect(ctx.symbolRenames.get('comment_arm2')).toBe('comment_block');
+			expect(ctx.deposits.get('comment_line')).toMatchObject({ type: 'TOKEN' });
+			expect(patched.members.map((m: any) => m.name)).toEqual(['comment_line', 'comment_block']);
+		} finally {
+			setGroupLiftRuleMap(undefined);
+		}
+	});
+
 	it('alias() re-homes a bare symbol reference to an authored rule without minting a synthetic deposit', () => {
 		const { result: patched, ctx } = withWireContext('rehome', () => {
 			const original = { type: 'SYMBOL', name: 'authored_rule' } as any;
@@ -52,6 +72,18 @@ describe('resolvePatch — ALIAS + enrich-lift', () => {
 		expect(patched.named).toBe(true);
 		expect(patched.value).toBe('public_name');
 		expect(patched.content).toEqual({ type: 'SYMBOL', name: 'authored_rule' });
+		expect(ctx.deposits.size).toBe(0);
+	});
+
+	it('alias() over a field enrich inferred aliases the symbol in place, dropping the field and minting nothing', () => {
+		const { result: patched, ctx } = withWireContext('extends_clause', () => {
+			const g = globalThis as any;
+			const inferred = { type: 'FIELD', name: 'extends_clause_single', content: { type: 'SYMBOL', name: '_extends_clause_single' }, metadata: { fieldSource: 'enriched' } };
+			return transform(g.seq({ type: 'STRING', value: 'extends' }, inferred), { 1: alias('extends_clause_single') } as any) as any;
+		});
+
+		expect(patched.members[1]).toEqual({ type: 'ALIAS', named: true, value: 'extends_clause_single', content: { type: 'SYMBOL', name: '_extends_clause_single' } });
+		expect(ctx.deposits.has('_extends_clause_single')).toBe(false);
 		expect(ctx.deposits.size).toBe(0);
 	});
 });

@@ -3,7 +3,7 @@ import { Delimiter, ir, TSKindId } from '@sittir/rust';
 // Rebuilds rust/crates/sittir-core/src/splice.rs through the FACTORY surface
 // alone — every node is spelled with `.strict` or a namespaced form, never a
 // loose config — so a coercion failure is never mistaken for a factory one.
-// `17-dogfood-rust.ts` rebuilds the same items through the coercion surface.
+// `17-dogfood-rust-loose.generated.ts` is the same target through the loose surface.
 //
 // Every gap marker names the layer that fails:
 //   (exposure) the factory builds the shape correctly, but no public
@@ -26,11 +26,12 @@ import { Delimiter, ir, TSKindId } from '@sittir/rust';
 // Open issues on this surface: docs/factory-surface-issues.md
 
 const id = (text: string) => ir.identifier(text);
+const tok = (content: Parameters<typeof ir.nonSpecialToken.strict>[0]) => ir.nonSpecialToken.strict(content);
 const ns = (path: string, name: string) => ir.scopedIdentifier.strict({ path: id(path), name: id(name) });
 const scopedTy = (path: Parameters<typeof ir.scopedTypeIdentifier.strict>[0]['path'], name: string) =>
 	ir.scopedTypeIdentifier.strict({ path, name: id(name) });
 const str = (text: string) =>
-	ir.stringLiteral.strict({ stringOpen: ir.stringLiteralOpen('"'), elements: [ir.stringContent(text)] });
+	ir.stringLiteral.strict({ stringOpen: ir.stringOpen('"'), elements: [ir.stringContent(text)] });
 
 /** `use crate::types::Edit;` */
 export function useEditStrict() {
@@ -52,13 +53,13 @@ export function deriveStrict() {
 		ir.attribute.input.strict({
 			path: id('derive'),
 			arguments: ir.delimTokenTree.paren.strict(
-				id('Debug'),
-				TSKindId.Comma,
-				id('Clone'),
-				TSKindId.Comma,
-				id('PartialEq'),
-				TSKindId.Comma,
-				id('Eq'),
+				tok(id('Debug')),
+				tok(TSKindId.Comma),
+				tok(id('Clone')),
+				tok(TSKindId.Comma),
+				tok(id('PartialEq')),
+				tok(TSKindId.Comma),
+				tok(id('Eq')),
 			),
 		})
 	);
@@ -115,13 +116,13 @@ function armPattern(variant: string, [first, second]: readonly [string, string])
 function writeCall(format: string) {
 	return ir.macroInvocation.strict({
 		macro: id('write'),
-		arguments: ir.delimTokenTree.paren.strict(id('f'), TSKindId.Comma, str(format)),
+		arguments: ir.delimTokenTree.paren.strict(tok(id('f')), tok(TSKindId.Comma), tok(str(format))),
 	});
 }
 
 export function displayImplStrict() {
 	return ir.statement.impl.body.positiveClause.strict({
-		traitClause: [scopedTy(ns('std', 'fmt'), 'Display')],
+		traitClause: scopedTy(ns('std', 'fmt'), 'Display'),
 		type: id('SpliceError'),
 		declarationList: ir.declarationList.strict(
 				ir.statement.function.strict({
@@ -171,7 +172,7 @@ export function displayImplStrict() {
 /** `impl std::error::Error for SpliceError {}` */
 export function errorImplStrict() {
 	return ir.statement.impl.body.positiveClause.strict({
-		traitClause: [scopedTy(ns('std', 'error'), 'Error')],
+		traitClause: scopedTy(ns('std', 'error'), 'Error'),
 		type: id('SpliceError'),
 		declarationList: ir.declarationList.strict(),
 	});

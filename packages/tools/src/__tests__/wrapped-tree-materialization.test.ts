@@ -3,13 +3,8 @@ import { fileURLToPath } from 'node:url';
 import ts from 'typescript6';
 import { describe, expect, it } from 'vitest';
 import type { TreeHandle } from '@sittir/common';
-import {
-	AssembledBranch,
-	AssembledNonterminal,
-	AssembledPattern,
-	type AssembledNode
-} from '../../../codegen/src/compiler/model/node-map.ts';
-import type { RenderRule, SeqRule, SimplifiedRule } from '../../../codegen/src/types/rule.ts';
+import { AssembledBranch, AssembledPattern, type AssembledNode } from '../../../codegen/src/compiler/model/node-map.ts';
+import type { RenderRule, SimplifiedRule } from '../../../codegen/src/types/rule.ts';
 import { emitWrap } from '../../../codegen/src/__tests__/helpers/emit-wrap.ts';
 import { verifyManifestForGrammar } from '../../../codegen/src/scripts/generated-manifest.ts';
 import {
@@ -74,63 +69,6 @@ async function loadFreshWrapWitnessModule(): Promise<{
 	}).outputText;
 	return (await import(`data:text/javascript,${encodeURIComponent(transpiled)}`)) as {
 		wrapListSplat: (node: unknown, tree: TreeHandle) => unknown;
-	};
-}
-
-async function loadAliasRoutingWrapWitnessModule(): Promise<{
-	wrapAliasHolder: (
-		node: unknown,
-		tree: TreeHandle
-	) => {
-		identifier: () => { $type: string };
-	};
-}> {
-	const rule: SeqRule = {
-		type: SEQ,
-		members: [{ type: SYMBOL, name: 'identifier' }]
-	};
-	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'alias_holder',
-		new AssembledBranch('alias_holder', rule, rule, {
-			slots: Object.freeze([
-				new AssembledNonterminal({
-					values: [
-						{
-							node: { kind: 'unresolved-ref', name: 'identifier' },
-							parseKind: { kind: 'unresolved-ref', name: 'decorator' },
-							multiplicity: 'single'
-						}
-					],
-					hasTrailingDelimiter: false,
-					hasLeadingDelimiter: false,
-					sourceRuleIds: []
-				})
-			])
-		}) as AssembledNode
-	);
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	const source = emitWrap({ grammar: 'synth', nodeMap: makeNodeMapWith(nodes) });
-	const stubbedSource = [
-		'const readNodeJs = () => { throw new Error("unused"); };',
-		'const withMethods = (node) => node;',
-		'const methodsEngine = {};',
-		'const _factories = new Proxy({}, { get: () => () => { throw new Error("unused"); } });',
-		source.replace(/^import .*;\n/gm, '')
-	].join('\n');
-	const transpiled = ts.transpileModule(stubbedSource, {
-		compilerOptions: {
-			module: ts.ModuleKind.ESNext,
-			target: ts.ScriptTarget.ES2020
-		}
-	}).outputText;
-	return (await import(`data:text/javascript,${encodeURIComponent(transpiled)}`)) as {
-		wrapAliasHolder: (
-			node: unknown,
-			tree: TreeHandle
-		) => {
-			identifier: () => { $type: string };
-		};
 	};
 }
 
@@ -401,26 +339,5 @@ describe('wrapped tree materialization', () => {
 		expect((thrown as Error).message).toBe(
 			'singular slot "value" on "list_splat" received 2 values; got array(len=2, items=[node($type="identifier", $text="*"), node($type="identifier", $text="f")])'
 		);
-	});
-
-	it('routes unnamed alias slots from parseKind storage without slot alias maps', async () => {
-		const { wrapAliasHolder } = await loadAliasRoutingWrapWitnessModule();
-		const wrapped = wrapAliasHolder(
-			{
-				$type: 'alias_holder',
-				_decorator: { $type: 'decorator', $text: '@dec' }
-			},
-			{
-				get rootNode(): never {
-					throw new Error('unused');
-				}
-			} satisfies TreeHandle
-		);
-
-		// Routing is the live contract: the accessor finds the value under its
-		// parse-derived wire key. Identity is the wire's job — the read stamps
-		// the grammar symbol as `$type`, and the wrap performs no restamp, so a
-		// value arriving under a display spelling passes through unchanged.
-		expect(wrapped.identifier().$type).toBe('decorator');
 	});
 });

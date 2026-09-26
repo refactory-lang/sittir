@@ -27,28 +27,13 @@ import {
 	collectKinds,
 	emitValidatorMetrics,
 	getChildFactoryArgs,
+	importGrammarModule,
 	nodeToConfig,
 	loadNodeModel,
-	type TSTree
+	type TSNode,
+	type TSTree,
+	type ValidatorSkip
 } from './common.ts';
-
-const FROM_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/factories/coerce.ts',
-	typescript: '../../../typescript/src/factories/coerce.ts',
-	python: '../../../python/src/factories/coerce.ts'
-};
-
-const FACTORY_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/factories/raw.ts',
-	typescript: '../../../typescript/src/factories/raw.ts',
-	python: '../../../python/src/factories/raw.ts'
-};
-
-const WRAP_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/wrap.ts',
-	typescript: '../../../typescript/src/wrap.ts',
-	python: '../../../python/src/wrap.ts'
-};
 
 // ---------------------------------------------------------------------------
 // Structural analysis
@@ -184,6 +169,19 @@ export interface FromValidationResult {
 	undefinedCount: number;
 	divergentCount: number;
 	errors: FromValidationError[];
+	skips: ValidatorSkip[];
+	excluded: ValidatorSkip[];
+	trivia: ValidatorSkip[];
+}
+
+async function importGenerated(grammar: string, file: string): Promise<Record<string, any>> {
+	const mod = await importGrammarModule(grammar, file);
+	if (mod === undefined) throw new Error(`grammar '${grammar}' has no generated src/${file}`);
+	return mod;
+}
+
+function insideExtra(node: TSNode | null): boolean {
+	return node !== null && (node.isExtra || insideExtra(node.parent));
 }
 
 export async function validateFrom(grammar: string, backend?: 'native' | 'js'): Promise<FromValidationResult> {
@@ -225,7 +223,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let wrapNode: ((data: AnyNodeData, tree: unknown) => unknown) | undefined;
 	const errors: FromValidationError[] = [];
 	try {
-		const fromModule = await import(new URL(FROM_MODULE_PATHS[grammar]!, import.meta.url).pathname);
+		const fromModule = await importGenerated(grammar, 'factories/coerce.ts');
 		fromMap = fromModule._fromMap ?? {};
 	} catch (e) {
 		errors.push({
@@ -235,7 +233,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		});
 	}
 	try {
-		const factoryModule = await import(new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname);
+		const factoryModule = await importGenerated(grammar, 'factories/raw.ts');
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata (shapes, field-alias, factoryFields,
 		// factorySlots) lives in node-model.json5.
@@ -252,7 +250,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		});
 	}
 	try {
-		const wrapModule = await import(new URL(WRAP_MODULE_PATHS[grammar]!, import.meta.url).pathname);
+		const wrapModule = await importGenerated(grammar, 'wrap.ts');
 		readTreeNode = wrapModule.readTreeNode;
 		wrapNode = wrapModule.wrapNode;
 	} catch {
@@ -272,30 +270,52 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 			skip: 0,
 			undefinedCount: 0,
 			divergentCount: 0,
-			errors
+			errors,
+			skips: [],
+			excluded: [],
+			trivia: []
 		};
 	}
 
 	const entries = loadCorpusEntries(grammar);
 	const testedKinds = new Set<string>();
 	let pass = 0;
-	let skip = 0;
 	let total = 0;
+	const skips: ValidatorSkip[] = [];
+	const excluded: ValidatorSkip[] = [];
+	const orphanedExtras = new Map<string, ValidatorSkip>();
+	const excludedKinds = new Set<string>();
 	let undefinedCount = 0;
 	let divergentCount = 0;
 
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;
-		if (tree1.rootNode.hasError) continue;
+		if (tree1.rootNode.hasError) {
+			excluded.push({ entry: entry.name, reason: 'parse-error', input: entry.source });
+			continue;
+		}
 
 		for (const kind of collectKinds(tree1.rootNode)) {
-			if (!(kind in fromMap) || !(kind in factoryMap)) continue;
+			if (!(kind in fromMap) || !(kind in factoryMap)) {
+				if (!excludedKinds.has(kind)) {
+					excludedKinds.add(kind);
+					excluded.push({
+						entry: entry.name,
+						kind,
+						reason: !(kind in fromMap) ? 'no-from-function' : 'no-factory-function'
+					});
+				}
+				continue;
+			}
 			if (testedKinds.has(kind)) continue;
 			testedKinds.add(kind);
 			total++;
 
 			const node1 = findFirst(tree1.rootNode, kind);
-			if (!node1) continue;
+			if (!node1) {
+				errors.push({ kind, severity: 'error', message: `no node of kind '${kind}' found in entry '${entry.name}'` });
+				continue;
+			}
 
 			let readData: AnyNodeData;
 			try {
@@ -337,6 +357,18 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 								message: `leaf text route throws: ${(e as Error).message}`
 							});
 						}
+						continue;
+					}
+					if (insideExtra(node1)) {
+						total--;
+						testedKinds.delete(kind);
+						if (!orphanedExtras.has(kind))
+							orphanedExtras.set(kind, {
+								entry: entry.name,
+								kind,
+								reason: 'native-read-dropped-extra',
+								input: entry.source
+							});
 						continue;
 					}
 					errors.push({
@@ -474,7 +506,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						severity: 'error',
 						message: `factory build throws: ${(e as Error).message}`
 					});
-					skip++;
+					skips.push({ entry: entry.name, kind, reason: 'factory-build-throws' });
 					continue;
 				}
 
@@ -529,16 +561,20 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		}
 	}
 
+	const trivia = [...orphanedExtras.values()].filter((s) => !testedKinds.has(s.kind!));
 	emitValidatorMetrics();
 	return {
 		grammar,
 		total,
 		pass,
-		fail: total - pass - skip,
-		skip,
+		fail: total - pass - skips.length,
+		skip: skips.length,
 		undefinedCount,
 		divergentCount,
-		errors
+		errors,
+		skips,
+		excluded,
+		trivia
 	};
 }
 
@@ -546,7 +582,7 @@ export function formatFromReport(result: FromValidationResult): string {
 	const lines: string[] = [];
 	const icon = result.fail === 0 ? 'v' : 'x';
 	lines.push(
-		`  ${icon} ${result.pass}/${result.total} from() correctness (${result.undefinedCount} undefined, ${result.divergentCount} divergent, ${result.skip} skipped)`
+		`  ${icon} ${result.pass}/${result.total} from() correctness (${result.undefinedCount} undefined, ${result.divergentCount} divergent, ${result.skip} skipped, ${result.trivia.length} trivia)`
 	);
 	if (result.errors.length > 0) {
 		for (const e of result.errors) {

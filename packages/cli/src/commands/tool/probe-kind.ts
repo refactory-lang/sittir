@@ -1,6 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
-import { probeKind as runProbeKind } from '@sittir/tools';
 
 export const probeKind: CommandModule = {
 	name: 'probe-kind',
@@ -49,6 +48,7 @@ export const probeKind: CommandModule = {
 					full?: boolean;
 					shipped?: boolean;
 				}) => {
+					const { probeKind: runProbeKind } = await import('@sittir/tools');
 					// Commander stores `--no-render`/`--no-wrap` under the positive
 					// key (opts.render/opts.wrap === false when the flag is passed).
 					const code = await runProbeKind({

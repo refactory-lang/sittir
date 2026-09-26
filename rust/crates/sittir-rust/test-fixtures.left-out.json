@@ -1,20 +1,8 @@
 {
-  "arguments": 2,
-  "attribute_item": 6,
-  "block": 3,
-  "call_expression": 3,
-  "delim_token_tree_paren": 15,
-  "enum_item": 1,
-  "function_item": 3,
   "if_expression": 1,
-  "impl_item_body": 1,
-  "inner_attribute_item": 1,
-  "macro_definition_brace": 3,
-  "macro_invocation": 7,
-  "match_expression": 1,
-  "source_file": 14,
+  "let_declaration": 1,
+  "source_file": 5,
   "struct_expression": 1,
-  "struct_item_brace": 6,
-  "token_tree": 6,
+  "struct_item_tuple": 1,
   "use_declaration": 2
 }

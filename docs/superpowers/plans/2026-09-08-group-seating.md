@@ -889,3 +889,25 @@ git commit --no-verify -q -m "feat(emit): the factory source emitter prints arm,
   - a nested arm inside a spliced group has no spelling (python `except a, b:`); `projectSeatedSlot` throws rather than print a wrong call, which is the one `ir-render-parse` error.
   - a mount route does not carry the parent's splice: `ir.exceptClause.block.strict({ content, suite })` silently drops `content`.
   - an unseated multiple hoisted kind prints its arguments bare inside an object literal (`fields: a, b,`), a syntax error that is the whole of the rust rebuild ceiling and masks anything after it in that file.
+
+### Open: a patch on a hoisted mint un-hoists it
+
+**Defect.** `reconstructContainer` (`packages/codegen/src/dsl/transform/transform-path.ts`) rebuilds a patched SEQ or CHOICE with the native `seq()` / `choice()` and drops the container's own properties (`annotations`, `metadata`). `reconstructWrapper` beside it already keeps them through `carryOverProperties`. Every patch path goes through it: `applyToMembers`, `applyToIndexedMember`, `applyWildcardToMembers`, `walkKindMatch`, `applyFlatPatches`, `applyFlatPatchesToSeq`, and the variant hoist / rewritten choice in `buildHoistedVariants`. So a patch on any member of a hoisted mint silently clears `hoisted`, and a rebuilt choice loses the automatic `variantOf` labels on its arms. Today's output depends on that erasure.
+
+**Fix.** One line: `reconstructContainer` returns `carryOverProperties(rule, nativeRequired('seq' | 'choice')(...members))`. The fix, a unit test (`group-annotation.test.ts`: a flat and a path `field()` patch on a hoisted seq keep `hoisted`), and the typescript `import_clause_group: { 1: field('bindings') }` patch that exposed it are saved in `2026-09-08-group-seating-reconstruct-container.patch` next to this plan.
+
+**Work list: the mints that regain `hoisted` with the fix** (grammar.json rule-level diff):
+- typescript: `import_clause_group` (with the patch), `export_statement_arm2`, `export_statement_arm4`, `export_statement_default`, `export_statement_namespace_export`, `export_statement_type_export`, `export_statement_equals_export`, `class_body_arm1`, `class_body_arm2`, `_index_signature_optional1`
+- rust: `range_pattern_arm2`, `use_wildcard_group`, `visibility_modifier_group`, `visibility_modifier_arm`, `array_expression_arm`, `array_expression_semi` (member 2), `or_pattern_prefix`, `range_expression_binary`, `range_expression_postfix`, `range_expression_prefix`
+- python: `except_clause_arm`, `_parenthesized_import_list`
+
+**Automatic `variantOf` labels that survive with the fix:** rust `_let_chain` (four seq arms), typescript `public_field_definition` (two seq arms).
+
+**Measured fallout with the fix** (validate, against the rows at the time):
+- typescript read-render-parse 112/114 → 98/114, all from `render: unknown kind id 421 in StatementTransport on … ProgramTransport._statements` (the `export_statement` mints now seated); ir-render-parse 951/952 → 949/950.
+- rust ir-render-parse 1170/1170 → 1168/1169: `Use declarations (use_wildcard)`, `root._use_wildcard_group._path: shape mismatch (node vs scalar)`.
+- python ir-render-parse 1241/1241 → 1239/1239 (two rows fewer, no failure).
+
+**Landed without `hoisted`.** `reconstructContainer` now carries over every container property except `hoisted`, which `withoutHoisted` removes first. The automatic `variantOf` labels and container `metadata` survive a patch, with no node-model, ir or row move. The remaining step is to lift the `withoutHoisted` exclusion together with the seating work that makes the mints above seat correctly; the rows above are its gate.
+
+A patch written through the parent does not avoid the rebuild. Typescript `import_clause: { '2/1/0/1': field('bindings') }` walks through the group lift (`descendThroughGroupLiftSymbol` runs `applyPath` on the mint's body), which rebuilds `import_clause_group`'s seq through `applyToMembers` → `reconstructContainer`, so the mint gains `fields.bindings` in node-types but still loses `hoisted`.

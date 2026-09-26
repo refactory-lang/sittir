@@ -1,8 +1,8 @@
-import { createRequire } from 'node:module';
 import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { parseSCMQuery, parseInheritsDirective } from './parse.ts';
 import type { SCMCapture } from './parse.ts';
+import { grammarRequire, upstreamPackage } from '../grammars.ts';
 
 export type Role =
 	| 'root'
@@ -88,11 +88,9 @@ const CAPTURE_TO_ROLE: readonly CaptureRoleMapping[] = [
 	{ captureBase: 'reference.call', role: 'reference.call', source: 'tags' }
 ];
 
-const _require = createRequire(import.meta.url);
-
 function resolveGrammarRoot(grammarName: string): string | undefined {
 	try {
-		const pkgPath = _require.resolve(`tree-sitter-${grammarName}/package.json`);
+		const pkgPath = grammarRequire(grammarName).resolve(`${upstreamPackage(grammarName)}/package.json`);
 		return dirname(pkgPath);
 	} catch {
 		return undefined;

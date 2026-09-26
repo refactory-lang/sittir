@@ -45,6 +45,25 @@ describe('argumentOptional', () => {
 		expect(forwarder.argumentOptional(ctxWith(new Map()))).toBe(false);
 	});
 
+	it('an optional sibling slot does not block the one required slot from forwarding (rust async_block)', () => {
+		// async_block: moveMarker (optional keyword presence) + body (required,
+		// forwards to a target that is itself argument-optional). `soleSlot`
+		// (exactly one slot total) would miss this — there are two slots here.
+		const target = branch('block', []);
+		const bodyRef: NodeOrTerminal = { node: target, storageKindId: 7, multiplicity: 'single' };
+		const moveMarkerValue: NodeOrTerminal = { value: 'move', multiplicity: 'optional' };
+		const node = branch('async_block', [slot([moveMarkerValue]), slot([bodyRef])]);
+		expect(node.argumentOptional(ctxWith(new Map([[7, target]])))).toBe(true);
+	});
+
+	it('is false when more than one slot is required, even if one of them would forward', () => {
+		const target = branch('block', []);
+		const bodyRef: NodeOrTerminal = { node: target, storageKindId: 8, multiplicity: 'single' };
+		const otherRequired: NodeOrTerminal = { value: 'x', multiplicity: 'single' };
+		const node = branch('two_required', [slot([otherRequired]), slot([bodyRef])]);
+		expect(node.argumentOptional(ctxWith(new Map([[8, target]])))).toBe(false);
+	});
+
 	it('breaks a two-kind forwarding cycle via the seen set instead of recursing forever', () => {
 		const requiredValue: NodeOrTerminal = { value: 'x', multiplicity: 'single' };
 		const a = branch('a', [slot([requiredValue])]);

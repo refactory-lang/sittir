@@ -1,5 +1,4 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
-import { runCountsCli } from '@sittir/tools';
 import { Option } from 'commander';
 
 export const counts: CommandModule = {
@@ -20,6 +19,7 @@ export const counts: CommandModule = {
 					.default(false)
 			)
 			.action(async (grammars: string[], opts: { isolate: boolean; _isolateWorker: boolean }) => {
+				const { runCountsCli } = await import('@sittir/tools');
 				await runCountsCli(grammars, 'native', { isolate: opts.isolate, isolateWorker: opts._isolateWorker });
 			});
 	}

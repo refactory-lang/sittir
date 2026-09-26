@@ -8,15 +8,7 @@
 
 import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 
-type Grammar = 'rust' | 'typescript' | 'python';
-
-const ALL_GRAMMARS: readonly Grammar[] = ['rust', 'typescript', 'python'];
-
-function resolveGrammars(args: readonly string[]): Grammar[] {
-	const valid = args.filter((arg): arg is Grammar => ALL_GRAMMARS.includes(arg as Grammar));
-	return valid.length > 0 ? valid : [...ALL_GRAMMARS];
-}
-
+import { resolveGrammars } from '../commands.ts';
 for (const grammar of resolveGrammars(process.argv.slice(2))) {
 	const result = await validateFactoryRenderParse(grammar, 'native');
 	console.log(

@@ -8,18 +8,19 @@
  *   - profile-recursive-ast.ts (AST mismatch detail alongside bucket counts)
  *
  * Usage:
- *   profile-factory [--grammar rust|typescript|python] [--ast]
+ *   profile-factory [--grammar <name>] [--ast]
  *
  * Options:
- *   --grammar    one grammar only (default: all three)
+ *   --grammar    one grammar only (default: all stable grammars)
  *   --ast        include AST-mismatch breakdown alongside reparse errors
  */
+
+import { assertGrammar, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 
 // ---------------------------------------------------------------------------
 // Local type mirrors — keeps compile-time safety without TS6307 static imports
 // ---------------------------------------------------------------------------
 
-type Grammar = 'rust' | 'typescript' | 'python';
 
 interface FactoryError {
 	kind: string;
@@ -52,7 +53,7 @@ const VALIDATOR_PATHS: Record<string, string> = {
 };
 
 interface ValidatorModules {
-	runFactory: (grammar: Grammar, backend?: string) => Promise<FactoryRenderParseResult>;
+	runFactory: (grammar: GrammarName, backend?: string) => Promise<FactoryRenderParseResult>;
 }
 
 async function loadValidatorModules(): Promise<ValidatorModules> {
@@ -60,7 +61,6 @@ async function loadValidatorModules(): Promise<ValidatorModules> {
 	return { runFactory: mod.runFactory };
 }
 
-const ALL_GRAMMARS: readonly Grammar[] = ['rust', 'typescript', 'python'];
 
 export interface ProfileFactoryOptions {
 	grammar?: string;
@@ -88,7 +88,7 @@ function classifyMessage(msg: string): string {
 // ---------------------------------------------------------------------------
 
 /** Run factory-render-parse for one grammar. */
-async function runFactoryOnce(grammar: Grammar): Promise<FactoryRenderParseResult> {
+async function runFactoryOnce(grammar: GrammarName): Promise<FactoryRenderParseResult> {
 	const { runFactory } = await loadValidatorModules();
 	return await runFactory(grammar, 'native');
 }
@@ -137,7 +137,7 @@ function reportGrammar(result: FactoryRenderParseResult, showAst: boolean): void
 // ---------------------------------------------------------------------------
 
 export async function run(opts: ProfileFactoryOptions): Promise<number> {
-	const grammars: readonly Grammar[] = opts.grammar ? [opts.grammar as Grammar] : ALL_GRAMMARS;
+	const grammars: readonly GrammarName[] = opts.grammar ? [assertGrammar(opts.grammar)] : stableGrammars();
 	const { showAst } = opts;
 
 	for (const g of grammars) {

@@ -20,6 +20,7 @@ fn wire(s: &str) -> serde_json::Value {
 fn sample_leaf() -> NodeData {
     NodeData {
         type_: K_IDENTIFIER,
+        storage_type: None,
         source: Source::Ts,
         named: true,
         fields: None,
@@ -51,6 +52,7 @@ fn sample_branch() -> NodeData {
     );
     NodeData {
         type_: K_FUNCTION_ITEM,
+        storage_type: None,
         source: Source::Ts,
         named: true,
         fields: Some(fields),
@@ -223,11 +225,13 @@ fn field_value_boolean_slot_roundtrips() {
 fn anonymous_leaf_children_scalarize_on_the_wire() {
     let node = NodeData {
         type_: K_FUNCTION_ITEM,
+        storage_type: None,
         source: Source::Ts,
         named: true,
         fields: None,
         children: Some(vec![NodeData {
             type_: KindId(55),
+            storage_type: None,
             source: Source::Ts,
             named: false,
             fields: None,

@@ -1,3 +1,4 @@
+import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
 import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
@@ -65,6 +66,12 @@ export interface KindParserMetadata {
 	readonly aux: boolean;
 	readonly alias: boolean;
 	readonly hidden: boolean;
+	readonly keyword?: true;
+	readonly aliasedNonTerminal?: true;
+	readonly supertype?: true;
+	readonly terminal?: true;
+	readonly visibleExternal?: true;
+	readonly lexicalRank?: number;
 }
 
 export interface GeneratedMetadata {
@@ -81,6 +88,15 @@ export interface GeneratedMetadataCatalog {
 	readonly fieldByName: ReadonlyMap<string, GeneratedMetadata>;
 }
 
+export interface DisplayUnionMember {
+	readonly storage: string;
+	readonly literal: boolean;
+}
+
+export type DisplayUnions = ReadonlyMap<string, readonly DisplayUnionMember[]>;
+
+export type ReservedWordsets = Readonly<Record<string, readonly Rule<'evaluate'>[]>>;
+
 export interface RawGrammar {
 	readonly name: string;
 	readonly rules: Record<string, Rule<'evaluate'>>;
@@ -93,6 +109,7 @@ export interface RawGrammar {
 	readonly conflicts: string[][];
 	readonly precedences: string[][];
 	readonly word: string | null;
+	readonly reserved?: ReservedWordsets;
 	readonly references: SymbolRef[];
 	readonly externalRoles?: Map<string, ExternalRole>;
 	readonly refineForms?: Map<string, RefineForm[]>;
@@ -103,14 +120,14 @@ export interface RawGrammar {
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Readonly<Record<string, string>>;
 	readonly orphanedSyntheticGroups?: readonly string[];
-	readonly visibleInlineNames?: readonly string[];
+	readonly automaticVariants?: AutomaticVariants;
 
 	readonly bodyPatternZeroMatches?: readonly string[];
 	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
 }
 
 export interface DesugarDivergenceEvent {
-	readonly site: 'inline-alias-source' | 'body-pattern-group';
+	readonly site: 'body-pattern-group';
 	readonly name: string;
 }
 
@@ -170,10 +187,12 @@ export interface LinkedGrammar {
 	readonly externals?: readonly string[];
 	readonly extras?: readonly string[];
 	readonly word: string | null;
+	readonly reserved?: ReservedWordsets;
 	readonly references: SymbolRef[];
 	readonly derivations: DerivationLog;
-	readonly aliasedHiddenKinds?: Map<string, string>;
+	readonly displayUnions?: DisplayUnions;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
+	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
@@ -197,11 +216,13 @@ export interface NormalizedGrammar {
 	readonly supertypes: Set<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
+	readonly reserved?: ReservedWordsets;
 	readonly externals?: readonly string[];
 	readonly extras?: readonly string[];
 	readonly derivations: DerivationLog;
-	readonly aliasedHiddenKinds?: Map<string, string>;
+	readonly displayUnions?: DisplayUnions;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
+	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	readonly variantChildren?: ReadonlyMap<string, readonly VariantChild[]>;
@@ -211,8 +232,9 @@ export interface NormalizedGrammar {
 
 export interface SimplifiedGrammar {
 	readonly name: string;
-	readonly aliasedHiddenKinds?: Map<string, string>;
+	readonly displayUnions?: DisplayUnions;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
+	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	readonly variantChildren?: ReadonlyMap<string, readonly VariantChild[]>;
@@ -223,6 +245,7 @@ export interface SimplifiedGrammar {
 	readonly factoryInline: ReadonlySet<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
+	readonly reserved?: ReservedWordsets;
 	readonly externals?: readonly string[];
 	readonly extras?: readonly string[];
 	readonly derivations: DerivationLog;
@@ -253,13 +276,14 @@ export interface NodeMap {
 	readonly nodeByRuleId: ReadonlyMap<RuleId, AssembledNode>;
 	readonly nodeByKindId: ReadonlyMap<number, AssembledNode>;
 	readonly slotByRuleId: ReadonlyMap<RuleId, AssembledNonterminal>;
-	readonly aliasedHiddenKinds?: ReadonlyMap<string, string>;
+	readonly displayUnions?: DisplayUnions;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly signatures: SignaturePool;
 	readonly derivations: DerivationLog;
 	readonly normalizedRules?: Record<string, RenderRule>;
 	readonly word?: string | null;
 	readonly wordMatcher?: RegExp;
+	readonly reserved?: ReservedWordsets;
 	readonly externals?: ReadonlySet<string>;
 	readonly extras?: ReadonlySet<string>;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;

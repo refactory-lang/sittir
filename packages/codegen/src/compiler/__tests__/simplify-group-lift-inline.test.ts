@@ -22,19 +22,10 @@
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { inlineRefs, type InlineRefsCtx } from '../../dsl/rule-transforms.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
-import { describe, expect, it, afterEach } from 'vitest';
-import {
-	computeSimplifiedRules,
-	drainSlotGroupingDiagnostics,
-	SimplifyCtx,
-	makeNormalizedGrammar
-} from '../simplify.ts';
+import { describe, expect, it } from 'vitest';
+import { computeSimplifiedRules, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
 import { flattenRules } from '../flatten.ts';
 import type { Rule } from '../../types/rule.ts';
-
-afterEach(() => {
-	drainSlotGroupingDiagnostics();
-});
 
 // ---------------------------------------------------------------------------
 // Helpers

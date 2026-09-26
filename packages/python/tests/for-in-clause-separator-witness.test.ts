@@ -25,7 +25,7 @@ describe('for_in_clause right side — a $text-stripped rebuild of a bare-tuple 
 		expect(elements).toBeDefined();
 		const statement = (elements as { _simple_statement: unknown })._simple_statement;
 		expect(statement).toBeDefined();
-		const listComprehension = (statement as { _list_comprehension: unknown })._list_comprehension;
+		const listComprehension = (statement as { _content: unknown })._content;
 		expect(listComprehension).toBeDefined();
 	});
 
@@ -34,9 +34,9 @@ describe('for_in_clause right side — a $text-stripped rebuild of a bare-tuple 
 			const { root } = engine.diagnostics.parseAndRead(SOURCE, { deep: true });
 			const listComprehension = (
 				root as unknown as {
-					_statements: { _simple_statements_elements: { _simple_statement: { _list_comprehension: unknown } } };
+					_statements: { _simple_statements_elements: { _simple_statement: { _content: unknown } } };
 				}
-			)._statements._simple_statements_elements._simple_statement._list_comprehension;
+			)._statements._simple_statements_elements._simple_statement._content;
 			const rendered = engine.render(stripText(listComprehension) as never).toString();
 			expect(rendered).toBe(SOURCE);
 	});

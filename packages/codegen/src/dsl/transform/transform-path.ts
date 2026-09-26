@@ -1,3 +1,4 @@
+import { IMMEDIATE_TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import {
 	isPrecWrapper as isPrecWrapperShape,
 	isContainerType,
@@ -6,7 +7,9 @@ import {
 	isChoiceType,
 	isFieldType
 } from '../../types/runtime-shapes.ts';
+import type { RuleAnnotations } from '../../types/rule.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
+import { readRuleMetadata } from '../rule-metadata.ts';
 
 interface RuntimeDsl {
 	seq?: (...members: RuntimeRule[]) => RuntimeRule;
@@ -14,6 +17,7 @@ interface RuntimeDsl {
 	optional?: (content: RuntimeRule) => RuntimeRule;
 	repeat?: (content: RuntimeRule) => RuntimeRule;
 	repeat1?: (content: RuntimeRule) => RuntimeRule;
+	token?: ((content: RuntimeRule) => RuntimeRule) & { immediate?: (content: RuntimeRule) => RuntimeRule };
 	field?: (name: string, content: RuntimeRule) => RuntimeRule;
 	prec?: ((value: number, content: RuntimeRule) => RuntimeRule) & {
 		left?: (value: number, content: RuntimeRule) => RuntimeRule;
@@ -185,8 +189,8 @@ function descendThroughPrecWrapper(
 export function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
 	const t = (rule as { type?: string }).type;
 	if (t !== 'SYMBOL') return false;
-	const meta = (rule as unknown as { metadata?: { author?: string } }).metadata;
-	return meta?.author === 'enrich';
+	const meta = readRuleMetadata('metadata' in rule ? rule.metadata : undefined);
+	return meta?.symbolSource === 'group-lift';
 }
 
 export interface GroupLiftRuleMap {
@@ -233,8 +237,7 @@ function descendThroughGroupLiftSymbol(
 function isEnrichContentAlias(rule: RuntimeRule): boolean {
 	const t = (rule as { type?: string }).type;
 	if (t !== 'ALIAS') return false;
-	const meta = (rule as unknown as { metadata?: { author?: string } }).metadata;
-	return meta?.author === 'enrich';
+	return readRuleMetadata('metadata' in rule ? rule.metadata : undefined)?.aliasSource === 'visible-group';
 }
 
 function descendThroughEnrichContentAlias(
@@ -487,8 +490,8 @@ function isWalkableNode(rule: unknown): rule is RuntimeRule {
 
 export function reconstructContainer(rule: RuntimeRule, members: RuntimeRule[]): RuntimeRule {
 	const t = rule.type;
-	if (isSeqType(t)) return nativeRequired('seq')(...members);
-	if (isChoiceType(t)) return nativeRequired('choice')(...members);
+	if (isSeqType(t)) return carryOverProperties(withoutHoisted(rule), nativeRequired('seq')(...members));
+	if (isChoiceType(t)) return carryOverProperties(withoutHoisted(rule), nativeRequired('choice')(...members));
 	throw new Error(`reconstructContainer: unknown container type '${t}'`);
 }
 
@@ -498,6 +501,12 @@ export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): 
 	if (t === 'REPEAT' || t === 'REPEAT1') {
 		return carryOverProperties(rule, nativeRequired(t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent));
 	}
+	if (t === 'TOKEN') return carryOverProperties(rule, nativeRequired('token')(newContent));
+	if (t === IMMEDIATE_TOKEN) {
+		const immediate = nativeRequired('token').immediate;
+		if (typeof immediate !== 'function') throw new Error('transform: native token.immediate not available');
+		return carryOverProperties(rule, immediate(newContent));
+	}
 	if (isFieldType(t)) {
 		if (isFieldType(newContent.type)) return newContent;
 		const name = (rule as unknown as { name: string }).name;
@@ -506,6 +515,13 @@ export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): 
 	throw new Error(
 		`reconstructWrapper: no native dsl reconstruction for wrapper type '${rule.type}' — this is a bug in the path-descent logic.`
 	);
+}
+
+function withoutHoisted(rule: RuntimeRule): RuntimeRule {
+	const { annotations, ...rest } = rule as RuntimeRule & { annotations?: RuleAnnotations };
+	if (annotations?.hoisted !== true) return rule;
+	const { hoisted: _hoisted, ...kept } = annotations;
+	return (Object.keys(kept).length === 0 ? rest : { ...rest, annotations: kept }) as RuntimeRule;
 }
 
 function carryOverProperties(rule: RuntimeRule, rebuilt: RuntimeRule): RuntimeRule {
