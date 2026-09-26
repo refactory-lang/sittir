@@ -206373,6 +206373,81 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "source_file",
+    "input": {
+      "$type": 171,
+      "$source": 0,
+      "$named": true,
+      "_shebang": {
+        "$type": 125,
+        "$source": 0,
+        "$named": true,
+        "$text": "#!\n",
+        "$span": {
+          "start": 1,
+          "end": 4
+        },
+        "_content": ""
+      },
+      "_statements": [
+        {
+          "$type": 203,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "main",
+            "$span": {
+              "start": 7,
+              "end": 11
+            }
+          },
+          "_parameters": {
+            "$type": 225,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 11,
+              "end": 13
+            }
+          },
+          "_body": {
+            "$type": 308,
+            "$source": 0,
+            "$named": true,
+            "_statements": []
+          },
+          "$other": [
+            {
+              "$type": 40,
+              "$source": 0,
+              "$named": false,
+              "$text": "fn",
+              "$span": {
+                "start": 4,
+                "end": 6
+              }
+            }
+          ],
+          "$slotOrder": [
+            "name",
+            "parameters",
+            "body"
+          ]
+        }
+      ],
+      "$slotOrder": [
+        "shebang",
+        "statements"
+      ]
+    },
+    "expectedOutput": "#!\nfn main() {}"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "rust",
     "sourceIn": "\n#!\nfn main() {}\n",
