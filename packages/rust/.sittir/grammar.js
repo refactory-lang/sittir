@@ -5048,6 +5048,13 @@ function renameNameList(value, renames) {
   return renameRule(value, renames);
 }
 
+// packages/codegen/src/dsl/primitives/rule-cause.ts
+var RULE_CAUSE = /* @__PURE__ */ Symbol.for("sittir.ruleCause");
+function ruleCauseOf(fn) {
+  if (typeof fn !== "function") return void 0;
+  return fn[RULE_CAUSE];
+}
+
 // packages/codegen/src/dsl/wire/wire.ts
 var currentContext = null;
 function wireRegisterSyntheticRule(name, content) {
@@ -5134,6 +5141,7 @@ function wire(config, base2) {
     options: cfg.options,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
+    ...declaredRuleCauses(cfg.rules ?? {}),
     extraRuleNames: extraRuleNames(cfg, baseArg),
     precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
     flattenedParents: /* @__PURE__ */ new Set(),
@@ -5204,6 +5212,16 @@ function wire(config, base2) {
     configurable: true
   });
   return wired;
+}
+function declaredRuleCauses(rules) {
+  const ruleCauses = /* @__PURE__ */ new Map();
+  const undeclaredRules = /* @__PURE__ */ new Set();
+  for (const [name, fn] of Object.entries(rules)) {
+    const declaration = ruleCauseOf(fn);
+    if (declaration === void 0) undeclaredRules.add(name);
+    else ruleCauses.set(name, declaration);
+  }
+  return { ruleCauses, undeclaredRules };
 }
 function renamingReserved(reserved, context) {
   if (reserved === null || typeof reserved !== "object" || Array.isArray(reserved)) return reserved;
