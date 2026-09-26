@@ -704,7 +704,7 @@ export function printFactorySource(
 import { readFileSync, writeFileSync } from 'node:fs';
 import { basename, resolve } from 'node:path';
 import {
-	TYPES_MODULE_PATHS,
+	importGrammarModule,
 	buildReadHandle,
 	loadKindIdFromName,
 	loadKindNameFromId,
@@ -877,9 +877,8 @@ export async function emitFactorySourceText(
 	const kindIdFromName = await loadKindIdFromName(grammar);
 	const handle = await buildReadHandle(grammar, tree, source, options.backend ?? 'native', kindIdFromName);
 	const model = await loadNodeModel(grammar);
-	const typesPath = TYPES_MODULE_PATHS[grammar];
-	if (!typesPath) throw new Error(`emit-factory-source: no types module for ${grammar}`);
-	const types = (await import(new URL(`../validate/${typesPath}`, import.meta.url).pathname)) as TypesModule;
+	const types = (await importGrammarModule(grammar, 'types.ts')) as TypesModule | undefined;
+	if (!types) throw new Error(`emit-factory-source: no types module for ${grammar}`);
 	const displayNameFromId = await loadKindNameFromId(grammar);
 	const kindNameFromId = (id: number): string | undefined => types.KIND_NAMES.get(id) ?? displayNameFromId?.(id);
 	const idOfName = new Map<string, number>();

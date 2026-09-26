@@ -1056,7 +1056,7 @@ function leadingLiteralOf(r) {
   const lit = members.find((m) => typeEq(m.type, "STRING"));
   return lit ? lit.value : null;
 }
-function separatorOf(resolved) {
+function separatorOf(resolved, symbols) {
   if (!typeEq(resolved.type, "SEQ")) return null;
   const members = resolved.members;
   if (!members || members.length !== 2) return null;
@@ -1065,10 +1065,9 @@ function separatorOf(resolved) {
   const secondIsStr = typeEq(second.type, "STRING");
   if (firstIsStr && !secondIsStr) return { content: second, separator: first };
   if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
-  const firstIsChoice = typeEq(first.type, "CHOICE");
-  const secondIsChoice = typeEq(second.type, "CHOICE");
-  if (firstIsChoice && !secondIsStr) return { content: second, separator: first };
-  if (secondIsChoice && !firstIsStr) return { content: first, separator: second, trailing: true };
+  const isToken = (r) => typeEq(r.type, "CHOICE") && terminalContentOf(r, (name) => terminalSymbolOf(name, symbols.rules, symbols));
+  if (isToken(first) && !secondIsStr) return { content: second, separator: first };
+  if (isToken(second) && !firstIsStr) return { content: first, separator: second, trailing: true };
   return null;
 }
 function ruleMatchesEmpty(rule) {
@@ -1113,6 +1112,12 @@ function collectSlots(members, rulesBag) {
   }
   return slots;
 }
+function isMultiSlotRepeatElement(content, symbols) {
+  const core = unwrapPrec(content);
+  if (!core || typeof core !== "object" || !isSeqType(core.type)) return false;
+  if (separatorOf(core, symbols) !== null) return false;
+  return collectSlots(core.members, symbols.rules).length >= 2;
+}
 function unwrapPrec(rule) {
   let cur = rule;
   while (cur && typeof cur === "object") {
@@ -1156,10 +1161,10 @@ function seqHasTopLevelRepeat(members) {
 function isNonterminalSeparatorType(t) {
   return isChoiceType(t) || isSymbolType(t) || typeEq(t, "PATTERN");
 }
-function repeatHasNonterminalSeparator(repeatRule) {
+function repeatHasNonterminalSeparator(repeatRule, symbols) {
   const content = repeatRule.content;
   if (!content || typeof content !== "object") return false;
-  const detected = separatorOf(content);
+  const detected = separatorOf(content, symbols);
   if (!detected) return false;
   return isNonterminalSeparatorType(detected.separator.type);
 }
@@ -1188,20 +1193,20 @@ function isOptionalSeparatorFlank(member, sepValue) {
   }
   return false;
 }
-function repeatMemberHasGenuineSeparatorVariability(repeatRule, siblings) {
-  if (repeatHasNonterminalSeparator(repeatRule)) return true;
+function repeatMemberHasGenuineSeparatorVariability(repeatRule, siblings, symbols) {
+  if (repeatHasNonterminalSeparator(repeatRule, symbols)) return true;
   const content = repeatRule.content;
   if (!content || typeof content !== "object") return false;
-  const detected = separatorOf(content);
+  const detected = separatorOf(content, symbols);
   if (!detected || !isStringType(detected.separator.type)) return false;
   const sepValue = detected.separator.value;
   if (typeof sepValue !== "string") return false;
   return siblings.some((m) => m !== repeatRule && isOptionalSeparatorFlank(m, sepValue));
 }
-function repeatHasGenuineSeparatorVariability(repeatRule) {
-  return repeatHasNonterminalSeparator(repeatRule);
+function repeatHasGenuineSeparatorVariability(repeatRule, symbols) {
+  return repeatHasNonterminalSeparator(repeatRule, symbols);
 }
-function seqHasGenuineSeparatorVariability(members) {
+function seqHasGenuineSeparatorVariability(members, symbols) {
   const flat = flattenSeqMembers(members);
   const repeatMembers = [];
   for (const m of flat) {
@@ -1210,24 +1215,24 @@ function seqHasGenuineSeparatorVariability(members) {
     const ct = core.type;
     if (typeof ct !== "string" || !isRepeatLike(ct)) continue;
     const content = core.content;
-    if (content && typeof content === "object" && separatorOf(content) !== null) {
+    if (content && typeof content === "object" && separatorOf(content, symbols) !== null) {
       repeatMembers.push(core);
     }
   }
   if (repeatMembers.length !== 1) return false;
-  return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0], flat);
+  return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0], flat, symbols);
 }
-function isInlineSafe(seqBody, rulesBag) {
+function isInlineSafe(seqBody, symbols) {
   if (!seqBody || typeof seqBody !== "object") return false;
   const r = seqBody;
   const t = typeof r.type === "string" ? r.type : "";
-  if (isRepeatLike(t)) return !repeatHasGenuineSeparatorVariability(seqBody);
+  if (isRepeatLike(t)) return !repeatHasGenuineSeparatorVariability(seqBody, symbols);
   if (typeEq(t, "ALIAS")) return true;
   if (!isSeqType(t)) return false;
   const members = r.members;
   if (!Array.isArray(members)) return false;
-  if (seqHasTopLevelRepeat(members)) return !seqHasGenuineSeparatorVariability(members);
-  const slots = collectSlots(members, rulesBag);
+  if (seqHasTopLevelRepeat(members)) return !seqHasGenuineSeparatorVariability(members, symbols);
+  const slots = collectSlots(members, symbols.rules);
   if (slots.length !== 1) return false;
   const core = unwrapPrec(slots[0]);
   if (!core || typeof core !== "object") return false;
@@ -1441,6 +1446,9 @@ function tokenUseCounts(rules) {
   for (const rule of Object.values(rules)) visit(rule);
   return counts;
 }
+function parserSymbolCtxOf(rules, externals, inline) {
+  return { rules, externals: new Set(externals), inline: new Set(inline), tokenUses: tokenUseCounts(rules) };
+}
 function choiceArmsOf(content) {
   if (content.type !== CHOICE) return void 0;
   return content.members.flatMap((m) => choiceArmsOf(m) ?? [m]);
@@ -1555,7 +1563,7 @@ function peelOptionalSeq(rule) {
   }
   return null;
 }
-function listSeparatorOfOptionalSeq(rule) {
+function listSeparatorOfOptionalSeq(rule, symbols) {
   const peeled = peelOptionalSeq(rule);
   if (peeled === null) return null;
   const seqMembers = peeled.seqBody.members;
@@ -1566,7 +1574,7 @@ function listSeparatorOfOptionalSeq(rule) {
     if (typeof sepAttr === "string") return sepAttr;
     const content = m.content;
     if (content) {
-      const detected = separatorOf(content);
+      const detected = separatorOf(content, symbols);
       if (detected) {
         const sep = detected.separator;
         if (typeEq(sep.type, "STRING")) return sep.value;
@@ -1612,14 +1620,14 @@ function peelOptionalEitherSpelling(rule) {
   const peeled = peelOptional(rule);
   return peeled.isOptional ? peeled.inner : null;
 }
-function separatedListBodyInfo(body) {
+function separatedListBodyInfo(body, symbols) {
   if (!isSeqType(body.type)) return null;
   const members = body.members;
   if (!Array.isArray(members) || members.length === 0) return null;
   const separatorRepeatOf = (m) => {
     if (!isRepeatType(m.type)) return null;
     const content = m.content;
-    return content ? separatorOf(content) : null;
+    return content ? separatorOf(content, symbols) : null;
   };
   if (members.length >= 2 && !members.some((m) => separatorRepeatOf(m) !== null)) {
     const nestedIdx = members.findIndex((m) => {
@@ -1632,7 +1640,7 @@ function separatedListBodyInfo(body) {
       return separatedListBodyInfo({
         ...body,
         members: [...members.slice(0, nestedIdx), ...headMembers, ...members.slice(nestedIdx + 1)]
-      });
+      }, symbols);
     }
   }
   const repeatIdx = members.findIndex((m) => separatorRepeatOf(m) !== null);
@@ -1777,6 +1785,54 @@ function armsDifferOnlyByLiteralChoice(a, b) {
   };
   return same(a, b) && literalDeltas === 1;
 }
+
+// packages/codegen/src/dsl/enrich-ctx.ts
+var EnrichCtx = class _EnrichCtx {
+  rulesBag;
+  supertypeNames;
+  externals;
+  inline;
+  wordMatcher;
+  sourceSymbols;
+  kwRules;
+  clauseGroupRules;
+  clauseDedupeMap;
+  groupDedupeMap;
+  visibleGroupSources;
+  clauseGroupOwners;
+  hoist;
+  constructor(fields) {
+    this.rulesBag = fields.rulesBag;
+    this.supertypeNames = fields.supertypeNames;
+    this.externals = fields.externals;
+    this.inline = fields.inline;
+    this.wordMatcher = fields.wordMatcher;
+    this.sourceSymbols = fields.sourceSymbols;
+    this.kwRules = fields.kwRules;
+    this.clauseGroupRules = fields.clauseGroupRules;
+    this.clauseDedupeMap = fields.clauseDedupeMap;
+    this.groupDedupeMap = fields.groupDedupeMap;
+    this.visibleGroupSources = fields.visibleGroupSources;
+    this.clauseGroupOwners = fields.clauseGroupOwners;
+    this.hoist = fields.hoist;
+  }
+  static create(init) {
+    return new _EnrichCtx({
+      ...init,
+      sourceSymbols: parserSymbolCtxOf(init.rulesBag, init.externals, init.inline),
+      kwRules: {},
+      clauseGroupRules: {},
+      clauseDedupeMap: {},
+      groupDedupeMap: {},
+      visibleGroupSources: /* @__PURE__ */ new Set(),
+      clauseGroupOwners: /* @__PURE__ */ new Map(),
+      hoist: void 0
+    });
+  }
+  withHoist(hoist) {
+    return new _EnrichCtx({ ...this, hoist });
+  }
+};
 
 // packages/codegen/src/dsl/rule-transforms.ts
 function innermostNamedAliasContent(rule) {
@@ -2139,31 +2195,32 @@ function enrich(baseInput) {
   const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
   if (!rulesBag) return base2;
   const grammarMeta = hasWrapper ? base2.grammar : base2;
-  const wordMatcher = compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag);
   const supertypeNames = extractGrammarSymbolNames(base2, hasWrapper, "supertypes");
-  const kwRules = {};
-  const clauseGroupRules = {};
-  const clauseDedupeMap = {};
-  const groupDedupeMap = {};
-  const visibleGroupSources = /* @__PURE__ */ new Set();
-  const clauseGroupOwners = /* @__PURE__ */ new Map();
+  const inlineNames = extractGrammarSymbolNames(base2, hasWrapper, "inline");
+  const ctx = EnrichCtx.create({
+    rulesBag,
+    supertypeNames,
+    externals: extractGrammarSymbolNames(base2, hasWrapper, "externals"),
+    inline: inlineNames,
+    wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag)
+  });
+  const { kwRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners } = ctx;
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
-    enrichedRules[name] = rule ? applyFieldWrapPasses(name, rule, kwRules, supertypeNames, rulesBag, wordMatcher) : rule;
+    enrichedRules[name] = rule ? applyFieldWrapPasses(name, rule, ctx) : rule;
   }
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
     if (!rule) continue;
     if (!isSeqType(rule.type)) continue;
-    const info = separatedListBodyInfo(rule);
+    const info = separatedListBodyInfo(rule, ctx.sourceSymbols);
     if (!info?.flankCarrying || info.form !== "head") continue;
     const members = rule.members;
     if (info.flatMembers === members) continue;
     enrichedRules[name] = { ...rule, members: info.flatMembers };
   }
   Object.assign(enrichedRules, mintInlineLiteralAliasStorage(enrichedRules));
-  const inlineNames = extractGrammarSymbolNames(base2, hasWrapper, "inline");
   Object.assign(enrichedRules, liftAliasedHiddenRuleBodies(enrichedRules));
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
@@ -2172,59 +2229,33 @@ function enrich(baseInput) {
       inlineBodyOf: (target) => inlineNames.has(target) ? enrichedRules[target] ?? rulesBag[target] : void 0
     });
   }
-  Object.assign(
-    enrichedRules,
-    unaliasOverloadedDisplays(enrichedRules, {
-      symbols: {
-        rules: enrichedRules,
-        externals: extractGrammarSymbolNames(base2, hasWrapper, "externals"),
-        inline: inlineNames,
-        tokenUses: tokenUseCounts(enrichedRules)
-      }
-    })
-  );
+  const enrichedSymbols = parserSymbolCtxOf(enrichedRules, ctx.externals, ctx.inline);
+  Object.assign(enrichedRules, unaliasOverloadedDisplays(enrichedRules, { symbols: enrichedSymbols }));
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
     if (!rule) continue;
     enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
   }
   const wordName = extractWordName(grammarMeta?.word);
-  const unhoistableNames = /* @__PURE__ */ new Set([...extractGrammarSymbolNames(base2, hasWrapper, "externals"), ...wordName === null ? [] : [wordName]]);
+  const unhoistableNames = /* @__PURE__ */ new Set([...ctx.externals, ...wordName === null ? [] : [wordName]]);
   const tokenFormParents = [];
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
     if (!rule) continue;
     const counter = { opt: 0, grp: 0, arm: 0, supertypeNames };
-    const hoisted = hoistTokenForms(name, rule, rulesBag, clauseGroupRules, groupDedupeMap, counter, visibleGroupSources, clauseGroupOwners, unhoistableNames);
+    const hoisted = hoistTokenForms(name, rule, ctx, counter, unhoistableNames);
     if (hoisted === rule) continue;
     enrichedRules[name] = hoisted;
     tokenFormParents.push(name);
   }
-  separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
-  hiddenListPromotionNames = /* @__PURE__ */ new Map();
-  hoistKwRules = kwRules;
-  hoistWordMatcher = wordMatcher;
-  try {
-    for (const name of Object.keys(enrichedRules)) {
-      const rule = enrichedRules[name];
-      if (!rule) continue;
-      enrichedRules[name] = applyClauseHoist(
-        name,
-        rule,
-        rulesBag,
-        clauseGroupRules,
-        clauseDedupeMap,
-        { opt: 0, grp: 0, arm: 0, supertypeNames },
-        groupDedupeMap,
-        visibleGroupSources,
-        clauseGroupOwners
-      );
-    }
-  } finally {
-    separatedListNameCounts = null;
-    hiddenListPromotionNames = null;
-    hoistKwRules = null;
-    hoistWordMatcher = void 0;
+  const hoistCtx = ctx.withHoist({
+    separatedListNameCounts: collectSeparatedListNameProposals(enrichedRules, ctx.sourceSymbols),
+    hiddenListPromotionNames: /* @__PURE__ */ new Map()
+  });
+  for (const name of Object.keys(enrichedRules)) {
+    const rule = enrichedRules[name];
+    if (!rule) continue;
+    enrichedRules[name] = applyClauseHoist(name, rule, hoistCtx, { opt: 0, grp: 0, arm: 0, supertypeNames });
   }
   for (const groupName of Object.keys(clauseGroupRules)) {
     const groupBody = clauseGroupRules[groupName];
@@ -2235,7 +2266,7 @@ function enrich(baseInput) {
   for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules, isSupertypeOwner(parent, mergedRules, supertypeNames, inlineNames));
   for (const name of Object.keys(mergedRules)) {
     const rule = mergedRules[name];
-    if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
+    if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, ctx);
   }
   synthesizeFieldEnumRules(mergedRules);
   const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
@@ -2302,16 +2333,16 @@ function getEnrichVisibleGroupSources(grammar2) {
   if (names instanceof Set) return names;
   return /* @__PURE__ */ new Set();
 }
-function applyFieldWrapPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, wordMatcher) {
+function applyFieldWrapPasses(ruleName, rule, ctx) {
   const MAX_ITERATIONS = 8;
   let r = rule;
   let converged = false;
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     const before = r;
-    r = applySymbolToField(ruleName, r, supertypeNames);
-    r = applyChoiceArmFieldWrap(ruleName, r, supertypeNames, rulesBag);
-    r = applyRepeatUnionFieldPromotion(ruleName, r, rulesBag);
-    r = applyOptionalKeyword(ruleName, r, kwRules, rulesBag, wordMatcher);
+    r = applySymbolToField(ruleName, r, ctx);
+    r = applyChoiceArmFieldWrap(ruleName, r, ctx);
+    r = applyRepeatUnionFieldPromotion(ruleName, r, ctx);
+    r = applyOptionalKeyword(ruleName, r, ctx);
     if (r === before) {
       converged = true;
       break;
@@ -2323,7 +2354,7 @@ function applyFieldWrapPasses(ruleName, rule, kwRules, supertypeNames, rulesBag,
   }
   return r;
 }
-function hoistTokenForms(parentKind, rule, rulesBag, clauseGroupRules, groupDedupeMap, counter, visibleGroupSources, clauseGroupOwners, unhoistableNames) {
+function hoistTokenForms(parentKind, rule, ctx, counter, unhoistableNames) {
   if (unhoistableNames.has(parentKind)) return rule;
   const distributed = distributeTokenForms(rule, parentKind);
   if (distributed === rule) return rule;
@@ -2335,10 +2366,18 @@ function hoistTokenForms(parentKind, rule, rulesBag, clauseGroupRules, groupDedu
   }
   const arms = core.members;
   const members = arms.map((arm2, i) => {
-    const minted = visibleGroupSynthName(withAnnotations(arm2, { tokenForm: true }), parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, void 0, void 0, "arm");
+    const minted = visibleGroupSynthName(
+      withAnnotations(arm2, { tokenForm: true }),
+      parentKind,
+      ctx,
+      counter,
+      void 0,
+      void 0,
+      "arm"
+    );
     if (minted === null) throw new Error(`token forms: '${parentKind}' could not mint form ${i}`);
-    visibleGroupSources.add(minted);
-    if (!clauseGroupOwners.has(minted)) clauseGroupOwners.set(minted, parentKind);
+    ctx.visibleGroupSources.add(minted);
+    if (!ctx.clauseGroupOwners.has(minted)) ctx.clauseGroupOwners.set(minted, parentKind);
     return makeGroupLiftSymbol(arm2, minted);
   });
   let out = { ...core, members };
@@ -2463,7 +2502,8 @@ function isAnonymousLiteralShapedContent(rule, rulesBag, seen) {
   }
   return false;
 }
-function applyChoiceArmFieldWrap(ruleName, rule, supertypeNames, rulesBag) {
+function applyChoiceArmFieldWrap(ruleName, rule, ctx) {
+  const { supertypeNames, rulesBag } = ctx;
   if (ruleName.startsWith("_")) return rule;
   let cursor = rule;
   const precStack = [];
@@ -2636,7 +2676,7 @@ function deriveElementFieldName(elementRule) {
   }
   return "element";
 }
-function fieldSeparatedListElements(seqRule, reserve) {
+function fieldSeparatedListElements(seqRule, reserve, symbols) {
   const members = seqRule.members;
   if (!Array.isArray(members)) return null;
   for (let i = 0; i < members.length - 1; i++) {
@@ -2655,7 +2695,7 @@ function fieldSeparatedListElements(seqRule, reserve) {
       innerPrecStack.push(inner);
       inner = inner.content;
     }
-    const detected = separatorOf(inner);
+    const detected = separatorOf(inner, symbols);
     if (!detected || detected.trailing) continue;
     const innerElement = detected.content;
     if (!sameElementShape(leading, innerElement)) continue;
@@ -2681,7 +2721,8 @@ function fieldSeparatedListElements(seqRule, reserve) {
   }
   return null;
 }
-function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
+function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, ctx) {
+  const { supertypeNames } = ctx;
   let changed = false;
   const namesDeepIn = (r) => {
     const names = /* @__PURE__ */ new Set();
@@ -2755,7 +2796,7 @@ function applyNodeChoiceFieldWrap(ruleName, rule, mergedRules, supertypeNames) {
       return rebuildRepeat(visitedInner);
     }
     if (isSeqType(r.type)) {
-      const sepListRewrite = fieldSeparatedListElements(r, (base2) => reserve(base2, scope));
+      const sepListRewrite = fieldSeparatedListElements(r, (base2) => reserve(base2, scope), ctx.sourceSymbols);
       if (sepListRewrite) {
         changed = true;
         r = sepListRewrite;
@@ -2875,7 +2916,8 @@ function distributeExclusiveFieldChoices(rule, rulesBag) {
   };
   return collapse(expand(rule));
 }
-function applyRepeatUnionFieldPromotion(ruleName, rule, rulesBag) {
+function applyRepeatUnionFieldPromotion(ruleName, rule, ctx) {
+  const { rulesBag } = ctx;
   const preExistingFieldNames = /* @__PURE__ */ new Set();
   const collectNames = (node) => {
     const n = node;
@@ -3052,7 +3094,8 @@ function countSymbolsInRepeat(node, kindCounts, inRepeat = false) {
     return;
   }
 }
-function applySymbolToField(ruleName, rule, supertypeNames) {
+function applySymbolToField(ruleName, rule, ctx) {
+  const { supertypeNames } = ctx;
   if (ruleName.startsWith("_")) return rule;
   const precStack = [];
   let cursor = rule;
@@ -3263,10 +3306,10 @@ function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertype
   }
   return result;
 }
-function applyOptionalKeyword(ruleName, rule, kwRules, rulesBag, wordMatcher) {
+function applyOptionalKeyword(ruleName, rule, ctx) {
   const inner = peelPrec(rule);
   const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : /* @__PURE__ */ new Set();
-  return walkOptionalKeyword(ruleName, rule, claimed, kwRules, rulesBag, wordMatcher) ?? rule;
+  return walkOptionalKeyword(ruleName, rule, claimed, ctx) ?? rule;
 }
 function peelPrec(rule) {
   let cursor = rule;
@@ -3275,31 +3318,23 @@ function peelPrec(rule) {
   }
   return cursor;
 }
-function tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher) {
+function tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, ctx) {
   const peeled = peelOptional(rule);
   if (!peeled.isOptional) return { matched: false, result: null };
-  const replacement = tryPromoteInnerKeyword(
-    ruleName,
-    rule,
-    peeled.inner,
-    claimedAtSeqLevel,
-    kwRules,
-    rulesBag,
-    wordMatcher
-  );
+  const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, ctx);
   if (replacement !== null) return { matched: true, result: replacement };
-  const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+  const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, ctx);
   if (innerRewritten !== null) {
     return { matched: true, result: rebuildOptional(rule, innerRewritten) };
   }
   return { matched: true, result: null };
 }
-function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher) {
+function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, ctx) {
   if (isSeqType(rule.type)) {
     const members = rule.members;
     let changed = false;
     const newMembers = members.map((m) => {
-      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, ctx);
       if (out === null) return m;
       changed = true;
       return out;
@@ -3307,46 +3342,46 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBa
     return changed ? { ...rule, members: newMembers } : null;
   }
   if (isChoiceType(rule.type)) {
-    const promoted2 = tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+    const promoted2 = tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, ctx);
     if (promoted2.matched) return promoted2.result;
     const members = rule.members;
     let changed = false;
     const newMembers = members.map((m) => {
-      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, ctx);
       if (out === null) return m;
       changed = true;
       return out;
     });
     return changed ? { ...rule, members: newMembers } : null;
   }
-  const promoted = tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+  const promoted = tryPromoteOptionalNode(ruleName, rule, claimedAtSeqLevel, ctx);
   if (promoted.matched) return promoted.result;
   if (isRepeatType(rule.type) || isFieldType(rule.type)) {
     const content = rule.content;
-    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, ctx);
     if (out === null) return null;
     return withContent(rule, out);
   }
   if (isPrecWrapper(rule)) {
     const content = rule.content;
-    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
+    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, ctx);
     if (out === null) return null;
     return withContent(rule, out);
   }
   return null;
 }
-function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, kwRules, rulesBag, wordMatcher) {
+function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, ctx) {
   const innerNorm = normalizeMember(inner);
   if (!isStringType(innerNorm.type)) return null;
   const kw = innerNorm.value;
-  if (typeof kw !== "string" || !matchesWordShape(kw, wordMatcher)) return null;
+  if (typeof kw !== "string" || !matchesWordShape(kw, ctx.wordMatcher)) return null;
   const fieldName = `${kw}_marker`;
   if (claimed.has(fieldName)) {
     reportSkip("optional-keyword-prefix", ruleName, `field '${fieldName}' already exists`);
     return null;
   }
   claimed.add(fieldName);
-  const symbolRef2 = registerKwRule(inner, fieldName, kwRules, rulesBag);
+  const symbolRef2 = registerKwRule(inner, fieldName, ctx.kwRules, ctx.rulesBag);
   if (symbolRef2 === null) {
     reportSkip(
       "optional-keyword-prefix",
@@ -3376,7 +3411,7 @@ function appendTrailingMemberToOptionalSeq(optSeqRule, trailingOptional) {
   const newSeqBody = { ...seqBody, members: [...seqMembers, trailingOptional] };
   return rebuildOptional(optSeqRule, newSeqBody);
 }
-function detectInlineSeparatedListRuns(members) {
+function detectInlineSeparatedListRuns(members, symbols) {
   const carriesRepeat = (m) => {
     if (isRepeatType(m.type)) return true;
     if (!isSeqType(m.type)) return false;
@@ -3392,7 +3427,7 @@ function detectInlineSeparatedListRuns(members) {
       const window = members.slice(i, i + size);
       if (!window.some(carriesRepeat)) continue;
       const synthetic = size === 1 && isSeqType(window[0].type) ? window[0] : { type: "SEQ", members: window };
-      const info = separatedListBodyInfo(synthetic);
+      const info = separatedListBodyInfo(synthetic, symbols);
       if (info?.flankCarrying) {
         if (info.form === "tail") {
           const repeatMember = window[0];
@@ -3409,7 +3444,7 @@ function detectInlineSeparatedListRuns(members) {
   }
   return runs;
 }
-function collectSeparatedListNameProposals(rules) {
+function collectSeparatedListNameProposals(rules, symbols) {
   const keysByName = /* @__PURE__ */ new Map();
   const record = (info, key) => {
     if (info.elementName === null) return;
@@ -3425,13 +3460,13 @@ function collectSeparatedListNameProposals(rules) {
     if (isSeqType(t)) {
       const rawMembers = rule.members;
       if (Array.isArray(rawMembers)) {
-        const members2 = absorbTrailingListSeparators(rawMembers) ?? rawMembers;
+        const members2 = absorbTrailingListSeparators(rawMembers, symbols) ?? rawMembers;
         const folded = members2 === rawMembers ? rule : { ...rule, members: members2 };
-        const whole = separatedListBodyInfo(folded);
+        const whole = separatedListBodyInfo(folded, symbols);
         if (whole?.flankCarrying) {
           record(whole, ruleKey(folded));
         } else {
-          for (const run of detectInlineSeparatedListRuns(members2)) record(run.info, run.key);
+          for (const run of detectInlineSeparatedListRuns(members2, symbols)) record(run.info, run.key);
         }
         for (const m of members2) visit(m);
         return;
@@ -3445,12 +3480,10 @@ function collectSeparatedListNameProposals(rules) {
   for (const name of Object.keys(rules)) visit(rules[name]);
   return new Map([...keysByName].map(([name, keys]) => [name, keys.size]));
 }
-var separatedListNameCounts = null;
-var hiddenListPromotionNames = null;
-var hoistKwRules = null;
-var hoistWordMatcher;
-function promoteHiddenListRef(member, rulesBag) {
-  if (separatedListNameCounts === null || hiddenListPromotionNames === null) return member;
+function promoteHiddenListRef(member, ctx) {
+  if (ctx.hoist === void 0) return member;
+  const { rulesBag } = ctx;
+  const { separatedListNameCounts, hiddenListPromotionNames } = ctx.hoist;
   if (!isSymbolType(member.type)) return member;
   const name = member.name;
   if (typeof name !== "string" || !name.startsWith("_")) return member;
@@ -3458,7 +3491,7 @@ function promoteHiddenListRef(member, rulesBag) {
   if (visibleName === void 0) {
     const body = rulesBag[name];
     if (!body || !isSeqType(body.type)) return member;
-    const info = separatedListBodyInfo(body);
+    const info = separatedListBodyInfo(body, ctx.sourceSymbols);
     if (!info?.flankCarrying || info.form !== "head") return member;
     const base2 = name.replace(/^_+/, "");
     const bare = info.elementName !== null ? pluralizeFieldName(info.elementName) : null;
@@ -3472,13 +3505,13 @@ function promoteHiddenListRef(member, rulesBag) {
   }
   return makeVisibleGroupAlias(member, visibleName);
 }
-function absorbTrailingListSeparators(members) {
+function absorbTrailingListSeparators(members, symbols) {
   let changed = false;
   const out = [];
   for (let i = 0; i < members.length; i++) {
     const cur = members[i];
     const next = members[i + 1];
-    const sep = next ? listSeparatorOfOptionalSeq(cur) : null;
+    const sep = next ? listSeparatorOfOptionalSeq(cur, symbols) : null;
     if (sep !== null && optionalStringLiteral(next) === sep) {
       out.push(appendTrailingMemberToOptionalSeq(cur, next));
       i++;
@@ -3489,22 +3522,11 @@ function absorbTrailingListSeparators(members) {
   }
   return changed ? out : null;
 }
-function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupSources, clauseGroupOwners, ambientPrec, enclosingFieldName) {
+function applyClauseHoist(parentKind, rule, ctx, counter, ambientPrec, enclosingFieldName) {
+  const { rulesBag, visibleGroupSources, clauseGroupOwners } = ctx;
   const peeled = peelOptionalSeq(rule);
   if (peeled !== null) {
-    const recursedSeqBody = applyClauseHoist(
-      parentKind,
-      peeled.seqBody,
-      rulesBag,
-      clauseGroupRules,
-      dedupeMap,
-      counter,
-      groupDedupeMap,
-      visibleGroupSources,
-      clauseGroupOwners,
-      ambientPrec,
-      enclosingFieldName
-    );
+    const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, ctx, counter, ambientPrec, enclosingFieldName);
     if (ruleMatchesEmpty(recursedSeqBody)) {
       counter.opt += 1;
       if (recursedSeqBody === peeled.seqBody) return rule;
@@ -3516,8 +3538,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         newMembers[peeled.seqIdx] = recursedSeqBody;
         return { ...rule, members: newMembers };
       }
-    } else if (isInlineSafe(recursedSeqBody, rulesBag)) {
-      const name = clauseHoistSynthName(recursedSeqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
+    } else if (isInlineSafe(recursedSeqBody, ctx.sourceSymbols)) {
+      const name = clauseHoistSynthName(recursedSeqBody, parentKind, ctx, counter);
       if (name !== null) {
         if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
         const symbolRef2 = makeGroupLiftSymbol(rule, name);
@@ -3533,16 +3555,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       return rule;
     } else {
       counter.opt += 1;
-      const name = visibleGroupSynthName(
-        recursedSeqBody,
-        parentKind,
-        groupDedupeMap,
-        counter,
-        rulesBag,
-        clauseGroupRules,
-        ambientPrec,
-        enclosingFieldName
-      );
+      const name = visibleGroupSynthName(recursedSeqBody, parentKind, ctx, counter, ambientPrec, enclosingFieldName);
       if (name !== null) {
         visibleGroupSources.add(name);
         if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
@@ -3570,28 +3583,12 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
   {
     const opt = peelOptional(rule);
     if (opt.isOptional) {
-      const recursed = applyClauseHoist(
-        parentKind,
-        opt.inner,
-        rulesBag,
-        clauseGroupRules,
-        dedupeMap,
-        counter,
-        groupDedupeMap,
-        visibleGroupSources,
-        clauseGroupOwners,
-        ambientPrec,
-        enclosingFieldName
-      );
+      const recursed = applyClauseHoist(parentKind, opt.inner, ctx, counter, ambientPrec, enclosingFieldName);
       const promoted = mintStructuredChoiceArm(
         recursed,
         parentKind,
-        rulesBag,
-        clauseGroupRules,
+        ctx,
         counter,
-        groupDedupeMap,
-        visibleGroupSources,
-        clauseGroupOwners,
         /* @__PURE__ */ new Set(),
         ambientPrec,
         enclosingFieldName
@@ -3611,28 +3608,17 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
   if (isSeqType(rule.type)) {
     const rawMembers = rule.members;
     if (!Array.isArray(rawMembers)) return rule;
-    const absorbed = absorbTrailingListSeparators(rawMembers);
+    const absorbed = absorbTrailingListSeparators(rawMembers, ctx.sourceSymbols);
     const members = absorbed ?? rawMembers;
     let changed = absorbed !== null;
     const newMembers = members.map((m) => {
-      let out = applyClauseHoist(
-        parentKind,
-        m,
-        rulesBag,
-        clauseGroupRules,
-        dedupeMap,
-        counter,
-        groupDedupeMap,
-        visibleGroupSources,
-        clauseGroupOwners,
-        ambientPrec
-      );
-      out = promoteHiddenListRef(out, rulesBag);
+      let out = applyClauseHoist(parentKind, m, ctx, counter, ambientPrec);
+      out = promoteHiddenListRef(out, ctx);
       if (out !== m) changed = true;
       return out;
     });
-    if (separatedListNameCounts !== null && separatedListBodyInfo({ ...rule, members: newMembers }) === null) {
-      const runs = detectInlineSeparatedListRuns(newMembers);
+    if (ctx.hoist !== void 0 && separatedListBodyInfo({ ...rule, members: newMembers }, ctx.sourceSymbols) === null) {
+      const runs = detectInlineSeparatedListRuns(newMembers, ctx.sourceSymbols);
       for (let r = runs.length - 1; r >= 0; r--) {
         const run = runs[r];
         const isTail = run.info.form === "tail";
@@ -3644,15 +3630,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
           repeatFn(seqFn(run.info.separatorRule, run.info.element)),
           optionalFn(run.info.separatorRule)
         ) : seqFn(...run.info.flatMembers);
-        const name = visibleGroupSynthName(
-          body,
-          parentKind,
-          groupDedupeMap,
-          counter,
-          rulesBag,
-          clauseGroupRules,
-          ambientPrec
-        );
+        const name = visibleGroupSynthName(body, parentKind, ctx, counter, ambientPrec);
         if (name === null) continue;
         visibleGroupSources.add(name);
         if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
@@ -3666,10 +3644,10 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
   }
   if (isChoiceType(rule.type)) {
     let choiceRule = rule;
-    const permutationChoice = isPermutationChoice(rule, rulesBag, hoistKwRules ?? void 0, hoistWordMatcher);
+    const permutationChoice = isPermutationChoice(rule, rulesBag, ctx.kwRules, ctx.wordMatcher);
     const selfFold = selfReferentialFoldOf(parentKind, rule) !== void 0;
-    if (permutationChoice && hoistKwRules !== null) {
-      choiceRule = promotePermutationArmKeywords(rule, hoistKwRules, rulesBag, hoistWordMatcher);
+    if (permutationChoice) {
+      choiceRule = promotePermutationArmKeywords(rule, ctx);
     }
     const members = choiceRule.members;
     if (!Array.isArray(members)) return rule;
@@ -3684,32 +3662,10 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     }
     let changed = false;
     const newMembers = members.map((m) => {
-      const out = applyClauseHoist(
-        parentKind,
-        m,
-        rulesBag,
-        clauseGroupRules,
-        dedupeMap,
-        counter,
-        groupDedupeMap,
-        visibleGroupSources,
-        clauseGroupOwners,
-        ambientPrec
-      );
+      const out = applyClauseHoist(parentKind, m, ctx, counter, ambientPrec);
       const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
-      const promoted = permutationChoice || literalOnlySplit || selfFold ? null : mintStructuredChoiceArm(
-        out,
-        parentKind,
-        rulesBag,
-        clauseGroupRules,
-        counter,
-        groupDedupeMap,
-        visibleGroupSources,
-        clauseGroupOwners,
-        collidingLeadingNames,
-        ambientPrec
-      );
-      const final = promoteHiddenListRef(promoted ?? out, rulesBag);
+      const promoted = permutationChoice || literalOnlySplit || selfFold ? null : mintStructuredChoiceArm(out, parentKind, ctx, counter, collidingLeadingNames, ambientPrec);
+      const final = promoteHiddenListRef(promoted ?? out, ctx);
       if (final !== m) changed = true;
       return final;
     });
@@ -3719,19 +3675,15 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     const content = rule.content;
     if (!content) return rule;
     const innerAmbientPrec = isPrecWrapper(rule) ? rule : ambientPrec;
-    const newContent = applyClauseHoist(
-      parentKind,
-      content,
-      rulesBag,
-      clauseGroupRules,
-      dedupeMap,
-      counter,
-      groupDedupeMap,
-      visibleGroupSources,
-      clauseGroupOwners,
-      innerAmbientPrec,
-      enclosingFieldName
-    );
+    const newContent = applyClauseHoist(parentKind, content, ctx, counter, innerAmbientPrec, enclosingFieldName);
+    if (isRepeatType(rule.type) && isMultiSlotRepeatElement(newContent, ctx.sourceSymbols)) {
+      const name = visibleGroupSynthName(newContent, parentKind, ctx, counter, ambientPrec, enclosingFieldName);
+      if (name !== null) {
+        visibleGroupSources.add(name);
+        if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+        return withContent(rule, makeGroupLiftSymbol(newContent, name));
+      }
+    }
     if (newContent === content) return rule;
     return withContent(rule, newContent);
   }
@@ -3741,13 +3693,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     const newContent = applyClauseHoist(
       parentKind,
       content,
-      rulesBag,
-      clauseGroupRules,
-      dedupeMap,
+      ctx,
       counter,
-      groupDedupeMap,
-      visibleGroupSources,
-      clauseGroupOwners,
       ambientPrec,
       rule.name
     );
@@ -3756,7 +3703,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
   }
   return rule;
 }
-function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules) {
+function clauseHoistSynthName(seqBody, parentKind, ctx, counter) {
+  const { clauseDedupeMap: dedupeMap, rulesBag, clauseGroupRules } = ctx;
   const key = ruleKey(seqBody);
   const existing = dedupeMap[key];
   if (existing !== void 0) {
@@ -3828,9 +3776,11 @@ function collapseSingletonMintOrdinals(mergedRules, mintedRules, visibleGroupSou
   };
   for (const name of Object.keys(mergedRules)) rewrite(mergedRules[name]);
 }
-function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec, enclosingFieldName, flavor = "group") {
+function visibleGroupSynthName(content, parentKind, ctx, counter, ambientPrec, enclosingFieldName, flavor = "group") {
+  const { groupDedupeMap, rulesBag, clauseGroupRules } = ctx;
+  const separatedListNameCounts = ctx.hoist?.separatedListNameCounts;
   if (process.env.SITTIR_DEBUG_LISTNAME) {
-    const info = separatedListBodyInfo(content);
+    const info = separatedListBodyInfo(content, ctx.sourceSymbols);
     process.stderr.write(
       `[listname] mint for parent='${parentKind}' list=${JSON.stringify(info)} counts=${info?.elementName ? separatedListNameCounts?.get(pluralizeFieldName(info.elementName)) : "-"}
 `
@@ -3849,7 +3799,7 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
     clauseGroupRules[name] = body;
     return name;
   };
-  const listInfo = separatedListNameCounts !== null ? separatedListBodyInfo(content) : null;
+  const listInfo = separatedListNameCounts !== void 0 ? separatedListBodyInfo(content, ctx.sourceSymbols) : null;
   if (listInfo?.flankCarrying) {
     const nameFree = (n) => !(n in rulesBag) && !(`_${n}` in rulesBag) && !(n in clauseGroupRules) && !(`_${n}` in clauseGroupRules);
     const bare = listInfo.elementName !== null ? pluralizeFieldName(listInfo.elementName) : null;
@@ -3882,7 +3832,8 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
   }
   return register(visibleName);
 }
-function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedupeMap, counter, rulesBag, flavor = "group") {
+function promoteExistingHiddenRuleName(existingHiddenName, parentKind, ctx, counter, flavor = "group") {
+  const { groupDedupeMap, rulesBag } = ctx;
   const existing = groupDedupeMap[existingHiddenName];
   if (existing !== void 0) return { visibleName: existing };
   const natural = existingHiddenName.replace(/^_+/, "");
@@ -3902,7 +3853,7 @@ function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedu
   groupDedupeMap[existingHiddenName] = visibleName;
   return { visibleName };
 }
-function promotePermutationArmKeywords(choiceRule, kwRules, rulesBag, wordMatcher) {
+function promotePermutationArmKeywords(choiceRule, ctx) {
   const members = choiceRule.members;
   let changed = false;
   const newMembers = members.map((arm2) => {
@@ -3912,9 +3863,9 @@ function promotePermutationArmKeywords(choiceRule, kwRules, rulesBag, wordMatche
     const newSeq = seqMembers.map((m) => {
       const norm = normalizeMember(m);
       if (!isStringType(norm.type) || typeof norm.value !== "string") return m;
-      if (!matchesWordShape(norm.value, wordMatcher)) return m;
+      if (!matchesWordShape(norm.value, ctx.wordMatcher)) return m;
       const fieldName = `${norm.value}_marker`;
-      const symbolRef2 = registerKwRule(m, fieldName, kwRules, rulesBag);
+      const symbolRef2 = registerKwRule(m, fieldName, ctx.kwRules, ctx.rulesBag);
       if (symbolRef2 === null) return m;
       armChanged = true;
       return makeField(fieldName, symbolRef2);
@@ -3925,7 +3876,8 @@ function promotePermutationArmKeywords(choiceRule, kwRules, rulesBag, wordMatche
   });
   return changed ? { ...choiceRule, members: newMembers } : choiceRule;
 }
-function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, counter, groupDedupeMap, visibleGroupSources, clauseGroupOwners, collidingLeadingNames, ambientPrec, enclosingFieldName) {
+function mintStructuredChoiceArm(arm2, parentKind, ctx, counter, collidingLeadingNames, ambientPrec, enclosingFieldName) {
+  const { rulesBag, clauseGroupRules, visibleGroupSources, clauseGroupOwners } = ctx;
   const t = arm2.type;
   if (typeof t !== "string") return null;
   if (armStartsWithSymbol(arm2, collidingLeadingNames, rulesBag)) return null;
@@ -3935,12 +3887,8 @@ function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, c
     const minted = mintStructuredChoiceArm(
       content,
       parentKind,
-      rulesBag,
-      clauseGroupRules,
+      ctx,
       counter,
-      groupDedupeMap,
-      visibleGroupSources,
-      clauseGroupOwners,
       collidingLeadingNames,
       arm2,
       enclosingFieldName
@@ -3954,9 +3902,9 @@ function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, c
     if (counter.supertypeNames?.has(name)) return null;
     if (Object.hasOwn(clauseGroupRules, name)) return null;
     const body = rulesBag[name];
-    if (!body || ruleMatchesEmpty(body) || isInlineSafe(body, rulesBag)) return null;
+    if (!body || ruleMatchesEmpty(body) || isInlineSafe(body, ctx.sourceSymbols)) return null;
     if (isSupertypeLike(body)) return null;
-    const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag, "arm");
+    const promoted = promoteExistingHiddenRuleName(name, parentKind, ctx, counter, "arm");
     if (!promoted) return null;
     rulesBag[name] = withHoistedAnnotation(body);
     visibleGroupSources.add(name);
@@ -3964,20 +3912,10 @@ function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, c
     return makeVisibleGroupAlias(arm2, promoted.visibleName);
   }
   if (isSeqType(t) || isChoiceType(t)) {
-    if (ruleMatchesEmpty(arm2) || isInlineSafe(arm2, rulesBag)) return null;
+    if (ruleMatchesEmpty(arm2) || isInlineSafe(arm2, ctx.sourceSymbols)) return null;
     if (isSupertypeLike(arm2)) return null;
-    if (isPermutationChoice(arm2, rulesBag, hoistKwRules ?? void 0, hoistWordMatcher)) return null;
-    const minted = visibleGroupSynthName(
-      arm2,
-      parentKind,
-      groupDedupeMap,
-      counter,
-      rulesBag,
-      clauseGroupRules,
-      ambientPrec,
-      enclosingFieldName,
-      "arm"
-    );
+    if (isPermutationChoice(arm2, rulesBag, ctx.kwRules, ctx.wordMatcher)) return null;
+    const minted = visibleGroupSynthName(arm2, parentKind, ctx, counter, ambientPrec, enclosingFieldName, "arm");
     if (minted === null) return null;
     visibleGroupSources.add(minted);
     if (!clauseGroupOwners.has(minted)) clauseGroupOwners.set(minted, parentKind);
@@ -5193,7 +5131,8 @@ function wire(config, base2) {
     precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
     flattenedParents: /* @__PURE__ */ new Set(),
     aliasTargets: /* @__PURE__ */ new Set(),
-    automaticVariants: seedAutomaticVariants(base2)
+    automaticVariants: seedAutomaticVariants(base2),
+    adoptedGroups: baseArg ? adoptMintedGroups(baseArg, base2, cfg.groups) : /* @__PURE__ */ new Map()
   };
   const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
@@ -5214,10 +5153,12 @@ function wire(config, base2) {
       context.syntheticInline.add(name);
     }
     for (const name of getEnrichVisibleGroupSources(base2)) {
+      if (context.adoptedGroups.has(name)) continue;
       context.inlineRemovals.add(name);
     }
     const inlineSafeNames = getEnrichClauseGroups(base2);
     for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base2)) {
+      if (context.adoptedGroups.has(syntheticName)) continue;
       if (context.authoredRuleNames.has(ownerKind)) {
         context.orphanedSyntheticGroups.add(syntheticName);
       }
@@ -5572,6 +5513,55 @@ function hasBodyPatternGroups(groups) {
 var passthroughBaseRuleFn = function passthroughBaseRuleFn2(_$, previous) {
   return previous;
 };
+function declaredPatterns(groups, injects) {
+  const $ = makeSimpleDollarProxy();
+  const declared = [];
+  for (const [key, value] of Object.entries(groups ?? {})) {
+    if (typeof value !== "function") continue;
+    if (key.startsWith("_")) {
+      throw new Error(
+        `groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); declare a hidden pattern under injects: instead`
+      );
+    }
+    declared.push(["groups", key, value]);
+  }
+  for (const [key, value] of Object.entries(injects ?? {})) {
+    if (typeof value === "function") declared.push(["injects", key, value]);
+  }
+  return declared.map(([section, key, value]) => {
+    let body;
+    try {
+      const result = value.call(void 0, $, void 0);
+      if (!result || typeof result !== "object" || typeof result.type !== "string") {
+        throw new Error(`${section}['${key}']: body fn did not return a rule object`);
+      }
+      body = result;
+    } catch (e) {
+      throw new Error(`${section}['${key}']: failed to evaluate body fn: ${e.message}`);
+    }
+    if (!isComplexBodyRt(body)) {
+      throw new Error(
+        `${section}['${key}']: body is not a complex structural pattern (need SEQ \u22652, CHOICE \u22652, or REPEAT with non-trivial content)`
+      );
+    }
+    return { section, key, value, body };
+  });
+}
+function adoptMintedGroups(baseArg, base2, groups) {
+  const adopted = /* @__PURE__ */ new Map();
+  const authored = declaredPatterns(groups, void 0);
+  if (authored.length === 0) return adopted;
+  const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
+  for (const minted of getEnrichVisibleGroupSources(base2)) {
+    const body = baseRules[minted];
+    if (body === void 0) continue;
+    const owner = authored.find((pattern) => patternBodyEqual(unwrapPrec(body), pattern.body));
+    if (owner === void 0) continue;
+    adopted.set(minted, owner.key);
+    delete baseRules[minted];
+  }
+  return adopted;
+}
 function makeSimpleDollarProxy() {
   return new Proxy({}, {
     get(_target, name) {
@@ -5638,7 +5628,7 @@ function replaceInBodyRt(rule, candidates, automatic) {
   if (!rule || typeof rule !== "object") return rule;
   const r = rule;
   for (const c of candidates) {
-    if (patternBodyEqual(rule, c.body)) {
+    if (patternBodyEqual(rule, c.body) || r.type === "SYMBOL" && c.adopts?.has(r.name ?? "") === true) {
       const site = c.aliasAs === void 0 ? { type: "SYMBOL", name: c.name } : { type: "ALIAS", content: { type: "SYMBOL", name: c.name }, named: true, value: c.aliasAs };
       return relabelledArm(site, rule, automatic());
     }
@@ -5755,38 +5745,11 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context, 
     if (!isComplexBodyRt(body)) continue;
     candidates.push({ name, body });
   }
-  const declared = [];
-  for (const [key, value] of Object.entries(groups ?? {})) {
-    if (typeof value !== "function") continue;
-    if (key.startsWith("_")) {
-      throw new Error(
-        `groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); declare a hidden pattern under injects: instead`
-      );
-    }
-    declared.push(["groups", key, value]);
-  }
-  for (const [key, value] of Object.entries(injects ?? {})) {
-    if (typeof value === "function") declared.push(["injects", key, value]);
-  }
-  for (const [section, key, value] of declared) {
+  for (const { section, key, value, body } of declaredPatterns(groups, injects)) {
     const hiddenName = declaredGroupMintName(key);
     const hidden = hiddenName === key;
-    let body;
-    try {
-      const result = value.call(void 0, $, void 0);
-      if (!result || typeof result !== "object" || typeof result.type !== "string") {
-        throw new Error(`${section}['${key}']: body fn did not return a rule object`);
-      }
-      body = result;
-    } catch (e) {
-      throw new Error(`${section}['${key}']: failed to evaluate body fn: ${e.message}`);
-    }
-    if (!isComplexBodyRt(body)) {
-      throw new Error(
-        `${section}['${key}']: body is not a complex structural pattern (need SEQ \u22652, CHOICE \u22652, or REPEAT with non-trivial content)`
-      );
-    }
-    candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
+    const adopts = new Set([...context.adoptedGroups].filter(([, owner]) => owner === key).map(([minted]) => minted));
+    candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key, adopts });
     const registered = wrapOneRuleFn(hiddenName, value, context);
     rules[hiddenName] = section === "groups" ? stampHoistedFn(registered) : registered;
   }

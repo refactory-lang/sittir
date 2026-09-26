@@ -1,7 +1,7 @@
 /**
  * bench.ts — native render benchmark.
  *
- * For each grammar (rust, typescript, python) two workloads are timed over
+ * For each stable grammar two workloads are timed over
  * N iterations through the grammar's own engine:
  *   - coordinate: every corpus fixture parsed and read, rendered as read.
  *     Nothing under the root was rebuilt, so it folds to one coordinate and
@@ -23,14 +23,13 @@
  * `NODE_ENV` is respected.
  */
 
+import { stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { readFileSync } from 'node:fs';
 import type { AnyNodeData } from '@sittir/types';
 import type { SittirEngine } from '@sittir/common/engine';
 import { loadCorpusEntries } from '../validate/common.ts';
 import { fixturesOutputPath, type ParityFixture } from '../validate/parity-fixtures.ts';
 
-const GRAMMARS = ['rust', 'typescript', 'python'] as const;
-type Grammar = (typeof GRAMMARS)[number];
 
 const WORKLOADS = ['coordinate', 'transport'] as const;
 type Workload = (typeof WORKLOADS)[number];
@@ -62,7 +61,7 @@ export interface MemoryDelta {
 }
 
 export interface BenchResult {
-	grammar: Grammar;
+	grammar: GrammarName;
 	backend: 'native';
 	workload: Workload;
 	iterations: number;
@@ -84,13 +83,13 @@ export interface BenchOptions {
 	// intentionally empty
 }
 
-async function loadEngine(grammar: Grammar): Promise<SittirEngine> {
+async function loadEngine(grammar: GrammarName): Promise<SittirEngine> {
 	const { createEngine } = (await import(`@sittir/${grammar}`)) as { createEngine(): SittirEngine };
 	return createEngine();
 }
 
 /** The nodes a workload renders: one read root per corpus fixture, or every parity render fixture's input. */
-function collectNodeData(grammar: Grammar, engine: SittirEngine, workload: Workload): AnyNodeData[] {
+function collectNodeData(grammar: GrammarName, engine: SittirEngine, workload: Workload): AnyNodeData[] {
 	if (workload === 'coordinate') {
 		return loadCorpusEntries(grammar).map((entry) => engine.diagnostics.parseAndRead(entry.source).root);
 	}
@@ -184,7 +183,7 @@ function runBench(
 	};
 }
 
-async function benchGrammar(grammar: Grammar): Promise<BenchResult[]> {
+async function benchGrammar(grammar: GrammarName): Promise<BenchResult[]> {
 	const results: BenchResult[] = [];
 
 	process.stderr.write(`[bench] ${grammar}: loading native engine...\n`);
@@ -264,7 +263,7 @@ export async function run(_opts: BenchOptions): Promise<number> {
 	);
 
 	const allResults: BenchResult[] = [];
-	for (const grammar of GRAMMARS) {
+	for (const grammar of stableGrammars()) {
 		const results = await benchGrammar(grammar);
 		allResults.push(...results);
 	}

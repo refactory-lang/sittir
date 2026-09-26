@@ -2,8 +2,9 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { generate } from '../../codegen/src/compiler/generate.ts';
 import { validateReadRenderParse } from '../src/validate/read-render-parse.ts';
 import { validateFactoryRenderParse } from '../src/validate/factory-render-parse.ts';
+import { stableGrammars } from '@sittir/codegen/grammars';
 
-const GRAMMARS = ['rust', 'typescript', 'python'] as const;
+const GRAMMARS = stableGrammars();
 
 // Render-parse failure ceilings — asserted ceilings can only go DOWN
 // over time. The authoritative guard is

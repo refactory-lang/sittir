@@ -112,13 +112,8 @@ import type { CodegenEmitter } from './emitter.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { Rule } from '../types/rule.ts';
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
+import type { GrammarName } from '../grammars.ts';
 
-export type Grammar = 'rust' | 'typescript' | 'python';
-const SUPPORTED_GRAMMARS = ['rust', 'typescript', 'python'] as const;
-
-export function isRenderModuleGrammar(grammar: string): grammar is Grammar {
-	return (SUPPORTED_GRAMMARS as readonly string[]).includes(grammar);
-}
 
 export interface RustRenderModuleEmit {
 	hashRs: { path: string; contents: string };
@@ -142,13 +137,13 @@ export interface RenderOptionsInputs {
 }
 
 export interface RenderModuleEmitterConfig extends RenderOptionsInputs {
-	grammar: Grammar;
+	grammar: GrammarName;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
 }
 
 interface SynthesizeRenderModuleBundleConfig extends RenderOptionsInputs {
-	grammar: Grammar;
+	grammar: GrammarName;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
 	templates: EmittedTemplates;
@@ -180,7 +175,7 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 }
 
 export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, EmittedTemplates> {
-	readonly #grammar: Grammar;
+	readonly #grammar: GrammarName;
 	readonly #nodeMap: NodeMap;
 	readonly #generatedIdTables?: GeneratedIdTables;
 	readonly #options: RenderOptionsInputs;
@@ -214,7 +209,7 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 	}
 }
 
-function hashRsHeader(lang: Grammar): string {
+function hashRsHeader(lang: GrammarName): string {
 	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src
 //
@@ -226,7 +221,7 @@ function hashRsHeader(lang: Grammar): string {
 `;
 }
 
-function hashTsHeader(lang: Grammar): string {
+function hashTsHeader(lang: GrammarName): string {
 	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src
 //
@@ -236,12 +231,12 @@ function hashTsHeader(lang: Grammar): string {
 `;
 }
 
-function generatedHeader(lang: Grammar): string {
+function generatedHeader(lang: GrammarName): string {
 	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src`;
 }
 
-function transportRsHeader(lang: Grammar): string {
+function transportRsHeader(lang: GrammarName): string {
 	return `${generatedHeader(lang)}
 //
 // Per-kind view structs and render bodies, AnyTransport enum + FromNapiValue
@@ -1007,7 +1002,7 @@ function rustKindIdSlice(
 		.join(', ')}]`;
 }
 
-function libRsContents(lang: Grammar): string {
+function libRsContents(lang: GrammarName): string {
 	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src
 
@@ -1023,7 +1018,7 @@ pub use kind_ids::*;
 }
 
 export function emitHashFiles(
-	lang: Grammar,
+	lang: GrammarName,
 	sources: readonly BundleFile[]
 ): {
 	hashRs: RustRenderModuleEmit['hashRs'];
@@ -1078,7 +1073,7 @@ function planRenderOptionsFor(
 }
 
 export function emitRenderModule(
-	lang: Grammar,
+	lang: GrammarName,
 	templates: EmittedTemplates,
 	nodeMap: NodeMap,
 	generatedIdTables?: GeneratedIdTables,

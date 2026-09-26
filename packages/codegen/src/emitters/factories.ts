@@ -75,7 +75,8 @@ import {
 	isAuthoredCompound,
 	enumMemberDiscriminant,
 	expandAndDedupeContentTypes,
-	registeredSlots
+	registeredSlots,
+	pruneUnusedImports
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -1735,7 +1736,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			(n) => n instanceof AssembledList && separatedListSurface(n, nodeMap, kindEntries).wrapper !== undefined
 		);
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
-		lines.push(SITTIR_TYPES_IMPORT_PLACEHOLDER);
+		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		lines.push(
 			`import { ${['withMethods', 'withAccessors', 'methodsEngine', ...storageCoercionImports, ...(usesElementWrap ? ['isNodeData'] : [])].join(', ')} } from '../utils.js';`
 		);
@@ -1841,12 +1842,8 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(...emitFactoryMapConst(mapEntries));
 		lines.push('');
 
-		const source = lines.join('\n');
-		const body = source.replace(SITTIR_TYPES_IMPORT_PLACEHOLDER, '');
-		const used = SITTIR_TYPES_IMPORT_CANDIDATES.filter((name) => new RegExp(`\\b${name}\\b`).test(body));
-		return source.replace(SITTIR_TYPES_IMPORT_PLACEHOLDER, `import type { ${used.join(', ')} } from '@sittir/types';`);
+		return pruneUnusedImports(lines, ['Delimiter', ...SITTIR_TYPES_IMPORT_CANDIDATES]).join('\n');
 	}
 }
 
-const SITTIR_TYPES_IMPORT_PLACEHOLDER = '__SITTIR_TYPES_IMPORT__';
 const SITTIR_TYPES_IMPORT_CANDIDATES = ['AnyNodeData', 'ByteRange', 'ConfigOf', 'Edit', 'LooseValue', 'NonEmptyArray', 'WidenNumeric'];

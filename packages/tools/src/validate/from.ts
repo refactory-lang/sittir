@@ -27,29 +27,13 @@ import {
 	collectKinds,
 	emitValidatorMetrics,
 	getChildFactoryArgs,
+	importGrammarModule,
 	nodeToConfig,
 	loadNodeModel,
+	type TSNode,
 	type TSTree,
 	type ValidatorSkip
 } from './common.ts';
-
-const FROM_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/factories/coerce.ts',
-	typescript: '../../../typescript/src/factories/coerce.ts',
-	python: '../../../python/src/factories/coerce.ts'
-};
-
-const FACTORY_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/factories/raw.ts',
-	typescript: '../../../typescript/src/factories/raw.ts',
-	python: '../../../python/src/factories/raw.ts'
-};
-
-const WRAP_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/wrap.ts',
-	typescript: '../../../typescript/src/wrap.ts',
-	python: '../../../python/src/wrap.ts'
-};
 
 // ---------------------------------------------------------------------------
 // Structural analysis
@@ -187,6 +171,17 @@ export interface FromValidationResult {
 	errors: FromValidationError[];
 	skips: ValidatorSkip[];
 	excluded: ValidatorSkip[];
+	trivia: ValidatorSkip[];
+}
+
+async function importGenerated(grammar: string, file: string): Promise<Record<string, any>> {
+	const mod = await importGrammarModule(grammar, file);
+	if (mod === undefined) throw new Error(`grammar '${grammar}' has no generated src/${file}`);
+	return mod;
+}
+
+function insideExtra(node: TSNode | null): boolean {
+	return node !== null && (node.isExtra || insideExtra(node.parent));
 }
 
 export async function validateFrom(grammar: string, backend?: 'native' | 'js'): Promise<FromValidationResult> {
@@ -228,7 +223,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let wrapNode: ((data: AnyNodeData, tree: unknown) => unknown) | undefined;
 	const errors: FromValidationError[] = [];
 	try {
-		const fromModule = await import(new URL(FROM_MODULE_PATHS[grammar]!, import.meta.url).pathname);
+		const fromModule = await importGenerated(grammar, 'factories/coerce.ts');
 		fromMap = fromModule._fromMap ?? {};
 	} catch (e) {
 		errors.push({
@@ -238,7 +233,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		});
 	}
 	try {
-		const factoryModule = await import(new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname);
+		const factoryModule = await importGenerated(grammar, 'factories/raw.ts');
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata (shapes, field-alias, factoryFields,
 		// factorySlots) lives in node-model.json5.
@@ -255,7 +250,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		});
 	}
 	try {
-		const wrapModule = await import(new URL(WRAP_MODULE_PATHS[grammar]!, import.meta.url).pathname);
+		const wrapModule = await importGenerated(grammar, 'wrap.ts');
 		readTreeNode = wrapModule.readTreeNode;
 		wrapNode = wrapModule.wrapNode;
 	} catch {
@@ -277,7 +272,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 			divergentCount: 0,
 			errors,
 			skips: [],
-			excluded: []
+			excluded: [],
+			trivia: []
 		};
 	}
 
@@ -287,6 +283,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let total = 0;
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
+	const orphanedExtras = new Map<string, ValidatorSkip>();
 	const excludedKinds = new Set<string>();
 	let undefinedCount = 0;
 	let divergentCount = 0;
@@ -360,6 +357,18 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 								message: `leaf text route throws: ${(e as Error).message}`
 							});
 						}
+						continue;
+					}
+					if (insideExtra(node1)) {
+						total--;
+						testedKinds.delete(kind);
+						if (!orphanedExtras.has(kind))
+							orphanedExtras.set(kind, {
+								entry: entry.name,
+								kind,
+								reason: 'native-read-dropped-extra',
+								input: entry.source
+							});
 						continue;
 					}
 					errors.push({
@@ -552,6 +561,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		}
 	}
 
+	const trivia = [...orphanedExtras.values()].filter((s) => !testedKinds.has(s.kind!));
 	emitValidatorMetrics();
 	return {
 		grammar,
@@ -563,7 +573,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		divergentCount,
 		errors,
 		skips,
-		excluded
+		excluded,
+		trivia
 	};
 }
 
@@ -571,7 +582,7 @@ export function formatFromReport(result: FromValidationResult): string {
 	const lines: string[] = [];
 	const icon = result.fail === 0 ? 'v' : 'x';
 	lines.push(
-		`  ${icon} ${result.pass}/${result.total} from() correctness (${result.undefinedCount} undefined, ${result.divergentCount} divergent, ${result.skip} skipped)`
+		`  ${icon} ${result.pass}/${result.total} from() correctness (${result.undefinedCount} undefined, ${result.divergentCount} divergent, ${result.skip} skipped, ${result.trivia.length} trivia)`
 	);
 	if (result.errors.length > 0) {
 		for (const e of result.errors) {

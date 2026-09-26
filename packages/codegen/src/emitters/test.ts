@@ -502,9 +502,13 @@ function emitSubFactoryTests(
 			const required = registeredSlots(child).filter(isRequired);
 			return required.map((f) => `.$with.${f.configKey}(${strictOptionDummy(f, nodeMap, kindEntries)})`).join('');
 		})();
-		cases.push(`    const node = ${callTarget}(${args})${aliasRegisteredChain};`);
-		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(child.kind, kindEntries, nodeMap)});`);
-		cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
+		if (child.modelType === 'keyword' || child.modelType === 'punctuation') {
+			cases.push(`    expect(${callTarget}(${args})).toBe(${testTypeDiscriminant(child.kind, kindEntries, nodeMap)});`);
+		} else {
+			cases.push(`    const node = ${callTarget}(${args})${aliasRegisteredChain};`);
+			cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(child.kind, kindEntries, nodeMap)});`);
+			cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
+		}
 		cases.push('  });');
 	}
 	if (cases.length === 0) return;

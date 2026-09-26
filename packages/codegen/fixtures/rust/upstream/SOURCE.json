@@ -1,0 +1,16 @@
+{
+	"repository": "https://github.com/tree-sitter/tree-sitter-rust",
+	"version": "0.24.0",
+	"ref": "v0.24.0",
+	"commit": "18b0515fca567f5a10aee9978c6d2640e878671a",
+	"files": [
+		"async.txt",
+		"declarations.txt",
+		"expressions.txt",
+		"literals.txt",
+		"macros.txt",
+		"patterns.txt",
+		"source_files.txt",
+		"types.txt"
+	]
+}

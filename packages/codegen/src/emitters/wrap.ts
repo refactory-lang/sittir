@@ -38,7 +38,8 @@ import {
 	fieldTypeComponents,
 	collectConcreteStorageKeys,
 	expandToConcreteParseKinds,
-	slotSeparatorTexts
+	slotSeparatorTexts,
+	pruneUnusedImports
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType, declaredSeparatorDefault } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
@@ -1282,7 +1283,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'// would dispatch straight back into the wrap function that called',
 						'// this, with the same data.',
 						'function drillInSelf<T>(entry: T, tree: TreeHandle): T {',
-						'  if (!entry) return undefined as unknown as T;',
+						'  if (entry == null) return undefined as unknown as T;',
 						'  const e = entry as unknown as _NodeData;',
 						'  if (e.$nodeHandle != null && e.$childIndex != null) return readTreeNode(tree, e.$nodeHandle, e.$childIndex) as unknown as T;',
 						'  return entry;',
@@ -1820,6 +1821,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('}');
 		lines.push('');
 
-		return lines.join('\n');
+		return pruneUnusedImports(lines, ['Delimiter']).join('\n');
 	}
 }

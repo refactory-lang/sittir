@@ -1,0 +1,10 @@
+{
+  "name": "tree-sitter-scm",
+  "type": "commonjs",
+  "tree-sitter": [
+    {
+      "scope": "source.scm",
+      "file-types": []
+    }
+  ]
+}

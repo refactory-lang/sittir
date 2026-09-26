@@ -797,6 +797,18 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 #### body
 
 ```text
+// A repeat whose element, after recursion, is a multi-slot seq
+// (isMultiSlotRepeatElement) is lifted into a visible group, the same mint
+// as the inline-unsafe optional(seq) path. Without it the builders push the
+// repeat's multiplicity onto each slot and splice the seq into the parent,
+// leaving parallel arrays that lose which slots came from one repetition.
+// An authored groups: pattern covering the element's whole body takes the
+// mint over in wire (adoptMintedGroups).
+```
+
+#### body
+
+```text
 // Descend into field content (a field-wrapped optional(seq) is also a target).
 ```
 
@@ -1234,6 +1246,14 @@ The names a grammar lists under `supertypes`, `externals` or `inline`, whether t
 		   (existing test-only call sites pass none) — omitting it preserves
 		   the permissive counting that ignores this distinction. */
 ```
+
+### `packages/codegen/src/dsl/rule-patterns.ts::isMultiSlotRepeatElement`
+
+Whether a repeat's element, prec peeled, is a seq that needs its own group:
+two or more slots (`collectSlots`, the same slot notion `isInlineSafe` uses)
+and not a separated-list body (`separatorOf` is null), because a separator
+plus element is one slot and link lifts it into a list. Link-phase
+`diagnoseRepeatedSeqGrouping` reports the same shape when it survives to link.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::unwrapPrec`
 
@@ -4071,22 +4091,11 @@ The whole-text regex source of a token, composed from its interior rule: a strin
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::separatorOf`
 
-#### body
+Recognizes a two-member `seq` as one separated-list step: `seq(SEP, X)` (leading) or `seq(X, SEP)` (trailing). A separator is a token: a literal, or a choice whose every arm lexes as one token by `terminalContentOf` over the grammar's source symbols — literals, patterns, token bodies, externals, and inlined rules whose own bodies are tokens (typescript's `_semicolon`, a choice of the external `_automatic_semicolon` and `;`). The full choice is kept, never narrowed to one literal arm; `separatorArmKinds` consumes the same shape.
 
-```text
-// Canonical: `seq(SEP, X)` (leading) or `seq(X, SEP)` (trailing).
-```
+A choice of nonterminals is content, not a separator: regex's `term` is `seq(choice(<atoms>), optional(<quantifier>))`, an element followed by its quantifier. An optional token (`choice(tok, blank)`) is not one either — it may be absent, so it is a per-element flank.
 
-#### body
-
-```text
-// Choice-of-separators in the separator position — preserve the FULL
-// choice; the caller (and everything downstream) now knows how to handle
-// a non-literal separator rule. No literal-presence check here by design:
-// a choice with zero STRING arms (all-symbol/external-scanner) still
-// counts as a detected separator shape — it's up to the caller to decide
-// what to do when it can't extract a literal from it.
-```
+Terminal-ness is the grammar-source classification of `parserSymbolClassOf`, so the test is the same in enrich (before any parser catalog exists) and in link; the link caller (`LinkCtx.sourceSymbols`) depends on that classifier and moves with it if link switches to the parser catalog's terminal fact.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::permutationAtomKey`
 
@@ -5787,35 +5796,6 @@ field labels instead of taking the minted `element` field.
 // the shapes the mints will see.
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::separatedListNameCounts`
-
-```text
-/** Grammar-global separated-list name counts for the CURRENT enrich() call —
- *  set between loop 1 (field-wrap) and loop 2 (hoist), cleared after. Module
- *  state rather than a threaded parameter, matching the `setGroupLiftRuleMap`
- *  precedent; null outside enrich() (standalone hoist tests keep ordinal
- *  naming). */
-```
-
-### `packages/codegen/src/dsl/enrich.ts::hiddenListPromotionNames`
-
-```text
-/** Per-enrich() cache of hidden-list-rule promotions: hidden rule name →
- *  the visible kind name every bare reference aliases to. Same lifecycle as
- *  {@link separatedListNameCounts}. */
-```
-
-### `packages/codegen/src/dsl/enrich.ts::hoistKwRules`
-
-```text
-// Loop-2 (clause-hoist) access to the enrich() call's keyword bag and word
-// matcher, for the permutation-choice decline + marker normalization: a
-// keyword already `_kw_*`-promoted in one arm must key identically to its
-// raw string spelling in a sibling arm, and only word-shaped literals are
-// modifier candidates. Same set/reset-in-try/finally pattern as the
-// separated-list state above.
-```
-
 ### `packages/codegen/src/dsl/enrich.ts::promoteHiddenListRef`
 
 ```text
@@ -6322,3 +6302,32 @@ model see the same kinds.
 ```text
 The content under a chain of named aliases.
 ```
+
+### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx`
+
+The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `visibleGroupSources`, `clauseGroupOwners`). Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
+
+`sourceSymbols` is the `ParserSymbolCtx` over the base rules — the grammar-source facts separator detection reads. It is distinct from the one `enrich()` builds over the enriched rules for `unaliasOverloadedDisplays` at the end (`enrichedSymbols`): the two describe the grammar at different points and are never merged.
+
+`hoist` is present only on the view `enrich()` hands to the clause-hoist loop (`withHoist`). Helpers that are also reached before that loop — `visibleGroupSynthName` from the token-form hoist — read it to tell the two apart: without it they fall back to ordinal naming and skip hidden-list promotion.
+
+### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx.create`
+
+Builds the ctx for one `enrich()` call from the grammar-level inputs, with empty mint registries and no hoist state.
+
+### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx.withHoist`
+
+The clause-hoist view: the same ctx — the registries are shared, not copied, so mints made through the view are the call's mints — with `hoist` set.
+
+### `packages/codegen/src/dsl/enrich-ctx.ts::ClauseHoistState`
+
+State that exists only while the clause hoist runs. `separatedListNameCounts` is the grammar-global count of each proposed separated-list name, computed after the field-wrap and token-form passes and read by every list mint so a name is taken bare only when globally unique. `hiddenListPromotionNames` caches, per hidden rule whose whole body is a flank-carrying separated list, the visible kind every bare reference to it aliases to, so all references agree.
+
+### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtxInit`
+
+The grammar-level inputs of an `enrich()` call: the base rules, the supertype, external and inline names, and the compiled word matcher.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::parserSymbolCtxOf`
+
+Builds a `ParserSymbolCtx` from a rule set and its `externals`/`inline` names, counting token uses over the same rules. The one constructor for every phase's symbol context, so the four fields are always derived together from one rule set.
+

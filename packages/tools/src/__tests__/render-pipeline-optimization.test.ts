@@ -1,6 +1,6 @@
 import { CHOICE, PATTERN, SEQ, STRING, SYMBOL } from '../../../codegen/src/types/rule-types.ts'; // @rule-type-consts
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
@@ -14,6 +14,7 @@ import { emittedTemplates } from '../../../codegen/src/emitters/__tests__/suppor
 import { concat, gate, slot, text } from '../../../codegen/src/emitters/render-body.ts';
 import { fixturesOutputPath } from '../validate/parity-fixtures.ts';
 import { makeNodeMapWith } from '../../../codegen/src/__tests__/helpers/node-map-fixtures.ts';
+import { nativeCrateRelDir, stableGrammars } from '../../../codegen/src/grammars.ts';
 
 const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 
@@ -212,9 +213,10 @@ describe('render pipeline optimization — retained baseline convergence', () =>
 
 	it('tracks grammar-owned native crates in the Cargo workspace instead of separate render modules', () => {
 		const cargoToml = readFileSync(resolve(repoRoot, 'Cargo.toml'), 'utf8');
-		expect(cargoToml).toContain('"rust/crates/sittir-rust"');
-		expect(cargoToml).toContain('"rust/crates/sittir-typescript"');
-		expect(cargoToml).toContain('"rust/crates/sittir-python"');
+		const members = [...(/members = \[([^\]]*)\]/.exec(cargoToml)?.[1] ?? '').matchAll(/"([^"]+)"/g)].map((m) => m[1]!);
+		const isMember = (crate: string) =>
+			members.some((m) => (m.endsWith('/*') ? dirname(crate) === m.slice(0, -2) : m === crate));
+		for (const grammar of stableGrammars()) expect(isMember(nativeCrateRelDir(grammar))).toBe(true);
 	});
 });
 

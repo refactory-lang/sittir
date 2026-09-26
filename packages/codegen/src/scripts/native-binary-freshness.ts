@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { nativeCrateRelDir } from '../grammars.ts';
 
 export interface HostBinaryFreshness {
 	rel: string;
@@ -25,7 +26,7 @@ function walkMtimes(root: string, repoRoot: string, newest: { mtimeMs: number; r
 }
 
 export function hostBinaryFreshnessFor(repoRoot: string, grammar: string): HostBinaryFreshness[] {
-	const crateDir = join(repoRoot, `rust/crates/sittir-${grammar}`);
+	const crateDir = join(repoRoot, nativeCrateRelDir(grammar));
 	if (!existsSync(crateDir)) return [];
 	const binaries = readdirSync(crateDir).filter((name) => name.endsWith('.node'));
 	if (binaries.length === 0) return [];
@@ -37,7 +38,7 @@ export function hostBinaryFreshnessFor(repoRoot: string, grammar: string): HostB
 	return binaries.map((name) => {
 		const binaryMtimeMs = statSync(join(crateDir, name)).mtimeMs;
 		return {
-			rel: `rust/crates/sittir-${grammar}/${name}`,
+			rel: `${nativeCrateRelDir(grammar)}/${name}`,
 			binaryMtimeMs,
 			newestInputMtimeMs: newest.mtimeMs,
 			newestInputRel: newest.rel,
@@ -57,6 +58,6 @@ export function assertNativeBinaryFresh(repoRoot: string, grammar: string): void
 	throw new Error(
 		`Stale native binary for grammar '${grammar}':\n${lines.join('\n')}\n` +
 			`Rebuild it:\n  pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${grammar} --all --output packages/${grammar}/src\n` +
-			`(or: pnpm -C rust/crates/sittir-${grammar} run build)`
+			`(or: pnpm -C ${nativeCrateRelDir(grammar)} run build)`
 	);
 }

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import type { AnyRule } from '../../types/rule.ts';
+import { stableGrammars } from '../../grammars.ts';
 import { parserSymbolClassOf, tokenUseCounts, type ParserSymbolClass, type ParserSymbolCtx } from '../rule-patterns.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../../', import.meta.url));
@@ -69,7 +70,7 @@ function parserClasses(grammar: string): (name: string) => ParserSymbolClass {
 }
 
 describe('parserSymbolClassOf agrees with the generated parser at every alias site', () => {
-	for (const grammar of ['rust', 'typescript', 'python']) {
+	for (const grammar of stableGrammars()) {
 		it(grammar, () => {
 			const json = JSON.parse(readFileSync(`${ROOT}packages/${grammar}/.sittir/src/grammar.json`, 'utf8')) as GrammarJson;
 			const ctx: ParserSymbolCtx = {

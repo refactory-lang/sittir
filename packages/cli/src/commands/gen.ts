@@ -27,12 +27,8 @@ function collectRepeatable(value: string, previous: string[]): string[] {
 }
 
 async function runPostGenerate(opts: GenCliOptions & { grammar: string }): Promise<void> {
-	const [{ RUST_RENDER_GRAMMARS }, { emitParityFixtures, runRoundtripProbes }] = await Promise.all([
-		import('@sittir/codegen/run-codegen'),
-		import('@sittir/tools/post-generate')
-	]);
-	const isRustRender = opts.all === true && (RUST_RENDER_GRAMMARS as readonly string[]).includes(opts.grammar);
-	if (isRustRender) {
+	const { emitParityFixtures, runRoundtripProbes } = await import('@sittir/tools/post-generate');
+	if (opts.all === true) {
 		if (opts.buildNative !== false) {
 			await emitParityFixtures(opts.grammar);
 		} else {

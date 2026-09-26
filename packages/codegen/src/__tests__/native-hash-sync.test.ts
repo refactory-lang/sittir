@@ -1,11 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { grammarPackageDir, nativeCrateDir, stableGrammars } from '../grammars.ts';
 
 import { describe, expect, it } from 'vitest';
 
-const GRAMMARS = ['python', 'rust', 'typescript'] as const;
-const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
+const GRAMMARS = stableGrammars();
 
 type Grammar = (typeof GRAMMARS)[number];
 
@@ -15,7 +14,7 @@ interface CheckedInHash {
 }
 
 function readTsHash(grammar: Grammar): CheckedInHash {
-	const path = resolve(repoRoot, `packages/${grammar}/src/hash.ts`);
+	const path = resolve(grammarPackageDir(grammar), 'src/hash.ts');
 	const text = readFileSync(path, 'utf8');
 	const match = /RENDER_MODULE_HASH\s*=\s*['"]([0-9a-f]{64})['"]/.exec(text);
 	if (!match?.[1]) {
@@ -25,7 +24,7 @@ function readTsHash(grammar: Grammar): CheckedInHash {
 }
 
 function readNativeHash(grammar: Grammar): CheckedInHash {
-	const path = resolve(repoRoot, `rust/crates/sittir-${grammar}/src/render/hash.rs`);
+	const path = resolve(nativeCrateDir(grammar), 'src/render/hash.rs');
 	const text = readFileSync(path, 'utf8');
 	const match = /RENDER_MODULE_HASH: &str = "([0-9a-f]{64})"/.exec(text);
 	if (!match?.[1]) {

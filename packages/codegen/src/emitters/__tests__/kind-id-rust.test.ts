@@ -10,10 +10,11 @@ import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
 import { loadGrammarJsonAliasMap } from '../../compiler/inline-sets.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
+import type { GrammarName } from '../../grammars.ts';
 
 const repoRoot = fileURLToPath(new URL('../../../../..', import.meta.url)).replace(/\/$/, '');
 
-async function emittedKindIds(grammar: 'rust' | 'typescript' | 'python') {
+async function emittedKindIds(grammar: GrammarName) {
 	const overridesPath = resolveOverridesPath(grammar);
 	const entryPath = existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
 	const raw = await evaluate(entryPath);

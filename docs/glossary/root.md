@@ -27,6 +27,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+One wasm binding per web-tree-sitter instance, shared by every loader. `Parser.init()` is not safe to call concurrently: its binding check runs before its await, so two first calls in flight build two bindings, and the second replaces the module-global one that `Language.load` and `setLanguage` use. A Language loaded between the two then reads as ABI version 0. The init promise is therefore stored once, synchronously, on the `Parser` class under `Symbol.for('sittir.web-tree-sitter.init')`, and every caller awaits that one promise. Keying on the class rather than this module's scope keeps the rule when two copies of this module share one web-tree-sitter instance (tools reaches it through the dynamic codegen surface, `generated-metadata` imports it statically), and the slot dies with the instance.
+
 ### `packages/codegen/src/polymorph-variant.ts::assertNever`
 
 ```text
@@ -714,3 +716,36 @@ values.
  * is exposed as `generate`.
  */
 ```
+
+### `packages/codegen/src/grammars.ts::module`
+
+The grammar registry. The set of grammars is discovered from disk — every `packages/<name>/` holding a `grammar.sittir.ts` is a grammar — so adding a grammar package is the whole registration; no list of grammar names exists anywhere else. Package, crate and upstream locations are derived from the name here and nowhere else.
+
+### `packages/codegen/src/grammars.ts::grammarPackages`
+
+Every grammar package, sorted by name, with its `stable` flag read from `package.json`'s `sittir.stable`. Cached for the process: packages are not created mid-run.
+
+### `packages/codegen/src/grammars.ts::allGrammars`
+
+Every grammar on disk. The set a user-supplied grammar name is checked against (CLI `--grammar` choices, `isGrammar`, `assertGrammar`).
+
+### `packages/codegen/src/grammars.ts::stableGrammars`
+
+The grammars whose `package.json` sets `"sittir": { "stable": true }` — the default set wherever a command runs "every grammar": `regen:all`, `validate counts`, censuses, benches, baseline ratchets and the per-grammar test sweeps. A newly bootstrapped grammar is generatable and validatable by name but stays out of the default gates until it is marked stable.
+
+### `packages/codegen/src/grammars.ts::upstreamPackage`
+
+The dependency name a grammar package declares for its upstream tree-sitter grammar: `tree-sitter-<name>`. A grammar whose upstream publishes under another name (or not on npm) declares it under this name with an `npm:` alias or a git spec.
+
+### `packages/codegen/src/grammars.ts::grammarRequire`
+
+A `require` rooted at the grammar package, so the upstream grammar resolves through the grammar package's own dependencies rather than through whatever happens to be hoisted next to codegen.
+
+### `packages/codegen/src/grammars.ts::sourceAliases`
+
+Vite/vitest aliases mapping each workspace package's `exports` entries (`@sittir/<pkg>` and `@sittir/<pkg>/<subpath>`) to the matching `src/` file, derived by rewriting the `import` target's `./dist/…js` to `src/…ts`. Entries whose source file does not exist are dropped. Sorted longest-first because a string alias also matches `find + '/'` prefixes.
+
+### `packages/codegen/src/grammars.ts::grammarDisplayName`
+
+PascalCase display name derived from the grammar name (`scm` → `Scm`, `my_lang` → `MyLang`), used where a generated artifact names the grammar in a type or prose (the native crate's `<Name>Grammar`).
+

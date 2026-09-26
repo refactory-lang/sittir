@@ -316,6 +316,7 @@ export interface ReadRenderParseResult {
 	accessorThrows: AccessorThrowRecord[];
 	skips: ValidatorSkip[];
 	excluded: ValidatorSkip[];
+	trivia: ValidatorSkip[];
 }
 
 /**
@@ -537,7 +538,7 @@ export async function validateReadRenderParse(
 	// native engine.
 	const { loadBoundaryRender } = await import('../scripts/collect-baseline.ts');
 	const render: (node: AnyNodeData) => string = await loadBoundaryRender(
-		grammar as 'rust' | 'typescript' | 'python'
+		grammar
 	);
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);
@@ -582,6 +583,7 @@ export async function validateReadRenderParse(
 	const accessorThrows: AccessorThrowRecord[] = [];
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
+	const trivia: ValidatorSkip[] = [];
 	const onAccessorThrow = (rec: AccessorThrowRecord): void => {
 		accessorThrows.push(rec);
 	};
@@ -966,7 +968,11 @@ export async function validateReadRenderParse(
 			// round-trip attempt ever succeeded past the read step) has tested
 			// nothing — score it like the testableKinds.length===0 case above
 			// (skip), not a silent pass. See entryHadAnyCandidate's doc comment.
-			if (!entryHadAnyCandidate) {
+			const namedRoots = tree1.rootNode.namedChildren;
+			if (!entryHadAnyCandidate && namedRoots.length > 0 && namedRoots.every((n) => n?.isExtra)) {
+				total--;
+				trivia.push({ entry: entry.name, reason: 'native-read-dropped-extras', input: entry.source });
+			} else if (!entryHadAnyCandidate) {
 				skips.push({ entry: entry.name, reason: 'all-candidates-neutral', input: entry.source });
 			} else {
 				if (entryOk) pass++;
@@ -1006,7 +1012,8 @@ export async function validateReadRenderParse(
 		astMismatches: dedupeMismatchesByContainment(astMismatches),
 		accessorThrows,
 		skips,
-		excluded
+		excluded,
+		trivia
 	};
 }
 

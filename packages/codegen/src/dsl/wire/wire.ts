@@ -24,6 +24,7 @@ import {
 } from '../primitives/variant.ts';
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
+import { unwrapPrec } from '../rule-patterns.ts';
 import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
@@ -56,6 +57,7 @@ export interface WireContext {
 	readonly flattenedParents: Set<string>;
 	readonly aliasTargets: Set<string>;
 	readonly automaticVariants: AutomaticVariants;
+	readonly adoptedGroups: ReadonlyMap<string, string>;
 }
 
 export interface RefineForm {
@@ -173,7 +175,8 @@ export function withWireContext<T>(
 		precedenceRankedNames: new Set(),
 		flattenedParents: new Set(),
 		aliasTargets: new Set(),
-		automaticVariants: seedAutomaticVariants(base)
+		automaticVariants: seedAutomaticVariants(base),
+		adoptedGroups: new Map()
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -349,7 +352,8 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
 		flattenedParents: new Set(),
 		aliasTargets: new Set(),
-		automaticVariants: seedAutomaticVariants(base)
+		automaticVariants: seedAutomaticVariants(base),
+		adoptedGroups: baseArg ? adoptMintedGroups(baseArg, base, cfg.groups) : new Map()
 	};
 
 	const patches = cfg.patches ?? {};
@@ -373,10 +377,12 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 			context.syntheticInline.add(name);
 		}
 		for (const name of getEnrichVisibleGroupSources(base)) {
+			if (context.adoptedGroups.has(name)) continue;
 			context.inlineRemovals.add(name);
 		}
 		const inlineSafeNames = getEnrichClauseGroups(base);
 		for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base)) {
+			if (context.adoptedGroups.has(syntheticName)) continue;
 			if (context.authoredRuleNames.has(ownerKind)) {
 				context.orphanedSyntheticGroups.add(syntheticName);
 			}
@@ -843,6 +849,65 @@ interface WirePatternCandidate {
 	readonly name: string;
 	readonly body: RuntimeRule;
 	readonly aliasAs?: string;
+	readonly adopts?: ReadonlySet<string>;
+}
+
+interface DeclaredPattern {
+	readonly section: 'groups' | 'injects';
+	readonly key: string;
+	readonly value: RuleFn;
+	readonly body: RuntimeRule;
+}
+
+function declaredPatterns(groups: GroupsConfig | undefined, injects: GroupsConfig | undefined): DeclaredPattern[] {
+	const $ = makeSimpleDollarProxy();
+	const declared: [section: 'groups' | 'injects', key: string, value: RuleFn][] = [];
+	for (const [key, value] of Object.entries(groups ?? {})) {
+		if (typeof value !== 'function') continue;
+		if (key.startsWith('_')) {
+			throw new Error(
+				`groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); declare a hidden pattern under injects: instead`
+			);
+		}
+		declared.push(['groups', key, value as RuleFn]);
+	}
+	for (const [key, value] of Object.entries(injects ?? {})) {
+		if (typeof value === 'function') declared.push(['injects', key, value as RuleFn]);
+	}
+	return declared.map(([section, key, value]) => {
+		let body: RuntimeRule;
+		try {
+			const result = value.call(undefined, $, undefined);
+			if (!result || typeof result !== 'object' || typeof (result as { type?: unknown }).type !== 'string') {
+				throw new Error(`${section}['${key}']: body fn did not return a rule object`);
+			}
+			body = result as RuntimeRule;
+		} catch (e) {
+			throw new Error(`${section}['${key}']: failed to evaluate body fn: ${(e as Error).message}`);
+		}
+		if (!isComplexBodyRt(body)) {
+			throw new Error(
+				`${section}['${key}']: body is not a complex structural pattern (need SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content)`
+			);
+		}
+		return { section, key, value, body };
+	});
+}
+
+function adoptMintedGroups(baseArg: BaseArg, base: unknown, groups: GroupsConfig | undefined): Map<string, string> {
+	const adopted = new Map<string, string>();
+	const authored = declaredPatterns(groups, undefined);
+	if (authored.length === 0) return adopted;
+	const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, unknown>;
+	for (const minted of getEnrichVisibleGroupSources(base)) {
+		const body = baseRules[minted];
+		if (body === undefined) continue;
+		const owner = authored.find((pattern) => patternBodyEqual(unwrapPrec(body), pattern.body));
+		if (owner === undefined) continue;
+		adopted.set(minted, owner.key);
+		delete baseRules[minted];
+	}
+	return adopted;
 }
 
 export function makeSimpleDollarProxy(): Record<string, RuntimeRule> {
@@ -915,7 +980,10 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 	if (!rule || typeof rule !== 'object') return rule;
 	const r = rule as { type: string; members?: unknown[]; content?: unknown };
 	for (const c of candidates) {
-		if (patternBodyEqual(rule, c.body)) {
+		if (
+			patternBodyEqual(rule, c.body) ||
+			(r.type === 'SYMBOL' && c.adopts?.has((r as { name?: string }).name ?? '') === true)
+		) {
 			const site =
 				c.aliasAs === undefined
 					? { type: 'SYMBOL', name: c.name }
@@ -1074,38 +1142,11 @@ export function applyWirePatternReplacement(
 		candidates.push({ name, body });
 	}
 
-	const declared: [section: 'groups' | 'injects', key: string, value: RuleFn][] = [];
-	for (const [key, value] of Object.entries(groups ?? {})) {
-		if (typeof value !== 'function') continue;
-		if (key.startsWith('_')) {
-			throw new Error(
-				`groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); declare a hidden pattern under injects: instead`
-			);
-		}
-		declared.push(['groups', key, value as RuleFn]);
-	}
-	for (const [key, value] of Object.entries(injects ?? {})) {
-		if (typeof value === 'function') declared.push(['injects', key, value as RuleFn]);
-	}
-	for (const [section, key, value] of declared) {
+	for (const { section, key, value, body } of declaredPatterns(groups, injects)) {
 		const hiddenName = declaredGroupMintName(key);
 		const hidden = hiddenName === key;
-		let body: RuntimeRule;
-		try {
-			const result = value.call(undefined, $, undefined);
-			if (!result || typeof result !== 'object' || typeof (result as { type?: unknown }).type !== 'string') {
-				throw new Error(`${section}['${key}']: body fn did not return a rule object`);
-			}
-			body = result as RuntimeRule;
-		} catch (e) {
-			throw new Error(`${section}['${key}']: failed to evaluate body fn: ${(e as Error).message}`);
-		}
-		if (!isComplexBodyRt(body)) {
-			throw new Error(
-				`${section}['${key}']: body is not a complex structural pattern (need SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content)`
-			);
-		}
-		candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
+		const adopts = new Set([...context.adoptedGroups].filter(([, owner]) => owner === key).map(([minted]) => minted));
+		candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key, adopts });
 		const registered = wrapOneRuleFn(hiddenName, value, context);
 		rules[hiddenName] = section === 'groups' ? stampHoistedFn(registered) : registered;
 	}

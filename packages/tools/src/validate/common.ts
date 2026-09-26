@@ -9,6 +9,8 @@ import type { AnyNodeData, AnyTreeNode, NodeTrivia } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common';
 import type { SittirEngine } from '@sittir/common/engine';
 import { load } from '../codegen-surface.ts';
+import { grammarPackageDir, isGrammar } from '@sittir/codegen/grammars';
+import { CORPUS_ROOT, localCorpusPath, upstreamCorpusDir } from '../corpus/layout.ts';
 import type {
 	CodegenSurface,
 	PolymorphVariantMap,
@@ -51,64 +53,67 @@ export interface CorpusEntry {
 export type TSNode = TS.Node;
 export type TSTree = TS.Tree;
 
+const CORPUS_HEADER =
+	/^(={3,})([^=\r\n][^\r\n]*)?\r?\n((?:(?:[^=\r\n]|\s+:)[^\r\n]*\r?\n)+)===+([^=\r\n][^\r\n]*)?\r?\n/gm;
+const CORPUS_DIVIDER = /^(-{3,})([^-\r\n][^\r\n]*)?\r?\n/gm;
+
 export function parseCorpus(content: string, grammar?: string): CorpusEntry[] {
+	const headers = [...content.matchAll(CORPUS_HEADER)];
+	const firstSuffix = headers[0]?.[2];
+	const tests = headers.filter((h) => h[2] === firstSuffix && h[4] === firstSuffix);
 	const entries: CorpusEntry[] = [];
-	const lines = content.split('\n');
-	let i = 0;
-
-	while (i < lines.length) {
-		if (!lines[i]!.startsWith('====')) {
-			i++;
-			continue;
-		}
-		i++;
-
-		const name = lines[i]?.trim() ?? '';
-		i++;
-
-		let declaredLanguage: string | undefined;
-		while (i < lines.length) {
-			const line = lines[i]!;
-			if (line.startsWith('====')) {
-				i++;
-				continue;
-			}
-			const directiveMatch = line.trim().match(/^:language\((.+?)\)$/);
-			if (directiveMatch) {
-				declaredLanguage = directiveMatch[1];
-				i++;
-				continue;
-			}
-			break;
-		}
-
-		const sourceLines: string[] = [];
-		while (i < lines.length && !lines[i]!.match(/^-{3,}$/)) {
-			sourceLines.push(lines[i]!);
-			i++;
-		}
-
-		while (i < lines.length && !lines[i]!.startsWith('====')) i++;
-
-		const source = sourceLines.join('\n').trim();
-		if (!source) continue;
-		if (grammar !== undefined && declaredLanguage !== undefined && declaredLanguage !== grammar) {
-			continue;
-		}
-		entries.push({ name, source });
-	}
-
+	tests.forEach((header, index) => {
+		const bodyStart = header.index + header[0].length;
+		const bodyEnd = tests[index + 1]?.index ?? content.length;
+		const body = content.slice(bodyStart, bodyEnd);
+		const divider = [...body.matchAll(CORPUS_DIVIDER)]
+			.filter((d) => d[2] === firstSuffix)
+			.reduce<RegExpExecArray | RegExpMatchArray | undefined>(
+				(best, d) => (best === undefined || d[1]!.length >= best[1]!.length ? d : best),
+				undefined
+			);
+		if (divider === undefined) return;
+		const [nameLine = '', ...markers] = header[3]!.split(/\r?\n/).filter((line) => line.length > 0);
+		const attributes = markers.map((line) => line.trim().match(/^:([a-z-]+)(?:\((.+?)\))?$/)).filter((m) => m !== null);
+		const declaredLanguage = attributes.find((m) => m[1] === 'language')?.[2];
+		if (grammar !== undefined && declaredLanguage !== undefined && declaredLanguage !== grammar) return;
+		const expected = body.slice(divider.index! + divider[0].length);
+		if (attributes.some((m) => m[1] === 'error') || /\((ERROR|MISSING)\b/.test(expected)) return;
+		let source = body.slice(0, divider.index);
+		if (source.endsWith('\n')) source = source.slice(0, -1);
+		if (source.endsWith('\r')) source = source.slice(0, -1);
+		if (source.trim().length === 0) return;
+		entries.push({ name: nameLine.trim(), source });
+	});
 	return entries;
 }
 
-const FIXTURES_DIR = fileURLToPath(new URL('../../../codegen/fixtures', import.meta.url));
+export function grammarModulePath(grammar: string, file: string): string | undefined {
+	if (!isGrammar(grammar)) return undefined;
+	const path = join(grammarPackageDir(grammar), 'src', file);
+	return existsSync(path) ? path : undefined;
+}
+
+export async function importGrammarModule(grammar: string, file: string): Promise<Record<string, any> | undefined> {
+	const path = grammarModulePath(grammar, file);
+	return path === undefined ? undefined : ((await import(pathToFileURL(path).href)) as Record<string, any>);
+}
 
 export function loadCorpusEntries(grammar: string): CorpusEntry[] {
-	const entries: CorpusEntry[] = [];
-	const files = readdirSync(FIXTURES_DIR).filter((f) => f.startsWith(`${grammar}-`) && f.endsWith('.txt'));
-	for (const file of files) {
-		const content = readFileSync(join(FIXTURES_DIR, file), 'utf-8');
-		entries.push(...parseCorpus(content, grammar));
+	const upstreamDir = upstreamCorpusDir(grammar);
+	const files = existsSync(upstreamDir)
+		? readdirSync(upstreamDir)
+				.filter((f) => f.endsWith('.txt'))
+				.sort()
+				.map((f) => join(upstreamDir, f))
+		: [];
+	const local = localCorpusPath(grammar);
+	if (existsSync(local)) files.push(local);
+	const entries = files.flatMap((file) => parseCorpus(readFileSync(file, 'utf-8'), grammar));
+	if (entries.length === 0) {
+		throw new Error(
+			`corpus: grammar '${grammar}' has no corpus entries under ${join(CORPUS_ROOT, grammar)}; run \`sittir tool fetch-corpus --grammar ${grammar}\``
+		);
 	}
 	return entries;
 }
@@ -597,19 +602,12 @@ export const WASM_PATHS: Record<string, string> = {
 	python: 'tree-sitter-python/tree-sitter-python.wasm'
 };
 
-export const WRAP_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/wrap.ts',
-	typescript: '../../../typescript/src/wrap.ts',
-	python: '../../../python/src/wrap.ts'
-};
-
 export async function loadReadTreeNode(
 	grammar: string
 ): Promise<((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null> {
-	const p = WRAP_MODULE_PATHS[grammar];
-	if (!p) return null;
 	try {
-		const mod = await import(new URL(p, import.meta.url).pathname);
+		const mod = await importGrammarModule(grammar, 'wrap.ts');
+		if (!mod) return null;
 		return mod.readTreeNode ?? null;
 	} catch (e) {
 		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
@@ -620,22 +618,15 @@ export async function loadReadTreeNode(
 export async function loadWrapNode(
 	grammar: string
 ): Promise<((data: AnyNodeData, tree: TreeHandle) => unknown) | null> {
-	const p = WRAP_MODULE_PATHS[grammar];
-	if (!p) return null;
 	try {
-		const mod = await import(new URL(p, import.meta.url).pathname);
+		const mod = await importGrammarModule(grammar, 'wrap.ts');
+		if (!mod) return null;
 		return mod.wrapNode ?? null;
 	} catch (e) {
 		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
 		return null;
 	}
 }
-
-const NODE_MODEL_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/node-model.json5',
-	typescript: '../../../typescript/src/node-model.json5',
-	python: '../../../python/src/node-model.json5'
-};
 
 export interface Seat {
 	readonly kind: string;
@@ -726,10 +717,10 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 };
 
 export function readNodeModelFile(grammar: string): string | undefined {
-	const p = NODE_MODEL_PATHS[grammar];
+	const p = grammarModulePath(grammar, 'node-model.json5');
 	if (!p) return undefined;
 	try {
-		return readFileSync(new URL(p, import.meta.url).pathname, 'utf-8');
+		return readFileSync(p, 'utf-8');
 	} catch {
 		return undefined;
 	}
@@ -940,18 +931,6 @@ function isWrappedNodeData(v: unknown): v is WrappedNodeData {
 	return !!v && typeof v === 'object' && typeof (v as { $type?: unknown }).$type === 'number';
 }
 
-export const TYPES_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/types.ts',
-	typescript: '../../../typescript/src/types.ts',
-	python: '../../../python/src/types.ts'
-};
-
-const IR_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/ir.ts',
-	typescript: '../../../typescript/src/ir.ts',
-	python: '../../../python/src/ir.ts'
-};
-
 export type IrEntry = { readonly strict?: (...args: unknown[]) => unknown } & Record<string, unknown>;
 
 export interface IrSurface {
@@ -961,11 +940,9 @@ export interface IrSurface {
 }
 
 export async function loadIrSurface(grammar: string): Promise<IrSurface | undefined> {
-	const p = IR_MODULE_PATHS[grammar];
-	if (!p) return undefined;
+	const mod = (await importGrammarModule(grammar, 'ir.ts')) as { ir?: Record<string, unknown> } | undefined;
+	if (mod?.ir === undefined) return undefined;
 	const model = await loadNodeModel(grammar);
-	const mod = (await import(new URL(p, import.meta.url).pathname)) as { ir?: Record<string, unknown> };
-	if (mod.ir === undefined) return undefined;
 	const entries: Record<string, IrEntry> = {};
 	for (const [kind, irKey] of Object.entries(model.irKeys)) {
 		const entry = mod.ir[irKey];
@@ -975,10 +952,9 @@ export async function loadIrSurface(grammar: string): Promise<IrSurface | undefi
 }
 
 export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined> {
-	const typesModulePath = TYPES_MODULE_PATHS[grammar];
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		return typesModule.KIND_DISPLAY_NAMES as ReadonlyMap<number, string> | undefined;
 	} catch {
 		return undefined;
@@ -988,10 +964,9 @@ export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number
 export async function loadStorageKindNameFromId(
 	grammar: string
 ): Promise<((id: number) => string | undefined) | undefined> {
-	const typesModulePath = TYPES_MODULE_PATHS[grammar];
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		const kindNames = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
 		return kindNames ? (id: number) => kindNames.get(id) : undefined;
 	} catch {
@@ -1010,10 +985,9 @@ export async function loadIsLeafKind(grammar: string): Promise<(kindId: number) 
 }
 
 export async function loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined> {
-	const typesModulePath = TYPES_MODULE_PATHS[grammar];
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		const kindNames = typesModule.KIND_DISPLAY_NAMES as ReadonlyMap<number, string> | undefined;
 		if (kindNames) {
 			return (id: number) => kindNames.get(id);
@@ -1035,10 +1009,9 @@ export async function loadKindNameFromId(grammar: string): Promise<((id: number)
 export async function loadCanonicalKindNameFromId(
 	grammar: string
 ): Promise<((id: number) => string | undefined) | undefined> {
-	const typesModulePath = TYPES_MODULE_PATHS[grammar];
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		const kindNames = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
 		if (!kindNames) return undefined;
 		return (id: number) => kindNames.get(id);
@@ -1048,10 +1021,9 @@ export async function loadCanonicalKindNameFromId(
 }
 
 export async function loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined> {
-	const typesModulePath = TYPES_MODULE_PATHS[grammar];
-	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+		const typesModule = await importGrammarModule(grammar, 'types.ts');
+		if (!typesModule) return undefined;
 		return typesModule.kindIdFromName as ((name: string) => number) | undefined;
 	} catch {
 		return undefined;
@@ -1065,9 +1037,7 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 	isOverride: boolean;
 }> {
 	const { assertGeneratedManifestsClean } = await load('generatedManifest');
-	if (grammar === 'rust' || grammar === 'typescript' || grammar === 'python') {
-		assertGeneratedManifestsClean([grammar]);
-	}
+	if (isGrammar(grammar)) assertGeneratedManifestsClean([grammar]);
 	const { Parser, Language } = await loadWebTreeSitter();
 
 	const thisDir = fileURLToPath(new URL('.', import.meta.url));

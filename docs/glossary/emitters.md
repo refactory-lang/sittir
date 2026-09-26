@@ -1126,18 +1126,33 @@ coerce layer).
 (`declaredSeparatorDefault`), so a built node always carries its token,
 as it always carries its delimiter.
 
+### `packages/codegen/src/emitters/shared.ts::pruneUnusedImports`
+
+The one mechanism for "import only what the body uses" in every generated TypeScript module. An emitter writes its preamble naming every candidate import, then passes its finished lines and the candidate local names here. The body is every line that is not an `import`; a named import specifier (`X`, or `X as Y` tested by its local name `Y`) whose name has no `\b` use in the body is removed, and an import line left with no specifiers is dropped whole. Keying on the imported name, not on the import's path or line text, keeps it correct wherever the import sits: the `Delimiter` import in the raw factories, the coerce module and wrap; the `@sittir/types` names in the factories, the coerce module and the types module. A grammar that never uses a name (scm and regex have no separated lists and no keyword-presence slots) gets no import of it, so its generated package lints clean.
+
+### `packages/codegen/src/emitters/shared.ts::importLocalName`
+
+The name an import specifier binds in the module: `Y` for `X as Y`, otherwise `X`.
+
+### `packages/codegen/src/emitters/types.ts::VOCABULARY_IMPORTS`
+
+The `@sittir/types` vocabulary a generated types module may import, in the order the import line lists them. The line names all of them and `pruneUnusedImports` keeps only those the module's body uses, so there is no per-name usage flag to keep in step with the list.
+
 ### `packages/codegen/src/emitters/shared.ts::stripUselessEscapes`
 
 ```text
 /**
  * Strip ESLint-flagged useless escapes that occur inside tree-sitter
- * grammar regex patterns. Only two cases appear in real grammars and
+ * grammar regex patterns. These cases appear in real grammars and
  * are safe to strip:
  *
  *   - `\[` inside a character class — `[` has no special meaning inside
  *     `[...]`, so the backslash is decorative.
  *   - `\-` at the end of a character class — a literal `-` after a prior
  *     character set needs no escape when it's the last char in the class.
+ *   - `\^` anywhere in a class except its first character — `^` negates
+ *     only directly after `[`, so `[\^a]` keeps its escape while
+ *     `[^\^$]` becomes `[^^$]`.
  *
  * The stripped pattern must still compile as a RegExp. If it doesn't
  * (some grammar regex we didn't anticipate), fall back to the original
@@ -6212,7 +6227,7 @@ mark instead of referencing the slot.
 
 ### `packages/codegen/src/emitters/test.ts::emitSubFactoryTests`
 
-One generated test per wired sub-factory, driven by `collectPolymorphWires` — the same derivation the overlay emits from, so tests exist exactly for wires that exist. Call arguments come from the dummy machinery, following the wire shapes (positional seat, residual config, merged config, seated tuple; list children lead with an options object when their surface takes one). `expectTestFailures["<kind>.<name>"]` skips a case and loosens its call target so a pinned, unwired name never type-errors. Alias wires get a form case each — the hoisted call with the child's bare-call arguments, asserting the child's discriminant (the form is its own node kind, not the parent's) — skipped when the dummy machinery cannot produce arguments for the child.
+One generated test per wired sub-factory, driven by `collectPolymorphWires` — the same derivation the overlay emits from, so tests exist exactly for wires that exist. Call arguments come from the dummy machinery, following the wire shapes (positional seat, residual config, merged config, seated tuple; list children lead with an options object when their surface takes one). `expectTestFailures["<kind>.<name>"]` skips a case and loosens its call target so a pinned, unwired name never type-errors. Alias wires get a form case each — the hoisted call with the child's bare-call arguments, asserting the child's discriminant (the form is its own node kind, not the parent's) — skipped when the dummy machinery cannot produce arguments for the child. A keyword or punctuation child is built as its kind-id value, not a node (as `emitKeywordTest` asserts for the kind itself), so its form case asserts the returned value is that kind id.
 
 A kind's tests are addressed through its public spelling (`subFactoryBase`): its flat `ir` key when it is bundled (sub-factories are callable), or its flattened-parent route (`variantRoutePaths`) called through `.coerce`, the loose flavor that accepts the prebuilt nodes the dummy machinery passes. A kind with neither has no public path, and no sub-factory tests are emitted for it.
 
@@ -8332,12 +8347,6 @@ restates the default from one that must be spelled.
 /** Pre-computed jinja templates. When omitted, a fresh TemplateEmitter drives the loop. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::Grammar`
-
-```text
-/** Grammars the emitter supports. Matches the three per-grammar packages. */
-```
-
 ### `packages/codegen/src/emitters/render-module.ts::RustRenderModuleEmit`
 
 ```text
@@ -9519,7 +9528,7 @@ would otherwise fall through to the in-path arm and render `pub(in pub)`.
 
 ### `packages/codegen/src/emitters/config.ts::emitConfig`
 
-Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block mapping every `@sittir/*` entry to its sibling `src/` — package-scoped test runs (and the examples they import) resolve to source, never to a stale `dist/` build, mirroring the root config and the workspace `paths`.
+Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sourceAliases()`, which maps every workspace package's `exports` entry to its `src/` file — package-scoped test runs resolve to source, never to a stale `dist/` build. `passWithNoTests` lets a freshly bootstrapped grammar with no tests yet run clean.
 
 ### `packages/codegen/src/emitters/is.ts::module`
 
@@ -13038,7 +13047,8 @@ leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
 /** The `@sittir/types` names the generated from-module may reference.
  *  `AnyNodeData` is unconditional (every leaf-registry entry names it); the
  *  rest depend on per-kind emission decisions made long after the preamble
- *  is written, so `finalize` prunes whichever the body never mentions. */
+ *  is written, so the preamble names them all and `pruneUnusedImports`
+ *  drops whichever the body never mentions. */
 ```
 
 ```text
@@ -16761,3 +16771,24 @@ Wraps a config type in `WidenNumeric` for the numeric text slots of a node, so t
 ### `packages/codegen/src/emitters/shared.ts::reclaimsAnonymousChild`
 
 Whether a slot takes an anonymous child from `$other`: it is unnamed and stores terminal (enum or literal) kinds. A fielded slot does not: the reader keys a field's child by field id, anonymous or not. The one predicate behind the wrap reclaim (`readTerminalFromOther<ElementType>(data, ids)` after the slot's storage keys), its collision guard, and the reader's `keeps_anonymous_children` table.
+
+### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
+
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json`, and `src/lib.rs` (the `LanguageFn`, `EngineGrammar`/`ReadModel` impls over the generated render module, and `sittir_core::napi_engine!`). `runCodegenInternal` writes it once, the first time it emits a grammar's render module, so a crate exists only alongside generated code it can compile. Pinned by a test to reproduce `sittir-python` byte-for-byte; a grammar whose crate needs more (typescript's scanner header) is edited after scaffolding.
+
+### `packages/codegen/src/emitters/grammar-runtime.ts::EmitGrammarRuntimeConfig`
+
+The per-grammar runtime glue shared by every grammar package, emitted into `packages/<name>/src/` next to `engine.ts`. It differs between grammars only in the grammar name, so it is emitted rather than copied into each package — a new grammar gets it from its first `gen --all`.
+
+### `packages/codegen/src/emitters/grammar-runtime.ts::emitBackend`
+
+`backend.ts`: loads the grammar-local native build (`rust/crates/sittir-<name>/index.js`) once per process and checks its render-module hash and transport ABI against the package's generated `RENDER_MODULE_HASH` / `NATIVE_RENDER_TRANSPORT_ABI`. The outcome is `native` or `js`; `js` means "native unavailable" — there is no JS engine behind it, and `createRenderEngine` throws on it. `SITTIR_BACKEND` forces a choice; a forced `native` that fails to load throws.
+
+### `packages/codegen/src/emitters/grammar-runtime.ts::emitBoundary`
+
+`boundary.ts`: the default-engine `render` / `toEdit` / `applyEdits` entry points the factories reach through `utils`, each timed with `recordFfi('<name>', …)` so FFI cost is attributed per grammar.
+
+### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
+
+The version of the JS → native render transport shape — the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into the scaffolded crate's `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. Bump it when the transport shape changes; crates are scaffolded once, so a test pins every existing crate's `lib.rs` to it and names the crates to update.
+

@@ -17,7 +17,7 @@ import { validateReadRenderParse, formatReadRenderParseReport } from './validate
 import type { ValidateReadRenderParseOptions } from './validate/read-render-parse.ts';
 import { validateTemplateCoverage } from './validate/template-coverage.ts';
 
-export type Grammar = 'rust' | 'typescript' | 'python';
+import type { GrammarName } from '@sittir/codegen/grammars';
 export type Backend = 'native';
 
 // Re-export result types so callers only need @sittir/tools.
@@ -30,13 +30,13 @@ export type { TemplateCoverageResult, CoverageIssue } from './validate/template-
 export { formatFromReport, formatFactoryRenderParseReport, formatReadRenderParseReport };
 
 /** Run from() correctness validation with an explicit backend. */
-export function runFrom(grammar: Grammar, backend: Backend = 'native') {
+export function runFrom(grammar: GrammarName, backend: Backend = 'native') {
 	return validateFrom(grammar, backend);
 }
 
 /** Run read-render-parse round-trip validation with an explicit backend. */
 export function runRt(
-	grammar: Grammar,
+	grammar: GrammarName,
 	backend: Backend = 'native',
 	options: Pick<ValidateReadRenderParseOptions, 'recursive'> = {}
 ) {
@@ -44,11 +44,11 @@ export function runRt(
 }
 
 /** Run template-coverage structural validation (synchronous). */
-export function runCoverage(grammar: Grammar) {
+export function runCoverage(grammar: GrammarName) {
 	return validateTemplateCoverage(grammar);
 }
 
 /** Run factory-render-parse validation with an explicit backend, through the raw or the `ir` surface. */
-export function runFactory(grammar: Grammar, backend: Backend = 'native', surface: FactorySurface = 'raw') {
+export function runFactory(grammar: GrammarName, backend: Backend = 'native', surface: FactorySurface = 'raw') {
 	return validateFactoryRenderParse(grammar, backend, { surface });
 }

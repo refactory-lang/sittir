@@ -9,7 +9,7 @@ import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisi
 import type { DeriveShapeDiagnostic } from './derive-shapes.ts';
 import type { AssembleWarning } from '../model/node-map.ts';
 import { makeSlotGroupingCollector } from '../simplify.ts';
-import type { SlotGroupingDiagnostic } from './slot-grouping.ts';
+import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent } from '../types.ts';
 import { collectGeneratedKindEntries, type GeneratedIdTables } from '../generated-metadata.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
@@ -187,12 +187,13 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		generatedIdTables: input.generatedIdTables,
 		diagnostics: compilerDiagnostics
 	});
-	const inlineKinds = new Set(loadGrammarJsonInlineList(rawGrammar.name) ?? []);
+	const inlineKinds = buildInlinableKinds(new Set(loadGrammarJsonInlineList(rawGrammar.name) ?? []), linked);
+	for (const rec of diagnoseRepeatedSeqGrouping(linked.rules, inlineKinds)) slotGroupingCollector.record(rec);
 	const normalized = normalizeGrammar(
 		linked,
 		new NormalizeCtx({
 			grammar: linked,
-			inlineKinds: buildInlinableKinds(inlineKinds, linked),
+			inlineKinds,
 			diagnostics: compilerDiagnostics,
 			slotGroupingCollector
 		})

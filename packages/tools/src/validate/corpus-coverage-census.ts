@@ -15,6 +15,7 @@
  * mis-counted) when a grammar's rrp/factory pass count looks low.
  */
 
+import { assertGrammar, stableGrammars } from '@sittir/codegen/grammars';
 import { loadCorpusEntries, loadLanguageForGrammar, collectKinds, type TSTree } from './common.ts';
 import { deriveRuleKinds } from './render-bodies.ts';
 
@@ -54,7 +55,6 @@ export interface CorpusCoverageCensusOptions {
 	format: string;
 }
 
-const GRAMMARS = ['rust', 'python', 'typescript'] as const;
 
 export async function run(opts: CorpusCoverageCensusOptions): Promise<number> {
 	const format = opts.format as 'list' | 'json';
@@ -62,7 +62,7 @@ export async function run(opts: CorpusCoverageCensusOptions): Promise<number> {
 		process.stderr.write(`invalid --format '${format}', expected one of: list, json\n`);
 		return 2;
 	}
-	const grammars = opts.allGrammars ? GRAMMARS : [opts.grammar as (typeof GRAMMARS)[number]];
+	const grammars = opts.allGrammars ? stableGrammars() : [assertGrammar(opts.grammar ?? '')];
 	const results: CorpusCoverageCensus[] = [];
 	for (const grammar of grammars) {
 		results.push(await computeCorpusCoverageCensus(grammar));

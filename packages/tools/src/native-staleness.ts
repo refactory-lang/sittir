@@ -23,7 +23,7 @@
  */
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { nativeCrateDir, nativeCrateRelDir } from '@sittir/codegen/grammars';
 
 /** Newest mtime (ms) among files in `dir` ending with `ext`, or undefined if none/missing. */
 function newestMtimeMs(dir: string, ext: string): number | undefined {
@@ -45,17 +45,15 @@ function newestMtimeMs(dir: string, ext: string): number | undefined {
  * @param grammar — grammar name (used to locate `rust/crates/sittir-<grammar>`).
  */
 export function warnIfNativeBinaryStale(grammar: string): void {
-	// packages/tools/src/ → ../../.. → repo root
-	const repoRoot = resolve(fileURLToPath(new URL('../../..', import.meta.url)));
-	const crateDir = resolve(repoRoot, 'rust', 'crates', `sittir-${grammar}`);
+	const crateDir = nativeCrateDir(grammar);
 	if (!existsSync(crateDir)) return; // no native crate for this grammar — nothing to guard
 
 	const nodeMtime = newestMtimeMs(crateDir, '.node');
 	if (nodeMtime === undefined) {
 		console.warn(
-			`⚠ [${grammar}] no native binding (.node) in rust/crates/sittir-${grammar}/ — ` +
+			`⚠ [${grammar}] no native binding (.node) in ${nativeCrateRelDir(grammar)}/ — ` +
 				`\`--backend native\` will throw (there is no JS backend to fall back to). Build it: \`pnpm validate:native\` ` +
-				`or \`pnpm -C rust/crates/sittir-${grammar} run build\`.`
+				`or \`pnpm -C ${nativeCrateRelDir(grammar)} run build\`.`
 		);
 		return;
 	}
@@ -69,7 +67,7 @@ export function warnIfNativeBinaryStale(grammar: string): void {
 				`(newest src/render/*.rs ${new Date(renderMtime).toISOString()} > newest .node ${new Date(nodeMtime).toISOString()}). ` +
 				`The render module is compiled into the .node, so \`--backend native\` reports counts ` +
 				`from the previously built module — these counts will NOT reflect your changes. ` +
-				`Rebuild: \`pnpm validate:native\` (regens + rebuilds + counts) or \`pnpm -C rust/crates/sittir-${grammar} run build\`. ` +
+				`Rebuild: \`pnpm validate:native\` (regens + rebuilds + counts) or \`pnpm -C ${nativeCrateRelDir(grammar)} run build\`. ` +
 				`[mtime heuristic — a no-op regen that only bumped timestamps can false-positive.]`
 		);
 	}
